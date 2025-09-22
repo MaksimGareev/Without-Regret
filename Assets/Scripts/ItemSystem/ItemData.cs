@@ -5,7 +5,7 @@ using UnityEngine;
 public enum ItemType
 {
     KeyItem,
-    NormalItem
+    ThrowableItem
 }
 [CreateAssetMenu(menuName = "ScriptableObjects/Item", order = 1)]
 public class ItemData : ScriptableObject

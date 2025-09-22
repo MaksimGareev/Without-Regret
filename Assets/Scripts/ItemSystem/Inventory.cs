@@ -15,6 +15,7 @@ public class Inventory : MonoBehaviour, IInventory
 
     public bool RemoveItem(ItemData item)
     {
+        Debug.Log($"Removed {item.ItemName} from inventory.");
         return itemsList.Remove(item);
     }
 
