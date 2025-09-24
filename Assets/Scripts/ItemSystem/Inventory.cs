@@ -23,5 +23,18 @@ public class Inventory : MonoBehaviour, IInventory
     {
         return itemsList.AsReadOnly();
     }
+
+    public ItemData GetFirstThrowable()
+    {
+        foreach (var item in itemsList)
+        {
+            if (item.ItemType == ItemType.ThrowableItem)
+            {
+                return item;
+            }
+        }
+        
+        return null;
+    }
 }
 
