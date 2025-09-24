@@ -2,32 +2,24 @@ using UnityEngine;
 
 public class PlayerMovingObjects : MonoBehaviour
 {
+    [SerializeField] private Transform grabPoint;
     [SerializeField] private float grabRange = 2f;
     [SerializeField] private KeyCode grabKey = KeyCode.E;
-    [SerializeField] private Transform playerHand;
-    [SerializeField] private float moveForce = 50f;
 
-    private MoveableObject heldObject;
-    private FixedJoint joint;
+    private IMoveable heldObject;
 
     private void Update()
     {
         if (Input.GetKeyDown(grabKey))
         {
             if (heldObject == null)
+            {
                 TryGrab();
+            }
             else
+            {
                 Release();
-        }
-    }
-
-    private void FixedUpdate()
-    {
-        if (heldObject != null)
-        {
-            Vector3 targetPos = playerHand.position;
-            Vector3 force = (targetPos - heldObject.transform.position) * moveForce;
-            heldObject.Rigidbody.AddForce(force, ForceMode.Force);
+            }
         }
     }
 
@@ -36,19 +28,23 @@ public class PlayerMovingObjects : MonoBehaviour
         Collider[] hits = Physics.OverlapSphere(transform.position, grabRange);
         foreach (Collider hit in hits)
         {
-            MoveableObject moveable = hit.GetComponent<MoveableObject>();
+            IMoveable moveable = hit.GetComponent<IMoveable>();
+
             if (moveable != null)
             {
+                moveable.Grab(grabPoint);
                 heldObject = moveable;
-                Debug.Log($"Grabbed {moveable.name}");
-                return;
+                Debug.Log($"Grabbed");
             }
         }
     }
 
     private void Release()
     {
-        Debug.Log($"Released {heldObject.name}");
-        heldObject = null;
+        if (heldObject != null)
+        {
+            heldObject.Release();
+            heldObject = null;
+        }
     }
 }
