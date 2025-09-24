@@ -45,7 +45,6 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         Movement();
-        Debug.Log(originalCamPos);
     }
 
     void Movement()
