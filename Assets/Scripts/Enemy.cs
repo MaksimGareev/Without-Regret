@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class FriendlyNPC : MonoBehaviour
+public class Enemy : MonoBehaviour
 {
-    public NavMeshAgent agent; 
+    public NavMeshAgent agent;
     public float range; // Area around the center point
     public Transform centrePoint; // Center Point of designated area
 
@@ -23,7 +23,7 @@ public class FriendlyNPC : MonoBehaviour
         // If close to destination and not already waiting, start waiting
         if (!isWaiting && !agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
         {
-            StartCoroutine(WaitBeforeNextMove());   
+            StartCoroutine(WaitBeforeNextMove());
         }
     }
 
@@ -45,7 +45,7 @@ public class FriendlyNPC : MonoBehaviour
             agent.SetDestination(point); // Move NPC to point
         }
     }
-    
+
     bool RandomPoint(Vector3 center, float range, out Vector3 result)
     {
         Vector3 randomPoint = center + Random.insideUnitSphere * range; // Picking random point within range
