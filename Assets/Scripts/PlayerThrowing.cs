@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Microsoft.Unity.VisualStudio.Editor;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.UI;
@@ -20,7 +21,9 @@ public class PlayerThrowing : MonoBehaviour
     [SerializeField] private float chargeSpeed = 1.5f;
 
     [Header("Input")]
-    [SerializeField] private KeyCode chargeKey = KeyCode.Space;
+    [SerializeField] private MouseButton chargeButton = MouseButton.Left;
+
+    private int chargeButtonInt;
     private bool isCharging = false;
     private float currentCharge = 0f;
 
@@ -32,6 +35,8 @@ public class PlayerThrowing : MonoBehaviour
             powerSlider.maxValue = 1f;
             powerSlider.value = 0f;
         }
+
+        chargeButtonInt = (int)chargeButton;
     }
     private void Awake()
     {
@@ -54,7 +59,7 @@ public class PlayerThrowing : MonoBehaviour
 
     private void HandleCharging()
     {
-        if (Input.GetKeyDown(chargeKey) && !isCharging)
+        if (Input.GetMouseButtonDown(chargeButtonInt) && !isCharging)
         {
             isCharging = true;
             currentCharge = 0f;
@@ -71,7 +76,7 @@ public class PlayerThrowing : MonoBehaviour
                 powerSlider.value = normalized;
             }
 
-            if (Input.GetKeyUp(chargeKey))
+            if (Input.GetMouseButtonUp(chargeButtonInt))
             {
                 ThrowItem(normalized);
                 isCharging = false;
