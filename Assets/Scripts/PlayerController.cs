@@ -6,39 +6,32 @@ public class PlayerController : MonoBehaviour
 {
 
     CharacterController Controller;
-
-    private bool MovementLocked = false;
+    // Movement Variables
+    private bool MovementLocked = false;    // locking the players movement when they interact with an item or NPC
     public float Speed = 1f;        
-    public float SprintSpeed = 2f;
-    public float SprintDuration = 3f;
-    public float sprintCooldown = 4f;
-
-    private float yVelocity = 0f;
-    private float gravity = -9.81f;
-
+    public float SprintSpeed = 2f;  // Sprint Speed
+    public float SprintDuration = 3f;   // How long the player can sprint
+    public float sprintCooldown = 4f;   // How long it takes for the player to sprint again
     private float SprintTimer;
-    private bool canSprint = true;
+    private bool canSprint = true; // Can the player sprint
 
+    // Extra variables to keep the player to the ground when interacting with items or NPC
+    private float yVelocity = 0f;
+    private float gravity = -9.81f; // gravity for when the player is locked so they don't fly away
+
+    // Camera Variables
     public Camera PlayerCamera;  // Main Camera
     public Vector3 pickupOffset = new Vector3(3f, 2f, -5f); // Offset of camera to player when picking up an item
     public float zoomDuration = 3f; // how long the camera will be zoomed in
     public float transitionSpeed = 2f; // Speed the camera zooms in
-
-    private Vector3 originalCamPos;
-    private Quaternion originalCamRot;
-    private bool isZooming = false;
+    private bool isZooming = false; // is the camera zoomed in
 
     // Start is called before the first frame update
     void Start()
     {
-        Controller = GetComponent<CharacterController>();
-        SprintTimer = SprintDuration;
+        Controller = GetComponent<CharacterController>();   // Find the Character controller
+        SprintTimer = SprintDuration;   // Set sprint timer to sprint duration
 
-        if(PlayerCamera != null)
-        {
-            originalCamPos = PlayerCamera.transform.localPosition;
-            originalCamRot = PlayerCamera.transform.localRotation;
-        }
     }
 
     // Update is called once per frame
@@ -49,12 +42,12 @@ public class PlayerController : MonoBehaviour
 
     void Movement()
     {
-        if(Controller.isGrounded && yVelocity < 0f)
+        if(Controller.isGrounded && yVelocity < 0f) // is the player on the ground
         {
             yVelocity = -2f;
         }
 
-        if (MovementLocked == true)
+        if (MovementLocked == true) // keeping the player on the ground when locked in place
         {
             Controller.Move(new Vector3(0, yVelocity, 0) * Time.deltaTime);
             return;
@@ -94,11 +87,8 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        // Apply Gravity
+        // Apply Gravity to when player movement is locked
         yVelocity += gravity * Time.deltaTime;
-
-        Vector3 finalMove = (move * currentSpeed) + new Vector3(0, yVelocity, 0);
-        Controller.Move(finalMove * Time.deltaTime);
 
         // Sprint cooldown
         IEnumerator SprintCooldown()
@@ -129,30 +119,39 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    // Adjusting the camera and locking player movement when the player picks up an item
     IEnumerator PickupCameraRoutine(Transform item)
     {
         isZooming = true;
 
-        // Move camera closer to player and item
-        Vector3 targetPos = transform.InverseTransformPoint(item.position + (transform.forward * 1f));
+        // Position and rotation of the camera following the player
+        Vector3 originalCamPos = PlayerCamera.transform.position;
+        Quaternion originalCamRot = PlayerCamera.transform.rotation;
+
+        // Position and rotation of the targeted item / NPC
+        Vector3 targetPos = item.position + (transform.forward * 1f) + pickupOffset;
         Quaternion targetRot = Quaternion.LookRotation(item.position - PlayerCamera.transform.position);
 
+        // Move camera to the offset position after picking up an item
         float t = 0;
-        while(t < 3f)
+        MovementLocked = true;
+        while (t < 3f)
         {
-            MovementLocked = true;
             t += Time.deltaTime * transitionSpeed;
-            PlayerCamera.transform.localPosition = Vector3.Lerp(originalCamPos, targetPos + pickupOffset, t);
+            PlayerCamera.transform.position = Vector3.Lerp(originalCamPos, targetPos + pickupOffset, t);
             PlayerCamera.transform.rotation = Quaternion.Slerp(originalCamRot, targetRot, t);
             yield return null;
         }
 
+        MovementLocked = false; // allow the player to move again
+
         // Stay zoomed in for the time duration
         yield return new WaitForSeconds(zoomDuration);
-        
+
+        MovementLocked = false; // allow the player to move again
         // return to normal camera veiw
         isZooming = false;
-        MovementLocked = false; // allow the player to move again
+
 
     }
 }

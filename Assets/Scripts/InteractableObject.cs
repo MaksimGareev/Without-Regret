@@ -71,6 +71,6 @@ public class InteractableObject : MonoBehaviour
         {
             promptUI.SetActive(false);
         }
-        Destroy(gameObject, 0.5f); // Remove the item with a small delay
+        Destroy(gameObject, 1f); // Remove the item with a small delay
     }
 }
