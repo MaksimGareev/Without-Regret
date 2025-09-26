@@ -21,11 +21,13 @@ public class PlayerThrowing : MonoBehaviour
     [SerializeField] private float chargeSpeed = 1.5f;
 
     [Header("Input")]
-    [SerializeField] private MouseButton chargeButton = MouseButton.Left;
+    [SerializeField] private MouseButton chargeKey = MouseButton.Left;
+    [SerializeField] private string chargeButton = "XboxRightTrigger";
 
-    private int chargeButtonInt;
+    private int chargeKeyInt;
     private bool isCharging = false;
     private float currentCharge = 0f;
+    private bool usingController;
 
     private void Start()
     {
@@ -36,7 +38,7 @@ public class PlayerThrowing : MonoBehaviour
             powerSlider.value = 0f;
         }
 
-        chargeButtonInt = (int)chargeButton;
+        chargeKeyInt = (int)chargeKey;
     }
     private void Awake()
     {
@@ -59,10 +61,18 @@ public class PlayerThrowing : MonoBehaviour
 
     private void HandleCharging()
     {
-        if (Input.GetMouseButtonDown(chargeButtonInt) && !isCharging)
+        if (Input.GetMouseButtonDown(chargeKeyInt) && !isCharging)
         {
             isCharging = true;
             currentCharge = 0f;
+            usingController = false;
+        }
+
+        if ((Input.GetAxis(chargeButton) > 0.1f) && !isCharging)
+        {
+            isCharging = true;
+            currentCharge = 0f;
+            usingController = true;
         }
 
         if (isCharging)
@@ -76,20 +86,36 @@ public class PlayerThrowing : MonoBehaviour
                 powerSlider.value = normalized;
             }
 
-            if (Input.GetMouseButtonUp(chargeButtonInt))
+            if (usingController)
             {
-                ThrowItem(normalized);
-                isCharging = false;
-
-                if (powerSlider != null)
+                if (Input.GetAxis(chargeButton) < 0.1f)
                 {
-                    powerSlider.value = 0f;
+                    ThrowItem(normalized, true);
+                    isCharging = false;
+
+                    if (powerSlider != null)
+                    {
+                        powerSlider.value = 0f;
+                    }
+                }
+            }
+            else
+            {
+                if (Input.GetMouseButtonUp(chargeKeyInt))
+                {
+                    ThrowItem(normalized, false);
+                    isCharging = false;
+
+                    if (powerSlider != null)
+                    {
+                        powerSlider.value = 0f;
+                    }
                 }
             }
         }
     }
 
-    private void ThrowItem(float normalizedPower)
+    private void ThrowItem(float normalizedPower, bool usingController)
     {
         ItemData itemToThrow = inventory.GetFirstThrowable();
 
@@ -103,15 +129,34 @@ public class PlayerThrowing : MonoBehaviour
 
         if (rb != null)
         {
-            Ray ray = playerCamera.ScreenPointToRay(Input.mousePosition);
-            Vector3 targetPoint;
+            Vector3 direction;
 
-            if (Physics.Raycast(ray, out RaycastHit hit))
-                targetPoint = hit.point;
+            if (usingController)
+            {
+                float RjoystickX = -Input.GetAxis("Xbox RightStick X");
+                float RjoystickY = Input.GetAxis("Xbox RightStick Y");
+
+                Vector3 aimDirection = new Vector3(RjoystickX, 0, RjoystickY);
+
+                if (aimDirection.magnitude < 0.01f)
+                {
+                    aimDirection = transform.forward;
+                }
+
+                direction = aimDirection.normalized;
+            }
             else
-                targetPoint = ray.GetPoint(10f);
+            {
+                Ray ray = playerCamera.ScreenPointToRay(Input.mousePosition);
+                Vector3 targetPoint;
 
-            Vector3 direction = (targetPoint - transform.position).normalized;
+                if (Physics.Raycast(ray, out RaycastHit hit))
+                    targetPoint = hit.point;
+                else
+                    targetPoint = ray.GetPoint(10f);
+
+                direction = (targetPoint - transform.position).normalized;
+            }
 
             float throwForce = Mathf.Lerp(minThrowForce, maxThrowForce, normalizedPower);
             rb.AddForce(direction * throwForce + Vector3.up * upwardForce, ForceMode.Impulse);

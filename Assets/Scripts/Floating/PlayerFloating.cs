@@ -10,7 +10,7 @@ public class PlayerFloating : MonoBehaviour
     [SerializeField] private float floatForce = 10f;
     [SerializeField] private float floatDuration = 5f; // Max Amount of time the player can float for
     [SerializeField] private float floatLift = 50f; // initial height that the player lifts to when starting to float
-    [SerializeField] private float horizontalSpeed = 5f; 
+    [SerializeField] private float horizontalSpeed = 10f; 
     [SerializeField] private float floatCooldown = 3f; // Time to cooldown between floating attempts
 
     [Header("Rhythm Settings")]
@@ -19,7 +19,8 @@ public class PlayerFloating : MonoBehaviour
     [SerializeField] private Slider rhythmSlider; // UI element to update and show floating
 
     [Header("Input")]
-    [SerializeField] private KeyCode floatKey = KeyCode.Space;
+    [SerializeField] private KeyCode floatKey = KeyCode.Space; // Keyboard input
+    [SerializeField] private string floatButton = "Submit"; // Controller input
 
     private Rigidbody rb;
     private bool isFloating = false;
@@ -40,8 +41,9 @@ public class PlayerFloating : MonoBehaviour
 
         if (!isCoolingDown)
         {
-            if (!isFloating && Input.GetKeyDown(floatKey))
+            if (!isFloating && (Input.GetKeyDown(floatKey) || Input.GetButtonDown(floatButton)))
             {
+
                 StartFloating();
             }
 
@@ -61,6 +63,30 @@ public class PlayerFloating : MonoBehaviour
         }
     }
 
+    private void StartFloating()
+    {
+        isFloating = true;
+        floatTimer = 0f;
+        rhythmTimer = 0f;
+
+        rb.AddForce(Vector3.up * floatLift, ForceMode.VelocityChange);
+    }
+
+    private void StopFloating()
+    {
+        isFloating = false;
+        rhythmTimer = 0f;
+        floatTimer = 0f;
+
+        if (rhythmSlider != null)
+        {
+            rhythmSlider.value = 0f;
+        }
+
+        isCoolingDown = true;
+        cooldownTimer = floatCooldown;
+    }
+
     private void HandleRhythmInput()
     {
         rhythmTimer += Time.deltaTime;
@@ -69,39 +95,34 @@ public class PlayerFloating : MonoBehaviour
         if (floatTimer >= floatDuration)
         {
             StopFloating();
+            Debug.Log("Floating failed: Ran out of floating time");
             return;
         }
 
-        if (floatTimer >= rhythmInterval)
-        {
-            StopFloating();
-            floatTimer = 0f;
-            if (rhythmSlider != null)
+        if (Input.GetKeyDown(floatKey) || Input.GetButtonDown(floatButton))
             {
-                rhythmSlider.value = 0f;
-            }
-        }
+                float errorMargin = Mathf.Min(rhythmTimer, rhythmInterval - rhythmTimer);
 
-        if (Input.GetKeyDown(floatKey))
-        {
-            float distanceToRhythm = Mathf.Min(floatTimer, rhythmInterval - rhythmTimer);
-
-            if (distanceToRhythm <= rhythmWindow)
-            {
-                floatTimer = 0f;
-
-                if (rhythmSlider != null)
+                if (errorMargin <= rhythmWindow)
                 {
-                    rhythmSlider.value = 0f;
+                    rhythmTimer = 0f;
+                    if (rhythmSlider != null)
+                    {
+                        rhythmSlider.value = 0f;
+                    }
+                    Debug.Log("Floating Rhythm Success");
                 }
+                else
+                {
+                    Debug.Log("Floating failed 3: Missed timing");
+                    StopFloating();
+                }
+            }
 
-                Debug.Log("Floating Rhythm Success");
-            }
-            else
-            {
-                Debug.Log("Floating failed");
-                StopFloating();
-            }
+        if (rhythmTimer >= rhythmInterval + rhythmWindow)
+        {
+            Debug.Log("Floating failed: Missed timing");
+            StopFloating();
         }
     }
 
@@ -109,7 +130,7 @@ public class PlayerFloating : MonoBehaviour
     {
         if (rhythmSlider != null)
         {
-            float normalized = rhythmTimer / rhythmInterval;
+            float normalized = Mathf.Clamp01(rhythmTimer / rhythmInterval);
             rhythmSlider.value = normalized;
         }
     }
@@ -128,29 +149,6 @@ public class PlayerFloating : MonoBehaviour
         move = transform.TransformDirection(move);
 
         rb.MovePosition(rb.position + move * Time.fixedDeltaTime);
-    }
-
-    private void StartFloating()
-    {
-        isFloating = true;
-        floatTimer = 0f;
-        rhythmTimer = 0f;
-
-        rb.AddForce(Vector3.up * floatLift, ForceMode.VelocityChange);
-    }
-
-    private void StopFloating()
-    {
-        isFloating = false;
-        floatTimer = 0f;
-
-        if (rhythmSlider != null)
-        {
-            rhythmSlider.value = 0f;
-        }
-
-        isCoolingDown = true;
-        cooldownTimer = floatCooldown;
     }
 
     private void HandleCooldown()

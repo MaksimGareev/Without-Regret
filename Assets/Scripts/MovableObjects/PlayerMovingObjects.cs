@@ -5,12 +5,13 @@ public class PlayerMovingObjects : MonoBehaviour
     [SerializeField] private Transform grabPoint;
     [SerializeField] private float grabRange = 2f;
     [SerializeField] private KeyCode grabKey = KeyCode.E;
+    [SerializeField] private string grabButton = "Xbox X Button";
 
     private IMoveable heldObject;
 
     private void Update()
     {
-        if (Input.GetKeyDown(grabKey))
+        if (Input.GetKeyDown(grabKey) || Input.GetButtonDown(grabButton))
         {
             if (heldObject == null)
             {
