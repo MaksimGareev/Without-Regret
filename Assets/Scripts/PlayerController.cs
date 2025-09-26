@@ -7,7 +7,7 @@ public class PlayerController : MonoBehaviour
 
     CharacterController Controller;
     // Movement Variables
-    private bool MovementLocked = false;    // locking the players movement when they interact with an item or NPC
+    public bool MovementLocked = false;    // locking the players movement when they interact with an item or NPC
     public float Speed = 1f;        
     public float SprintSpeed = 2f;  // Sprint Speed
     public float SprintDuration = 3f;   // How long the player can sprint
