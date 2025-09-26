@@ -7,13 +7,14 @@ public class PlayerItemPickup : MonoBehaviour
 {
     [SerializeField] private Inventory inventory;
     [SerializeField] private KeyCode pickupKey = KeyCode.F;
+    [SerializeField] private string pickupButton = "Xbox X Button";
 
     private WorldItem itemInRange;
 
     // Update is called once per frame
     void Update()
     {
-        if (itemInRange != null && Input.GetKeyDown(pickupKey))
+        if (itemInRange != null && (Input.GetKeyDown(pickupKey) || Input.GetButtonDown(pickupButton)))
         {
             CollectItem(itemInRange);
         }
