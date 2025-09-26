@@ -7,6 +7,8 @@ public class LockPickUI : MonoBehaviour
 {
     public RectTransform LockIndicator;
     public RectTransform PickCursor;
+    public GameObject lockPickUI;
+    private Transform player;
 
     public float CursorSpeed = 100f;
     public float MaxRotation = 90f;
@@ -14,14 +16,12 @@ public class LockPickUI : MonoBehaviour
     public float UnlockTolerance = 5f;
 
     private float CurrentAngle = 0f;
-    
-
     private bool isActive = false;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        player = GameObject.FindGameObjectWithTag("Player").transform;
     }
 
     // Update is called once per frame
@@ -41,10 +41,6 @@ public class LockPickUI : MonoBehaviour
         // Apply rotation to pick cursor
         PickCursor.localEulerAngles = new Vector3(0, 0, CurrentAngle);
 
-        if (LockIndicator != null)
-        {
-            LockIndicator.localEulerAngles = new Vector3(0, 0, UnlockAngle);
-        }
 
         // Press space to attempt unlocking
         if (Input.GetKeyDown(KeyCode.Space))
@@ -74,13 +70,23 @@ public class LockPickUI : MonoBehaviour
         CurrentAngle = 0f;
         PickCursor.localEulerAngles = Vector3.zero;
 
-        //PickCursor.localRotation = Quaternion.Euler(0, 0, 0);
-        //LockIndicator.localRotation = Quaternion.Euler(0, 0, 0);
+        UnlockAngle = Random.Range(-MaxRotation, MaxRotation);
+
+        if (LockIndicator != null)
+        {
+            LockIndicator.localEulerAngles = Vector3.zero;
+        }
+
     }
 
     public void DeactivateLockPick()
     {
         isActive = false;
-        
+        lockPickUI.SetActive(false);
+        // Unlock player movement
+        PlayerController pc = player.GetComponent<PlayerController>();
+        if (pc != null)
+            pc.MovementLocked = false;
+
     }
 }
