@@ -37,7 +37,6 @@ public class InteractableObject : MonoBehaviour
                     promptUI.SetActive(true); // Show the prompt when the player is in range
                 }
             }
-
             if (Input.GetKeyDown(KeyCode.E))
             {
                 Pickup(); // Pick up the item
