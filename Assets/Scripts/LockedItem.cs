@@ -8,6 +8,7 @@ public class LockedItem : MonoBehaviour
     private Transform player;
 
     public GameObject promptUI;
+    public GameObject LockPickUI;
 
     private bool isInRange = false;
 
@@ -18,6 +19,10 @@ public class LockedItem : MonoBehaviour
         if (promptUI != null)
         {
             promptUI.SetActive(false);
+        }
+        if (LockPickUI != null)
+        {
+            LockPickUI.SetActive(false);
         }
 
     }
@@ -36,9 +41,15 @@ public class LockedItem : MonoBehaviour
                     promptUI.SetActive(true); // Show the prompt when the player is in range
                 }
             }
-            if (Input.GetKeyDown(KeyCode.E))
+            if (Input.GetKeyDown(KeyCode.E) && LockPickUI != null)
             {
-                
+                LockPickUI.SetActive(true);
+                LockPickUI.GetComponent<LockPickUI>().ActivateLockPick();
+                promptUI.SetActive(false);
+
+                PlayerController pc = player.GetComponent<PlayerController>();
+                if (pc != null)
+                    pc.MovementLocked = true;
             }
         }
         else
@@ -50,6 +61,15 @@ public class LockedItem : MonoBehaviour
                 {
                     promptUI.SetActive(false); // Remove prompt when moving out of range
                 }
+                if (LockPickUI != null)
+                {
+                    LockPickUI.SetActive(false);
+                }
+
+                // Unlock player movement
+                PlayerController pc = player.GetComponent<PlayerController>();
+                if (pc != null)
+                    pc.MovementLocked = false;
             }
         }
     }
