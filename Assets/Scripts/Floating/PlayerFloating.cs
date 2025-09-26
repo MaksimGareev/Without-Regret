@@ -10,7 +10,7 @@ public class PlayerFloating : MonoBehaviour
     [SerializeField] private float floatForce = 10f;
     [SerializeField] private float floatDuration = 5f; // Max Amount of time the player can float for
     [SerializeField] private float floatLift = 50f; // initial height that the player lifts to when starting to float
-    [SerializeField] private float horizontalSpeed = 10f; 
+    [SerializeField] private float horizontalSpeed = 10f; // Movement speed while floating
     [SerializeField] private float floatCooldown = 3f; // Time to cooldown between floating attempts
 
     [Header("Rhythm Settings")]
@@ -23,10 +23,12 @@ public class PlayerFloating : MonoBehaviour
     [SerializeField] private string floatButton = "Submit"; // Controller input
 
     private Rigidbody rb;
+
+    // variables for managing the rhythm of the floating mechanic
     private bool isFloating = false;
-    private float floatTimer = 0f;
-    private float rhythmTimer = 0f;
-    private float cooldownTimer = 0f;
+    private float floatTimer = 0f; // Used to keep track of how long the player has been floating for
+    private float rhythmTimer = 0f; // Keeps track of the time when the player hits spacebar again
+    private float cooldownTimer = 0f; // How long the player has to wait after floating until they can start floating again
     private bool isCoolingDown = false;
 
     private void Awake()
@@ -41,12 +43,13 @@ public class PlayerFloating : MonoBehaviour
 
         if (!isCoolingDown)
         {
+            // Start floating if the player presses the appropriate buttons
             if (!isFloating && (Input.GetKeyDown(floatKey) || Input.GetButtonDown(floatButton)))
             {
-
                 StartFloating();
             }
 
+            // Keep the rhythm 
             if (isFloating)
             {
                 HandleRhythmInput();
