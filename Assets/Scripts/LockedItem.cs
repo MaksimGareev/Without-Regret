@@ -65,11 +65,6 @@ public class LockedItem : MonoBehaviour
                 {
                     LockPickUI.SetActive(false);
                 }
-
-                // Unlock player movement
-                PlayerController pc = player.GetComponent<PlayerController>();
-                if (pc != null)
-                    pc.MovementLocked = false;
             }
         }
     }
