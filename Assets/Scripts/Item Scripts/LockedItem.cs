@@ -9,6 +9,8 @@ public class LockedItem : MonoBehaviour
 
     public GameObject promptUI;
     public GameObject LockPickUI;
+    public bool isDoor = false;
+
 
     private bool isInRange = false;
 
@@ -31,6 +33,7 @@ public class LockedItem : MonoBehaviour
     void Update()
     {
         float dist = Vector3.Distance(player.position, transform.position); // Players position in relation to the pick up item
+
         if (dist <= PickupRange)
         {
             if (!isInRange)
@@ -44,7 +47,7 @@ public class LockedItem : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.E) && LockPickUI != null)
             {
                 LockPickUI.SetActive(true);
-                LockPickUI.GetComponent<LockPickUI>().ActivateLockPick();
+                LockPickUI.GetComponent<LockPickUI>().ActivateLockPick(this.gameObject);
                 promptUI.SetActive(false);
 
                 PlayerController pc = player.GetComponent<PlayerController>();
@@ -66,6 +69,20 @@ public class LockedItem : MonoBehaviour
                     LockPickUI.SetActive(false);
                 }
             }
+        }
+    }
+
+    public void OnUnlocked()
+    {
+        Debug.Log(gameObject.name + "unlocked!");
+
+        if (isDoor == true)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            // add animation for chest or drawer
         }
     }
 }

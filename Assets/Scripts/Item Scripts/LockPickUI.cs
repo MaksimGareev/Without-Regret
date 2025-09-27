@@ -18,10 +18,21 @@ public class LockPickUI : MonoBehaviour
     private float CurrentAngle = 0f;
     private bool isActive = false;
 
+    public float ShakeDuration = 0.2f;
+    public float ShakeStrength = 10f;
+
+    private Vector3 originalPosition;
+
+    private GameObject targetLockedItem;
+
     // Start is called before the first frame update
     void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player").transform;
+        if (PickCursor != null)
+        {
+            originalPosition = PickCursor.localPosition;
+        }
     }
 
     // Update is called once per frame
@@ -46,14 +57,25 @@ public class LockPickUI : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {
             float angleDifference = Mathf.Abs(Mathf.DeltaAngle(PickCursor.localEulerAngles.z, UnlockAngle));
+
             if (angleDifference <= UnlockTolerance)
             {
                 Debug.Log("Its Unlocked");
+                if (targetLockedItem != null)
+                {
+                    LockedItem li = targetLockedItem.GetComponent<LockedItem>();
+                    if (li != null)
+                    {
+                        li.OnUnlocked();
+                    }
+                    targetLockedItem = null;
+                }
                 DeactivateLockPick();
             }
             else
             {
                 Debug.Log("Failed, try again");
+                StartCoroutine(ShakePick());
             }
         }
 
@@ -63,18 +85,23 @@ public class LockPickUI : MonoBehaviour
         }
     }
 
-    // Create a random unlock angle
+    public void ActivateLockPick(GameObject item)
+    {
+        targetLockedItem = item;
+        ActivateLockPick();
+    }
+
     public void ActivateLockPick()
     {
         isActive = true;
         CurrentAngle = 0f;
         PickCursor.localEulerAngles = Vector3.zero;
 
-        UnlockAngle = Random.Range(-MaxRotation, MaxRotation);
+        UnlockAngle = Random.Range(-MaxRotation, MaxRotation);  // Randomize unlocke aggle
 
         if (LockIndicator != null)
         {
-            LockIndicator.localEulerAngles = Vector3.zero;
+            LockIndicator.localEulerAngles = Vector3.zero;  // Keep the lock straight up in UI
         }
 
     }
@@ -86,7 +113,28 @@ public class LockPickUI : MonoBehaviour
         // Unlock player movement
         PlayerController pc = player.GetComponent<PlayerController>();
         if (pc != null)
+        {
             pc.MovementLocked = false;
+        }
+    }
 
+    private IEnumerator ShakePick()
+    {
+        float elapsed = 0f;
+
+        while (elapsed < ShakeDuration)
+        {
+            elapsed += Time.deltaTime;
+
+            float offsetX = Random.Range(-1f, 1f) * ShakeStrength;
+            float offsetY = Random.Range(-1f, 1f) * ShakeStrength;
+
+            PickCursor.localPosition = originalPosition + new Vector3(offsetX, offsetY, 0);
+
+            yield return null;
+ 
+        }
+
+        PickCursor.localPosition = originalPosition;
     }
 }
