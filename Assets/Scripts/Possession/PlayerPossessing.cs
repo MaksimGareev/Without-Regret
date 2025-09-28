@@ -9,7 +9,7 @@ public class PlayerPossessing : MonoBehaviour
     [SerializeField] private float possessionRange = 10f;
     [SerializeField] private float searchConeAngle = 30f;
     [SerializeField] private KeyCode possessKey = KeyCode.R;
-    [SerializeField] private string possessButton = "XboxYButton";
+    [SerializeField] private string possessButton = "Xbox Y Button";
 
     private PlayerMovement playerMovement;
     private PossessedEnemyResisting possessedEnemyMovement;
