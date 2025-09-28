@@ -62,6 +62,4 @@ public class Enemy : MonoBehaviour
         return false;
 
     }
-
-
 }
