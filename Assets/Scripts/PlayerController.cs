@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -39,9 +40,12 @@ public class PlayerController : MonoBehaviour
     public float zoomDuration = 3f; // how long the camera will be zoomed in
     public float transitionSpeed = 2f; // Speed the camera zooms in
     private bool isZooming = false; // is the camera zoomed in
+
     public static bool DialogueActive = false;
 
+
     void Awake()
+
     {
         Controller = GetComponent<CharacterController>();   // Find the Character controller
         if (PlayerCamera == null)
@@ -69,6 +73,7 @@ public class PlayerController : MonoBehaviour
         }
 
         Movement();
+        LoadArtScene();
     }
 
     void Movement()
@@ -258,6 +263,19 @@ public class PlayerController : MonoBehaviour
         {
             Gizmos.color = Color.yellow;
             Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
+        }
+    }
+
+    public void LoadArtScene()
+    {
+        if (Input.GetKeyDown(KeyCode.V))
+        {
+            SceneManager.LoadScene("ArtScene");
+        }
+
+        if (Input.GetKey(KeyCode.R))
+        {
+            SceneManager.LoadScene("MainScene");
         }
     }
 }

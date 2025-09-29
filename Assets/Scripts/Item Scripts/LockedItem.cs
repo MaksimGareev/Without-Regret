@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class LockedItem : MonoBehaviour
 {
-    public float LockpickRange;
+    public float LockpickRange = 1.5f;
+
     private Transform player;
 
     public GameObject promptUI;
@@ -13,6 +14,7 @@ public class LockedItem : MonoBehaviour
 
     public AudioClip UnlockSound;
     private AudioSource audioSource;
+
 
     public KeyCode interactKey = KeyCode.E;
     public string interactButton = "Xbox X Button";
