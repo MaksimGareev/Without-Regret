@@ -7,7 +7,7 @@ public class Controller : MonoBehaviour  {
     [Header("Reference")]
     public Rigidbody rb;
     public Transform head;
-    public Camera camera;
+    public Camera playerCamera;
 
 
     [Header("Config")]
