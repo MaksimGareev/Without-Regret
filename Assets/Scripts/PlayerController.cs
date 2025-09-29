@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -157,7 +158,13 @@ public class PlayerController : MonoBehaviour
         MovementLocked = false; // allow the player to move again
         // return to normal camera veiw
         isZooming = false;
+    }
 
-
+    public void LoadArtScene()
+    {
+        if (Input.GetKeyDown(KeyCode.V))
+        {
+            SceneManager.LoadScene("ArtScene");
+        }
     }
 }
