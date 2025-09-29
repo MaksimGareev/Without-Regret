@@ -5,6 +5,7 @@ using UnityEngine;
 public class LockedItem : MonoBehaviour
 {
     public float LockpickRange = 1.5f;
+
     private Transform player;
 
     public GameObject promptUI;
@@ -14,6 +15,9 @@ public class LockedItem : MonoBehaviour
     public AudioClip UnlockSound;
     private AudioSource audioSource;
 
+
+    public KeyCode interactKey = KeyCode.E;
+    public string interactButton = "Xbox X Button";
 
     private bool isInRange = false;
 
@@ -50,7 +54,7 @@ public class LockedItem : MonoBehaviour
                     promptUI.SetActive(true); // Show the prompt when the player is in range
                 }
             }
-            if (Input.GetKeyDown(KeyCode.E) && LockPickUI != null)
+            if ((Input.GetKeyDown(interactKey) || Input.GetButtonDown(interactButton)) && LockPickUI != null)
             {
                 LockPickUI.SetActive(true);
                 LockPickUI.GetComponent<LockPickUI>().ActivateLockPick(this.gameObject);
@@ -58,7 +62,16 @@ public class LockedItem : MonoBehaviour
 
                 PlayerController pc = player.GetComponent<PlayerController>();
                 if (pc != null)
+                {
                     pc.MovementLocked = true;
+                    pc.enabled = false;
+                }
+
+                PlayerFloating playerFloating = player.GetComponent<PlayerFloating>();
+                if (playerFloating != null)
+                {
+                    playerFloating.enabled = false;
+                }
             }
         }
         else
@@ -72,7 +85,7 @@ public class LockedItem : MonoBehaviour
                 }
                 if (LockPickUI != null)
                 {
-                    LockPickUI.SetActive(false);
+                    // LockPickUI.SetActive(false);
                 }
             }
         }
@@ -81,6 +94,19 @@ public class LockedItem : MonoBehaviour
     public void OnUnlocked()
     {
         Debug.Log(gameObject.name + "unlocked!");
+
+        PlayerFloating playerFloating = player.GetComponent<PlayerFloating>();
+        if (playerFloating != null)
+        {
+             playerFloating.enabled = true;
+        }
+
+        PlayerController pc = player.GetComponent<PlayerController>();
+        if (pc != null)
+        {
+            pc.MovementLocked = false;
+            pc.enabled = true;
+        }
 
         if (isDoor == true)
         {

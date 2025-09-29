@@ -1,15 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 [RequireComponent(typeof(Rigidbody))]
 public class EnemyDistracted : MonoBehaviour
 {
     [Header("Distraction Settings")]
     [SerializeField] private float lingerDistance = 1.5f;
-    [SerializeField] private float moveSpeed = 2f;
+    [SerializeField] private float moveSpeed = 25f;
 
     private Enemy enemyMovement;
+    private NavMeshAgent enemyNavMeshAgent;
     private Rigidbody rb;
     private bool isDistracted = false;
     private Vector3 distractionPoint;
@@ -19,6 +21,7 @@ public class EnemyDistracted : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         enemyMovement = GetComponent<Enemy>();
+        enemyNavMeshAgent = GetComponent<NavMeshAgent>();
     }
 
     void Update()
@@ -56,6 +59,11 @@ public class EnemyDistracted : MonoBehaviour
         {
             enemyMovement.enabled = false;
         }
+
+        if (enemyNavMeshAgent != null)
+        {
+            enemyNavMeshAgent.enabled = false;
+        }
     }
 
     private void EndDistraction()
@@ -64,6 +72,10 @@ public class EnemyDistracted : MonoBehaviour
         if (enemyMovement != null)
         {
             enemyMovement.enabled = true;
+        }
+        if (enemyNavMeshAgent != null)
+        {
+            enemyNavMeshAgent.enabled = true;
         }
     }
 }

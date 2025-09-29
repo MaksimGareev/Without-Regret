@@ -7,7 +7,7 @@ public class CameraMovement : MonoBehaviour
     public Transform target; // Reference the player as the intended target of the camera
     public Vector3 OffSet = new Vector3(0, 8, -8); // Height and distance away from the player
     public float smoothSpeed = 5f; // Speed the camera moves to follow the player
-
+    
     // Update is called once per frame
     void LateUpdate()
     {

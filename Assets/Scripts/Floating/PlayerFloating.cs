@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,63 +5,78 @@ using UnityEngine.UI;
 public class PlayerFloating : MonoBehaviour
 {
     [Header("Float Settings")]
-    [SerializeField] private float floatForce = 10f;
-    [SerializeField] private float floatDuration = 5f; // Max Amount of time the player can float for
-    [SerializeField] private float floatLift = 50f; // initial height that the player lifts to when starting to float
-    [SerializeField] private float horizontalSpeed = 10f; // Movement speed while floating
-    [SerializeField] private float floatCooldown = 3f; // Time to cooldown between floating attempts
+    [SerializeField] private float floatLift = 3f;            // instantaneous upward boost on start
+    [SerializeField] private float floatHeightOffset = 3f;   // height above start position to hover at
+    [SerializeField] private float horizontalSpeed = 6f;     // max horizontal speed while floating
+    [SerializeField] private float verticalSmooth = 5f;      // how quickly Y approaches target
+    [SerializeField] private float moveSmoothing = 8f;       // how quickly horizontal motion interpolates
+    [SerializeField] private float hoverDrag = 3f;           // extra drag while hovering
+    [SerializeField] private float stickDeadzone = 0.2f;     // deadzone for controllers
 
-    [Header("Rhythm Settings")]
-    [SerializeField] private float rhythmWindow = 0.3f; // Margin of error so the input doesn't have to be exactly perfectly timed
-    [SerializeField] private float rhythmInterval = 1f; // Time in between each input
-    [SerializeField] private Slider rhythmSlider; // UI element to update and show floating
+    [Header("Rhythm / Input")]
+    [SerializeField] private float floatDuration = 5f;
+    [SerializeField] private float floatCooldown = 3f;
+    [SerializeField] private KeyCode floatKey = KeyCode.Space;
+    [SerializeField] private string floatButton = "Submit";
+    [SerializeField] private Slider rhythmSlider;
+    [SerializeField] private float rhythmWindow = 0.3f;
+    [SerializeField] private float rhythmInterval = 1f;
 
-    [Header("Input")]
-    [SerializeField] private KeyCode floatKey = KeyCode.Space; // Keyboard input
-    [SerializeField] private string floatButton = "Submit"; // Controller input
-
+    // internals
     private Rigidbody rb;
+    private PlayerController playerController;
+    private CharacterController charController;
+    private Camera playerCamera;
 
-    // variables for managing the rhythm of the floating mechanic
     private bool isFloating = false;
-    private float floatTimer = 0f; // Used to keep track of how long the player has been floating for
-    private float rhythmTimer = 0f; // Keeps track of the time when the player hits spacebar again
-    private float cooldownTimer = 0f; // How long the player has to wait after floating until they can start floating again
+    private float floatTimer = 0f;
+    private float cooldownTimer = 0f;
     private bool isCoolingDown = false;
+    private float rhythmTimer = 0f;
+    private float hoverTargetY;
+
+    // smoothing state
+    private Vector3 currentMove = Vector3.zero; // world-space horizontal velocity (x,z)
+    private Vector3 targetMove = Vector3.zero;
+
+    // restore original rigidbody/cc state
+    private bool prevCCEnabled;
+    private bool prevPlayerControllerEnabled;
+    private bool prevRbUseGravity;
+    private float prevRbDrag;
+    private bool prevRbKinematic;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
+        playerController = GetComponent<PlayerController>();
+        charController = GetComponent<CharacterController>();
+        playerCamera = Camera.main;
     }
 
-    // Update is called once per frame
     private void Update()
     {
         HandleCooldown();
 
         if (!isCoolingDown)
         {
-            // Start floating if the player presses the appropriate buttons
             if (!isFloating && (Input.GetKeyDown(floatKey) || Input.GetButtonDown(floatButton)))
             {
                 StartFloating();
             }
 
-            // Keep the rhythm 
             if (isFloating)
             {
                 HandleRhythmInput();
                 UpdateRhythmUI();
             }
-        }  
+        }
     }
 
     private void FixedUpdate()
     {
         if (isFloating)
-        {
             ApplyFloatPhysics();
-        }
     }
 
     private void StartFloating()
@@ -72,7 +85,33 @@ public class PlayerFloating : MonoBehaviour
         floatTimer = 0f;
         rhythmTimer = 0f;
 
+        // store previous states
+        if (charController != null) prevCCEnabled = charController.enabled;
+        if (playerController != null) prevPlayerControllerEnabled = playerController.enabled;
+        prevRbUseGravity = rb.useGravity;
+        prevRbDrag = rb.drag;
+        prevRbKinematic = rb.isKinematic;
+
+        // disable controller systems
+        if (playerController != null) playerController.enabled = false;
+        if (charController != null) charController.enabled = false;
+
+        // enable rigidbody physics for floating
+        rb.isKinematic = false;
+        rb.useGravity = false;
+        rb.drag = hoverDrag;
+        rb.angularVelocity = Vector3.zero;
+        rb.velocity = Vector3.zero;
+
+        // lift up a bit
         rb.AddForce(Vector3.up * floatLift, ForceMode.VelocityChange);
+
+        // pick target hover height (from current world position)
+        hoverTargetY = transform.position.y + floatHeightOffset;
+
+        // reset movement smoothing state
+        currentMove = Vector3.zero;
+        targetMove = Vector3.zero;
     }
 
     private void StopFloating()
@@ -80,14 +119,22 @@ public class PlayerFloating : MonoBehaviour
         isFloating = false;
         rhythmTimer = 0f;
         floatTimer = 0f;
-
-        if (rhythmSlider != null)
-        {
-            rhythmSlider.value = 0f;
-        }
+        if (rhythmSlider != null) rhythmSlider.value = 0f;
 
         isCoolingDown = true;
         cooldownTimer = floatCooldown;
+
+        // restore rigidbody settings
+        rb.velocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
+        rb.isKinematic = prevRbKinematic;
+        rb.useGravity = prevRbUseGravity;
+        rb.drag = prevRbDrag;
+
+        // re-enable controllers AFTER syncing transform
+        // ensure character/ player controllers see the current transform position
+        if (charController != null) charController.enabled = true;
+        if (playerController != null) playerController.enabled = true;
     }
 
     private void HandleRhythmInput()
@@ -98,33 +145,29 @@ public class PlayerFloating : MonoBehaviour
         if (floatTimer >= floatDuration)
         {
             StopFloating();
-            Debug.Log("Floating failed: Ran out of floating time");
+            Debug.Log("Floating ended: ran out of time");
             return;
         }
 
         if (Input.GetKeyDown(floatKey) || Input.GetButtonDown(floatButton))
+        {
+            float errorMargin = Mathf.Min(rhythmTimer, rhythmInterval - rhythmTimer);
+            if (errorMargin <= rhythmWindow)
             {
-                float errorMargin = Mathf.Min(rhythmTimer, rhythmInterval - rhythmTimer);
-
-                if (errorMargin <= rhythmWindow)
-                {
-                    rhythmTimer = 0f;
-                    if (rhythmSlider != null)
-                    {
-                        rhythmSlider.value = 0f;
-                    }
-                    Debug.Log("Floating Rhythm Success");
-                }
-                else
-                {
-                    Debug.Log("Floating failed 3: Missed timing");
-                    StopFloating();
-                }
+                rhythmTimer = 0f;
+                if (rhythmSlider != null) rhythmSlider.value = 0f;
+                Debug.Log("Floating Rhythm Success");
             }
+            else
+            {
+                Debug.Log("Floating failed: missed timing");
+                StopFloating();
+            }
+        }
 
         if (rhythmTimer >= rhythmInterval + rhythmWindow)
         {
-            Debug.Log("Floating failed: Missed timing");
+            Debug.Log("Floating failed: missed timing");
             StopFloating();
         }
     }
@@ -133,25 +176,67 @@ public class PlayerFloating : MonoBehaviour
     {
         if (rhythmSlider != null)
         {
-            float normalized = Mathf.Clamp01(rhythmTimer / rhythmInterval);
-            rhythmSlider.value = normalized;
+            rhythmSlider.value = Mathf.Clamp01(rhythmTimer / rhythmInterval);
         }
     }
 
     private void ApplyFloatPhysics()
     {
+        // --- HORIZONTAL: get input relative to camera, apply deadzone and smoothing ---
+        Vector3 raw = GetRawCameraRelativeInput(); // world-space direction (not normalized if zero)
+        if (raw.sqrMagnitude < stickDeadzone * stickDeadzone)
+        {
+            // no meaningful input — target is zero
+            targetMove = Vector3.zero;
+        }
+        else
+        {
+            // normalized direction times speed
+            targetMove = raw.normalized * horizontalSpeed;
+        }
 
-        rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
+        // smooth toward target
+        currentMove = Vector3.Lerp(currentMove, targetMove, Mathf.Clamp01(moveSmoothing * Time.fixedDeltaTime));
 
-        rb.AddForce(Vector3.up * floatForce, ForceMode.Acceleration);
+        // --- VERTICAL: smoothly approach hover target Y ---
+        float currentY = rb.position.y;
+        float desiredY = Mathf.Lerp(currentY, hoverTargetY, Mathf.Clamp01(verticalSmooth * Time.fixedDeltaTime));
 
-        float horizontalInput = Input.GetAxis("Horizontal");
-        float verticalInput = Input.GetAxis("Vertical");
+        // build next position
+        Vector3 nextPos = rb.position + new Vector3(currentMove.x, 0f, currentMove.z) * Time.fixedDeltaTime;
+        nextPos.y = desiredY;
 
-        Vector3 move = new Vector3(horizontalInput, 0f, verticalInput) * horizontalSpeed;
-        move = transform.TransformDirection(move);
+        rb.MovePosition(nextPos);
 
-        rb.MovePosition(rb.position + move * Time.fixedDeltaTime);
+        // --- ROTATION: smoothly face movement direction ---
+        Vector3 flatMove = new Vector3(currentMove.x, 0f, currentMove.z);
+        if (flatMove.sqrMagnitude > 0.001f)
+        {
+            float targetAngle = Mathf.Atan2(flatMove.x, flatMove.z) * Mathf.Rad2Deg;
+            Quaternion targetRot = Quaternion.Euler(0f, targetAngle, 0f);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, Mathf.Clamp01(moveSmoothing * Time.fixedDeltaTime));
+        }
+    }
+
+    private Vector3 GetRawCameraRelativeInput()
+    {
+        // raw axes (can be from gamepad or keyboard)
+        float x = Input.GetAxis("Horizontal");
+        float z = Input.GetAxis("Vertical");
+        Vector3 input = new Vector3(x, 0f, z);
+
+        // early out: no input
+        if (input.sqrMagnitude < 0.0001f) return Vector3.zero;
+
+        // camera basis
+        Vector3 camForward = playerCamera.transform.forward;
+        camForward.y = 0f; camForward.Normalize();
+        Vector3 camRight = playerCamera.transform.right;
+        camRight.y = 0f; camRight.Normalize();
+
+        // combine (note: forward uses z, right uses x)
+        Vector3 world = camForward * input.z + camRight * input.x;
+        return world;
     }
 
     private void HandleCooldown()
@@ -159,10 +244,7 @@ public class PlayerFloating : MonoBehaviour
         if (isCoolingDown)
         {
             cooldownTimer -= Time.deltaTime;
-            if (cooldownTimer <= 0f)
-            {
-                isCoolingDown = false;
-            }
+            if (cooldownTimer <= 0f) isCoolingDown = false;
         }
     }
 }

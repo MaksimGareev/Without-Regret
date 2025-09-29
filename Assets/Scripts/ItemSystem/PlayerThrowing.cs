@@ -118,8 +118,10 @@ public class PlayerThrowing : MonoBehaviour
     private void ThrowItem(float normalizedPower, bool usingController)
     {
         ItemData itemToThrow = inventory.GetFirstThrowable();
-
-        if (itemToThrow == null) return;
+        if (itemToThrow == null)
+        {
+            return;
+        }
 
         inventory.RemoveItem(itemToThrow);
 
@@ -133,13 +135,11 @@ public class PlayerThrowing : MonoBehaviour
 
             if (usingController)
             {
-                float RjoystickX = -Input.GetAxis("Xbox RightStick X");
-                float RjoystickY = Input.GetAxis("Xbox RightStick Y");
-
-                Vector3 aimDirection = new Vector3(RjoystickX, 0, RjoystickY);
+                Vector3 aimDirection = CalculateInputFromPOV();
 
                 if (aimDirection.magnitude < 0.01f)
                 {
+                    Debug.Log("Stick at neutral");
                     aimDirection = transform.forward;
                 }
 
@@ -151,15 +151,36 @@ public class PlayerThrowing : MonoBehaviour
                 Vector3 targetPoint;
 
                 if (Physics.Raycast(ray, out RaycastHit hit))
-                    targetPoint = hit.point;
+                {
+                    targetPoint = hit.point;   
+                }
                 else
-                    targetPoint = ray.GetPoint(10f);
+                {
+                    targetPoint = ray.GetPoint(30f);   
+                }
 
                 direction = (targetPoint - transform.position).normalized;
             }
 
             float throwForce = Mathf.Lerp(minThrowForce, maxThrowForce, normalizedPower);
+            Debug.Log("Direction: " + direction + ", ThrowForce: " + throwForce + ", NormalizedPower: " + normalizedPower);
             rb.AddForce(direction * throwForce + Vector3.up * upwardForce, ForceMode.Impulse);
         }
+    }
+
+    private Vector3 CalculateInputFromPOV()
+    {
+        Vector3 input = new Vector3(Input.GetAxis("Xbox RightStick X"), 0, Input.GetAxis("Xbox RightStick Y"));
+
+        Vector3 camForward = playerCamera.transform.forward;
+        camForward.y = 0f;
+        camForward.Normalize();
+
+        Vector3 camRight = playerCamera.transform.right;
+        camRight.y = 0;
+        camRight.Normalize();
+
+        Vector3 relativeDirection = (camForward * input.x + camRight * input.z).normalized;
+        return relativeDirection;
     }
 }
