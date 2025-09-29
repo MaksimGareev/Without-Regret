@@ -23,7 +23,7 @@ public class ItemDistractingEnemy : MonoBehaviour
         Collider[] hits = Physics.OverlapSphere(transform.position, distractionRadius);
         foreach (Collider hit in hits)
         {
-            if (hit.gameObject.tag == "Enemy")
+            if (hit.gameObject.CompareTag("Enemy"))
             {
                 EnemyDistracted distractedEnemy = hit.GetComponent<EnemyDistracted>();
                 if (distractedEnemy != null)

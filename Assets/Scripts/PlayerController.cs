@@ -132,7 +132,7 @@ public class PlayerController : MonoBehaviour
             }
         }
         // if player is not holding shift the sprint timer will increase to sprint again
-        else if (!Input.GetKey(sprintKey) || Input.GetButton(sprintButton))
+        else if (!Input.GetKey(sprintKey) && Input.GetButton(sprintButton))
         {
             if (SprintTimer < SprintDuration)
             {
@@ -148,7 +148,7 @@ public class PlayerController : MonoBehaviour
 
         // Move the Player
         Vector3 combined = (move.normalized * currentSpeed) + new Vector3(0f, yVelocity, 0f);
-        Controller.Move(combined* currentSpeed * Time.deltaTime);
+        Controller.Move(combined * Time.deltaTime);
 
         // Rotate the player to face the way they are moving
         if (move.sqrMagnitude > 0.01f)
@@ -239,6 +239,11 @@ public class PlayerController : MonoBehaviour
         {
             yVelocity = 0f;
         }
+    }
+
+    public void SetCanSprint(bool newCanSprint)
+    {
+        canSprint = newCanSprint;
     }
 
     private void OnDrawGizmosSelected()

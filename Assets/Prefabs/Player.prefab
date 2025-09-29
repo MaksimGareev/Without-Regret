@@ -353,12 +353,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a248b41f1e8d2d744879d4983c056287, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Controller: {fileID: 8821119716541630626}
+  PlayerCamera: {fileID: 0}
   MovementLocked: 0
   Speed: 2
   SprintSpeed: 3
   SprintDuration: 3
   sprintCooldown: 4
-  PlayerCamera: {fileID: 0}
+  sprintKey: 304
+  sprintButton: Xbox LeftStick Click
+  groundCheck: {fileID: 0}
+  groundCheckRadius: 0.2
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 0
   pickupOffset: {x: 3, y: 2, z: -5}
   zoomDuration: 3
   transitionSpeed: 2
@@ -395,6 +403,7 @@ MonoBehaviour:
   grabRange: 2
   grabKey: 101
   grabButton: Xbox X Button
+  moveSlowdownMultiplier: 2
 --- !u!114 &1566633728491210951
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -410,7 +419,7 @@ MonoBehaviour:
   floatForce: 10
   floatDuration: 5
   floatLift: 50
-  horizontalSpeed: 10
+  horizontalSpeed: 5
   floatCooldown: 3
   rhythmWindow: 0.3
   rhythmInterval: 1
