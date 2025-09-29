@@ -356,8 +356,8 @@ MonoBehaviour:
   Controller: {fileID: 8821119716541630626}
   PlayerCamera: {fileID: 0}
   MovementLocked: 0
-  Speed: 2
-  SprintSpeed: 3
+  Speed: 4
+  SprintSpeed: 8
   SprintDuration: 3
   sprintCooldown: 4
   sprintKey: 304
@@ -416,16 +416,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d64b772b840b4d439952d8b0cafd708, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  floatForce: 10
-  floatDuration: 5
-  floatLift: 50
+  floatLift: 10
+  floatHeightOffset: 3
   horizontalSpeed: 5
+  verticalSmooth: 5
+  moveSmoothing: 8
+  hoverDrag: 3
+  stickDeadzone: 0.2
+  floatDuration: 5
   floatCooldown: 3
-  rhythmWindow: 0.3
-  rhythmInterval: 1
-  rhythmSlider: {fileID: 0}
   floatKey: 32
   floatButton: Submit
+  rhythmSlider: {fileID: 0}
+  rhythmWindow: 0.3
+  rhythmInterval: 1
 --- !u!114 &7147037502482933178
 MonoBehaviour:
   m_ObjectHideFlags: 0
