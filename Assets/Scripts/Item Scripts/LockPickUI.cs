@@ -54,7 +54,7 @@ public class LockPickUI : MonoBehaviour
 
 
         // Press space to attempt unlocking
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space) || Input.GetButtonDown("Submit"))
         {
             float angleDifference = Mathf.Abs(Mathf.DeltaAngle(PickCursor.localEulerAngles.z, UnlockAngle));
 
@@ -79,7 +79,7 @@ public class LockPickUI : MonoBehaviour
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.Escape) || Input.GetButtonDown("Xbox B Button"))
         {
             DeactivateLockPick();
         }
@@ -115,6 +115,7 @@ public class LockPickUI : MonoBehaviour
         if (pc != null)
         {
             pc.MovementLocked = false;
+            pc.enabled = true;
         }
     }
 

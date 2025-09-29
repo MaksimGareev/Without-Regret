@@ -58,7 +58,7 @@ public class Enemy : MonoBehaviour
         }
 
         result = Vector3.zero;
-        Debug.Log("search for point failed");
+        // Debug.Log("search for point failed");
         return false;
 
     }
