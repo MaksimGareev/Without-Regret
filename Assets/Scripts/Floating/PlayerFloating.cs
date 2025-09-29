@@ -40,8 +40,8 @@ public class PlayerFloating : MonoBehaviour
     private Vector3 targetMove = Vector3.zero;
 
     // restore original rigidbody/cc state
-    private bool prevCCEnabled;
-    private bool prevPlayerControllerEnabled;
+    //private bool prevCCEnabled;
+    //private bool prevPlayerControllerEnabled;
     private bool prevRbUseGravity;
     private float prevRbDrag;
     private bool prevRbKinematic;
@@ -52,6 +52,11 @@ public class PlayerFloating : MonoBehaviour
         playerController = GetComponent<PlayerController>();
         charController = GetComponent<CharacterController>();
         playerCamera = Camera.main;
+    }
+
+    private void Start()
+    {
+        rhythmSlider.gameObject.SetActive(false);
     }
 
     private void Update()
@@ -81,13 +86,14 @@ public class PlayerFloating : MonoBehaviour
 
     private void StartFloating()
     {
+        rhythmSlider.gameObject.SetActive(true);
         isFloating = true;
         floatTimer = 0f;
         rhythmTimer = 0f;
 
         // store previous states
-        if (charController != null) prevCCEnabled = charController.enabled;
-        if (playerController != null) prevPlayerControllerEnabled = playerController.enabled;
+        //if (charController != null) prevCCEnabled = charController.enabled;
+        //if (playerController != null) prevPlayerControllerEnabled = playerController.enabled;
         prevRbUseGravity = rb.useGravity;
         prevRbDrag = rb.drag;
         prevRbKinematic = rb.isKinematic;
@@ -116,6 +122,7 @@ public class PlayerFloating : MonoBehaviour
 
     private void StopFloating()
     {
+        rhythmSlider.gameObject.SetActive(false);
         isFloating = false;
         rhythmTimer = 0f;
         floatTimer = 0f;

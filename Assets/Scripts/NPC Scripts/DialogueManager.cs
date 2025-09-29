@@ -11,7 +11,10 @@ public class DialogueManager : MonoBehaviour
     public TextMeshProUGUI DialogueText;
     public Transform ChoicesContainer;
     public GameObject ChoiceButton;
-    private Transform player;
+    private Transform playerTransform;
+
+    private PlayerThrowing playerThrowing;
+    private PlayerFloating playerFloating;
 
     private List<GameObject> spawnedChoices = new List<GameObject>();
     private DialogueNode currentNode;
@@ -24,10 +27,25 @@ public class DialogueManager : MonoBehaviour
 
     public void StartDialogue(string NPCName, DialogueNode StartNode)
     {
-        player = GameObject.FindGameObjectWithTag("Player").transform;
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+
+        playerTransform = player.transform;
+        playerFloating = player.GetComponent<PlayerFloating>();
+        playerThrowing = player.GetComponent<PlayerThrowing>();
+
         this.NPCName = NPCName;
         DialoguePanel.SetActive(true);
         PlayerController.DialogueActive = true;
+
+        if (playerFloating != null)
+        {
+            playerFloating.enabled = false;
+        }
+
+        if (playerThrowing != null)
+        {
+            playerThrowing.enabled = false;
+        }
 
         ShowNode(StartNode);
     }
@@ -89,6 +107,16 @@ public class DialogueManager : MonoBehaviour
     {
         DialoguePanel.SetActive(false);
         PlayerController.DialogueActive = false;
+
+        if (playerFloating != null)
+        {
+            playerFloating.enabled = true;
+        }
+
+        if (playerThrowing != null)
+        {
+            playerThrowing.enabled = true;
+        }
 
         foreach (var b in spawnedChoices)
         {
