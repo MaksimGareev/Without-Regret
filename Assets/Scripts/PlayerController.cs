@@ -45,6 +45,7 @@ public class PlayerController : MonoBehaviour
             return;
         }
             Movement();
+        LoadArtScene();
     }
 
     void Movement()
@@ -165,6 +166,11 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.V))
         {
             SceneManager.LoadScene("ArtScene");
+        }
+
+        if (Input.GetKey(KeyCode.R))
+        {
+            SceneManager.LoadScene("MainScene");
         }
     }
 }
