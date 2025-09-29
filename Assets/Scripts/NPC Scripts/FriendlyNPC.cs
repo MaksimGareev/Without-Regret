@@ -3,65 +3,147 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
+[System.Serializable]
+public class DialogueNode
+{
+    public string npcLine;                                            // What the NPC says
+    public List<string> playerChoices = new List<string>();           // Player options
+    public List<DialogueNode> nextNodes = new List<DialogueNode>();   // Next node for each choice
+}
 public class FriendlyNPC : MonoBehaviour
 {
-    public NavMeshAgent agent; 
-    public float range; // Area around the center point
-    public Transform centrePoint; // Center Point of designated area
 
+    public NavMeshAgent agent;
+    public Transform centrePoint;   // Center for wandering
+    public float range = 5f;        // How far NPC wanders
     public float waitTime = 2f;
     private bool isWaiting = false;
 
+    public string NPCName = "Friendly NPC";
+    public GameObject promptUI;
+    public float chatRange = 3f;
+
+    private bool playerInRange = false;
+    private Transform player;
+    private DialogueManager dialogueManager;
+    public DialogueNode StartNode;
     void Start()
     {
+        // NavMesh setup
         agent = GetComponent<NavMeshAgent>();
         PickNewDestination();
+
+        // Player reference
+        player = GameObject.FindGameObjectWithTag("Player").transform;
+
+        // Dialogue Manager
+        dialogueManager = FindObjectOfType<DialogueManager>();
     }
 
     void Update()
     {
-        // If close to destination and not already waiting, start waiting
-        if (!isWaiting && !agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
+        // Distance to player
+        float dist = Vector3.Distance(player.position, transform.position);
+
+        // Show/Hide prompt UI
+        if (dist <= chatRange)
         {
-            StartCoroutine(WaitBeforeNextMove());   
+            if (!playerInRange)
+            {
+                playerInRange = true;
+                if (promptUI != null)
+                    promptUI.SetActive(true);
+            }
+        }
+        else
+        {
+            if (playerInRange)
+            {
+                playerInRange = false;
+                if (promptUI != null)
+                    promptUI.SetActive(false);
+            }
+        }
+
+        // NPC wandering (only if not in dialogue)
+        if (!isWaiting && !agent.pathPending && agent.remainingDistance <= agent.stoppingDistance && !PlayerController.DialogueActive)
+        {
+            StartCoroutine(WaitBeforeNextMove());
+        }
+
+        // Start dialogue
+        if (playerInRange && Input.GetKeyDown(KeyCode.E) && !PlayerController.DialogueActive)
+        {
+            PlayerController.DialogueActive = true;
+
+            if (promptUI != null)
+                promptUI.SetActive(false);
+
+            dialogueManager.StartDialogue(NPCName, StartNode);
+
+            /*DialogueNode EndNode = new DialogueNode
+            {
+                npcLine = "OK",
+                playerChoices = new List<string> { },
+                nextNodes = null
+            };
+
+            DialogueNode GreatNode = new DialogueNode
+            {
+                npcLine = "That is good to hear",
+                playerChoices = new List<string> { "Hope your day is good too", "Thanks" },
+                nextNodes = null
+            };
+            DialogueNode StartNode = new DialogueNode
+            {
+                npcLine = "Hi how are you?",
+                playerChoices = new List<string> { "Great", "I don't want to talk" },
+                nextNodes = new List<DialogueNode> { GreatNode, EndNode }
+            };
+
+            dialogueManager.StartDialogue(
+                NPCName,
+                DialogueLines,
+                new List<string>() { "Hello!", "Goodbye" },
+                new List<System.Action>() {
+                    () => Debug.Log("Player said Hello!"),
+                    () => Debug.Log("Player said Goodbye!")
+                }
+            );*/
+
         }
     }
 
-    // Timer for NPC to pick next random point
+    // Wait before picking next wandering destination
     IEnumerator WaitBeforeNextMove()
     {
         isWaiting = true;
-        yield return new WaitForSeconds(waitTime); // Wait at the point
-        PickNewDestination(); // Pick next destination
+        yield return new WaitForSeconds(waitTime);
+        PickNewDestination();
         isWaiting = false;
     }
 
+    // Pick a random NavMesh point to wander to
     void PickNewDestination()
     {
         Vector3 point;
         if (RandomPoint(centrePoint.position, range, out point))
         {
-            Debug.DrawRay(point, Vector3.up, Color.blue, 1.0f); // Show next point
-            agent.SetDestination(point); // Move NPC to point
+            agent.SetDestination(point);
         }
     }
-    
+
+    // Random point on NavMesh
     bool RandomPoint(Vector3 center, float range, out Vector3 result)
     {
-        Vector3 randomPoint = center + Random.insideUnitSphere * range; // Picking random point within range
+        Vector3 randomPoint = center + Random.insideUnitSphere * range;
         NavMeshHit hit;
         if (NavMesh.SamplePosition(randomPoint, out hit, 1.0f, NavMesh.AllAreas))
         {
             result = hit.position;
-            Debug.Log("Random Point: " + result);
             return true;
         }
-
         result = Vector3.zero;
-        Debug.Log("search for point failed");
         return false;
-
     }
-
-
 }

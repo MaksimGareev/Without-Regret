@@ -26,6 +26,8 @@ public class PlayerController : MonoBehaviour
     public float transitionSpeed = 2f; // Speed the camera zooms in
     private bool isZooming = false; // is the camera zoomed in
 
+    public static bool DialogueActive = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -37,7 +39,11 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Movement();
+        if (DialogueActive == true)
+        {
+            return;
+        }
+            Movement();
     }
 
     void Movement()
