@@ -77,7 +77,7 @@ public class LockedItem : MonoBehaviour
                 }
                 if (LockPickUI != null)
                 {
-                    LockPickUI.SetActive(false);
+                    // LockPickUI.SetActive(false);
                 }
             }
         }
