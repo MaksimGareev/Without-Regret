@@ -8,7 +8,6 @@ public class ItemDistractingEnemy : MonoBehaviour
     [Header("Distraction Settings")]
     [SerializeField] private float distractionRadius = 5f;
     [SerializeField] private float distractionDuration = 3f;
-    [SerializeField] private LayerMask enemyLayer;
 
     private bool hasLanded = false;
 
@@ -21,13 +20,16 @@ public class ItemDistractingEnemy : MonoBehaviour
 
         hasLanded = true;
 
-        Collider[] hits = Physics.OverlapSphere(transform.position, distractionRadius, enemyLayer);
+        Collider[] hits = Physics.OverlapSphere(transform.position, distractionRadius);
         foreach (Collider hit in hits)
         {
-            EnemyDistracted distractedEnemy = hit.GetComponent<EnemyDistracted>();
-            if (distractedEnemy != null)
+            if (hit.gameObject.tag == "Enemy")
             {
-                distractedEnemy.BeginDistraction(transform.position, distractionDuration);
+                EnemyDistracted distractedEnemy = hit.GetComponent<EnemyDistracted>();
+                if (distractedEnemy != null)
+                {
+                    distractedEnemy.BeginDistraction(transform.position, distractionDuration);
+                }
             }
         }
     }

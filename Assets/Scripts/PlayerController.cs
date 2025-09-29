@@ -19,6 +19,8 @@ public class PlayerController : MonoBehaviour
     private float yVelocity = 0f;
     private float gravity = -9.81f; // gravity for when the player is locked so they don't fly away
 
+    public Transform groundCheck;
+
     // Camera Variables
     public Camera PlayerCamera;  // Main Camera
     public Vector3 pickupOffset = new Vector3(3f, 2f, -5f); // Offset of camera to player when picking up an item
@@ -26,12 +28,19 @@ public class PlayerController : MonoBehaviour
     public float transitionSpeed = 2f; // Speed the camera zooms in
     private bool isZooming = false; // is the camera zoomed in
 
-    // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         Controller = GetComponent<CharacterController>();   // Find the Character controller
+        if (PlayerCamera == null)
+        {
+            PlayerCamera = Camera.main; // Set camera as main camera in scene if not applied manually in inspector
+        }
         SprintTimer = SprintDuration;   // Set sprint timer to sprint duration
 
+        if (groundCheck == null)
+        {
+            
+        }
     }
 
     // Update is called once per frame
@@ -151,7 +160,11 @@ public class PlayerController : MonoBehaviour
         MovementLocked = false; // allow the player to move again
         // return to normal camera veiw
         isZooming = false;
+    }
 
-
+    // Allows other scripts to update yVelocity while keeping the variable private & not exposed in inspector
+    public void SetVerticalVelocity( float newVelocity)
+    {
+        yVelocity = newVelocity;
     }
 }

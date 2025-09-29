@@ -9,7 +9,7 @@ public class PlayerFloating : MonoBehaviour
     [Header("Float Settings")]
     [SerializeField] private float floatForce = 10f;
     [SerializeField] private float floatDuration = 5f; // Max Amount of time the player can float for
-    [SerializeField] private float floatLift = 50f; // initial height that the player lifts to when starting to float
+    [SerializeField] private float floatLift = 5f; // initial height that the player lifts to when starting to float
     [SerializeField] private float horizontalSpeed = 10f; // Movement speed while floating
     [SerializeField] private float floatCooldown = 3f; // Time to cooldown between floating attempts
 
@@ -23,6 +23,7 @@ public class PlayerFloating : MonoBehaviour
     [SerializeField] private string floatButton = "Submit"; // Controller input
 
     private Rigidbody rb;
+    private PlayerController playerController;
 
     // variables for managing the rhythm of the floating mechanic
     private bool isFloating = false;
@@ -34,6 +35,7 @@ public class PlayerFloating : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
+        playerController = GetComponent<PlayerController>();
     }
 
     // Update is called once per frame
@@ -72,7 +74,10 @@ public class PlayerFloating : MonoBehaviour
         floatTimer = 0f;
         rhythmTimer = 0f;
 
-        rb.AddForce(Vector3.up * floatLift, ForceMode.VelocityChange);
+        if (playerController != null)
+        {
+            playerController.SetVerticalVelocity(floatLift);
+        }
     }
 
     private void StopFloating()
