@@ -39,6 +39,7 @@ public class PlayerController : MonoBehaviour
     public float zoomDuration = 3f; // how long the camera will be zoomed in
     public float transitionSpeed = 2f; // Speed the camera zooms in
     private bool isZooming = false; // is the camera zoomed in
+    public static bool DialogueActive = false;
 
     void Awake()
     {
@@ -62,6 +63,11 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (DialogueActive == true)
+        {
+            return;
+        }
+
         Movement();
     }
 
