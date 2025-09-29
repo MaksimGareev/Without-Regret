@@ -79,7 +79,7 @@ public class LockPickUI : MonoBehaviour
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.Escape) || Input.GetButtonDown("Xbox B Button"))
         {
             DeactivateLockPick();
         }
@@ -115,6 +115,7 @@ public class LockPickUI : MonoBehaviour
         if (pc != null)
         {
             pc.MovementLocked = false;
+            pc.enabled = true;
         }
     }
 
