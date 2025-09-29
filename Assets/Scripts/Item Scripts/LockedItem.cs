@@ -4,12 +4,15 @@ using UnityEngine;
 
 public class LockedItem : MonoBehaviour
 {
-    public float PickupRange;
+    public float LockpickRange;
     private Transform player;
 
     public GameObject promptUI;
     public GameObject LockPickUI;
     public bool isDoor = false;
+
+    public AudioClip UnlockSound;
+    private AudioSource audioSource;
 
     public KeyCode interactKey = KeyCode.E;
     public string interactButton = "Xbox X Button";
@@ -19,6 +22,9 @@ public class LockedItem : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        audioSource = gameObject.AddComponent<AudioSource>();
+        audioSource.playOnAwake = false;
+
         player = GameObject.FindGameObjectWithTag("Player").transform;
         if (promptUI != null)
         {
@@ -36,7 +42,7 @@ public class LockedItem : MonoBehaviour
     {
         float dist = Vector3.Distance(player.position, transform.position); // Players position in relation to the pick up item
 
-        if (dist <= PickupRange)
+        if (dist <= LockpickRange)
         {
             if (!isInRange)
             {
@@ -102,6 +108,7 @@ public class LockedItem : MonoBehaviour
 
         if (isDoor == true)
         {
+            audioSource.PlayOneShot(UnlockSound);
             Destroy(gameObject);
         }
         else
