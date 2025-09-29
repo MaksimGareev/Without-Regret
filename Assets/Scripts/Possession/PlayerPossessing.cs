@@ -13,6 +13,7 @@ public class PlayerPossessing : MonoBehaviour
     [SerializeField] private string possessButton = "Xbox Y Button";
 
     private PlayerController playerController;
+    private Rigidbody playerRigidbody;
     private PossessedEnemyResisting possessedEnemyMovement;
     private Enemy normalEnemyMovement;
     private NavMeshAgent enemyNavMeshAgent;
@@ -22,6 +23,7 @@ public class PlayerPossessing : MonoBehaviour
     private void Awake()
     {
         playerController = GetComponent<PlayerController>();
+        playerRigidbody = GetComponent<Rigidbody>();
     }
 
     private void Update()
@@ -88,7 +90,7 @@ public class PlayerPossessing : MonoBehaviour
 
     private PossessedEnemyResisting SelectEnemyController()
     {
-        Vector3 rightStick = new Vector3(Input.GetAxis("Xbox RightStick X"), 0, Input.GetAxis("Xbox RightStick Y"));
+        Vector3 rightStick = CalculateInputFromPOV();
 
         if (rightStick.sqrMagnitude < 0.1f)
         {
@@ -118,6 +120,22 @@ public class PlayerPossessing : MonoBehaviour
         return null;
     }
 
+    private Vector3 CalculateInputFromPOV()
+    {
+        Vector3 input = new Vector3(Input.GetAxis("Xbox RightStick X"), 0, Input.GetAxis("Xbox RightStick Y"));
+
+        Vector3 camForward = Camera.main.transform.forward;
+        camForward.y = 0f;
+        camForward.Normalize();
+
+        Vector3 camRight = Camera.main.transform.right;
+        camRight.y = 0;
+        camRight.Normalize();
+
+        Vector3 relativeDirection = (camForward * input.x + camRight * input.z).normalized;
+        return relativeDirection;
+    }
+
     private void StartPossession(PossessedEnemyResisting target)
     {
         if (target == null)
@@ -134,7 +152,17 @@ public class PlayerPossessing : MonoBehaviour
         if (playerController != null)
         {
             Debug.Log("Reference to player controller is null");
+
+            Vector3 frozenPos = transform.position;
+            Quaternion frozenRot = transform.rotation;
+
+            playerController.MovementLocked = true;
             playerController.enabled = false;
+            playerRigidbody.velocity = Vector3.zero;
+            playerRigidbody.angularVelocity = Vector3.zero;
+
+            GetComponent<CharacterController>().enabled = false;
+            transform.SetPositionAndRotation(frozenPos, frozenRot);
         }
 
         if (normalEnemyMovement != null)
@@ -155,9 +183,9 @@ public class PlayerPossessing : MonoBehaviour
         }
 
         if (!possessedEnemyMovement.enabled)
-            {
-                possessedEnemyMovement.enabled = true;
-            }
+        {
+            possessedEnemyMovement.enabled = true;
+        }
 
         possessedEnemyMovement.BeginPossession();
         Debug.Log("Starting Possession of " + target.name);
@@ -186,10 +214,12 @@ public class PlayerPossessing : MonoBehaviour
         {
             //enemyRigidbody.useGravity = true;
         }
-        
+
         if (playerController != null)
         {
             playerController.enabled = true;
+            playerController.MovementLocked = false;
+            GetComponent<CharacterController>().enabled = true;
         }
     }
 }
