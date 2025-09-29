@@ -36,6 +36,7 @@ public class PlayerThrowing : MonoBehaviour
             powerSlider.minValue = 0f;
             powerSlider.maxValue = 1f;
             powerSlider.value = 0f;
+            powerSlider.gameObject.SetActive(false);
         }
 
         chargeKeyInt = (int)chargeKey;
@@ -84,6 +85,7 @@ public class PlayerThrowing : MonoBehaviour
             if (powerSlider != null)
             {
                 powerSlider.value = normalized;
+                powerSlider.gameObject.SetActive(true);
             }
 
             if (usingController)
@@ -96,6 +98,7 @@ public class PlayerThrowing : MonoBehaviour
                     if (powerSlider != null)
                     {
                         powerSlider.value = 0f;
+                        powerSlider.gameObject.SetActive(false);
                     }
                 }
             }
@@ -109,6 +112,7 @@ public class PlayerThrowing : MonoBehaviour
                     if (powerSlider != null)
                     {
                         powerSlider.value = 0f;
+                        powerSlider.gameObject.SetActive(false);
                     }
                 }
             }
