@@ -15,6 +15,8 @@ public class PossessedEnemyResisting : MonoBehaviour
     private Vector3 playerInput;
     private float struggleTimer;
 
+    private Vector3 struggleDirection;
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
@@ -30,15 +32,22 @@ public class PossessedEnemyResisting : MonoBehaviour
         Vector3 moveDirection = playerInput.normalized * moveSpeed;
 
         struggleTimer += Time.fixedDeltaTime;
+
         if (struggleTimer >= struggleFrequency)
         {
             struggleTimer = 0f;
 
-            moveDirection += Random.insideUnitSphere * struggleStrength;
-            moveDirection.y = 0f;
+            struggleDirection = playerInput + (Random.insideUnitSphere * struggleStrength);
+            struggleDirection.y = 0f;
         }
 
-        rb.MovePosition(rb.position + moveDirection * Time.fixedDeltaTime);
+        Vector3 finalMoveDirection = Vector3.Lerp(moveDirection, moveDirection + struggleDirection, 0.5f);
+
+        rb.MovePosition(rb.position + finalMoveDirection * Time.fixedDeltaTime);
+
+        Debug.DrawRay(transform.position, moveDirection, Color.white, 0.1f);
+        Debug.DrawRay(transform.position, struggleDirection, Color.red, 0.1f);
+        Debug.DrawRay(transform.position, finalMoveDirection, Color.green, 0.1f);
     }
 
     public void BeginPossession()
