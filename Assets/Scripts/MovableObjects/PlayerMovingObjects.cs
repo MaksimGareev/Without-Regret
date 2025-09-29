@@ -6,6 +6,7 @@ public class PlayerMovingObjects : MonoBehaviour
     [SerializeField] private float grabRange = 2f;
     [SerializeField] private KeyCode grabKey = KeyCode.E;
     [SerializeField] private string grabButton = "Xbox X Button";
+    [SerializeField] private float moveSlowdownMultiplier = 2f;
     
     private PlayerController playerController;
     private float normalMoveSpeed;
@@ -43,7 +44,8 @@ public class PlayerMovingObjects : MonoBehaviour
                 moveable.Grab(grabPoint);
                 heldObject = moveable;
                 normalMoveSpeed = playerController.Speed;
-                playerController.Speed = normalMoveSpeed / 3;
+                playerController.Speed = normalMoveSpeed / moveSlowdownMultiplier;
+                playerController.SetCanSprint(false);
                 Debug.Log($"Grabbed");
             }
         }
@@ -56,6 +58,7 @@ public class PlayerMovingObjects : MonoBehaviour
             heldObject.Release();
             heldObject = null;
             playerController.Speed = normalMoveSpeed;
+            playerController.SetCanSprint(true);
         }
     }
 }

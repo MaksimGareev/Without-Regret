@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+[RequireComponent(typeof(Rigidbody))]
 public class PlayerFloating : MonoBehaviour
 {
     [Header("Float Settings")]
-    // [SerializeField] private float floatForce = 10f;
+    [SerializeField] private float floatForce = 10f;
     [SerializeField] private float floatDuration = 5f; // Max Amount of time the player can float for 
-    [SerializeField] private float floatLift = 5f; // initial height that the player lifts to when starting to float
-    // [SerializeField] private float horizontalSpeed = 10f; // Movement speed while floating
+    [SerializeField] private float floatLift = 50f; // initial height that the player lifts to when starting to float
+    [SerializeField] private float horizontalSpeed = 10f; // Movement speed while floating
     [SerializeField] private float floatCooldown = 3f; // Time to cooldown between floating attempts
     private float floatHeight;
 
@@ -23,6 +24,9 @@ public class PlayerFloating : MonoBehaviour
     [SerializeField] private string floatButton = "Submit"; // Controller input
 
     private PlayerController playerController;
+    private CharacterController characterController;
+    private Rigidbody playerRigidBody;
+    private Camera playerCamera;
 
     // variables for managing the rhythm of the floating mechanic
     private bool isFloating = false;
@@ -34,6 +38,9 @@ public class PlayerFloating : MonoBehaviour
     private void Awake()
     {
         playerController = GetComponent<PlayerController>();
+        characterController = GetComponent<CharacterController>();
+        playerRigidBody = GetComponent<Rigidbody>();
+        playerCamera = Camera.main;
     }
 
     // Update is called once per frame
@@ -55,7 +62,7 @@ public class PlayerFloating : MonoBehaviour
                 HandleRhythmInput();
                 UpdateRhythmUI();
             }
-        }  
+        }
     }
 
     private void FixedUpdate()
@@ -74,10 +81,15 @@ public class PlayerFloating : MonoBehaviour
 
         if (playerController != null)
         {
-            playerController.SetGravityEnabled(false);
-            floatHeight = transform.position.y + floatLift;
-            playerController.SetVerticalVelocity(0f);
+            playerController.enabled = false;
         }
+
+        if (characterController != null)
+        {
+            characterController.enabled = false;
+        }
+
+        playerRigidBody.AddForce(Vector3.up * floatLift, ForceMode.VelocityChange);
     }
 
     private void StopFloating()
@@ -96,7 +108,12 @@ public class PlayerFloating : MonoBehaviour
 
         if (playerController != null)
         {
-            playerController.SetGravityEnabled(true);
+            playerController.enabled = true;
+        }
+
+        if (characterController != null)
+        {
+            characterController.enabled = true;
         }
     }
 
@@ -113,24 +130,24 @@ public class PlayerFloating : MonoBehaviour
         }
 
         if (Input.GetKeyDown(floatKey) || Input.GetButtonDown(floatButton))
-            {
-                float errorMargin = Mathf.Min(rhythmTimer, rhythmInterval - rhythmTimer);
+        {
+            float errorMargin = Mathf.Min(rhythmTimer, rhythmInterval - rhythmTimer);
 
-                if (errorMargin <= rhythmWindow)
+            if (errorMargin <= rhythmWindow)
+            {
+                rhythmTimer = 0f;
+                if (rhythmSlider != null)
                 {
-                    rhythmTimer = 0f;
-                    if (rhythmSlider != null)
-                    {
-                        rhythmSlider.value = 0f;
-                    }
-                    Debug.Log("Floating Rhythm Success");
+                    rhythmSlider.value = 0f;
                 }
-                else
-                {
-                    Debug.Log("Floating failed 3: Missed timing");
-                    StopFloating();
-                }
+                Debug.Log("Floating Rhythm Success");
             }
+            else
+            {
+                Debug.Log("Floating failed 3: Missed timing");
+                StopFloating();
+            }
+        }
 
         if (rhythmTimer >= rhythmInterval + rhythmWindow)
         {
@@ -150,24 +167,18 @@ public class PlayerFloating : MonoBehaviour
 
     private void ApplyFloatPhysics()
     {
-        if (playerController == null)
+        playerRigidBody.velocity = new Vector3(playerRigidBody.velocity.x, 0f, playerRigidBody.velocity.z);
+        playerRigidBody.AddForce(Vector3.up * floatForce, ForceMode.Acceleration);
+
+        Vector3 move = CalculateInputFromPOV() * horizontalSpeed;
+
+        playerRigidBody.MovePosition(playerRigidBody.position + move * Time.fixedDeltaTime);
+
+        if (move.sqrMagnitude > 0.01f)
         {
-            return;
+            float angle = Mathf.Atan2(move.x, move.z) * Mathf.Rad2Deg;
+            transform.rotation = Quaternion.Euler(0f, angle, 0f);
         }
-
-        float currentY = transform.position.y;
-        float heightError = floatHeight - currentY;
-
-        // Use proportional–derivative control (spring + damping)
-        float correction = heightError * 5f; // proportional factor (hover stiffness)
-        float damping = -playerController.GetVerticalVelocity() * 2f; // cancel out velocity drift
-
-        float newVerticalVelocity = correction + damping;
-
-        // Clamp to avoid extreme forces
-        newVerticalVelocity = Mathf.Clamp(newVerticalVelocity, -5f, 5f);
-
-        playerController.SetVerticalVelocity(newVerticalVelocity);
     }
 
     private void HandleCooldown()
@@ -180,5 +191,26 @@ public class PlayerFloating : MonoBehaviour
                 isCoolingDown = false;
             }
         }
+    }
+    
+    private Vector3 CalculateInputFromPOV()
+    {
+        Vector3 input = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+
+        if (input.sqrMagnitude < 0.1f)
+        {
+            return Vector3.zero;
+        }
+
+        Vector3 camForward = playerCamera.transform.forward;
+        camForward.y = 0f;
+        camForward.Normalize();
+
+        Vector3 camRight = playerCamera.transform.right;
+        camRight.y = 0;
+        camRight.Normalize();
+
+        Vector3 relativeDirection = (camForward * input.z + camRight * input.x).normalized;
+        return relativeDirection;
     }
 }

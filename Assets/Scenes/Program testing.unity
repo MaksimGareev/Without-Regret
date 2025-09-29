@@ -568,6 +568,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Test Item
       objectReference: {fileID: 0}
+    - target: {fileID: 3104341450837639692, guid: 8012a6fb752d12c408bf4d6db4b361a3, type: 3}
+      propertyPath: distractionRadius
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 6322807526584299951, guid: 8012a6fb752d12c408bf4d6db4b361a3, type: 3}
       propertyPath: m_LocalPosition.x
       value: 8.848898
@@ -1121,11 +1125,6 @@ GameObject:
 --- !u!4 &1339883343 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 878993099091267819, guid: dc60125b78695de43a450852f8101d10, type: 3}
-  m_PrefabInstance: {fileID: 2956753307949557009}
-  m_PrefabAsset: {fileID: 0}
---- !u!143 &1339883351 stripped
-CharacterController:
-  m_CorrespondingSourceObject: {fileID: 8821119716541630626, guid: dc60125b78695de43a450852f8101d10, type: 3}
   m_PrefabInstance: {fileID: 2956753307949557009}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1350859568
@@ -1939,14 +1938,6 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1566633728491210951, guid: dc60125b78695de43a450852f8101d10, type: 3}
-      propertyPath: floatLift
-      value: 3.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 1566633728491210951, guid: dc60125b78695de43a450852f8101d10, type: 3}
-      propertyPath: floatHeight
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 1566633728491210951, guid: dc60125b78695de43a450852f8101d10, type: 3}
       propertyPath: rhythmSlider
       value: 
       objectReference: {fileID: 1350859570}
@@ -1954,10 +1945,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
-    - target: {fileID: 7137697055784097519, guid: dc60125b78695de43a450852f8101d10, type: 3}
-      propertyPath: Controller
-      value: 
-      objectReference: {fileID: 1339883351}
     - target: {fileID: 7137697055784097519, guid: dc60125b78695de43a450852f8101d10, type: 3}
       propertyPath: PlayerCamera
       value: 
