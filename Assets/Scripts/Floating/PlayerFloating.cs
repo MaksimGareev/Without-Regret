@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-[RequireComponent(typeof(Rigidbody))]
 public class PlayerFloating : MonoBehaviour
 {
     [Header("Float Settings")]
-    [SerializeField] private float floatForce = 10f;
-    [SerializeField] private float floatDuration = 5f; // Max Amount of time the player can float for
+    // [SerializeField] private float floatForce = 10f;
+    [SerializeField] private float floatDuration = 5f; // Max Amount of time the player can float for 
     [SerializeField] private float floatLift = 5f; // initial height that the player lifts to when starting to float
-    [SerializeField] private float horizontalSpeed = 10f; // Movement speed while floating
+    // [SerializeField] private float horizontalSpeed = 10f; // Movement speed while floating
     [SerializeField] private float floatCooldown = 3f; // Time to cooldown between floating attempts
+    private float floatHeight;
 
     [Header("Rhythm Settings")]
     [SerializeField] private float rhythmWindow = 0.3f; // Margin of error so the input doesn't have to be exactly perfectly timed
@@ -22,7 +22,6 @@ public class PlayerFloating : MonoBehaviour
     [SerializeField] private KeyCode floatKey = KeyCode.Space; // Keyboard input
     [SerializeField] private string floatButton = "Submit"; // Controller input
 
-    private Rigidbody rb;
     private PlayerController playerController;
 
     // variables for managing the rhythm of the floating mechanic
@@ -34,7 +33,6 @@ public class PlayerFloating : MonoBehaviour
 
     private void Awake()
     {
-        rb = GetComponent<Rigidbody>();
         playerController = GetComponent<PlayerController>();
     }
 
@@ -76,7 +74,9 @@ public class PlayerFloating : MonoBehaviour
 
         if (playerController != null)
         {
-            playerController.SetVerticalVelocity(floatLift);
+            playerController.SetGravityEnabled(false);
+            floatHeight = transform.position.y + floatLift;
+            playerController.SetVerticalVelocity(0f);
         }
     }
 
@@ -93,6 +93,11 @@ public class PlayerFloating : MonoBehaviour
 
         isCoolingDown = true;
         cooldownTimer = floatCooldown;
+
+        if (playerController != null)
+        {
+            playerController.SetGravityEnabled(true);
+        }
     }
 
     private void HandleRhythmInput()
@@ -145,18 +150,24 @@ public class PlayerFloating : MonoBehaviour
 
     private void ApplyFloatPhysics()
     {
+        if (playerController == null)
+        {
+            return;
+        }
 
-        rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
+        float currentY = transform.position.y;
+        float heightError = floatHeight - currentY;
 
-        rb.AddForce(Vector3.up * floatForce, ForceMode.Acceleration);
+        // Use proportional–derivative control (spring + damping)
+        float correction = heightError * 5f; // proportional factor (hover stiffness)
+        float damping = -playerController.GetVerticalVelocity() * 2f; // cancel out velocity drift
 
-        float horizontalInput = Input.GetAxis("Horizontal");
-        float verticalInput = Input.GetAxis("Vertical");
+        float newVerticalVelocity = correction + damping;
 
-        Vector3 move = new Vector3(horizontalInput, 0f, verticalInput) * horizontalSpeed;
-        move = transform.TransformDirection(move);
+        // Clamp to avoid extreme forces
+        newVerticalVelocity = Mathf.Clamp(newVerticalVelocity, -5f, 5f);
 
-        rb.MovePosition(rb.position + move * Time.fixedDeltaTime);
+        playerController.SetVerticalVelocity(newVerticalVelocity);
     }
 
     private void HandleCooldown()
