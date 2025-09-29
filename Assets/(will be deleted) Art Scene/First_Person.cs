@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+public class First_Person : MonoBehaviour
 {
     [Header("References")]
     public Rigidbody rb;
