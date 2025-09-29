@@ -12,6 +12,8 @@ public class InteractableObject : MonoBehaviour
     public GameObject promptUI;
 
     private bool isInRange = false;
+    public KeyCode interactKey = KeyCode.E;
+    public string interactButton = "Xbox X Button";
 
     // Start is called before the first frame update
     void Start()
@@ -37,7 +39,7 @@ public class InteractableObject : MonoBehaviour
                     promptUI.SetActive(true); // Show the prompt when the player is in range
                 }
             }
-            if (Input.GetKeyDown(KeyCode.E))
+            if (Input.GetKeyDown(interactKey) || Input.GetButtonDown(interactButton))
             {
                 Pickup(); // Pick up the item
             }
