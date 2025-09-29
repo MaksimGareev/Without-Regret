@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -72,6 +73,7 @@ public class PlayerController : MonoBehaviour
         }
 
         Movement();
+        LoadArtScene();
     }
 
     void Movement()
@@ -261,6 +263,19 @@ public class PlayerController : MonoBehaviour
         {
             Gizmos.color = Color.yellow;
             Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
+        }
+    }
+
+    public void LoadArtScene()
+    {
+        if (Input.GetKeyDown(KeyCode.V))
+        {
+            SceneManager.LoadScene("ArtScene");
+        }
+
+        if (Input.GetKey(KeyCode.R))
+        {
+            SceneManager.LoadScene("MainScene");
         }
     }
 }
