@@ -81,36 +81,6 @@ public class FriendlyNPC : MonoBehaviour
 
             dialogueManager.StartDialogue(NPCName, StartNode);
 
-            /*DialogueNode EndNode = new DialogueNode
-            {
-                npcLine = "OK",
-                playerChoices = new List<string> { },
-                nextNodes = null
-            };
-
-            DialogueNode GreatNode = new DialogueNode
-            {
-                npcLine = "That is good to hear",
-                playerChoices = new List<string> { "Hope your day is good too", "Thanks" },
-                nextNodes = null
-            };
-            DialogueNode StartNode = new DialogueNode
-            {
-                npcLine = "Hi how are you?",
-                playerChoices = new List<string> { "Great", "I don't want to talk" },
-                nextNodes = new List<DialogueNode> { GreatNode, EndNode }
-            };
-
-            dialogueManager.StartDialogue(
-                NPCName,
-                DialogueLines,
-                new List<string>() { "Hello!", "Goodbye" },
-                new List<System.Action>() {
-                    () => Debug.Log("Player said Hello!"),
-                    () => Debug.Log("Player said Goodbye!")
-                }
-            );*/
-
         }
     }
 

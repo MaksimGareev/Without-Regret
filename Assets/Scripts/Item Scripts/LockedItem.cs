@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class LockedItem : MonoBehaviour
 {
-    public float LockpickRange;
+    public float LockpickRange = 1.5f;
     private Transform player;
 
     public GameObject promptUI;
