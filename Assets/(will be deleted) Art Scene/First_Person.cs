@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class First_Person : MonoBehaviour
 {
@@ -28,6 +29,11 @@ public class First_Person : MonoBehaviour
     {
         HandleMouseLook();
         HandleMovement();
+
+        if (Input.GetKey(KeyCode.M))
+        {
+            SceneManager.LoadScene("GraveyardLevelBlockout");
+        }
     }
 
     void LateUpdate()
