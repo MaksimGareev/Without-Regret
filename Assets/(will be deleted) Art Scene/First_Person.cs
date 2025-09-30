@@ -34,6 +34,11 @@ public class First_Person : MonoBehaviour
         {
             SceneManager.LoadScene("GraveyardLevelBlockout");
         }
+
+        if (Input.GetKey(KeyCode.G))
+        {
+            SceneManager.LoadScene("MenuTesting");
+        }
     }
 
     void LateUpdate()
