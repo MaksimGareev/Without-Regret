@@ -273,9 +273,9 @@ public class PlayerController : MonoBehaviour
             SceneManager.LoadScene("ArtScene");
         }
 
-        if (Input.GetKey(KeyCode.M))
+        if (Input.GetKey(KeyCode.G))
         {
-            SceneManager.LoadScene("MainScene");
+            SceneManager.LoadScene("MenuTesting");
         }
     }
 }

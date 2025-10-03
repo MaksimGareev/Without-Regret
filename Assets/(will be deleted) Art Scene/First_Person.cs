@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
-public class PlayerController : MonoBehaviour
+public class First_Person : MonoBehaviour
 {
     [Header("References")]
     public Rigidbody rb;
@@ -28,6 +29,16 @@ public class PlayerController : MonoBehaviour
     {
         HandleMouseLook();
         HandleMovement();
+
+        if (Input.GetKey(KeyCode.M))
+        {
+            SceneManager.LoadScene("GraveyardLevelBlockout");
+        }
+
+        if (Input.GetKey(KeyCode.G))
+        {
+            SceneManager.LoadScene("MenuTesting");
+        }
     }
 
     void LateUpdate()
