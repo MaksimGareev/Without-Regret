@@ -95,7 +95,7 @@ public class PlayerFloating : MonoBehaviour
         //if (charController != null) prevCCEnabled = charController.enabled;
         //if (playerController != null) prevPlayerControllerEnabled = playerController.enabled;
         prevRbUseGravity = rb.useGravity;
-        prevRbDrag = rb.drag;
+        prevRbDrag = rb.linearDamping;
         prevRbKinematic = rb.isKinematic;
 
         // disable controller systems
@@ -105,9 +105,9 @@ public class PlayerFloating : MonoBehaviour
         // enable rigidbody physics for floating
         rb.isKinematic = false;
         rb.useGravity = false;
-        rb.drag = hoverDrag;
+        rb.linearDamping = hoverDrag;
         rb.angularVelocity = Vector3.zero;
-        rb.velocity = Vector3.zero;
+        rb.linearVelocity = Vector3.zero;
 
         // lift up a bit
         rb.AddForce(Vector3.up * floatLift, ForceMode.VelocityChange);
@@ -132,11 +132,11 @@ public class PlayerFloating : MonoBehaviour
         cooldownTimer = floatCooldown;
 
         // restore rigidbody settings
-        rb.velocity = Vector3.zero;
+        rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
         rb.isKinematic = prevRbKinematic;
         rb.useGravity = prevRbUseGravity;
-        rb.drag = prevRbDrag;
+        rb.linearDamping = prevRbDrag;
 
         // re-enable controllers AFTER syncing transform
         // ensure character/ player controllers see the current transform position

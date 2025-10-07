@@ -158,7 +158,7 @@ public class PlayerPossessing : MonoBehaviour
 
             playerController.MovementLocked = true;
             playerController.enabled = false;
-            playerRigidbody.velocity = Vector3.zero;
+            playerRigidbody.linearVelocity = Vector3.zero;
             playerRigidbody.angularVelocity = Vector3.zero;
 
             GetComponent<CharacterController>().enabled = false;
