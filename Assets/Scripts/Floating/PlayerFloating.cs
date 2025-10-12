@@ -5,13 +5,13 @@ using UnityEngine.UI;
 public class PlayerFloating : MonoBehaviour
 {
     [Header("Float Settings")]
-    [SerializeField] private float floatLift = 3f;            // instantaneous upward boost on start
-    [SerializeField] private float floatHeightOffset = 3f;   // height above start position to hover at
-    [SerializeField] private float horizontalSpeed = 6f;     // max horizontal speed while floating
-    [SerializeField] private float verticalSmooth = 5f;      // how quickly Y approaches target
-    [SerializeField] private float moveSmoothing = 8f;       // how quickly horizontal motion interpolates
-    [SerializeField] private float hoverDrag = 3f;           // extra drag while hovering
-    [SerializeField] private float stickDeadzone = 0.2f;     // deadzone for controllers
+    [SerializeField] private float floatLift = 3f; // instantaneous upward boost on start
+    [SerializeField] private float floatHeightOffset = 3f; // height above start position to hover at
+    [SerializeField] private float horizontalSpeed = 6f; // max horizontal speed while floating
+    [SerializeField] private float verticalSmooth = 5f; // how quickly Y approaches target
+    [SerializeField] private float moveSmoothing = 8f; // how quickly horizontal motion interpolates
+    [SerializeField] private float hoverDrag = 3f; // extra drag while hovering
+    [SerializeField] private float stickDeadzone = 0.2f; // deadzone for controllers
 
     [Header("Rhythm / Input")]
     [SerializeField] private float floatDuration = 5f;
@@ -39,9 +39,6 @@ public class PlayerFloating : MonoBehaviour
     private Vector3 currentMove = Vector3.zero; // world-space horizontal velocity (x,z)
     private Vector3 targetMove = Vector3.zero;
 
-    // restore original rigidbody/cc state
-    //private bool prevCCEnabled;
-    //private bool prevPlayerControllerEnabled;
     private bool prevRbUseGravity;
     private float prevRbDrag;
     private bool prevRbKinematic;
@@ -61,19 +58,22 @@ public class PlayerFloating : MonoBehaviour
 
     private void Update()
     {
-        HandleCooldown();
-
-        if (!isCoolingDown)
+        if (Time.timeScale != 0f)
         {
-            if (!isFloating && (Input.GetKeyDown(floatKey) || Input.GetButtonDown(floatButton)))
-            {
-                StartFloating();
-            }
+            HandleCooldown();
 
-            if (isFloating)
+            if (!isCoolingDown)
             {
-                HandleRhythmInput();
-                UpdateRhythmUI();
+                if (!isFloating && (Input.GetKeyDown(floatKey) || Input.GetButtonDown(floatButton)))
+                {
+                    StartFloating();
+                }
+
+                if (isFloating)
+                {
+                    HandleRhythmInput();
+                    UpdateRhythmUI();
+                }
             }
         }
     }
@@ -91,9 +91,6 @@ public class PlayerFloating : MonoBehaviour
         floatTimer = 0f;
         rhythmTimer = 0f;
 
-        // store previous states
-        //if (charController != null) prevCCEnabled = charController.enabled;
-        //if (playerController != null) prevPlayerControllerEnabled = playerController.enabled;
         prevRbUseGravity = rb.useGravity;
         prevRbDrag = rb.linearDamping;
         prevRbKinematic = rb.isKinematic;
@@ -109,7 +106,7 @@ public class PlayerFloating : MonoBehaviour
         rb.angularVelocity = Vector3.zero;
         rb.linearVelocity = Vector3.zero;
 
-        // lift up a bit
+        // Apply lift force
         rb.AddForce(Vector3.up * floatLift, ForceMode.VelocityChange);
 
         // pick target hover height (from current world position)
@@ -138,7 +135,7 @@ public class PlayerFloating : MonoBehaviour
         rb.useGravity = prevRbUseGravity;
         rb.linearDamping = prevRbDrag;
 
-        // re-enable controllers AFTER syncing transform
+        // re-enable controllers after syncing transform
         // ensure character/ player controllers see the current transform position
         if (charController != null) charController.enabled = true;
         if (playerController != null) playerController.enabled = true;
@@ -189,11 +186,11 @@ public class PlayerFloating : MonoBehaviour
 
     private void ApplyFloatPhysics()
     {
-        // --- HORIZONTAL: get input relative to camera, apply deadzone and smoothing ---
+        // Get input relative to camera, apply deadzone and smoothing
         Vector3 raw = GetRawCameraRelativeInput(); // world-space direction (not normalized if zero)
         if (raw.sqrMagnitude < stickDeadzone * stickDeadzone)
         {
-            // no meaningful input — target is zero
+            // Apply 0 movement if within deadzone
             targetMove = Vector3.zero;
         }
         else
@@ -202,20 +199,20 @@ public class PlayerFloating : MonoBehaviour
             targetMove = raw.normalized * horizontalSpeed;
         }
 
-        // smooth toward target
+        // Smooth toward target
         currentMove = Vector3.Lerp(currentMove, targetMove, Mathf.Clamp01(moveSmoothing * Time.fixedDeltaTime));
 
-        // --- VERTICAL: smoothly approach hover target Y ---
+        // Smoothly approach hover target Y
         float currentY = rb.position.y;
         float desiredY = Mathf.Lerp(currentY, hoverTargetY, Mathf.Clamp01(verticalSmooth * Time.fixedDeltaTime));
 
-        // build next position
+        // Build next position
         Vector3 nextPos = rb.position + new Vector3(currentMove.x, 0f, currentMove.z) * Time.fixedDeltaTime;
         nextPos.y = desiredY;
 
         rb.MovePosition(nextPos);
 
-        // --- ROTATION: smoothly face movement direction ---
+        // Smoothly face movement direction
         Vector3 flatMove = new Vector3(currentMove.x, 0f, currentMove.z);
         if (flatMove.sqrMagnitude > 0.001f)
         {
@@ -227,7 +224,7 @@ public class PlayerFloating : MonoBehaviour
 
     private Vector3 GetRawCameraRelativeInput()
     {
-        // raw axes (can be from gamepad or keyboard)
+        // Get input values
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
         Vector3 input = new Vector3(x, 0f, z);
@@ -235,13 +232,13 @@ public class PlayerFloating : MonoBehaviour
         // early out: no input
         if (input.sqrMagnitude < 0.0001f) return Vector3.zero;
 
-        // camera basis
+        // Get camera rotation vectors
         Vector3 camForward = playerCamera.transform.forward;
         camForward.y = 0f; camForward.Normalize();
         Vector3 camRight = playerCamera.transform.right;
         camRight.y = 0f; camRight.Normalize();
 
-        // combine (note: forward uses z, right uses x)
+        // combine 
         Vector3 world = camForward * input.z + camRight * input.x;
         return world;
     }
