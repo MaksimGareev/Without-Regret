@@ -326,7 +326,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 0
+  m_Interactable: 1
   m_TargetGraphic: {fileID: 55729137}
   m_OnClick:
     m_PersistentCalls:
@@ -651,7 +651,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 0
+  m_Interactable: 1
   m_TargetGraphic: {fileID: 176769220}
   m_OnClick:
     m_PersistentCalls:
@@ -782,7 +782,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 0
+  m_Interactable: 1
   m_TargetGraphic: {fileID: 214195862}
   m_OnClick:
     m_PersistentCalls:
@@ -903,7 +903,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 0
+  m_Interactable: 1
   m_TargetGraphic: {fileID: 216060580}
   m_OnClick:
     m_PersistentCalls:
@@ -1229,7 +1229,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 0
+  m_Interactable: 1
   m_TargetGraphic: {fileID: 367589714}
   m_OnClick:
     m_PersistentCalls:
@@ -1682,7 +1682,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 0
+  m_Interactable: 1
   m_TargetGraphic: {fileID: 477368919}
   m_OnClick:
     m_PersistentCalls:
@@ -1725,6 +1725,71 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 477368916}
   m_CullTransparentMesh: 1
+--- !u!1 &541513246
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 541513247}
+  - component: {fileID: 541513248}
+  m_Layer: 5
+  m_Name: InteractingScript
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &541513247
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 541513246}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2097654932}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &541513248
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 541513246}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a6ea5dfa89642b46aa8f19be2464897, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InventoryUIController
+  rows: 4
+  columns: 3
+  allButtons:
+  - {fileID: 216060579}
+  - {fileID: 1308305621}
+  - {fileID: 2143857112}
+  - {fileID: 367589713}
+  - {fileID: 477368918}
+  - {fileID: 1625387554}
+  - {fileID: 214195861}
+  - {fileID: 2080554083}
+  - {fileID: 176769219}
+  - {fileID: 55729136}
+  - {fileID: 1318816619}
+  - {fileID: 1130798471}
+  moveThreshold: 0.5
+  moveCooldown: 0.25
 --- !u!1001 &557705308
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2207,7 +2272,7 @@ GameObject:
   m_Component:
   - component: {fileID: 614518687}
   m_Layer: 5
-  m_Name: InventorySlot (2)
+  m_Name: InventorySlot 3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2650,16 +2715,16 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1231354547}
-  - {fileID: 1396887656}
-  - {fileID: 1005360811}
-  - {fileID: 1062350608}
   - {fileID: 1245630532}
-  - {fileID: 1364906781}
-  - {fileID: 1532941673}
-  - {fileID: 1826976028}
   - {fileID: 614518687}
-  - {fileID: 2141491964}
+  - {fileID: 1005360811}
+  - {fileID: 1532941673}
   - {fileID: 1799607161}
+  - {fileID: 1396887656}
+  - {fileID: 1364906781}
+  - {fileID: 2141491964}
+  - {fileID: 1062350608}
+  - {fileID: 1826976028}
   - {fileID: 1997505729}
   m_Father: {fileID: 2097654932}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2798,7 +2863,34 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InventoryUI
   inventoryGameObject: {fileID: 2097654931}
   inventoryKey: 105
-  inventoryButton: 
+  inventoryButton: Xbox Y Button
+  slideDuration: 0.4
+  disabledPosition: {x: -100, y: -200}
+  enabledPosition: {x: -100, y: 120}
+  slideCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!4 &847307848
 Transform:
   m_ObjectHideFlags: 0
@@ -2886,7 +2978,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1005360811}
   m_Layer: 5
-  m_Name: InventorySlot (3)
+  m_Name: InventorySlot 4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2923,7 +3015,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1062350608}
   m_Layer: 5
-  m_Name: InventorySlot (7)
+  m_Name: InventorySlot 10
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3363,7 +3455,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 0
+  m_Interactable: 1
   m_TargetGraphic: {fileID: 1130798472}
   m_OnClick:
     m_PersistentCalls:
@@ -3416,7 +3508,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1231354547}
   m_Layer: 5
-  m_Name: InventorySlot
+  m_Name: InventorySlot 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3648,7 +3740,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1245630532}
   m_Layer: 5
-  m_Name: InventorySlot (1)
+  m_Name: InventorySlot 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3873,7 +3965,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 0
+  m_Interactable: 1
   m_TargetGraphic: {fileID: 1308305622}
   m_OnClick:
     m_PersistentCalls:
@@ -3994,7 +4086,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 0
+  m_Interactable: 1
   m_TargetGraphic: {fileID: 1318816620}
   m_OnClick:
     m_PersistentCalls:
@@ -4170,7 +4262,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1364906781}
   m_Layer: 5
-  m_Name: InventorySlot (10)
+  m_Name: InventorySlot 8
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4207,7 +4299,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1396887656}
   m_Layer: 5
-  m_Name: InventorySlot (6)
+  m_Name: InventorySlot 7
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4591,7 +4683,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1532941673}
   m_Layer: 5
-  m_Name: InventorySlot (5)
+  m_Name: InventorySlot 5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4802,7 +4894,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 0
+  m_Interactable: 1
   m_TargetGraphic: {fileID: 1625387555}
   m_OnClick:
     m_PersistentCalls:
@@ -4972,7 +5064,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -5113,7 +5205,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1799607161}
   m_Layer: 5
-  m_Name: InventorySlot (4)
+  m_Name: InventorySlot 6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5150,7 +5242,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1826976028}
   m_Layer: 5
-  m_Name: InventorySlot (8)
+  m_Name: InventorySlot 11
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5439,7 +5531,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1997505729}
   m_Layer: 5
-  m_Name: InventorySlot (11)
+  m_Name: InventorySlot 12
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5777,7 +5869,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 0
+  m_Interactable: 1
   m_TargetGraphic: {fileID: 2080554084}
   m_OnClick:
     m_PersistentCalls:
@@ -5851,6 +5943,7 @@ RectTransform:
   m_Children:
   - {fileID: 783268374}
   - {fileID: 1677386982}
+  - {fileID: 541513247}
   m_Father: {fileID: 1530156516}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
@@ -6064,7 +6157,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2141491964}
   m_Layer: 5
-  m_Name: InventorySlot (9)
+  m_Name: InventorySlot 9
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6169,7 +6262,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 0
+  m_Interactable: 1
   m_TargetGraphic: {fileID: 2143857113}
   m_OnClick:
     m_PersistentCalls:
