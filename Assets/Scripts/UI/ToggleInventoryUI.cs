@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class InventoryUI : MonoBehaviour
+public class ToggleInventoryUI : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private GameObject inventoryGameObject;
@@ -31,11 +31,11 @@ public class InventoryUI : MonoBehaviour
     {
         if (Input.GetKeyDown(inventoryKey) || Input.GetButtonDown(inventoryButton))
         {
-            ToggleInventoryUI();
+            ToggleInventory();
         }
     }
 
-    private void ToggleInventoryUI()
+    private void ToggleInventory()
     {
         if (slideRoutine != null)
         {
