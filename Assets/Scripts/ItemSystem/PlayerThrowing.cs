@@ -56,7 +56,10 @@ public class PlayerThrowing : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        HandleCharging();
+        if (Time.timeScale != 0f)
+        {
+            HandleCharging();
+        }
     }
 
     private void HandleCharging()
