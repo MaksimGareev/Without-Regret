@@ -17,9 +17,7 @@ public class InventoryUIController : MonoBehaviour
     private Button[,] slotButtons;
     private int selectedRow = 0;
     private int selectedColumn = 0;
-
     private float moveTimer = 0f;
-
     private PlayerEquipItem playerEquipItem;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
