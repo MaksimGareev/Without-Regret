@@ -13,7 +13,7 @@ OcclusionCullingSettings:
 --- !u!104 &2
 RenderSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 9
+  serializedVersion: 10
   m_Fog: 0
   m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   m_FogMode: 3
@@ -42,8 +42,8 @@ RenderSettings:
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 12
-  m_GIWorkflowMode: 1
+  serializedVersion: 13
+  m_BakeOnSceneLoad: 0
   m_GISettings:
     serializedVersion: 2
     m_BounceScale: 1
@@ -66,9 +66,6 @@ LightmapSettings:
     m_LightmapParameters: {fileID: 0}
     m_LightmapsBakeMode: 1
     m_TextureCompression: 1
-    m_FinalGather: 0
-    m_FinalGatherFiltering: 1
-    m_FinalGatherRayCount: 256
     m_ReflectionCompression: 2
     m_MixedBakeMode: 2
     m_BakeBackend: 1
@@ -96,7 +93,7 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
-  m_LightingDataAsset: {fileID: 0}
+  m_LightingDataAsset: {fileID: 20201, guid: 0000000000000000f000000000000000, type: 0}
   m_LightingSettings: {fileID: 0}
 --- !u!196 &4
 NavMeshSettings:
@@ -122,6 +119,108 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &18038470 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7723209263034436145, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
+  m_PrefabInstance: {fileID: 3373101365994277207}
+  m_PrefabAsset: {fileID: 0}
+--- !u!82 &18038473
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 18038470}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &26101546
 GameObject:
   m_ObjectHideFlags: 0
@@ -197,6 +296,11 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -218,6 +322,7 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
@@ -436,15 +541,17 @@ MonoBehaviour:
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
-  m_enableWordWrapping: 1
+  m_TextWrappingMode: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 1
+  m_ActiveFontFeatures: 00000000
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
+  m_EmojiFallbackSupport: 1
   m_parseCtrlCharacters: 1
   m_isOrthographic: 1
   m_isCullingEnabled: 0
@@ -542,6 +649,11 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -563,6 +675,7 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
@@ -779,7 +892,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: e2fafe4e588916242b6f8214a373c461, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -888,10 +1001,10 @@ Rigidbody:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 494880814}
-  serializedVersion: 4
+  serializedVersion: 5
   m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -947,6 +1060,11 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -968,6 +1086,7 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
@@ -1053,6 +1172,11 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -1074,6 +1198,7 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
@@ -1193,6 +1318,11 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -1214,6 +1344,7 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
@@ -1299,6 +1430,11 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -1320,6 +1456,7 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
@@ -1441,6 +1578,11 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -1462,6 +1604,7 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
@@ -1700,6 +1843,11 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -1721,6 +1869,7 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
@@ -1799,7 +1948,6 @@ CharacterController:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -1817,10 +1965,10 @@ Rigidbody:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1339883336}
-  serializedVersion: 4
+  serializedVersion: 5
   m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -1877,6 +2025,11 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -1898,6 +2051,7 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
@@ -2011,6 +2165,11 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -2032,6 +2191,7 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
@@ -2167,6 +2327,11 @@ MonoBehaviour:
   DialogueText: {fileID: 0}
   ChoicesContainer: {fileID: 1817796443}
   ChoiceButton: {fileID: 0}
+  TypingAudioSource: {fileID: 0}
+  letterClips: []
+  uiAudioSource: {fileID: 0}
+  moveClip: {fileID: 0}
+  confirmClip: {fileID: 0}
 --- !u!1 &1577429169
 GameObject:
   m_ObjectHideFlags: 0
@@ -2226,6 +2391,11 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -2247,6 +2417,7 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
@@ -2286,6 +2457,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_SerializedVersion: 0
   m_AgentTypeID: 0
   m_CollectObjects: 0
   m_Size: {x: 10, y: 10, z: 10}
@@ -2381,6 +2553,11 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -2402,6 +2579,7 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
@@ -2529,15 +2707,17 @@ MonoBehaviour:
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
-  m_enableWordWrapping: 1
+  m_TextWrappingMode: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 1
+  m_ActiveFontFeatures: 00000000
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
+  m_EmojiFallbackSupport: 1
   m_parseCtrlCharacters: 1
   m_isOrthographic: 1
   m_isCullingEnabled: 0
@@ -2588,9 +2768,8 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1767740442}
   m_Enabled: 1
-  serializedVersion: 10
+  serializedVersion: 11
   m_Type: 1
-  m_Shape: 0
   m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
   m_Intensity: 1
   m_Range: 10
@@ -2640,8 +2819,12 @@ Light:
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
+  m_ForceVisible: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
+  m_LightUnit: 1
+  m_LuxAtDistance: 1
+  m_EnableSpotReflector: 1
 --- !u!4 &1767740444
 Transform:
   m_ObjectHideFlags: 0
@@ -2744,6 +2927,11 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -2765,6 +2953,7 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
@@ -3137,10 +3326,125 @@ PrefabInstance:
       propertyPath: ChoicesContainer
       value: 
       objectReference: {fileID: 1828280033}
+    - target: {fileID: 7951233116101154460, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
+      propertyPath: TypingAudioSource
+      value: 
+      objectReference: {fileID: 18038473}
+    - target: {fileID: 7951233116101154460, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
+      propertyPath: letterClips.Array.size
+      value: 26
+      objectReference: {fileID: 0}
+    - target: {fileID: 7951233116101154460, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
+      propertyPath: 'letterClips.Array.data[0]'
+      value: 
+      objectReference: {fileID: 8300000, guid: 46955f2bd3e9e2e49b5658667a378641, type: 3}
+    - target: {fileID: 7951233116101154460, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
+      propertyPath: 'letterClips.Array.data[1]'
+      value: 
+      objectReference: {fileID: 8300000, guid: 819559db03543bc4287e1f189f0e109f, type: 3}
+    - target: {fileID: 7951233116101154460, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
+      propertyPath: 'letterClips.Array.data[2]'
+      value: 
+      objectReference: {fileID: 8300000, guid: aaf4060807f6fa24abd31c950175a521, type: 3}
+    - target: {fileID: 7951233116101154460, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
+      propertyPath: 'letterClips.Array.data[3]'
+      value: 
+      objectReference: {fileID: 8300000, guid: a691510fecaf7434e8bd69bc66900843, type: 3}
+    - target: {fileID: 7951233116101154460, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
+      propertyPath: 'letterClips.Array.data[4]'
+      value: 
+      objectReference: {fileID: 8300000, guid: d89e4bb3dbe4edc4a94d9a9919013157, type: 3}
+    - target: {fileID: 7951233116101154460, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
+      propertyPath: 'letterClips.Array.data[5]'
+      value: 
+      objectReference: {fileID: 8300000, guid: 9308a6a27b69bf64aa21f962cb0152f3, type: 3}
+    - target: {fileID: 7951233116101154460, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
+      propertyPath: 'letterClips.Array.data[6]'
+      value: 
+      objectReference: {fileID: 8300000, guid: 4c9ad18aafa5c5143b96cb7381d41320, type: 3}
+    - target: {fileID: 7951233116101154460, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
+      propertyPath: 'letterClips.Array.data[7]'
+      value: 
+      objectReference: {fileID: 8300000, guid: e0015f457448bf34bbfb395d10f5d668, type: 3}
+    - target: {fileID: 7951233116101154460, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
+      propertyPath: 'letterClips.Array.data[8]'
+      value: 
+      objectReference: {fileID: 8300000, guid: a872efef4b5679d4db24e4ad6f8e87ff, type: 3}
+    - target: {fileID: 7951233116101154460, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
+      propertyPath: 'letterClips.Array.data[9]'
+      value: 
+      objectReference: {fileID: 8300000, guid: 556b1a53ce9d8cb4099a5ba394f323cb, type: 3}
+    - target: {fileID: 7951233116101154460, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
+      propertyPath: 'letterClips.Array.data[10]'
+      value: 
+      objectReference: {fileID: 8300000, guid: 2529a61beb8c7fb4893f23baf083b06d, type: 3}
+    - target: {fileID: 7951233116101154460, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
+      propertyPath: 'letterClips.Array.data[11]'
+      value: 
+      objectReference: {fileID: 8300000, guid: 26130b26759e78b4bbcf6207cba139a6, type: 3}
+    - target: {fileID: 7951233116101154460, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
+      propertyPath: 'letterClips.Array.data[12]'
+      value: 
+      objectReference: {fileID: 8300000, guid: fa6031b9ef64332448493399e3e2f7f6, type: 3}
+    - target: {fileID: 7951233116101154460, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
+      propertyPath: 'letterClips.Array.data[13]'
+      value: 
+      objectReference: {fileID: 8300000, guid: 62b98757c59c18645a42d3e4290500fd, type: 3}
+    - target: {fileID: 7951233116101154460, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
+      propertyPath: 'letterClips.Array.data[14]'
+      value: 
+      objectReference: {fileID: 8300000, guid: 2729319e4f040654f8b20c6e93071faa, type: 3}
+    - target: {fileID: 7951233116101154460, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
+      propertyPath: 'letterClips.Array.data[15]'
+      value: 
+      objectReference: {fileID: 8300000, guid: c3815ecac8ea0064a9dcd7afb457ac58, type: 3}
+    - target: {fileID: 7951233116101154460, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
+      propertyPath: 'letterClips.Array.data[16]'
+      value: 
+      objectReference: {fileID: 8300000, guid: 3c798708f72c0af4b9e9a1a317a5fe1f, type: 3}
+    - target: {fileID: 7951233116101154460, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
+      propertyPath: 'letterClips.Array.data[17]'
+      value: 
+      objectReference: {fileID: 8300000, guid: 9f52c5be08620df46a7c2c3cc688b164, type: 3}
+    - target: {fileID: 7951233116101154460, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
+      propertyPath: 'letterClips.Array.data[18]'
+      value: 
+      objectReference: {fileID: 8300000, guid: de8d0ea98eb730e4ba7838866e785446, type: 3}
+    - target: {fileID: 7951233116101154460, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
+      propertyPath: 'letterClips.Array.data[19]'
+      value: 
+      objectReference: {fileID: 8300000, guid: 3c0f246f9c7e7c443974955c8d55994f, type: 3}
+    - target: {fileID: 7951233116101154460, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
+      propertyPath: 'letterClips.Array.data[20]'
+      value: 
+      objectReference: {fileID: 8300000, guid: cdab79f2d7c499c4f8cb5469298560ea, type: 3}
+    - target: {fileID: 7951233116101154460, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
+      propertyPath: 'letterClips.Array.data[21]'
+      value: 
+      objectReference: {fileID: 8300000, guid: dd9e75e2e4f15b046b0c1759a3f88341, type: 3}
+    - target: {fileID: 7951233116101154460, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
+      propertyPath: 'letterClips.Array.data[22]'
+      value: 
+      objectReference: {fileID: 8300000, guid: c495feb21ad1c874c93a028afd5fc660, type: 3}
+    - target: {fileID: 7951233116101154460, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
+      propertyPath: 'letterClips.Array.data[23]'
+      value: 
+      objectReference: {fileID: 8300000, guid: 8ed2059ad466229498e7818dec6cd21e, type: 3}
+    - target: {fileID: 7951233116101154460, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
+      propertyPath: 'letterClips.Array.data[24]'
+      value: 
+      objectReference: {fileID: 8300000, guid: 727dfede81bdee44d9228ba063291c4d, type: 3}
+    - target: {fileID: 7951233116101154460, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
+      propertyPath: 'letterClips.Array.data[25]'
+      value: 
+      objectReference: {fileID: 8300000, guid: 2ac35b0aca60abd40a465433a835605f, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7723209263034436145, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 18038473}
   m_SourcePrefab: {fileID: 100100000, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
 --- !u!1001 &3483696165192494201
 PrefabInstance:
