@@ -196,6 +196,7 @@ GameObject:
   - component: {fileID: 7147037502482933178}
   - component: {fileID: 6369621648110085496}
   - component: {fileID: 937434756003880922}
+  - component: {fileID: 771315798553256207}
   m_Layer: 3
   m_Name: Player
   m_TagString: Player
@@ -459,6 +460,7 @@ MonoBehaviour:
   throwOrigin: {fileID: 7354983856930337315}
   playerCamera: {fileID: 0}
   powerSlider: {fileID: 0}
+  playerEquipItem: {fileID: 0}
   minThrowForce: 1
   maxThrowForce: 10
   upwardForce: 2
@@ -492,6 +494,22 @@ MonoBehaviour:
   inventory: {fileID: 6369621648110085496}
   pickupKey: 101
   pickupButton: Xbox X Button
+--- !u!114 &771315798553256207
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5675321481151379428}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 887097a799be45c4486ab74a4b5ff2fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerEquipItem
+  playerThrowing: {fileID: 7147037502482933178}
+  equippableItemPrefabs:
+  - {fileID: 674867072477469486, guid: 8012a6fb752d12c408bf4d6db4b361a3, type: 3}
+  equipGameObject: {fileID: 7826200252848409900}
 --- !u!1 &7826200252848409900
 GameObject:
   m_ObjectHideFlags: 0

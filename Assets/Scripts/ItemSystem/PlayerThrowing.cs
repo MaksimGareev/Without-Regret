@@ -12,6 +12,7 @@ public class PlayerThrowing : MonoBehaviour
     [SerializeField] private Transform throwOrigin;
     [SerializeField] private Camera playerCamera;
     [SerializeField] private Slider powerSlider;
+    [SerializeField] private PlayerEquipItem playerEquipItem;
     
     [Header("Throw Settings")]
     [SerializeField] private float minThrowForce = 1f;
@@ -39,6 +40,11 @@ public class PlayerThrowing : MonoBehaviour
         }
 
         chargeKeyInt = (int)chargeKey;
+
+        if (playerEquipItem == null)
+        {
+            playerEquipItem = GetComponent<PlayerEquipItem>();
+        }
     }
     private void Awake()
     {
@@ -56,7 +62,7 @@ public class PlayerThrowing : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        if (Time.timeScale != 0f)
+        if (Time.timeScale != 0f && playerEquipItem.throwableEquipped)
         {
             HandleCharging();
         }
