@@ -413,7 +413,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 83123988}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
@@ -990,7 +990,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 245764138}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
@@ -1316,7 +1316,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 387731443}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
@@ -1391,7 +1391,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 393954402}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
@@ -1775,7 +1775,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InventoryUIController
   rows: 4
   columns: 3
-  allButtons:
+  buttons:
   - {fileID: 216060579}
   - {fileID: 1308305621}
   - {fileID: 2143857112}
@@ -1788,8 +1788,10 @@ MonoBehaviour:
   - {fileID: 55729136}
   - {fileID: 1318816619}
   - {fileID: 1130798471}
+  emptySlotSprite: {fileID: 21300000, guid: 0af6e13274fef6e409180ede50b64bca, type: 3}
   moveThreshold: 0.5
   moveCooldown: 0.25
+  showDebugLogs: 0
 --- !u!1001 &557705308
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1863,6 +1865,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
+--- !u!1 &558813058 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7826200252848409900, guid: dc60125b78695de43a450852f8101d10, type: 3}
+  m_PrefabInstance: {fileID: 2956753307949557009}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &578695355
 GameObject:
   m_ObjectHideFlags: 0
@@ -1907,7 +1914,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 578695355}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
@@ -2231,7 +2238,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 611547528}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
@@ -2832,80 +2839,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 975880bb2e5406145b377ee649fec541, type: 3}
---- !u!1 &847307846
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 847307848}
-  - component: {fileID: 847307847}
-  m_Layer: 0
-  m_Name: UIManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &847307847
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 847307846}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 80d9e08308c65754b95fe5708dd4534d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::InventoryUI
-  inventoryGameObject: {fileID: 2097654931}
-  inventoryKey: 105
-  inventoryButton: Xbox Y Button
-  slideDuration: 0.4
-  disabledPosition: {x: -100, y: -200}
-  enabledPosition: {x: -100, y: 120}
-  slideCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
---- !u!4 &847307848
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 847307846}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 700.245, y: 138.03406, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &885286113
 GameObject:
   m_ObjectHideFlags: 0
@@ -3086,7 +3019,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1070014895}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
@@ -3161,7 +3094,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1079570572}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
@@ -3699,7 +3632,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1239987847}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
@@ -4785,7 +4718,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1580529307}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
@@ -4981,7 +4914,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1636980385}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
@@ -5490,7 +5423,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1957108274}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
@@ -5928,7 +5861,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &2097654932
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6471,6 +6404,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 771315798553256207, guid: dc60125b78695de43a450852f8101d10, type: 3}
+      propertyPath: equipTransform
+      value: 
+      objectReference: {fileID: 558813058}
     - target: {fileID: 878993099091267819, guid: dc60125b78695de43a450852f8101d10, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.1
@@ -6511,10 +6448,34 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 937434756003880922, guid: dc60125b78695de43a450852f8101d10, type: 3}
+      propertyPath: interactingScript
+      value: 
+      objectReference: {fileID: 541513246}
     - target: {fileID: 1566633728491210951, guid: dc60125b78695de43a450852f8101d10, type: 3}
       propertyPath: rhythmSlider
       value: 
       objectReference: {fileID: 1350859570}
+    - target: {fileID: 5657707268177514977, guid: dc60125b78695de43a450852f8101d10, type: 3}
+      propertyPath: enabledPosition.x
+      value: -100
+      objectReference: {fileID: 0}
+    - target: {fileID: 5657707268177514977, guid: dc60125b78695de43a450852f8101d10, type: 3}
+      propertyPath: enabledPosition.y
+      value: 120
+      objectReference: {fileID: 0}
+    - target: {fileID: 5657707268177514977, guid: dc60125b78695de43a450852f8101d10, type: 3}
+      propertyPath: disabledPosition.x
+      value: -100
+      objectReference: {fileID: 0}
+    - target: {fileID: 5657707268177514977, guid: dc60125b78695de43a450852f8101d10, type: 3}
+      propertyPath: disabledPosition.y
+      value: -100
+      objectReference: {fileID: 0}
+    - target: {fileID: 5657707268177514977, guid: dc60125b78695de43a450852f8101d10, type: 3}
+      propertyPath: inventoryGameObject
+      value: 
+      objectReference: {fileID: 2097654931}
     - target: {fileID: 5675321481151379428, guid: dc60125b78695de43a450852f8101d10, type: 3}
       propertyPath: m_Name
       value: Player
@@ -7197,4 +7158,3 @@ SceneRoots:
   - {fileID: 837538880}
   - {fileID: 115146530}
   - {fileID: 557705308}
-  - {fileID: 847307848}

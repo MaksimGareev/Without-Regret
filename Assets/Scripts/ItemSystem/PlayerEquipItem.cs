@@ -3,48 +3,56 @@ using UnityEngine;
 public class PlayerEquipItem : MonoBehaviour
 {
     [Header("References")]
-    [SerializeField] private PlayerThrowing playerThrowing;
-    [SerializeField] private GameObject[] equippableItemPrefabs;
-    [SerializeField] private GameObject equipGameObject;
-
-    private int equippedItemIndex = -1;
+    [SerializeField] private GameObject equipTransform;
+    private ItemData currentEquippedItem;
     private GameObject equippedItemInstance;
 
+    [Header("Debugging")]
+    [SerializeField] private bool showDebugLogs = false;
+    
     public bool throwableEquipped { get; private set; } = false;
 
-    public void EquipItem(int slotIndex)
+    public void EquipItem(ItemData itemToEquip)
     {
-        if (slotIndex < 0 || slotIndex >= equippableItemPrefabs.Length)
-        {
-            Debug.LogWarning($"Invalid equip index {slotIndex}");
-            return;
-        }
-
-        // UnequipItem if clicked again in inventory.
-        if (equippedItemIndex == slotIndex)
+        // UnequipItem if clicked on empty slot
+        if (itemToEquip == null)
         {
             UnequipItem();
             return;
         }
 
-        // Unequip any currently equipped item before equipping a new item.
+        // UnequipItem if clicked on the same slot as currently equipped item
+        if (itemToEquip == currentEquippedItem)
+        {
+            UnequipItem();
+            return;
+        }
+
         if (equippedItemInstance != null)
         {
             Destroy(equippedItemInstance);
         }
 
         // Equip new item
-        GameObject newItem = Instantiate(equippableItemPrefabs[slotIndex], equipGameObject.transform);
-        newItem.transform.localPosition = Vector3.zero;
-        newItem.transform.localRotation = Quaternion.identity;
-        equippedItemInstance = newItem;
-        equippedItemIndex = slotIndex;
+        if (itemToEquip.Prefab != null)
+        {
+            equippedItemInstance = Instantiate(itemToEquip.Prefab, equipTransform.transform);
+            equippedItemInstance.transform.localPosition = Vector3.zero;
+            equippedItemInstance.transform.localRotation = Quaternion.identity;
+            currentEquippedItem = itemToEquip;
+        }
+        else
+        {
+            equippedItemInstance = null;
+        }
 
-        // Check if item is throwable
-        var itemData = newItem.GetComponent<ItemData>();
-        throwableEquipped = (itemData != null && itemData.ItemType == ItemType.ThrowableItem);
+        // Check if the item is throwable
+        throwableEquipped = itemToEquip != null && itemToEquip.ItemType == ItemType.ThrowableItem;
 
-        Debug.Log($"Equipping item from slot {slotIndex}, throwable = {throwableEquipped}");
+        if (showDebugLogs)
+        {
+            Debug.Log($"Equipped {itemToEquip.name}. Throwable = {throwableEquipped}");
+        }
     }
     
     public void UnequipItem()
@@ -55,9 +63,12 @@ public class PlayerEquipItem : MonoBehaviour
             equippedItemInstance = null;
         }
 
-        equippedItemIndex = -1;
+        currentEquippedItem = null;
         throwableEquipped = false;
 
-        Debug.Log("Unequipped current item.");
+        if (showDebugLogs)
+        {
+            Debug.Log("Unequipped current item.");
+        }
     }
 }

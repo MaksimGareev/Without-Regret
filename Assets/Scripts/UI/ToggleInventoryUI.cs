@@ -14,7 +14,10 @@ public class ToggleInventoryUI : MonoBehaviour
     [SerializeField] private Vector2 enabledPosition = new Vector2(0, 0f);
     [SerializeField] private AnimationCurve slideCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
 
-    private bool isEnabled = false;
+    [Header("Debugging")]
+    [SerializeField] private bool showDebugLogs = false;
+
+    public bool isEnabled { get; private set; } = false;
     private RectTransform rectTransform;
     private Coroutine slideRoutine;
 
@@ -45,7 +48,7 @@ public class ToggleInventoryUI : MonoBehaviour
         isEnabled = !isEnabled;
         slideRoutine = StartCoroutine(SlideInventory(isEnabled));
     }
-    
+
     private IEnumerator SlideInventory(bool enabled)
     {
         if (enabled)
@@ -66,8 +69,8 @@ public class ToggleInventoryUI : MonoBehaviour
         }
 
         rectTransform.anchoredPosition = endPosition;
-        
-        if(!enabled)
+
+        if (!enabled)
         {
             inventoryGameObject.SetActive(false);
         }

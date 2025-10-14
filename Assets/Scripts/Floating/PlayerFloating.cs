@@ -22,11 +22,14 @@ public class PlayerFloating : MonoBehaviour
     [SerializeField] private float rhythmWindow = 0.3f;
     [SerializeField] private float rhythmInterval = 1f;
 
-    // internals
+    [Header("Debugging")]
+    [SerializeField] private bool showDebugLogs = false;
+
     private Rigidbody rb;
     private PlayerController playerController;
     private CharacterController charController;
     private Camera playerCamera;
+    private ToggleInventoryUI toggleInventoryUI;
 
     private bool isFloating = false;
     private float floatTimer = 0f;
@@ -35,8 +38,7 @@ public class PlayerFloating : MonoBehaviour
     private float rhythmTimer = 0f;
     private float hoverTargetY;
 
-    // smoothing state
-    private Vector3 currentMove = Vector3.zero; // world-space horizontal velocity (x,z)
+    private Vector3 currentMove = Vector3.zero;
     private Vector3 targetMove = Vector3.zero;
 
     private bool prevRbUseGravity;
@@ -48,6 +50,7 @@ public class PlayerFloating : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         playerController = GetComponent<PlayerController>();
         charController = GetComponent<CharacterController>();
+        toggleInventoryUI = GetComponent<ToggleInventoryUI>();
         playerCamera = Camera.main;
     }
 
@@ -58,7 +61,7 @@ public class PlayerFloating : MonoBehaviour
 
     private void Update()
     {
-        if (Time.timeScale != 0f)
+        if (Time.timeScale != 0f || !toggleInventoryUI.isEnabled) 
         {
             HandleCooldown();
 
@@ -149,7 +152,10 @@ public class PlayerFloating : MonoBehaviour
         if (floatTimer >= floatDuration)
         {
             StopFloating();
-            Debug.Log("Floating ended: ran out of time");
+            if (showDebugLogs)
+            {
+                Debug.Log("Floating ended: ran out of time");
+            }
             return;
         }
 
@@ -160,18 +166,27 @@ public class PlayerFloating : MonoBehaviour
             {
                 rhythmTimer = 0f;
                 if (rhythmSlider != null) rhythmSlider.value = 0f;
-                Debug.Log("Floating Rhythm Success");
+                if (showDebugLogs)
+                {
+                    Debug.Log("Floating Rhythm Success");
+                }
             }
             else
             {
-                Debug.Log("Floating failed: missed timing");
+                if (showDebugLogs)
+                {
+                    Debug.Log("Floating failed: missed timing");
+                }
                 StopFloating();
             }
         }
 
         if (rhythmTimer >= rhythmInterval + rhythmWindow)
         {
-            Debug.Log("Floating failed: missed timing");
+            if (showDebugLogs)
+            {
+                Debug.Log("Floating failed: missed timing");
+            }
             StopFloating();
         }
     }
