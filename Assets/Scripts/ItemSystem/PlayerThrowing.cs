@@ -15,6 +15,7 @@ public class PlayerThrowing : MonoBehaviour
     [SerializeField] private PlayerEquipItem playerEquipItem;
     [SerializeField] private GameObject interactingScript;
     private InventoryUIController inventoryUI;
+    private ToggleInventoryUI inventoryToggle;
     
     [Header("Throw Settings")]
     [SerializeField] private float minThrowForce = 1f;
@@ -64,12 +65,17 @@ public class PlayerThrowing : MonoBehaviour
         {
             inventoryUI = interactingScript.GetComponent<InventoryUIController>();
         }
+
+        if (inventoryToggle == null)
+        {
+            inventoryToggle = GetComponent<ToggleInventoryUI>();
+        }
     }
 
     // Update is called once per frame
     private void Update()
     {
-        if (Time.timeScale != 0f && playerEquipItem.throwableEquipped)
+        if (Time.timeScale != 0f && playerEquipItem.throwableEquipped && !inventoryToggle.isEnabled)
         {
             HandleCharging();
         }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -80,7 +81,10 @@ public class InventoryUIController : MonoBehaviour
                     slotButtons[row, col] = buttons[index];
                     slotIcons[row, col] = slotButtons[row, col].transform.Find("Icon").GetComponent<Image>();
 
-                    slotButtons[row, col].onClick.AddListener(() => OnSlotClicked(row, col, index));
+                    int capturedRow = row;
+                    int capturedCol = col;
+
+                    slotButtons[row, col].onClick.AddListener(() => OnSlotClicked(capturedRow, capturedCol, index));
 
                     index++;
                 }
@@ -181,7 +185,7 @@ public class InventoryUIController : MonoBehaviour
             moveTimer = moveCooldown;
         }
 
-        if (Input.GetButtonDown("Submit"))
+        if (Input.GetButtonDown("Xbox A Button"))
         {
             OnSlotClicked(selectedRow, selectedColumn, selectedRow * columns + selectedColumn);
         }
