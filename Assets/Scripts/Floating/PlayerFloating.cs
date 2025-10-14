@@ -61,13 +61,13 @@ public class PlayerFloating : MonoBehaviour
 
     private void Update()
     {
-        if (Time.timeScale != 0f || !toggleInventoryUI.isEnabled) 
+        if (Time.timeScale != 0f) 
         {
             HandleCooldown();
 
             if (!isCoolingDown)
             {
-                if (!isFloating && (Input.GetKeyDown(floatKey) || Input.GetButtonDown(floatButton)))
+                if (!isFloating && !toggleInventoryUI.isEnabled && (Input.GetKeyDown(floatKey) || Input.GetButtonDown(floatButton)))
                 {
                     StartFloating();
                 }
@@ -159,7 +159,7 @@ public class PlayerFloating : MonoBehaviour
             return;
         }
 
-        if (Input.GetKeyDown(floatKey) || Input.GetButtonDown(floatButton))
+        if ((Input.GetKeyDown(floatKey) || Input.GetButtonDown(floatButton)) && !toggleInventoryUI.isEnabled)
         {
             float errorMargin = Mathf.Min(rhythmTimer, rhythmInterval - rhythmTimer);
             if (errorMargin <= rhythmWindow)
