@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -8,53 +10,130 @@ public class InventoryUIController : MonoBehaviour
     [Header("Grid Settings")]
     [SerializeField] private int rows = 4;
     [SerializeField] private int columns = 3;
-    [SerializeField] private Button[] allButtons;
+    [SerializeField] private Button[] buttons;
+    [SerializeField] private Sprite emptySlotSprite;
 
     [Header("Input Settings")]
     [SerializeField] private float moveThreshold = 0.5f;
     [SerializeField] private float moveCooldown = 0.25f;
 
+    [Header("Debugging")]
+    [SerializeField] private bool showDebugLogs = false;
+
     private Button[,] slotButtons;
+    private Image[,] slotIcons;
+    private ItemData[,] slotItems;
+
     private int selectedRow = 0;
     private int selectedColumn = 0;
     private float moveTimer = 0f;
+    
     private PlayerEquipItem playerEquipItem;
+    private Inventory inventory;
 
-    void Start()
+    private void Awake()
     {
-        if (allButtons.Length != rows * columns)
-        {
-            Debug.LogWarning($"InventoryUIController: Expected {rows * columns} buttons, found {allButtons.Length}.");
-        }
 
-        slotButtons = new Button[rows, columns];
-        int index = 0;
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
 
-        for (int row = 0; row < rows; row++)
-        {
-            for (int col = 0; col < columns; col++)
-            {
-                if (index < allButtons.Length)
-                {
-                    slotButtons[row, col] = allButtons[index];
-                    int currentRow = row;
-                    int currentCol = col;
-                    int slotIndex = index;
+        playerEquipItem = player?.GetComponent<PlayerEquipItem>();
+        inventory = player?.GetComponent<Inventory>();
 
-                    slotButtons[row, col].onClick.AddListener(() => OnSlotClicked(currentRow, currentCol, slotIndex));
-                    index++;
-                }
-            }
-        }
-        
-        playerEquipItem = GameObject.FindGameObjectWithTag("Player")?.GetComponent<PlayerEquipItem>();
-        HighlightSelectedSlot();
+        InitializeSlots();
+        RefreshInventoryUI();
+    }
+
+    private void OnEnable()
+    {
+        RefreshInventoryUI();
+    }
+
+    private void Start()
+    {
+        RefreshInventoryUI();
     }
 
     // Update is called once per frame
     void Update()
     {
         HandleControllerInput();
+    }
+
+    private void InitializeSlots()
+    {
+        if (buttons.Length != rows * columns && showDebugLogs)
+        {
+            Debug.LogWarning($"InventoryUIController: Expected {rows * columns} buttons, found {buttons.Length}.");
+        }
+
+        slotButtons = new Button[rows, columns];
+        slotIcons = new Image[rows, columns];
+        slotItems = new ItemData[rows, columns];
+
+        int index = 0;
+        for (int row = 0; row < rows; row++)
+        {
+            for (int col = 0; col < columns; col++)
+            {
+                if (index < buttons.Length)
+                {
+                    slotButtons[row, col] = buttons[index];
+                    slotIcons[row, col] = slotButtons[row, col].transform.Find("Icon").GetComponent<Image>();
+
+                    slotButtons[row, col].onClick.AddListener(() => OnSlotClicked(row, col, index));
+
+                    index++;
+                }
+            }
+        }
+    }
+
+    public void RefreshInventoryUI()
+    {
+        if (slotButtons == null)
+        {
+            InitializeSlots();
+            if (slotButtons == null)
+            {
+                Debug.LogWarning("Couldnt InitializeSlots!");
+                return;
+            }
+        }
+        if (inventory == null)
+        {
+            inventory = GameObject.FindGameObjectWithTag("Player").GetComponent<Inventory>();
+            if (inventory == null)
+            {
+                Debug.LogWarning("InventoryUIController.RefreshInventoryUI: No inventory found!");
+                return;
+            }
+        }
+
+        IReadOnlyList<ItemData> itemsList = inventory.GetItems();
+        int index = 0;
+
+        for (int row = 0; row < rows; row++)
+        {
+            for (int col = 0; col < columns; col++)
+            {
+                if (index < itemsList.Count)
+                {
+                    slotItems[row, col] = itemsList[index];
+                    slotIcons[row, col].sprite = itemsList[index].InvIcon;
+                    slotIcons[row, col].color = Color.white;
+                }
+                else
+                {
+                    slotItems[row, col] = null;
+                    slotIcons[row, col].sprite = emptySlotSprite;
+                    slotIcons[row, col].color = new Color(1, 1, 1, 0.2f);
+                }
+
+                index++;
+            }
+        }
+
+        HighlightSelectedSlot();
     }
 
     private void HandleControllerInput()
@@ -117,13 +196,24 @@ public class InventoryUIController : MonoBehaviour
 
     private void OnSlotClicked(int row, int column, int index)
     {
-        Debug.Log($"Clicked slot ({row},{column}) with index {index}");
+        ItemData clickedItem = slotItems[row, column];
 
+        if (showDebugLogs && clickedItem == null)
+        {
+            Debug.Log("Clicked an empty slot.");
+            return;
+        }
+        
         if (playerEquipItem != null)
         {
-            playerEquipItem.EquipItem(index);
+            playerEquipItem.EquipItem(clickedItem);
+
+            if (showDebugLogs)
+            {
+            Debug.Log($"Equipping item {clickedItem.name} from slot ({row},{column}) with index {index}.");
+            }
         }
-        else
+        else if (showDebugLogs)
         {
             Debug.LogWarning("No PlayerEquipItem found!");
         }
@@ -138,7 +228,7 @@ public class InventoryUIController : MonoBehaviour
                 Image slotImage = slotButtons[row, col]?.GetComponent<Image>();
                 if (slotImage != null)
                 {
-                    slotImage.color = (row == selectedRow && col == selectedColumn) ? Color.yellow : Color.white;
+                    slotImage.color = (row == selectedRow && col == selectedColumn) ? Color.gray : Color.white;
                 }
             }
         }

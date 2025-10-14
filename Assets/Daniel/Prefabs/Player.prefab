@@ -197,6 +197,7 @@ GameObject:
   - component: {fileID: 6369621648110085496}
   - component: {fileID: 937434756003880922}
   - component: {fileID: 771315798553256207}
+  - component: {fileID: 5657707268177514977}
   m_Layer: 3
   m_Name: Player
   m_TagString: Player
@@ -444,6 +445,7 @@ MonoBehaviour:
   rhythmSlider: {fileID: 0}
   rhythmWindow: 0.3
   rhythmInterval: 1
+  UIManager: {fileID: 0}
 --- !u!114 &7147037502482933178
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -510,6 +512,48 @@ MonoBehaviour:
   equippableItemPrefabs:
   - {fileID: 674867072477469486, guid: 8012a6fb752d12c408bf4d6db4b361a3, type: 3}
   equipGameObject: {fileID: 7826200252848409900}
+--- !u!114 &5657707268177514977
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5675321481151379428}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80d9e08308c65754b95fe5708dd4534d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ToggleInventoryUI
+  inventoryGameObject: {fileID: 0}
+  inventoryKey: 105
+  inventoryButton: Xbox Y Button
+  slideDuration: 0.4
+  disabledPosition: {x: 0, y: -600}
+  enabledPosition: {x: 0, y: 0}
+  slideCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &7826200252848409900
 GameObject:
   m_ObjectHideFlags: 0

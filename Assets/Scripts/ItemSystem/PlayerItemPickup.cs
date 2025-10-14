@@ -8,8 +8,15 @@ public class PlayerItemPickup : MonoBehaviour
     [SerializeField] private Inventory inventory;
     [SerializeField] private KeyCode pickupKey = KeyCode.F;
     [SerializeField] private string pickupButton = "Xbox X Button";
+    [SerializeField] private GameObject interactingScript;
+    private InventoryUIController inventoryUI;
 
     private WorldItem itemInRange;
+
+    private void Awake()
+    {
+        inventoryUI = interactingScript.GetComponent<InventoryUIController>();
+    }
 
     // Update is called once per frame
     void Update()
@@ -43,6 +50,7 @@ public class PlayerItemPickup : MonoBehaviour
     private void CollectItem(WorldItem worldItem)
     {
         inventory.AddItem(worldItem.ItemData);
+        inventoryUI.RefreshInventoryUI();
         Destroy(worldItem.gameObject);
         itemInRange = null;
     }
