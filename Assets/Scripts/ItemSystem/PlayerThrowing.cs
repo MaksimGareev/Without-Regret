@@ -13,6 +13,8 @@ public class PlayerThrowing : MonoBehaviour
     [SerializeField] private Camera playerCamera;
     [SerializeField] private Slider powerSlider;
     [SerializeField] private PlayerEquipItem playerEquipItem;
+    [SerializeField] private GameObject interactingScript;
+    private InventoryUIController inventoryUI;
     
     [Header("Throw Settings")]
     [SerializeField] private float minThrowForce = 1f;
@@ -40,11 +42,6 @@ public class PlayerThrowing : MonoBehaviour
         }
 
         chargeKeyInt = (int)chargeKey;
-
-        if (playerEquipItem == null)
-        {
-            playerEquipItem = GetComponent<PlayerEquipItem>();
-        }
     }
     private void Awake()
     {
@@ -56,6 +53,16 @@ public class PlayerThrowing : MonoBehaviour
         if (playerCamera == null)
         {
             playerCamera = Camera.main;
+        }
+
+        if (playerEquipItem == null)
+        {
+            playerEquipItem = GetComponent<PlayerEquipItem>();
+        }
+
+        if (interactingScript != null && inventoryUI == null)
+        {
+            inventoryUI = interactingScript.GetComponent<InventoryUIController>();
         }
     }
 
@@ -136,8 +143,10 @@ public class PlayerThrowing : MonoBehaviour
         }
 
         inventory.RemoveItem(itemToThrow);
+        inventoryUI.RefreshInventoryUI();
+        playerEquipItem.UnequipItem();
 
-        GameObject gameObject = Instantiate(itemToThrow.Prefab, throwOrigin.position, Quaternion.identity);
+        GameObject gameObject = Instantiate(itemToThrow.WorldPrefab, throwOrigin.position, Quaternion.identity);
 
         Rigidbody rb = gameObject.GetComponent<Rigidbody>();
 

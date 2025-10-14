@@ -10,8 +10,8 @@ public class ToggleInventoryUI : MonoBehaviour
 
     [Header("Slide Animation Settings")]
     [SerializeField] private float slideDuration = 0.4f;
-    [SerializeField] private Vector2 disabledPosition = new Vector2(0, -600f);
-    [SerializeField] private Vector2 enabledPosition = new Vector2(0, 0f);
+    [SerializeField] private Vector2 disabledPosition = new Vector2(-100, -100f);
+    [SerializeField] private Vector2 enabledPosition = new Vector2(-100, 120f);
     [SerializeField] private AnimationCurve slideCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
 
     [Header("Debugging")]

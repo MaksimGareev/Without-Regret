@@ -34,9 +34,9 @@ public class PlayerEquipItem : MonoBehaviour
         }
 
         // Equip new item
-        if (itemToEquip.Prefab != null)
+        if (itemToEquip.VisualPrefab != null)
         {
-            equippedItemInstance = Instantiate(itemToEquip.Prefab, equipTransform.transform);
+            equippedItemInstance = Instantiate(itemToEquip.VisualPrefab, equipTransform.transform);
             equippedItemInstance.transform.localPosition = Vector3.zero;
             equippedItemInstance.transform.localRotation = Quaternion.identity;
             currentEquippedItem = itemToEquip;

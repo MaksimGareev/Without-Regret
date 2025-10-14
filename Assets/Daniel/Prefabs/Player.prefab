@@ -445,7 +445,7 @@ MonoBehaviour:
   rhythmSlider: {fileID: 0}
   rhythmWindow: 0.3
   rhythmInterval: 1
-  UIManager: {fileID: 0}
+  showDebugLogs: 0
 --- !u!114 &7147037502482933178
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -462,7 +462,8 @@ MonoBehaviour:
   throwOrigin: {fileID: 7354983856930337315}
   playerCamera: {fileID: 0}
   powerSlider: {fileID: 0}
-  playerEquipItem: {fileID: 0}
+  playerEquipItem: {fileID: 771315798553256207}
+  interactingScript: {fileID: 0}
   minThrowForce: 1
   maxThrowForce: 10
   upwardForce: 2
@@ -496,6 +497,7 @@ MonoBehaviour:
   inventory: {fileID: 6369621648110085496}
   pickupKey: 101
   pickupButton: Xbox X Button
+  interactingScript: {fileID: 0}
 --- !u!114 &771315798553256207
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -508,10 +510,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 887097a799be45c4486ab74a4b5ff2fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerEquipItem
-  playerThrowing: {fileID: 7147037502482933178}
-  equippableItemPrefabs:
-  - {fileID: 674867072477469486, guid: 8012a6fb752d12c408bf4d6db4b361a3, type: 3}
-  equipGameObject: {fileID: 7826200252848409900}
+  equipTransform: {fileID: 7826200252848409900}
+  showDebugLogs: 0
 --- !u!114 &5657707268177514977
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -528,8 +528,8 @@ MonoBehaviour:
   inventoryKey: 105
   inventoryButton: Xbox Y Button
   slideDuration: 0.4
-  disabledPosition: {x: 0, y: -600}
-  enabledPosition: {x: 0, y: 0}
+  disabledPosition: {x: -100, y: -100}
+  enabledPosition: {x: -100, y: 120}
   slideCurve:
     serializedVersion: 2
     m_Curve:
@@ -554,6 +554,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  showDebugLogs: 0
 --- !u!1 &7826200252848409900
 GameObject:
   m_ObjectHideFlags: 0
@@ -580,8 +581,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.65, y: 0.047, z: -0.135}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 878993099091267819}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

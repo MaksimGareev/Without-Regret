@@ -13,10 +13,12 @@ public class ItemData : ScriptableObject
     [SerializeField] private string itemName;
     [SerializeField] private ItemType itemType;
     [SerializeField] private Sprite invIcon;
-    [SerializeField] private GameObject prefab;
+    [SerializeField] private GameObject worldPrefab;
+    [SerializeField] private GameObject visualPrefab;
 
     public string ItemName => itemName;
     public ItemType ItemType => itemType;
     public Sprite InvIcon => invIcon;
-    public GameObject Prefab => prefab;
+    public GameObject WorldPrefab => worldPrefab;
+    public GameObject VisualPrefab => visualPrefab;
 }
