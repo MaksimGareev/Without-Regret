@@ -217,9 +217,13 @@ public class PlayerFloating : MonoBehaviour
         // Smooth toward target
         currentMove = Vector3.Lerp(currentMove, targetMove, Mathf.Clamp01(moveSmoothing * Time.fixedDeltaTime));
 
+        float oscillationAmplitude = 0.5f;
+        float oscillationSpeed = 5f;
+        float oscillation = Mathf.Sin(Time.time * oscillationSpeed) * oscillationAmplitude;
+
         // Smoothly approach hover target Y
         float currentY = rb.position.y;
-        float desiredY = Mathf.Lerp(currentY, hoverTargetY, Mathf.Clamp01(verticalSmooth * Time.fixedDeltaTime));
+        float desiredY = Mathf.Lerp(currentY, hoverTargetY + oscillation, Mathf.Clamp01(verticalSmooth * Time.fixedDeltaTime));
 
         // Build next position
         Vector3 nextPos = rb.position + new Vector3(currentMove.x, 0f, currentMove.z) * Time.fixedDeltaTime;
