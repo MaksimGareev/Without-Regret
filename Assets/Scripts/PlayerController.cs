@@ -24,7 +24,7 @@ public class PlayerController : MonoBehaviour
     [Header("Gravity / Ground Settings")]
     // Extra variables to keep the player to the ground when interacting with items or NPC
     private float yVelocity = 0f;
-    private float gravity = -9.81f; // gravity for when the player is locked so they don't fly away
+    private float gravity = -3f; // gravity for when the player is locked so they don't fly away
     private bool gravityEnabled = true;
     private bool freezePosition = false;
 
