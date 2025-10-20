@@ -13,6 +13,7 @@ public class InventoryUIController : MonoBehaviour
     [SerializeField] private int columns = 3;
     [SerializeField] private Button[] buttons;
     [SerializeField] private Sprite emptySlotSprite;
+    [SerializeField] private InventoryTooltipUI tooltipUI;
 
     [Header("Input Settings")]
     [SerializeField] private float moveThreshold = 0.5f;
@@ -86,6 +87,20 @@ public class InventoryUIController : MonoBehaviour
 
                     slotButtons[row, col].onClick.AddListener(() => OnSlotClicked(capturedRow, capturedCol, index));
 
+                    EventTrigger trigger = slotButtons[row, col].GetComponent<EventTrigger>();
+                    if (trigger == null)
+                    {
+                        trigger = slotButtons[row, col].gameObject.AddComponent<EventTrigger>();
+                    }
+
+                    EventTrigger.Entry entryEnter = new EventTrigger.Entry { eventID = EventTriggerType.PointerEnter };
+                    entryEnter.callback.AddListener((_) => OnSlotHoverEnter(capturedRow, capturedCol));
+                    trigger.triggers.Add(entryEnter);
+
+                    EventTrigger.Entry entryExit = new EventTrigger.Entry { eventID = EventTriggerType.PointerExit };
+                    entryExit.callback.AddListener((_) => OnSlotHoverExit());
+                    trigger.triggers.Add(entryExit);
+
                     index++;
                 }
             }
@@ -103,6 +118,7 @@ public class InventoryUIController : MonoBehaviour
                 return;
             }
         }
+        
         if (inventory == null)
         {
             inventory = GameObject.FindGameObjectWithTag("Player").GetComponent<Inventory>();
@@ -222,7 +238,7 @@ public class InventoryUIController : MonoBehaviour
             Debug.LogWarning("No PlayerEquipItem found!");
         }
     }
-    
+
     private void HighlightSelectedSlot()
     {
         for (int row = 0; row < rows; row++)
@@ -233,8 +249,47 @@ public class InventoryUIController : MonoBehaviour
                 if (slotImage != null)
                 {
                     slotImage.color = (row == selectedRow && col == selectedColumn) ? Color.gray : Color.white;
+                    if (tooltipUI != null)
+                    {
+                        ItemData selectedItem = slotItems[selectedRow, selectedColumn];
+                        if (selectedItem != null)
+                        {
+                            tooltipUI.Show(selectedItem);
+                        }
+                        else
+                        {
+                            tooltipUI.Hide();
+                        }
+                    }
                 }
             }
         }
+    }
+
+    private void OnSlotHoverEnter(int row, int column)
+    {
+        if (tooltipUI == null || slotItems == null)
+        {
+            return;
+        }
+
+        ItemData item = slotItems[row, column];
+        if (item != null)
+        {
+            tooltipUI.Show(item);
+            if (showDebugLogs)
+            {
+                Debug.Log($"Hovering over item: {item.ItemName}");
+            }
+        }
+    }
+    
+    private void OnSlotHoverExit()
+    {
+        if (tooltipUI == null)
+        {
+            return;
+        }
+        tooltipUI.Hide();
     }
 }
