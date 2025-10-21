@@ -198,6 +198,7 @@ GameObject:
   - component: {fileID: 937434756003880922}
   - component: {fileID: 771315798553256207}
   - component: {fileID: 5657707268177514977}
+  - component: {fileID: 4795456634535947141}
   m_Layer: 3
   m_Name: Player
   m_TagString: Player
@@ -432,7 +433,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   floatLift: 10
-  floatHeightOffset: 3
+  floatHeightOffset: 0.5
   horizontalSpeed: 5
   verticalSmooth: 5
   moveSmoothing: 8
@@ -554,6 +555,23 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  showDebugLogs: 0
+--- !u!114 &4795456634535947141
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5675321481151379428}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d12f95f4fc9e1a148a298ff22ba3b196, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerCrawling
+  crawlKey: 99
+  crawlButton: Xbox B Button
+  crawlSpeed: 1
+  playerModel: {fileID: 5830711324976825679}
   showDebugLogs: 0
 --- !u!1 &7826200252848409900
 GameObject:
@@ -683,6 +701,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 16a217fec0209484e99537fe962f8b81, type: 3}
+--- !u!1 &5830711324976825679 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 16a217fec0209484e99537fe962f8b81, type: 3}
+  m_PrefabInstance: {fileID: 6641596547934615582}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &6602569121628889077 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 16a217fec0209484e99537fe962f8b81, type: 3}
