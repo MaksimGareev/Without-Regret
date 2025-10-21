@@ -22,6 +22,7 @@ public class PlayerCrawling : MonoBehaviour
     private Camera playerCamera;
     private Rigidbody rb;
     private CharacterController controller;
+    private ToggleInventoryUI inventoryToggle;
 
     private bool prevRbUseGravity;
     private bool prevRbKinematic;
@@ -36,12 +37,13 @@ public class PlayerCrawling : MonoBehaviour
         playerCamera = Camera.main;
         rb = GetComponent<Rigidbody>();
         controller = GetComponent<CharacterController>();
+        inventoryToggle = GetComponent<ToggleInventoryUI>();
     }
     
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(crawlKey) || Input.GetButtonDown(crawlButton))
+        if ((Input.GetKeyDown(crawlKey) || Input.GetButtonDown(crawlButton)) && !inventoryToggle.isEnabled)
         {
             isCrawling = !isCrawling;
             switch (isCrawling)
@@ -51,12 +53,6 @@ public class PlayerCrawling : MonoBehaviour
                     break;
                 case false:
                     StopCrawling();
-                    break;
-                default:
-                    if (showDebugLogs)
-                    {
-                        Debug.LogWarning("Invalid bool for crawling state.");
-                    }
                     break;
             }
         }
