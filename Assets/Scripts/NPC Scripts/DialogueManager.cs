@@ -75,7 +75,7 @@ public class DialogueManager : MonoBehaviour
             //uiAudioSource?.PlayOneShot(moveClip);
         }
 
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.F))
         {
             //uiAudioSource?.PlayOneShot(confirmClip);
             OnChoiceSelected(SelectiedChoiceIndex);
