@@ -14,8 +14,14 @@ public class InventoryUIController : MonoBehaviour
     [SerializeField] private Button[] buttons;
     [SerializeField] private Sprite emptySlotSprite;
     [SerializeField] private InventoryTooltipUI tooltipUI;
+    [SerializeField] private Button keyItemsTabButton;
+    [SerializeField] private Button otherItemsTabButton;
+    public enum InventoryTab { KeyItems, OtherItems }
+    private InventoryTab currentTab = InventoryTab.OtherItems;
 
     [Header("Input Settings")]
+    [SerializeField] private string tabLeftButton;
+    [SerializeField] private string tabRightButton;
     [SerializeField] private float moveThreshold = 0.5f;
     [SerializeField] private float moveCooldown = 0.25f;
 
@@ -52,6 +58,9 @@ public class InventoryUIController : MonoBehaviour
 
     private void Start()
     {
+        keyItemsTabButton.onClick.AddListener(() => SwitchTabs(InventoryTab.KeyItems));
+        otherItemsTabButton.onClick.AddListener(() => SwitchTabs(InventoryTab.OtherItems));
+
         RefreshInventoryUI();
     }
 
@@ -129,7 +138,7 @@ public class InventoryUIController : MonoBehaviour
             }
         }
 
-        IReadOnlyList<ItemData> itemsList = inventory.GetItems();
+        IReadOnlyList<ItemData> itemsList = (currentTab == InventoryTab.KeyItems) ? inventory.KeyItems : inventory.OtherItems;
         int index = 0;
 
         for (int row = 0; row < rows; row++)
@@ -158,6 +167,18 @@ public class InventoryUIController : MonoBehaviour
 
     private void HandleControllerInput()
     {
+        if (Input.GetButtonDown(tabLeftButton) || Input.GetButtonDown(tabRightButton))
+        {
+            if (currentTab == InventoryTab.KeyItems)
+            {
+                SwitchTabs(InventoryTab.OtherItems);
+            }
+            else
+            {
+                SwitchTabs(InventoryTab.KeyItems);
+            }
+        }
+        
         moveTimer -= Time.unscaledDeltaTime;
 
         float horizontalInput = Input.GetAxis("Xbox RightStick X");
@@ -283,7 +304,7 @@ public class InventoryUIController : MonoBehaviour
             }
         }
     }
-    
+
     private void OnSlotHoverExit()
     {
         if (tooltipUI == null)
@@ -291,5 +312,11 @@ public class InventoryUIController : MonoBehaviour
             return;
         }
         tooltipUI.Hide();
+    }
+    
+    private void SwitchTabs(InventoryTab newTab)
+    {
+        currentTab = newTab;
+        RefreshInventoryUI();
     }
 }
