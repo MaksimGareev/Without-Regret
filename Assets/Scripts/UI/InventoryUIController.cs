@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class InventoryUIController : MonoBehaviour
+public class InventoryUIController : MonoBehaviour//, IPointerEnterHandler, IPointerExitHandler
 {
     [Header("Grid Settings")]
     [SerializeField] private int rows = 4;
@@ -16,6 +16,7 @@ public class InventoryUIController : MonoBehaviour
     [SerializeField] private InventoryTooltipUI tooltipUI;
     [SerializeField] private Button keyItemsTabButton;
     [SerializeField] private Button otherItemsTabButton;
+     private Color highlightColor = new Color(0.85f, 0.85f, 0.85f);
     public enum InventoryTab { KeyItems, OtherItems }
     private InventoryTab currentTab = InventoryTab.OtherItems;
 
@@ -38,6 +39,7 @@ public class InventoryUIController : MonoBehaviour
     
     private PlayerEquipItem playerEquipItem;
     private Inventory inventory;
+    private (int row, int col)? hoveredSlot = null;
 
     private void Awake()
     {
@@ -269,7 +271,7 @@ public class InventoryUIController : MonoBehaviour
                 Image slotImage = slotButtons[row, col]?.GetComponent<Image>();
                 if (slotImage != null)
                 {
-                    slotImage.color = (row == selectedRow && col == selectedColumn) ? Color.gray : Color.white;
+                    slotImage.color = (row == selectedRow && col == selectedColumn) ? highlightColor : Color.white;
                     if (tooltipUI != null)
                     {
                         ItemData selectedItem = slotItems[selectedRow, selectedColumn];
@@ -285,6 +287,18 @@ public class InventoryUIController : MonoBehaviour
                 }
             }
         }
+    }
+
+    public void OnSlotPointerEnter(int row, int col)
+    {
+        hoveredSlot = (row, col);
+        HighlightSelectedSlot();
+    }
+
+    public void OnSlotPointerExit()
+    {
+        hoveredSlot = null;
+        HighlightSelectedSlot();
     }
 
     private void OnSlotHoverEnter(int row, int column)
@@ -311,6 +325,7 @@ public class InventoryUIController : MonoBehaviour
         {
             return;
         }
+
         tooltipUI.Hide();
     }
     
@@ -318,5 +333,16 @@ public class InventoryUIController : MonoBehaviour
     {
         currentTab = newTab;
         RefreshInventoryUI();
+
+        if (currentTab == InventoryTab.KeyItems)
+        {
+            keyItemsTabButton.image.color = Color.white;
+            otherItemsTabButton.image.color = highlightColor;
+        }
+        else
+        {
+            keyItemsTabButton.image.color = highlightColor;
+            otherItemsTabButton.image.color = Color.white;
+        }
     }
 }
