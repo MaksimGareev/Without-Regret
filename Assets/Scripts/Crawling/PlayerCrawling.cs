@@ -106,6 +106,7 @@ public class PlayerCrawling : MonoBehaviour
         rb.isKinematic = false;
         rb.useGravity = true;
 
+        // Temporary until crawling animation is created
         playerModel.transform.Rotate(Vector3.right * 90);
     }
 
