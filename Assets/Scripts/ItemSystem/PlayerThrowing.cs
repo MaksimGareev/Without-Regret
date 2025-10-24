@@ -1,8 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.ProBuilder;
 using UnityEngine.UI;
 
 public class PlayerThrowing : MonoBehaviour
@@ -79,6 +76,23 @@ public class PlayerThrowing : MonoBehaviour
         {
             HandleCharging();
         }
+        else if (Time.timeScale != 0f && playerEquipItem.grabbableEquipped && (Input.GetMouseButtonDown(chargeKeyInt) || Input.GetAxis(chargeButton) > 0.1f))
+        {
+            DropItem();
+        }
+    }
+
+    private void DropItem()
+    {
+        ItemData itemToDrop = playerEquipItem.currentEquippedItem;
+        if (itemToDrop == null)
+        {
+            return;
+        }
+
+        inventoryUI.RefreshInventoryUI();
+        playerEquipItem.UnequipItem();
+        Instantiate(itemToDrop.WorldPrefab, transform.position + transform.forward * 1f, Quaternion.identity);
     }
 
     private void HandleCharging()

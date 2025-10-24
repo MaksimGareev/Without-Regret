@@ -2042,6 +2042,7 @@ MonoBehaviour:
   tooltipUI: {fileID: 915721398}
   keyItemsTabButton: {fileID: 1468544864}
   otherItemsTabButton: {fileID: 1359538359}
+  highlightColor: {r: 0.85, g: 0.85, b: 0.85, a: 1}
   tabLeftButton: Xbox Left Bumper
   tabRightButton: Xbox RIght Bumper
   moveThreshold: 0.5
@@ -7899,6 +7900,63 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 72dc4e8488d0ae64a816b5dceb8e8177, type: 3}
+--- !u!1001 &4196547832785628850
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 154020209561577764, guid: a80c07008709d604ba217f79aa36c875, type: 3}
+      propertyPath: m_Name
+      value: TestGrabbableItem
+      objectReference: {fileID: 0}
+    - target: {fileID: 6077641572210544648, guid: a80c07008709d604ba217f79aa36c875, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -4.119
+      objectReference: {fileID: 0}
+    - target: {fileID: 6077641572210544648, guid: a80c07008709d604ba217f79aa36c875, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.68
+      objectReference: {fileID: 0}
+    - target: {fileID: 6077641572210544648, guid: a80c07008709d604ba217f79aa36c875, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -2.82417
+      objectReference: {fileID: 0}
+    - target: {fileID: 6077641572210544648, guid: a80c07008709d604ba217f79aa36c875, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6077641572210544648, guid: a80c07008709d604ba217f79aa36c875, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6077641572210544648, guid: a80c07008709d604ba217f79aa36c875, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6077641572210544648, guid: a80c07008709d604ba217f79aa36c875, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6077641572210544648, guid: a80c07008709d604ba217f79aa36c875, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6077641572210544648, guid: a80c07008709d604ba217f79aa36c875, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6077641572210544648, guid: a80c07008709d604ba217f79aa36c875, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: a80c07008709d604ba217f79aa36c875, type: 3}
 --- !u!1001 &4713154670486563123
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8644,3 +8702,4 @@ SceneRoots:
   - {fileID: 1678903337}
   - {fileID: 4898617254446383680}
   - {fileID: 8473433248283213580}
+  - {fileID: 4196547832785628850}
