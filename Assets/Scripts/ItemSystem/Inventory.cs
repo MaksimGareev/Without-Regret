@@ -21,6 +21,7 @@ public class Inventory : MonoBehaviour
     [Header("Debugging")]
     [SerializeField] private bool showDebugLogs = false;
     private bool hasBackpack = false;
+    private PlayerController playerController;
     private InventoryUIController inventoryUI;
     private ToggleInventoryUI toggleInventoryUI;
     public WorldItem itemToCollect;
@@ -28,6 +29,7 @@ public class Inventory : MonoBehaviour
 
     private void Awake()
     {
+        playerController = GetComponent<PlayerController>();
         inventoryUI = interactingScript.GetComponent<InventoryUIController>();
         toggleInventoryUI = GetComponent<ToggleInventoryUI>();
         itemToCollect = null;
@@ -39,7 +41,7 @@ public class Inventory : MonoBehaviour
         {
             if (hasBackpack)
             {
-                CollectItem(itemToCollect);
+                AddItem(itemToCollect.ItemData);
             }
             else
             {
@@ -48,9 +50,9 @@ public class Inventory : MonoBehaviour
                     Debug.Log($"Player does not have backpack");
                 }
 
-                if (CheckForBackpack(itemToCollect))
+                if (itemToCollect.ItemData.ItemType == ItemType.Backpack)
                 {
-                    CollectItem(itemToCollect);
+                    AddItem(itemToCollect.ItemData);
                     backpack.SetActive(true);
                     hasBackpack = true;
                     toggleInventoryUI.hasBackpack = true;
@@ -59,7 +61,7 @@ public class Inventory : MonoBehaviour
         }
     }
 
-    public void AddItem(ItemData item)
+    private void AddItem(ItemData item)
     {
         if (item == null) return;
 
@@ -91,18 +93,19 @@ public class Inventory : MonoBehaviour
             }
         }
 
-    }
-    
-    private bool CheckForBackpack(WorldItem worldItem)
-    {
-        return worldItem.ItemData.ItemType == ItemType.Backpack;
-    }
+        if (item.ItemType == ItemType.KeyItem || item.ItemType == ItemType.Backpack)
+        {
+            playerController.TriggerPickupCameraEffect(itemToCollect.transform);
+            Destroy(itemToCollect.gameObject, 1f);
+            itemToCollect = null;
+        }
+        else
+        {
+            Destroy(itemToCollect.gameObject);
+            itemToCollect = null;
+        }
 
-    private void CollectItem(WorldItem worldItem)
-    {
-        AddItem(worldItem.ItemData);
         inventoryUI.RefreshInventoryUI();
-        Destroy(worldItem.gameObject);
     }
 
     public bool RemoveItem(ItemData item)
