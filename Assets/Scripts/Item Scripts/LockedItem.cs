@@ -1,11 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class LockedItem : MonoBehaviour
 {
     public float LockpickRange = 1.5f;
-
     private Transform player;
 
     public GameObject promptUI;
@@ -16,13 +16,12 @@ public class LockedItem : MonoBehaviour
     private AudioSource audioSource;
 
 
-    public KeyCode interactKey = KeyCode.E;
-    public string interactButton = "Xbox X Button";
-
     private bool isInRange = false;
 
+    private PlayerControls controls;
+
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         audioSource = gameObject.AddComponent<AudioSource>();
         audioSource.playOnAwake = false;
@@ -37,7 +36,14 @@ public class LockedItem : MonoBehaviour
             LockPickUI.SetActive(false);
         }
 
+        controls = new PlayerControls();
+
+        controls.Player.Interact.performed += ctx => TryInteract();
+
     }
+
+    private void OnEnable() => controls.Enable();
+    private void OnDisable() => controls.Disable();
 
     // Update is called once per frame
     void Update()
@@ -54,25 +60,6 @@ public class LockedItem : MonoBehaviour
                     promptUI.SetActive(true); // Show the prompt when the player is in range
                 }
             }
-            if ((Input.GetKeyDown(interactKey) || Input.GetButtonDown(interactButton)) && LockPickUI != null)
-            {
-                LockPickUI.SetActive(true);
-                LockPickUI.GetComponent<LockPickUI>().ActivateLockPick(this.gameObject);
-                promptUI.SetActive(false);
-
-                PlayerController pc = player.GetComponent<PlayerController>();
-                if (pc != null)
-                {
-                    pc.MovementLocked = true;
-                    pc.enabled = false;
-                }
-
-                PlayerFloating playerFloating = player.GetComponent<PlayerFloating>();
-                if (playerFloating != null)
-                {
-                    playerFloating.enabled = false;
-                }
-            }
         }
         else
         {
@@ -81,14 +68,35 @@ public class LockedItem : MonoBehaviour
                 isInRange = false;
                 if (promptUI != null)
                 {
-                    promptUI.SetActive(false); // Remove prompt when moving out of range
-                }
-                if (LockPickUI != null)
-                {
-                    // LockPickUI.SetActive(false);
+                    promptUI.SetActive(false);
                 }
             }
         }
+    }
+
+
+    private void TryInteract()
+    {
+        if (!isInRange || LockPickUI == null) return;
+
+        // Show LockPick UI
+        LockPickUI.SetActive(true);
+        LockPickUI.GetComponent<LockPickUI>().ActivateLockPick(this.gameObject);
+
+        if (promptUI != null)
+            promptUI.SetActive(false);
+
+        // Disable player movement
+        PlayerController pc = player.GetComponent<PlayerController>();
+        if (pc != null)
+        {
+            pc.MovementLocked = true;
+            pc.enabled = false;
+        }
+
+        PlayerFloating pf = player.GetComponent<PlayerFloating>();
+        if (pf != null)
+            pf.enabled = false;
     }
 
     public void OnUnlocked()
