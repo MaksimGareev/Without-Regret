@@ -1,7 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -16,7 +13,7 @@ public class InventoryUIController : MonoBehaviour//, IPointerEnterHandler, IPoi
     [SerializeField] private InventoryTooltipUI tooltipUI;
     [SerializeField] private Button keyItemsTabButton;
     [SerializeField] private Button otherItemsTabButton;
-     private Color highlightColor = new Color(0.85f, 0.85f, 0.85f);
+    [SerializeField] private Color highlightColor = new Color(0.70f, 0.70f, 0.70f);
     public enum InventoryTab { KeyItems, OtherItems }
     private InventoryTab currentTab = InventoryTab.OtherItems;
 
@@ -247,7 +244,7 @@ public class InventoryUIController : MonoBehaviour//, IPointerEnterHandler, IPoi
             return;
         }
         
-        if (playerEquipItem != null)
+        if (playerEquipItem != null && clickedItem.ItemType != ItemType.KeyItem)
         {
             playerEquipItem.EquipItem(clickedItem);
 
@@ -258,7 +255,15 @@ public class InventoryUIController : MonoBehaviour//, IPointerEnterHandler, IPoi
         }
         else if (showDebugLogs)
         {
-            Debug.LogWarning("No PlayerEquipItem found!");
+            if (clickedItem.ItemType == ItemType.KeyItem)
+            {
+                Debug.Log($"Unable to equip item type : {clickedItem.ItemType}");
+            }
+            else if (playerEquipItem == null)
+            {
+                Debug.LogWarning("PlayerEquipItem script not found on player!");
+            }
+            
         }
     }
 

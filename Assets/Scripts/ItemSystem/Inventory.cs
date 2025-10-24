@@ -20,6 +20,7 @@ public class Inventory : MonoBehaviour
     [SerializeField] private bool showDebugLogs = false;
     private bool hasBackpack = false;
     private PlayerController playerController;
+    private PlayerEquipItem playerEquipItem;
     private InventoryUIController inventoryUI;
     private ToggleInventoryUI toggleInventoryUI;
     public WorldItem itemToCollect;
@@ -28,6 +29,7 @@ public class Inventory : MonoBehaviour
     private void Awake()
     {
         playerController = GetComponent<PlayerController>();
+        playerEquipItem = GetComponent<PlayerEquipItem>();
         inventoryUI = interactingScript.GetComponent<InventoryUIController>();
         toggleInventoryUI = GetComponent<ToggleInventoryUI>();
         itemToCollect = null;
@@ -37,7 +39,13 @@ public class Inventory : MonoBehaviour
     {
         if (itemToCollect != null)
         {
-            if (hasBackpack)
+            if (itemToCollect.ItemData.ItemType == ItemType.GrabbableItem)
+            {
+                playerEquipItem.EquipItem(itemToCollect.ItemData);
+                Destroy(itemToCollect.gameObject);
+                itemToCollect = null;
+            }
+            else if (hasBackpack)
             {
                 AddItem(itemToCollect.ItemData);
             }
@@ -52,7 +60,7 @@ public class Inventory : MonoBehaviour
                 {
                     AddItem(itemToCollect.ItemData);
                     backpack.SetActive(true);
-                    
+
                     toggleInventoryUI.hasBackpack = true;
                 }
             }
@@ -106,7 +114,7 @@ public class Inventory : MonoBehaviour
         inventoryUI.RefreshInventoryUI();
     }
 
-    public bool RemoveItem(ItemData item)
+    public void RemoveItem(ItemData item)
     {
         if (showDebugLogs)
         {
@@ -122,7 +130,9 @@ public class Inventory : MonoBehaviour
             otherItems.Remove(item);
         }
         
-        return itemsList.Remove(item);
+        itemsList.Remove(item);
+        
+        return;
     }
 
     public IReadOnlyList<ItemData> GetItems()

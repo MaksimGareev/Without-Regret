@@ -4,13 +4,14 @@ public class PlayerEquipItem : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private GameObject equipTransform;
-    private ItemData currentEquippedItem;
+    public ItemData currentEquippedItem { get; private set; }
     private GameObject equippedItemInstance;
 
     [Header("Debugging")]
     [SerializeField] private bool showDebugLogs = false;
-    
+
     public bool throwableEquipped { get; private set; } = false;
+    public bool grabbableEquipped { get; private set; } = false;
 
     public void EquipItem(ItemData itemToEquip)
     {
@@ -21,6 +22,12 @@ public class PlayerEquipItem : MonoBehaviour
             return;
         }
 
+        // Do nothing if player has grabbable item currently equipped
+        if (grabbableEquipped)
+        {
+            return;
+        }
+        
         // UnequipItem if clicked on the same slot as currently equipped item
         if (itemToEquip == currentEquippedItem)
         {
@@ -34,7 +41,7 @@ public class PlayerEquipItem : MonoBehaviour
         }
 
         // Equip new item
-        if (itemToEquip.VisualPrefab != null && itemToEquip.ItemType != ItemType.KeyItem)
+        if (itemToEquip.VisualPrefab != null)
         {
             equippedItemInstance = Instantiate(itemToEquip.VisualPrefab, equipTransform.transform);
             equippedItemInstance.transform.localPosition = Vector3.zero;
@@ -48,10 +55,11 @@ public class PlayerEquipItem : MonoBehaviour
 
         // Check if the item is throwable
         throwableEquipped = itemToEquip != null && itemToEquip.ItemType == ItemType.ThrowableItem;
+        grabbableEquipped = itemToEquip != null && itemToEquip.ItemType == ItemType.GrabbableItem;
 
         if (showDebugLogs)
         {
-            Debug.Log($"Equipped {itemToEquip.name}. Throwable = {throwableEquipped}");
+            Debug.Log($"Equipped {itemToEquip.ItemName}. Type = {itemToEquip.ItemType}");
         }
     }
     
@@ -65,6 +73,7 @@ public class PlayerEquipItem : MonoBehaviour
 
         currentEquippedItem = null;
         throwableEquipped = false;
+        grabbableEquipped = false;
 
         if (showDebugLogs)
         {
