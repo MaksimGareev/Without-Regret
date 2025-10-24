@@ -191,7 +191,6 @@ GameObject:
   - component: {fileID: 8821119716541630626}
   - component: {fileID: 7137697055784097519}
   - component: {fileID: 8123318097379088782}
-  - component: {fileID: 1069728513981126635}
   - component: {fileID: 1566633728491210951}
   - component: {fileID: 7147037502482933178}
   - component: {fileID: 6369621648110085496}
@@ -200,6 +199,7 @@ GameObject:
   - component: {fileID: 4795456634535947141}
   - component: {fileID: 2251472805719034207}
   - component: {fileID: 3930968705077024376}
+  - component: {fileID: 2250357011382021346}
   m_Layer: 3
   m_Name: Player
   m_TagString: Player
@@ -405,23 +405,6 @@ MonoBehaviour:
   searchConeAngle: 30
   possessKey: 114
   possessButton: Xbox RIght Bumper
---- !u!114 &1069728513981126635
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5675321481151379428}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 76b75d8ced4576d41856019886fcdd33, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  grabPoint: {fileID: 1136661512570076457}
-  grabRange: 2
-  grabKey: 102
-  grabButton: Xbox X Button
-  moveSlowdownMultiplier: 3
 --- !u!114 &1566633728491210951
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -575,7 +558,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0ae8b3d4641ac0458419bca3fccb349, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMantling
-  mantleRange: 2
   mantleSpeed: 3
   showDebugLogs: 1
   showGizmos: 1
@@ -591,10 +573,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b453a18c1abc7b4fb4d5cd48886ce81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInteracting
+  promptUI: {fileID: 0}
   interactionRange: 1
   interactOffset: 1
   interactKey: 101
   interactButton: Xbox X Button
+  showDebugLogs: 0
+--- !u!114 &2250357011382021346
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5675321481151379428}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76b75d8ced4576d41856019886fcdd33, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerMovingObjects
+  grabPoint: {fileID: 1136661512570076457}
+  moveSlowdownMultiplier: 2
   showDebugLogs: 0
 --- !u!1 &7826200252848409900
 GameObject:
