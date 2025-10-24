@@ -3,7 +3,7 @@ using UnityEngine;
 public class PlayerMantling : MonoBehaviour
 {
     [Header("Mantling Settings")]
-    [SerializeField] private float mantleRange = 2f;
+    //[SerializeField] private float mantleRange = 2f;
     [SerializeField] private float mantleSpeed = 3f;
     
     [Header("Debugging")]
