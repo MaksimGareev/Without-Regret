@@ -195,11 +195,11 @@ GameObject:
   - component: {fileID: 1566633728491210951}
   - component: {fileID: 7147037502482933178}
   - component: {fileID: 6369621648110085496}
-  - component: {fileID: 937434756003880922}
   - component: {fileID: 771315798553256207}
   - component: {fileID: 5657707268177514977}
   - component: {fileID: 4795456634535947141}
   - component: {fileID: 2251472805719034207}
+  - component: {fileID: 3930968705077024376}
   m_Layer: 3
   m_Name: Player
   m_TagString: Player
@@ -485,23 +485,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60122aef9c0269d46893af1ce98c7737, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &937434756003880922
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5675321481151379428}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fa25e94b2a096ce46a6c07394906010f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  inventory: {fileID: 6369621648110085496}
-  pickupKey: 101
-  pickupButton: Xbox X Button
   interactingScript: {fileID: 0}
   backpack: {fileID: 6428672626242342441}
+  showDebugLogs: 0
+  itemToCollect: {fileID: 0}
 --- !u!114 &771315798553256207
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -590,10 +577,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMantling
   mantleRange: 2
   mantleSpeed: 3
-  mantleButton: Xbox X Button
-  mantleKey: 101
   showDebugLogs: 1
   showGizmos: 1
+--- !u!114 &3930968705077024376
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5675321481151379428}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b453a18c1abc7b4fb4d5cd48886ce81, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerInteracting
+  interactionRange: 1
+  interactOffset: 1
+  interactKey: 101
+  interactButton: Xbox X Button
+  showDebugLogs: 0
 --- !u!1 &7826200252848409900
 GameObject:
   m_ObjectHideFlags: 0

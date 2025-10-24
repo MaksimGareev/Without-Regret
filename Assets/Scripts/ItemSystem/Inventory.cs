@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Inventory : MonoBehaviour, IInventory
+public class Inventory : MonoBehaviour
 {
     private readonly List<ItemData> itemsList = new List<ItemData>();
 
@@ -14,8 +14,50 @@ public class Inventory : MonoBehaviour, IInventory
     public List<ItemData> OtherItems => otherItems;
     public List<ItemData> NonInventoryItems => nonInventoryItems;
 
+    [Header("References")]
+    [SerializeField] private GameObject interactingScript;
+    [SerializeField] private GameObject backpack;
+
     [Header("Debugging")]
     [SerializeField] private bool showDebugLogs = false;
+    private bool hasBackpack = false;
+    private InventoryUIController inventoryUI;
+    private ToggleInventoryUI toggleInventoryUI;
+    public WorldItem itemToCollect;
+
+
+    private void Awake()
+    {
+        inventoryUI = interactingScript.GetComponent<InventoryUIController>();
+        toggleInventoryUI = GetComponent<ToggleInventoryUI>();
+        itemToCollect = null;
+    }
+
+    private void Update()
+    {
+        if (itemToCollect != null)
+        {
+            if (hasBackpack)
+            {
+                CollectItem(itemToCollect);
+            }
+            else
+            {
+                if (showDebugLogs)
+                {
+                    Debug.Log($"Player does not have backpack");
+                }
+
+                if (CheckForBackpack(itemToCollect))
+                {
+                    CollectItem(itemToCollect);
+                    backpack.SetActive(true);
+                    hasBackpack = true;
+                    toggleInventoryUI.hasBackpack = true;
+                }
+            }
+        }
+    }
 
     public void AddItem(ItemData item)
     {
@@ -28,7 +70,7 @@ public class Inventory : MonoBehaviour, IInventory
             if (showDebugLogs)
             {
                 Debug.Log($"Backpack collected.");
-            } 
+            }
         }
         else
         {
@@ -37,8 +79,8 @@ public class Inventory : MonoBehaviour, IInventory
             if (showDebugLogs)
             {
                 Debug.Log($"Added {item.ItemName} to inventory.");
-            }  
-        
+            }
+
             if (item.ItemType == ItemType.KeyItem)
             {
                 keyItems.Add(item);
@@ -48,7 +90,19 @@ public class Inventory : MonoBehaviour, IInventory
                 otherItems.Add(item);
             }
         }
-        
+
+    }
+    
+    private bool CheckForBackpack(WorldItem worldItem)
+    {
+        return worldItem.ItemData.ItemType == ItemType.Backpack;
+    }
+
+    private void CollectItem(WorldItem worldItem)
+    {
+        AddItem(worldItem.ItemData);
+        inventoryUI.RefreshInventoryUI();
+        Destroy(worldItem.gameObject);
     }
 
     public bool RemoveItem(ItemData item)

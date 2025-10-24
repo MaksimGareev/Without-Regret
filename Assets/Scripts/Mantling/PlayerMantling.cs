@@ -5,8 +5,6 @@ public class PlayerMantling : MonoBehaviour
     [Header("Mantling Settings")]
     [SerializeField] private float mantleRange = 2f;
     [SerializeField] private float mantleSpeed = 3f;
-    [SerializeField] private string mantleButton = "Xbox X Button";
-    [SerializeField] private KeyCode mantleKey = KeyCode.E;
     
     [Header("Debugging")]
     [SerializeField] private bool showDebugLogs = false;
@@ -23,7 +21,6 @@ public class PlayerMantling : MonoBehaviour
     private Vector3 mantleStartPos;
     private Vector3 mantleEndPos;
     private float mantleProgress = 0f;
-    private MantleableObject currentMantlePoint;
 
     private void Awake()
     {
@@ -43,56 +40,11 @@ public class PlayerMantling : MonoBehaviour
             PerformMantle();
             return;
         }   
-
-        if (Input.GetKeyDown(mantleKey) || Input.GetButtonDown(mantleButton))
-        {
-            TryStartMantle();
-        }
     }
 
-    private void TryStartMantle()
-    {
-        Collider[] hits = Physics.OverlapSphere(transform.position + transform.forward * 1f, 0.75f);
-
-        MantleableObject nearest = null;
-        float nearestDistance = float.MaxValue;
-
-        foreach (var hit in hits)
-        {
-            MantleableObject mantleableObject = hit.GetComponent<MantleableObject>();
-
-            if (mantleableObject == null)
-            {
-                continue;
-            }
-
-            float distance = Vector3.Distance(transform.position, mantleableObject.transform.position);
-            if (distance < nearestDistance && distance <= mantleRange)
-            {
-                nearest = mantleableObject;
-                nearestDistance = distance;
-            }
-        }
-
-        if (nearest != null)
-        {
-            if (showDebugLogs)
-            {
-                Debug.Log("Mantling to " + nearest.name);
-            }
-
-            StartMantle(nearest);
-        }
-        else if (showDebugLogs)
-        {
-            Debug.Log("No Mantleable surface found.");
-        }
-    }
-
-    private void StartMantle(MantleableObject point)
+    public void StartMantle(MantleableObject point)
     {
         isMantling = true;
-        currentMantlePoint = point;
         mantleStartPos = transform.position;
         mantleEndPos = point.GetMantlePosition();
         mantleProgress = 0f;
@@ -147,7 +99,6 @@ public class PlayerMantling : MonoBehaviour
         }
 
         isMantling = false;
-        currentMantlePoint = null;
 
         if (playerController != null)
         {
