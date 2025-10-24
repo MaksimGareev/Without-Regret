@@ -5,7 +5,10 @@ using UnityEngine;
 public enum ItemType
 {
     KeyItem,
-    ThrowableItem
+    ThrowableItem,
+    CarriedItem,
+    Backpack,
+    MiscItem
 }
 
 [CreateAssetMenu(menuName = "ScriptableObjects/Item", order = 1)]
