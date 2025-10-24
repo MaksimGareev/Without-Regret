@@ -3,14 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Collider))]
-public class WorldItem : MonoBehaviour
+public class WorldItem : MonoBehaviour, IInteractable
 {
     [SerializeField] private ItemData itemData;
     public ItemData ItemData => itemData;
+    public float interactionPriority => 0f;
 
-    private void Reset()
+    public void OnPlayerInteraction(GameObject player)
     {
-        Collider collider = GetComponent<Collider>();
-        collider.isTrigger = true;
+        Inventory inventory = player.GetComponent<Inventory>();
+        inventory.itemToCollect = this;
     }
+    
 }

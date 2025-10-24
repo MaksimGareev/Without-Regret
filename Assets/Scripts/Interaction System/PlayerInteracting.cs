@@ -5,7 +5,8 @@ using UnityEngine;
 public class PlayerInteracting : MonoBehaviour
 {
     [Header("General Settings")]
-    [SerializeField] private float interactionRange = 3f;
+    [SerializeField] private float interactionRange = 1f;
+    [SerializeField] private float interactOffset = 1f;
     [SerializeField] private KeyCode interactKey = KeyCode.E;
     [SerializeField] private string interactButton = "Xbox X Button";
 
@@ -24,7 +25,7 @@ public class PlayerInteracting : MonoBehaviour
 
     private void ScanForInteractable()
     {
-        Collider[] hits = Physics.OverlapSphere(transform.position, interactionRange);
+        Collider[] hits = Physics.OverlapSphere(transform.position + transform.forward * interactOffset, interactionRange);
         List<IInteractable> interactableList = new List<IInteractable>();
 
         foreach (Collider hit in hits)
@@ -66,6 +67,6 @@ public class PlayerInteracting : MonoBehaviour
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, interactionRange);
+        Gizmos.DrawWireSphere(transform.position + transform.forward * interactOffset, interactionRange);
     }
 }
