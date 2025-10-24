@@ -18,6 +18,7 @@ public class ToggleInventoryUI : MonoBehaviour
     [SerializeField] private bool showDebugLogs = false;
 
     public bool isEnabled { get; private set; } = false;
+    public bool hasBackpack { get; set; } = false;
     private RectTransform rectTransform;
     private Coroutine slideRoutine;
 
@@ -32,7 +33,7 @@ public class ToggleInventoryUI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(inventoryKey) || Input.GetButtonDown(inventoryButton))
+        if ((Input.GetKeyDown(inventoryKey) || Input.GetButtonDown(inventoryButton)) && hasBackpack)
         {
             ToggleInventory();
         }

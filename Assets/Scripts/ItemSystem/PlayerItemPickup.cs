@@ -5,17 +5,27 @@ using UnityEngine;
 [RequireComponent(typeof(Collider))]
 public class PlayerItemPickup : MonoBehaviour
 {
+    [Header("References")]
     [SerializeField] private Inventory inventory;
+    [SerializeField] private GameObject interactingScript;
+    [SerializeField] private GameObject backpack;
+
+    [Header("Input Settings")]
     [SerializeField] private KeyCode pickupKey = KeyCode.F;
     [SerializeField] private string pickupButton = "Xbox X Button";
-    [SerializeField] private GameObject interactingScript;
-    private InventoryUIController inventoryUI;
 
+    [Header("Debugging")]
+    [SerializeField] private bool showDebugLogs = false;
+    
+    private InventoryUIController inventoryUI;
+    private ToggleInventoryUI toggleInventoryUI;
+    private bool hasBackpack = false;
     private WorldItem itemInRange;
 
     private void Awake()
     {
         inventoryUI = interactingScript.GetComponent<InventoryUIController>();
+        toggleInventoryUI = GetComponent<ToggleInventoryUI>();
     }
 
     // Update is called once per frame
@@ -23,7 +33,25 @@ public class PlayerItemPickup : MonoBehaviour
     {
         if (itemInRange != null && (Input.GetKeyDown(pickupKey) || Input.GetButtonDown(pickupButton)))
         {
-            CollectItem(itemInRange);
+            if (hasBackpack)
+            {
+                CollectItem(itemInRange);
+            }
+            else
+            {
+                if (showDebugLogs)
+                {
+                    Debug.Log($"Player does not have backpack");
+                }
+
+                if (CheckForBackpack(itemInRange))
+                {
+                    CollectItem(itemInRange);
+                    backpack.SetActive(true);
+                    hasBackpack = true;
+                    toggleInventoryUI.hasBackpack = true;
+                }
+            }
         }
     }
 
@@ -45,6 +73,11 @@ public class PlayerItemPickup : MonoBehaviour
             itemInRange = null;
             // Remove UI Prompt
         }
+    }
+
+    private bool CheckForBackpack(WorldItem worldItem)
+    {
+        return worldItem.ItemData.ItemType == ItemType.Backpack;
     }
 
     private void CollectItem(WorldItem worldItem)

@@ -8,30 +8,55 @@ public class Inventory : MonoBehaviour, IInventory
 
     private List<ItemData> keyItems = new();
     private List<ItemData> otherItems = new();
+    private List<ItemData> nonInventoryItems = new();
 
     public List<ItemData> KeyItems => keyItems;
     public List<ItemData> OtherItems => otherItems;
+    public List<ItemData> NonInventoryItems => nonInventoryItems;
+
+    [Header("Debugging")]
+    [SerializeField] private bool showDebugLogs = false;
 
     public void AddItem(ItemData item)
     {
         if (item == null) return;
 
-        itemsList.Add(item);
-        if (item.ItemType == ItemType.KeyItem)
+        if (item.ItemType == ItemType.Backpack)
         {
-            keyItems.Add(item);
+            nonInventoryItems.Add(item);
+
+            if (showDebugLogs)
+            {
+                Debug.Log($"Backpack collected.");
+            } 
         }
         else
         {
-            otherItems.Add(item);
-        }
+            itemsList.Add(item);
 
-        Debug.Log($"Added {item.ItemName} to inventory.");
+            if (showDebugLogs)
+            {
+                Debug.Log($"Added {item.ItemName} to inventory.");
+            }  
+        
+            if (item.ItemType == ItemType.KeyItem)
+            {
+                keyItems.Add(item);
+            }
+            else
+            {
+                otherItems.Add(item);
+            }
+        }
+        
     }
 
     public bool RemoveItem(ItemData item)
     {
-        Debug.Log($"Removed {item.ItemName} from inventory.");
+        if (showDebugLogs)
+        {
+            Debug.Log($"Removed {item.ItemName} from inventory.");
+        }
 
         if (item.ItemType == ItemType.KeyItem)
         {
