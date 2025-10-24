@@ -6,7 +6,7 @@ public enum ItemType
 {
     KeyItem,
     ThrowableItem,
-    CarriedItem,
+    GrabbableItem,
     Backpack,
     MiscItem
 }

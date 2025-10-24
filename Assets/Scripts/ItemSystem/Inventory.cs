@@ -8,11 +8,9 @@ public class Inventory : MonoBehaviour
 
     private List<ItemData> keyItems = new();
     private List<ItemData> otherItems = new();
-    private List<ItemData> nonInventoryItems = new();
 
     public List<ItemData> KeyItems => keyItems;
     public List<ItemData> OtherItems => otherItems;
-    public List<ItemData> NonInventoryItems => nonInventoryItems;
 
     [Header("References")]
     [SerializeField] private GameObject interactingScript;
@@ -54,7 +52,7 @@ public class Inventory : MonoBehaviour
                 {
                     AddItem(itemToCollect.ItemData);
                     backpack.SetActive(true);
-                    hasBackpack = true;
+                    
                     toggleInventoryUI.hasBackpack = true;
                 }
             }
@@ -67,7 +65,7 @@ public class Inventory : MonoBehaviour
 
         if (item.ItemType == ItemType.Backpack)
         {
-            nonInventoryItems.Add(item);
+            hasBackpack = true;
 
             if (showDebugLogs)
             {
