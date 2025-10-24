@@ -30,7 +30,7 @@ public class CameraMovement : MonoBehaviour
 
         }
 
-        if (Input.GetKeyDown(KeyCode.Space) && pc.MovementLocked == false)
+        if (Input.GetKeyDown(KeyCode.R) && pc.MovementLocked == false && PlayerController.DialogueActive == false)
         {
             StartCoroutine(SwitchCameraZ());
         }
