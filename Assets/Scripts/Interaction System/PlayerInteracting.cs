@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class PlayerInteracting : MonoBehaviour
 {
+    [Header("References")]
+    [SerializeField] private GameObject promptUI;
+
     [Header("General Settings")]
     [SerializeField] private float interactionRange = 1f;
     [SerializeField] private float interactOffset = 1f;
@@ -14,12 +17,22 @@ public class PlayerInteracting : MonoBehaviour
     [SerializeField] private bool showDebugLogs;
     private IInteractable currentTarget;
 
+    private void Start()
+    {
+        if (promptUI != null)
+        {
+            promptUI.SetActive(false);
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(interactKey) || Input.GetButtonDown(interactButton))
+        ScanForInteractable();
+
+        if (currentTarget != null && (Input.GetKeyDown(interactKey) || Input.GetButtonDown(interactButton)))
         {
-            ScanForInteractable();
+            currentTarget.OnPlayerInteraction(gameObject);
         }
     }
 
@@ -46,6 +59,8 @@ public class PlayerInteracting : MonoBehaviour
                 Debug.Log("PlayerInteracting: No interactables found.");
             }
 
+            promptUI.SetActive(false);
+
             return;
         }
         else
@@ -55,12 +70,12 @@ public class PlayerInteracting : MonoBehaviour
                 .ThenBy(i => Vector3.Distance(transform.position, ((MonoBehaviour)i).transform.position))
                 .FirstOrDefault();
 
-            currentTarget.OnPlayerInteraction(gameObject);
-
             if (showDebugLogs)
             {
                 Debug.Log("PlayerInteracting: Interactable object found!");
             }
+
+            promptUI.SetActive(true);
         }
     }
     

@@ -130,15 +130,4 @@ public class PlayerMantling : MonoBehaviour
             controller.enabled = true;
         }
     }
-
-    private void OnDrawGizmosSelected()
-    {
-        if(!showGizmos)
-        {
-            return;
-        }
-
-        Gizmos.color = Color.cyan;
-        Gizmos.DrawWireSphere(transform.position + transform.forward * 1f, 0.75f);
-    }
 }

@@ -9,6 +9,7 @@ public class WorldItem : MonoBehaviour, IInteractable
     public ItemData ItemData => itemData;
     public float interactionPriority => 0f;
 
+
     public void OnPlayerInteraction(GameObject player)
     {
         Inventory inventory = player.GetComponent<Inventory>();
