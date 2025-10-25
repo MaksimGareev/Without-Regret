@@ -12,10 +12,14 @@ public class PlayerInteracting : MonoBehaviour
     [SerializeField] private float interactOffset = 1f;
     [SerializeField] private KeyCode interactKey = KeyCode.E;
     [SerializeField] private string interactButton = "Xbox X Button";
+    [SerializeField] private KeyCode mantleKey = KeyCode.Space;
+    [SerializeField] private string mantleButton = "Xbox A Button";
 
     [Header("Debugging")]
     [SerializeField] private bool showDebugLogs;
     private IInteractable currentTarget;
+    private MantleableObject mantleTarget;
+    private MoveableObject moveTarget;
 
     private void Start()
     {
@@ -30,7 +34,15 @@ public class PlayerInteracting : MonoBehaviour
     {
         ScanForInteractable();
 
-        if (currentTarget != null && (Input.GetKeyDown(interactKey) || Input.GetButtonDown(interactButton)))
+        if (mantleTarget != null && (Input.GetKeyDown(mantleKey) || Input.GetButtonDown(mantleButton)))
+        {
+            mantleTarget.OnPlayerInteraction(gameObject);
+        }
+        if (moveTarget != null && (Input.GetKeyDown(interactKey) || Input.GetButtonDown(interactButton)))
+        {
+            moveTarget.OnPlayerInteraction(gameObject);
+        }
+        else if (currentTarget != null && mantleTarget == null && (Input.GetKeyDown(interactKey) || Input.GetButtonDown(interactButton)))
         {
             currentTarget.OnPlayerInteraction(gameObject);
         }
@@ -53,29 +65,43 @@ public class PlayerInteracting : MonoBehaviour
         if (interactableList.Count == 0)
         {
             currentTarget = null;
+            mantleTarget = null;
+            moveTarget = null;
 
             if (showDebugLogs)
             {
                 Debug.Log("PlayerInteracting: No interactables found.");
             }
 
-            promptUI.SetActive(false);
+            if (promptUI != null)
+            {
+                promptUI.SetActive(false);
+            }
 
             return;
         }
-        else
+
+        currentTarget = interactableList
+            .OrderByDescending(i => i.interactionPriority)
+            .ThenBy(i => Vector3.Distance(transform.position, ((MonoBehaviour)i).transform.position))
+            .FirstOrDefault();
+
+        if(currentTarget != null)
         {
-            currentTarget = interactableList
-                .OrderByDescending(i => i.interactionPriority)
-                .ThenBy(i => Vector3.Distance(transform.position, ((MonoBehaviour)i).transform.position))
-                .FirstOrDefault();
+            var targetMono = (currentTarget as MonoBehaviour);
+
+            mantleTarget = targetMono.GetComponent<MantleableObject>();
+            moveTarget = targetMono.GetComponent<MoveableObject>();
 
             if (showDebugLogs)
             {
                 Debug.Log("PlayerInteracting: Interactable object found!");
             }
 
-            promptUI.SetActive(true);
+            if (promptUI != null)
+            {
+                promptUI.SetActive(true);
+            }
         }
     }
     
