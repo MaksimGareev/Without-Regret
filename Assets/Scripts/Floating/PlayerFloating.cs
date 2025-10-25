@@ -31,10 +31,11 @@ public class PlayerFloating : MonoBehaviour
     private Camera playerCamera;
     private ToggleInventoryUI toggleInventoryUI;
 
-    private bool isFloating = false;
+    public bool isFloating { get; private set; } = false;
+    private bool canFloat = false;
     private float floatTimer = 0f;
     private float cooldownTimer = 0f;
-    private bool isCoolingDown = false;
+    public bool isCoolingDown { get; private set; } = false;
     private float rhythmTimer = 0f;
     private float hoverTargetY;
 
@@ -65,7 +66,7 @@ public class PlayerFloating : MonoBehaviour
         {
             HandleCooldown();
 
-            if (!isCoolingDown)
+            if (!isCoolingDown && canFloat)
             {
                 if (!isFloating && !toggleInventoryUI.isEnabled && (Input.GetKeyDown(floatKey) || Input.GetButtonDown(floatButton)))
                 {
@@ -84,7 +85,9 @@ public class PlayerFloating : MonoBehaviour
     private void FixedUpdate()
     {
         if (isFloating)
+        {
             ApplyFloatPhysics();
+        }
     }
 
     private void StartFloating()
@@ -142,6 +145,8 @@ public class PlayerFloating : MonoBehaviour
         // ensure character/ player controllers see the current transform position
         if (charController != null) charController.enabled = true;
         if (playerController != null) playerController.enabled = true;
+
+        canFloat = false;
     }
 
     private void HandleRhythmInput()
@@ -165,7 +170,11 @@ public class PlayerFloating : MonoBehaviour
             if (errorMargin <= rhythmWindow)
             {
                 rhythmTimer = 0f;
-                if (rhythmSlider != null) rhythmSlider.value = 0f;
+                if (rhythmSlider != null)
+                {
+                    rhythmSlider.value = 0f;
+                }
+
                 if (showDebugLogs)
                 {
                     Debug.Log("Floating Rhythm Success");
@@ -269,5 +278,10 @@ public class PlayerFloating : MonoBehaviour
             cooldownTimer -= Time.deltaTime;
             if (cooldownTimer <= 0f) isCoolingDown = false;
         }
+    }
+
+    public void SetCanFloat (bool newCanfloat)
+    {
+        canFloat = newCanfloat;
     }
 }
