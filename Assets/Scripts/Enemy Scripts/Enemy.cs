@@ -12,6 +12,9 @@ public class Enemy : MonoBehaviour
     public float waitTime = 2f;
     private bool isWaiting = false;
 
+    [Header("Debugging")]
+    [SerializeField] private bool showDebugLogs = false;
+
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
@@ -53,7 +56,12 @@ public class Enemy : MonoBehaviour
         if (NavMesh.SamplePosition(randomPoint, out hit, 1.0f, NavMesh.AllAreas))
         {
             result = hit.position;
-            Debug.Log("Random Point: " + result);
+            
+            if (showDebugLogs)
+            {
+                Debug.Log("Random Point: " + result);
+            }
+
             return true;
         }
 

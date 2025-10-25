@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -40,6 +39,9 @@ public class PlayerController : MonoBehaviour
     public float zoomDuration = 3f; // how long the camera will be zoomed in
     public float transitionSpeed = 2f; // Speed the camera zooms in
     private bool isZooming = false; // is the camera zoomed in
+
+    [Header("Debugging")]
+    [SerializeField] private bool showDebugLogs = false;
 
     public static bool DialogueActive = false;
 
@@ -132,14 +134,21 @@ public class PlayerController : MonoBehaviour
             {
                 currentSpeed = SprintSpeed;
                 SprintTimer -= Time.deltaTime;
-                Debug.Log("player is sprinting");
+                if (showDebugLogs)
+                {
+                    Debug.Log("player is sprinting");
+                }
+                
             }
             else                  // if timer is 0 or less the player cannot sprint
             {
                 canSprint = false;
                 currentSpeed = Speed;
                 StartCoroutine(SprintCooldown());
-                Debug.Log("player cannot sprint any more");
+                if (showDebugLogs)
+                {
+                    Debug.Log("player cannot sprint any more");
+                }
             }
         }
         // if player is not holding shift the sprint timer will increase to sprint again
@@ -175,7 +184,10 @@ public class PlayerController : MonoBehaviour
         yield return new WaitForSeconds(sprintCooldown);
         SprintTimer = SprintDuration;
         canSprint = true;
-        Debug.Log("Player can sprint again");
+        if (showDebugLogs)
+        {
+            Debug.Log("Player can sprint again");
+        }
     }
 
     // called when an item is picked up by the player
