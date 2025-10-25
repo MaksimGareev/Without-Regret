@@ -59,12 +59,17 @@ public class Inventory : MonoBehaviour
                 if (itemToCollect.ItemData.ItemType == ItemType.Backpack)
                 {
                     AddItem(itemToCollect.ItemData);
-                    backpack.SetActive(true);
+                    Invoke(nameof(SetBackpackActive), 1f);
 
                     toggleInventoryUI.hasBackpack = true;
                 }
             }
         }
+    }
+    
+    private void SetBackpackActive()
+    {
+        backpack.SetActive(true);
     }
 
     private void AddItem(ItemData item)
