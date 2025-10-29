@@ -81,7 +81,7 @@ public class LockedItem : MonoBehaviour
 
         // Show LockPick UI
         LockPickUI.SetActive(true);
-        LockPickUI.GetComponent<LockPickUI>().ActivateLockPick(this.gameObject);
+        LockPickUI.GetComponent<LockPicking>().NewLock();//(this.gameObject);
 
         if (promptUI != null)
             promptUI.SetActive(false);

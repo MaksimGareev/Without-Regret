@@ -3,13 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-/*[System.Serializable]
-public class DialogueNode
-{
-    public string npcLine;                                            // What the NPC says
-    public List<string> playerChoices = new List<string>();           // Player options
-    public List<DialogueNode> nextNodes = new List<DialogueNode>();   // Next node for each choice
-}*/
 public class DialogueTrigger : MonoBehaviour
 {
     public string NPCName = "Friendly NPC";
@@ -20,7 +13,6 @@ public class DialogueTrigger : MonoBehaviour
     private bool playerInRange = false;
     private Transform player;
     private PlayerControls controls;
-    //public DialogueNode StartNode;
 
     [Header("Ink JSON")]
     [SerializeField] private TextAsset inkJSON;
@@ -43,6 +35,9 @@ public class DialogueTrigger : MonoBehaviour
 
         // Dialogue Manager
         dialogueManager = FindObjectOfType<DialogueManager>();
+
+        if (promptUI != null)
+            promptUI.SetActive(false);
     }
 
     // Update is called once per frame
@@ -78,15 +73,19 @@ public class DialogueTrigger : MonoBehaviour
         if (!playerInRange || PlayerController.DialogueActive)
             return;
 
-        PlayerController.DialogueActive = true;
+       // PlayerController.DialogueActive = true;
 
         if (promptUI != null)
             promptUI.SetActive(false);
 
         // Start dialogue
-        if (dialogueManager != null)
+        if (dialogueManager != null && inkJSON != null)
         {
-            DialogueManager.GetInstance().EnterDialogueMode(inkJSON);
+            dialogueManager.StartDialogueFromInk(NPCName, inkJSON);
+        }
+        else
+        {
+            Debug.LogWarning("missing Dialogue or ink Json on " + gameObject.name);
         }
     }
 }
