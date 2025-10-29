@@ -82,6 +82,9 @@ public class PlayerController : MonoBehaviour
         if (DialogueActive)
             return;
 
+        Debug.Log(MovementLocked);
+        Debug.Log(freezePosition);
+
         Movement();
     }
 
@@ -191,16 +194,16 @@ public class PlayerController : MonoBehaviour
         Quaternion targetRot = Quaternion.LookRotation(item.position - PlayerCamera.transform.position);
 
         float t = 0;
-        MovementLocked = true;
         while (t < 3f)
         {
             t += Time.deltaTime * transitionSpeed;
             PlayerCamera.transform.position = Vector3.Lerp(originalCamPos, targetPos + pickupOffset, t);
             PlayerCamera.transform.rotation = Quaternion.Slerp(originalCamRot, targetRot, t);
+            //MovementLocked = true;
             yield return null;
         }
 
-        MovementLocked = false;
+        //MovementLocked = false;
         yield return new WaitForSeconds(zoomDuration);
         isZooming = false;
     }

@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class LockPickUI : MonoBehaviour
 {
     public RectTransform LockIndicator;
+    public RectTransform InnerLock;
     public RectTransform PickCursor;
     public GameObject lockPickUI;
     private Transform player;
@@ -14,6 +15,7 @@ public class LockPickUI : MonoBehaviour
     public float MaxRotation = 90f;
     public float UnlockAngle = 30f;
     public float UnlockTolerance = 5f;
+    public float LockSpeed = 10f;
 
     private float CurrentAngle = 0f;
     private bool isActive = false;
@@ -27,6 +29,7 @@ public class LockPickUI : MonoBehaviour
 
     private PlayerControls controls;
     private float rotateInput;
+    private float KeyPressTime = 0;
 
     // Start is called before the first frame update
     void Awake()
@@ -74,7 +77,6 @@ public class LockPickUI : MonoBehaviour
 
         // Apply rotation to pick cursor
         PickCursor.localEulerAngles = new Vector3(0, 0, CurrentAngle);
-
 
         // Press space to attempt unlocking
        /* if (Input.GetKeyDown(KeyCode.F) || Input.GetButtonDown("Submit"))
@@ -133,7 +135,8 @@ public class LockPickUI : MonoBehaviour
             Debug.Log("Failed, try again");
             StartCoroutine(ShakePick());
         }
-
+        Debug.Log(angleDifference);
+        Debug.Log(UnlockTolerance);
     }
 
     public void ActivateLockPick(GameObject item)
@@ -161,6 +164,7 @@ public class LockPickUI : MonoBehaviour
         {
             lockPickUI.SetActive(true);
         }
+        Debug.Log(UnlockAngle);
 
     }
 
@@ -196,5 +200,15 @@ public class LockPickUI : MonoBehaviour
         }
 
         PickCursor.localPosition = originalPosition;
+    }
+
+    public void RotateLock()
+    {
+        float Percentage = Mathf.Round(100 - Mathf.Abs((CurrentAngle - UnlockAngle) / 100) * 100);
+        float LockRotation = ((Percentage / 100) * MaxRotation) * KeyPressTime;
+        float MaxRotate = (Percentage / 100) * MaxRotation;
+
+        float LockLerp = Mathf.Lerp(InnerLock.eulerAngles.z, LockRotation, Time.deltaTime * LockSpeed);
+        InnerLock.eulerAngles = new Vector3(0, 0, LockLerp);
     }
 }

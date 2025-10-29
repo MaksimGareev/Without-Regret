@@ -11,6 +11,10 @@ public class CameraMovement : MonoBehaviour
 
     private bool isSwitching = false;   // prevent spam switching 
 
+    private void Start()
+    {
+        transform.position = target.position + OffSet;
+    }
     // Update is called once per frame
     void LateUpdate()
     {
