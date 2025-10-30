@@ -3,13 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-[System.Serializable]
-public class DialogueNode
-{
-    public string npcLine;                                            // What the NPC says
-    public List<string> playerChoices = new List<string>();           // Player options
-    public List<DialogueNode> nextNodes = new List<DialogueNode>();   // Next node for each choice
-}
 public class FriendlyNPC : MonoBehaviour
 {
 
@@ -19,68 +12,18 @@ public class FriendlyNPC : MonoBehaviour
     public float waitTime = 2f;
     private bool isWaiting = false;
 
-    public string NPCName = "Friendly NPC";
-    public GameObject promptUI;
-    public float chatRange = 3f;
-
-    private bool playerInRange = false;
-    private Transform player;
-    private DialogueManager dialogueManager;
-    public DialogueNode StartNode;
     void Start()
     {
         // NavMesh setup
         agent = GetComponent<NavMeshAgent>();
         PickNewDestination();
-
-        // Player reference
-        player = GameObject.FindGameObjectWithTag("Player").transform;
-
-        // Dialogue Manager
-        dialogueManager = FindObjectOfType<DialogueManager>();
     }
-
     void Update()
     {
-        // Distance to player
-        float dist = Vector3.Distance(player.position, transform.position);
-
-        // Show/Hide prompt UI
-        if (dist <= chatRange)
-        {
-            if (!playerInRange)
-            {
-                playerInRange = true;
-                if (promptUI != null)
-                    promptUI.SetActive(true);
-            }
-        }
-        else
-        {
-            if (playerInRange)
-            {
-                playerInRange = false;
-                if (promptUI != null)
-                    promptUI.SetActive(false);
-            }
-        }
-
         // NPC wandering (only if not in dialogue)
         if (!isWaiting && !agent.pathPending && agent.remainingDistance <= agent.stoppingDistance && !PlayerController.DialogueActive)
         {
             StartCoroutine(WaitBeforeNextMove());
-        }
-
-        // Start dialogue
-        if (playerInRange && Input.GetKeyDown(KeyCode.E) && !PlayerController.DialogueActive)
-        {
-            PlayerController.DialogueActive = true;
-
-            if (promptUI != null)
-                promptUI.SetActive(false);
-
-            dialogueManager.StartDialogue(NPCName, StartNode);
-
         }
     }
 

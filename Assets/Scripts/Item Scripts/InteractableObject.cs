@@ -12,18 +12,25 @@ public class InteractableObject : MonoBehaviour
     public GameObject promptUI;
 
     private bool isInRange = false;
-    public KeyCode interactKey = KeyCode.E;
-    public string interactButton = "Xbox X Button";
+
+    private PlayerControls controls;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         player = GameObject.FindGameObjectWithTag("Player").transform;
         if(promptUI != null)
         {
             promptUI.SetActive(false);
         }
+
+        controls = new PlayerControls();
+
+        //controls.Player.Interact.performed += ctx => Pickup();
     }
+
+    private void OnEnable() => controls.Enable();
+    private void OnDisable() => controls.Disable();
 
     // Update is called once per frame
     void Update()
@@ -38,10 +45,6 @@ public class InteractableObject : MonoBehaviour
                 {
                     promptUI.SetActive(true); // Show the prompt when the player is in range
                 }
-            }
-            if (Input.GetKeyDown(interactKey) || Input.GetButtonDown(interactButton))
-            {
-                Pickup(); // Pick up the item
             }
         }
         else
@@ -66,12 +69,15 @@ public class InteractableObject : MonoBehaviour
         if (pc != null)
         {
             pc.TriggerPickupCameraEffect(transform); // allow camera to look at object being picked up
+            pc.MovementLocked = true;
         }
 
         if(promptUI != null)
         {
             promptUI.SetActive(false);
         }
-        Destroy(gameObject, 1f); // Remove the item with a small delay
+        pc.MovementLocked = false;
+        pc.enabled = true;
+        //Destroy(gameObject, 1f); // Remove the item with a small delay
     }
 }
