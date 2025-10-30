@@ -1,0 +1,237 @@
+using System.Collections;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.InputSystem;
+
+public class NewPlayer : MonoBehaviour
+{
+    [Header("Components")]
+    public CharacterController Controller;
+    public Camera PlayerCamera;
+
+    [Header("Movement Settings")]
+    public bool MovementLocked = false;
+    public float Speed = 1f;
+    public float SprintSpeed = 2f;
+    public float SprintDuration = 3f;
+    public float sprintCooldown = 4f;
+
+    private float SprintTimer;
+    private bool canSprint = true;
+    private bool isSprinting = false;
+
+    [Header("Gravity / Ground Settings")]
+    private float yVelocity = 0f;
+    private float gravity = -9.81f;
+    private bool gravityEnabled = true;
+    private bool freezePosition = false;
+
+    [Header("Ground check")]
+    public Transform groundCheck;
+    public float groundCheckRadius = 0.2f;
+    public LayerMask groundMask;
+    private bool isGrounded;
+
+    [Header("Camera Settings")]
+    public Vector3 pickupOffset = new Vector3(3f, 2f, -5f);
+    public float zoomDuration = 3f;
+    public float transitionSpeed = 2f;
+    private bool isZooming = false;
+
+    public static bool DialogueActive = false;
+
+    // Input System
+    private PlayerControls controls;
+    private Vector2 moveInput;
+
+    private void Awake()
+    {
+        Controller = GetComponent<CharacterController>();
+        if (PlayerCamera == null)
+            PlayerCamera = Camera.main;
+
+        SprintTimer = SprintDuration;
+
+        // Create ground check if missing
+        if (groundCheck == null)
+        {
+            GameObject groundCheckObj = new GameObject("GroundCheck");
+            groundCheckObj.transform.SetParent(transform);
+            groundCheckObj.transform.localPosition = new Vector3(0f, 0.05f, 0f);
+            groundCheck = groundCheckObj.transform;
+        }
+
+        // Initialize input actions
+        controls = new PlayerControls();
+
+        controls.Player.Move.performed += ctx => moveInput = ctx.ReadValue<Vector2>();
+        controls.Player.Move.canceled += ctx => moveInput = Vector2.zero;
+
+        controls.Player.Sprint.performed += ctx => StartSprinting();
+        controls.Player.Sprint.canceled += ctx => StopSprinting();
+
+        //controls.Player.LoadArtScene.performed += ctx => LoadArtScene();
+       // controls.Player.LoadMenuScene.performed += ctx => LoadMenuScene();
+    }
+
+    private void OnEnable() => controls.Enable();
+    private void OnDisable() => controls.Disable();
+
+    private void Update()
+    {
+        if (DialogueActive)
+            return;
+
+        Movement();
+    }
+
+    private void Movement()
+    {
+        isGrounded = Physics.CheckSphere(groundCheck.position, groundCheckRadius, groundMask);
+
+        if (isGrounded && yVelocity < 0f)
+            yVelocity = -1f;
+
+        if (freezePosition)
+        {
+            Controller.Move(new Vector3(0, yVelocity, 0) * Time.deltaTime);
+            return;
+        }
+
+        if (MovementLocked)
+        {
+            if (gravityEnabled)
+                yVelocity += gravity * Time.deltaTime;
+
+            Controller.Move(new Vector3(0f, yVelocity, 0f) * Time.deltaTime);
+            return;
+        }
+
+        // Calculate movement direction
+        Vector3 move = Vector3.zero;
+        if (PlayerCamera != null)
+        {
+            Vector3 camForward = PlayerCamera.transform.forward;
+            camForward.y = 0f;
+            camForward.Normalize();
+            Vector3 camRight = PlayerCamera.transform.right;
+            camRight.y = 0f;
+            camRight.Normalize();
+            move = camForward * moveInput.y + camRight * moveInput.x;
+        }
+
+        float currentSpeed = Speed;
+
+        // Sprint logic
+        if (isSprinting && canSprint)
+        {
+            if (SprintTimer > 0f)
+            {
+                currentSpeed = SprintSpeed;
+                SprintTimer -= Time.deltaTime;
+            }
+            else
+            {
+                canSprint = false;
+                isSprinting = false;
+                currentSpeed = Speed;
+                StartCoroutine(SprintCooldown());
+            }
+        }
+        else if (!isSprinting && SprintTimer < SprintDuration)
+        {
+            SprintTimer += Time.deltaTime;
+        }
+
+        if (gravityEnabled)
+            yVelocity += gravity * Time.deltaTime;
+
+        Vector3 combined = (move.normalized * currentSpeed) + new Vector3(0f, yVelocity, 0f);
+        Controller.Move(combined * Time.deltaTime);
+
+        if (move.sqrMagnitude > 0.01f)
+        {
+            float angle = Mathf.Atan2(move.x, move.z) * Mathf.Rad2Deg;
+            transform.rotation = Quaternion.Euler(0f, angle, 0f);
+        }
+    }
+
+    private void StartSprinting()
+    {
+        if (canSprint)
+            isSprinting = true;
+    }
+
+    private void StopSprinting()
+    {
+        isSprinting = false;
+    }
+
+    IEnumerator SprintCooldown()
+    {
+        yield return new WaitForSeconds(sprintCooldown);
+        SprintTimer = SprintDuration;
+        canSprint = true;
+    }
+
+    public void TriggerPickupCameraEffect(Transform item)
+    {
+        if (!isZooming && PlayerCamera != null)
+            StartCoroutine(PickupCameraRoutine(item));
+    }
+
+    IEnumerator PickupCameraRoutine(Transform item)
+    {
+        isZooming = true;
+
+        Vector3 originalCamPos = PlayerCamera.transform.position;
+        Quaternion originalCamRot = PlayerCamera.transform.rotation;
+
+        Vector3 targetPos = item.position + (transform.forward * 1f) + pickupOffset;
+        Quaternion targetRot = Quaternion.LookRotation(item.position - PlayerCamera.transform.position);
+
+        float t = 0;
+        MovementLocked = true;
+        while (t < 3f)
+        {
+            t += Time.deltaTime * transitionSpeed;
+            PlayerCamera.transform.position = Vector3.Lerp(originalCamPos, targetPos + pickupOffset, t);
+            PlayerCamera.transform.rotation = Quaternion.Slerp(originalCamRot, targetRot, t);
+            yield return null;
+        }
+
+        MovementLocked = false;
+        yield return new WaitForSeconds(zoomDuration);
+        isZooming = false;
+    }
+
+    public void SetVerticalVelocity(float newVelocity) => yVelocity = newVelocity;
+    public float GetVerticalVelocity() => yVelocity;
+    public void AddVerticalVelocity(float delta) => yVelocity += delta;
+    public void SetGravityEnabled(bool enabled) => gravityEnabled = enabled;
+    public void SetFreezePosition(bool freeze)
+    {
+        freezePosition = freeze;
+        if (freeze) yVelocity = 0f;
+    }
+    public void SetCanSprint(bool newCanSprint) => canSprint = newCanSprint;
+
+    private void OnDrawGizmosSelected()
+    {
+        if (groundCheck != null)
+        {
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
+        }
+    }
+
+    private void LoadArtScene()
+    {
+        SceneManager.LoadScene("ArtScene");
+    }
+
+    private void LoadMenuScene()
+    {
+        SceneManager.LoadScene("MenuTesting");
+    }
+}

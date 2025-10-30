@@ -1,18 +1,21 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
-public class MoveableObject : MonoBehaviour, IMoveable
+public class MoveableObject : MonoBehaviour, IInteractable
 {
+    private PlayerMovingObjects playerMovingObjects; 
     private Transform grabPoint;
     private Rigidbody rb;
     private bool isGrabbed = false;
+    public float interactionPriority => 1;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
+        
     }
 
-    public void Grab(Transform grabPoint)
+    private void Grab(Transform grabPoint)
     {
         this.grabPoint = grabPoint;
         isGrabbed = true;
@@ -34,6 +37,22 @@ public class MoveableObject : MonoBehaviour, IMoveable
         {
             rb.MovePosition(grabPoint.position);
             rb.MoveRotation(grabPoint.rotation);
+        }
+    }
+
+    public void OnPlayerInteraction(GameObject player)
+    {
+        playerMovingObjects = player.GetComponent<PlayerMovingObjects>();
+
+        if (!isGrabbed)
+        {
+            Grab(playerMovingObjects.grabPoint);
+            playerMovingObjects.OnMovingObject();
+        }
+        else
+        {
+            Release();
+            playerMovingObjects.OnReleaseObject();
         }
     }
 }
