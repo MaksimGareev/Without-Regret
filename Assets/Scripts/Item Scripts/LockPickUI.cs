@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class LockPickUI : MonoBehaviour
 {
     public RectTransform LockIndicator;
+    public RectTransform InnerLock;
     public RectTransform PickCursor;
     public GameObject lockPickUI;
     private Transform player;
@@ -14,6 +15,7 @@ public class LockPickUI : MonoBehaviour
     public float MaxRotation = 90f;
     public float UnlockAngle = 30f;
     public float UnlockTolerance = 5f;
+    public float LockSpeed = 10f;
 
     private float CurrentAngle = 0f;
     private bool isActive = false;
@@ -25,14 +27,40 @@ public class LockPickUI : MonoBehaviour
 
     private GameObject targetLockedItem;
 
+    private PlayerControls controls;
+    private float rotateInput;
+    private float KeyPressTime = 0;
+
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         player = GameObject.FindGameObjectWithTag("Player").transform;
         if (PickCursor != null)
         {
             originalPosition = PickCursor.localPosition;
         }
+
+        controls = new PlayerControls();
+
+        // Rotation
+        controls.LockPicking.Rotate.performed += ctx => rotateInput = ctx.ReadValue<float>();
+        controls.LockPicking.Rotate.canceled += ctx => rotateInput = 0f;
+
+        // Attempt unlock
+        controls.LockPicking.Unlock.performed += ctx => TryUnlock();
+
+        // Cancel Lockpick
+        controls.LockPicking.Exit.performed += ctx => DeactivateLockPick();
+    }
+
+    private void OnEnable()
+    {
+        controls.Enable();
+    }
+
+    private void OnDisable()
+    {
+        controls.Disable();
     }
 
     // Update is called once per frame
@@ -41,9 +69,7 @@ public class LockPickUI : MonoBehaviour
         if (!isActive) return;
 
         // Rotate pick cursor with horisontal input (A/D)
-        float input = Input.GetAxis("Horizontal");
-        float RotationAmount = -input * CursorSpeed * Time.deltaTime;
-        //PickCursor.Rotate(0, 0, -input * CursorSpeed * Time.deltaTime);
+        float RotationAmount = -rotateInput * CursorSpeed * Time.deltaTime;
 
         // Update and clamp rotation
         CurrentAngle += RotationAmount;
@@ -52,9 +78,8 @@ public class LockPickUI : MonoBehaviour
         // Apply rotation to pick cursor
         PickCursor.localEulerAngles = new Vector3(0, 0, CurrentAngle);
 
-
         // Press space to attempt unlocking
-        if (Input.GetKeyDown(KeyCode.Space) || Input.GetButtonDown("Submit"))
+       /* if (Input.GetKeyDown(KeyCode.F) || Input.GetButtonDown("Submit"))
         {
             float angleDifference = Mathf.Abs(Mathf.DeltaAngle(PickCursor.localEulerAngles.z, UnlockAngle));
 
@@ -82,7 +107,36 @@ public class LockPickUI : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape) || Input.GetButtonDown("Xbox B Button"))
         {
             DeactivateLockPick();
+        }*/
+    }
+
+    private void TryUnlock()
+    {
+        if (!isActive) return;
+
+        float angleDifference = Mathf.Abs(Mathf.DeltaAngle(PickCursor.localEulerAngles.z, UnlockAngle));
+
+        if (angleDifference <= UnlockTolerance)
+        {
+            Debug.Log("Its Unlocked");
+            if (targetLockedItem != null)
+            {
+                LockedItem li = targetLockedItem.GetComponent<LockedItem>();
+                if (li != null)
+                {
+                    li.OnUnlocked();
+                }
+                targetLockedItem = null;
+            }
+            DeactivateLockPick();
         }
+        else
+        {
+            Debug.Log("Failed, try again");
+            StartCoroutine(ShakePick());
+        }
+        Debug.Log(angleDifference);
+        Debug.Log(UnlockTolerance);
     }
 
     public void ActivateLockPick(GameObject item)
@@ -95,6 +149,7 @@ public class LockPickUI : MonoBehaviour
     {
         isActive = true;
         CurrentAngle = 0f;
+        if (PickCursor != null)
         PickCursor.localEulerAngles = Vector3.zero;
 
         UnlockAngle = Random.Range(-MaxRotation, MaxRotation);  // Randomize unlocke aggle
@@ -104,12 +159,20 @@ public class LockPickUI : MonoBehaviour
             LockIndicator.localEulerAngles = Vector3.zero;  // Keep the lock straight up in UI
         }
 
+        // Enable UI
+        if (lockPickUI != null)
+        {
+            lockPickUI.SetActive(true);
+        }
+        Debug.Log(UnlockAngle);
+
     }
 
     public void DeactivateLockPick()
     {
         isActive = false;
         lockPickUI.SetActive(false);
+
         // Unlock player movement
         PlayerController pc = player.GetComponent<PlayerController>();
         if (pc != null)
@@ -137,5 +200,15 @@ public class LockPickUI : MonoBehaviour
         }
 
         PickCursor.localPosition = originalPosition;
+    }
+
+    public void RotateLock()
+    {
+        float Percentage = Mathf.Round(100 - Mathf.Abs((CurrentAngle - UnlockAngle) / 100) * 100);
+        float LockRotation = ((Percentage / 100) * MaxRotation) * KeyPressTime;
+        float MaxRotate = (Percentage / 100) * MaxRotation;
+
+        float LockLerp = Mathf.Lerp(InnerLock.eulerAngles.z, LockRotation, Time.deltaTime * LockSpeed);
+        InnerLock.eulerAngles = new Vector3(0, 0, LockLerp);
     }
 }
