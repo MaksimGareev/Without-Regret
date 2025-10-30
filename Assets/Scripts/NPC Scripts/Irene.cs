@@ -7,7 +7,7 @@ public class Irene : MonoBehaviour
     public Transform player;            // the player to follow
     public float FollowDistance = 2f;   // how far behind the player
     public float FollowSpeed = 3f;      // movement speed
-    public float RotationSpeed = 2f;    // how fast the NPC rotates
+    public float RotationSpeed = 3f;    // how fast the NPC rotates
 
     // Start is called before the first frame update
     void Start()
