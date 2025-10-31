@@ -64,11 +64,11 @@ public class First_Person : MonoBehaviour
     {
         float speed = Input.GetKey(KeyCode.LeftShift) ? runSpeed : walkSpeed;
 
-        newVelocity = Vector3.up * rb.velocity.y; 
+        newVelocity = Vector3.up * rb.linearVelocity.y; 
         newVelocity.x = Input.GetAxis("Horizontal") * speed;
         newVelocity.z = Input.GetAxis("Vertical") * speed;
 
-        rb.velocity = transform.TransformDirection(newVelocity);
+        rb.linearVelocity = transform.TransformDirection(newVelocity);
     }
 
     public static float RestrictAngle(float angle, float min, float max)

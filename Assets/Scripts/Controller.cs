@@ -28,11 +28,11 @@ public class Controller : MonoBehaviour  {
     }
 
     void FixedUpdate() {
-        Vector3 newVelocity = Vector3.up * rb.velocity.y;
+        Vector3 newVelocity = Vector3.up * rb.linearVelocity.y;
         float speed = Input.GetKey(KeyCode.LeftShift) ? runSpeed : walkSpeed;
         newVelocity.x = Input.GetAxis("Horizontal") * speed;
         newVelocity.z = Input.GetAxis("Vertical") * speed;
-        rb.velocity = newVelocity;
+        rb.linearVelocity = newVelocity;
     }
 
     void LateUpdate() {

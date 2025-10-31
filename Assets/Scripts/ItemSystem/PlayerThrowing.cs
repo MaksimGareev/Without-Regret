@@ -1,8 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.ProBuilder;
 using UnityEngine.UI;
 
 public class PlayerThrowing : MonoBehaviour
@@ -12,6 +9,10 @@ public class PlayerThrowing : MonoBehaviour
     [SerializeField] private Transform throwOrigin;
     [SerializeField] private Camera playerCamera;
     [SerializeField] private Slider powerSlider;
+    [SerializeField] private PlayerEquipItem playerEquipItem;
+    [SerializeField] private GameObject interactingScript;
+    private InventoryUIController inventoryUI;
+    private ToggleInventoryUI inventoryToggle;
     
     [Header("Throw Settings")]
     [SerializeField] private float minThrowForce = 1f;
@@ -51,12 +52,47 @@ public class PlayerThrowing : MonoBehaviour
         {
             playerCamera = Camera.main;
         }
+
+        if (playerEquipItem == null)
+        {
+            playerEquipItem = GetComponent<PlayerEquipItem>();
+        }
+
+        if (interactingScript != null && inventoryUI == null)
+        {
+            inventoryUI = interactingScript.GetComponent<InventoryUIController>();
+        }
+
+        if (inventoryToggle == null)
+        {
+            inventoryToggle = GetComponent<ToggleInventoryUI>();
+        }
     }
 
     // Update is called once per frame
     private void Update()
     {
-        HandleCharging();
+        if (Time.timeScale != 0f && playerEquipItem.throwableEquipped && !inventoryToggle.isEnabled)
+        {
+            HandleCharging();
+        }
+        else if (Time.timeScale != 0f && playerEquipItem.grabbableEquipped && (Input.GetMouseButtonDown(chargeKeyInt) || Input.GetAxis(chargeButton) > 0.1f))
+        {
+            DropItem();
+        }
+    }
+
+    private void DropItem()
+    {
+        ItemData itemToDrop = playerEquipItem.currentEquippedItem;
+        if (itemToDrop == null)
+        {
+            return;
+        }
+
+        inventoryUI.RefreshInventoryUI();
+        playerEquipItem.UnequipItem();
+        Instantiate(itemToDrop.WorldPrefab, transform.position + transform.forward * 1f, Quaternion.identity);
     }
 
     private void HandleCharging()
@@ -127,8 +163,10 @@ public class PlayerThrowing : MonoBehaviour
         }
 
         inventory.RemoveItem(itemToThrow);
+        inventoryUI.RefreshInventoryUI();
+        playerEquipItem.UnequipItem();
 
-        GameObject gameObject = Instantiate(itemToThrow.Prefab, throwOrigin.position, Quaternion.identity);
+        GameObject gameObject = Instantiate(itemToThrow.WorldPrefab, throwOrigin.position, Quaternion.identity);
 
         Rigidbody rb = gameObject.GetComponent<Rigidbody>();
 
