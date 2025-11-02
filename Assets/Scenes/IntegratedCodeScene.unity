@@ -154,8 +154,6 @@ MonoBehaviour:
   Box: Box
   PickupRange: 1.5
   promptUI: {fileID: 1766668948}
-  interactKey: 101
-  interactButton: Xbox X Button
 --- !u!65 &26101548
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -485,6 +483,18 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5273993982251385165, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5273993982251385165, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5273993982251385165, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5273993982251385165, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -541,11 +551,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
---- !u!224 &115146531 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 3105080686631781647, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
-  m_PrefabInstance: {fileID: 115146530}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &115146532 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2050183522725417625, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
@@ -2115,7 +2120,7 @@ PrefabInstance:
     - target: {fileID: 7951233116101154460, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
       propertyPath: ChoicesContainer
       value: 
-      objectReference: {fileID: 115146531}
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2231,8 +2236,6 @@ MonoBehaviour:
   Box: Box
   PickupRange: 1.5
   promptUI: {fileID: 1766668948}
-  interactKey: 101
-  interactButton: Xbox X Button
 --- !u!65 &583022755
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2984,8 +2987,6 @@ MonoBehaviour:
   Box: Box
   PickupRange: 1.5
   promptUI: {fileID: 1766668948}
-  interactKey: 101
-  interactButton: Xbox X Button
 --- !u!65 &763302192
 BoxCollider:
   m_ObjectHideFlags: 0
