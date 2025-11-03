@@ -28,6 +28,9 @@ public class CameraMovement : MonoBehaviour
     private Vector3 currentLookAtOffset;
     private float yaw = 0f;
     private float pitch = 0f;
+    private PlayerThrowing playerThrowing;
+    private bool isThrowing;
+    private ToggleInventoryUI toggleInventoryUI;
 
     private void Start()
     {
@@ -38,16 +41,17 @@ public class CameraMovement : MonoBehaviour
             return;
         }
 
+        playerThrowing = target.GetComponent<PlayerThrowing>();
+        toggleInventoryUI = target.GetComponent<ToggleInventoryUI>();
+
         currentOffset = defaultOffset;
         currentLookAtOffset = defaultLookAtOffset;
-
-        Vector3 direction = defaultOffset.normalized;
 
         yaw = 0f;
         pitch = 0f;
 
         transform.position = target.position + currentOffset;
-        transform.LookAt(target);
+        transform.LookAt(target.position + currentLookAtOffset);
     }
 
     // Update is called once per frame
@@ -71,13 +75,36 @@ public class CameraMovement : MonoBehaviour
         float horizontalInput = Input.GetAxis("Xbox RightStick X");
         float verticalInput = Input.GetAxis("Xbox RightStick Y");
 
+        bool hasInput = Mathf.Abs(horizontalInput) > 0.01f || Mathf.Abs(verticalInput) > 0.01f;
+
+        if (playerThrowing != null)
+        {
+            isThrowing = playerThrowing.GetIsCharging();
+        }
+
         if (rotateCamera)
         {
-            HandleRotation(horizontalInput, verticalInput);
+            if (hasInput && !isThrowing && !toggleInventoryUI.isEnabled)
+            {
+                HandleRotation(horizontalInput, verticalInput);
+            }
+            else
+            {
+                ReturnRotation();
+            }
+            
         }
         else
         {
-            HandleTranslation(horizontalInput, verticalInput);
+            if (hasInput && !isThrowing && !toggleInventoryUI.isEnabled)
+            {
+                HandleTranslation(horizontalInput, verticalInput);
+            }
+            else
+            {
+                ReturnTranslation();
+            }
+            
         }
 
         if (Input.GetKeyDown(KeyCode.R) && pc.MovementLocked == false && PlayerController.DialogueActive == false)
@@ -89,7 +116,7 @@ public class CameraMovement : MonoBehaviour
         Vector3 Position = target.position + currentOffset;
 
         // Smooth following of the player
-        transform.position = Vector3.Lerp(transform.position, Position, smoothSpeed * Time.deltaTime);
+        transform.position = Vector3.Lerp(transform.position, Position, Mathf.Clamp01(smoothSpeed * Time.deltaTime));
 
         Vector3 lookAtPos = target.position + currentLookAtOffset;
 
@@ -99,56 +126,50 @@ public class CameraMovement : MonoBehaviour
 
     private void HandleRotation(float horizontalInput, float verticalInput)
     {
-        if (Mathf.Abs(horizontalInput) > 0.01f || Mathf.Abs(verticalInput) > 0.01f)
+        yaw += horizontalInput * rotateSpeed * Time.deltaTime;
+        pitch += -verticalInput * rotateSpeed * Time.deltaTime;
+
+        yaw = Mathf.Clamp(yaw, -Mathf.Abs(maxYaw), Mathf.Abs(maxYaw));
+        pitch = Mathf.Clamp(pitch, -Mathf.Abs(maxPitch), Mathf.Abs(maxPitch));
+
+        Quaternion rotation = Quaternion.Euler(pitch, yaw, 0f);
+        currentOffset = rotation * defaultOffset;
+
+        currentLookAtOffset = defaultLookAtOffset;
+    }
+    
+    private void ReturnRotation()
+    {
+        yaw = Mathf.Lerp(yaw, 0f, Mathf.Clamp01(returnSpeed * Time.deltaTime));
+        pitch = Mathf.Lerp(pitch, 0f, Mathf.Clamp01(returnSpeed * Time.deltaTime));
+
+        Quaternion rotation = Quaternion.Euler(pitch, yaw, 0f);
+        currentOffset = rotation * defaultOffset;
+
+        currentLookAtOffset = Vector3.Lerp(currentLookAtOffset, defaultLookAtOffset, Mathf.Clamp01(returnSpeed * Time.deltaTime));
+    }
+
+    private void HandleTranslation(float horizontalInput, float verticalInput)
+    {
+        Vector3 delta = (Vector3.right * horizontalInput + Vector3.forward * verticalInput) * translateSpeed * Time.deltaTime;
+
+        currentOffset += delta;
+        currentLookAtOffset += delta;
+
+        Vector3 offsetFromDefault = currentOffset - defaultOffset;
+
+        if (offsetFromDefault.magnitude > translateLimit)
         {
-            yaw += horizontalInput * rotateSpeed * Time.deltaTime;
-            pitch += -verticalInput * rotateSpeed * Time.deltaTime;
-
-            yaw = Mathf.Clamp(yaw, -Mathf.Abs(maxYaw), Mathf.Abs(maxYaw));
-            pitch = Mathf.Clamp(pitch, -Mathf.Abs(maxPitch), Mathf.Abs(maxPitch));
-
-            Quaternion rotation = Quaternion.Euler(pitch, yaw, 0f);
-            currentOffset = rotation * defaultOffset;
-
-            currentLookAtOffset = defaultLookAtOffset;
-        }
-        else
-        {
-            yaw = Mathf.Lerp(yaw, 0f, Mathf.Clamp01(returnSpeed * Time.deltaTime));
-            pitch = Mathf.Lerp(pitch, 0f, Mathf.Clamp01(returnSpeed * Time.deltaTime));
-
-            Quaternion rotation = Quaternion.Euler(pitch, yaw, 0f);
-            currentOffset = rotation * defaultOffset;
-
-            currentLookAtOffset = Vector3.Lerp(currentLookAtOffset, defaultLookAtOffset, Mathf.Clamp01(returnSpeed * Time.deltaTime));
+            offsetFromDefault = offsetFromDefault.normalized * translateLimit;
+            currentOffset = defaultOffset + offsetFromDefault;
+            currentLookAtOffset = defaultLookAtOffset + offsetFromDefault;
         }
     }
     
-    private void HandleTranslation(float horizontalInput, float verticalInput)
+    private void ReturnTranslation()
     {
-        if (Mathf.Abs(horizontalInput) > 0.01f || Mathf.Abs(verticalInput) > 0.01f)
-        {
-            Vector3 right = transform.right;
-            Vector3 up = transform.up;
-
-            Vector3 delta = (right * horizontalInput + up * verticalInput) * translateSpeed * Time.deltaTime;
-
-            currentOffset += delta;
-            currentLookAtOffset += delta;
-
-            if (currentOffset.magnitude > translateLimit)
-            {
-                currentOffset = currentOffset.normalized * translateLimit;
-
-                Vector3 offsetDiff = currentOffset - defaultOffset;
-                currentLookAtOffset = defaultLookAtOffset + offsetDiff;
-            }
-        }
-        else
-        {
-            currentOffset = Vector3.Lerp(currentOffset, defaultOffset, Mathf.Clamp01(returnSpeed * Time.deltaTime));
-            currentLookAtOffset = Vector3.Lerp(currentLookAtOffset, defaultLookAtOffset, Mathf.Clamp01(returnSpeed * Time.deltaTime));
-        }
+        currentOffset = Vector3.Lerp(currentOffset, defaultOffset, Mathf.Clamp01(returnSpeed * Time.deltaTime));
+        currentLookAtOffset = Vector3.Lerp(currentLookAtOffset, defaultLookAtOffset, Mathf.Clamp01(returnSpeed * Time.deltaTime));
     }
 
     private IEnumerator SwitchCameraZ()

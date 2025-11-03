@@ -221,7 +221,9 @@ public class PlayerThrowing : MonoBehaviour
         camRight.y = 0;
         camRight.Normalize();
 
-        Vector3 relativeDirection = (camForward * input.x + camRight * input.z).normalized;
+        Vector3 relativeDirection = (camRight * input.x + camForward * input.z).normalized;
         return relativeDirection;
     }
+
+    public bool GetIsCharging() => isCharging;
 }
