@@ -72,12 +72,12 @@ public class PlayerFloating : MonoBehaviour
                 {
                     StartFloating();
                 }
+            }
 
-                if (isFloating)
-                {
-                    HandleRhythmInput();
-                    UpdateRhythmUI();
-                }
+            if (isFloating)
+            {
+                HandleRhythmInput();
+                UpdateRhythmUI();
             }
         }
     }
