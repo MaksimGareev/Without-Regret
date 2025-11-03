@@ -1,6 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
-using Ink.Parsed;
 using UnityEngine;
 
 public class CameraMovement : MonoBehaviour
@@ -28,6 +26,8 @@ public class CameraMovement : MonoBehaviour
     private Vector3 currentLookAtOffset;
     private float yaw = 0f;
     private float pitch = 0f;
+    private float initialYaw;
+    private Quaternion initialRotation;
     private PlayerThrowing playerThrowing;
     private bool isThrowing;
     private ToggleInventoryUI toggleInventoryUI;
@@ -44,6 +44,12 @@ public class CameraMovement : MonoBehaviour
         playerThrowing = target.GetComponent<PlayerThrowing>();
         toggleInventoryUI = target.GetComponent<ToggleInventoryUI>();
 
+        Vector3 worldOffset = transform.position - target.position;
+
+        float distance = defaultOffset.magnitude;
+        defaultOffset = worldOffset.normalized * distance;
+        // Debug.Log($"Camera initialized with offset: {defaultOffset}");
+
         currentOffset = defaultOffset;
         currentLookAtOffset = defaultLookAtOffset;
 
@@ -52,6 +58,9 @@ public class CameraMovement : MonoBehaviour
 
         transform.position = target.position + currentOffset;
         transform.LookAt(target.position + currentLookAtOffset);
+
+        initialYaw = transform.eulerAngles.y;
+        initialRotation = Quaternion.Euler(0f, initialYaw, 0f);
     }
 
     // Update is called once per frame
@@ -84,7 +93,7 @@ public class CameraMovement : MonoBehaviour
 
         if (rotateCamera)
         {
-            if (hasInput && !isThrowing && !toggleInventoryUI.isEnabled)
+            if (hasInput && !isThrowing && !toggleInventoryUI.isEnabled && !pc.MovementLocked)
             {
                 HandleRotation(horizontalInput, verticalInput);
             }
@@ -96,7 +105,7 @@ public class CameraMovement : MonoBehaviour
         }
         else
         {
-            if (hasInput && !isThrowing && !toggleInventoryUI.isEnabled)
+            if (hasInput && !isThrowing && !toggleInventoryUI.isEnabled && !pc.MovementLocked)
             {
                 HandleTranslation(horizontalInput, verticalInput);
             }
@@ -126,13 +135,14 @@ public class CameraMovement : MonoBehaviour
 
     private void HandleRotation(float horizontalInput, float verticalInput)
     {
-        yaw += horizontalInput * rotateSpeed * Time.deltaTime;
+        yaw += -horizontalInput * rotateSpeed * Time.deltaTime;
         pitch += -verticalInput * rotateSpeed * Time.deltaTime;
 
         yaw = Mathf.Clamp(yaw, -Mathf.Abs(maxYaw), Mathf.Abs(maxYaw));
         pitch = Mathf.Clamp(pitch, -Mathf.Abs(maxPitch), Mathf.Abs(maxPitch));
 
-        Quaternion rotation = Quaternion.Euler(pitch, yaw, 0f);
+        Quaternion rotation = initialRotation * Quaternion.Euler(pitch, yaw, 0f);
+
         currentOffset = rotation * defaultOffset;
 
         currentLookAtOffset = defaultLookAtOffset;
@@ -151,7 +161,10 @@ public class CameraMovement : MonoBehaviour
 
     private void HandleTranslation(float horizontalInput, float verticalInput)
     {
-        Vector3 delta = (Vector3.right * horizontalInput + Vector3.forward * verticalInput) * translateSpeed * Time.deltaTime;
+        Vector3 inputDirection = new Vector3(horizontalInput, 0f, verticalInput);
+
+        Quaternion rotation = initialRotation * Quaternion.Euler(pitch, yaw, 0f);
+        Vector3 delta = rotation * inputDirection * translateSpeed * Time.deltaTime;
 
         currentOffset += delta;
         currentLookAtOffset += delta;
