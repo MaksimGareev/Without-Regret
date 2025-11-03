@@ -378,8 +378,6 @@ MonoBehaviour:
   SprintSpeed: 8
   SprintDuration: 3
   sprintCooldown: 4
-  sprintKey: 304
-  sprintButton: Xbox LeftStick Click
   groundCheck: {fileID: 0}
   groundCheckRadius: 0.2
   groundMask:
@@ -454,8 +452,8 @@ MonoBehaviour:
   maxThrowForce: 10
   upwardForce: 2
   chargeSpeed: 1.5
-  chargeKey: 0
-  chargeButton: XboxRightTrigger
+  chargeKey: 1
+  chargeButton: Xbox RightStick Click
 --- !u!114 &6369621648110085496
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -578,6 +576,8 @@ MonoBehaviour:
   interactOffset: 1
   interactKey: 101
   interactButton: Xbox X Button
+  mantleKey: 32
+  mantleButton: Xbox A Button
   showDebugLogs: 0
 --- !u!114 &2250357011382021346
 MonoBehaviour:
@@ -592,7 +592,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovingObjects
   grabPoint: {fileID: 1136661512570076457}
-  moveSlowdownMultiplier: 2
+  moveSlowdownMultiplier: 3
   showDebugLogs: 0
 --- !u!1 &7826200252848409900
 GameObject:
@@ -692,7 +692,7 @@ PrefabInstance:
     - target: {fileID: -7511558181221131132, guid: 807525ce563cb0348a23818dc46836c1, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: 3a644353e6da2b84a84e591e09cdcb90, type: 2}
+      objectReference: {fileID: 2100000, guid: d4f0f436475a0674183e0f20a1edd3fd, type: 2}
     - target: {fileID: 919132149155446097, guid: 807525ce563cb0348a23818dc46836c1, type: 3}
       propertyPath: m_Name
       value: Backpack
