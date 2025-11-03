@@ -45,7 +45,7 @@ public class TODManager : MonoBehaviour
         currentTime = newTime;
         UpdateLighting();
     }
-
+// if needed update this lines of code
     void UpdateLighting()
     {
         switch (currentTime)
@@ -53,15 +53,15 @@ public class TODManager : MonoBehaviour
             case TOD.Evening:
                 RenderSettings.skybox = Skybox_Evening;
                 directionalLight.color = new Color(1f, 0.5f, 0.3f); // orange color
-                directionalLight.intensity = 0.3f;
-                directionalLight.transform.rotation = Quaternion.Euler(30f, 50f, 0f);
+                directionalLight.intensity = 0.3f;// I wonder what light intensity does hmmmmmmmmm
+                directionalLight.transform.rotation = Quaternion.Euler(30f, 50f, 0f); //sun rotation don't touch
                 RenderSettings.ambientLight = new Color(1f, 0.7f, 0.4f); //ambient light
                 break;
             case TOD.Night:
                 RenderSettings.skybox = Skybox_Night;
                 directionalLight.color = new Color(0.3f, 0.4f, 0.6f); // bluish color
-                directionalLight.intensity = 0.3f;
-                directionalLight.transform.rotation = Quaternion.Euler(60f, 0f, 0f);
+                directionalLight.intensity = 0.3f;// I wonder what light intensity does hmmmmmmmmm
+                directionalLight.transform.rotation = Quaternion.Euler(60f, 0f, 0f);//sun rotation don't touch
                 RenderSettings.ambientLight = new Color(0.1f, 0.1f, 0.2f); //ambient light
                 break;
         }
