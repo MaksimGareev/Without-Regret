@@ -191,12 +191,12 @@ public class InventoryUIController : MonoBehaviour//, IPointerEnterHandler, IPoi
             {
                 if (verticalInput > moveThreshold)
                 {
-                    MoveSelection(0, 1);
+                    MoveSelection(1, 0);
                     moved = true;
                 }
                 else if (verticalInput < -moveThreshold)
                 {
-                    MoveSelection(0, -1);
+                    MoveSelection(-1, -0);
                     moved = true;
                 }
             }
@@ -205,12 +205,12 @@ public class InventoryUIController : MonoBehaviour//, IPointerEnterHandler, IPoi
             {
                 if (horizontalInput > moveThreshold)
                 {
-                    MoveSelection(-1, 0);
+                    MoveSelection(0, -1);
                     moved = true;
                 }
                 else if (horizontalInput < -moveThreshold)
                 {
-                    MoveSelection(1, 0);
+                    MoveSelection(0, 1);
                     moved = true;
                 }
             }
