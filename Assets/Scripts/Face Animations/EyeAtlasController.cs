@@ -16,7 +16,9 @@ public class EyeAtlasController : MonoBehaviour
     void Start()
     {
         if (targetRenderer == null)
+        {
             targetRenderer = GetComponent<Renderer>();
+        }
 
         _mat = targetRenderer.material;
     }
@@ -26,7 +28,11 @@ public class EyeAtlasController : MonoBehaviour
     /// </summary>
     public void SetEyeIndex(int index)
     {
-        if (_mat == null) return;
+        if (_mat == null)
+        {
+            Debug.Log("Eye _mat is null!");
+            return;
+        }
         
         if (index < 0 || index >= columns * rows)
         {
