@@ -26,7 +26,7 @@ public class CameraMovement : MonoBehaviour
             if (pc.MovementLocked == true)
             {
                 pc.enabled = false;
-                if (Input.GetKeyDown(KeyCode.Space) && isSwitching == false)
+                if (Input.GetKeyDown(KeyCode.R) && isSwitching == false)
                 {
                     Debug.Log("Player movement is locked cannot rotate camera");
                 }
@@ -43,6 +43,7 @@ public class CameraMovement : MonoBehaviour
         Vector3 Position = target.position + OffSet;
 
         // Smooth following of the player
+        // if ReachedNPC == false
         transform.position = Vector3.Lerp(transform.position, Position, smoothSpeed * Time.deltaTime);
 
         // Look at the Player

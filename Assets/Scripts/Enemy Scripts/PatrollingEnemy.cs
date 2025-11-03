@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class Enemy : MonoBehaviour
+public class PatrollingEnemy : MonoBehaviour
 {
     public NavMeshAgent agent;
     public float range; // Area around the center point
