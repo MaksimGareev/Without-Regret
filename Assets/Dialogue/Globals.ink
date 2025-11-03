@@ -1,0 +1,1 @@
+VAR Morality = 0

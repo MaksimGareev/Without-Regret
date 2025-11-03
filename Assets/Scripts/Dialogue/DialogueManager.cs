@@ -4,6 +4,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using Ink.Runtime;
+using Ink.UnityIntegration;
 
 public class DialogueManager : MonoBehaviour
 {
@@ -38,6 +39,7 @@ public class DialogueManager : MonoBehaviour
     // Selection
     private int SelectedChoiceIndex = 0;
     private bool CanChoose = false;
+    public TextMeshProUGUI PopupText;
 
     // Player references
     private Transform playerTransform;
@@ -46,9 +48,13 @@ public class DialogueManager : MonoBehaviour
 
     private string NPCName;
 
+    private DialogueVariables dialogueVariables;
+    [SerializeField] private InkFile globalsInkFile;
+
     private void Awake()
     {
         controls = new PlayerControls();
+        dialogueVariables = new DialogueVariables(globalsInkFile.filePath);
 
         controls.Dialogue.Move.performed += ctx =>
         {
@@ -73,6 +79,7 @@ public class DialogueManager : MonoBehaviour
     void Start()
     {
         DialoguePanel.SetActive(false);
+        //PopupText.gameObject.SetActive(false);
 
         // Build letter sound dictionary
         letterSounds = new Dictionary<char, AudioClip>();
@@ -104,6 +111,7 @@ public class DialogueManager : MonoBehaviour
         if (playerThrowing != null) playerThrowing.enabled = false;
 
         currentStory = new Story(inkJSON.text);
+        dialogueVariables.StartListening(currentStory);
 
         ContinueStory();
     }
@@ -238,10 +246,36 @@ public class DialogueManager : MonoBehaviour
         ContinueStory();
     }
 
+    public void ShowPopUp(string message, float duration = 2f)
+    {
+        StopAllCoroutines();
+        StartCoroutine(ShowPopupRoutine(message, duration));
+    }
+
+    private IEnumerator ShowPopupRoutine(string message, float duration)
+    {
+        //PopupText.gameObject.SetActive(true);
+        PopupText.text = message;
+        PopupText.alpha = 1;
+
+        // Fade out over time
+        yield return new WaitForSeconds(duration);
+
+        float fadeSpeed = 2f;
+        while (PopupText.alpha > 0)
+        {
+            PopupText.alpha -= Time.deltaTime * fadeSpeed;
+            yield return null;
+        }
+
+        PopupText.text = "";
+    }
+
     public void EndDialogue()
     {
         DialoguePanel.SetActive(false);
         PlayerController.DialogueActive = false;
+        dialogueVariables.StopListening(currentStory);
 
         if (playerFloating != null) playerFloating.enabled = true;
         if (playerThrowing != null) playerThrowing.enabled = true;
