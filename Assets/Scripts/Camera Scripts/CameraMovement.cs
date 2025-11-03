@@ -74,7 +74,7 @@ public class CameraMovement : MonoBehaviour
             if (pc.MovementLocked == true)
             {
                 pc.enabled = false;
-                if (Input.GetKeyDown(KeyCode.Space) && isSwitching == false)
+                if (Input.GetKeyDown(KeyCode.R) && isSwitching == false)
                 {
                     Debug.Log("Player movement is locked cannot rotate camera");
                 }
