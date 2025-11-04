@@ -3,7 +3,7 @@ INCLUDE Globals.ink
 -> main
 
 === main ===
-Hi my name is Irene
+Hi my name is Sally
     * [This is the the good answer.]
         ~ Morality += 1
         -> goodResponse
