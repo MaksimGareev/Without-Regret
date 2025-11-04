@@ -6,16 +6,20 @@ using System.IO;
 
 public class DialogueVariables
 {
+    private Story globalVariablesStory;
     private Dictionary<string, Ink.Runtime.Object> variables;
-    public DialogueManager dialogueManager;
+    //public DialogueManager dialogueManager;
 
 
-    public DialogueVariables(string globalsFilePath)
+    public DialogueVariables(string inkJSON)
     {
-        // Compile the story
+        /* Compile the story
         string inkFilesContents = File.ReadAllText(globalsFilePath);
         Ink.Compiler compiler = new Ink.Compiler(inkFilesContents);
         Story globalVariablesStory = compiler.Compile();
+        */
+
+        globalVariablesStory = new Story(inkJSON);
 
         // Initialize the dictionary
         variables = new Dictionary<string, Ink.Runtime.Object>();
