@@ -27,7 +27,7 @@ public class Door : MonoBehaviour
             isPlayerNear = true;
 
             // if player presses E to enter
-            if (Input.GetKeyDown(KeyCode.E))
+            if (Input.GetKeyDown(KeyCode.E) || Input.GetButtonDown("Xbox X Button"))
             {
                 LoadScene();
             }
