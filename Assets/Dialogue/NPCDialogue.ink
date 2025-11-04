@@ -10,7 +10,7 @@ Hi my name is Sally
     * [This is the bad answer.]
         ~ Morality -= 1
         -> badResponse
-    * [This is the Nutral answer.]
+    * [This is the Neutral answer.]
         ~ Morality += 0
         -> neutralResponse
         
@@ -23,6 +23,6 @@ This means you picked the bad response.
 -> END
 
 === neutralResponse ===
-This means you picked the nutral response.
+This means you picked the neutral response.
 -> END
  
