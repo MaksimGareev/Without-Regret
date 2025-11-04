@@ -7,7 +7,7 @@ public class ChasingEnemy : MonoBehaviour
     // Movement
     public NavMeshAgent agent;
     public Transform target;
-    private Vector3 StoppingDistance;
+    //private Vector3 StoppingDistance;
 
     // Camera
     public Camera cam;
@@ -26,7 +26,7 @@ public class ChasingEnemy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        agent.SetDestination(target.position - StoppingDistance);
+        agent.SetDestination(target.position);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -37,8 +37,8 @@ public class ChasingEnemy : MonoBehaviour
             // Destroy(target);
 
             // Lerp camera over to show enemy reaching NPC
-            cam.transform.position = Vector3.Lerp(transform.position, target.position + offSet, smoothSpeed * Time.deltaTime);
-            cam.transform.LookAt(target);
+           // cam.transform.position = Vector3.Lerp(transform.position, target.position + offSet, smoothSpeed * Time.deltaTime);
+           // cam.transform.LookAt(target);
 
             // Freeze all other objects
             // Implement a delayed game over here after camera has showed the enemy and NPC
