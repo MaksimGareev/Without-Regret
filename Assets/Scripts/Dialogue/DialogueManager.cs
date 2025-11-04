@@ -47,6 +47,7 @@ public class DialogueManager : MonoBehaviour
     private Transform playerTransform;
     private PlayerThrowing playerThrowing;
     private PlayerFloating playerFloating;
+    private PlayerController playerController;
 
     private string NPCName;
 
@@ -114,10 +115,11 @@ public class DialogueManager : MonoBehaviour
         playerTransform = player.transform;
         playerFloating = player.GetComponent<PlayerFloating>();
         playerThrowing = player.GetComponent<PlayerThrowing>();
+        playerController = player.GetComponent<PlayerController>();
 
         this.NPCName = NPCName;
         DialoguePanel.SetActive(true);
-        PlayerController.DialogueActive = true;
+        playerController.SetDialogueActive(true);
 
         if (playerFloating != null) playerFloating.enabled = false;
         if (playerThrowing != null) playerThrowing.enabled = false;

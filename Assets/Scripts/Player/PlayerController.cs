@@ -80,7 +80,12 @@ public class PlayerController : MonoBehaviour
     private void Update()
     {
         if (DialogueActive)
+        {
+            moveInput = Vector2.zero;
+            yVelocity = 0f;
             return;
+        }
+            
 
         Debug.Log(MovementLocked);
         Debug.Log(freezePosition);
@@ -156,6 +161,19 @@ public class PlayerController : MonoBehaviour
         {
             float angle = Mathf.Atan2(move.x, move.z) * Mathf.Rad2Deg;
             transform.rotation = Quaternion.Euler(0f, angle, 0f);
+        }
+    }
+
+    public void SetDialogueActive(bool active)
+    {
+        Rigidbody rb = GetComponent<Rigidbody>();
+
+        DialogueActive = active;
+        if (active)
+        {
+            moveInput = Vector2.zero; // stop leftover movement
+            Controller.Move(Vector3.zero); // ensure no residual motion
+            rb.constraints = RigidbodyConstraints.FreezeAll;
         }
     }
 
