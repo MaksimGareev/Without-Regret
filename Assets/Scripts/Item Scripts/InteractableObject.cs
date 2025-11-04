@@ -78,6 +78,7 @@ public class InteractableObject : MonoBehaviour
         }
         pc.MovementLocked = false;
         pc.enabled = true;
+        promptUI.SetActive(false);
         //Destroy(gameObject, 1f); // Remove the item with a small delay
     }
 }
