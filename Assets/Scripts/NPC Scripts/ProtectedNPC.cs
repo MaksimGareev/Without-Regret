@@ -5,7 +5,8 @@ using UnityEngine.AI;
 public class ProtectedNPC : MonoBehaviour
 {
     public NavMeshAgent agent;
-    public Transform target;
+    public Transform[] CheckPoints;
+    public int point;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -16,6 +17,20 @@ public class ProtectedNPC : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        agent.SetDestination(target.position); // set NPC destination
+        if (point >= CheckPoints.Length)
+        {
+            point = 0;
+        }
+
+        Transform target = CheckPoints[point];
+        agent.SetDestination(target.position);
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+       if (other.gameObject.CompareTag("Point"))
+        {
+            point ++;
+        }
     }
 }
