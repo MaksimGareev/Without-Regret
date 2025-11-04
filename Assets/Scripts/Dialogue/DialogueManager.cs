@@ -4,7 +4,9 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using Ink.Runtime;
+#if UNITY_EDITOR
 using Ink.UnityIntegration;
+#endif
 
 public class DialogueManager : MonoBehaviour
 {
@@ -49,13 +51,23 @@ public class DialogueManager : MonoBehaviour
     private string NPCName;
 
     private DialogueVariables dialogueVariables;
-    [SerializeField] private InkFile globalsInkFile;
-
+    [SerializeField] private TextAsset globalsInkJSON;
+    /*
+    #if UNITY_EDITOR
+        [SerializeField] private InkFile globalsInkFile;
+    #endif
+    */
     private void Awake()
     {
         controls = new PlayerControls();
-        dialogueVariables = new DialogueVariables(globalsInkFile.filePath);
-
+        dialogueVariables = new DialogueVariables(globalsInkJSON.text);
+        /*
+        #if UNITY_EDITOR
+                dialogueVariables = new DialogueVariables(globalsInkFile.filePath);
+        #else
+                dialogueVariables = new DialogueVariables("");
+        #endif
+        */
         controls.Dialogue.Move.performed += ctx =>
         {
             MoveInput = ctx.ReadValue<float>();

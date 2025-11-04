@@ -5,10 +5,8 @@ INCLUDE Globals.Ink
 === main ===
 
 {Morality > 0 : You are positive.}
-    -> END
     
 {Morality < 0 : You are negative.}
-    -> END
     
 {Morality == 0 : You are neutral.}
-    ->END
+    -> END
