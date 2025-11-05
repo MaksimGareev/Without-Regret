@@ -4,6 +4,9 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using Ink.Runtime;
+#if UNITY_EDITOR
+using Ink.UnityIntegration;
+#endif
 
 public class DialogueManager : MonoBehaviour
 {
@@ -38,18 +41,34 @@ public class DialogueManager : MonoBehaviour
     // Selection
     private int SelectedChoiceIndex = 0;
     private bool CanChoose = false;
+    public TextMeshProUGUI PopupText;
 
     // Player references
     private Transform playerTransform;
     private PlayerThrowing playerThrowing;
     private PlayerFloating playerFloating;
+    private PlayerController playerController;
 
     private string NPCName;
 
+    private DialogueVariables dialogueVariables;
+    [SerializeField] private TextAsset globalsInkJSON;
+    /*
+    #if UNITY_EDITOR
+        [SerializeField] private InkFile globalsInkFile;
+    #endif
+    */
     private void Awake()
     {
         controls = new PlayerControls();
-
+        dialogueVariables = new DialogueVariables(globalsInkJSON.text);
+        /*
+        #if UNITY_EDITOR
+                dialogueVariables = new DialogueVariables(globalsInkFile.filePath);
+        #else
+                dialogueVariables = new DialogueVariables("");
+        #endif
+        */
         controls.Dialogue.Move.performed += ctx =>
         {
             MoveInput = ctx.ReadValue<float>();
@@ -73,6 +92,7 @@ public class DialogueManager : MonoBehaviour
     void Start()
     {
         DialoguePanel.SetActive(false);
+        //PopupText.gameObject.SetActive(false);
 
         // Build letter sound dictionary
         letterSounds = new Dictionary<char, AudioClip>();
@@ -95,15 +115,17 @@ public class DialogueManager : MonoBehaviour
         playerTransform = player.transform;
         playerFloating = player.GetComponent<PlayerFloating>();
         playerThrowing = player.GetComponent<PlayerThrowing>();
+        playerController = player.GetComponent<PlayerController>();
 
         this.NPCName = NPCName;
         DialoguePanel.SetActive(true);
-        PlayerController.DialogueActive = true;
+        playerController.SetDialogueActive(true);
 
         if (playerFloating != null) playerFloating.enabled = false;
         if (playerThrowing != null) playerThrowing.enabled = false;
 
         currentStory = new Story(inkJSON.text);
+        dialogueVariables.StartListening(currentStory);
 
         ContinueStory();
     }
@@ -238,10 +260,37 @@ public class DialogueManager : MonoBehaviour
         ContinueStory();
     }
 
+    public void ShowPopUp(string message, float duration = 2f)
+    {
+        StopAllCoroutines();
+        StartCoroutine(ShowPopupRoutine(message, duration));
+    }
+
+    private IEnumerator ShowPopupRoutine(string message, float duration)
+    {
+        //PopupText.gameObject.SetActive(true);
+        PopupText.text = message;
+        PopupText.alpha = 1;
+
+        // Fade out over time
+        yield return new WaitForSeconds(duration);
+
+        float fadeSpeed = 2f;
+        while (PopupText.alpha > 0)
+        {
+            PopupText.alpha -= Time.deltaTime * fadeSpeed;
+            yield return null;
+        }
+
+        PopupText.text = "";
+    }
+
     public void EndDialogue()
     {
         DialoguePanel.SetActive(false);
         PlayerController.DialogueActive = false;
+        playerController.SetDialogueActive(false);
+        dialogueVariables.StopListening(currentStory);
 
         if (playerFloating != null) playerFloating.enabled = true;
         if (playerThrowing != null) playerThrowing.enabled = true;

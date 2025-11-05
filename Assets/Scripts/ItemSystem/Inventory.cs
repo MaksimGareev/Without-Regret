@@ -107,6 +107,7 @@ public class Inventory : MonoBehaviour
         if (item.ItemType == ItemType.KeyItem || item.ItemType == ItemType.Backpack)
         {
             playerController.TriggerPickupCameraEffect(itemToCollect.transform);
+            StartCoroutine(WaitForCameraTransition());
             Destroy(itemToCollect.gameObject, 1f);
             itemToCollect = null;
         }
@@ -117,6 +118,13 @@ public class Inventory : MonoBehaviour
         }
 
         inventoryUI.RefreshInventoryUI();
+    }
+
+    IEnumerator WaitForCameraTransition()
+    {
+        playerController.SetFreezePosition(true);
+        yield return new WaitForSeconds(2f);
+        playerController.SetFreezePosition(false);
     }
 
     public void RemoveItem(ItemData item)
