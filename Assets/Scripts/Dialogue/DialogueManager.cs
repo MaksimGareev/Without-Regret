@@ -289,6 +289,7 @@ public class DialogueManager : MonoBehaviour
     {
         DialoguePanel.SetActive(false);
         PlayerController.DialogueActive = false;
+        playerController.SetDialogueActive(false);
         dialogueVariables.StopListening(currentStory);
 
         if (playerFloating != null) playerFloating.enabled = true;
