@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 3870113160531172826}
   - component: {fileID: 8730694522381901846}
   - component: {fileID: 3392652441733394398}
+  - component: {fileID: 6511686138349588171}
   m_Layer: 0
   m_Name: Backpack
   m_TagString: Untagged
@@ -70,7 +71,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 3a644353e6da2b84a84e591e09cdcb90, type: 2}
+  - {fileID: 2100000, guid: d4f0f436475a0674183e0f20a1edd3fd, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -175,3 +176,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WorldItem
   itemData: {fileID: 11400000, guid: a555a26ed256f294a97f71bf0737870f, type: 2}
+--- !u!114 &6511686138349588171
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8657645946949767162}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3adaafd8c8f10a74a98d24a83d99506e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractableObject
+  Box: Backpack
+  PickupRange: 1
+  promptUI: {fileID: 0}

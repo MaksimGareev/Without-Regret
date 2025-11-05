@@ -10,7 +10,7 @@ public class EnemyDistracted : MonoBehaviour
     [SerializeField] private float lingerDistance = 1.5f;
     [SerializeField] private float moveSpeed = 25f;
 
-    private Enemy enemyMovement;
+    private PatrollingEnemy enemyMovement;
     private NavMeshAgent enemyNavMeshAgent;
     private Rigidbody rb;
     private bool isDistracted = false;
@@ -20,7 +20,7 @@ public class EnemyDistracted : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
-        enemyMovement = GetComponent<Enemy>();
+        enemyMovement = GetComponent<PatrollingEnemy>();
         enemyNavMeshAgent = GetComponent<NavMeshAgent>();
     }
 

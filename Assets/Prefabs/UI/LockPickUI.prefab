@@ -93,7 +93,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &3147972211091899894
 RectTransform:
   m_ObjectHideFlags: 0
@@ -166,12 +166,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   LockIndicator: {fileID: 6807974025016516914}
+  InnerLock: {fileID: 0}
   PickCursor: {fileID: 7847607148354444208}
   lockPickUI: {fileID: 4902098984296157853}
   CursorSpeed: 100
   MaxRotation: 90
   UnlockAngle: 0
   UnlockTolerance: 5
+  LockSpeed: 10
   ShakeDuration: 0.2
   ShakeStrength: 10
 --- !u!1 &6940519460537270773

@@ -18,6 +18,13 @@ public class ItemDistractingEnemy : MonoBehaviour
             return;
         }
 
+        BreakableObject breakableObject = collision.gameObject.GetComponent<BreakableObject>();
+
+        if (breakableObject != null)
+        {
+            breakableObject.Break();
+        }
+
         hasLanded = true;
 
         Collider[] hits = Physics.OverlapSphere(transform.position, distractionRadius);

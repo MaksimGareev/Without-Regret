@@ -15,7 +15,7 @@ public class PlayerPossessing : MonoBehaviour
     private PlayerController playerController;
     private Rigidbody playerRigidbody;
     private PossessedEnemyResisting possessedEnemyMovement;
-    private Enemy normalEnemyMovement;
+    private PatrollingEnemy normalEnemyMovement;
     private NavMeshAgent enemyNavMeshAgent;
     private Rigidbody enemyRigidbody;
     private float possessionTimer;
@@ -79,7 +79,7 @@ public class PlayerPossessing : MonoBehaviour
         {
             if (hit.collider.TryGetComponent<PossessedEnemyResisting>(out var target))
             {
-                normalEnemyMovement = hit.collider.GetComponent<Enemy>();
+                normalEnemyMovement = hit.collider.GetComponent<PatrollingEnemy>();
                 Debug.Log("Enemy found :" + hit.collider.gameObject.name);
                 StartPossession(target);
             }
@@ -110,7 +110,7 @@ public class PlayerPossessing : MonoBehaviour
                 float angle = Vector3.Angle(rightStick, directionToEnemy);
                 if (angle < searchConeAngle)
                 {
-                    normalEnemyMovement = hit.GetComponent<Enemy>();
+                    normalEnemyMovement = hit.GetComponent<PatrollingEnemy>();
                     Debug.Log("Enemy found: " + hit.name);
                     return hit.GetComponent<PossessedEnemyResisting>();
                 }
@@ -143,7 +143,7 @@ public class PlayerPossessing : MonoBehaviour
             return;
         }
 
-        normalEnemyMovement = target.GetComponent<Enemy>();
+        normalEnemyMovement = target.GetComponent<PatrollingEnemy>();
         enemyRigidbody = target.GetComponent<Rigidbody>();
         possessedEnemyMovement = target;
 
