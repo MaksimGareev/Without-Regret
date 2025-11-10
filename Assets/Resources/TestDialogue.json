@@ -1,0 +1,34 @@
+{
+    "npcName": "Friendly NPC",
+    "dialogueLines": [
+        {
+            "text": "Hello traveler! Welcome to the village.",
+            "choices": [
+                {
+                    "text": "Thanks!",
+                    "nextIndex": 1,
+                    "morality": "Morality",
+                    "valueChange" :  1
+                },
+                {
+                    "text": "Who are you?",
+                    "nextIndex": 2,
+                    "morality": "Morality",
+                    "valueChange": -1
+                }
+            ]
+        },
+        {
+            "text": "Glad you're here. Be careful near the forest.",
+            "choices": [
+                {
+                    "nextIndex" :  -1
+                }
+            ]
+        },
+        {
+            "text": "I'm just a villager who loves meeting new people.",
+            "choices": []
+        }
+    ]
+}
