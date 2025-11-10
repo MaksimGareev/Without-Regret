@@ -3,10 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
-using Ink.Runtime;
-#if UNITY_EDITOR
-using Ink.UnityIntegration;
-#endif
 
 public class DialogueManager : MonoBehaviour
 {
@@ -18,7 +14,8 @@ public class DialogueManager : MonoBehaviour
     public GameObject ChoiceButton;
 
     private List<GameObject> spawnedChoices = new List<GameObject>();
-    private Story currentStory;
+    private DialogueData currentDialogue;
+    private int currentIndex = 0;
     private bool IsTyping;
 
     // Letter sounds
@@ -50,25 +47,11 @@ public class DialogueManager : MonoBehaviour
     private PlayerController playerController;
 
     private string NPCName;
+    private Dictionary<string, int> dialogueVariables = new Dictionary<string, int>();
 
-    private DialogueVariables dialogueVariables;
-    [SerializeField] private TextAsset globalsInkJSON;
-    /*
-    #if UNITY_EDITOR
-        [SerializeField] private InkFile globalsInkFile;
-    #endif
-    */
     private void Awake()
     {
         controls = new PlayerControls();
-        dialogueVariables = new DialogueVariables(globalsInkJSON.text);
-        /*
-        #if UNITY_EDITOR
-                dialogueVariables = new DialogueVariables(globalsInkFile.filePath);
-        #else
-                dialogueVariables = new DialogueVariables("");
-        #endif
-        */
         controls.Dialogue.Move.performed += ctx =>
         {
             MoveInput = ctx.ReadValue<float>();
@@ -93,6 +76,7 @@ public class DialogueManager : MonoBehaviour
     {
         DialoguePanel.SetActive(false);
         //PopupText.gameObject.SetActive(false);
+        dialogueVariables["Morality"] = 0;
 
         // Build letter sound dictionary
         letterSounds = new Dictionary<char, AudioClip>();
@@ -108,53 +92,61 @@ public class DialogueManager : MonoBehaviour
         HandleChoiceInput();
     }
 
-    // -------------------- INK LOADING --------------------
-    public void StartDialogueFromInk(string NPCName, TextAsset inkJSON)
+    // -------------------- JSON Dialogue --------------------
+    public void StartDialogueFromJson(TextAsset jsonFile)
     {
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         playerTransform = player.transform;
         playerFloating = player.GetComponent<PlayerFloating>();
         playerThrowing = player.GetComponent<PlayerThrowing>();
         playerController = player.GetComponent<PlayerController>();
+        
+        if (jsonFile == null)
+        {
+            Debug.LogWarning("no json dialogue file assigned");
+            return;
+        }
 
-        this.NPCName = NPCName;
+        currentDialogue = JsonUtility.FromJson<DialogueData>(jsonFile.text);
+        currentIndex = 0;
+
+        if (currentDialogue == null || currentDialogue.dialogueLines.Count == 0)
+        {
+            Debug.LogWarning("Dialogue JSON invalid or empty");
+            return;
+        }
+
         DialoguePanel.SetActive(true);
+        NPCNameText.text = currentDialogue.npcName;
         playerController.SetDialogueActive(true);
 
         if (playerFloating != null) playerFloating.enabled = false;
         if (playerThrowing != null) playerThrowing.enabled = false;
 
-        currentStory = new Story(inkJSON.text);
-        dialogueVariables.StartListening(currentStory);
+        ShowCurrentLine();
 
-        ContinueStory();
     }
 
-    private void ContinueStory()
+    private void ShowCurrentLine()
     {
-        if (currentStory.canContinue)
+        DialogueLine line = currentDialogue.dialogueLines[currentIndex];
+        StopAllCoroutines();
+        StartCoroutine(TypeLine(line.text));
+
+        // clear previous choices
+        foreach (var b in spawnedChoices)
         {
-            string text = currentStory.Continue().Trim();
-            NPCNameText.text = NPCName;
-            StopAllCoroutines();
-            StartCoroutine(TypeLine(text));
+            Destroy(b);
         }
-        else if (currentStory.currentChoices.Count > 0)
-        {
-            SpawnChoices();
-        }
-        else
-        {
-            EndDialogue();
-        }
+        spawnedChoices.Clear();
     }
 
-    private IEnumerator TypeLine(string line)
+    private IEnumerator TypeLine(string text)
     {
         IsTyping = true;
         DialogueText.text = "";
 
-        foreach (char c in line.ToCharArray())
+        foreach (char c in text)
         {
             DialogueText.text += c;
             char upperChar = char.ToUpper(c);
@@ -162,15 +154,16 @@ public class DialogueManager : MonoBehaviour
             {
                 TypingAudioSource.PlayOneShot(letterSounds[upperChar]);
             }
-            yield return new WaitForSeconds(0.03f);
+            yield return new WaitForSeconds(0.02f);
         }
 
         IsTyping = false;
 
-        // After typing line, show choices (if any)
-        if (currentStory.currentChoices.Count > 0)
+        // Show choices if any
+        var choices = currentDialogue.dialogueLines[currentIndex].choices;
+        if (choices != null && choices.Count > 0)
         {
-            SpawnChoices();
+            SpawnChoices(choices);
         }
         else
         {
@@ -186,28 +179,40 @@ public class DialogueManager : MonoBehaviour
             yield return null;
         }
         ConfirmPressed = false;
-        ContinueStory();
+        
+        // move to next line (if any)
+        if (currentIndex + 1 < currentDialogue.dialogueLines.Count)
+        {
+            currentIndex++;
+            ShowCurrentLine();
+        }
+        else if (currentIndex < 0)
+        {
+            EndDialogue();
+        }
+        else
+        {
+            EndDialogue();
+        }
     }
 
-    private void SpawnChoices()
+    private void SpawnChoices(List<DialogueChoice> choices)  
     {
         // Clear old
         foreach (var b in spawnedChoices) Destroy(b);
         spawnedChoices.Clear();
-
         ChoicesContainer.gameObject.SetActive(true);
 
-        for (int i = 0; i < currentStory.currentChoices.Count; i++)
+        foreach (DialogueChoice choice in choices)
         {
-            int index = i;
-            var choice = currentStory.currentChoices[i];
             GameObject buttonObj = Instantiate(ChoiceButton, ChoicesContainer);
             buttonObj.SetActive(true);
             TextMeshProUGUI buttonText = buttonObj.GetComponentInChildren<TextMeshProUGUI>();
-            buttonText.text = choice.text.Trim();
+            buttonText.text = choice.text;
 
             Button btn = buttonObj.GetComponent<Button>();
-            btn.onClick.AddListener(() => OnChoiceSelected(index));
+            int next = choice.nextIndex;
+            btn.onClick.AddListener(() => OnChoiceSelected(choice));
             spawnedChoices.Add(buttonObj);
         }
 
@@ -236,7 +241,7 @@ public class DialogueManager : MonoBehaviour
 
         if (ConfirmPressed)
         {
-            OnChoiceSelected(SelectedChoiceIndex);
+            OnChoiceSelected(currentDialogue.dialogueLines[currentIndex].choices[SelectedChoiceIndex]);
             ConfirmPressed = false;
         }
     }
@@ -250,14 +255,54 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
-    private void OnChoiceSelected(int choiceIndex)
+    private void OnChoiceSelected(DialogueChoice chosen)
     {
         CanChoose = false;
-        currentStory.ChooseChoiceIndex(choiceIndex);
+        Debug.Log($"OnChoiceSelected CALLED. Choice text: {chosen.text}");
+
+        // Get the current lines choices
+        // var choices = currentDialogue.dialogueLines[currentIndex].choices;
+        //DialogueChoice chosen = null;
+
+        // Find which choice triggered this next index
+        /* foreach (var choice in choices)
+         {
+             if (choice.nextIndex == nextIndex)
+             {
+                 chosen = choice;
+                 break;
+             }
+         }*/
+
+        // Apply variable change if any
+        if (!string.IsNullOrEmpty(chosen.morality))
+        {
+            if (!dialogueVariables.ContainsKey(chosen.morality))
+            {
+                dialogueVariables[chosen.morality] = 0;
+            }
+
+            dialogueVariables[chosen.morality] += chosen.valueChange;
+
+            Debug.Log($"{chosen.morality} changed by {chosen.valueChange}. New value: {dialogueVariables[chosen.morality]}");
+        }
+
+        // clear old choices
         foreach (var b in spawnedChoices) Destroy(b);
         spawnedChoices.Clear();
         ChoicesContainer.gameObject.SetActive(false);
-        ContinueStory();
+
+        // Continue dialogue
+        if (chosen.nextIndex >= 0 && chosen.nextIndex < currentDialogue.dialogueLines.Count)
+        {
+            currentIndex = chosen.nextIndex;
+            ShowCurrentLine();
+        }
+        else
+        {
+            EndDialogue();
+        }
+
     }
 
     public void ShowPopUp(string message, float duration = 2f)
@@ -288,16 +333,31 @@ public class DialogueManager : MonoBehaviour
     public void EndDialogue()
     {
         DialoguePanel.SetActive(false);
+        currentDialogue = null;
+        currentIndex = 0;
+        spawnedChoices.Clear();
+        ConfirmPressed = false;
+        CanChoose = false;
+
         PlayerController.DialogueActive = false;
         playerController.SetDialogueActive(false);
-        dialogueVariables.StopListening(currentStory);
-
+        
         if (playerFloating != null) playerFloating.enabled = true;
         if (playerThrowing != null) playerThrowing.enabled = true;
-
-        foreach (var b in spawnedChoices) Destroy(b);
-        spawnedChoices.Clear();
-
         if (TypingAudioSource != null) TypingAudioSource.Stop();
+    }
+
+    public int GetVariable(string morality)
+    {
+        if (dialogueVariables.TryGetValue(morality, out int value))
+        {
+            return value;
+        }
+        return 0;
+    }
+
+    public void SetVariable(string morality, int value)
+    {
+        dialogueVariables[morality] = value;
     }
 }
