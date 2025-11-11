@@ -46,6 +46,9 @@ public class DialogueManager : MonoBehaviour
     private PlayerFloating playerFloating;
     private PlayerController playerController;
 
+    // Player morality
+    private int playerMorality = 0;
+
     private string NPCName;
     private Dictionary<string, int> dialogueVariables = new Dictionary<string, int>();
 
@@ -60,7 +63,7 @@ public class DialogueManager : MonoBehaviour
         };
         controls.Dialogue.Move.canceled += ctx =>
         {
-            MoveInput = 0f;
+            //MoveInput = 0f;
             MoveUpPressed = false;
             MoveDownPressed = false;
         };
@@ -75,8 +78,10 @@ public class DialogueManager : MonoBehaviour
     void Start()
     {
         DialoguePanel.SetActive(false);
-        //PopupText.gameObject.SetActive(false);
-        dialogueVariables["Morality"] = 0;
+        playerMorality = 0;
+        PlayerPrefs.SetInt("Morality", playerMorality);
+        PlayerPrefs.Save();
+        //playerMorality = PlayerPrefs.GetInt("Morality", 0);
 
         // Build letter sound dictionary
         letterSounds = new Dictionary<char, AudioClip>();
@@ -100,7 +105,8 @@ public class DialogueManager : MonoBehaviour
         playerFloating = player.GetComponent<PlayerFloating>();
         playerThrowing = player.GetComponent<PlayerThrowing>();
         playerController = player.GetComponent<PlayerController>();
-        
+        PopupText.gameObject.SetActive(false);
+
         if (jsonFile == null)
         {
             Debug.LogWarning("no json dialogue file assigned");
@@ -130,7 +136,25 @@ public class DialogueManager : MonoBehaviour
     private void ShowCurrentLine()
     {
         DialogueLine line = currentDialogue.dialogueLines[currentIndex];
-        StopAllCoroutines();
+        
+        if (line.requiredMorality != 0)
+        {
+            if((line.requiredMorality > 0 && playerMorality < line.requiredMorality) || (line.requiredMorality < 0 && playerMorality > line.requiredMorality))
+            {
+                currentIndex++;
+                if (currentIndex < currentDialogue.dialogueLines.Count)
+                {
+                    ShowCurrentLine();
+                }
+                else
+                {
+                    EndDialogue();
+                }
+                return;
+            }
+        }
+        
+        StopCoroutine(nameof(TypeLine));
         StartCoroutine(TypeLine(line.text));
 
         // clear previous choices
@@ -258,39 +282,24 @@ public class DialogueManager : MonoBehaviour
     private void OnChoiceSelected(DialogueChoice chosen)
     {
         CanChoose = false;
-        Debug.Log($"OnChoiceSelected CALLED. Choice text: {chosen.text}");
-
-        // Get the current lines choices
-        // var choices = currentDialogue.dialogueLines[currentIndex].choices;
-        //DialogueChoice chosen = null;
-
-        // Find which choice triggered this next index
-        /* foreach (var choice in choices)
-         {
-             if (choice.nextIndex == nextIndex)
-             {
-                 chosen = choice;
-                 break;
-             }
-         }*/
 
         // Apply variable change if any
-        if (!string.IsNullOrEmpty(chosen.morality))
-        {
-            if (!dialogueVariables.ContainsKey(chosen.morality))
-            {
-                dialogueVariables[chosen.morality] = 0;
-            }
+        playerMorality += chosen.moralityChange;
+        PlayerPrefs.SetInt("Morality", playerMorality);
+        PlayerPrefs.Save();
 
-            dialogueVariables[chosen.morality] += chosen.valueChange;
-
-            Debug.Log($"{chosen.morality} changed by {chosen.valueChange}. New value: {dialogueVariables[chosen.morality]}");
-        }
-
+        Debug.Log($"Morality changed by {chosen.moralityChange}. New Morality: {playerMorality}");
+        //ShowPopUp($"Morality changed by {chosen.moralityChange}. New Morality: {playerMorality}", 2f);
         // clear old choices
         foreach (var b in spawnedChoices) Destroy(b);
         spawnedChoices.Clear();
         ChoicesContainer.gameObject.SetActive(false);
+
+        // show pop up of morality change
+        if (chosen.moralityChange != 0)
+        {
+            ShowPopUp($"Morality changed by {chosen.moralityChange}. New Morality: {playerMorality}", 2f);
+        }
 
         // Continue dialogue
         if (chosen.nextIndex >= 0 && chosen.nextIndex < currentDialogue.dialogueLines.Count)
@@ -305,9 +314,13 @@ public class DialogueManager : MonoBehaviour
 
     }
 
-    public void ShowPopUp(string message, float duration = 2f)
+    public void ShowPopUp(string message, float duration = 1f)
     {
-        StopAllCoroutines();
+        PopupText.gameObject.SetActive(true);
+        PopupText.alpha = 1f;
+       // PopupText.transform.localPosition = Vector3.zero;
+
+        StopCoroutine(nameof(ShowPopupRoutine));
         StartCoroutine(ShowPopupRoutine(message, duration));
     }
 
@@ -315,19 +328,32 @@ public class DialogueManager : MonoBehaviour
     {
         //PopupText.gameObject.SetActive(true);
         PopupText.text = message;
-        PopupText.alpha = 1;
+
+        // Capture starting position
+       // Vector3 startPos = PopupText.transform.localPosition;
+       // Vector3 endPos = startPos + Vector3.up * 20f;
 
         // Fade out over time
         yield return new WaitForSeconds(duration);
 
-        float fadeSpeed = 2f;
-        while (PopupText.alpha > 0)
+        float fadeDuration = 1f;
+        float elapsed = 0f;
+        while (elapsed < fadeDuration)
         {
-            PopupText.alpha -= Time.deltaTime * fadeSpeed;
+            elapsed += Time.deltaTime;
+            float t = elapsed / fadeDuration;
+
+            PopupText.alpha = Mathf.Lerp(1f, 0f, t);
+            //PopupText.transform.localPosition = Vector3.Lerp(startPos, endPos, t);
+
+            //PopupText.alpha -= Time.deltaTime * fadeSpeed;
             yield return null;
         }
 
         PopupText.text = "";
+        PopupText.alpha = 0f;
+        //PopupText.transform.localPosition = startPos;
+        PopupText.gameObject.SetActive(false);
     }
 
     public void EndDialogue()
@@ -345,6 +371,8 @@ public class DialogueManager : MonoBehaviour
         if (playerFloating != null) playerFloating.enabled = true;
         if (playerThrowing != null) playerThrowing.enabled = true;
         if (TypingAudioSource != null) TypingAudioSource.Stop();
+
+        Debug.Log($"Dialogue ended. Final morality = {playerMorality}");
     }
 
     public int GetVariable(string morality)

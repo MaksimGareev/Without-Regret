@@ -3,23 +3,23 @@
     "dialogueLines": [
         {
             "text": "Hello traveler! Welcome to the village.",
+            "requiredMorality" :  0,
             "choices": [
                 {
-                    "text": "Thanks!",
+                    "text": "This is the good response",
                     "nextIndex": 1,
-                    "morality": "Morality",
-                    "valueChange" :  1
+                    "moralityChange" :  2
                 },
                 {
-                    "text": "Who are you?",
+                    "text": "This is the bad response",
                     "nextIndex": 2,
-                    "morality": "Morality",
-                    "valueChange": -1
+                    "moralityChange": -2
                 }
             ]
         },
         {
-            "text": "Glad you're here. Be careful near the forest.",
+            "text": "You chose the good response.",
+            "requiredMorality": 1,
             "choices": [
                 {
                     "nextIndex" :  -1
@@ -27,7 +27,8 @@
             ]
         },
         {
-            "text": "I'm just a villager who loves meeting new people.",
+            "text": "You chose the bad response.",
+            "requiredMorality":  -1,
             "choices": []
         }
     ]
