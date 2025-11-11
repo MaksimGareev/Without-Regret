@@ -12,6 +12,7 @@ public class DialogueData
 public class DialogueLine
 {
     public string text;
+    public int requiredMorality;
     public List<DialogueChoice> choices; // list of choices
 }
 
@@ -20,9 +21,6 @@ public class DialogueChoice
 {
     public string text;
     public int nextIndex; // index of the next dialogue line
-
-    public string morality;
-    //public int currentValue;
-    public int valueChange;
+    public int moralityChange;
 }
 
