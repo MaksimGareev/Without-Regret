@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -14,6 +15,11 @@ public class ObjectiveManager : MonoBehaviour
     public UnityEvent<ObjectiveInstance> OnObjectiveActivated = new();
     public UnityEvent<ObjectiveInstance> OnObjectiveCompleted = new();
 
+    [Header("UI Reference")]
+    [SerializeField] private GameObject objectiveUI;
+
+    private Coroutine UIHideRoutine;
+
     private void Awake()
     {
         if (Instance == null)
@@ -24,6 +30,11 @@ public class ObjectiveManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+
+    private void Start()
+    {
+        ActivateObjective(allObjectives[0]);
     }
 
     public void ActivateObjective(ObjectiveData objective)
@@ -38,6 +49,17 @@ public class ObjectiveManager : MonoBehaviour
         {
             Debug.LogWarning($"Objective is already completed.");
             return;
+        }
+
+        if (objectiveUI != null)
+        {
+            objectiveUI.SetActive(true);
+        }
+
+        if (UIHideRoutine != null)
+        {
+            StopCoroutine(UIHideRoutine);
+            UIHideRoutine = null;
         }
 
         ObjectiveInstance newObjective = new ObjectiveInstance(objective);
@@ -78,11 +100,43 @@ public class ObjectiveManager : MonoBehaviour
         }
     }
 
+    private IEnumerator HideAfterDelay()
+    {
+        yield return new WaitForSeconds(2f);
+
+        if (objectiveUI != null)
+        {
+            objectiveUI.SetActive(false);
+        }
+
+        yield return new WaitForSeconds(1f);
+
+        foreach (var next in allObjectives)
+        {
+            if (!completedObjectives.Contains(next))
+            {
+                ActivateObjective(next);
+                yield break;
+            }
+        }
+
+        Debug.Log("All objectives complete");
+
+        UIHideRoutine = null;
+    }
+
     private void CompleteObjective(ObjectiveInstance objective)
     {
         completedObjectives.Add(objective.data);
         activeObjectives.Remove(objective);
         OnObjectiveCompleted.Invoke(objective);
+
+        if (UIHideRoutine != null)
+        {
+            StopCoroutine(UIHideRoutine);
+        }
+
+        UIHideRoutine = StartCoroutine(HideAfterDelay());
     }
 
     public IEnumerable<ObjectiveInstance> GetActiveObjectives() => activeObjectives;

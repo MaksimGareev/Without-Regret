@@ -18,9 +18,10 @@ public class ObjectiveInstance
     {
         currentProgress += amount;
 
-        if (currentProgress > data.requiredProgress)
+        if (currentProgress >= data.requiredProgress)
         {
             currentProgress = data.requiredProgress;
+            isCompleted = true;
         }
     }
 }
