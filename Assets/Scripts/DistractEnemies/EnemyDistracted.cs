@@ -1,25 +1,25 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(NavMeshAgent))]
 public class EnemyDistracted : MonoBehaviour
 {
     [Header("Distraction Settings")]
     [SerializeField] private float lingerDistance = 1.5f;
-    [SerializeField] private float moveSpeed = 25f;
+    [SerializeField] private float moveSpeed = 5f;
+    [SerializeField] private float lingerTime = 2f;
 
     private PatrollingEnemy enemyMovement;
     private NavMeshAgent enemyNavMeshAgent;
-    private Rigidbody rb;
+
     private bool isDistracted = false;
     private Vector3 distractionPoint;
     private float distractionTimer;
+    private float lingerTimer;
+    private float originalSpeed;
 
     private void Awake()
     {
-        rb = GetComponent<Rigidbody>();
         enemyMovement = GetComponent<PatrollingEnemy>();
         enemyNavMeshAgent = GetComponent<NavMeshAgent>();
     }
@@ -30,16 +30,14 @@ public class EnemyDistracted : MonoBehaviour
         {
             distractionTimer -= Time.deltaTime;
 
-            float distance = Vector3.Distance(transform.position, distractionPoint);
-            if (distance > lingerDistance)
+            if (enemyNavMeshAgent.remainingDistance <= lingerDistance)
             {
-                Vector3 direction = (distractionPoint - transform.position).normalized;
-                rb.MovePosition(transform.position + direction * moveSpeed * Time.deltaTime);
-            }
+                lingerTimer += Time.deltaTime;
 
-            if (distractionTimer <= 0f)
-            {
-                EndDistraction();
+                if (lingerTimer >= lingerTime || distractionTimer <= 0f)
+                {
+                    EndDistraction();
+                }
             }
         }
     }
@@ -54,6 +52,7 @@ public class EnemyDistracted : MonoBehaviour
         isDistracted = true;
         distractionPoint = distractionPos;
         distractionTimer = duration;
+        lingerTimer = 0f;
 
         if (enemyMovement != null)
         {
@@ -62,20 +61,27 @@ public class EnemyDistracted : MonoBehaviour
 
         if (enemyNavMeshAgent != null)
         {
-            enemyNavMeshAgent.enabled = false;
+            originalSpeed = enemyNavMeshAgent.speed;
+            enemyNavMeshAgent.enabled = true;
+            enemyNavMeshAgent.isStopped = false;
+            enemyNavMeshAgent.speed = moveSpeed;
+            enemyNavMeshAgent.SetDestination(distractionPoint);
         }
     }
 
     private void EndDistraction()
     {
         isDistracted = false;
+
         if (enemyMovement != null)
         {
             enemyMovement.enabled = true;
         }
+
         if (enemyNavMeshAgent != null)
         {
-            enemyNavMeshAgent.enabled = true;
+            enemyNavMeshAgent.speed = originalSpeed;
+            enemyNavMeshAgent.ResetPath();
         }
     }
 }
