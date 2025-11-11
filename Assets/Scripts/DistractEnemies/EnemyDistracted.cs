@@ -5,12 +5,14 @@ using UnityEngine.AI;
 public class EnemyDistracted : MonoBehaviour
 {
     [Header("Distraction Settings")]
-    [SerializeField] private float lingerDistance = 1.5f;
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float lingerTime = 2f;
+    [SerializeField] private float stoppingRadius = 1f;
+
 
     private PatrollingEnemy enemyMovement;
     private NavMeshAgent enemyNavMeshAgent;
+    private GameObject distraction;
 
     private bool isDistracted = false;
     private Vector3 distractionPoint;
@@ -26,23 +28,48 @@ public class EnemyDistracted : MonoBehaviour
 
     void Update()
     {
-        if (isDistracted)
+        if (!isDistracted || distraction == null)
         {
-            distractionTimer -= Time.deltaTime;
+            return;
+        }
 
-            if (enemyNavMeshAgent.remainingDistance <= lingerDistance)
+        distractionTimer -= Time.deltaTime;
+
+        if (enemyNavMeshAgent != null && !enemyNavMeshAgent.pathPending)
+        {
+            float distance = Vector3.Distance(transform.position, distractionPoint);
+
+            if (distance <= stoppingRadius && HasLineOfSight(distraction))
             {
+                enemyNavMeshAgent.isStopped = true;
+                enemyNavMeshAgent.velocity = Vector3.zero;
                 lingerTimer += Time.deltaTime;
-
-                if (lingerTimer >= lingerTime || distractionTimer <= 0f)
-                {
-                    EndDistraction();
-                }
             }
+        }
+
+        if (lingerTimer >= lingerTime || distractionTimer <= 0f)
+        {
+            EndDistraction();
         }
     }
 
-    public void BeginDistraction(Vector3 distractionPos, float duration)
+    private bool HasLineOfSight(GameObject distraction)
+    {
+        Vector3 direction = distractionPoint - transform.position;
+        Vector3 start = transform.position + Vector3.up * 1.5f + Vector3.forward * 0.5f;
+
+        if (Physics.Raycast(start, direction.normalized, out RaycastHit hit, direction.magnitude))
+        {
+            if (hit.collider.gameObject == distraction)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public void BeginDistraction(Vector3 distractionPos, float duration, GameObject newDistraction)
     {
         if (isDistracted)
         {
@@ -53,6 +80,7 @@ public class EnemyDistracted : MonoBehaviour
         distractionPoint = distractionPos;
         distractionTimer = duration;
         lingerTimer = 0f;
+        distraction = newDistraction;
 
         if (enemyMovement != null)
         {
@@ -62,7 +90,6 @@ public class EnemyDistracted : MonoBehaviour
         if (enemyNavMeshAgent != null)
         {
             originalSpeed = enemyNavMeshAgent.speed;
-            enemyNavMeshAgent.enabled = true;
             enemyNavMeshAgent.isStopped = false;
             enemyNavMeshAgent.speed = moveSpeed;
             enemyNavMeshAgent.SetDestination(distractionPoint);
@@ -73,6 +100,8 @@ public class EnemyDistracted : MonoBehaviour
     {
         isDistracted = false;
 
+        distraction = null;
+
         if (enemyMovement != null)
         {
             enemyMovement.enabled = true;
@@ -81,6 +110,7 @@ public class EnemyDistracted : MonoBehaviour
         if (enemyNavMeshAgent != null)
         {
             enemyNavMeshAgent.speed = originalSpeed;
+            enemyNavMeshAgent.isStopped = false;
             enemyNavMeshAgent.ResetPath();
         }
     }
