@@ -31,7 +31,7 @@ public class ObjectiveUI : MonoBehaviour
     private void HandleObjectiveActivated(ObjectiveInstance newObjective)
     {
         Debug.Log($"[ObjectiveUI] Received objective activation: {newObjective.data.title}");
-        
+
         currentObjective = newObjective;
 
         if (currentObjective == null)
@@ -46,25 +46,21 @@ public class ObjectiveUI : MonoBehaviour
         if (completedObjective == currentObjective)
         {
             currentObjective = null;
-            RefreshUI(null);
+            RefreshUI(completedObjective);
         }
     }
     
     private void RefreshUI(ObjectiveInstance objective)
     {
-        if (objective == null)
+        if (objective != null)
         {
-            titleText.text = "";
-            descriptionText.text = "";
-            progressText.text = "";
-            gameObject.SetActive(false);
-        }
-        else
-        {
-            gameObject.SetActive(true);
             titleText.text = objective.data.title;
             descriptionText.text = objective.data.description;
             progressText.text = $"{objective.currentProgress} / {objective.data.requiredProgress}";
+        }
+        else
+        {
+            Debug.Log("Objective is null, cannot refresh info");
         }
     }
 

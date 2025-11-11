@@ -3,6 +3,7 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class MoveableObject : MonoBehaviour, IInteractable
 {
+    [SerializeField] private float moveSlowdownMultiplier = 3f;
     private PlayerMovingObjects playerMovingObjects; 
     private Transform grabPoint;
     private Rigidbody rb;
@@ -12,7 +13,6 @@ public class MoveableObject : MonoBehaviour, IInteractable
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
-        
     }
 
     private void Grab(Transform grabPoint)
@@ -29,10 +29,17 @@ public class MoveableObject : MonoBehaviour, IInteractable
         grabPoint = null;
 
         rb.isKinematic = false;
+        rb.linearVelocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
     }
 
     private void FixedUpdate()
     {
+        if (!isGrabbed && rb.linearVelocity.magnitude < 0.01f && rb.angularVelocity.magnitude < 0.01f)
+        {
+            //rb.Sleep();
+        }
+        
         if (isGrabbed && grabPoint != null)
         {
             rb.MovePosition(grabPoint.position);
@@ -47,7 +54,7 @@ public class MoveableObject : MonoBehaviour, IInteractable
         if (!isGrabbed)
         {
             Grab(playerMovingObjects.grabPoint);
-            playerMovingObjects.OnMovingObject();
+            playerMovingObjects.OnMovingObject(moveSlowdownMultiplier);
         }
         else
         {
