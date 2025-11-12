@@ -29,6 +29,7 @@ public class CameraMovement : MonoBehaviour
     [SerializeField] private float translateSpeed = 5f;
     [SerializeField] private float translateLimit = 4f;
     [SerializeField] private float returnSpeed = 4f;
+    [SerializeField] private float mouseResetTime = 3f; 
 
     private Vector3 currentOffset;
     private Vector3 currentLookAtOffset;
@@ -38,6 +39,7 @@ public class CameraMovement : MonoBehaviour
     private PlayerThrowing playerThrowing;
     private bool isThrowing;
     private ToggleInventoryUI toggleInventoryUI;
+    private float mouseResetTimer;
 
     private void Start()
     {
@@ -62,6 +64,9 @@ public class CameraMovement : MonoBehaviour
 
         transform.position = target.position + currentOffset;
         transform.LookAt(target.position + currentLookAtOffset);
+
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
     
     private Vector3 DirectionToVector(WorldDirection direction)
@@ -98,18 +103,32 @@ public class CameraMovement : MonoBehaviour
         float horizontalInput = Input.GetAxis("Xbox RightStick X");
         float verticalInput = Input.GetAxis("Xbox RightStick Y");
 
-        bool hasInput = Mathf.Abs(horizontalInput) > 0.01f || Mathf.Abs(verticalInput) > 0.01f;
+        float mouseX = -Input.GetAxis("Mouse X");
+        float mouseY = -Input.GetAxis("Mouse Y");
+
+        bool hasControllerInput = Mathf.Abs(horizontalInput) > 0.01f || Mathf.Abs(verticalInput) > 0.01f;
+        bool hasMouseInput = Mathf.Abs(mouseX) > 0.01f || Mathf.Abs(mouseY) > 0.01f;
 
         if (playerThrowing != null)
         {
             isThrowing = playerThrowing.GetIsCharging();
         }
 
+        if (!hasMouseInput && mouseResetTimer >= 0)
+        {
+            mouseResetTimer -= Time.deltaTime;
+        }
+
         if (rotateCamera)
         {
-            if (hasInput && !isThrowing && !toggleInventoryUI.isEnabled && !pc.MovementLocked)
+            if (hasControllerInput && !isThrowing && !toggleInventoryUI.isEnabled && !pc.MovementLocked)
             {
                 HandleRotation(horizontalInput, verticalInput);
+            }
+            else if (hasMouseInput && !isThrowing && !toggleInventoryUI.isEnabled && !pc.MovementLocked)
+            {
+                HandleRotation(mouseX, mouseY);
+                mouseResetTimer = mouseResetTime;
             }
             else
             {
@@ -119,15 +138,19 @@ public class CameraMovement : MonoBehaviour
         }
         else
         {
-            if (hasInput && !isThrowing && !toggleInventoryUI.isEnabled && !pc.MovementLocked)
+            if (hasControllerInput && !isThrowing && !toggleInventoryUI.isEnabled && !pc.MovementLocked)
             {
                 HandleTranslation(horizontalInput, verticalInput);
+            }
+            else if (hasMouseInput && !isThrowing && !toggleInventoryUI.isEnabled && !pc.MovementLocked)
+            {
+                HandleTranslation(mouseX, mouseY);
+                mouseResetTimer = mouseResetTime;
             }
             else
             {
                 ReturnTranslation();
             }
-            
         }
 
         // Position of the camera
@@ -159,6 +182,11 @@ public class CameraMovement : MonoBehaviour
     
     private void ReturnRotation()
     {
+        if (mouseResetTimer >= 0f)
+        {
+            return;
+        }
+
         yaw = Mathf.Lerp(yaw, 0f, returnSpeed * Time.deltaTime);
         pitch = Mathf.Lerp(pitch, 0f, returnSpeed * Time.deltaTime);
 
