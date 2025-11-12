@@ -8,14 +8,12 @@ public class DialogueTrigger : MonoBehaviour
     public string NPCName = "Friendly NPC";
     public GameObject promptUI;
     public float chatRange = 3f;
+    public TextAsset jsonDialogueFile;
     private DialogueManager dialogueManager;
 
     private bool playerInRange = false;
     private Transform player;
     private PlayerControls controls;
-
-    [Header("Ink JSON")]
-    [SerializeField] private TextAsset inkJSON;
 
     private void Awake()
     {
@@ -79,9 +77,9 @@ public class DialogueTrigger : MonoBehaviour
             promptUI.SetActive(false);
 
         // Start dialogue
-        if (dialogueManager != null && inkJSON != null)
+        if (dialogueManager != null && jsonDialogueFile != null)
         {
-            dialogueManager.StartDialogueFromInk(NPCName, inkJSON);
+            dialogueManager.StartDialogueFromJson(jsonDialogueFile);
         }
         else
         {
