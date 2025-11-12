@@ -4,7 +4,6 @@ public class PlayerMovingObjects : MonoBehaviour
 {
     [Header("General Settings")]
     [SerializeField] public Transform grabPoint;
-    [SerializeField] private float moveSlowdownMultiplier = 3f;
 
     [Header("Debugging")]
     [SerializeField] private bool showDebugLogs = false;
@@ -17,10 +16,10 @@ public class PlayerMovingObjects : MonoBehaviour
         playerController = gameObject.GetComponent<PlayerController>();
     }
 
-    public void OnMovingObject()
+    public void OnMovingObject(float moveSlowdownMult)
     {
         normalMoveSpeed = playerController.Speed;
-        playerController.Speed = normalMoveSpeed / moveSlowdownMultiplier;
+        playerController.Speed = normalMoveSpeed / moveSlowdownMult;
         playerController.SetCanSprint(false);
         
         if (showDebugLogs)

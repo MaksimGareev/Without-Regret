@@ -1,0 +1,35 @@
+{
+    "npcName": "Friendly NPC",
+    "dialogueLines": [
+        {
+            "text": "Hello traveler! Welcome to the village.",
+            "requiredMorality" :  0,
+            "choices": [
+                {
+                    "text": "This is the good response",
+                    "nextIndex": 1,
+                    "moralityChange" :  2
+                },
+                {
+                    "text": "This is the bad response",
+                    "nextIndex": 2,
+                    "moralityChange": -2
+                }
+            ]
+        },
+        {
+            "text": "You chose the good response.",
+            "requiredMorality": 1,
+            "choices": [
+                {
+                    "nextIndex" :  -1
+                }
+            ]
+        },
+        {
+            "text": "You chose the bad response.",
+            "requiredMorality":  -1,
+            "choices": []
+        }
+    ]
+}
