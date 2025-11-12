@@ -35,7 +35,7 @@ public class ItemDistractingEnemy : MonoBehaviour
                 EnemyDistracted distractedEnemy = hit.GetComponent<EnemyDistracted>();
                 if (distractedEnemy != null)
                 {
-                    distractedEnemy.BeginDistraction(transform.position, distractionDuration);
+                    distractedEnemy.BeginDistraction(transform.position, distractionDuration, gameObject);
                 }
             }
         }

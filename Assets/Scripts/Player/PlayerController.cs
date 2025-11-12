@@ -87,8 +87,8 @@ public class PlayerController : MonoBehaviour
         }
             
 
-        Debug.Log(MovementLocked);
-        Debug.Log(freezePosition);
+        //Debug.Log(MovementLocked);
+        //Debug.Log(freezePosition);
 
         Movement();
     }

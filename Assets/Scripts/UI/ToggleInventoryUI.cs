@@ -47,6 +47,17 @@ public class ToggleInventoryUI : MonoBehaviour
         }
 
         isEnabled = !isEnabled;
+        Cursor.visible = !Cursor.visible;
+
+        if (isEnabled)
+        {
+            Cursor.lockState = CursorLockMode.Confined;
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+        }
+        
         slideRoutine = StartCoroutine(SlideInventory(isEnabled));
     }
 
