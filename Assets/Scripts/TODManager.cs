@@ -5,18 +5,19 @@ public class TODManager : MonoBehaviour
 {
     // sun and skybox references
     public Light directionalLight;
+    public Material Skybox_Morning;
     public Material Skybox_Evening;
     public Material Skybox_Night;
 
-    // enum time of day
+    // enum for time of day
     public enum TOD
     {
+        Morning,
         Evening,
         Night
     }
 
-    public TOD currentTime = TOD.Evening;
-
+    public TOD currentTime = TOD.Morning;
     public float TransitionDuration = 5f;
 
     void Start()
@@ -24,19 +25,18 @@ public class TODManager : MonoBehaviour
         UpdateLighting();
     }
 
-    // switches time after pressing L key for testing, delete/modify later
+    // switch time after pressing L key for testing
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.L))
         {
-            if (currentTime == TOD.Evening)
-            {
-                StartCoroutine(TransitionTo(TOD.Night, TransitionDuration));
-            }
-            else
-            {
+            // cycle between Morning -> Evening -> Night
+            if (currentTime == TOD.Morning)
                 StartCoroutine(TransitionTo(TOD.Evening, TransitionDuration));
-            }
+            else if (currentTime == TOD.Evening)
+                StartCoroutine(TransitionTo(TOD.Night, TransitionDuration));
+            else
+                StartCoroutine(TransitionTo(TOD.Morning, TransitionDuration));
         }
     }
 
@@ -45,53 +45,71 @@ public class TODManager : MonoBehaviour
         currentTime = newTime;
         UpdateLighting();
     }
-// if needed update this lines of code
+
     void UpdateLighting()
     {
         switch (currentTime)
         {
+            case TOD.Morning:
+                RenderSettings.skybox = Skybox_Morning;
+                directionalLight.color = new Color(0.8f, 0.9f, 1f); // warm morning light
+                directionalLight.intensity = 0.7f;
+                directionalLight.transform.rotation = Quaternion.Euler(15f, 45f, 0f);
+                RenderSettings.ambientLight = new Color(0.7f, 0.8f, 1f);
+                break;
+
             case TOD.Evening:
                 RenderSettings.skybox = Skybox_Evening;
                 directionalLight.color = new Color(1f, 0.5f, 0.3f); // orange color
-                directionalLight.intensity = 0.3f;// I wonder what light intensity does hmmmmmmmmm
-                directionalLight.transform.rotation = Quaternion.Euler(30f, 50f, 0f); //sun rotation don't touch
-                RenderSettings.ambientLight = new Color(1f, 0.7f, 0.4f); //ambient light
+                directionalLight.intensity = 0.3f;
+                directionalLight.transform.rotation = Quaternion.Euler(30f, 50f, 0f);
+                RenderSettings.ambientLight = new Color(1f, 0.7f, 0.4f);
                 break;
+
             case TOD.Night:
                 RenderSettings.skybox = Skybox_Night;
                 directionalLight.color = new Color(0.3f, 0.4f, 0.6f); // bluish color
-                directionalLight.intensity = 0.3f;// I wonder what light intensity does hmmmmmmmmm
-                directionalLight.transform.rotation = Quaternion.Euler(60f, 0f, 0f);//sun rotation don't touch
-                RenderSettings.ambientLight = new Color(0.1f, 0.1f, 0.2f); //ambient light
+                directionalLight.intensity = 0.1f;
+                directionalLight.transform.rotation = Quaternion.Euler(60f, 0f, 0f);
+                RenderSettings.ambientLight = new Color(0.1f, 0.1f, 0.2f);
                 break;
         }
+
         // update global illumination
         DynamicGI.UpdateEnvironment();
     }
 
-    // transition between TOD 
+    // transition between TOD
     IEnumerator TransitionTo(TOD newTime, float duration)
     {
         // starting values
-        Color StartColor = directionalLight.color;
-        float StartIntensity = directionalLight.intensity;
+        Color startColor = directionalLight.color;
+        float startIntensity = directionalLight.intensity;
         Color startAmbient = RenderSettings.ambientLight;
         Material startSkybox = RenderSettings.skybox;
 
-        // target updated values
+        // target values
         Color targetColor = new Color();
         float targetIntensity = 0f;
         Color targetAmbient = new Color();
-        Material targetSkybox = new Material(Skybox_Evening);
+        Material targetSkybox = Skybox_Morning;
 
         switch (newTime)
         {
+            case TOD.Morning:
+                targetColor = new Color(1f, 0.95f, 0.8f);
+                targetIntensity = 0.8f;
+                targetAmbient = new Color(1f, 0.9f, 0.7f);
+                targetSkybox = Skybox_Morning;
+                break;
+
             case TOD.Evening:
                 targetColor = new Color(1f, 0.5f, 0.3f);
-                targetIntensity = 0.2f;
+                targetIntensity = 0.3f;
                 targetAmbient = new Color(1f, 0.7f, 0.4f);
                 targetSkybox = Skybox_Evening;
                 break;
+
             case TOD.Night:
                 targetColor = new Color(0.3f, 0.4f, 0.6f);
                 targetIntensity = 0.1f;
@@ -100,20 +118,19 @@ public class TODManager : MonoBehaviour
                 break;
         }
 
-        // smooth transition over time
+        // smooth transition
         float time = 0f;
         while (time < duration)
         {
             time += Time.deltaTime;
-            directionalLight.color = Color.Lerp(StartColor, targetColor, time / duration);
-            directionalLight.intensity = Mathf.Lerp(StartIntensity, targetIntensity, time / duration);
+            directionalLight.color = Color.Lerp(startColor, targetColor, time / duration);
+            directionalLight.intensity = Mathf.Lerp(startIntensity, targetIntensity, time / duration);
             RenderSettings.ambientLight = Color.Lerp(startAmbient, targetAmbient, time / duration);
-
             RenderSettings.skybox.Lerp(startSkybox, targetSkybox, time / duration);
             yield return null;
         }
 
-        // set the new time of day after transition completes
+        // apply final state
         SetTOD(newTime);
     }
 }
