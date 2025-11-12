@@ -102,6 +102,8 @@ public class PlayerThrowing : MonoBehaviour
             isCharging = true;
             currentCharge = 0f;
             usingController = false;
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.Confined;
         }
 
         if ((Input.GetAxis(chargeButton) > 0.1f) && !isCharging)
@@ -188,6 +190,9 @@ public class PlayerThrowing : MonoBehaviour
             }
             else
             {
+                Cursor.visible = false;
+                Cursor.lockState = CursorLockMode.Locked;
+
                 Ray ray = playerCamera.ScreenPointToRay(Input.mousePosition);
                 Vector3 targetPoint;
 
