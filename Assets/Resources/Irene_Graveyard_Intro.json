@@ -1,0 +1,82 @@
+{
+    "npcName": "Irene",
+    "dialogueLines": [
+        {
+            "text": "Hey Echo!  You're late...",
+            "requiredMorality": 0,
+            "choices": []
+        },
+        {
+            "text": "You're still coming to the graveyard with me right?",
+            "requiredMorality": 0,
+            "choices": []
+        },
+        {
+            "text": "It's okay to say yes or no, just remember your choices affect the people aroud you.",
+            "requiredMorality": 0,
+            "choices": [
+                {
+                    "text": "Sure",
+                    "nextIndex": 3,
+                    "moralityChange": 1
+                },
+                {
+                    "text": "...",
+                    "nextIndex": 4,
+                    "moralityChange": -1
+                }
+            ]
+        },
+        {
+            "text": "Awesome! Let's go!",
+            "requiredMorality": 1,
+            "choices": []
+        },
+        {
+            "text": "Ouch... Lets go anyways",
+            "requiredMorality": -1,
+            "choices": []
+        }
+    ]
+}
+/*  [
+    {
+    "text": "Oh Echo! Did you bring gifts for the graves?",
+    "requiredMorality": 0,
+    "choices": [
+        {
+            "text": "Gifts?",
+            "nextIndex": ,
+            "moralityChange": -1
+        },
+        {
+            "text": "Shows Flowers"
+            "nextIndex": ,
+            "moralityChange": 1
+        }
+    ]
+    },
+    // no flowers
+    {
+        "text": "GIFTS?!",
+        "requiredMorality": < 1,
+        "choices": []
+    },
+    {
+        "text": "You messed up this early",
+        "requiredMorality": < 1:,
+        "choices":[]
+    },
+    // flowers
+    {
+        "text": "Well you can't blame me for having my doubts..."
+        "requiredMorality": < 1,
+        "choices": []
+    },
+    {
+        "text": "Woah! So pretty"
+        "requiredMorality": < 1,
+        "choices": []
+    }
+    ]
+*/
