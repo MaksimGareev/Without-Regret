@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 7047860427567931702}
   - component: {fileID: 7747859725635564633}
   - component: {fileID: 5042732869356640971}
-  m_Layer: 7
+  m_Layer: 8
   m_Name: Direction
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -59,6 +59,11 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -80,6 +85,7 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
@@ -120,7 +126,8 @@ GameObject:
   - component: {fileID: 4419574281613640712}
   - component: {fileID: 8589541859818923028}
   - component: {fileID: 9169940238804770612}
-  m_Layer: 7
+  - component: {fileID: 1311592278050812008}
+  m_Layer: 8
   m_Name: Irene
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -169,6 +176,11 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -190,6 +202,7 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
@@ -207,9 +220,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 0}
-  FollowDistance: 2
-  FollowSpeed: 3
+  npcName: Irene
+  FollowDistance: 1
+  FollowSpeed: 1
   RotationSpeed: 1
+  IsFollowing: 0
+  dialogueTrigger: {fileID: 1311592278050812008}
 --- !u!136 &9169940238804770612
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -233,6 +249,22 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1311592278050812008
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9028717818022298950}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a40ba9254f066ed499136723990e8a6f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DialogueTrigger
+  NPCName: Irene
+  promptUI: {fileID: 0}
+  chatRange: 3
+  jsonDialogueFile: {fileID: 4900000, guid: 4784a40bd37475b458c97f350302f4f3, type: 3}
 --- !u!1001 &1029084643908885826
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -297,9 +329,25 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: -8513424388201257645, guid: 6084e2fe6b33a4c4f856247a4c4c51b3, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: -6452266432751415832, guid: 6084e2fe6b33a4c4f856247a4c4c51b3, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: -3957782524123411102, guid: 6084e2fe6b33a4c4f856247a4c4c51b3, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 6084e2fe6b33a4c4f856247a4c4c51b3, type: 3}
       propertyPath: m_Name
       value: Ghost or friend low poly
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 6084e2fe6b33a4c4f856247a4c4c51b3, type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
