@@ -25,8 +25,8 @@ public class DialogueManager : MonoBehaviour
 
     // Navigation sounds
     public AudioSource uiAudioSource;
-   // public AudioClip moveClip;
-   // public AudioClip confirmClip;
+    // public AudioClip moveClip;
+    // public AudioClip confirmClip;
 
     // Input
     private PlayerControls controls;
@@ -40,11 +40,20 @@ public class DialogueManager : MonoBehaviour
     private bool CanChoose = false;
     public TextMeshProUGUI PopupText;
 
+    // Random choice timer
+    public float choiceTimeLimit = 5f;
+    private float choiceTimer;
+    private Coroutine choiceTimerRoutine;
+    public TextMeshProUGUI TimerText;
+
     // Player references
     private Transform playerTransform;
     private PlayerThrowing playerThrowing;
     private PlayerFloating playerFloating;
     private PlayerController playerController;
+
+    // NPC references
+    private Irene ireneNPC;
 
     // Player morality
     private int playerMorality = 0;
@@ -101,6 +110,7 @@ public class DialogueManager : MonoBehaviour
     public void StartDialogueFromJson(TextAsset jsonFile)
     {
         GameObject player = GameObject.FindGameObjectWithTag("Player");
+        ireneNPC = FindObjectOfType<Irene>();
         playerTransform = player.transform;
         playerFloating = player.GetComponent<PlayerFloating>();
         playerThrowing = player.GetComponent<PlayerThrowing>();
@@ -136,10 +146,10 @@ public class DialogueManager : MonoBehaviour
     private void ShowCurrentLine()
     {
         DialogueLine line = currentDialogue.dialogueLines[currentIndex];
-        
+
         if (line.requiredMorality != 0)
         {
-            if((line.requiredMorality > 0 && playerMorality < line.requiredMorality) || (line.requiredMorality < 0 && playerMorality > line.requiredMorality))
+            if ((line.requiredMorality > 0 && playerMorality < line.requiredMorality) || (line.requiredMorality < 0 && playerMorality > line.requiredMorality))
             {
                 currentIndex++;
                 if (currentIndex < currentDialogue.dialogueLines.Count)
@@ -153,7 +163,7 @@ public class DialogueManager : MonoBehaviour
                 return;
             }
         }
-        
+
         StopCoroutine(nameof(TypeLine));
         StartCoroutine(TypeLine(line.text));
 
@@ -203,7 +213,7 @@ public class DialogueManager : MonoBehaviour
             yield return null;
         }
         ConfirmPressed = false;
-        
+
         // move to next line (if any)
         if (currentIndex + 1 < currentDialogue.dialogueLines.Count)
         {
@@ -220,7 +230,7 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
-    private void SpawnChoices(List<DialogueChoice> choices)  
+    private void SpawnChoices(List<DialogueChoice> choices)
     {
         // Clear old
         foreach (var b in spawnedChoices) Destroy(b);
@@ -243,6 +253,13 @@ public class DialogueManager : MonoBehaviour
         CanChoose = true;
         SelectedChoiceIndex = 0;
         UpdateChoiceHighlight();
+
+        // Start timer countdown for auto-select
+        if (choiceTimerRoutine != null)
+        {
+            StopCoroutine(choiceTimerRoutine);
+        }
+        choiceTimerRoutine = StartCoroutine(ChoiceTimerCountdown(choices));
     }
 
     private void HandleChoiceInput()
@@ -281,6 +298,12 @@ public class DialogueManager : MonoBehaviour
 
     private void OnChoiceSelected(DialogueChoice chosen)
     {
+        if (choiceTimerRoutine != null)
+        {
+            StopCoroutine(choiceTimerRoutine);
+            choiceTimerRoutine = null;
+        }
+
         CanChoose = false;
 
         // Apply variable change if any
@@ -312,6 +335,59 @@ public class DialogueManager : MonoBehaviour
             EndDialogue();
         }
 
+        if (TimerText != null)
+        {
+            TimerText.text = "";
+        }
+
+    }
+
+    private IEnumerator ChoiceTimerCountdown(List<DialogueChoice> choices)
+    {
+        choiceTimer = choiceTimeLimit;
+
+        while (choiceTimer > 0f && CanChoose)
+        {
+            if (TimerText != null)
+            {
+                TimerText.gameObject.SetActive(true);
+                TimerText.text = Mathf.CeilToInt(choiceTimer).ToString();
+            }
+            else
+            {
+                TimerText.gameObject.SetActive(false);
+            }
+            choiceTimer -= Time.deltaTime;
+            yield return null;
+        }
+
+        // Timer has expired and the player hasnt chosen anything
+        if (CanChoose)
+        {
+            DialogueChoice fallback = null;
+
+            // Try to find a neutral or negative morality choice
+            foreach (var c in choices)
+            {
+                if (c.moralityChange <= 0)
+                {
+                    fallback = c;
+                    break;
+                }
+            }
+
+            // If no suitable one, just pick the first
+            if (fallback == null && choices.Count > 0)
+            {
+                fallback = choices[0];
+            }
+
+            if (fallback != null)
+            {
+                Debug.Log("timer expired auto selecting choice: " + fallback.text);
+                OnChoiceSelected(fallback);
+            }
+        }
     }
 
     public void ShowPopUp(string message, float duration = 1f)
@@ -371,6 +447,11 @@ public class DialogueManager : MonoBehaviour
         if (playerFloating != null) playerFloating.enabled = true;
         if (playerThrowing != null) playerThrowing.enabled = true;
         if (TypingAudioSource != null) TypingAudioSource.Stop();
+
+        if (ireneNPC != null && ireneNPC.NPCNameMatches(NPCNameText.text))
+        {
+            ireneNPC.IsFollowing = true;
+        }
 
         Debug.Log($"Dialogue ended. Final morality = {playerMorality}");
     }
