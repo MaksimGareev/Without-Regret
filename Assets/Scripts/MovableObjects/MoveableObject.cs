@@ -8,6 +8,7 @@ public class MoveableObject : MonoBehaviour, IInteractable
     private Transform grabPoint;
     private Rigidbody rb;
     private bool isGrabbed = false;
+    public bool isGrabbable = true;
     public float interactionPriority => 1;
 
     private void Awake()
@@ -51,7 +52,7 @@ public class MoveableObject : MonoBehaviour, IInteractable
     {
         playerMovingObjects = player.GetComponent<PlayerMovingObjects>();
 
-        if (!isGrabbed)
+        if (!isGrabbed && isGrabbable)
         {
             Grab(playerMovingObjects.grabPoint);
             playerMovingObjects.OnMovingObject(moveSlowdownMultiplier);
