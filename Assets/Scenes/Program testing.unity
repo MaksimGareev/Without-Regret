@@ -792,9 +792,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 1339883343}
+  npcName: Irene
   FollowDistance: 2
   FollowSpeed: 3
   RotationSpeed: 3
+  IsFollowing: 0
+  dialogueTrigger: {fileID: 0}
 --- !u!23 &395270285
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1000,6 +1003,7 @@ MonoBehaviour:
   defaultOffset: {x: 0, y: 8, z: 8}
   defaultLookAtOffset: {x: 0, y: 0, z: 0}
   smoothSpeed: 2
+  defaultFacingDirection: 0
   rotateCamera: 0
   rotateSpeed: 120
   maxPitch: 45
@@ -1007,7 +1011,7 @@ MonoBehaviour:
   translateSpeed: 5
   translateLimit: 4
   returnSpeed: 4
-  switchSpeed: 1
+  mouseResetTime: 3
 --- !u!114 &397513760
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3782,8 +3786,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0533f1ed123acf041884b16faa1a16ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyDistracted
-  lingerDistance: 1.5
   moveSpeed: 25
+  lingerTime: 2
+  stoppingRadius: 1
 --- !u!224 &1988411385 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 217429383959435193, guid: 2263a5ef92ada3845b92882a6052e459, type: 3}
@@ -4100,6 +4105,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1530156516}
     m_Modifications:
+    - target: {fileID: 1992816413947756768, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
+      propertyPath: m_Color.a
+      value: 0.24313726
+      objectReference: {fileID: 0}
     - target: {fileID: 5273993982251385165, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -4179,6 +4188,10 @@ PrefabInstance:
     - target: {fileID: 5273993982251385165, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7020237606844082684, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8472669192102556517, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
       propertyPath: m_Name
