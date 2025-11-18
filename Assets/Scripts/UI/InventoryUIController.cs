@@ -13,7 +13,7 @@ public class InventoryUIController : MonoBehaviour//, IPointerEnterHandler, IPoi
     [SerializeField] private InventoryTooltipUI tooltipUI;
     [SerializeField] private Button keyItemsTabButton;
     [SerializeField] private Button otherItemsTabButton;
-    [SerializeField] private Color highlightColor = new Color(0.70f, 0.70f, 0.70f);
+    [SerializeField] private Color highlightColor = new Color(0.70f, 0.70f, 0.70f, 0.70f);
     public enum InventoryTab { KeyItems, OtherItems }
     private InventoryTab currentTab = InventoryTab.OtherItems;
 
@@ -37,6 +37,7 @@ public class InventoryUIController : MonoBehaviour//, IPointerEnterHandler, IPoi
     private PlayerEquipItem playerEquipItem;
     private Inventory inventory;
     private (int row, int col)? hoveredSlot = null;
+    private bool slotsInitialized = false;
 
     private void Awake()
     {
@@ -46,12 +47,12 @@ public class InventoryUIController : MonoBehaviour//, IPointerEnterHandler, IPoi
         playerEquipItem = player?.GetComponent<PlayerEquipItem>();
         inventory = player?.GetComponent<Inventory>();
 
-        InitializeSlots();
         RefreshInventoryUI();
     }
 
     private void OnEnable()
     {
+        InitializeSlots();
         RefreshInventoryUI();
     }
 
@@ -71,6 +72,13 @@ public class InventoryUIController : MonoBehaviour//, IPointerEnterHandler, IPoi
 
     private void InitializeSlots()
     {
+        if (slotsInitialized)
+        {
+            return;
+        }
+
+        slotsInitialized = true;
+
         if (buttons.Length != rows * columns && showDebugLogs)
         {
             Debug.LogWarning($"InventoryUIController: Expected {rows * columns} buttons, found {buttons.Length}.");
@@ -236,21 +244,36 @@ public class InventoryUIController : MonoBehaviour//, IPointerEnterHandler, IPoi
 
     private void OnSlotClicked(int row, int column, int index)
     {
+        if (playerEquipItem == null)
+        {
+            GameObject player = GameObject.FindGameObjectWithTag("Player");
+            playerEquipItem = player?.GetComponent<PlayerEquipItem>();
+
+            if (playerEquipItem == null)
+            {
+                Debug.LogWarning("PlayerEquipItem still missing, cannot equip.");
+                return;
+            }
+        }
+        
         ItemData clickedItem = slotItems[row, column];
 
-        if (showDebugLogs && clickedItem == null)
+        if (clickedItem == null)
         {
-            Debug.Log("Clicked an empty slot.");
+            if (showDebugLogs)
+            {
+                Debug.Log("Clicked an empty slot.");
+            }
             return;
         }
         
-        if (playerEquipItem != null && clickedItem.ItemType != ItemType.KeyItem)
+        if (clickedItem.ItemType != ItemType.KeyItem)
         {
             playerEquipItem.EquipItem(clickedItem);
 
             if (showDebugLogs)
             {
-            Debug.Log($"Equipping item {clickedItem.name} from slot ({row},{column}) with index {index}.");
+                Debug.Log($"Equipping item {clickedItem.name} from slot ({row},{column}) with index {index}.");
             }
         }
         else if (showDebugLogs)

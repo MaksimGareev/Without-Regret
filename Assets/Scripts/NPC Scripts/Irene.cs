@@ -5,9 +5,13 @@ using UnityEngine;
 public class Irene : MonoBehaviour
 {
     public Transform player;            // the player to follow
+    public string npcName = "Irene";    // string data of npc name
     public float FollowDistance = 2f;   // how far behind the player
     public float FollowSpeed = 3f;      // movement speed
     public float RotationSpeed = 3f;    // how fast the NPC rotates
+    public bool IsFollowing = false;
+
+    public DialogueTrigger dialogueTrigger; // dialogue trigger script reference
 
     // Start is called before the first frame update
     void Start()
@@ -18,7 +22,17 @@ public class Irene : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Follow();
+        if (IsFollowing == true)
+        {
+            Follow();
+
+            // disable dialogue trigger when following
+            if (dialogueTrigger != null && dialogueTrigger.enabled)
+            {
+                dialogueTrigger.enabled = false;
+                Debug.Log("Irene's dialogue trigger has been deactivated.");
+            }
+        }
     }
 
     public void Follow()
@@ -44,4 +58,9 @@ public class Irene : MonoBehaviour
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, RotationSpeed * Time.deltaTime);
         }
     }
+    public bool NPCNameMatches(string name)
+    {
+        return string.Equals(npcName, name, System.StringComparison.OrdinalIgnoreCase);
+    }
+
 }

@@ -32,12 +32,6 @@ public class PlayerController : MonoBehaviour
     public LayerMask groundMask;
     private bool isGrounded;
 
-    [Header("Camera Settings")]
-    public Vector3 pickupOffset = new Vector3(3f, 2f, -5f);
-    public float zoomDuration = 3f;
-    public float transitionSpeed = 2f;
-    private bool isZooming = false;
-
     public static bool DialogueActive = false;
 
     // Input System
@@ -87,8 +81,8 @@ public class PlayerController : MonoBehaviour
         }
             
 
-        Debug.Log(MovementLocked);
-        Debug.Log(freezePosition);
+        //Debug.Log(MovementLocked);
+        //Debug.Log(freezePosition);
 
         Movement();
     }
@@ -200,6 +194,7 @@ public class PlayerController : MonoBehaviour
         canSprint = true;
     }
 
+    /*
     public void TriggerPickupCameraEffect(Transform item)
     {
         if (!isZooming && PlayerCamera != null)
@@ -230,6 +225,7 @@ public class PlayerController : MonoBehaviour
         yield return new WaitForSeconds(zoomDuration);
         isZooming = false;
     }
+    */
 
     public void SetVerticalVelocity(float newVelocity) => yVelocity = newVelocity;
     public float GetVerticalVelocity() => yVelocity;

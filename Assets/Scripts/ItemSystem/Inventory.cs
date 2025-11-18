@@ -18,12 +18,15 @@ public class Inventory : MonoBehaviour
 
     [Header("Debugging")]
     [SerializeField] private bool showDebugLogs = false;
-    private bool hasBackpack = false;
+    [SerializeField] private bool hasBackpack = false;
     private PlayerController playerController;
     private PlayerEquipItem playerEquipItem;
     private InventoryUIController inventoryUI;
     private ToggleInventoryUI toggleInventoryUI;
+    private CameraMovement cameraMovement;
     public WorldItem itemToCollect;
+
+    public static event System.Action<ItemData> OnItemAdded;
 
 
     private void Awake()
@@ -32,7 +35,21 @@ public class Inventory : MonoBehaviour
         playerEquipItem = GetComponent<PlayerEquipItem>();
         inventoryUI = interactingScript.GetComponent<InventoryUIController>();
         toggleInventoryUI = GetComponent<ToggleInventoryUI>();
+        cameraMovement = Camera.main.GetComponent<CameraMovement>();
         itemToCollect = null;
+    }
+
+    private void Start()
+    {
+        if (hasBackpack)
+        {
+            SetBackpackActive();
+            toggleInventoryUI.hasBackpack = true;
+        }
+        else
+        {
+            backpack.SetActive(false);
+        }
     }
 
     private void Update()
@@ -106,8 +123,8 @@ public class Inventory : MonoBehaviour
 
         if (item.ItemType == ItemType.KeyItem || item.ItemType == ItemType.Backpack)
         {
-            playerController.TriggerPickupCameraEffect(itemToCollect.transform);
-            StartCoroutine(WaitForCameraTransition());
+            //cameraMovement.TriggerPickupCameraEffect(itemToCollect.transform);
+            //StartCoroutine(WaitForCameraTransition());
             Destroy(itemToCollect.gameObject, 1f);
             itemToCollect = null;
         }
@@ -116,6 +133,8 @@ public class Inventory : MonoBehaviour
             Destroy(itemToCollect.gameObject);
             itemToCollect = null;
         }
+
+        OnItemAdded?.Invoke(item);
 
         inventoryUI.RefreshInventoryUI();
     }
