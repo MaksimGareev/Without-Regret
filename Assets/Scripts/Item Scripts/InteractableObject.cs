@@ -68,7 +68,7 @@ public class InteractableObject : MonoBehaviour
 
         if (pc != null)
         {
-            pc.TriggerPickupCameraEffect(transform); // allow camera to look at object being picked up
+            // pc.TriggerPickupCameraEffect(transform); // allow camera to look at object being picked up
             pc.MovementLocked = true;
         }
 

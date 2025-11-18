@@ -23,6 +23,7 @@ public class Inventory : MonoBehaviour
     private PlayerEquipItem playerEquipItem;
     private InventoryUIController inventoryUI;
     private ToggleInventoryUI toggleInventoryUI;
+    private CameraMovement cameraMovement;
     public WorldItem itemToCollect;
 
     public static event System.Action<ItemData> OnItemAdded;
@@ -34,6 +35,7 @@ public class Inventory : MonoBehaviour
         playerEquipItem = GetComponent<PlayerEquipItem>();
         inventoryUI = interactingScript.GetComponent<InventoryUIController>();
         toggleInventoryUI = GetComponent<ToggleInventoryUI>();
+        cameraMovement = Camera.main.GetComponent<CameraMovement>();
         itemToCollect = null;
     }
 
@@ -108,7 +110,7 @@ public class Inventory : MonoBehaviour
 
         if (item.ItemType == ItemType.KeyItem || item.ItemType == ItemType.Backpack)
         {
-            playerController.TriggerPickupCameraEffect(itemToCollect.transform);
+            cameraMovement.TriggerPickupCameraEffect(itemToCollect.transform);
             StartCoroutine(WaitForCameraTransition());
             Destroy(itemToCollect.gameObject, 1f);
             itemToCollect = null;
