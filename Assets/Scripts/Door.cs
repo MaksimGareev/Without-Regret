@@ -19,6 +19,11 @@ public class Door : MonoBehaviour
     private bool isPlayerNear = false;
     private bool isInteracting = false;
 
+    private void Start()
+    {
+
+    }
+
     void Update()
     {
        
