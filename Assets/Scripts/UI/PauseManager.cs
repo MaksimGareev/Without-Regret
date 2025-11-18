@@ -111,6 +111,7 @@ public class PauseManager : MonoBehaviour
     {
         // Logic to reload the last save
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        ResumeGame();
         Debug.Log("Reloading Save...");
     }
 
@@ -129,6 +130,8 @@ public class PauseManager : MonoBehaviour
     {
         // Logic to quit to main menu
         SceneManager.LoadScene("MainMenu");
+        Time.timeScale = 1f; // Ensure time scale is reset
+        Cursor.visible = true;
         Debug.Log("Quitting to Main Menu...");
     }
 }
