@@ -40,6 +40,18 @@ public class MMSettings : MonoBehaviour
         resolutionDropdown.ClearOptions();
 
         var options = new System.Collections.Generic.List<string>();
+        
+        var uniqueResolutions = new System.Collections.Generic.List<Resolution>();
+        foreach (var res in resolutions)
+        {
+            if (!uniqueResolutions.Exists(r => r.width == res.width && r.height == res.height))
+            {
+                uniqueResolutions.Add(res);
+            }
+        }
+
+        resolutions = uniqueResolutions.ToArray();
+        
         int currentResolutionIndex = 0;
 
         for (int i = 0; i < resolutions.Length; i++)
@@ -125,16 +137,16 @@ public class MMSettings : MonoBehaviour
 
     private void LoadSettings()
     {
-        int quality = PlayerPrefs.GetInt("quality", QualitySettings.GetQualityLevel());
+        int quality = PlayerPrefs.GetInt("quality", 0);
         graphicsQualityDropdown.value = quality;
         QualitySettings.SetQualityLevel(quality);
 
-        int resolutionIndex = PlayerPrefs.GetInt("resolution", resolutions.Length - 1);
+        int resolutionIndex = Mathf.Clamp(PlayerPrefs.GetInt("resolution", resolutions.Length - 1), 0, resolutions.Length - 1);
         resolutionDropdown.value = resolutionIndex;
         resolutionDropdown.RefreshShownValue();
         SetResolution(resolutionIndex);
 
-        bool isFullscreen = PlayerPrefs.GetInt("fullscreen", Screen.fullScreen ? 1 : 0) == 1;
+        bool isFullscreen = PlayerPrefs.GetInt("fullscreen", 1) == 1;
         fullscreenToggle.isOn = isFullscreen;
         Screen.fullScreen = isFullscreen;
 
