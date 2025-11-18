@@ -43,7 +43,8 @@ public class Inventory : MonoBehaviour
     {
         if (hasBackpack)
         {
-            backpack.SetActive(true);
+            SetBackpackActive();
+            toggleInventoryUI.hasBackpack = true;
         }
         else
         {
