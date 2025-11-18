@@ -44,9 +44,14 @@ public class MMSettings : MonoBehaviour
         var uniqueResolutions = new System.Collections.Generic.List<Resolution>();
         foreach (var res in resolutions)
         {
-            if (!uniqueResolutions.Exists(r => r.width == res.width && r.height == res.height))
+            // Only add 16:9 resolutions
+            if (Mathf.Approximately((float)res.width / res.height, 16f / 9f))
             {
-                uniqueResolutions.Add(res);
+                // Avoid duplicates
+                if (!uniqueResolutions.Exists(r => r.width == res.width && r.height == res.height))
+                {
+                    uniqueResolutions.Add(res);
+                }
             }
         }
 
@@ -59,6 +64,7 @@ public class MMSettings : MonoBehaviour
             string option = resolutions[i].width + " x " + resolutions[i].height;
             options.Add(option);
 
+            // Check if this resolution is the native resolution, set as current
             if (resolutions[i].width == Screen.currentResolution.width && resolutions[i].height == Screen.currentResolution.height)
             {
                 currentResolutionIndex = i;
@@ -72,6 +78,7 @@ public class MMSettings : MonoBehaviour
 
     private void SetUpEvents()
     {
+        // Set up listeners for UI elements
         graphicsQualityDropdown.onValueChanged.AddListener(SetGraphicsQuality);
         resolutionDropdown.onValueChanged.AddListener(SetResolution);
         fullscreenToggle.onValueChanged.AddListener(SetFullscreen);
