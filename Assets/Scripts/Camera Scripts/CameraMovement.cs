@@ -31,6 +31,12 @@ public class CameraMovement : MonoBehaviour
     [SerializeField] private float returnSpeed = 4f;
     [SerializeField] private float mouseResetTime = 3f; 
 
+    [Header("Focus Movement Settings")]
+    public Vector3 pickupOffset = new Vector3(3f, 2f, -5f);
+    public float zoomDuration = 2f;
+    public float transitionSpeed = 2f;
+    private bool isZooming = false;
+
     private Vector3 currentOffset;
     private Vector3 currentLookAtOffset;
     private float yaw;
@@ -119,50 +125,52 @@ public class CameraMovement : MonoBehaviour
             mouseResetTimer -= Time.deltaTime;
         }
 
-        if (rotateCamera)
+        if (!isZooming)
         {
-            if (hasControllerInput && !isThrowing && !toggleInventoryUI.isEnabled && !pc.MovementLocked)
+            if (rotateCamera)
             {
-                HandleRotation(horizontalInput, verticalInput);
-            }
-            else if (hasMouseInput && !isThrowing && !toggleInventoryUI.isEnabled && !pc.MovementLocked)
-            {
-                HandleRotation(mouseX, mouseY);
-                mouseResetTimer = mouseResetTime;
-            }
-            else
-            {
-                ReturnRotation();
-            }
+                if (hasControllerInput && !isThrowing && !toggleInventoryUI.isEnabled && !pc.MovementLocked)
+                {
+                    HandleRotation(horizontalInput, verticalInput);
+                }
+                else if (hasMouseInput && !isThrowing && !toggleInventoryUI.isEnabled && !pc.MovementLocked)
+                {
+                    HandleRotation(mouseX, mouseY);
+                    mouseResetTimer = mouseResetTime;
+                }
+                else
+                {
+                    ReturnRotation();
+                }
             
-        }
-        else
-        {
-            if (hasControllerInput && !isThrowing && !toggleInventoryUI.isEnabled && !pc.MovementLocked)
-            {
-                HandleTranslation(horizontalInput, verticalInput);
-            }
-            else if (hasMouseInput && !isThrowing && !toggleInventoryUI.isEnabled && !pc.MovementLocked)
-            {
-                HandleTranslation(mouseX, mouseY);
-                mouseResetTimer = mouseResetTime;
             }
             else
             {
-                ReturnTranslation();
+                if (hasControllerInput && !isThrowing && !toggleInventoryUI.isEnabled && !pc.MovementLocked)
+                {
+                    HandleTranslation(horizontalInput, verticalInput);
+                }
+                else if (hasMouseInput && !isThrowing && !toggleInventoryUI.isEnabled && !pc.MovementLocked)
+                {
+                    HandleTranslation(mouseX, mouseY);
+                    mouseResetTimer = mouseResetTime;
+                }
+                else
+                {
+                    ReturnTranslation();
+                }
             }
-        }
 
-        // Position of the camera
-        Vector3 desiredPosition = target.position + currentOffset;
+            // Position of the camera
+            Vector3 desiredPosition = target.position + currentOffset;
 
-        // Smooth following of the player
-        transform.position = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed * Time.deltaTime);
+            // Smooth following of the player
+            transform.position = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed * Time.deltaTime);
+            Vector3 lookAtPos = target.position + currentLookAtOffset;
 
-        Vector3 lookAtPos = target.position + currentLookAtOffset;
-
-        // Look at the Player
-        transform.LookAt(lookAtPos);
+            // Look at the Player
+            transform.LookAt(lookAtPos);
+        } 
     }
 
     private void HandleRotation(float horizontalInput, float verticalInput)
@@ -218,5 +226,39 @@ public class CameraMovement : MonoBehaviour
     {
         currentOffset = Vector3.Lerp(currentOffset, initialRotation * defaultOffset, returnSpeed * Time.deltaTime);
         currentLookAtOffset = Vector3.Lerp(currentLookAtOffset, initialRotation * defaultLookAtOffset, returnSpeed * Time.deltaTime);
+    }
+
+    public void TriggerPickupCameraEffect(Transform item)
+    {
+        if (!isZooming)
+        {
+            StartCoroutine(PickupCameraRoutine(item));
+        }
+    }
+
+    IEnumerator PickupCameraRoutine(Transform item)
+    {
+        isZooming = true;
+
+        Vector3 originalCamPos = transform.position;
+        Quaternion originalCamRot = transform.rotation;
+
+        Vector3 targetPos = item.position + (transform.forward * 1f) + pickupOffset;
+        Quaternion targetRot = Quaternion.LookRotation(item.position - transform.position);
+
+        Vector3 lookAtPos = item.position;
+
+        float t = 0;
+        while (t < zoomDuration)
+        {
+            t += Time.deltaTime * transitionSpeed;
+            transform.position = Vector3.Lerp(originalCamPos, targetPos, t);
+            transform.rotation = Quaternion.Slerp(originalCamRot, targetRot, t);
+            transform.LookAt(lookAtPos);
+            yield return null;
+        }
+
+        yield return new WaitForSeconds(zoomDuration / 2f);
+        isZooming = false;
     }
 }
