@@ -129,8 +129,10 @@ public class MMSettings : MonoBehaviour
         graphicsQualityDropdown.value = quality;
         QualitySettings.SetQualityLevel(quality);
 
-        int resolutionIndex = PlayerPrefs.GetInt("resolution", resolutionDropdown.value);
+        int resolutionIndex = PlayerPrefs.GetInt("resolution", resolutions.Length - 1);
         resolutionDropdown.value = resolutionIndex;
+        resolutionDropdown.RefreshShownValue();
+        SetResolution(resolutionIndex);
 
         bool isFullscreen = PlayerPrefs.GetInt("fullscreen", Screen.fullScreen ? 1 : 0) == 1;
         fullscreenToggle.isOn = isFullscreen;
