@@ -18,7 +18,7 @@ public class Inventory : MonoBehaviour
 
     [Header("Debugging")]
     [SerializeField] private bool showDebugLogs = false;
-    private bool hasBackpack = false;
+    [SerializeField] private bool hasBackpack = false;
     private PlayerController playerController;
     private PlayerEquipItem playerEquipItem;
     private InventoryUIController inventoryUI;
@@ -37,6 +37,18 @@ public class Inventory : MonoBehaviour
         toggleInventoryUI = GetComponent<ToggleInventoryUI>();
         cameraMovement = Camera.main.GetComponent<CameraMovement>();
         itemToCollect = null;
+    }
+
+    private void Start()
+    {
+        if (hasBackpack)
+        {
+            backpack.SetActive(true);
+        }
+        else
+        {
+            backpack.SetActive(false);
+        }
     }
 
     private void Update()
