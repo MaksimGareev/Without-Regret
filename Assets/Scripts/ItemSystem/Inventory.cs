@@ -110,8 +110,8 @@ public class Inventory : MonoBehaviour
 
         if (item.ItemType == ItemType.KeyItem || item.ItemType == ItemType.Backpack)
         {
-            cameraMovement.TriggerPickupCameraEffect(itemToCollect.transform);
-            StartCoroutine(WaitForCameraTransition());
+            //cameraMovement.TriggerPickupCameraEffect(itemToCollect.transform);
+            //StartCoroutine(WaitForCameraTransition());
             Destroy(itemToCollect.gameObject, 1f);
             itemToCollect = null;
         }
