@@ -67,6 +67,7 @@ public class LockPicking : MonoBehaviour
     void Update()
     {
         Debug.Log(UnlockRange);
+        Rigidbody rb = player.GetComponent<Rigidbody>();
 
         if (MovePick == true)
         {
@@ -148,6 +149,7 @@ public class LockPicking : MonoBehaviour
     public void DeactivateLockPick()
     {
         LockPickUi.SetActive(false);
+        Rigidbody rb = player.GetComponent<Rigidbody>();
 
         // Unlock player movement
         PlayerController pc = player.GetComponent<PlayerController>();
@@ -156,13 +158,18 @@ public class LockPicking : MonoBehaviour
             pc.MovementLocked = false;
             pc.enabled = true;
         }
+        rb.constraints = RigidbodyConstraints.None;
+        rb.constraints = RigidbodyConstraints.FreezeRotation;
+
     }
 
     public void NewLock()
     {
         LockPickUi.SetActive(true);
+        Rigidbody rb = player.GetComponent<Rigidbody>();
         PickCursor.eulerAngles = new Vector3(0, 0, 0);
         UnlockAngle = Random.Range(-MaxAngle + LockRange, MaxAngle - LockRange);
         UnlockRange = new Vector2(UnlockAngle - LockRange, UnlockAngle + LockRange);
+        rb.constraints = RigidbodyConstraints.FreezeAll;
     }
 }

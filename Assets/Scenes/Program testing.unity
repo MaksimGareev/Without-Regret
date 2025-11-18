@@ -1082,6 +1082,9 @@ MonoBehaviour:
   translateLimit: 4
   returnSpeed: 4
   mouseResetTime: 3
+  pickupOffset: {x: 3, y: 2, z: -5}
+  zoomDuration: 2
+  transitionSpeed: 2
 --- !u!114 &397513760
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3709,10 +3712,6 @@ PrefabInstance:
     - target: {fileID: 5203188700804547327, guid: 7e895fe3b82fbe446868298d86c17a9c, type: 3}
       propertyPath: m_Name
       value: LockPickUI
-      objectReference: {fileID: 0}
-    - target: {fileID: 5203188700804547327, guid: 7e895fe3b82fbe446868298d86c17a9c, type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5579932507705342025, guid: 7e895fe3b82fbe446868298d86c17a9c, type: 3}
       propertyPath: cam
