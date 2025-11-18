@@ -25,6 +25,8 @@ public class Inventory : MonoBehaviour
     private ToggleInventoryUI toggleInventoryUI;
     public WorldItem itemToCollect;
 
+    public static event System.Action<ItemData> OnItemAdded;
+
 
     private void Awake()
     {
@@ -116,6 +118,8 @@ public class Inventory : MonoBehaviour
             Destroy(itemToCollect.gameObject);
             itemToCollect = null;
         }
+
+        OnItemAdded?.Invoke(item);
 
         inventoryUI.RefreshInventoryUI();
     }

@@ -5,7 +5,7 @@ using TMPro;
 
 public class InteractableObject : MonoBehaviour
 {
-    public string Box = "Box";
+    public string ItemName = "";
     public float PickupRange;
     private Transform player;
 
@@ -62,7 +62,7 @@ public class InteractableObject : MonoBehaviour
 
     void Pickup()
     {
-        Debug.Log("Picked up" + Box);
+        Debug.Log("Picked up" + ItemName);
 
         PlayerController pc = player.GetComponent<PlayerController>();
 
