@@ -33,7 +33,7 @@ public class PlayerController : MonoBehaviour
     private bool isGrounded;
 
     [Header("Camera Settings")]
-    public Vector3 pickupOffset = new Vector3(3f, 2f, -5f);
+    public Vector3 pickupOffset = new Vector3(-1.5f, 3f, 2f);
     public float zoomDuration = 3f;
     public float transitionSpeed = 2f;
     private bool isZooming = false;
