@@ -110,6 +110,7 @@ public class PauseManager : MonoBehaviour
     private void ReloadSave()
     {
         // Logic to reload the last save
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         Debug.Log("Reloading Save...");
     }
 
