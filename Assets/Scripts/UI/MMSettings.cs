@@ -12,6 +12,8 @@ public class MMSettings : MonoBehaviour
     [SerializeField] private Slider mouseSensitivitySlider;
     [SerializeField] private Slider controllerSensitivitySlider;
     [SerializeField] private Button resetButton;
+
+    [Header("Text References")]
     [SerializeField] private TextMeshProUGUI masterVolumeValueText;
     [SerializeField] private TextMeshProUGUI mouseSensitivityValueText;
     [SerializeField] private TextMeshProUGUI controllerSensitivityValueText;
