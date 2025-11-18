@@ -8,47 +8,43 @@ public class Chime : MonoBehaviour
 
     public float OrbitRadius = 2f;
     public float OrbitSpeed = 2f;
-    public float OrbitAngle = 0f;
 
     public float BobHeight = .5f;
     public float BobSpeed = 2f;
 
+    public bool facePlayer = true;
+    public float lookSmooth = 8f;
+
+    private float OrbitAngle;
+
     private Transform OrbitPivot;
     private Transform BobObject;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        // orbit pivot at runtime
-        OrbitPivot = new GameObject("OrbitPivot").transform;
-        OrbitPivot.position = player.position;
-
-        BobObject = this.transform;
-        BobObject.SetParent(OrbitPivot);
-
-        BobObject.localPosition = new Vector3(OrbitRadius, 0f, 0f);
-    }
-
     // Update is called once per frame
-    void Update()
+    void LateUpdate()
     {
         if (player == null) return;
 
         // Orbit angle increases steadily
         OrbitAngle += OrbitSpeed * Time.deltaTime;
+        if (OrbitAngle > Mathf.PI * 2f) OrbitAngle -= Mathf.PI * 2f;
 
-        // Orbit position (X/Z circle around player)
-        float x = Mathf.Cos(OrbitAngle) * OrbitRadius;
-        float z = Mathf.Sin(OrbitAngle) * OrbitRadius;
+        // Calculate orbit position relative to player
+        Vector3 offset = new Vector3(Mathf.Cos(OrbitAngle) * OrbitRadius, Mathf.Sin(Time.time * BobSpeed) * BobHeight + 1f, Mathf.Sin(OrbitAngle) * OrbitRadius);
 
-        // Bobbing motion (sin wave up/down)
-        float y = Mathf.Sin(Time.time * BobSpeed) * BobHeight;
+        // Smoothly rotate toward player
+        Vector3 targetPos = player.position + offset;
+        transform.position = Vector3.Lerp(transform.position, targetPos, Time.deltaTime * 10f);
 
-        // Final position = orbit circle + bobbing height
-        Vector3 orbitPos = new Vector3(x, 1f + y, z); // "1f" keeps above the ground
-        transform.position = player.position + orbitPos;
-
-        // Face the player
-         transform.LookAt(player);
+        // smoothly rotate toward player
+        if (facePlayer)
+        {
+            Vector3 dir = (player.position - transform.position).normalized;
+            if (dir.sqrMagnitude > 0.001f)
+            {
+                Quaternion lookRot = Quaternion.LookRotation(dir, Vector3.up);
+                transform.rotation = Quaternion.Slerp(transform.rotation, lookRot, Time.deltaTime * lookSmooth);
+            }
+        }
     }
 }
