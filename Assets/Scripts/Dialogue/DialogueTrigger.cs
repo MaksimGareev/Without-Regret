@@ -8,13 +8,22 @@ public class DialogueTrigger : MonoBehaviour
     public string NPCName = "Friendly NPC";
     public GameObject promptUI;
     public float chatRange = 3f;
+
+    // Dialogue files
     public TextAsset jsonDialogueFile;
+    public TextAsset TalkedJsonDialogueFile;
+    public TextAsset CompleteJsonDialogueFile;
+    public TextAsset ActiveJsonDialogueFile;
+    
     private DialogueManager dialogueManager;
+
+    // objectives the npc is responisble for
+    public List<string> objectiveIDYouCareAbout = new List<string>();
 
     private bool playerInRange = false;
     private Transform player;
     private PlayerControls controls;
-
+    public bool TalkedAlready = false;
     private void Awake()
     {
         controls = new PlayerControls();
@@ -63,6 +72,7 @@ public class DialogueTrigger : MonoBehaviour
                     promptUI.SetActive(false);
             }
         }
+
     }
 
     private void TryInteract()
@@ -76,14 +86,71 @@ public class DialogueTrigger : MonoBehaviour
         if (promptUI != null)
             promptUI.SetActive(false);
 
-        // Start dialogue
-        if (dialogueManager != null && jsonDialogueFile != null)
+        // check if the player completed any objectives the npc is responsible for
+        bool allCompleted = true;
+        foreach (string objectiveID in objectiveIDYouCareAbout)
+        {
+            if (!ObjectiveManager.Instance.IsObjectiveCompleted(objectiveID))
+            {
+                allCompleted = false;
+                break;
+            }
+        }
+        // if all are completed play completed dialogue
+        if (allCompleted && CompleteJsonDialogueFile != null)
+        {
+            dialogueManager.StartDialogueFromJson(CompleteJsonDialogueFile);
+            return;
+        }
+
+        // check if the player has an active objective the npc is responsible for
+        bool anyActive = false;
+        foreach (string objectiveID in objectiveIDYouCareAbout)
+        {
+            if (ObjectiveManager.Instance.IsObjectiveActive(objectiveID))
+            {
+                anyActive = true;
+                break;
+            }
+        }
+        // if any are active play active dialogue
+        if (anyActive && ActiveJsonDialogueFile != null)
+        {
+            dialogueManager.StartDialogueFromJson(ActiveJsonDialogueFile);
+            return;
+        }
+
+        // Starting dialogue
+        if (dialogueManager != null && jsonDialogueFile != null && TalkedAlready == false)
         {
             dialogueManager.StartDialogueFromJson(jsonDialogueFile);
+            TalkedAlready = true;
         }
-        else
+        // dialogue if the npc has already been talked to and hasn't started any objectives from the npc
+        else if (TalkedAlready == true)
         {
-            Debug.LogWarning("missing Dialogue or ink Json on " + gameObject.name);
+            dialogueManager.StartDialogueFromJson(TalkedJsonDialogueFile);
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player") && TalkedAlready == false)
+        {
+            if (dialogueManager != null && jsonDialogueFile != null)
+            {
+                dialogueManager.StartDialogueFromJson(jsonDialogueFile);
+            }
+            TalkedAlready = true;
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Player") && TalkedAlready == false)
+        {
+            //TryInteract();
+            //TalkedAlready = true;
         }
     }
 }
