@@ -4,12 +4,12 @@ using UnityEngine;
 public class CameraObstructionFade : MonoBehaviour
 {
     [Header("Setup")]
-    public Transform target;             
-    public LayerMask obstructionMask;   
+    public Transform target;
+    public LayerMask obstructionMask;
 
     [Header("Fade Settings")]
     [Range(0f, 1f)] public float fadedOpacity = 0.3f;
-    public float fadeSpeed = 3f;        
+    public float fadeSpeed = 3f;
 
     Camera _cam;
 
@@ -64,7 +64,7 @@ public class CameraObstructionFade : MonoBehaviour
             }
         }
 
-       //fade out objects that are currently in the way
+        // fade out objects that are currently in the way
         foreach (var kvp in _activeFaders)
         {
             Fader f = kvp.Value;
@@ -80,7 +80,7 @@ public class CameraObstructionFade : MonoBehaviour
             SetOpacityOnRenderer(f.renderer, f.currentOpacity);
         }
 
-        // remove finished faders 
+        // remove finished faders
         List<Renderer> toRemove = null;
         foreach (var kvp in _activeFaders)
         {
@@ -107,7 +107,7 @@ public class CameraObstructionFade : MonoBehaviour
 
     void SetOpacityOnRenderer(Renderer rend, float opacity)
     {
-        //  MaterialPropertyBlock
+        // MaterialPropertyBlock
         var block = new MaterialPropertyBlock();
         rend.GetPropertyBlock(block);
         block.SetFloat(OpacityID, opacity);
