@@ -1,0 +1,32 @@
+{
+    "npcName": "Barry",
+    "dialogueLines": [
+        {
+            "text": "Hello, do you mind helping me move these piles of leaves?",
+            "requiredMorality": 0,
+            "choices": [
+                {
+                    "text": "Sure I can help with that.",
+                    "nextIndex": 1,
+                    "moralityChange": 1,
+                    "objectiveToActivate": "stackLeaves"
+                },
+                {
+                    "text": "That isnt my job.",
+                    "nextIndex": 2,
+                    "moralityChange": -1
+                }
+            ]
+        },
+        {
+            "text": "Great, thank you so much.",
+            "choices": [],
+            "endDialogueAfter":  true
+        },
+        {
+            "text": "Wow, sorry for asking.",
+            "choices": [],
+            "endDialogueAfter": true
+        }
+    ]
+}

@@ -12,6 +12,9 @@ public class ObjectiveData : ScriptableObject
     public int currentProgress;
     public int requiredProgress;
 
+    [Header("Scene")]
+    public string sceneName;
+
     [Header("Status")]
     public bool isCompleted;
     public float ProgressPercent => (float)currentProgress / requiredProgress;
