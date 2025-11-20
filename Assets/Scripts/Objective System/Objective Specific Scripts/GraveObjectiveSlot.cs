@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Linq;
 using UnityEngine;
 
@@ -35,6 +36,27 @@ public class GraveObjectiveSlot : MonoBehaviour
         {
             Debug.LogWarning("No objective linked in inspector!");
         }
+
+        if (!isObjectiveActive)
+        {
+            GameObject[] gravestones = GameObject.FindGameObjectsWithTag("Gravestone");
+            foreach (GameObject gravestone in gravestones)
+            {
+                StartCoroutine(WaitToDisableGravestone(gravestone));
+            }
+        }
+    }
+
+    private IEnumerator WaitToDisableGravestone(GameObject gravestone)
+    {
+        yield return new WaitForSeconds(3f);
+        MoveableObject moveable = gravestone.GetComponent<MoveableObject>();
+        Rigidbody rb = gravestone.GetComponent<Rigidbody>();
+        if (moveable != null)
+        {
+            moveable.isGrabbable = false;
+            rb.constraints = RigidbodyConstraints.FreezeAll;
+        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -70,6 +92,19 @@ public class GraveObjectiveSlot : MonoBehaviour
         }
 
         isObjectiveActive = true;
+
+        GameObject[] gravestones = GameObject.FindGameObjectsWithTag("Gravestone");
+        foreach (GameObject gravestone in gravestones)
+        {
+            MoveableObject moveable = gravestone.GetComponent<MoveableObject>();
+            rb = gravestone.GetComponent<Rigidbody>();
+
+            if (moveable != null)
+            {
+                moveable.isGrabbable = true;
+                rb.constraints = RigidbodyConstraints.None;
+            }
+        }
     }
     
     private void SetObjectiveInactive(ObjectiveInstance objective)
