@@ -1,0 +1,34 @@
+{
+    "npcName": "Barry",
+    "dialogueLines": [
+        {
+            "text": "Hello, do you mind helping me out with cleaning this place up a little?",
+            "requiredMorality": 0,
+            "choices": [
+                {
+                    "text": "Sure I can help with that.",
+                    "nextIndex": 1,
+                    "moralityChange": 1,
+                    "objectiveToActivate": "stackLeaves"
+                },
+                {
+                    "text": "That isnt my job.",
+                    "nextIndex": 2,
+                    "moralityChange": -1
+                }
+            ]
+        },
+        {
+            "text": "Great, thank you so much.",
+            "requiredMorality": 0,
+            "choices": [],
+            "endDialogueAfterLine": true
+        },
+        {
+            "text": "Wow, sorry for asking.",
+            "requiredMorality": 0,
+            "choices": [],
+            "endDialogueAfterLine": true
+        }
+    ]
+}
