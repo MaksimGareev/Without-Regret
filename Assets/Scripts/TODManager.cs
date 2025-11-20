@@ -20,17 +20,27 @@ public class TODManager : MonoBehaviour
     public TOD currentTime = TOD.Morning;
     public float TransitionDuration = 5f;
 
+    // objects that should glow only during night
+    public EmissionChanger[] nightGlowObjects;
+    public float nightGlowIntensity = 5f;
+
+    // spot lights that should turn on only during night
+    public Light[] nightSpotLights;
+
+    // fog particles that should play only during night
+    public ParticleSystem[] nightFogParticles;
+
     void Start()
     {
         UpdateLighting();
     }
 
-    // switch time after pressing L key for testing
+    // switch time after pressing l key for testing
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.L))
         {
-            // cycle between Morning -> Evening -> Night
+            // cycle between morning -> evening -> night
             if (currentTime == TOD.Morning)
                 StartCoroutine(TransitionTo(TOD.Evening, TransitionDuration));
             else if (currentTime == TOD.Evening)
@@ -77,9 +87,59 @@ public class TODManager : MonoBehaviour
 
         // update global illumination
         DynamicGI.UpdateEnvironment();
+
+        // update glow for night-only objects
+        UpdateNightGlow();
+
+        // update spot lights for night-only lighting
+        UpdateNightSpotLights();
+
+        // update fog particles for night-only effect
+        UpdateNightFog();
     }
 
-    // transition between TOD
+    // update emission intensity on all objects meant to glow at night
+    void UpdateNightGlow()
+    {
+        float intensity = (currentTime == TOD.Night) ? nightGlowIntensity : 0f;
+
+        foreach (var obj in nightGlowObjects)
+        {
+            if (obj != null)
+                obj.SetEmission(intensity);
+        }
+    }
+
+    // enable or disable spot lights based on time of day
+    void UpdateNightSpotLights()
+    {
+        bool lightsOn = (currentTime == TOD.Night);
+
+        foreach (var light in nightSpotLights)
+        {
+            if (light != null)
+                light.enabled = lightsOn;
+        }
+    }
+
+    // enable or disable fog particle systems based on time of day
+    void UpdateNightFog()
+    {
+        bool fogOn = (currentTime == TOD.Night);
+
+        foreach (var fog in nightFogParticles)
+        {
+            if (fog != null)
+            {
+                if (fogOn && !fog.isPlaying)
+                    fog.Play();
+                if (!fogOn && fog.isPlaying)
+                    fog.Stop();
+            }
+        }
+    }
+
+    // transition between tod
     IEnumerator TransitionTo(TOD newTime, float duration)
     {
         // starting values
