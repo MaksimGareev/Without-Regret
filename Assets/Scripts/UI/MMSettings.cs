@@ -40,6 +40,23 @@ public class MMSettings : MonoBehaviour
         resolutionDropdown.ClearOptions();
 
         var options = new System.Collections.Generic.List<string>();
+        
+        var uniqueResolutions = new System.Collections.Generic.List<Resolution>();
+        foreach (var res in resolutions)
+        {
+            // Only add 16:9 resolutions
+            if (Mathf.Approximately((float)res.width / res.height, 16f / 9f))
+            {
+                // Avoid duplicates
+                if (!uniqueResolutions.Exists(r => r.width == res.width && r.height == res.height))
+                {
+                    uniqueResolutions.Add(res);
+                }
+            }
+        }
+
+        resolutions = uniqueResolutions.ToArray();
+        
         int currentResolutionIndex = 0;
 
         for (int i = 0; i < resolutions.Length; i++)
@@ -47,6 +64,7 @@ public class MMSettings : MonoBehaviour
             string option = resolutions[i].width + " x " + resolutions[i].height;
             options.Add(option);
 
+            // Check if this resolution is the native resolution, set as current
             if (resolutions[i].width == Screen.currentResolution.width && resolutions[i].height == Screen.currentResolution.height)
             {
                 currentResolutionIndex = i;
@@ -60,6 +78,7 @@ public class MMSettings : MonoBehaviour
 
     private void SetUpEvents()
     {
+        // Set up listeners for UI elements
         graphicsQualityDropdown.onValueChanged.AddListener(SetGraphicsQuality);
         resolutionDropdown.onValueChanged.AddListener(SetResolution);
         fullscreenToggle.onValueChanged.AddListener(SetFullscreen);
@@ -125,14 +144,16 @@ public class MMSettings : MonoBehaviour
 
     private void LoadSettings()
     {
-        int quality = PlayerPrefs.GetInt("quality", QualitySettings.GetQualityLevel());
+        int quality = PlayerPrefs.GetInt("quality", 0);
         graphicsQualityDropdown.value = quality;
         QualitySettings.SetQualityLevel(quality);
 
-        int resolutionIndex = PlayerPrefs.GetInt("resolution", resolutionDropdown.value);
+        int resolutionIndex = Mathf.Clamp(PlayerPrefs.GetInt("resolution", resolutions.Length - 1), 0, resolutions.Length - 1);
         resolutionDropdown.value = resolutionIndex;
+        resolutionDropdown.RefreshShownValue();
+        SetResolution(resolutionIndex);
 
-        bool isFullscreen = PlayerPrefs.GetInt("fullscreen", Screen.fullScreen ? 1 : 0) == 1;
+        bool isFullscreen = PlayerPrefs.GetInt("fullscreen", 1) == 1;
         fullscreenToggle.isOn = isFullscreen;
         Screen.fullScreen = isFullscreen;
 
