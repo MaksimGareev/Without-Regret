@@ -164,6 +164,19 @@ public class DialogueManager : MonoBehaviour
             }
         }
 
+        // Activate objective immediately when line is shown
+        if (line.objectivesToActivate != null && line.objectivesToActivate.Count > 0)
+        {
+            foreach (string objectiveID in line.objectivesToActivate)
+            {
+                if (!string.IsNullOrEmpty(objectiveID))
+                {
+                    Debug.Log("Activating objective from dialogue line: " + objectiveID);
+                    ObjectiveManager.Instance.ActivateObjectiveByID(objectiveID);
+                }
+            }
+        }
+
         StopCoroutine(nameof(TypeLine));
         StartCoroutine(TypeLine(line.text));
 
@@ -213,6 +226,15 @@ public class DialogueManager : MonoBehaviour
             yield return null;
         }
         ConfirmPressed = false;
+
+        DialogueLine line = currentDialogue.dialogueLines[currentIndex];
+
+        // End dialogue if the line says to
+        if (line.endDialogueAfterLine)
+        {
+            EndDialogue();
+            yield break;
+        }
 
         // move to next line (if any)
         if (currentIndex + 1 < currentDialogue.dialogueLines.Count)
@@ -312,7 +334,7 @@ public class DialogueManager : MonoBehaviour
         PlayerPrefs.Save();
 
         Debug.Log($"Morality changed by {chosen.moralityChange}. New Morality: {playerMorality}");
-        //ShowPopUp($"Morality changed by {chosen.moralityChange}. New Morality: {playerMorality}", 2f);
+ 
         // clear old choices
         foreach (var b in spawnedChoices) Destroy(b);
         spawnedChoices.Clear();
@@ -322,6 +344,12 @@ public class DialogueManager : MonoBehaviour
         if (chosen.moralityChange != 0)
         {
             ShowPopUp($"Morality changed by {chosen.moralityChange}. New Morality: {playerMorality}", 2f);
+        }
+
+        // Trigger an objective if this choice has one
+        if (!string.IsNullOrEmpty(chosen.objectiveToActivate))
+        {
+            ObjectiveManager.Instance.ActivateObjectiveByID(chosen.objectiveToActivate);
         }
 
         // Continue dialogue
