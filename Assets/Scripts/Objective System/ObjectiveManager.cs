@@ -143,7 +143,7 @@ public class ObjectiveManager : MonoBehaviour
     // check if a single objective is completed
     public bool IsObjectiveCompleted(string id)
     {
-        return completedObjectives.Exists(o => o.objectiveID == id);
+        return completedObjectives.Exists(o => o.data.objectiveID == id);
     }
 
     // check if the player has completed all of the objectives in the current scene
