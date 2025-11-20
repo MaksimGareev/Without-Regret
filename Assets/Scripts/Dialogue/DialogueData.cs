@@ -13,7 +13,9 @@ public class DialogueLine
 {
     public string text;
     public int requiredMorality;
-    public List<DialogueChoice> choices; // list of choices
+    public List<DialogueChoice> choices;
+    public List<string> objectivesToActivate;// list of choices
+    public bool endDialogueAfterLine; // allows line to end dialogue after being said
 }
 
 [System.Serializable]
@@ -22,5 +24,6 @@ public class DialogueChoice
     public string text;
     public int nextIndex; // index of the next dialogue line
     public int moralityChange;
+    public string objectiveToActivate; // add objective 
 }
 

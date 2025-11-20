@@ -9,7 +9,7 @@ public class ObjectiveManager : MonoBehaviour
     [Header("Objectives")]
     [SerializeField] private List<ObjectiveData> allObjectives;
     private List<ObjectiveInstance> activeObjectives = new();
-    private List<ObjectiveData> completedObjectives = new();
+    private List<ObjectiveInstance> completedObjectives = new();
 
     [Header("Events")]
     public UnityEvent<ObjectiveInstance> OnObjectiveActivated = new();
@@ -34,7 +34,7 @@ public class ObjectiveManager : MonoBehaviour
 
     private void Start()
     {
-        ActivateObjective(allObjectives[0]);
+        //ActivateObjective(allObjectives[0]);
     }
 
     public void ActivateObjective(ObjectiveData objective)
@@ -45,7 +45,7 @@ public class ObjectiveManager : MonoBehaviour
             return;
         }
 
-        if (activeObjectives.Exists(o => o.data == objective) || completedObjectives.Contains(objective))
+        if (activeObjectives.Exists(o => o.data == objective) || completedObjectives.Exists(o => o.data == objective))
         {
             Debug.LogWarning($"Objective is already completed.");
             return;
@@ -113,7 +113,7 @@ public class ObjectiveManager : MonoBehaviour
 
         foreach (var next in allObjectives)
         {
-            if (!completedObjectives.Contains(next))
+            if (!completedObjectives.Exists(o => o.data == next))
             {
                 ActivateObjective(next);
                 yield break;
@@ -127,7 +127,8 @@ public class ObjectiveManager : MonoBehaviour
 
     private void CompleteObjective(ObjectiveInstance objective)
     {
-        completedObjectives.Add(objective.data);
+        objective.data.isCompleted = true;
+        completedObjectives.Add(objective);
         activeObjectives.Remove(objective);
         OnObjectiveCompleted.Invoke(objective);
 
@@ -139,6 +140,31 @@ public class ObjectiveManager : MonoBehaviour
         UIHideRoutine = StartCoroutine(HideAfterDelay());
     }
 
+    // check if a single objective is completed
+    public bool IsObjectiveCompleted(string id)
+    {
+        return completedObjectives.Exists(o => o.data.objectiveID == id);
+    }
+
+    // check if the player has completed all of the objectives in the current scene
+    public bool AllObjectivesCompletedInScene(string sceneName)
+    {
+        foreach (var objective in allObjectives)
+        {
+            if (objective.sceneName == sceneName && !objective.isCompleted)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // check if any objectives are active
+    public bool IsObjectiveActive(string id)
+    {
+        return activeObjectives.Exists(o => o.data.objectiveID == id);
+    }
+
     public IEnumerable<ObjectiveInstance> GetActiveObjectives() => activeObjectives;
-    public IEnumerable<ObjectiveData> GetCompletedObjectives() => completedObjectives;
+    public IEnumerable<ObjectiveInstance> GetCompletedObjectives() => completedObjectives;
 }
