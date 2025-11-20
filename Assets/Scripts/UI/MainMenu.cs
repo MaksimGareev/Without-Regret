@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -18,12 +19,16 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private Button quitButton;
     [SerializeField] private Button backButton;
 
+    [Header("Text References")]
+    [SerializeField] private TextMeshProUGUI versionNumberText;
+    private string gameVersion = "v.0.0.1";
     private string firstLevelTitle = "Echo'sHouse";
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         OpenMainMenu();
+        versionNumberText.text = gameVersion;
     }
 
     // Update is called once per frame
