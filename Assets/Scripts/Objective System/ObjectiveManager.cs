@@ -34,7 +34,7 @@ public class ObjectiveManager : MonoBehaviour
 
     private void Start()
     {
-        ActivateObjective(allObjectives[0]);
+        //ActivateObjective(allObjectives[0]);
     }
 
     public void ActivateObjective(ObjectiveData objective)
@@ -127,6 +127,7 @@ public class ObjectiveManager : MonoBehaviour
 
     private void CompleteObjective(ObjectiveInstance objective)
     {
+        objective.data.isCompleted = true;
         completedObjectives.Add(objective.data);
         activeObjectives.Remove(objective);
         OnObjectiveCompleted.Invoke(objective);
@@ -137,6 +138,31 @@ public class ObjectiveManager : MonoBehaviour
         }
 
         UIHideRoutine = StartCoroutine(HideAfterDelay());
+    }
+
+    // check if a single objective is completed
+    public bool IsObjectiveCompleted(string id)
+    {
+        return completedObjectives.Exists(o => o.objectiveID == id);
+    }
+
+    // check if the player has completed all of the objectives in the current scene
+    public bool AllObjectivesCompletedInScene(string sceneName)
+    {
+        foreach (var objective in allObjectives)
+        {
+            if (objective.sceneName == sceneName && !objective.isCompleted)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // check if any objectives are active
+    public bool IsObjectiveActive(string id)
+    {
+        return activeObjectives.Exists(o => o.data.objectiveID == id);
     }
 
     public IEnumerable<ObjectiveInstance> GetActiveObjectives() => activeObjectives;
