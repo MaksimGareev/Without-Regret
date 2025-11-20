@@ -5,6 +5,9 @@ using TMPro;
 
 public class ChimeHintUI : MonoBehaviour
 {
+    [Header("Input Settings")]
+    [SerializeField] private KeyCode hintKey = KeyCode.H;
+    [SerializeField] private string hintButton = "Xbox Select Button";
     public GameObject hintBubbleUI;
     public TextMeshProUGUI hintText;
     private Transform cam;
@@ -27,7 +30,7 @@ public class ChimeHintUI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.H) || Input.GetButtonDown("Xbox Select Button"))
+        if (Input.GetKeyDown(hintKey) || Input.GetButtonDown(hintButton))
         {
             ShowHint();
         }
