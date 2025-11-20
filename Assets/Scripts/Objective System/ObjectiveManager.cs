@@ -9,7 +9,7 @@ public class ObjectiveManager : MonoBehaviour
     [Header("Objectives")]
     [SerializeField] private List<ObjectiveData> allObjectives;
     private List<ObjectiveInstance> activeObjectives = new();
-    private List<ObjectiveData> completedObjectives = new();
+    private List<ObjectiveInstance> completedObjectives = new();
 
     [Header("Events")]
     public UnityEvent<ObjectiveInstance> OnObjectiveActivated = new();
@@ -45,7 +45,7 @@ public class ObjectiveManager : MonoBehaviour
             return;
         }
 
-        if (activeObjectives.Exists(o => o.data == objective) || completedObjectives.Contains(objective))
+        if (activeObjectives.Exists(o => o.data == objective) || completedObjectives.Exists(o => o.data == objective))
         {
             Debug.LogWarning($"Objective is already completed.");
             return;
@@ -113,7 +113,7 @@ public class ObjectiveManager : MonoBehaviour
 
         foreach (var next in allObjectives)
         {
-            if (!completedObjectives.Contains(next))
+            if (!completedObjectives.Exists(o => o.data == next))
             {
                 ActivateObjective(next);
                 yield break;
@@ -127,7 +127,7 @@ public class ObjectiveManager : MonoBehaviour
 
     private void CompleteObjective(ObjectiveInstance objective)
     {
-        completedObjectives.Add(objective.data);
+        completedObjectives.Add(objective);
         activeObjectives.Remove(objective);
         OnObjectiveCompleted.Invoke(objective);
 
@@ -140,5 +140,5 @@ public class ObjectiveManager : MonoBehaviour
     }
 
     public IEnumerable<ObjectiveInstance> GetActiveObjectives() => activeObjectives;
-    public IEnumerable<ObjectiveData> GetCompletedObjectives() => completedObjectives;
+    public IEnumerable<ObjectiveInstance> GetCompletedObjectives() => completedObjectives;
 }
