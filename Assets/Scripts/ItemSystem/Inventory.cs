@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Inventory : MonoBehaviour
+public class Inventory : MonoBehaviour, ISaveable
 {
     private readonly List<ItemData> itemsList = new List<ItemData>();
 
@@ -83,6 +83,36 @@ public class Inventory : MonoBehaviour
             }
         }
     }
+
+    public void SaveTo(SaveData data)
+    {
+        data.inventorySaveData.items = itemsList;
+        data.inventorySaveData.keyItems = keyItems;
+        data.inventorySaveData.otherItems = otherItems;
+        data.inventorySaveData.hasBackpack = hasBackpack;
+    }
+
+    public void LoadFrom(SaveData data)
+    {
+        itemsList.Clear();
+        itemsList.AddRange(data.inventorySaveData.items);
+
+        keyItems.Clear();
+        keyItems.AddRange(data.inventorySaveData.keyItems);
+
+        otherItems.Clear();
+        otherItems.AddRange(data.inventorySaveData.otherItems);
+
+        hasBackpack = data.inventorySaveData.hasBackpack;
+
+        if (hasBackpack)
+        {
+            SetBackpackActive();
+            toggleInventoryUI.hasBackpack = true;
+        }
+
+        inventoryUI.RefreshInventoryUI();
+    }
     
     private void SetBackpackActive()
     {
@@ -125,11 +155,13 @@ public class Inventory : MonoBehaviour
         {
             //cameraMovement.TriggerPickupCameraEffect(itemToCollect.transform);
             //StartCoroutine(WaitForCameraTransition());
+            itemToCollect.hasBeenCollected = true;
             Destroy(itemToCollect.gameObject, 1f);
             itemToCollect = null;
         }
         else
         {
+            itemToCollect.hasBeenCollected = true;
             Destroy(itemToCollect.gameObject);
             itemToCollect = null;
         }
