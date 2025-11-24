@@ -52,6 +52,7 @@ public class PauseManager : MonoBehaviour
 
     private void PauseGame()
     {
+        SaveManager.Instance.SaveGame();
         pauseMenuPanel.SetActive(true);
         Time.timeScale = 0f; // Freeze game time
         Cursor.visible = true;
@@ -128,6 +129,7 @@ public class PauseManager : MonoBehaviour
 
     private void QuitToMainMenu()
     {
+        SaveManager.Instance.SaveGame();
         // Logic to quit to main menu
         SceneManager.LoadScene("MainMenu");
         Time.timeScale = 1f; // Ensure time scale is reset

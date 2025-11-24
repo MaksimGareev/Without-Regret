@@ -13,6 +13,8 @@ GameObject:
   - component: {fileID: 65833780837272751}
   - component: {fileID: 999213477847758754}
   - component: {fileID: 9104071507018838044}
+  - component: {fileID: 6298345985863480951}
+  - component: {fileID: 3096833380224275490}
   m_Layer: 0
   m_Name: bouquet
   m_TagString: Untagged
@@ -28,7 +30,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3108664399994057373}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.53679067, y: -0, z: -0, w: 0.8437155}
+  m_LocalRotation: {x: 0.5367917, y: 0, z: 0, w: 0.84371483}
   m_LocalPosition: {x: 70.553, y: 0.888, z: 108.069}
   m_LocalScale: {x: 0.2259975, y: 0.2259975, z: 0.2259975}
   m_ConstrainProportionsScale: 0
@@ -125,3 +127,31 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WorldItem
   itemData: {fileID: 11400000, guid: 6ec2904e4d7058e44802dc7b98b21437, type: 2}
+  hasBeenCollected: 0
+--- !u!114 &6298345985863480951
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3108664399994057373}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17faab47526183d41aee6ec5f46179b3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RosesObjective
+  linkedObjective: {fileID: 11400000, guid: 29c3e418a1c36aa4a9f6ff833a3dd117, type: 2}
+  roseItemID: Roses
+--- !u!114 &3096833380224275490
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3108664399994057373}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ced780c22dcf6ef4bb8e624b32e4787a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SaveableWorldObject
+  uniqueID: 86436a82-57ae-437b-b22c-265ca6afeb31

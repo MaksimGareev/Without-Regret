@@ -32,6 +32,8 @@ public class MoveableObject : MonoBehaviour, IInteractable
         rb.isKinematic = false;
         rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
+
+        SaveManager.Instance.SaveGame();
     }
 
     private void FixedUpdate()

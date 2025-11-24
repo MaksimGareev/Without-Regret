@@ -4,7 +4,6 @@ using UnityEngine;
 [System.Serializable]
 public class WorldSaveData
 {
-    private string currentLevel;
     public List<WorldObjectState> worldObjects = new List<WorldObjectState>();
 }
 
