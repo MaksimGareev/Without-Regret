@@ -15,6 +15,8 @@ GameObject:
   - component: {fileID: 3870113160531172826}
   - component: {fileID: 8730694522381901846}
   - component: {fileID: 3392652441733394398}
+  - component: {fileID: 5852563069547504042}
+  - component: {fileID: 8209122591772879969}
   m_Layer: 0
   m_Name: Backpack
   m_TagString: Untagged
@@ -175,3 +177,31 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WorldItem
   itemData: {fileID: 11400000, guid: a555a26ed256f294a97f71bf0737870f, type: 2}
+  hasBeenCollected: 0
+--- !u!114 &5852563069547504042
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8657645946949767162}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 378015c664036754c8a1ff78cb271140, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BackpackObjective
+  linkedObjective: {fileID: 11400000, guid: 2538c85277e38ff4a9135fc1efbb57bb, type: 2}
+  BackpackItemID: Backpack
+--- !u!114 &8209122591772879969
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8657645946949767162}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ced780c22dcf6ef4bb8e624b32e4787a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SaveableWorldObject
+  uniqueID: c902b3b3-a61f-47a3-a084-7034042359cc

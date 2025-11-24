@@ -14,7 +14,7 @@ public class LockedItem : MonoBehaviour
 
     public AudioClip UnlockSound;
     private AudioSource audioSource;
-    public bool hasBeenLockpicked = false;
+    [HideInInspector]public bool hasBeenLockpicked = false;
     private bool isInRange = false;
 
     private PlayerControls controls;
@@ -126,5 +126,7 @@ public class LockedItem : MonoBehaviour
         {
             // add animation for chest or drawer
         }
+
+        SaveManager.Instance.SaveGame();
     }
 }

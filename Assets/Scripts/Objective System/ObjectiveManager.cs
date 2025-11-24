@@ -33,11 +33,6 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
         }
     }
 
-    private void Start()
-    {
-        ActivateObjective(allObjectives[currentObjectiveIndex]);
-    }
-
     public void SaveTo(SaveData data)
     {
         data.objectiveSaveData.currentObjectiveIndex = currentObjectiveIndex;
@@ -50,6 +45,8 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
         currentObjectiveIndex = data.objectiveSaveData.currentObjectiveIndex;
         completedObjectives = data.objectiveSaveData.completedObjectives;
         activeObjectives = data.objectiveSaveData.activeObjectives;
+
+        ActivateObjective(allObjectives[currentObjectiveIndex]);
     }
 
     public void ActivateObjective(ObjectiveData objective)
@@ -81,6 +78,7 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
         activeObjectives.Add(newObjective);
         OnObjectiveActivated.Invoke(newObjective);
         Debug.Log($"Objective '{newObjective.data.title}' has been activated");
+        SaveManager.Instance.SaveGame();
     }
 
     public void ActivateObjectiveByID(string objectiveID)
@@ -96,6 +94,8 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
         {
             Debug.LogWarning($"Objective with ID '{objectiveID}' not found in list.");
         }
+
+        SaveManager.Instance.SaveGame();
     }
 
     public void AddProgress(string ObjectiveID, int amount)
@@ -113,6 +113,8 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
         {
             CompleteObjective(objective);
         }
+
+        SaveManager.Instance.SaveGame();
     }
 
     private IEnumerator HideAfterDelay()
@@ -154,6 +156,8 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
 
         UIHideRoutine = StartCoroutine(HideAfterDelay());
         currentObjectiveIndex++;
+
+        SaveManager.Instance.SaveGame();
     }
 
     // check if a specific objective is completed

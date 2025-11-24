@@ -169,6 +169,8 @@ public class Inventory : MonoBehaviour, ISaveable
         OnItemAdded?.Invoke(item);
 
         inventoryUI.RefreshInventoryUI();
+
+        SaveManager.Instance.SaveGame();
     }
 
     IEnumerator WaitForCameraTransition()
@@ -195,6 +197,10 @@ public class Inventory : MonoBehaviour, ISaveable
         }
         
         itemsList.Remove(item);
+
+        inventoryUI.RefreshInventoryUI();
+
+        SaveManager.Instance.SaveGame();
         
         return;
     }

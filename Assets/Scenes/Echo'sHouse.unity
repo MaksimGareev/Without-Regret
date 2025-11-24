@@ -1673,25 +1673,6 @@ Mesh:
       - serializedVersion: 1
         m_IndexStart: 0
         m_IndexCount: 0
---- !u!1 &196217070 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8657645946949767162, guid: 2fb16b61ca03777408a9d2164316e150, type: 3}
-  m_PrefabInstance: {fileID: 360317708}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &196217078
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 196217070}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 378015c664036754c8a1ff78cb271140, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::BackpackObjective
-  linkedObjective: {fileID: 11400000, guid: 2538c85277e38ff4a9135fc1efbb57bb, type: 2}
-  BackpackItemID: Backpack
 --- !u!1 &217314656
 GameObject:
   m_ObjectHideFlags: 0
@@ -9001,10 +8982,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 8657645946949767162, guid: 2fb16b61ca03777408a9d2164316e150, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 196217078}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2fb16b61ca03777408a9d2164316e150, type: 3}
 --- !u!1 &381204759
 GameObject:
@@ -23611,25 +23589,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
---- !u!1 &1390522434 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3108664399994057373, guid: 6d145a8f2933d58498ef6ff2a7d15e98, type: 3}
-  m_PrefabInstance: {fileID: 7058995568487869072}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1390522440
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1390522434}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 17faab47526183d41aee6ec5f46179b3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RosesObjective
-  linkedObjective: {fileID: 11400000, guid: 29c3e418a1c36aa4a9f6ff833a3dd117, type: 2}
-  roseItemID: Roses
 --- !u!1 &1400892398
 GameObject:
   m_ObjectHideFlags: 0
@@ -29641,22 +29600,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1136661512570076457, guid: dc60125b78695de43a450852f8101d10, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 2.57
-      objectReference: {fileID: 0}
-    - target: {fileID: 1136661512570076457, guid: dc60125b78695de43a450852f8101d10, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 3.772
-      objectReference: {fileID: 0}
     - target: {fileID: 1566633728491210951, guid: dc60125b78695de43a450852f8101d10, type: 3}
       propertyPath: rhythmSlider
       value: 
       objectReference: {fileID: 1901369676}
-    - target: {fileID: 5657707268177514977, guid: dc60125b78695de43a450852f8101d10, type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 5657707268177514977, guid: dc60125b78695de43a450852f8101d10, type: 3}
       propertyPath: inventoryGameObject
       value: 
@@ -29664,14 +29611,6 @@ PrefabInstance:
     - target: {fileID: 5675321481151379428, guid: dc60125b78695de43a450852f8101d10, type: 3}
       propertyPath: m_Name
       value: Player
-      objectReference: {fileID: 0}
-    - target: {fileID: 6369621648110085496, guid: dc60125b78695de43a450852f8101d10, type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6369621648110085496, guid: dc60125b78695de43a450852f8101d10, type: 3}
-      propertyPath: hasBackpack
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6369621648110085496, guid: dc60125b78695de43a450852f8101d10, type: 3}
       propertyPath: interactingScript
@@ -33447,10 +33386,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 3108664399994057373, guid: 6d145a8f2933d58498ef6ff2a7d15e98, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1390522440}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6d145a8f2933d58498ef6ff2a7d15e98, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
