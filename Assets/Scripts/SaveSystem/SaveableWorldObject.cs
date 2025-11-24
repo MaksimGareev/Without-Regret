@@ -14,6 +14,28 @@ public class SaveableWorldObject : MonoBehaviour, ISaveable
         state.rotation = new float[] { transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z };
         state.isActive = gameObject.activeSelf;
 
+        if (GetComponent<WorldItem>() != null)
+        {
+            state.objectType = ObjectType.InventoryItem;
+            state.hasBeenCollected = GetComponent<WorldItem>()?.hasBeenCollected ?? false;
+        }   
+        else if (GetComponent<MoveableObject>() != null)
+        {
+            state.objectType = ObjectType.MovableObject;
+            state.isGrabbable = GetComponent<MoveableObject>()?.isGrabbable ?? false;
+        }
+        else if (GetComponent<LockedItem>() != null)
+        {
+            state.objectType = ObjectType.LockpickableObject;
+            state.hasBeenLockpicked = GetComponent<LockedItem>()?.hasBeenLockpicked ?? false;
+        }
+        else
+        {
+            state.objectType = ObjectType.MiscObject;
+        }
+        
+        state.rbConstraints = GetComponent<Rigidbody>()?.constraints ?? RigidbodyConstraints.None;
+
         data.worldSaveData.worldObjects.Add(state);
     }
 
@@ -30,5 +52,24 @@ public class SaveableWorldObject : MonoBehaviour, ISaveable
         transform.position = new Vector3(state.position[0], state.position[1], state.position[2]);
         transform.eulerAngles = new Vector3(state.rotation[0], state.rotation[1], state.rotation[2]);
         gameObject.SetActive(state.isActive);
+
+        if (GetComponent<WorldItem>() != null && state.objectType == ObjectType.InventoryItem)
+        {
+            GetComponent<WorldItem>().hasBeenCollected = state.hasBeenCollected;
+        }
+        else if (GetComponent<MoveableObject>() != null && state.objectType == ObjectType.MovableObject)
+        {
+            GetComponent<MoveableObject>().isGrabbable = state.isGrabbable;
+        }
+        else if (GetComponent<LockedItem>() != null && state.objectType == ObjectType.LockpickableObject)
+        {
+            GetComponent<LockedItem>().hasBeenLockpicked = state.hasBeenLockpicked;
+        }
+
+        Rigidbody rb = GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.constraints = state.rbConstraints;
+        }
     }
 }

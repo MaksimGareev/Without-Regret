@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class ObjectiveManager : MonoBehaviour
+public class ObjectiveManager : MonoBehaviour, ISaveable
 {
     public static ObjectiveManager Instance;
     [Header("Objectives")]
     [SerializeField] private List<ObjectiveData> allObjectives;
+    private int currentObjectiveIndex = 0;
     private List<ObjectiveInstance> activeObjectives = new();
     private List<ObjectiveInstance> completedObjectives = new();
 
@@ -34,7 +35,21 @@ public class ObjectiveManager : MonoBehaviour
 
     private void Start()
     {
-        ActivateObjective(allObjectives[0]);
+        ActivateObjective(allObjectives[currentObjectiveIndex]);
+    }
+
+    public void SaveTo(SaveData data)
+    {
+        data.objectiveSaveData.currentObjectiveIndex = currentObjectiveIndex;
+        data.objectiveSaveData.completedObjectives = completedObjectives;
+        data.objectiveSaveData.activeObjectives = activeObjectives;
+    }
+
+    public void LoadFrom(SaveData data)
+    {
+        currentObjectiveIndex = data.objectiveSaveData.currentObjectiveIndex;
+        completedObjectives = data.objectiveSaveData.completedObjectives;
+        activeObjectives = data.objectiveSaveData.activeObjectives;
     }
 
     public void ActivateObjective(ObjectiveData objective)
@@ -47,7 +62,7 @@ public class ObjectiveManager : MonoBehaviour
 
         if (activeObjectives.Exists(o => o.data == objective) || completedObjectives.Exists(o => o.data == objective))
         {
-            Debug.LogWarning($"Objective is already completed.");
+            Debug.LogWarning($"Objective is already active or completed.");
             return;
         }
 
@@ -138,6 +153,7 @@ public class ObjectiveManager : MonoBehaviour
         }
 
         UIHideRoutine = StartCoroutine(HideAfterDelay());
+        currentObjectiveIndex++;
     }
 
     // check if a specific objective is completed

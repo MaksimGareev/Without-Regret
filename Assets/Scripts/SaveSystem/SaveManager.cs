@@ -6,7 +6,13 @@ public class SaveManager : MonoBehaviour
 
     private void Awake()
     {
+        DontDestroyOnLoad(gameObject);
         saveables = FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.InstanceID) as ISaveable[];
+    }
+
+    private void Start()
+    {
+        LoadGame();
     }
 
     public void SaveGame()
@@ -24,6 +30,7 @@ public class SaveManager : MonoBehaviour
     public void LoadGame()
     {
         SaveData data = SaveSystem.Load();
+        
         if (data == null)
         {
             Debug.LogWarning("No save data found to load.");

@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviour, ISaveable
 {
     [Header("Components")]
     public CharacterController Controller;
@@ -66,6 +66,18 @@ public class PlayerController : MonoBehaviour
 
        // controls.Player.LoadArtScene.performed += ctx => LoadArtScene();
        // controls.Player.LoadMenuScene.performed += ctx => LoadMenuScene();
+    }
+
+    public void SaveTo(SaveData data)
+    {
+        data.playerSaveData.position = new float[] { transform.position.x, transform.position.y, transform.position.z };
+        data.playerSaveData.rotation = new float[] { transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z };
+    }
+
+    public void LoadFrom(SaveData data)
+    {
+        transform.position = new Vector3(data.playerSaveData.position[0], data.playerSaveData.position[1], data.playerSaveData.position[2]);
+        transform.eulerAngles = new Vector3(data.playerSaveData.rotation[0], data.playerSaveData.rotation[1], data.playerSaveData.rotation[2]);
     }
 
     private void OnEnable() => controls.Enable();

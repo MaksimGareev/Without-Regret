@@ -14,8 +14,7 @@ public class LockedItem : MonoBehaviour
 
     public AudioClip UnlockSound;
     private AudioSource audioSource;
-
-
+    public bool hasBeenLockpicked = false;
     private bool isInRange = false;
 
     private PlayerControls controls;
@@ -77,7 +76,7 @@ public class LockedItem : MonoBehaviour
 
     private void TryInteract()
     {
-        if (!isInRange || LockPickUI == null) return;
+        if (!isInRange || LockPickUI == null || hasBeenLockpicked) return;
 
         // Show LockPick UI
         LockPickUI.SetActive(true);
@@ -102,6 +101,8 @@ public class LockedItem : MonoBehaviour
     public void OnUnlocked()
     {
         Debug.Log(gameObject.name + "unlocked!");
+
+        hasBeenLockpicked = true;
 
         PlayerFloating playerFloating = player.GetComponent<PlayerFloating>();
         if (playerFloating != null)
