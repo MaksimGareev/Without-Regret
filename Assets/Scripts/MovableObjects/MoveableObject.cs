@@ -30,6 +30,11 @@ public class MoveableObject : MonoBehaviour, IInteractable
         isGrabbed = true;
 
         rb.isKinematic = true;
+
+        if (popupInstance != null)
+        {
+            popupInstance.SetActive(false);
+        }
     }
 
     public void Release()
@@ -41,7 +46,15 @@ public class MoveableObject : MonoBehaviour, IInteractable
         rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
 
-        SaveManager.Instance.SaveGame();
+        if (SaveManager.Instance != null)
+        {
+            SaveManager.Instance.SaveGame();
+        }
+
+        if (popupInstance != null)
+        {
+            popupInstance.SetActive(true);
+        }
     }
 
     private void FixedUpdate()

@@ -14,10 +14,14 @@ public class LockedItem : MonoBehaviour
 
     public AudioClip UnlockSound;
     private AudioSource audioSource;
-    [HideInInspector]public bool hasBeenLockpicked = false;
+    [HideInInspector] public bool hasBeenLockpicked = false;
     private bool isInRange = false;
 
     private PlayerControls controls;
+
+    public GameObject iconPrefab;
+    public bool shouldShowIcon = true;
+    private GameObject popupInstance;
 
     // Start is called before the first frame update
     void Awake()
@@ -38,6 +42,8 @@ public class LockedItem : MonoBehaviour
         controls = new PlayerControls();
 
         controls.Player.Interact.performed += ctx => TryInteract();
+
+        popupInstance = PopupManager.Instance.CreatePopup(this.transform, iconPrefab).gameObject;
 
     }
 
@@ -70,6 +76,15 @@ public class LockedItem : MonoBehaviour
                     promptUI.SetActive(false);
                 }
             }
+        }
+
+        if (shouldShowIcon && popupInstance != null && !popupInstance.activeSelf)
+        {
+            popupInstance.SetActive(true);
+        }
+        else if (!shouldShowIcon && popupInstance != null && popupInstance.activeSelf)
+        {
+            popupInstance.SetActive(false);
         }
     }
 
@@ -127,6 +142,14 @@ public class LockedItem : MonoBehaviour
             // add animation for chest or drawer
         }
 
-        SaveManager.Instance.SaveGame();
+        if (SaveManager.Instance != null)
+        {
+            SaveManager.Instance.SaveGame();
+        }
+
+        if (popupInstance != null)
+        {
+            Destroy(popupInstance);
+        }
     }
 }

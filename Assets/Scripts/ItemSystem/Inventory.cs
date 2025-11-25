@@ -177,7 +177,10 @@ public class Inventory : MonoBehaviour, ISaveable
 
         inventoryUI.RefreshInventoryUI();
 
-        SaveManager.Instance.SaveGame();
+        if (SaveManager.Instance != null)
+        {
+            SaveManager.Instance.SaveGame();
+        }
     }
 
     IEnumerator WaitForCameraTransition()
@@ -207,8 +210,11 @@ public class Inventory : MonoBehaviour, ISaveable
 
         inventoryUI.RefreshInventoryUI();
 
-        SaveManager.Instance.SaveGame();
-        
+        if (SaveManager.Instance != null)
+        {
+            SaveManager.Instance.SaveGame();
+        }
+
         return;
     }
 
