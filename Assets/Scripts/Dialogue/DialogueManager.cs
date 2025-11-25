@@ -40,6 +40,10 @@ public class DialogueManager : MonoBehaviour
     private bool CanChoose = false;
     public TextMeshProUGUI PopupText;
 
+    // Typing
+    private Coroutine typeingRoutine;
+    private string currentFullLine = "";
+
     // Random choice timer
     public float choiceTimeLimit = 5f;
     private float choiceTimer;
@@ -176,10 +180,16 @@ public class DialogueManager : MonoBehaviour
                 }
             }
         }
-
+        /*
         StopCoroutine(nameof(TypeLine));
         StartCoroutine(TypeLine(line.text));
+        */
+        if (typeingRoutine != null)
+        {
+            StopCoroutine(typeingRoutine);
+        }
 
+        typeingRoutine = StartCoroutine(TypeLine(line.text));
         // clear previous choices
         foreach (var b in spawnedChoices)
         {
@@ -192,15 +202,26 @@ public class DialogueManager : MonoBehaviour
     {
         IsTyping = true;
         DialogueText.text = "";
+        currentFullLine = text;
 
         foreach (char c in text)
         {
+            // If skip requested, instantly finish
+            if (ConfirmPressed)
+            {
+                DialogueText.text = currentFullLine;
+                ConfirmPressed = false;
+                break;
+            }
+
             DialogueText.text += c;
+            
             char upperChar = char.ToUpper(c);
             if (letterSounds.ContainsKey(upperChar))
             {
                 TypingAudioSource.PlayOneShot(letterSounds[upperChar]);
             }
+
             yield return new WaitForSeconds(0.02f);
         }
 
@@ -232,6 +253,11 @@ public class DialogueManager : MonoBehaviour
         // End dialogue if the line says to
         if (line.endDialogueAfterLine)
         {
+            if (ireneNPC != null)
+            {
+                ireneNPC.StartTravel();
+                ireneNPC.IsFollowing = false;
+            }
             EndDialogue();
             yield break;
         }
@@ -476,9 +502,13 @@ public class DialogueManager : MonoBehaviour
         if (playerThrowing != null) playerThrowing.enabled = true;
         if (TypingAudioSource != null) TypingAudioSource.Stop();
 
+        // Only auto follwo if Irene does not have a destination to travel to
         if (ireneNPC != null && ireneNPC.NPCNameMatches(NPCNameText.text))
         {
-            ireneNPC.IsFollowing = true;
+            if (!ireneNPC.isTraveling)
+            {
+                ireneNPC.IsFollowing = true;
+            }
         }
 
         Debug.Log($"Dialogue ended. Final morality = {playerMorality}");

@@ -1,0 +1,44 @@
+{
+    "npcName": "Chime",
+    "dialogueLines": [
+        {
+            "text": "Look, there is that guy you talked to earlier in the day, Barry.",
+            "requiredMorality": 0,
+            "choices": []
+        },
+        {
+            "text": "It looks like he is arguing with someone, do you know who he is talking to?.",
+            "requiredMorality": 0,
+            "choices": [
+                {
+                    "text": "Yeah thats Darry.",
+                    "nextIndex": 2,
+                    "moralityChange": 1
+                },
+                {
+                    "text": "I can't remember I wasn't really paying attention durring his whole story.",
+                    "nextIndex": 3,
+                    "moralityChange": 1
+                }
+            ]
+        },
+        {
+            "text": "So thats the guy he was talking about at the graveyard, you should see why they are arguing.",
+            "requiredMorality": 1,
+            "choices": [],
+            "endDialogueAfterLine": true
+        },
+        {
+            "text": "Thats the guy he was mourning at the graveyard, Darry.  Go figure out why they are arguing with each other..",
+            "requiredMorality": -1,
+            "choices": [],
+            "endDialogueAfterLine": true
+        },
+        {
+            "text": "I think you should go see what they are arguing about over there.",
+            "requiredMorality": 0,
+            "choices": [],
+            "endDialogueAfterLine": true
+        }
+    ]
+}
