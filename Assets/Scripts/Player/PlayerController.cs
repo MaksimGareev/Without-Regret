@@ -70,14 +70,23 @@ public class PlayerController : MonoBehaviour, ISaveable
 
     public void SaveTo(SaveData data)
     {
-        data.playerSaveData.position = new float[] { transform.position.x, transform.position.y, transform.position.z };
-        data.playerSaveData.rotation = new float[] { transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z };
+        float[] position = new float[] { transform.position.x, transform.position.y, transform.position.z };
+        float[] rotation = new float[] { transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z };
+        data.playerSaveData.SetPlayerTransform(SceneManager.GetActiveScene().name, position, rotation);
     }
 
     public void LoadFrom(SaveData data)
     {
-        transform.position = new Vector3(data.playerSaveData.position[0], data.playerSaveData.position[1], data.playerSaveData.position[2]);
-        transform.eulerAngles = new Vector3(data.playerSaveData.rotation[0], data.playerSaveData.rotation[1], data.playerSaveData.rotation[2]);
+        if (data.playerSaveData.TryGetPlayerTransform(SceneManager.GetActiveScene().name, out float[] position, out float[] rotation))
+        {
+            transform.position = new Vector3(position[0], position[1], position[2]);
+            transform.eulerAngles = new Vector3(rotation[0], rotation[1], rotation[2]);
+            Debug.Log("Player transform loaded for scene: " + SceneManager.GetActiveScene().name + " Position: " + transform.position + " Rotation: " + transform.eulerAngles);
+        }
+        else
+        {
+            Debug.LogWarning("No saved transform found for player in scene: " + SceneManager.GetActiveScene().name);
+        }
     }
 
     private void OnEnable() => controls.Enable();

@@ -3,7 +3,20 @@ using UnityEngine;
 
 public class SaveableWorldObject : MonoBehaviour, ISaveable
 {
-    public string uniqueID = Guid.NewGuid().ToString();
+    [SerializeField] private string uniqueID;
+
+    private void Awake()
+    {
+        if (string.IsNullOrEmpty(uniqueID))
+        {
+            uniqueID = Guid.NewGuid().ToString();
+            #if UNITY_EDITOR
+            UnityEditor.EditorUtility.SetDirty(this);
+            #endif
+        }
+    }
+
+    public string GetUniqueID() => uniqueID;
 
     public void SaveTo(SaveData data)
     {
@@ -33,8 +46,22 @@ public class SaveableWorldObject : MonoBehaviour, ISaveable
         {
             state.objectType = ObjectType.MiscObject;
         }
-        
-        state.rbConstraints = GetComponent<Rigidbody>()?.constraints ?? RigidbodyConstraints.None;
+
+        Rigidbody rb = GetComponent<Rigidbody>();
+
+        if (rb != null)
+        {
+            state.rbConstraints = rb.constraints;
+        }
+        else
+        {
+            state.rbConstraints = RigidbodyConstraints.None;
+        }
+
+        if (data.worldSaveData.worldObjects.Exists(obj => obj.id == uniqueID))
+        {
+            data.worldSaveData.worldObjects.RemoveAll(obj => obj.id == uniqueID);
+        }
 
         data.worldSaveData.worldObjects.Add(state);
     }
