@@ -24,6 +24,11 @@ public class DialogueTrigger : MonoBehaviour
     private Transform player;
     private PlayerControls controls;
     public bool TalkedAlready = false;
+
+    [SerializeField] private GameObject iconPrefab;
+    [SerializeField] private bool shouldShowIcon = true;
+    private GameObject popupInstance;
+
     private void Awake()
     {
         controls = new PlayerControls();
@@ -45,6 +50,8 @@ public class DialogueTrigger : MonoBehaviour
 
         if (promptUI != null)
             promptUI.SetActive(false);
+
+        popupInstance = PopupManager.Instance.CreatePopup(this.transform, iconPrefab).gameObject;
     }
 
     // Update is called once per frame
@@ -71,6 +78,15 @@ public class DialogueTrigger : MonoBehaviour
                 if (promptUI != null)
                     promptUI.SetActive(false);
             }
+        }
+
+        if (shouldShowIcon && !popupInstance.activeSelf)
+        {
+            popupInstance.SetActive(true);
+        }
+        else if (!shouldShowIcon && popupInstance.activeSelf)
+        {
+            popupInstance.SetActive(false);
         }
 
     }
