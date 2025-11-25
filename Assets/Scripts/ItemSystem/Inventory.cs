@@ -124,6 +124,8 @@ public class Inventory : MonoBehaviour, ISaveable
     {
         if (item == null) return;
 
+        OnItemAdded?.Invoke(item);
+
         if (item.ItemType == ItemType.Backpack)
         {
             hasBackpack = true;
@@ -171,9 +173,7 @@ public class Inventory : MonoBehaviour, ISaveable
             itemToCollect.gameObject.SetActive(false);
             itemToCollect.hasBeenCollected = true;
             itemToCollect = null;
-        }
-
-        OnItemAdded?.Invoke(item);
+        }        
 
         inventoryUI.RefreshInventoryUI();
 

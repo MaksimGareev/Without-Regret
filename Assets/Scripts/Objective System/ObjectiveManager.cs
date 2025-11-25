@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 
 public class ObjectiveManager : MonoBehaviour, ISaveable
 {
@@ -11,10 +12,11 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
     private int currentObjectiveIndex = 0;
     private List<ObjectiveInstance> activeObjectives = new();
     private List<ObjectiveInstance> completedObjectives = new();
+    private bool objectivesInSceneCompleted = false;
 
     [Header("Events")]
-    public UnityEvent<ObjectiveInstance> OnObjectiveActivated = new();
-    public UnityEvent<ObjectiveInstance> OnObjectiveCompleted = new();
+    [HideInInspector] public UnityEvent<ObjectiveInstance> OnObjectiveActivated = new();
+    [HideInInspector] public UnityEvent<ObjectiveInstance> OnObjectiveCompleted = new();
 
     [Header("UI Reference")]
     [SerializeField] private GameObject objectiveUI;
@@ -33,6 +35,16 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
         }
     }
 
+    private void Start()
+    {
+        if (!SaveManager.Instance.SaveExists() && SceneManager.GetActiveScene().name != "Echo'sHouse")
+        {
+            ActivateObjective(allObjectives[0]);
+            currentObjectiveIndex = 0;
+            return;
+        }
+    }
+
     public void SaveTo(SaveData data)
     {
         data.objectiveSaveData.currentObjectiveIndex = currentObjectiveIndex;
@@ -43,9 +55,9 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
         {
             data.objectiveSaveData.objectives.Add(new ObjectiveRecord
             {
-                objectiveID = inst.data.objectiveID;
-                progress = inst.currentProgress;
-                isCompleted = false;
+                objectiveID = inst.data.objectiveID,
+                progress = inst.currentProgress,
+                isCompleted = false
             });
         }
 
@@ -53,9 +65,9 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
         {
             data.objectiveSaveData.objectives.Add(new ObjectiveRecord
             {
-                objectiveID = inst.data.objectiveID;
-                progress = inst.currentProgress;
-                isCompleted = true;
+                objectiveID = inst.data.objectiveID,
+                progress = inst.currentProgress,
+                isCompleted = true
             });
         }
     }
@@ -101,7 +113,7 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
 
         if (activeObjectives.Exists(o => o.data == objective) || completedObjectives.Exists(o => o.data == objective))
         {
-            Debug.LogWarning($"Objective is already active or completed.");
+            Debug.LogWarning($"Objective '{objective.title}' is already active or completed.");
             return;
         }
 
@@ -150,6 +162,7 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
         }
 
         objective.AddProgress(amount);
+        Debug.Log($"Objective '{objective.data.title}' progress increased to {objective.currentProgress}/{objective.data.requiredProgress}");
 
         if (objective.isCompleted)
         {
@@ -179,6 +192,7 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
             }
         }
 
+        objectivesInSceneCompleted = true;
         Debug.Log("All objectives complete");
 
         UIHideRoutine = null;
@@ -186,10 +200,12 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
 
     private void CompleteObjective(ObjectiveInstance objective)
     {
-        objective.data.isCompleted = true;
+        objective.isCompleted = true;
         completedObjectives.Add(objective);
         activeObjectives.Remove(objective);
         OnObjectiveCompleted.Invoke(objective);
+
+        Debug.Log($"Objective '{objective.data.title}' completed!");
 
         if (UIHideRoutine != null)
         {
@@ -209,16 +225,9 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
     }
 
     // check if the player has completed all of the objectives in the current scene
-    public bool AllObjectivesCompletedInScene(string sceneName)
+    public bool AllObjectivesCompletedInScene()
     {
-        foreach (var objective in allObjectives)
-        {
-            if (objective.sceneName == sceneName && !objective.isCompleted)
-            {
-                return false;
-            }
-        }
-        return true;
+        return objectivesInSceneCompleted;
     }
 
     // check if a specific objective is active
