@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 8800797850949705458}
   - component: {fileID: 7624106012675272511}
   - component: {fileID: 6384103439953344238}
+  - component: {fileID: 4953376983093548185}
   m_Layer: 5
   m_Name: PlayerUICanvas
   m_TagString: Untagged
@@ -102,6 +103,28 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &4953376983093548185
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 565190579125525281}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e54dd8bb7731044195cd245be2983c3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TimerRingUI
+  ringImage: {fileID: 5597851364840465714}
+  portraitImage: {fileID: 7710274978063955484}
+  ringFull: {fileID: -1140834468, guid: 02197c973c960884fb0cccf5f651319a, type: 3}
+  ringTwoThirds: {fileID: -1777055870, guid: f031704bb2a446d46be8e1c5a887e878, type: 3}
+  ringOneThird: {fileID: -620896843, guid: 96eb90b5297e98f4c8ff27bab6b757a1, type: 3}
+  ringEmpty: {fileID: 1467570785, guid: ba564128f000d244d8432164ea29aab2, type: 3}
+  portraitFull: {fileID: -9653950, guid: e2ccdccbeb2923f46a2b46b751c3c81a, type: 3}
+  portraitTwoThirds: {fileID: -1521356264, guid: e2ccdccbeb2923f46a2b46b751c3c81a, type: 3}
+  portraitOneThird: {fileID: 835100968, guid: e2ccdccbeb2923f46a2b46b751c3c81a, type: 3}
+  portraitEmpty: {fileID: -1899959237, guid: e2ccdccbeb2923f46a2b46b751c3c81a, type: 3}
 --- !u!1 &626333383474887898
 GameObject:
   m_ObjectHideFlags: 0
