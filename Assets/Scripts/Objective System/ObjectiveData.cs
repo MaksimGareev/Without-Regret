@@ -15,13 +15,7 @@ public class ObjectiveData : ScriptableObject
     [Header("Scene")]
     public string sceneName;
 
-    [Header("Status")]
-    //public bool isCompleted;
-    public float ProgressPercent => (float)currentProgress / requiredProgress;
-
-    public void ResetProgress()
-    {
-        currentProgress = 0;
-        isCompleted = false;
-    }
+    // [Header("Status")]
+    // public bool isCompleted;
+    // public float ProgressPercent => (float)currentProgress / requiredProgress;
 }
