@@ -36,17 +36,59 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
     public void SaveTo(SaveData data)
     {
         data.objectiveSaveData.currentObjectiveIndex = currentObjectiveIndex;
-        data.objectiveSaveData.completedObjectives = completedObjectives;
-        data.objectiveSaveData.activeObjectives = activeObjectives;
+
+        data.objectiveSaveData.objectives.Clear();
+
+        foreach(var inst in activeObjectives)
+        {
+            data.objectiveSaveData.objectives.Add(new ObjectiveRecord
+            {
+                objectiveID = inst.data.objectiveID;
+                progress = inst.currentProgress;
+                isCompleted = false;
+            });
+        }
+
+        foreach (var inst in completedObjectives)
+        {
+            data.objectiveSaveData.objectives.Add(new ObjectiveRecord
+            {
+                objectiveID = inst.data.objectiveID;
+                progress = inst.currentProgress;
+                isCompleted = true;
+            });
+        }
     }
 
     public void LoadFrom(SaveData data)
     {
         currentObjectiveIndex = data.objectiveSaveData.currentObjectiveIndex;
-        completedObjectives = data.objectiveSaveData.completedObjectives;
-        activeObjectives = data.objectiveSaveData.activeObjectives;
+        
+        activeObjectives.Clear();
+        completedObjectives.Clear();
 
-        ActivateObjective(allObjectives[currentObjectiveIndex]);
+        foreach (var record in data.objectiveSaveData.objectives)
+        {
+            ObjectiveData objective = allObjectives.Find(o => o.objectiveID == record.objectiveID);
+
+            if (objective == null)
+            {
+                Debug.LogWarning($"Saved objective '{record.objectiveID}' not found!");
+                continue;
+            }
+
+            ObjectiveInstance inst = new ObjectiveInstance(objective);
+            inst.SetProgress(record.progress);
+
+            if (record.isCompleted)
+            {
+                completedObjectives.Add(inst);
+            }
+            else
+            {
+                activeObjectives.Add(inst);
+            }
+        }
     }
 
     public void ActivateObjective(ObjectiveData objective)

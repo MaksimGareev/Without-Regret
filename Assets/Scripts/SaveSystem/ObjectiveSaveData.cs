@@ -1,9 +1,16 @@
 using System.Collections.Generic;
 
 [System.Serializable]
+public class ObjectiveRecord
+{
+    public string objectiveID;
+    public int progress;
+    public bool isCompleted;
+}
+
+[System.Serializable]
 public class ObjectiveSaveData
 {
+    public List<ObjectiveRecord> objectives = new List<ObjectiveRecord>();
     public int currentObjectiveIndex = 0;
-    public List<ObjectiveInstance> completedObjectives = new List<ObjectiveInstance>();
-    public List<ObjectiveInstance> activeObjectives = new List<ObjectiveInstance>();
 }
