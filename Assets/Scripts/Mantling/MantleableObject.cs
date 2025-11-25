@@ -7,6 +7,27 @@ public class MantleableObject : MonoBehaviour, IInteractable
     [SerializeField] private Vector3 mantleOffset = new Vector3(0f, 1.0f, 0.5f);
     [SerializeField] private bool showGizmos = true;
     public float interactionPriority => 1f;
+    [SerializeField] private GameObject iconPrefab;
+    [SerializeField] private bool shouldShowIcon = true;
+    private GameObject popupInstance;
+    
+
+    private void Start()
+    {
+        popupInstance = PopupManager.Instance.CreatePopup(this.transform, iconPrefab).gameObject;
+    }
+
+    private void Update()
+    {
+        if (shouldShowIcon && !popupInstance.activeSelf)
+        {
+            popupInstance.SetActive(true);
+        }
+        else if (!shouldShowIcon && popupInstance.activeSelf)
+        {
+            popupInstance.SetActive(false);
+        }
+    }
 
     public void OnPlayerInteraction(GameObject player)
     {

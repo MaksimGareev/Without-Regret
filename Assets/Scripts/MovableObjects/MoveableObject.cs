@@ -10,10 +10,18 @@ public class MoveableObject : MonoBehaviour, IInteractable
     private bool isGrabbed = false;
     public bool isGrabbable = true;
     public float interactionPriority => 1;
+    [SerializeField] private GameObject iconPrefab;
+    [SerializeField] private bool shouldShowIcon = true;
+    private GameObject popupInstance;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
+    }
+
+    private void Start()
+    {
+        popupInstance = PopupManager.Instance.CreatePopup(this.transform, iconPrefab).gameObject;
     }
 
     private void Grab(Transform grabPoint)
@@ -47,6 +55,18 @@ public class MoveableObject : MonoBehaviour, IInteractable
         {
             rb.MovePosition(grabPoint.position);
             rb.MoveRotation(grabPoint.rotation);
+        }
+    }
+
+    private void Update()
+    {
+        if (shouldShowIcon && !popupInstance.activeSelf)
+        {
+            popupInstance.SetActive(true);
+        }
+        else if (!shouldShowIcon && popupInstance.activeSelf)
+        {
+            popupInstance.SetActive(false);
         }
     }
 
