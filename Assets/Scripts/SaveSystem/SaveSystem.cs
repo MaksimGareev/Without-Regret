@@ -26,6 +26,19 @@ public static class SaveSystem
         return data;
     }
 
+    public static void DeleteSave()
+    {
+        if (SaveExists())
+        {
+            File.Delete(savePath);
+            Debug.Log("Save file deleted from " + savePath);
+        }
+        else
+        {
+            Debug.LogWarning("No save file to delete at " + savePath);
+        }
+    }
+
     public static bool SaveExists()
     {
         return File.Exists(savePath);

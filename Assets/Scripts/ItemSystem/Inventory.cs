@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Inventory : MonoBehaviour, ISaveable
 {
@@ -153,16 +154,22 @@ public class Inventory : MonoBehaviour, ISaveable
 
         if (item.ItemType == ItemType.KeyItem || item.ItemType == ItemType.Backpack)
         {
-            //cameraMovement.TriggerPickupCameraEffect(itemToCollect.transform);
-            //StartCoroutine(WaitForCameraTransition());
+            string[] scenesWOPickupEffect = { "MainMenu", "Echo'sHouse", "Echo'sHouseAstral", "BarryAndDarry'sHouse" };
+
+            if (!System.Array.Exists(scenesWOPickupEffect, scene => scene == SceneManager.GetActiveScene().name))
+            {
+                cameraMovement.TriggerPickupCameraEffect(itemToCollect.transform);
+                StartCoroutine(WaitForCameraTransition());
+            }
+            
+            itemToCollect.gameObject.SetActive(false);
             itemToCollect.hasBeenCollected = true;
-            Destroy(itemToCollect.gameObject, 1f);
             itemToCollect = null;
         }
         else
         {
+            itemToCollect.gameObject.SetActive(false);
             itemToCollect.hasBeenCollected = true;
-            Destroy(itemToCollect.gameObject);
             itemToCollect = null;
         }
 

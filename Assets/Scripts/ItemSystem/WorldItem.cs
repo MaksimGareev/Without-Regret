@@ -26,6 +26,8 @@ public class WorldItem : MonoBehaviour, IInteractable
     {
         Inventory inventory = player.GetComponent<Inventory>();
         inventory.itemToCollect = this;
+        hasBeenCollected = true;
+        gameObject.SetActive(false);
     }
     
 }
