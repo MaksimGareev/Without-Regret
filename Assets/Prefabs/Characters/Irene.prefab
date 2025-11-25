@@ -222,10 +222,13 @@ MonoBehaviour:
   player: {fileID: 0}
   npcName: Irene
   FollowDistance: 1
-  FollowSpeed: 1
-  RotationSpeed: 1
+  FollowSpeed: 1.75
+  RotationSpeed: 1.75
   IsFollowing: 0
   dialogueTrigger: {fileID: 1311592278050812008}
+  targetSpot: {fileID: 0}
+  isTraveling: 0
+  stopDistance: 0.5
 --- !u!136 &9169940238804770612
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -265,6 +268,11 @@ MonoBehaviour:
   promptUI: {fileID: 0}
   chatRange: 3
   jsonDialogueFile: {fileID: 4900000, guid: 4784a40bd37475b458c97f350302f4f3, type: 3}
+  TalkedJsonDialogueFile: {fileID: 0}
+  CompleteJsonDialogueFile: {fileID: 0}
+  ActiveJsonDialogueFile: {fileID: 0}
+  objectiveIDYouCareAbout: []
+  TalkedAlready: 0
 --- !u!1001 &1029084643908885826
 PrefabInstance:
   m_ObjectHideFlags: 0
