@@ -80,11 +80,11 @@ public class DialogueTrigger : MonoBehaviour
             }
         }
 
-        if (shouldShowIcon && !popupInstance.activeSelf)
+        if (shouldShowIcon && popupInstance != null && !popupInstance.activeSelf)
         {
             popupInstance.SetActive(true);
         }
-        else if (!shouldShowIcon && popupInstance.activeSelf)
+        else if (!shouldShowIcon && popupInstance != null && popupInstance.activeSelf)
         {
             popupInstance.SetActive(false);
         }
