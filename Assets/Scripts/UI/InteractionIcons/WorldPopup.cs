@@ -9,15 +9,15 @@ public class WorldPopup : MonoBehaviour
     
     [Header("Distance Values")]
     public float minDistance = 15f;
-    public float maxDistance = 40f;
+    public float maxDistance = 35f;
     
     [Header("Scaling Values")]
-    public float maxScale = 1f;
-    public float minScale = 0.5f;
+    public float maxScale = 0.7f;
+    public float minScale = 0.2f;
 
     [Header("Alpha Opacity Values")]
     public float maxAlpha = 1f;
-    public float minAlpha = 0.2f;
+    public float minAlpha = 0f;
 
     private Camera cam;
     private CanvasGroup canvasGroup;

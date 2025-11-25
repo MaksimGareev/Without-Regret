@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 [DisallowMultipleComponent]
@@ -33,6 +34,22 @@ public class MantleableObject : MonoBehaviour, IInteractable
     {
         PlayerMantling playerMantling = player.GetComponent<PlayerMantling>();
         playerMantling.StartMantle(this);
+        StartCoroutine(HideIconWhileMantling());
+    }
+
+    private IEnumerator HideIconWhileMantling()
+    {
+        if (popupInstance != null)
+        {
+            popupInstance.SetActive(false);
+        }
+
+        yield return new WaitForSeconds(1.0f);
+
+        if (popupInstance != null)
+        {
+            popupInstance.SetActive(true);
+        }
     }
 
     public Vector3 GetMantlePosition()

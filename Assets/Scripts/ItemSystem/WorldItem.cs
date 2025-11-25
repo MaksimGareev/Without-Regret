@@ -44,6 +44,11 @@ public class WorldItem : MonoBehaviour, IInteractable
         inventory.itemToCollect = this;
         hasBeenCollected = true;
         gameObject.SetActive(false);
+
+        if (popupInstance != null)
+        {
+            Destroy(popupInstance);
+        }
     }
     
 }
