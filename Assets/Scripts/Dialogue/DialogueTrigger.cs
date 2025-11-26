@@ -26,7 +26,7 @@ public class DialogueTrigger : MonoBehaviour
     public bool TalkedAlready = false;
 
     [SerializeField] private GameObject iconPrefab;
-    [SerializeField] private bool shouldShowIcon = true;
+    public bool shouldShowIcon = true;
     private GameObject popupInstance;
 
     private void Awake()
@@ -50,8 +50,6 @@ public class DialogueTrigger : MonoBehaviour
 
         if (promptUI != null)
             promptUI.SetActive(false);
-
-        popupInstance = PopupManager.Instance.CreatePopup(this.transform, iconPrefab).gameObject;
     }
 
     // Update is called once per frame
@@ -80,13 +78,13 @@ public class DialogueTrigger : MonoBehaviour
             }
         }
 
-        if (shouldShowIcon && popupInstance != null && !popupInstance.activeSelf)
+        if (shouldShowIcon && popupInstance == null)
         {
-            popupInstance.SetActive(true);
+            EnablePopupIcon();
         }
-        else if (!shouldShowIcon && popupInstance != null && popupInstance.activeSelf)
+        else if (!shouldShowIcon && popupInstance != null)
         {
-            popupInstance.SetActive(false);
+            DisablePopupIcon();
         }
 
     }
@@ -97,7 +95,8 @@ public class DialogueTrigger : MonoBehaviour
         if (!playerInRange || PlayerController.DialogueActive)
             return;
 
-       // PlayerController.DialogueActive = true;
+        // PlayerController.DialogueActive = true;
+        DisablePopupIcon();
 
         if (promptUI != null)
             promptUI.SetActive(false);
@@ -167,6 +166,25 @@ public class DialogueTrigger : MonoBehaviour
         {
             //TryInteract();
             //TalkedAlready = true;
+        }
+    }
+
+    public void EnablePopupIcon()
+    {
+        if (popupInstance == null)
+        {
+            popupInstance = PopupManager.Instance.CreatePopup(this.transform, iconPrefab).gameObject;
+            shouldShowIcon = true;
+        }
+    }
+
+    public void DisablePopupIcon()
+    {
+        if (popupInstance != null)
+        {
+            Destroy(popupInstance);
+            popupInstance = null;
+            shouldShowIcon = false;
         }
     }
 }
