@@ -78,7 +78,7 @@ public class DialogueTrigger : MonoBehaviour
             }
         }
 
-        if (shouldShowIcon && popupInstance == null)
+        if (shouldShowIcon && popupInstance == null && iconPrefab != null && PopupManager.Instance != null)
         {
             EnablePopupIcon();
         }
@@ -171,7 +171,7 @@ public class DialogueTrigger : MonoBehaviour
 
     public void EnablePopupIcon()
     {
-        if (popupInstance == null)
+        if (popupInstance == null && iconPrefab != null && PopupManager.Instance != null)
         {
             popupInstance = PopupManager.Instance.CreatePopup(this.transform, iconPrefab).gameObject;
             shouldShowIcon = true;

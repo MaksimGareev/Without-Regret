@@ -27,7 +27,7 @@ public class WorldItem : MonoBehaviour, IInteractable
 
     private void Update()
     {
-        if (shouldShowIcon && popupInstance == null)
+        if (shouldShowIcon && popupInstance == null && iconPrefab != null && PopupManager.Instance != null)
         {
             EnablePopupIcon();
         }
@@ -47,7 +47,7 @@ public class WorldItem : MonoBehaviour, IInteractable
 
     public void EnablePopupIcon()
     {
-        if (popupInstance == null)
+        if (popupInstance == null && iconPrefab != null && PopupManager.Instance != null)
         {
             popupInstance = PopupManager.Instance.CreatePopup(this.transform, iconPrefab).gameObject;
             shouldShowIcon = true;
