@@ -10,7 +10,7 @@ public class WorldItem : MonoBehaviour, IInteractable
     public float interactionPriority => 0f;
     [HideInInspector] public bool hasBeenCollected = false;
     [SerializeField] private GameObject iconPrefab;
-    [SerializeField] private bool shouldShowIcon = true;
+    public bool shouldShowIcon = true;
     private GameObject popupInstance;
 
     public void Start()
@@ -23,19 +23,17 @@ public class WorldItem : MonoBehaviour, IInteractable
         {
             gameObject.SetActive(true);
         }
-
-        popupInstance = PopupManager.Instance.CreatePopup(this.transform, iconPrefab).gameObject;
     }
 
     private void Update()
     {
-        if (shouldShowIcon && popupInstance != null && !popupInstance.activeSelf)
+        if (shouldShowIcon && popupInstance == null)
         {
-            popupInstance.SetActive(true);
+            EnablePopupIcon();
         }
-        else if (!shouldShowIcon && popupInstance != null && popupInstance.activeSelf)
+        else if (!shouldShowIcon && popupInstance != null)
         {
-            popupInstance.SetActive(false);
+            DisablePopupIcon();
         }
     }
     public void OnPlayerInteraction(GameObject player)
@@ -44,10 +42,25 @@ public class WorldItem : MonoBehaviour, IInteractable
         inventory.itemToCollect = this;
         hasBeenCollected = true;
         gameObject.SetActive(false);
+        DisablePopupIcon();
+    }
 
+    public void EnablePopupIcon()
+    {
+        if (popupInstance == null)
+        {
+            popupInstance = PopupManager.Instance.CreatePopup(this.transform, iconPrefab).gameObject;
+            shouldShowIcon = true;
+        }
+    }
+
+    public void DisablePopupIcon()
+    {
         if (popupInstance != null)
         {
             Destroy(popupInstance);
+            popupInstance = null;
+            shouldShowIcon = false;
         }
     }
     

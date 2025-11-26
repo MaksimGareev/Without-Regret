@@ -11,17 +11,12 @@ public class MoveableObject : MonoBehaviour, IInteractable
     public bool isGrabbable = true;
     public float interactionPriority => 1;
     [SerializeField] private GameObject iconPrefab;
-    [SerializeField] private bool shouldShowIcon = true;
+    public bool shouldShowIcon = true;
     private GameObject popupInstance;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
-    }
-
-    private void Start()
-    {
-        popupInstance = PopupManager.Instance.CreatePopup(this.transform, iconPrefab).gameObject;
     }
 
     private void Grab(Transform grabPoint)
@@ -31,10 +26,7 @@ public class MoveableObject : MonoBehaviour, IInteractable
 
         rb.isKinematic = true;
 
-        if (popupInstance != null)
-        {
-            popupInstance.SetActive(false);
-        }
+        DisablePopupIcon();
     }
 
     public void Release()
@@ -51,9 +43,25 @@ public class MoveableObject : MonoBehaviour, IInteractable
             SaveManager.Instance.SaveGame();
         }
 
+        EnablePopupIcon();
+    }
+
+    public void EnablePopupIcon()
+    {
+        if (popupInstance == null)
+        {
+            popupInstance = PopupManager.Instance.CreatePopup(this.transform, iconPrefab).gameObject;
+            shouldShowIcon = true;
+        }
+    }
+
+    public void DisablePopupIcon()
+    {
         if (popupInstance != null)
         {
-            popupInstance.SetActive(true);
+            Destroy(popupInstance);
+            popupInstance = null;
+            shouldShowIcon = false;
         }
     }
 
@@ -73,13 +81,13 @@ public class MoveableObject : MonoBehaviour, IInteractable
 
     private void Update()
     {
-        if (shouldShowIcon && popupInstance != null && !popupInstance.activeSelf)
+        if (shouldShowIcon && popupInstance == null)
         {
-            popupInstance.SetActive(true);
+            EnablePopupIcon();
         }
-        else if (!shouldShowIcon && popupInstance != null && popupInstance.activeSelf)
+        else if (!shouldShowIcon && popupInstance != null)
         {
-            popupInstance.SetActive(false);
+            DisablePopupIcon();
         }
     }
 

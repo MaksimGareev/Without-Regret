@@ -38,7 +38,7 @@ public class WorldPopup : MonoBehaviour
     // Update is called once per frame
     void LateUpdate()
     {
-        if (uiElement == null && cam == null)
+        if (uiElement == null || cam == null)
         {
             return;
         }

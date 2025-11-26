@@ -9,24 +9,18 @@ public class MantleableObject : MonoBehaviour, IInteractable
     [SerializeField] private bool showGizmos = true;
     public float interactionPriority => 1f;
     [SerializeField] private GameObject iconPrefab;
-    [SerializeField] private bool shouldShowIcon = true;
+    public bool shouldShowIcon = true;
     private GameObject popupInstance;
-    
-
-    private void Start()
-    {
-        popupInstance = PopupManager.Instance.CreatePopup(this.transform, iconPrefab).gameObject;
-    }
 
     private void Update()
     {
-        if (shouldShowIcon && popupInstance != null && !popupInstance.activeSelf)
+        if (shouldShowIcon && popupInstance == null)
         {
-            popupInstance.SetActive(true);
+            EnablePopupIcon();
         }
-        else if (!shouldShowIcon && popupInstance != null && popupInstance.activeSelf)
+        else if (!shouldShowIcon && popupInstance != null)
         {
-            popupInstance.SetActive(false);
+            DisablePopupIcon();
         }
     }
 
@@ -39,17 +33,11 @@ public class MantleableObject : MonoBehaviour, IInteractable
 
     private IEnumerator HideIconWhileMantling()
     {
-        if (popupInstance != null)
-        {
-            popupInstance.SetActive(false);
-        }
+        DisablePopupIcon();
 
         yield return new WaitForSeconds(1.0f);
 
-        if (popupInstance != null)
-        {
-            popupInstance.SetActive(true);
-        }
+        EnablePopupIcon();
     }
 
     public Vector3 GetMantlePosition()
@@ -67,5 +55,24 @@ public class MantleableObject : MonoBehaviour, IInteractable
         Gizmos.color = Color.green;
         Gizmos.DrawSphere(GetMantlePosition(), 0.1f);
         Gizmos.DrawLine(transform.position, GetMantlePosition());
+    }
+
+    public void EnablePopupIcon()
+    {
+        if (popupInstance == null)
+        {
+            popupInstance = PopupManager.Instance.CreatePopup(this.transform, iconPrefab).gameObject;
+            shouldShowIcon = true;
+        }
+    }
+
+    public void DisablePopupIcon()
+    {
+        if (popupInstance != null)
+        {
+            Destroy(popupInstance);
+            popupInstance = null;
+            shouldShowIcon = false;
+        }
     }
 }
