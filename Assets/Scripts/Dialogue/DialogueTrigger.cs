@@ -24,6 +24,11 @@ public class DialogueTrigger : MonoBehaviour
     private Transform player;
     private PlayerControls controls;
     public bool TalkedAlready = false;
+
+    [SerializeField] private GameObject iconPrefab;
+    public bool shouldShowIcon = true;
+    private GameObject popupInstance;
+
     private void Awake()
     {
         controls = new PlayerControls();
@@ -73,6 +78,15 @@ public class DialogueTrigger : MonoBehaviour
             }
         }
 
+        if (shouldShowIcon && popupInstance == null && iconPrefab != null && PopupManager.Instance != null)
+        {
+            EnablePopupIcon();
+        }
+        else if (!shouldShowIcon && popupInstance != null)
+        {
+            DisablePopupIcon();
+        }
+
     }
 
     private void TryInteract()
@@ -81,7 +95,8 @@ public class DialogueTrigger : MonoBehaviour
         if (!playerInRange || PlayerController.DialogueActive)
             return;
 
-       // PlayerController.DialogueActive = true;
+        // PlayerController.DialogueActive = true;
+        DisablePopupIcon();
 
         if (promptUI != null)
             promptUI.SetActive(false);
@@ -151,6 +166,25 @@ public class DialogueTrigger : MonoBehaviour
         {
             //TryInteract();
             //TalkedAlready = true;
+        }
+    }
+
+    public void EnablePopupIcon()
+    {
+        if (popupInstance == null && iconPrefab != null && PopupManager.Instance != null)
+        {
+            popupInstance = PopupManager.Instance.CreatePopup(this.transform, iconPrefab).gameObject;
+            shouldShowIcon = true;
+        }
+    }
+
+    public void DisablePopupIcon()
+    {
+        if (popupInstance != null)
+        {
+            Destroy(popupInstance);
+            popupInstance = null;
+            shouldShowIcon = false;
         }
     }
 }

@@ -14,11 +14,14 @@ public class LockedItem : MonoBehaviour
 
     public AudioClip UnlockSound;
     private AudioSource audioSource;
-
-
+    [HideInInspector] public bool hasBeenLockpicked = false;
     private bool isInRange = false;
 
     private PlayerControls controls;
+
+    public GameObject iconPrefab;
+    public bool shouldShowIcon = true;
+    private GameObject popupInstance;
 
     // Start is called before the first frame update
     void Awake()
@@ -39,7 +42,6 @@ public class LockedItem : MonoBehaviour
         controls = new PlayerControls();
 
         controls.Player.Interact.performed += ctx => TryInteract();
-
     }
 
     private void OnEnable() => controls.Enable();
@@ -72,12 +74,21 @@ public class LockedItem : MonoBehaviour
                 }
             }
         }
+
+        if (shouldShowIcon && popupInstance == null && iconPrefab != null && PopupManager.Instance != null)
+        {
+            EnablePopupIcon();
+        }
+        else if (!shouldShowIcon && popupInstance != null)
+        {
+            DisablePopupIcon();
+        }
     }
 
 
     private void TryInteract()
     {
-        if (!isInRange || LockPickUI == null) return;
+        if (!isInRange || LockPickUI == null || hasBeenLockpicked) return;
 
         // Show LockPick UI
         LockPickUI.SetActive(true);
@@ -103,6 +114,8 @@ public class LockedItem : MonoBehaviour
     {
         Debug.Log(gameObject.name + "unlocked!");
 
+        hasBeenLockpicked = true;
+
         PlayerFloating playerFloating = player.GetComponent<PlayerFloating>();
         if (playerFloating != null)
         {
@@ -124,6 +137,32 @@ public class LockedItem : MonoBehaviour
         else
         {
             // add animation for chest or drawer
+        }
+
+        if (SaveManager.Instance != null)
+        {
+            SaveManager.Instance.SaveGame();
+        }
+
+        DisablePopupIcon();
+    }
+
+    public void EnablePopupIcon()
+    {
+        if (popupInstance == null && iconPrefab != null && PopupManager.Instance != null)
+        {
+            popupInstance = PopupManager.Instance.CreatePopup(this.transform, iconPrefab).gameObject;
+            shouldShowIcon = true;
+        }
+    }
+
+    public void DisablePopupIcon()
+    {
+        if (popupInstance != null)
+        {
+            Destroy(popupInstance);
+            popupInstance = null;
+            shouldShowIcon = false;
         }
     }
 }
