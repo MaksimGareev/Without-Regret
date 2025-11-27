@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
-public class Inventory : MonoBehaviour
+public class Inventory : MonoBehaviour, ISaveable
 {
     private readonly List<ItemData> itemsList = new List<ItemData>();
 
@@ -83,6 +84,36 @@ public class Inventory : MonoBehaviour
             }
         }
     }
+
+    public void SaveTo(SaveData data)
+    {
+        data.inventorySaveData.items = itemsList;
+        data.inventorySaveData.keyItems = keyItems;
+        data.inventorySaveData.otherItems = otherItems;
+        data.inventorySaveData.hasBackpack = hasBackpack;
+    }
+
+    public void LoadFrom(SaveData data)
+    {
+        itemsList.Clear();
+        itemsList.AddRange(data.inventorySaveData.items);
+
+        keyItems.Clear();
+        keyItems.AddRange(data.inventorySaveData.keyItems);
+
+        otherItems.Clear();
+        otherItems.AddRange(data.inventorySaveData.otherItems);
+
+        hasBackpack = data.inventorySaveData.hasBackpack;
+
+        if (hasBackpack)
+        {
+            SetBackpackActive();
+            toggleInventoryUI.hasBackpack = true;
+        }
+
+        inventoryUI.RefreshInventoryUI();
+    }
     
     private void SetBackpackActive()
     {
@@ -92,6 +123,8 @@ public class Inventory : MonoBehaviour
     private void AddItem(ItemData item)
     {
         if (item == null) return;
+
+        OnItemAdded?.Invoke(item);
 
         if (item.ItemType == ItemType.Backpack)
         {
@@ -123,20 +156,31 @@ public class Inventory : MonoBehaviour
 
         if (item.ItemType == ItemType.KeyItem || item.ItemType == ItemType.Backpack)
         {
-            //cameraMovement.TriggerPickupCameraEffect(itemToCollect.transform);
-            //StartCoroutine(WaitForCameraTransition());
-            Destroy(itemToCollect.gameObject, 1f);
+            string[] scenesWOPickupEffect = { "MainMenu", "Echo'sHouse", "Echo'sHouseAstral", "BarryAndDarry'sHouse" };
+
+            if (!System.Array.Exists(scenesWOPickupEffect, scene => scene == SceneManager.GetActiveScene().name))
+            {
+                cameraMovement.TriggerPickupCameraEffect(itemToCollect.transform);
+                StartCoroutine(WaitForCameraTransition());
+            }
+            
+            itemToCollect.gameObject.SetActive(false);
+            itemToCollect.hasBeenCollected = true;
             itemToCollect = null;
         }
         else
         {
-            Destroy(itemToCollect.gameObject);
+            itemToCollect.gameObject.SetActive(false);
+            itemToCollect.hasBeenCollected = true;
             itemToCollect = null;
-        }
-
-        OnItemAdded?.Invoke(item);
+        }        
 
         inventoryUI.RefreshInventoryUI();
+
+        if (SaveManager.Instance != null)
+        {
+            SaveManager.Instance.SaveGame();
+        }
     }
 
     IEnumerator WaitForCameraTransition()
@@ -163,7 +207,14 @@ public class Inventory : MonoBehaviour
         }
         
         itemsList.Remove(item);
-        
+
+        inventoryUI.RefreshInventoryUI();
+
+        if (SaveManager.Instance != null)
+        {
+            SaveManager.Instance.SaveGame();
+        }
+
         return;
     }
 

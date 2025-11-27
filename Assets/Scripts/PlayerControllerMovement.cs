@@ -23,6 +23,5 @@ public class PlayerControllerMovement : MonoBehaviour
     {
         moveValue = move.ReadValue<Vector2>();
         playerRigidBody.AddForce(new Vector3(moveValue.x, 0, moveValue.y)*scalar*Time.fixedDeltaTime, ForceMode.Force);
-
     }
 }

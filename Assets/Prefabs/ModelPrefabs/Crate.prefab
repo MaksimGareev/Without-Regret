@@ -22,15 +22,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: d57a54117df0de649a2f0b2a2cf90a9b, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -20.89
+      value: -75.33891
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: d57a54117df0de649a2f0b2a2cf90a9b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.0000014305115
+      value: -1.79
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: d57a54117df0de649a2f0b2a2cf90a9b, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 163.43
+      value: 255.81
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: d57a54117df0de649a2f0b2a2cf90a9b, type: 3}
       propertyPath: m_LocalRotation.w
@@ -136,7 +136,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 1
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 112
   m_CollisionDetection: 0
 --- !u!114 &7218772078414013682
 MonoBehaviour:
@@ -152,6 +152,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MoveableObject
   moveSlowdownMultiplier: 3
   isGrabbable: 1
+  iconPrefab: {fileID: 7228842916403451623, guid: 8c37cda576505cc45bd7511edf89a1b3, type: 3}
 --- !u!114 &5428962653008800824
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -164,8 +165,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f49c7f5692189b44806d9531a0a3c8a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MantleableObject
-  mantleOffset: {x: 0, y: 1, z: 0.5}
+  mantleOffset: {x: 0, y: 2, z: 0}
   showGizmos: 1
+  iconPrefab: {fileID: 74127676795608141, guid: e337bf8e8d399f342b62d7ad9b912550, type: 3}
 --- !u!65 &5377259135617283748
 BoxCollider:
   m_ObjectHideFlags: 0

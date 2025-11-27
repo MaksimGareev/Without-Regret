@@ -1,0 +1,170 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &7396725767200599710
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 106106494005778935}
+  - component: {fileID: 6829026690585224141}
+  - component: {fileID: 8565140599229439162}
+  m_Layer: 8
+  m_Name: Chime 1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &106106494005778935
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7396725767200599710}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: -0.38519743, z: 0, w: 0.9228342}
+  m_LocalPosition: {x: 41.62, y: 1.86, z: 107.33}
+  m_LocalScale: {x: 0.25, y: 0.25, z: 0.25}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 2143820101934723543}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -45.312, z: 0}
+--- !u!114 &6829026690585224141
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7396725767200599710}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 218f2fd800b43af4c8de0c0663919970, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 0}
+  OrbitRadius: 1
+  OrbitSpeed: 1
+  BobHeight: 0.5
+  BobSpeed: 2
+  facePlayer: 1
+  lookSmooth: 8
+  model: {fileID: 2143820101934723543}
+  isInDialogue: 0
+--- !u!114 &8565140599229439162
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7396725767200599710}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea9c855eb1140f841998ddb98cfabfee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ChimeHintUI
+  hintKey: 104
+  hintButton: Xbox Left Bumper
+  hintBubbleUI: {fileID: 8274678231426151688}
+  hintText: {fileID: 3134006348252229540}
+  displayTime: 3
+--- !u!1001 &2212815524535103865
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 106106494005778935}
+    m_Modifications:
+    - target: {fileID: 62228616380233743, guid: 060d1994ce174a34196d13cf86d99581, type: 3}
+      propertyPath: m_Name
+      value: ChimeModel
+      objectReference: {fileID: 0}
+    - target: {fileID: 249139408837230766, guid: 060d1994ce174a34196d13cf86d99581, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 249139408837230766, guid: 060d1994ce174a34196d13cf86d99581, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 249139408837230766, guid: 060d1994ce174a34196d13cf86d99581, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 249139408837230766, guid: 060d1994ce174a34196d13cf86d99581, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 249139408837230766, guid: 060d1994ce174a34196d13cf86d99581, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 249139408837230766, guid: 060d1994ce174a34196d13cf86d99581, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 249139408837230766, guid: 060d1994ce174a34196d13cf86d99581, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 249139408837230766, guid: 060d1994ce174a34196d13cf86d99581, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 249139408837230766, guid: 060d1994ce174a34196d13cf86d99581, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -45.312
+      objectReference: {fileID: 0}
+    - target: {fileID: 249139408837230766, guid: 060d1994ce174a34196d13cf86d99581, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1067483465265286743, guid: 060d1994ce174a34196d13cf86d99581, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.037780687
+      objectReference: {fileID: 0}
+    - target: {fileID: 1067483465265286743, guid: 060d1994ce174a34196d13cf86d99581, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.015834644
+      objectReference: {fileID: 0}
+    - target: {fileID: 1067483465265286743, guid: 060d1994ce174a34196d13cf86d99581, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.037780687
+      objectReference: {fileID: 0}
+    - target: {fileID: 1067483465265286743, guid: 060d1994ce174a34196d13cf86d99581, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 7.35
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 5429523989780856230, guid: 060d1994ce174a34196d13cf86d99581, type: 3}
+    - {fileID: 4882477681072992440, guid: 060d1994ce174a34196d13cf86d99581, type: 3}
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 060d1994ce174a34196d13cf86d99581, type: 3}
+--- !u!4 &2143820101934723543 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 249139408837230766, guid: 060d1994ce174a34196d13cf86d99581, type: 3}
+  m_PrefabInstance: {fileID: 2212815524535103865}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &3134006348252229540 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3876268687996935901, guid: 060d1994ce174a34196d13cf86d99581, type: 3}
+  m_PrefabInstance: {fileID: 2212815524535103865}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+--- !u!1 &8274678231426151688 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7809505621546517617, guid: 060d1994ce174a34196d13cf86d99581, type: 3}
+  m_PrefabInstance: {fileID: 2212815524535103865}
+  m_PrefabAsset: {fileID: 0}

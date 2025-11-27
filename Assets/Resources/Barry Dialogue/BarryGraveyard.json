@@ -2,32 +2,67 @@
     "npcName": "Barry",
     "dialogueLines": [
         {
-            "text": "Hello, do you mind helping me out with cleaning this place up a little?",
+            "text": "Hey Echo it's been a long time since the last time I saw you, thanks for coming by to chick in on Darry.  Everything is still very vivid in my head how that night went and I wish I could change it.  Do you have some time right now?",
             "requiredMorality": 0,
             "choices": [
                 {
-                    "text": "Sure I can help with that.",
+                    "text": "Yeah I don't have much going on.",
                     "nextIndex": 1,
-                    "moralityChange": 1,
-                    "objectiveToActivate": "stackLeaves"
+                    "moralityChange": 1
                 },
                 {
-                    "text": "That isnt my job.",
+                    "text": "I'm in a rush but fine.",
                     "nextIndex": 2,
                     "moralityChange": -1
                 }
             ]
         },
         {
-            "text": "Great, thank you so much.",
-            "requiredMorality": 0,
-            "choices": [],
-            "endDialogueAfterLine": true
+            "text": "Thanks I really appreciate it.",
+            "requiredMorality": 1,
+            "choices": []
         },
         {
-            "text": "Wow, sorry for asking.",
+            "text": "Okay... I'll uhhh, make it quick then.",
+            "requiredMorality": -1,
+            "choices": []
+        },
+        {
+            "text": "Darry and I were roommates and I had gotten a new TV for the house. The next day I woke up to the TV being broken on the floor and my car missing. I was so mad the whole day and I waited for him to return.",
+            "requiredMorality": 0,
+            "choices": [
+                {
+                    "text": "Stay Focused",
+                    "nextIndex": 4,
+                    "moralityChange": 1
+                },
+                {
+                    "text": "Doze off",
+                    "nextIndex": 4,
+                    "moralityChange": -1
+                }
+            ]
+        },
+        {
+            "text": "Darry arrived and we got into a bad argument..and I drove away. I was driving when I noticed a receipt for a TV earlier that day. I checked the trunk and I realized Darry got me a new TV. I returned to the house just to see it on fire, with firefighters spraying down the flames.  They took me away from the house and told me the news later…",
+            "requiredMorality": 0,
+            "choices": []
+        },
+        {
+            "text": "I appreciate you listening, it means more than you think.  I wish I never left over somting so simple",
+            "requiredMorality": 0,
+            "choices": []
+        },
+        {
+            "text": "Sorry for bothering you, I understand you don't want to hear nay of that.",
+            "requiredMorality": -1,
+            "choices": []
+        },
+        {
+            "text": "I'm going to walk back home now, I lost my keys around here and can't find them.  If you want to help me find them they might be in one of those leaf piles over there.",
             "requiredMorality": 0,
             "choices": [],
+            "objectiveToActivate": "stackLeaves",
             "endDialogueAfterLine": true
         }
     ]
