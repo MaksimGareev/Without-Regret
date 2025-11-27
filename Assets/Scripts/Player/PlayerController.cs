@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviour, ISaveable
 {
     [Header("Components")]
     public CharacterController Controller;
@@ -37,10 +37,14 @@ public class PlayerController : MonoBehaviour
     // Input System
     private PlayerControls controls;
     private Vector2 moveInput;
+    private float deadzone = 0.01f;
+    private bool cutsceneLocked = false;
+    private Vector3 lockedPosition;
 
     private void Awake()
     {
         Controller = GetComponent<CharacterController>();
+
         if (PlayerCamera == null)
             PlayerCamera = Camera.main;
 
@@ -68,6 +72,27 @@ public class PlayerController : MonoBehaviour
        // controls.Player.LoadMenuScene.performed += ctx => LoadMenuScene();
     }
 
+    public void SaveTo(SaveData data)
+    {
+        float[] position = new float[] { transform.position.x, transform.position.y, transform.position.z };
+        float[] rotation = new float[] { transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z };
+        data.playerSaveData.SetPlayerTransform(SceneManager.GetActiveScene().name, position, rotation);
+    }
+
+    public void LoadFrom(SaveData data)
+    {
+        if (data.playerSaveData.TryGetPlayerTransform(SceneManager.GetActiveScene().name, out float[] position, out float[] rotation))
+        {
+            transform.position = new Vector3(position[0], position[1], position[2]);
+            transform.eulerAngles = new Vector3(rotation[0], rotation[1], rotation[2]);
+            Debug.Log("Player transform loaded for scene: " + SceneManager.GetActiveScene().name + " Position: " + transform.position + " Rotation: " + transform.eulerAngles);
+        }
+        else
+        {
+            Debug.LogWarning("No saved transform found for player in scene: " + SceneManager.GetActiveScene().name);
+        }
+    }
+
     private void OnEnable() => controls.Enable();
     private void OnDisable() => controls.Disable();
 
@@ -79,16 +104,33 @@ public class PlayerController : MonoBehaviour
             yVelocity = 0f;
             return;
         }
-            
 
-        //Debug.Log(MovementLocked);
-        //Debug.Log(freezePosition);
+        if (moveInput.sqrMagnitude < deadzone)
+        {
+            moveInput = Vector2.zero;
+        }
 
         Movement();
+
+        if (moveInput != Vector2.zero)
+        {
+            //Debug.Log("MOVE INPUT: " + moveInput);
+        }
     }
 
     private void Movement()
     {
+        if (cutsceneLocked)
+        {
+            Controller.enabled = false;
+            transform.position = lockedPosition;
+            return;
+        }
+        else
+        {
+            Controller.enabled = true;
+        }
+        
         isGrounded = Physics.CheckSphere(groundCheck.position, groundCheckRadius, groundMask);
 
         if (isGrounded && yVelocity < 0f)
@@ -96,16 +138,24 @@ public class PlayerController : MonoBehaviour
 
         if (freezePosition)
         {
+            if (gravityEnabled)
+            {
+                yVelocity += gravity * Time.deltaTime;
+            }
+
             Controller.Move(new Vector3(0, yVelocity, 0) * Time.deltaTime);
             return;
         }
 
         if (MovementLocked)
         {
+            moveInput = Vector2.zero;
             if (gravityEnabled)
+            {
                 yVelocity += gravity * Time.deltaTime;
+            }
 
-            Controller.Move(new Vector3(0f, yVelocity, 0f) * Time.deltaTime);
+            Controller.Move(new Vector3(0, yVelocity, 0) * Time.deltaTime);
             return;
         }
 
@@ -167,12 +217,25 @@ public class PlayerController : MonoBehaviour
         {
             moveInput = Vector2.zero; // stop leftover movement
             Controller.Move(Vector3.zero); // ensure no residual motion
-            rb.constraints = RigidbodyConstraints.FreezeAll;
+
+            if (rb != null)
+            {
+                rb.constraints = RigidbodyConstraints.FreezeAll;
+            }
+            
+            freezePosition = true;
         }
-        else if (active == false)
+        else
         {
-            rb.constraints = RigidbodyConstraints.None;
-            rb.constraints = RigidbodyConstraints.FreezeRotation;
+            if (rb != null)
+            {
+                rb.constraints = RigidbodyConstraints.None;
+                rb.constraints = RigidbodyConstraints.FreezeRotation;
+            }
+
+            freezePosition = false;
+
+            yVelocity = 0f;
         }
     }
 
@@ -194,39 +257,6 @@ public class PlayerController : MonoBehaviour
         canSprint = true;
     }
 
-    /*
-    public void TriggerPickupCameraEffect(Transform item)
-    {
-        if (!isZooming && PlayerCamera != null)
-            StartCoroutine(PickupCameraRoutine(item));
-    }
-
-    IEnumerator PickupCameraRoutine(Transform item)
-    {
-        isZooming = true;
-
-        Vector3 originalCamPos = PlayerCamera.transform.position;
-        Quaternion originalCamRot = PlayerCamera.transform.rotation;
-
-        Vector3 targetPos = item.position + (transform.forward * 1f) + pickupOffset;
-        Quaternion targetRot = Quaternion.LookRotation(item.position - PlayerCamera.transform.position);
-
-        float t = 0;
-        while (t < 3f)
-        {
-            t += Time.deltaTime * transitionSpeed;
-            PlayerCamera.transform.position = Vector3.Lerp(originalCamPos, targetPos + pickupOffset, t);
-            PlayerCamera.transform.rotation = Quaternion.Slerp(originalCamRot, targetRot, t);
-            //MovementLocked = true;
-            yield return null;
-        }
-
-        //MovementLocked = false;
-        yield return new WaitForSeconds(zoomDuration);
-        isZooming = false;
-    }
-    */
-
     public void SetVerticalVelocity(float newVelocity) => yVelocity = newVelocity;
     public float GetVerticalVelocity() => yVelocity;
     public void AddVerticalVelocity(float delta) => yVelocity += delta;
@@ -238,6 +268,23 @@ public class PlayerController : MonoBehaviour
     }
     public void SetCanSprint(bool newCanSprint) => canSprint = newCanSprint;
 
+    public void SetCutsceneLocked(bool locked)
+    {
+        cutsceneLocked = locked;
+
+        if (locked)
+        {
+            lockedPosition = transform.position;
+            yVelocity = 0f;
+            moveInput = Vector2.zero;
+            isSprinting = false;
+            canSprint = false;
+        }
+        else
+        {
+            canSprint = true;
+        }
+    }
     private void OnDrawGizmosSelected()
     {
         if (groundCheck != null)
