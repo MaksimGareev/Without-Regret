@@ -4,17 +4,24 @@ using System.Collections;
 public class POICutsceneTrigger : MonoBehaviour
 {
     [SerializeField] private GameObject VCam1;
+    private PlayerController player;
+    private bool triggered = false;
+    private void Start()
+    {
+        triggered = false;
+    }
 
     private void OnTriggerEnter(Collider other)
     {
-        if(other.CompareTag("Player"))
+        if(other.CompareTag("Player") && !triggered)
         {
-            VCam1.SetActive(false);
-           // StartCoroutine(ReEnableCam());
-        }
+            player = other.GetComponent<PlayerController>();
+            player.SetCutsceneLocked(true);
 
-        StartCoroutine(ReEnableCam());
-        
+            VCam1.SetActive(false);
+            StartCoroutine(ReEnableCam());
+            triggered = true;
+        }
     }
 
 
@@ -22,6 +29,8 @@ public class POICutsceneTrigger : MonoBehaviour
     {
         yield return new WaitForSeconds(5);
         VCam1.SetActive(true);
+        yield return new WaitForSeconds(4);
+        player.SetCutsceneLocked(false);
     }
 
 }
