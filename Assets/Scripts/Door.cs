@@ -45,7 +45,7 @@ public class Door : MonoBehaviour
 
     void LoadScene()
     {
-        if (ObjectiveManager.Instance.AllObjectivesCompletedInScene(SceneManager.GetActiveScene().name))
+        if (ObjectiveManager.Instance.AllObjectivesCompletedInScene())
         {
             // Load the  scene  added in Build Settings
             SceneManager.LoadScene(sceneToLoad);

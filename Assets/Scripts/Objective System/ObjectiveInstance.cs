@@ -24,4 +24,9 @@ public class ObjectiveInstance
             isCompleted = true;
         }
     }
+
+    public void SetProgress(int amount)
+    {
+        currentProgress = amount;
+    }
 }
