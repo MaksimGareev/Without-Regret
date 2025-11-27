@@ -13,6 +13,13 @@ public class Irene : MonoBehaviour
 
     public DialogueTrigger dialogueTrigger; // dialogue trigger script reference
 
+    public Transform targetSpot;
+    public Transform lookAtTarget;
+    public bool isTraveling;
+    public bool arrived = false;
+    public float stopDistance = 0.5f;
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -32,6 +39,14 @@ public class Irene : MonoBehaviour
                 dialogueTrigger.enabled = false;
                 Debug.Log("Irene's dialogue trigger has been deactivated.");
             }
+        }
+        else if (isTraveling)
+        {
+            TravelToTarget();
+        }
+        else if (arrived && lookAtTarget != null)
+        {
+            LookAtObject();
         }
     }
 
@@ -58,9 +73,57 @@ public class Irene : MonoBehaviour
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, RotationSpeed * Time.deltaTime);
         }
     }
+
+    public void TravelToTarget()
+    {
+        if (targetSpot == null)
+        {
+            return;
+        }
+
+        Vector3 direction = targetSpot.position - transform.position;
+        direction.y = 0f;
+
+        // Movement
+        transform.position = Vector3.MoveTowards(transform.position, targetSpot.position, FollowSpeed * Time.deltaTime);
+
+        // Rotate towards target
+        if (direction.sqrMagnitude > 0.001f)
+        {
+            Quaternion targetRot = Quaternion.LookRotation(direction);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, RotationSpeed * Time.deltaTime);
+        }
+
+        // Stop when close to target destination
+        if (Vector3.Distance(transform.position, targetSpot.position)< stopDistance)
+        {
+            isTraveling = false;
+            arrived = true;
+            Debug.Log("Irene reached the destination.");
+        }
+    }
+
+    public void StartTravel()
+    {
+        IsFollowing = false;
+        isTraveling = true;
+        Debug.Log("Irene is now traveling to her destination");
+    }
+
+    public void LookAtObject()
+    {
+        Vector3 direction = lookAtTarget.position - transform.position;
+        direction.y = 0f;
+
+        if (direction.sqrMagnitude > 0.001f)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(direction);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, RotationSpeed * Time.deltaTime);
+        }
+    }
+
     public bool NPCNameMatches(string name)
     {
         return string.Equals(npcName, name, System.StringComparison.OrdinalIgnoreCase);
     }
-
 }

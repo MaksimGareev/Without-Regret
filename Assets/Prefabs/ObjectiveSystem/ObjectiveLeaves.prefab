@@ -190,6 +190,7 @@ GameObject:
   - component: {fileID: 1454991729624789680}
   - component: {fileID: 1145118258072333730}
   - component: {fileID: 847045251922170833}
+  - component: {fileID: 1857675662239280356}
   m_Layer: 11
   m_Name: ObjectiveLeaves
   m_TagString: Leaves
@@ -276,6 +277,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MoveableObject
   moveSlowdownMultiplier: 1.5
   isGrabbable: 1
+  iconPrefab: {fileID: 7228842916403451623, guid: 8c37cda576505cc45bd7511edf89a1b3, type: 3}
+  shouldShowIcon: 1
+--- !u!114 &1857675662239280356
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 606298470149412685}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ced780c22dcf6ef4bb8e624b32e4787a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SaveableWorldObject
+  uniqueID: afe61b01-6ae0-41b7-a6e7-253223c46617
 --- !u!1 &819466705063230454
 GameObject:
   m_ObjectHideFlags: 0

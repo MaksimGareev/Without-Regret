@@ -1,38 +1,36 @@
 using UnityEngine;
 using System.Collections;
 
-
 public class POICutsceneTrigger : MonoBehaviour
 {
     [SerializeField] private GameObject VCam1;
-    PlayerController playerController;
+    private PlayerController player;
+    private bool triggered = false;
+    private void Start()
+    {
+        triggered = false;
+    }
 
     private void OnTriggerEnter(Collider other)
     {
-        if(other.CompareTag("Player"))
+        if(other.CompareTag("Player") && !triggered)
         {
+            player = other.GetComponent<PlayerController>();
+            player.SetCutsceneLocked(true);
+
             VCam1.SetActive(false);
-            playerController = other.gameObject.GetComponent<PlayerController>(); 
-            playerController.MovementLocked = true;   
+            StartCoroutine(ReEnableCam());
+            triggered = true;
         }
-        StartCoroutine(ReEnableCam());
-        
-    }
-    IEnumerator ReEnableCam()
-    {
-        yield return new WaitForSeconds(3);
-        VCam1.SetActive(true);
-        
-        StartCoroutine(ReEnableMovement());
     }
 
-    IEnumerator ReEnableMovement()
+
+    IEnumerator ReEnableCam()
     {
-        yield return new WaitForSeconds(1);
-        playerController.MovementLocked = false;
-        playerController.enabled = true;
-        gameObject.SetActive(false); 
+        yield return new WaitForSeconds(5);
+        VCam1.SetActive(true);
+        yield return new WaitForSeconds(2);
+        player.SetCutsceneLocked(false);
     }
-   
 
 }
