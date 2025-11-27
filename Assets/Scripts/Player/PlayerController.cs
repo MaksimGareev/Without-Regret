@@ -37,7 +37,7 @@ public class PlayerController : MonoBehaviour, ISaveable
     // Input System
     private PlayerControls controls;
     private Vector2 moveInput;
-    private float deadzone = 0.01f;
+    private float deadzone = 0.15f;
     private bool cutsceneLocked = false;
     private Vector3 lockedPosition;
 
@@ -114,7 +114,7 @@ public class PlayerController : MonoBehaviour, ISaveable
 
         if (moveInput != Vector2.zero)
         {
-            //Debug.Log("MOVE INPUT: " + moveInput);
+            Debug.Log("MOVE INPUT: " + moveInput);
         }
     }
 
