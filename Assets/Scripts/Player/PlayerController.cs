@@ -37,6 +37,7 @@ public class PlayerController : MonoBehaviour, ISaveable
     // Input System
     private PlayerControls controls;
     private Vector2 moveInput;
+    private float deadzone = 0.01f;
 
     private void Awake()
     {
@@ -106,6 +107,16 @@ public class PlayerController : MonoBehaviour, ISaveable
         //Debug.Log(freezePosition);
 
         Movement();
+
+        if (moveInput != Vector2.zero)
+        {
+            Debug.Log("MOVE INPUT: " + moveInput);
+        }
+
+        if (moveInput.sqrMagnitude < deadzone)
+        {
+            moveInput = Vector2.zero;
+        }
     }
 
     private void Movement()
