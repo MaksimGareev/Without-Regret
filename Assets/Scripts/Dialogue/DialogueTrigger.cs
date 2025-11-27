@@ -112,7 +112,7 @@ public class DialogueTrigger : MonoBehaviour
             }
         }
         // if all are completed play completed dialogue
-        if (allCompleted && CompleteJsonDialogueFile != null)
+        if (allCompleted && CompleteJsonDialogueFile != null && TalkedAlready == true)
         {
             dialogueManager.StartDialogueFromJson(CompleteJsonDialogueFile);
             return;
@@ -122,7 +122,7 @@ public class DialogueTrigger : MonoBehaviour
         bool anyActive = false;
         foreach (string objectiveID in objectiveIDYouCareAbout)
         {
-            if (ObjectiveManager.Instance.IsObjectiveActive(objectiveID))
+            if (ObjectiveManager.Instance.IsObjectiveActive(objectiveID) && TalkedAlready == true)
             {
                 anyActive = true;
                 break;

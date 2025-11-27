@@ -38,9 +38,21 @@ public class ChimeHintUI : MonoBehaviour
 
     private void LateUpdate()
     {
+        if (cam == null || hintBubbleUI == null) 
+        {
+            return;
+        }
+
+        Vector3 camPos = cam.position;
+        camPos.y = hintBubbleUI.transform.position.y;
+
+        hintBubbleUI.transform.LookAt(cam);
+        hintBubbleUI.transform.Rotate(0, 180f, 0);
+        
+        /*
         Vector3 lookPos = transform.position + cam.forward;
         lookPos.y = transform.position.y;
-        transform.LookAt(lookPos);
+        transform.LookAt(lookPos);*/
     }
 
     public void ShowHint()
