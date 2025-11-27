@@ -29,7 +29,7 @@ public class POICutsceneTrigger : MonoBehaviour
     {
         yield return new WaitForSeconds(5);
         VCam1.SetActive(true);
-        yield return new WaitForSeconds(4);
+        yield return new WaitForSeconds(2);
         player.SetCutsceneLocked(false);
     }
 
