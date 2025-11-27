@@ -7,7 +7,7 @@ public class MoveableObject : MonoBehaviour, IInteractable
     private PlayerMovingObjects playerMovingObjects; 
     private Transform grabPoint;
     private Rigidbody rb;
-    private bool isGrabbed = false;
+    public bool isGrabbed { get; private set; } = false;
     public bool isGrabbable = true;
     public float interactionPriority => 1;
     [SerializeField] private GameObject iconPrefab;
