@@ -10,6 +10,9 @@ public class MoveableObject : MonoBehaviour, IInteractable
     private bool isGrabbed = false;
     public bool isGrabbable = true;
     public float interactionPriority => 1;
+    [SerializeField] private GameObject iconPrefab;
+    public bool shouldShowIcon = true;
+    private GameObject popupInstance;
 
     private void Awake()
     {
@@ -22,6 +25,8 @@ public class MoveableObject : MonoBehaviour, IInteractable
         isGrabbed = true;
 
         rb.isKinematic = true;
+
+        DisablePopupIcon();
     }
 
     public void Release()
@@ -32,6 +37,32 @@ public class MoveableObject : MonoBehaviour, IInteractable
         rb.isKinematic = false;
         rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
+
+        if (SaveManager.Instance != null)
+        {
+            SaveManager.Instance.SaveGame();
+        }
+
+        EnablePopupIcon();
+    }
+
+    public void EnablePopupIcon()
+    {
+        if (popupInstance == null && iconPrefab != null && PopupManager.Instance != null)
+        {
+            popupInstance = PopupManager.Instance.CreatePopup(this.transform, iconPrefab).gameObject;
+            shouldShowIcon = true;
+        }
+    }
+
+    public void DisablePopupIcon()
+    {
+        if (popupInstance != null)
+        {
+            Destroy(popupInstance);
+            popupInstance = null;
+            shouldShowIcon = false;
+        }
     }
 
     private void FixedUpdate()
@@ -45,6 +76,18 @@ public class MoveableObject : MonoBehaviour, IInteractable
         {
             rb.MovePosition(grabPoint.position);
             rb.MoveRotation(grabPoint.rotation);
+        }
+    }
+
+    private void Update()
+    {
+        if (shouldShowIcon && popupInstance == null && iconPrefab != null && PopupManager.Instance != null)
+        {
+            EnablePopupIcon();
+        }
+        else if (!shouldShowIcon && popupInstance != null)
+        {
+            DisablePopupIcon();
         }
     }
 
