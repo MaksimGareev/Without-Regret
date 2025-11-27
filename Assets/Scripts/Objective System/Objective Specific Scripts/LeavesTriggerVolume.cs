@@ -24,7 +24,7 @@ public class LeavesTriggerVolume : MonoBehaviour
                 if (moveable != null)
                 {
                     moveable.isGrabbable = true;
-                    rb.constraints = RigidbodyConstraints.None;
+                    rb.constraints = RigidbodyConstraints.FreezeRotation;
                 }
             }
         }
