@@ -10,6 +10,8 @@ public class GraveObjectiveSlot : MonoBehaviour
     private bool isObjectiveActive = false;
     private Rigidbody rb;
     private bool didOnce = false;
+    [SerializeField] private GameObject ghostPrefab;
+    private GameObject ghostInstance;
 
     private void OnEnable()
     {
@@ -43,6 +45,25 @@ public class GraveObjectiveSlot : MonoBehaviour
             foreach (GameObject gravestone in gravestones)
             {
                 StartCoroutine(WaitToDisableGravestone(gravestone));
+            }
+        }
+
+        if (ghostPrefab != null && lockingPosition != null)
+        {
+            ghostInstance = Instantiate(ghostPrefab, lockingPosition.position, lockingPosition.rotation);
+            MakeGhostTransparent(ghostInstance, 0.35f);
+            ghostInstance.SetActive(false);
+
+            Collider[] cols = ghostInstance.GetComponentsInChildren<Collider>();
+            foreach (Collider col in cols)
+            {
+                col.enabled = false;
+            }
+
+            Rigidbody rb = ghostInstance.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                Destroy(rb);
             }
         }
     }
@@ -105,6 +126,14 @@ public class GraveObjectiveSlot : MonoBehaviour
                 rb.constraints = RigidbodyConstraints.None;
             }
         }
+
+        if (ghostInstance != null)
+        {
+            ghostInstance.transform.position = lockingPosition.position;
+            ghostInstance.transform.rotation = lockingPosition.rotation;
+            ghostInstance.SetActive(true);
+            MakeGhostTransparent(ghostInstance, 0.1f);
+        }
     }
     
     private void SetObjectiveInactive(ObjectiveInstance objective)
@@ -115,5 +144,47 @@ public class GraveObjectiveSlot : MonoBehaviour
         }
 
         isObjectiveActive = false;
+
+        DisableGhost();
+    }
+
+    private void MakeGhostTransparent(GameObject ghost, float alpha = 0.35f)
+    {
+        
+
+        if (ghostInstance != null)
+        {
+            Renderer[] renderers = ghostInstance.GetComponentsInChildren<Renderer>();
+            foreach (Renderer renderer in renderers)
+            {
+                foreach (Material mat in renderer.materials)
+                {
+                    Debug.Log("Material shader: " + mat.shader.name);
+                    
+                    if (mat.HasProperty("_Color"))
+                    {
+                        Color color = mat.color;
+                        color.a = alpha; // Set transparency level
+                        mat.color = color;
+
+                        mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+                        mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+                        mat.SetInt("_ZWrite", 0);
+                        mat.DisableKeyword("_ALPHATEST_ON");
+                        mat.EnableKeyword("_ALPHABLEND_ON");
+                        mat.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+                        mat.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
+                    }
+                }
+            }
+        }
+    }
+
+    public void DisableGhost()
+    {
+        if (ghostInstance != null)
+        {
+            ghostInstance.SetActive(false);
+        }
     }
 }

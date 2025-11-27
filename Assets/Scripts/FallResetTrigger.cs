@@ -81,6 +81,11 @@ public class FallResetTrigger : MonoBehaviour
         {
             return;
         }
+
+        if (TimerRingUI.Instance != null)
+        {
+            TimerRingUI.Instance.SubtractRingSection(1);
+        }
         
         StartCoroutine(HandleReset(player));
     }
