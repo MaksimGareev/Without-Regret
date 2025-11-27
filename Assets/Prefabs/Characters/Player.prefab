@@ -49,7 +49,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1600988069774658989
 Transform:
   m_ObjectHideFlags: 0
@@ -196,7 +196,6 @@ GameObject:
   - component: {fileID: 6369621648110085496}
   - component: {fileID: 771315798553256207}
   - component: {fileID: 5657707268177514977}
-  - component: {fileID: 4795456634535947141}
   - component: {fileID: 2251472805719034207}
   - component: {fileID: 3930968705077024376}
   - component: {fileID: 2250357011382021346}
@@ -384,9 +383,6 @@ MonoBehaviour:
   groundMask:
     serializedVersion: 2
     m_Bits: 0
-  pickupOffset: {x: 3, y: 2, z: -5}
-  zoomDuration: 3
-  transitionSpeed: 2
 --- !u!114 &8123318097379088782
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -470,6 +466,7 @@ MonoBehaviour:
   interactingScript: {fileID: 0}
   backpack: {fileID: 6428672626242342441}
   showDebugLogs: 0
+  hasBackpack: 0
   itemToCollect: {fileID: 0}
 --- !u!114 &771315798553256207
 MonoBehaviour:
@@ -501,8 +498,8 @@ MonoBehaviour:
   inventoryKey: 105
   inventoryButton: Xbox Y Button
   slideDuration: 0.4
-  disabledPosition: {x: -90, y: -150}
-  enabledPosition: {x: -90, y: 100}
+  disabledPosition: {x: -80, y: -150}
+  enabledPosition: {x: -80, y: 90}
   slideCurve:
     serializedVersion: 2
     m_Curve:
@@ -527,23 +524,6 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  showDebugLogs: 0
---- !u!114 &4795456634535947141
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5675321481151379428}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d12f95f4fc9e1a148a298ff22ba3b196, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerCrawling
-  crawlKey: 306
-  crawlButton: Xbox B Button
-  crawlSpeed: 1
-  playerModel: {fileID: 5830711324976825679}
   showDebugLogs: 0
 --- !u!114 &2251472805719034207
 MonoBehaviour:
@@ -649,7 +629,7 @@ Transform:
   m_GameObject: {fileID: 7826200252848409900}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.65, y: 0.047, z: -0.135}
+  m_LocalPosition: {x: 0.65, y: 0.047, z: 0.078000054}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -685,7 +665,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 807525ce563cb0348a23818dc46836c1, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.344
+      value: -0.13099995
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 807525ce563cb0348a23818dc46836c1, type: 3}
       propertyPath: m_LocalRotation.w
@@ -776,7 +756,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 16a217fec0209484e99537fe962f8b81, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 0.213
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 16a217fec0209484e99537fe962f8b81, type: 3}
       propertyPath: m_LocalRotation.w
@@ -843,11 +823,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 16a217fec0209484e99537fe962f8b81, type: 3}
---- !u!1 &5830711324976825679 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 16a217fec0209484e99537fe962f8b81, type: 3}
-  m_PrefabInstance: {fileID: 6641596547934615582}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &6602569121628889077 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 16a217fec0209484e99537fe962f8b81, type: 3}

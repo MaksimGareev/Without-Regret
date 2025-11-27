@@ -52,6 +52,11 @@ public class PauseManager : MonoBehaviour
 
     private void PauseGame()
     {
+        if (SaveManager.Instance != null)
+        {
+            SaveManager.Instance.SaveGame();
+        }
+
         pauseMenuPanel.SetActive(true);
         Time.timeScale = 0f; // Freeze game time
         Cursor.visible = true;
@@ -110,6 +115,8 @@ public class PauseManager : MonoBehaviour
     private void ReloadSave()
     {
         // Logic to reload the last save
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        ResumeGame();
         Debug.Log("Reloading Save...");
     }
 
@@ -126,8 +133,14 @@ public class PauseManager : MonoBehaviour
 
     private void QuitToMainMenu()
     {
+        if (SaveManager.Instance != null)
+        {
+            SaveManager.Instance.SaveGame();
+        }
         // Logic to quit to main menu
         SceneManager.LoadScene("MainMenu");
+        Time.timeScale = 1f; // Ensure time scale is reset
+        Cursor.visible = true;
         Debug.Log("Quitting to Main Menu...");
     }
 }

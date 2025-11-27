@@ -14,6 +14,7 @@ public class PlayerMovingObjects : MonoBehaviour
     private void Start()
     {
         playerController = gameObject.GetComponent<PlayerController>();
+        normalMoveSpeed = playerController.Speed;
     }
 
     public void OnMovingObject(float moveSlowdownMult)
