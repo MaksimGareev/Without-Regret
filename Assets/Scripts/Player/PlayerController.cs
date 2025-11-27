@@ -114,7 +114,7 @@ public class PlayerController : MonoBehaviour, ISaveable
 
         if (moveInput != Vector2.zero)
         {
-            Debug.Log("MOVE INPUT: " + moveInput);
+            //Debug.Log("MOVE INPUT: " + moveInput);
         }
     }
 
