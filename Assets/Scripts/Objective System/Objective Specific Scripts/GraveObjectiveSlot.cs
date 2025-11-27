@@ -12,6 +12,7 @@ public class GraveObjectiveSlot : MonoBehaviour
     private bool didOnce = false;
     [SerializeField] private GameObject ghostPrefab;
     private GameObject ghostInstance;
+    private float ghostAlpha = 0.7f;
 
     private void OnEnable()
     {
@@ -51,7 +52,7 @@ public class GraveObjectiveSlot : MonoBehaviour
         if (ghostPrefab != null && lockingPosition != null)
         {
             ghostInstance = Instantiate(ghostPrefab, lockingPosition.position, lockingPosition.rotation);
-            MakeGhostTransparent(ghostInstance, 0.35f);
+            MakeGhostTransparent(ghostInstance, ghostAlpha);
             ghostInstance.SetActive(false);
 
             Collider[] cols = ghostInstance.GetComponentsInChildren<Collider>();
@@ -66,6 +67,26 @@ public class GraveObjectiveSlot : MonoBehaviour
                 Destroy(rb);
             }
         }
+    }
+
+    private void Update()
+    {
+        GameObject[] gravestones = GameObject.FindGameObjectsWithTag("Gravestone");
+        foreach (GameObject gravestone in gravestones)
+        {
+            MoveableObject moveable = gravestone.GetComponent<MoveableObject>();
+
+            if (moveable != null)
+            {
+                if (isObjectiveActive && moveable.isGrabbed)
+                {
+                    EnableGhost();
+                    return;
+                }
+            }
+        }
+        
+        DisableGhost();
     }
 
     private IEnumerator WaitToDisableGravestone(GameObject gravestone)
@@ -101,6 +122,8 @@ public class GraveObjectiveSlot : MonoBehaviour
                 ObjectiveManager.Instance.AddProgress(linkedObjective.objectiveID, 1);
                 rb.constraints = RigidbodyConstraints.FreezeAll;
                 didOnce = true;
+
+                DisableGhost();
             }
         }
     }
@@ -127,13 +150,7 @@ public class GraveObjectiveSlot : MonoBehaviour
             }
         }
 
-        if (ghostInstance != null)
-        {
-            ghostInstance.transform.position = lockingPosition.position;
-            ghostInstance.transform.rotation = lockingPosition.rotation;
-            ghostInstance.SetActive(true);
-            MakeGhostTransparent(ghostInstance, 0.1f);
-        }
+        EnableGhost();
     }
     
     private void SetObjectiveInactive(ObjectiveInstance objective)
@@ -148,7 +165,7 @@ public class GraveObjectiveSlot : MonoBehaviour
         DisableGhost();
     }
 
-    private void MakeGhostTransparent(GameObject ghost, float alpha = 0.35f)
+    private void MakeGhostTransparent(GameObject ghost, float alpha)
     {
         
 
@@ -159,8 +176,8 @@ public class GraveObjectiveSlot : MonoBehaviour
             {
                 foreach (Material mat in renderer.materials)
                 {
-                    Debug.Log("Material shader: " + mat.shader.name);
-                    
+                    //Debug.Log("Material shader: " + mat.shader.name);
+
                     if (mat.HasProperty("_Color"))
                     {
                         Color color = mat.color;
@@ -177,6 +194,17 @@ public class GraveObjectiveSlot : MonoBehaviour
                     }
                 }
             }
+        }
+    }
+
+    public void EnableGhost()
+    {
+        if (ghostInstance != null)
+        {
+            MakeGhostTransparent(ghostInstance, ghostAlpha);
+            ghostInstance.transform.position = lockingPosition.position;
+            ghostInstance.transform.rotation = lockingPosition.rotation;
+            ghostInstance.SetActive(true);
         }
     }
 
