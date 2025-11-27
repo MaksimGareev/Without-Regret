@@ -19,16 +19,16 @@ public class FloatingTriggerVolume : MonoBehaviour
 
   private void Update()
     {
-        if (player != null && !playerFloating.isCoolingDown && !playerFloating.isFloating)
+        if (player != null && !playerFloating.isCoolingDown && !playerFloating.isFloating && floatPromptUI != null)
         {
             floatPromptUI.SetActive(true);
         }
-        else
+        else if (floatPromptUI != null)
         {
             floatPromptUI.SetActive(false);
         }
 
-        if (shouldShowIcon && popupInstance != null && !popupInstance.activeSelf)
+        if (shouldShowIcon && popupInstance != null && !popupInstance.activeSelf && !playerFloating.isFloating && !playerFloating.isCoolingDown)
         {
             popupInstance.SetActive(true);
         }
