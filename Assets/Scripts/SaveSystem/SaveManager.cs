@@ -4,8 +4,11 @@ using UnityEngine.SceneManagement;
 
 public class SaveManager : MonoBehaviour
 {
+    public static SaveManager Instance { get; private set; }
+
     private List<ISaveable> saveables = new List<ISaveable>();
-    public static SaveManager Instance;
+    
+    public bool shouldAutoSave = true;
     private float autoSaveInterval = 300f; // Auto-save every 5 minutes
     private float autoSaveTimer = 0f;
 
@@ -97,7 +100,14 @@ public class SaveManager : MonoBehaviour
 
     private void Update()
     {
-        autoSaveTimer += Time.deltaTime;
+        if (shouldAutoSave)
+        {
+            autoSaveTimer += Time.deltaTime;
+        }
+        else if (autoSaveTimer != 0f)
+        {
+            autoSaveTimer = 0f;
+        }
 
         if (autoSaveTimer >= autoSaveInterval && SceneManager.GetActiveScene().name != "MainMenu")
         {

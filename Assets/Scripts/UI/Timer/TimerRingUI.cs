@@ -68,9 +68,13 @@ public class TimerRingUI : MonoBehaviour
     }
 
     private void EndGame()
-    {
-        Debug.Log("Timer has run out! Triggering end game sequence.");
-        // Implement end game logic here (e.g., load game over screen)
+    {   
+        if (GameOverManager.Instance != null)
+        {
+            Debug.Log("Timer has run out! Triggering end game sequence.");
+            GameOverManager.Instance.TriggerGameOver();
+        }
+        
     }
 
     public void SetRingState(RingState state)
