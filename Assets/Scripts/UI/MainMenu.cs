@@ -2,6 +2,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 
 public class MainMenu : MonoBehaviour
 {
@@ -33,12 +35,19 @@ public class MainMenu : MonoBehaviour
         OpenMainMenu();
 
         versionNumberText.text = gameVersion;
+        EventSystem.current.SetSelectedGameObject(playButton.gameObject);
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        if (Gamepad.current != null && Gamepad.current.bButton.wasPressedThisFrame)
+        {
+            if (settingsPanel.activeSelf || creditsPanel.activeSelf)
+            {
+                OpenMainMenu();
+            }
+        }
     }
 
     private void OnEnable()
@@ -73,6 +82,8 @@ public class MainMenu : MonoBehaviour
         creditsPanel.SetActive(false);
         
         backButton.gameObject.SetActive(false);
+
+        EventSystem.current.SetSelectedGameObject(playButton.gameObject);
     }
 
     private void NewGame()
@@ -106,6 +117,8 @@ public class MainMenu : MonoBehaviour
         creditsPanel.SetActive(false);
         
         backButton.gameObject.SetActive(true);
+        
+        EventSystem.current.SetSelectedGameObject(settingsPanel.GetComponentInChildren<MMSettings>().resolutionDropdown.gameObject);
     }
 
     private void OpenCredits()
@@ -115,6 +128,8 @@ public class MainMenu : MonoBehaviour
         creditsPanel.SetActive(true);
         
         backButton.gameObject.SetActive(true);
+
+        EventSystem.current.SetSelectedGameObject(backButton.gameObject);
     }
 
     private void QuitGame()

@@ -98,13 +98,13 @@ public class PlayerController : MonoBehaviour, ISaveable
             Debug.LogWarning("No saved transform found for player in scene: " + SceneManager.GetActiveScene().name);
         }
 
-        if (TimerRingUI.Instance != null && data.playerSaveData.currentRingState != RingState.Empty)
+        if (TimerRingUI.Instance != null && data.playerSaveData.currentRingState != TimerRingUI.RingState.Empty)
         {
             TimerRingUI.Instance.SetRingState(data.playerSaveData.currentRingState);
         }
         else if (TimerRingUI.Instance != null)
         {
-            TimerRingUI.Instance.SetRingState(RingState.Full);
+            TimerRingUI.Instance.SetRingState(TimerRingUI.RingState.Full);
         }
         
     }
