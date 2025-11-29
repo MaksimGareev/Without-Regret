@@ -12,6 +12,7 @@ public class DialogueManager : MonoBehaviour
     public TextMeshProUGUI DialogueText;
     public Transform ChoicesContainer;
     public GameObject ChoiceButton;
+    public GameObject ContinueArrow;
 
     private List<GameObject> spawnedChoices = new List<GameObject>();
     private DialogueData currentDialogue;
@@ -227,8 +228,18 @@ public class DialogueManager : MonoBehaviour
 
         IsTyping = false;
 
-        // Show choices if any
+        // show continue arrow after the line is typed and there are no choices to be selected
         var choices = currentDialogue.dialogueLines[currentIndex].choices;
+        if (choices == null || choices.Count == 0)
+        {
+            ContinueArrow.SetActive(true);
+        }
+        else if (IsTyping == true)
+        {
+            ContinueArrow.SetActive(false);
+        }
+
+        // Show choices if any
         if (choices != null && choices.Count > 0)
         {
             SpawnChoices(choices);

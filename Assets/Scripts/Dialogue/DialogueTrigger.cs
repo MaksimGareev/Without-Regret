@@ -160,15 +160,6 @@ public class DialogueTrigger : MonoBehaviour
         }
     }
 
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.CompareTag("Player") && TalkedAlready == false)
-        {
-            //TryInteract();
-            //TalkedAlready = true;
-        }
-    }
-
     public void EnablePopupIcon()
     {
         if (popupInstance == null && iconPrefab != null && PopupManager.Instance != null)
