@@ -27,7 +27,7 @@ public class POICutsceneTrigger : MonoBehaviour
 
     IEnumerator ReEnableCam()
     {
-        yield return new WaitForSeconds(5);
+        yield return new WaitForSeconds(3);
         VCam1.SetActive(true);
         yield return new WaitForSeconds(2);
         player.SetCutsceneLocked(false);
