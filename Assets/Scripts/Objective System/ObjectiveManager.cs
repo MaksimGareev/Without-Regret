@@ -6,7 +6,8 @@ using UnityEngine.SceneManagement;
 
 public class ObjectiveManager : MonoBehaviour, ISaveable
 {
-    public static ObjectiveManager Instance;
+    public static ObjectiveManager Instance { get; private set; }
+    
     [Header("Objectives")]
     [SerializeField] private List<ObjectiveData> allObjectives;
     private int currentObjectiveIndex = 0;
@@ -41,8 +42,8 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
     {
         if (!SaveManager.Instance.SaveExists() && SceneManager.GetActiveScene().name != "Echo'sHouse")
         {
-            ActivateObjective(allObjectives[0]);
-            currentObjectiveIndex = 0;
+            //ActivateObjective(allObjectives[0]);
+            //currentObjectiveIndex = 0;
             return;
         }
     }

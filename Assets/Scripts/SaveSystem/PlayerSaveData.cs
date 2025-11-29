@@ -13,6 +13,7 @@ public class PlayerTransformEntry
 public class PlayerSaveData
 {
     public List<PlayerTransformEntry> playerTransforms = new List<PlayerTransformEntry>();
+    public RingState currentRingState = RingState.Full;
 
     public void SetPlayerTransform(string scene, float[] pos, float[] rot)
     {
