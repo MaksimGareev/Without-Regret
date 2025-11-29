@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 
 public class PauseManager : MonoBehaviour
 {
@@ -48,6 +50,14 @@ public class PauseManager : MonoBehaviour
                 ResumeGame();
             }
         }
+
+        if (Gamepad.current != null && Gamepad.current.bButton.wasPressedThisFrame)
+        {
+            if (settingsPanel.activeSelf)
+            {
+                BackToPauseMenu();
+            }
+        }
     }
 
     private void PauseGame()
@@ -67,6 +77,8 @@ public class PauseManager : MonoBehaviour
             canvas.enabled = false;
         }
 
+        EventSystem.current.SetSelectedGameObject(resumeButton.gameObject);
+
         Debug.Log("Game Paused");
     }
 
@@ -85,6 +97,8 @@ public class PauseManager : MonoBehaviour
         settingsPanel.SetActive(false);
         pauseMenuPanel.SetActive(true);
         backButton.gameObject.SetActive(false);
+
+        EventSystem.current.SetSelectedGameObject(resumeButton.gameObject);
     }
 
     private void ResumeGame()
@@ -127,6 +141,8 @@ public class PauseManager : MonoBehaviour
         pauseMenuPanel.SetActive(false);
         settingsPanel.SetActive(true);
         backButton.gameObject.SetActive(true);
+
+        EventSystem.current.SetSelectedGameObject(settingsPanel.GetComponentInChildren<MMSettings>().resolutionDropdown.gameObject);
         
         Debug.Log("Opening Settings...");
     }
