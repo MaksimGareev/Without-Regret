@@ -59,9 +59,10 @@ public class TimerRingUI : MonoBehaviour
                     break;
                 case RingState.OneThird:
                     SetRingState(RingState.Empty);
+                    EndGame();
                     break;
                 case RingState.Empty:
-                    EndGame();
+                    // Already empty, do nothing
                     break;
             }
         }
@@ -73,6 +74,10 @@ public class TimerRingUI : MonoBehaviour
         {
             Debug.Log("Timer has run out! Triggering end game sequence.");
             GameOverManager.Instance.TriggerGameOver();
+        }
+        else
+        {
+            Debug.LogError("GameOverManager instance not found! Cannot trigger game over.");
         }
         
     }
