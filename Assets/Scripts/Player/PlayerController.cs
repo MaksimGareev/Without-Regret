@@ -82,6 +82,7 @@ public class PlayerController : MonoBehaviour, ISaveable
         float[] position = new float[] { transform.position.x, transform.position.y, transform.position.z };
         float[] rotation = new float[] { transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z };
         data.playerSaveData.SetPlayerTransform(SceneManager.GetActiveScene().name, position, rotation);
+        data.playerSaveData.currentRingState = TimerRingUI.Instance.currentRingState;
     }
 
     public void LoadFrom(SaveData data)
@@ -96,6 +97,16 @@ public class PlayerController : MonoBehaviour, ISaveable
         {
             Debug.LogWarning("No saved transform found for player in scene: " + SceneManager.GetActiveScene().name);
         }
+
+        if (TimerRingUI.Instance != null && data.playerSaveData.currentRingState != RingState.Empty)
+        {
+            TimerRingUI.Instance.SetRingState(data.playerSaveData.currentRingState);
+        }
+        else if (TimerRingUI.Instance != null)
+        {
+            TimerRingUI.Instance.SetRingState(RingState.Full);
+        }
+        
     }
 
     private void OnEnable() => controls.Enable();

@@ -27,7 +27,7 @@ public class TimerRingUI : MonoBehaviour
     [SerializeField] private Sprite portraitOneThird;
     [SerializeField] private Sprite portraitEmpty;
 
-    private RingState currentRingState;
+    public RingState currentRingState;
     public static TimerRingUI Instance { get; private set; }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
