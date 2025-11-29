@@ -70,12 +70,15 @@ public class GameOverManager : MonoBehaviour
         }
 
         gameOverUI.SetActive(true);
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
     }
 
     private void Quit()
     {
         Time.timeScale = 1f; // Resume the game before quitting
         isGameOver = false;
+        gameOverUI.SetActive(false);
         SceneManager.LoadScene("MainMenu");
     }
 
@@ -83,9 +86,11 @@ public class GameOverManager : MonoBehaviour
     {
         Time.timeScale = 1f; // Resume the game
         isGameOver = false;
+        gameOverUI.SetActive(false);
 
         if (SaveManager.Instance != null)
         {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
             SaveManager.Instance.LoadGame();
         }
         else
