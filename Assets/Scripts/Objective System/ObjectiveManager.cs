@@ -11,7 +11,7 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
     [Header("Objectives")]
     [SerializeField] private List<ObjectiveData> allObjectives;
     private int currentObjectiveIndex = 0;
-    private List<ObjectiveInstance> activeObjectives = new();
+    [SerializeField] private List<ObjectiveInstance> activeObjectives = new();
     private List<ObjectiveInstance> completedObjectives = new();
     private bool objectivesInSceneCompleted = false;
 
@@ -30,6 +30,11 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
+
+            if (SaveManager.Instance != null)
+            {
+                SaveManager.Instance.RegisterSaveable(this);
+            }
         }
         else
         {
@@ -50,12 +55,15 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
 
     public void SaveTo(SaveData data)
     {
+        Debug.Log($"[ObjectiveManager.SaveTo] called, activeObjectives.Count = {activeObjectives.Count}, completedObjectives.count = {completedObjectives.Count}");
+
         data.objectiveSaveData.currentObjectiveIndex = currentObjectiveIndex;
 
         data.objectiveSaveData.objectives.Clear();
 
         foreach(var inst in activeObjectives)
         {
+            Debug.Log($"[ObjectiveManager.SaveTo] saving ACTIVE {inst.data.objectiveID} progress {inst.currentProgress}");
             data.objectiveSaveData.objectives.Add(new ObjectiveRecord
             {
                 objectiveID = inst.data.objectiveID,
@@ -66,6 +74,7 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
 
         foreach (var inst in completedObjectives)
         {
+            Debug.Log($"[ObjectiveManager.SaveTo] saving COMPLETED {inst.data.objectiveID} progress {inst.currentProgress}");
             data.objectiveSaveData.objectives.Add(new ObjectiveRecord
             {
                 objectiveID = inst.data.objectiveID,
@@ -186,14 +195,13 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
 
     private IEnumerator HideAfterDelay()
     {
-        yield return new WaitForSeconds(2f);
-
         if (objectiveUI != null)
         {
+            yield return new WaitForSeconds(2f);
             objectiveUI.SetActive(false);
         }
 
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.5f);
 
         foreach (var next in allObjectives)
         {
@@ -208,6 +216,31 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
         Debug.Log("All objectives complete");
 
         UIHideRoutine = null;
+    }
+
+    public void EnsureActiveObjective()
+    {
+        if (activeObjectives.Count > 0)
+        {
+            foreach (var obj in activeObjectives)
+            {
+                if (obj.isCompleted)
+                {
+                    CompleteObjective(obj);
+                }
+            }
+        }
+
+        for (int i = 0; i < allObjectives.Count; i++)
+        {
+            if (!completedObjectives.Exists(o => o.data == allObjectives[i]))
+            {
+                ActivateObjective(allObjectives[i]);
+                return;
+            }
+        }
+
+        Debug.Log("All objectives completed");
     }
 
     private void CompleteObjective(ObjectiveInstance objective)
@@ -251,6 +284,14 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
         return activeObjectives.Exists(o => o.data.objectiveID == id);
     }
 
-    public IEnumerable<ObjectiveInstance> GetActiveObjectives() => activeObjectives;
+    private void OnDestroy()
+    {
+        if(SaveManager.Instance != null)
+        {
+            SaveManager.Instance.RemoveSaveable(this);
+        }
+    }
+
+  public IEnumerable<ObjectiveInstance> GetActiveObjectives() => activeObjectives;
     public IEnumerable<ObjectiveInstance> GetCompletedObjectives() => completedObjectives;
 }
