@@ -121,6 +121,7 @@ public class DialogueManager : MonoBehaviour
         playerThrowing = player.GetComponent<PlayerThrowing>();
         playerController = player.GetComponent<PlayerController>();
         PopupText.gameObject.SetActive(false);
+        Chime.isInDialogue = true;
 
         if (jsonFile == null)
         {
@@ -150,6 +151,8 @@ public class DialogueManager : MonoBehaviour
 
     private void ShowCurrentLine()
     {
+        ContinueArrow.SetActive(false);
+
         DialogueLine line = currentDialogue.dialogueLines[currentIndex];
 
         if (line.requiredMorality != 0)
@@ -233,10 +236,6 @@ public class DialogueManager : MonoBehaviour
         if (choices == null || choices.Count == 0)
         {
             ContinueArrow.SetActive(true);
-        }
-        else if (IsTyping == true)
-        {
-            ContinueArrow.SetActive(false);
         }
 
         // Show choices if any
@@ -357,6 +356,9 @@ public class DialogueManager : MonoBehaviour
 
     private void OnChoiceSelected(DialogueChoice chosen)
     {
+        // prevent confirm from instantly skipping the next line
+        ConfirmPressed = false;
+
         if (choiceTimerRoutine != null)
         {
             StopCoroutine(choiceTimerRoutine);
@@ -522,6 +524,7 @@ public class DialogueManager : MonoBehaviour
             }
         }
 
+        Chime.isInDialogue = false;
         Debug.Log($"Dialogue ended. Final morality = {playerMorality}");
     }
 

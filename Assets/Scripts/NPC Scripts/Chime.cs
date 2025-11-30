@@ -21,7 +21,7 @@ public class Chime : MonoBehaviour
     private Transform BobObject;
     public Transform model;
 
-    public bool isInDialogue = false;
+    public static bool isInDialogue = false;
 
     // Update is called once per frame
     void LateUpdate()
@@ -45,9 +45,12 @@ public class Chime : MonoBehaviour
         else
         {
             // Dialogue Mode
-            Vector3 offset = new Vector3(0f, Mathf.Sin(Time.time * BobSpeed) * BobHeight + 1f, OrbitRadius * 0.5f);
+            Vector3 dialogueOffset = player.right * 1.2f + new Vector3(0f, 1f, 0f);
+           
+                //new Vector3(0f, Mathf.Sin(Time.time * BobSpeed) * BobHeight + 1f, OrbitRadius * 0.5f);
+            Vector3 bob = new Vector3(0f, Mathf.Sin(Time.time * BobSpeed) * BobHeight, 0f);
 
-            targetPos = player.position + player.forward * 1.5f + offset;
+            targetPos = player.position + player.forward * 1.5f + dialogueOffset + bob;
         }
 
         // Smooth follow
