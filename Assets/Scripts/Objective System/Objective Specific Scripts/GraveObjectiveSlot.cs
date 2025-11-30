@@ -20,7 +20,7 @@ public class GraveObjectiveSlot : MonoBehaviour
         ObjectiveManager.Instance.OnObjectiveCompleted.AddListener(SetObjectiveInactive);
     }
 
-  private void Start()
+    private void Start()
     {
         lockingPosition = GetComponentInChildren<Transform>();
         player = GameObject.FindGameObjectWithTag("Player");
