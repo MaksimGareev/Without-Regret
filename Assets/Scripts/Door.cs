@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -10,6 +12,7 @@ public class Door : MonoBehaviour
     public float interactDistance = 3f;
     // player
     public Transform player;
+    public ObjectiveData linkedObjective;
 
     [Header("Audio Settings")]
 
@@ -45,14 +48,19 @@ public class Door : MonoBehaviour
 
     void LoadScene()
     {
-        if (ObjectiveManager.Instance.AllObjectivesCompletedInScene())
+        var activeObjectives = ObjectiveManager.Instance.GetActiveObjectives();
+        foreach (var obj in activeObjectives)
         {
-            // Load the  scene  added in Build Settings
-            SceneManager.LoadScene(sceneToLoad);
-        }
-        else
-        {
-            Debug.Log("You must complete all objectives before moving forward");
+            if (obj.data == linkedObjective)
+            {
+                obj.AddProgress(1);
+                SceneManager.LoadScene(sceneToLoad);
+                return;
+            }
+            else
+            {
+                Debug.Log("You must complete all objectives before moving forward");
+            }
         }
     }
 }
