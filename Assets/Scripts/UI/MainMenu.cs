@@ -48,6 +48,60 @@ public class MainMenu : MonoBehaviour
                 OpenMainMenu();
             }
         }
+
+        CheckMouseInput();
+        CheckControllerInput();
+    }
+
+    private void CheckMouseInput()
+    {
+        if (Mouse.current == null)
+        {
+            return;
+        }
+
+        Vector2 mouseDelta = Mouse.current.delta.ReadValue();
+
+        if (mouseDelta.sqrMagnitude > 0.1f)
+        {
+            Cursor.visible = true;
+            
+            if (EventSystem.current.currentSelectedGameObject != null)
+            {
+                EventSystem.current.SetSelectedGameObject(null);
+            }
+        }
+    }
+
+    private void CheckControllerInput()
+    {
+        if (Gamepad.current == null)
+        {
+            return;
+        }
+
+        bool controllerMoved = Gamepad.current.leftStick.ReadValue().sqrMagnitude > 0.1f || Gamepad.current.dpad.ReadValue().sqrMagnitude > 0.1f;
+
+        if (controllerMoved)
+        {
+            Cursor.visible = false;
+
+            if (EventSystem.current.currentSelectedGameObject == null)
+            {
+                if (mainMenuPanel.activeSelf)
+                {
+                    EventSystem.current.SetSelectedGameObject(playButton.gameObject);
+                }
+                else if (settingsPanel.activeSelf)
+                {
+                    EventSystem.current.SetSelectedGameObject(settingsPanel.GetComponentInChildren<MMSettings>().resolutionDropdown.gameObject);
+                }
+                else if (creditsPanel.activeSelf)
+                {
+                    EventSystem.current.SetSelectedGameObject(backButton.gameObject);
+                }
+            }
+        }
     }
 
     private void OnEnable()
