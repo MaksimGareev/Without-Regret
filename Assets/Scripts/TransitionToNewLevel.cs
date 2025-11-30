@@ -12,6 +12,13 @@ public class TransitionToNewLevel : MonoBehaviour
         ObjectiveManager.Instance.OnObjectiveActivated.AddListener(SetObjectiveActive);
     }
 
+    private void Update()
+    {
+        if (ObjectiveManager.Instance == null || linkedObjective == null) return;
+
+        isObjectiveActive = ObjectiveManager.Instance.IsObjectiveCompleted(linkedObjective.objectiveID);
+    }
+
     private void SetObjectiveActive(ObjectiveInstance objective)
     {
         if (objective.data == linkedObjective)
