@@ -14,6 +14,7 @@ public class Door : MonoBehaviour
     // player
     public Transform player;
     public ObjectiveData linkedObjective;
+    public bool needsObjective = true;
 
     [Header("Audio Settings")]
 
@@ -49,19 +50,26 @@ public class Door : MonoBehaviour
 
     void LoadScene()
     {
-        var activeObjectives = ObjectiveManager.Instance.GetActiveObjectives();
-        foreach (var obj in activeObjectives)
+        if (needsObjective)
         {
-            if (obj.data == linkedObjective)
+            var activeObjectives = ObjectiveManager.Instance.GetActiveObjectives();
+            foreach (var obj in activeObjectives)
             {
-                obj.AddProgress(1);
-                StartCoroutine(WaitToLoadScene());
-                return;
+                if (obj.data == linkedObjective)
+                {
+                    obj.AddProgress(1);
+                    StartCoroutine(WaitToLoadScene());
+                    return;
+                }
+                else
+                {
+                    Debug.Log("You must complete all objectives before moving forward");
+                }
             }
-            else
-            {
-                Debug.Log("You must complete all objectives before moving forward");
-            }
+        }
+        else
+        {
+            StartCoroutine(WaitToLoadScene());
         }
     }
 
@@ -71,6 +79,7 @@ public class Door : MonoBehaviour
         {
             SaveManager.Instance.SaveGame();
         }
+        
         yield return new WaitForSeconds(0.1f);
         SceneManager.LoadScene(sceneToLoad);
     }
