@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -54,7 +55,7 @@ public class Door : MonoBehaviour
             if (obj.data == linkedObjective)
             {
                 obj.AddProgress(1);
-                SceneManager.LoadScene(sceneToLoad);
+                StartCoroutine(WaitToLoadScene());
                 return;
             }
             else
@@ -62,6 +63,16 @@ public class Door : MonoBehaviour
                 Debug.Log("You must complete all objectives before moving forward");
             }
         }
+    }
+
+    private IEnumerator WaitToLoadScene()
+    {
+        if (SaveManager.Instance != null)
+        {
+            SaveManager.Instance.SaveGame();
+        }
+        yield return new WaitForSeconds(0.1f);
+        SceneManager.LoadScene(sceneToLoad);
     }
 }
 

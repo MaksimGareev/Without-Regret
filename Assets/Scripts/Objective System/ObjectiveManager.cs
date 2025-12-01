@@ -30,17 +30,14 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
-
-            if (SaveManager.Instance != null)
-            {
-                SaveManager.Instance.RegisterSaveable(this);
-            }
         }
         else
         {
             Destroy(gameObject);
             return;
         }
+
+        StartCoroutine(RegisterWhenReady());
     }
 
     private void Start()
@@ -51,6 +48,17 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
             //currentObjectiveIndex = 0;
             return;
         }
+    }
+
+    private IEnumerator RegisterWhenReady()
+    {
+        while (SaveManager.Instance == null)
+        {
+            yield return null;
+        }
+
+        SaveManager.Instance.RegisterSaveable(this);
+        Debug.Log("ObjectiveManager Registered with SaveManager");
     }
 
     public void SaveTo(SaveData data)
@@ -289,6 +297,17 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
         if(SaveManager.Instance != null)
         {
             SaveManager.Instance.RemoveSaveable(this);
+        }
+    }
+
+    public void ClearObjectivesOnDelete()
+    {
+        activeObjectives.Clear();
+        completedObjectives.Clear();
+
+        if (SceneManager.GetActiveScene().name != "MainMenu")
+        {
+            EnsureActiveObjective();
         }
     }
 
