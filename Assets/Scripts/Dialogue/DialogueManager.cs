@@ -62,6 +62,8 @@ public class DialogueManager : MonoBehaviour
     private Barry barryNPC;
     private Darry darryNPC;
 
+    public static bool DialogueIsActive = false;
+
     // Player morality
     private int playerMorality = 0;
 
@@ -116,6 +118,7 @@ public class DialogueManager : MonoBehaviour
     // -------------------- JSON Dialogue --------------------
     public void StartDialogueFromJson(TextAsset jsonFile)
     {
+        DialogueIsActive = true;
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         ireneNPC = FindObjectOfType<Irene>();
         playerTransform = player.transform;
@@ -517,6 +520,8 @@ public class DialogueManager : MonoBehaviour
         spawnedChoices.Clear();
         ConfirmPressed = false;
         CanChoose = false;
+        DialogueIsActive = false;
+        ContinueArrow.SetActive(false);
 
         PlayerController.DialogueActive = false;
         playerController.SetDialogueActive(false);
