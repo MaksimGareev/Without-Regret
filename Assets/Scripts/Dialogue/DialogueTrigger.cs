@@ -65,6 +65,7 @@ public class DialogueTrigger : MonoBehaviour
             if (!playerInRange)
             {
                 playerInRange = true;
+                iconPrefab.SetActive(true);
                 if (promptUI != null)
                     promptUI.SetActive(true);
             }
@@ -74,12 +75,13 @@ public class DialogueTrigger : MonoBehaviour
             if (playerInRange)
             {
                 playerInRange = false;
+                iconPrefab.SetActive(false);
                 if (promptUI != null)
                     promptUI.SetActive(false);
             }
         }
 
-        if (shouldShowIcon && popupInstance == null && iconPrefab != null && PopupManager.Instance != null)
+        if (shouldShowIcon && popupInstance == null && iconPrefab != null && PopupManager.Instance != null && !playerInRange)
         {
             EnablePopupIcon();
         }
