@@ -18,7 +18,7 @@ public class Gate : MonoBehaviour
 
     private void OnEnable()
     {
-        ObjectiveManager.Instance.OnObjectiveActivated.AddListener(SetObjectiveActive);
+        ObjectiveManager.Instance.OnObjectiveCompleted.AddListener(SetObjectiveComplete);
     }
 
     private void Update()
@@ -28,7 +28,7 @@ public class Gate : MonoBehaviour
         isObjectiveActive = ObjectiveManager.Instance.IsObjectiveCompleted(linkedObjective.objectiveID);
     }
 
-    private void SetObjectiveActive(ObjectiveInstance objective)
+    private void SetObjectiveComplete(ObjectiveInstance objective)
     {
         if (objective.data == linkedObjective)
         {
