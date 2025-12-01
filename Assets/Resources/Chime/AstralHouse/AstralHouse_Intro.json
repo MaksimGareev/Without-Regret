@@ -2,32 +2,75 @@
     "npcName": "Chime",
     "dialogueLines": [
         {
-            "text": "Echo, my name is Chime and this place we are right now is not a dream but instead we are in the astral plane.",
+            "text": "Oh! You finally woke up.",
+            "requiredMorality": 0,
+            "choices": [
+                {
+                    "text": "Why does my house look like this.",
+                    "nextIndex": 1,
+                    "moralityChange": -1
+                },
+                {
+                    "text": "Who are you?",
+                    "nextIndex": 1,
+                    "moralityChange": -1
+                }
+            ]
+        },
+        {
+            "text": "Before you start asking wuestions I can explain.  My name is Chime, a guide fairy who exists in the astral plane which is where you are right now.  This is the astral form of your house.",
+            "requiredMorality": 0,
+            "choices": [
+                {
+                    "text": "What is the astral plane?",
+                    "nextIndex": 2,
+                    "moralityChange": 0
+                },
+                {
+                    "text": "Guide for what?",
+                    "nextIndex": 2,
+                    "moralityChange": -1
+                }
+            ]
+        },
+        {
+            "text": "The astral plane is a place where memories are revisited and can be altered, by the powers you gained.  I'm a guide meant for you to unlock your powers and alter the past events.  Earlier today your friends mentioned the loss of someone close and how they wished they could have changed the past events, you've been granted with the ability to change those events altering the future that you exist in.",
             "requiredMorality": 0,
             "choices": []
         },
         {
-            "text": "You have awoken a power that allows you to travel through the astral plane while you are asleep in your astral form.",
+            "text": "Can you help your firends live forward without regret back in your reality?",
+            "requiredMorality": 0,
+            "choices": [
+                {
+                    "text": "Yes I can!",
+                    "nextIndex": 4,
+                    "moralityChange": 1
+                },
+                {
+                    "text": "I'm not sure.",
+                    "nextIndex": 5,
+                    "moralityChange": -1
+                }
+            ]
+        },
+        {
+            "text": "Okay awesome! Let's get going",
+            "requiredMorality": 1,
+            "choices": []
+        },
+        {
+            "text": "I think you're the hero, you just don't know it yet.",
+            "requiredMorality": -1,
+            "choices": []
+        },
+        {
+            "text": "I saw you grab a map before you went to bed last night, do you still have it?  It will come in handy on our journey.",
             "requiredMorality": 0,
             "choices": []
         },
         {
-            "text": "I saw you talking to all those people at the graveyard today, I heard how sad they were.  I do have some good news though.",
-            "requiredMorality": 0,
-            "choices": []
-        },
-        {
-            "text": "All those people they were talking about perished on the same day and since then have been trapped in the astral plane.  With your powers you have the chance to go back and help free these lost souls.",
-            "requiredMorality": 0,
-            "choices": []
-        },
-        {
-            "text": "I will serve as your guide on your journey to free these lost souls through the astal plane.",
-            "requiredMorality": 0,
-            "choices": []
-        },
-        {
-            "text": "Pressing the hint button will display my message of your current objective.",
+            "text": "Okay so we have to go through that north gate on the other side of the graveyard.  Grab your backpack and lets start heading over there.",
             "requiredMorality": 0,
             "objectiveToActivate": "grabBackpack",
             "choices": []

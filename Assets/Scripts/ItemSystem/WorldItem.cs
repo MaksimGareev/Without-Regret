@@ -13,6 +13,7 @@ public class WorldItem : MonoBehaviour, IInteractable
     [SerializeField] private Vector3 iconOffset = new Vector3(0f, 2f, 0f);
     public bool shouldShowIcon = true;
     private GameObject popupInstance;
+    public bool isCollectible = true;
 
     public void Start()
     {
@@ -39,6 +40,8 @@ public class WorldItem : MonoBehaviour, IInteractable
     }
     public void OnPlayerInteraction(GameObject player)
     {
+        if (!isCollectible) return;
+        
         Inventory inventory = player.GetComponent<Inventory>();
         inventory.itemToCollect = this;
         hasBeenCollected = true;

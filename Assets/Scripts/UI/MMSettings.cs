@@ -5,7 +5,7 @@ using TMPro;
 public class MMSettings : MonoBehaviour
 {
     [Header("Settings References")]
-    [SerializeField] private TMP_Dropdown resolutionDropdown;
+    [SerializeField] public TMP_Dropdown resolutionDropdown;
     [SerializeField] private Toggle fullscreenToggle;
     [SerializeField] private Slider masterVolumeSlider;
     [SerializeField] private Slider SFXVolumeSlider;
