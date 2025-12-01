@@ -5,6 +5,7 @@ public class TransitionToNewLevel : MonoBehaviour
 {
     public string sceneToLoad;
     public ObjectiveData linkedObjective;
+    public bool needsObjective = true;
     private bool isObjectiveActive = false;
 
     private void OnEnable()
@@ -29,7 +30,7 @@ public class TransitionToNewLevel : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (sceneToLoad == null || !isObjectiveActive) return;
+        if (sceneToLoad == null || (!isObjectiveActive && needsObjective)) return;
 
         if (other.CompareTag("Player"))
         {
