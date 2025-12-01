@@ -146,18 +146,12 @@ public class PlayerController : MonoBehaviour, ISaveable
     {
         if (cutsceneLocked)
         {
-            Controller.enabled = false;
             transform.position = lockedPosition;
             return;
-        }
-        else
-        {
-            Controller.enabled = true;
         }
 
         if (resetLocked)
         {
-            Controller.enabled = false;
             Controller.Move(Vector3.zero);
             return;
         }
@@ -325,6 +319,14 @@ public class PlayerController : MonoBehaviour, ISaveable
         }
         else
         {
+            Controller.enabled = false;
+            yVelocity = -1f;
+            transform.position = new Vector3(
+                transform.position.x,
+                transform.position.y + 0.1f,
+                transform.position.z
+            );
+            Controller.enabled = true;
             canSprint = true;
         }
     }
