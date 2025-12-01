@@ -7,6 +7,7 @@ public class FallResetTrigger : MonoBehaviour
     public float delayBeforeReset = 0.5f;
     public float moveDuration = 0.8f;
     public float fadedAlpha = 0.3f;
+    public int amountOfRingsToSubtract = 1;
 
     [Header("Reset Point(auto-assigned if child exists)")]
     public Transform resetPoint;
@@ -84,7 +85,7 @@ public class FallResetTrigger : MonoBehaviour
 
         if (TimerRingUI.Instance != null)
         {
-            TimerRingUI.Instance.SubtractRingSection(1);
+            TimerRingUI.Instance.SubtractRingSection(amountOfRingsToSubtract);
         }
         
         StartCoroutine(HandleReset(player));
