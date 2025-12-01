@@ -134,8 +134,16 @@ public class Journal : MonoBehaviour
         var activeObjectives = ObjectiveManager.Instance.GetActiveObjectives();
         var completedObjectives = ObjectiveManager.Instance.GetCompletedObjectives();
 
-        objectivesList.AddRange(activeObjectives);
         objectivesList.AddRange(completedObjectives);
+        objectivesList.AddRange(activeObjectives);
+
+        // reverse objectivelist
+        for (int i = 0; i < objectivesList.Count / 2; i++)
+        {
+            var temp = objectivesList[i];
+            objectivesList[i] = objectivesList[objectivesList.Count - i - 1];
+            objectivesList[objectivesList.Count - i - 1] = temp;
+        }
     }
 
     private void RefreshObjectives()
