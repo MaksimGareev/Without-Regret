@@ -13,8 +13,10 @@ public class LockedItem : MonoBehaviour
     public bool isDoor = false;
 
     public AudioClip UnlockSound;
+    public GameObject UnlockTop;
+    public bool isChest = false;
     private AudioSource audioSource;
-    [HideInInspector] public bool hasBeenLockpicked = false;
+    public bool hasBeenLockpicked = false;
     private bool isInRange = false;
 
     private PlayerControls controls;
@@ -28,6 +30,7 @@ public class LockedItem : MonoBehaviour
     {
         audioSource = gameObject.AddComponent<AudioSource>();
         audioSource.playOnAwake = false;
+        hasBeenLockpicked = false;
 
         player = GameObject.FindGameObjectWithTag("Player").transform;
         if (promptUI != null)
@@ -40,8 +43,21 @@ public class LockedItem : MonoBehaviour
         }
 
         controls = new PlayerControls();
-
         controls.Player.Interact.performed += ctx => TryInteract();
+
+        // Load unlock state from SaveManager
+        if (SaveManager.Instance != null)
+        {
+            hasBeenLockpicked = SaveManager.Instance.IsUnlocked(gameObject.name);
+        }
+
+        // Disable interaction if already unlocked
+        if (hasBeenLockpicked)
+        {
+            DisablePopupIcon();
+            Collider col = GetComponent<Collider>();
+            if (col != null) col.enabled = false;
+        }
     }
 
     private void OnEnable() => controls.Enable();
@@ -57,7 +73,7 @@ public class LockedItem : MonoBehaviour
             if (!isInRange)
             {
                 isInRange = true;
-                if (promptUI != null)
+                if (!hasBeenLockpicked && promptUI != null)
                 {
                     promptUI.SetActive(true); // Show the prompt when the player is in range
                 }
@@ -75,11 +91,11 @@ public class LockedItem : MonoBehaviour
             }
         }
 
-        if (shouldShowIcon && popupInstance == null && iconPrefab != null && PopupManager.Instance != null)
+        if (shouldShowIcon && popupInstance == null && iconPrefab != null && PopupManager.Instance != null && !hasBeenLockpicked)
         {
             EnablePopupIcon();
         }
-        else if (!shouldShowIcon && popupInstance != null)
+        else if (hasBeenLockpicked && popupInstance != null)
         {
             DisablePopupIcon();
         }
@@ -92,7 +108,7 @@ public class LockedItem : MonoBehaviour
 
         // Show LockPick UI
         LockPickUI.SetActive(true);
-        LockPickUI.GetComponent<LockPicking>().NewLock();//(this.gameObject);
+        LockPickUI.GetComponent<LockPicking>().NewLock(this);//(this.gameObject);
 
         if (promptUI != null)
             promptUI.SetActive(false);
@@ -113,7 +129,6 @@ public class LockedItem : MonoBehaviour
     public void OnUnlocked()
     {
         Debug.Log(gameObject.name + "unlocked!");
-
         hasBeenLockpicked = true;
 
         PlayerFloating playerFloating = player.GetComponent<PlayerFloating>();
@@ -144,7 +159,47 @@ public class LockedItem : MonoBehaviour
             SaveManager.Instance.SaveGame();
         }
 
+        //UnlockTop.transform.position = new Vector3(0f, 95f, -23f);
+        //UnlockTop.transform.rotation = new Vector3(-39f, 0f, 0f);
+        if (isChest)
+        {
+            StartCoroutine(MoveAndRotateTop(UnlockTop, new Vector3(0f, 95f, -23f), Quaternion.Euler(-39f, 0f, 0f), 1f));
+        }
+
+        // Disable interaction
+        Collider col = GetComponent<Collider>();
+        if (col != null) col.enabled = false;
+
         DisablePopupIcon();
+
+        // Save unlock state
+        if (SaveManager.Instance != null)
+        {
+            SaveManager.Instance.SetUnlocked(gameObject.name, true);
+            SaveManager.Instance.SaveGame();
+        }
+    }
+
+    private IEnumerator MoveAndRotateTop(GameObject target, Vector3 endPos, Quaternion endRot, float duration)
+    {
+        Vector3 startPos = target.transform.localPosition;
+        Quaternion startRot = target.transform.localRotation;
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / duration;
+
+            // smooth movement
+            target.transform.localPosition = Vector3.Lerp(startPos, endPos, t);
+            target.transform.localRotation = Quaternion.Lerp(startRot, endRot, t);
+
+            yield return null;
+        }
+
+        target.transform.localPosition = endPos;
+        target.transform.localRotation = endRot;
     }
 
     public void EnablePopupIcon()

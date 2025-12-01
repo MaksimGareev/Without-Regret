@@ -14,6 +14,9 @@ public class SaveManager : MonoBehaviour
     private float autoSaveTimer = 0f;
     private bool isSaving = false;
 
+    // Dictionary to store unlock states
+    private Dictionary<string, bool> unlockedItems = new Dictionary<string, bool>();
+
     private void Awake()
     {
         DontDestroyOnLoad(gameObject);
@@ -27,6 +30,21 @@ public class SaveManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
+    }
+
+    public bool IsUnlocked(string itemName)
+    {
+        if (unlockedItems.ContainsKey(itemName))
+            return unlockedItems[itemName];
+        return false;
+    }
+
+    public void SetUnlocked(string itemName, bool unlocked)
+    {
+        if (unlockedItems.ContainsKey(itemName))
+            unlockedItems[itemName] = unlocked;
+        else
+            unlockedItems.Add(itemName, unlocked);
     }
 
     private void OnEnable()

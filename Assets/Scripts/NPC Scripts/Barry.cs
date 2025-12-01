@@ -1,13 +1,7 @@
 using UnityEngine;
-using UnityEngine.AI;
 
-public class Darry : MonoBehaviour
+public class Barry : MonoBehaviour
 {
-    // Movement
-    public NavMeshAgent agent;
-    public Transform target;
-
-    // movemnet after dialogue
     public float Speed = 3f;      // movement speed
     public float RotationSpeed = 3f;    // how fast the NPC rotates
 
@@ -16,11 +10,6 @@ public class Darry : MonoBehaviour
     public bool isTraveling;
     public bool arrived = false;
     public float stopDistance = 0.5f;
-
-    // objectives
-    [SerializeField] ObjectiveData linkedHouseObjective;
-    [SerializeField] ObjectiveData linkedNeighborhoodObjective;
-
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -30,21 +19,21 @@ public class Darry : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!agent.pathPending && agent.remainingDistance < 0.5f && agent != null)
-        {
-            agent.SetDestination(target.position);
-        }
         if (isTraveling)
         {
             TravelToTarget();
         }
+        /*else if (arrived && lookAtTarget != null)
+        {
+            LookAtObject();
+        }*/
     }
 
     public void StartTravel()
     {
         //IsFollowing = false;
         isTraveling = true;
-        Debug.Log("Darry is now traveling to her destination");
+        Debug.Log("Barry is now traveling to her destination");
     }
 
     public void TravelToTarget()
@@ -73,22 +62,6 @@ public class Darry : MonoBehaviour
             isTraveling = false;
             arrived = true;
             Debug.Log("Irene reached the destination.");
-        }
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("door"))
-        {
-            this.gameObject.SetActive(false);
-            ObjectiveManager.Instance.AddProgress(linkedHouseObjective.objectiveID, 1);
-            Debug.Log("Darry has reached the door.");
-        }
-
-        if (other.CompareTag("Finish"))
-        {
-            ObjectiveManager.Instance.AddProgress(linkedNeighborhoodObjective.objectiveID, 1);
-            Debug.Log("Darry has made it to the end.");
         }
     }
 }

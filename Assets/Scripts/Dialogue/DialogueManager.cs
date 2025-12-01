@@ -59,6 +59,8 @@ public class DialogueManager : MonoBehaviour
 
     // NPC references
     private Irene ireneNPC;
+    private Barry barryNPC;
+    private Darry darryNPC;
 
     // Player morality
     private int playerMorality = 0;
@@ -267,6 +269,14 @@ public class DialogueManager : MonoBehaviour
             {
                 ireneNPC.StartTravel();
                 ireneNPC.IsFollowing = false;
+            }
+            else if (barryNPC != null)
+            {
+                barryNPC.StartTravel();
+            }
+            else if (darryNPC != null)
+            {
+                darryNPC.StartTravel();
             }
             EndDialogue();
             yield break;
