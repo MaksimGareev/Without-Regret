@@ -27,4 +27,5 @@ public class WorldObjectState
     public RigidbodyConstraints rbConstraints;
     public bool hasBeenCollected;
     public bool hasBeenLockpicked;
+    public bool isCollectible;
 }

@@ -4,7 +4,6 @@ using UnityEngine;
 public class FloatingTriggerVolume : MonoBehaviour
 {
     [Header("References")]
-    [SerializeField] private GameObject floatPromptUI;
     [SerializeField] private GameObject iconPrefab;
     [SerializeField] private bool shouldShowIcon = true;
     private GameObject popupInstance;
@@ -19,14 +18,8 @@ public class FloatingTriggerVolume : MonoBehaviour
 
   private void Update()
     {
-        if (player != null && !playerFloating.isCoolingDown && !playerFloating.isFloating && floatPromptUI != null)
-        {
-            floatPromptUI.SetActive(true);
-        }
-        else if (floatPromptUI != null)
-        {
-            floatPromptUI.SetActive(false);
-        }
+        if (player == null || playerFloating == null)
+            return;
 
         if (shouldShowIcon && popupInstance != null && !popupInstance.activeSelf && !playerFloating.isFloating && !playerFloating.isCoolingDown)
         {
@@ -45,11 +38,6 @@ public class FloatingTriggerVolume : MonoBehaviour
             player = other.gameObject;
             playerFloating = player.GetComponent<PlayerFloating>();
             playerFloating.SetCanFloat(true);
-
-            if (floatPromptUI != null)
-            {
-                floatPromptUI.SetActive(true);
-            }
         }
     }
 
@@ -60,11 +48,6 @@ public class FloatingTriggerVolume : MonoBehaviour
             playerFloating.SetCanFloat(false);
             player = null;
             playerFloating = null;
-
-            if (floatPromptUI != null)
-            {
-                floatPromptUI.SetActive(false);
-            }
         }
     } 
 }

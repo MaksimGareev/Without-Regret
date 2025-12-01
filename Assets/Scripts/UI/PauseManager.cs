@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 
 public class PauseManager : MonoBehaviour
 {
@@ -48,6 +50,64 @@ public class PauseManager : MonoBehaviour
                 ResumeGame();
             }
         }
+
+        if (Gamepad.current != null && Gamepad.current.bButton.wasPressedThisFrame)
+        {
+            if (settingsPanel.activeSelf)
+            {
+                BackToPauseMenu();
+            }
+        }
+
+        CheckMouseInput();
+        CheckControllerInput();
+    }
+
+    private void CheckMouseInput()
+    {
+        if (Mouse.current == null)
+        {
+            return;
+        }
+
+        Vector2 mouseDelta = Mouse.current.delta.ReadValue();
+        
+        if (mouseDelta.sqrMagnitude > 0.1f)
+        {
+            Cursor.visible = true;
+
+            if (EventSystem.current.currentSelectedGameObject != null)
+            {
+                EventSystem.current.SetSelectedGameObject(null);
+            }
+        }
+    }
+
+    private void CheckControllerInput()
+    {
+        if (Gamepad.current == null)
+        {
+            return;
+        }
+
+        bool controllerMoved = Gamepad.current.leftStick.ReadValue().sqrMagnitude > 0.1f || Gamepad.current.dpad.ReadValue().sqrMagnitude > 0.1f;
+
+        if (controllerMoved)
+        {
+            Cursor.visible = false;
+
+            if (EventSystem.current.currentSelectedGameObject == null)
+            {
+                if (pauseMenuPanel.activeSelf)
+                {
+                    EventSystem.current.SetSelectedGameObject(resumeButton.gameObject);
+                }
+                else if (settingsPanel.activeSelf)
+                {
+                    EventSystem.current.SetSelectedGameObject(settingsPanel.GetComponentInChildren<MMSettings>().resolutionDropdown.gameObject);
+                }
+            }
+        } 
     }
 
     private void PauseGame()
@@ -67,6 +127,8 @@ public class PauseManager : MonoBehaviour
             canvas.enabled = false;
         }
 
+        EventSystem.current.SetSelectedGameObject(resumeButton.gameObject);
+
         Debug.Log("Game Paused");
     }
 
@@ -85,6 +147,8 @@ public class PauseManager : MonoBehaviour
         settingsPanel.SetActive(false);
         pauseMenuPanel.SetActive(true);
         backButton.gameObject.SetActive(false);
+
+        EventSystem.current.SetSelectedGameObject(resumeButton.gameObject);
     }
 
     private void ResumeGame()
@@ -127,6 +191,8 @@ public class PauseManager : MonoBehaviour
         pauseMenuPanel.SetActive(false);
         settingsPanel.SetActive(true);
         backButton.gameObject.SetActive(true);
+
+        EventSystem.current.SetSelectedGameObject(settingsPanel.GetComponentInChildren<MMSettings>().resolutionDropdown.gameObject);
         
         Debug.Log("Opening Settings...");
     }
