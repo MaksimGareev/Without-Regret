@@ -1,4 +1,6 @@
 using UnityEngine;
+using System.Collections;
+using Unity.AI.Navigation;
 
 [RequireComponent(typeof(Rigidbody))]
 public class MoveableObject : MonoBehaviour, IInteractable
@@ -7,12 +9,14 @@ public class MoveableObject : MonoBehaviour, IInteractable
     private PlayerMovingObjects playerMovingObjects; 
     private Transform grabPoint;
     private Rigidbody rb;
-    private bool isGrabbed = false;
+    public bool isGrabbed { get; private set; } = false;
     public bool isGrabbable = true;
     public float interactionPriority => 1;
     [SerializeField] private GameObject iconPrefab;
     public bool shouldShowIcon = true;
     private GameObject popupInstance;
+
+    [SerializeField] private NavMeshSurface navMeshSurface;
 
     private void Awake()
     {
@@ -44,6 +48,24 @@ public class MoveableObject : MonoBehaviour, IInteractable
         }
 
         EnablePopupIcon();
+
+        // Rebuild NavMesh after the object is moved
+        if (navMeshSurface != null)
+        {
+            //navMeshSurface.BuildNavMesh();
+            StartCoroutine(RebuildNavMeshWhenStill());
+        }
+    }
+
+    private IEnumerator RebuildNavMeshWhenStill()
+    {
+        // wait for object to stop moving
+        while (rb.linearVelocity.magnitude > 0.05f || rb.angularVelocity.magnitude > 0.05f)
+        {
+            yield return null;
+        }
+
+        navMeshSurface.BuildNavMesh();
     }
 
     public void EnablePopupIcon()

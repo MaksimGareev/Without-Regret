@@ -19,6 +19,7 @@ public class DialogueTrigger : MonoBehaviour
 
     // objectives the npc is responisble for
     public List<string> objectiveIDYouCareAbout = new List<string>();
+    public ObjectiveData linkedObjective;
 
     private bool playerInRange = false;
     private Transform player;
@@ -139,6 +140,16 @@ public class DialogueTrigger : MonoBehaviour
         if (dialogueManager != null && jsonDialogueFile != null && TalkedAlready == false)
         {
             dialogueManager.StartDialogueFromJson(jsonDialogueFile);
+            
+            // Add Progress to objective if there is one to add to, (Talking to irene completes the "talk to irene" objective)
+            if (ObjectiveManager.Instance != null && linkedObjective != null)
+            {
+                if (ObjectiveManager.Instance.IsObjectiveActive(linkedObjective.objectiveID))
+                {
+                    ObjectiveManager.Instance.AddProgress(linkedObjective.objectiveID, 1);
+                }
+            }
+
             TalkedAlready = true;
         }
         // dialogue if the npc has already been talked to and hasn't started any objectives from the npc
@@ -146,6 +157,8 @@ public class DialogueTrigger : MonoBehaviour
         {
             dialogueManager.StartDialogueFromJson(TalkedJsonDialogueFile);
         }
+
+        
     }
 
     private void OnTriggerEnter(Collider other)
@@ -157,15 +170,6 @@ public class DialogueTrigger : MonoBehaviour
                 dialogueManager.StartDialogueFromJson(jsonDialogueFile);
             }
             TalkedAlready = true;
-        }
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.CompareTag("Player") && TalkedAlready == false)
-        {
-            //TryInteract();
-            //TalkedAlready = true;
         }
     }
 

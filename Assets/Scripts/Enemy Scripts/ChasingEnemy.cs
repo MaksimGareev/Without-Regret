@@ -53,7 +53,7 @@ public class ChasingEnemy : MonoBehaviour
         if (other.CompareTag("protectedNPC"))
         {
             ReachedNPC = true;
-            // Destroy(target);
+            Destroy(target.gameObject);
 
             // Lerp camera over to show enemy reaching NPC
            // cam.transform.position = Vector3.Lerp(transform.position, target.position + offSet, smoothSpeed * Time.deltaTime);
@@ -64,6 +64,10 @@ public class ChasingEnemy : MonoBehaviour
 
             // Freeze all other objects
             // Implement a delayed game over here after camera has showed the enemy and NPC
+            /*if (TimerRingUI.Instance != null)
+            {
+                TimerRingUI.Instance.SubtractRingSection(3);
+            }*/
             Debug.Log("The enemy has reached the NPC");
         }
     }
