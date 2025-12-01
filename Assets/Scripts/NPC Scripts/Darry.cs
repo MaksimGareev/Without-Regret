@@ -20,7 +20,10 @@ public class Darry : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        agent.SetDestination(target.position);
+        if (!agent.pathPending && agent.remainingDistance < 0.5f)
+        {
+            agent.SetDestination(target.position);
+        }
     }
 
     private void OnTriggerEnter(Collider other)

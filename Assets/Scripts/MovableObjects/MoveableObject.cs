@@ -16,7 +16,7 @@ public class MoveableObject : MonoBehaviour, IInteractable
     public bool shouldShowIcon = true;
     private GameObject popupInstance;
 
-    [SerializeField] private NavMeshSurface navMeshSurface;
+   // [SerializeField] private NavMeshSurface navMeshSurface;
 
     private void Awake()
     {
@@ -49,15 +49,15 @@ public class MoveableObject : MonoBehaviour, IInteractable
 
         EnablePopupIcon();
 
-        // Rebuild NavMesh after the object is moved
+       /* // Rebuild NavMesh after the object is moved
         if (navMeshSurface != null)
         {
             //navMeshSurface.BuildNavMesh();
             StartCoroutine(RebuildNavMeshWhenStill());
-        }
+        }*/
     }
 
-    private IEnumerator RebuildNavMeshWhenStill()
+   /* private IEnumerator RebuildNavMeshWhenStill()
     {
         // wait for object to stop moving
         while (rb.linearVelocity.magnitude > 0.05f || rb.angularVelocity.magnitude > 0.05f)
@@ -65,8 +65,8 @@ public class MoveableObject : MonoBehaviour, IInteractable
             yield return null;
         }
 
-        navMeshSurface.BuildNavMesh();
-    }
+       // navMeshSurface.BuildNavMesh();
+    }*/
 
     public void EnablePopupIcon()
     {
