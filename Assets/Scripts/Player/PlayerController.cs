@@ -36,10 +36,13 @@ public class PlayerController : MonoBehaviour, ISaveable
 
     // Input System
     private PlayerControls controls;
+    private Rigidbody rb;
     private Vector2 moveInput;
     private float deadzone = 0.15f;
     private bool cutsceneLocked = false;
     private Vector3 lockedPosition;
+    public bool showDebugLogs = false;
+    private bool resetLocked = false;
 
     private void Awake()
     {
@@ -68,6 +71,8 @@ public class PlayerController : MonoBehaviour, ISaveable
         controls.Player.Sprint.performed += ctx => StartSprinting();
         controls.Player.Sprint.canceled += ctx => StopSprinting();
 
+        rb = GetComponent<Rigidbody>();
+
        // controls.Player.LoadArtScene.performed += ctx => LoadArtScene();
        // controls.Player.LoadMenuScene.performed += ctx => LoadMenuScene();
     }
@@ -77,6 +82,15 @@ public class PlayerController : MonoBehaviour, ISaveable
         float[] position = new float[] { transform.position.x, transform.position.y, transform.position.z };
         float[] rotation = new float[] { transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z };
         data.playerSaveData.SetPlayerTransform(SceneManager.GetActiveScene().name, position, rotation);
+        if (TimerRingUI.Instance != null)
+        {
+            data.playerSaveData.currentRingState = TimerRingUI.Instance.currentRingState;
+        }
+        else
+        {
+            Debug.Log("TimerRingUI.Instance == null! cannot save current ring state");
+        }
+        
     }
 
     public void LoadFrom(SaveData data)
@@ -91,6 +105,16 @@ public class PlayerController : MonoBehaviour, ISaveable
         {
             Debug.LogWarning("No saved transform found for player in scene: " + SceneManager.GetActiveScene().name);
         }
+
+        if (TimerRingUI.Instance != null && data.playerSaveData.currentRingState != TimerRingUI.RingState.Empty)
+        {
+            TimerRingUI.Instance.SetRingState(data.playerSaveData.currentRingState);
+        }
+        else if (TimerRingUI.Instance != null)
+        {
+            TimerRingUI.Instance.SetRingState(TimerRingUI.RingState.Full);
+        }
+        
     }
 
     private void OnEnable() => controls.Enable();
@@ -112,9 +136,9 @@ public class PlayerController : MonoBehaviour, ISaveable
 
         Movement();
 
-        if (moveInput != Vector2.zero)
+        if (moveInput != Vector2.zero && showDebugLogs)
         {
-            //Debug.Log("MOVE INPUT: " + moveInput);
+            Debug.Log("MOVE INPUT: " + moveInput);
         }
     }
 
@@ -124,6 +148,17 @@ public class PlayerController : MonoBehaviour, ISaveable
         {
             Controller.enabled = false;
             transform.position = lockedPosition;
+            return;
+        }
+        else
+        {
+            Controller.enabled = true;
+        }
+
+        if (resetLocked)
+        {
+            Controller.enabled = false;
+            Controller.Move(Vector3.zero);
             return;
         }
         else
@@ -210,7 +245,15 @@ public class PlayerController : MonoBehaviour, ISaveable
 
     public void SetDialogueActive(bool active)
     {
-        Rigidbody rb = GetComponent<Rigidbody>();
+        if (rb == null)
+        {
+            rb = GetComponent<Rigidbody>();
+            if (rb == null)
+            {
+                Debug.LogWarning("Rigidbody component not found on PlayerController.");
+                return;
+            }
+        }
 
         DialogueActive = active;
         if (active == true)
@@ -285,6 +328,34 @@ public class PlayerController : MonoBehaviour, ISaveable
             canSprint = true;
         }
     }
+
+    public void SetResetLock(bool locked)
+    {
+        if (locked)
+        {
+            yVelocity = 0f;
+            moveInput = Vector2.zero;
+            isSprinting = false;
+            canSprint = false;
+        }
+        else
+        {
+            canSprint = true;
+        }
+    }
+
+    public void TeleportTo(Vector3 newPosition, Quaternion newRotation)
+    {
+        Controller.enabled = false;
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector3.zero;
+        }
+        transform.SetPositionAndRotation(newPosition, newRotation);
+        Controller.enabled = true;
+
+    }
+
     private void OnDrawGizmosSelected()
     {
         if (groundCheck != null)
