@@ -31,7 +31,7 @@ public class TimerRingUI : MonoBehaviour
     public static TimerRingUI Instance { get; private set; }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private void Awake()
     {
         SetRingState(RingState.Full);
 

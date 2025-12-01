@@ -82,7 +82,15 @@ public class PlayerController : MonoBehaviour, ISaveable
         float[] position = new float[] { transform.position.x, transform.position.y, transform.position.z };
         float[] rotation = new float[] { transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z };
         data.playerSaveData.SetPlayerTransform(SceneManager.GetActiveScene().name, position, rotation);
-        data.playerSaveData.currentRingState = TimerRingUI.Instance.currentRingState;
+        if (TimerRingUI.Instance != null)
+        {
+            data.playerSaveData.currentRingState = TimerRingUI.Instance.currentRingState;
+        }
+        else
+        {
+            Debug.Log("TimerRingUI.Instance == null! cannot save current ring state");
+        }
+        
     }
 
     public void LoadFrom(SaveData data)
