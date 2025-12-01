@@ -32,7 +32,7 @@ public class Darry : MonoBehaviour
             Debug.Log("Darry has reached the door.");
         }
 
-        if (other.CompareTag("finish"))
+        if (other.CompareTag("Finish"))
         {
             ObjectiveManager.Instance.AddProgress(linkedNeighborhoodObjective.objectiveID, 1);
             Debug.Log("Darry has made it to the end.");
