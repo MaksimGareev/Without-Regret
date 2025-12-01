@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Linq;
 using UnityEngine;
+using Unity.AI.Navigation;
+
 
 public class GapObjective : MonoBehaviour
 {
@@ -11,6 +13,8 @@ public class GapObjective : MonoBehaviour
     private Rigidbody rb;
     private bool didOnce = false;
     public bool needsObjective = false;
+
+    [SerializeField] private NavMeshSurface navMeshSurface;
 
     private void OnEnable()
     {
@@ -97,6 +101,29 @@ public class GapObjective : MonoBehaviour
                 didOnce = true;
 
             }
+
+            // Rebuild NavMesh after the object is moved
+            if (navMeshSurface != null)
+            {
+                //navMeshSurface.BuildNavMesh();
+                StartCoroutine(RebuildNavMeshWhenStill());
+            }
+        }
+    }
+
+    private IEnumerator RebuildNavMeshWhenStill()
+    {
+        // wait for object to stop moving
+        while (rb.linearVelocity.magnitude > 0.05f || rb.angularVelocity.magnitude > 0.05f)
+        {
+            yield return null;
+        }
+
+        navMeshSurface.BuildNavMesh();
+
+        foreach (var link in FindObjectsOfType<NavMeshLink>())
+        {
+            link.UpdateLink();
         }
     }
 
