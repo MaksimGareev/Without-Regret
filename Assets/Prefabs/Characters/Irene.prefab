@@ -227,7 +227,9 @@ MonoBehaviour:
   IsFollowing: 0
   dialogueTrigger: {fileID: 1311592278050812008}
   targetSpot: {fileID: 0}
+  lookAtTarget: {fileID: 0}
   isTraveling: 0
+  arrived: 0
   stopDistance: 0.5
 --- !u!136 &9169940238804770612
 CapsuleCollider:
@@ -272,6 +274,7 @@ MonoBehaviour:
   CompleteJsonDialogueFile: {fileID: 0}
   ActiveJsonDialogueFile: {fileID: 0}
   objectiveIDYouCareAbout: []
+  linkedObjective: {fileID: 11400000, guid: a027b5d7ae55ba341a809f88e56a62f2, type: 2}
   TalkedAlready: 0
   iconPrefab: {fileID: 4114033263953508203, guid: 48024210bf4a4394fa37015b90b3b410, type: 3}
   shouldShowIcon: 1

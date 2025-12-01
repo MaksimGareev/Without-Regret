@@ -29,8 +29,14 @@ public class TODManager : MonoBehaviour
 
     // fog particles that should play only during night
     public ParticleSystem[] nightFogParticles;
+    public ObjectiveData linkedObjective;
 
-    void Start()
+    private void OnEnable()
+    {
+        ObjectiveManager.Instance.OnObjectiveCompleted.AddListener(ListenToObjective);
+    }
+
+  void Start()
     {
         UpdateLighting();
     }
@@ -48,6 +54,13 @@ public class TODManager : MonoBehaviour
             else
                 StartCoroutine(TransitionTo(TOD.Morning, TransitionDuration));
         }
+    }
+
+    private void ListenToObjective(ObjectiveInstance objective)
+    {
+        if (objective.data != linkedObjective) return;
+
+        SetTOD(TOD.Evening);
     }
 
     public void SetTOD(TOD newTime)

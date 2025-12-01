@@ -12,6 +12,7 @@ public class DialogueManager : MonoBehaviour
     public TextMeshProUGUI DialogueText;
     public Transform ChoicesContainer;
     public GameObject ChoiceButton;
+    public GameObject ContinueArrow;
 
     private List<GameObject> spawnedChoices = new List<GameObject>();
     private DialogueData currentDialogue;
@@ -120,6 +121,7 @@ public class DialogueManager : MonoBehaviour
         playerThrowing = player.GetComponent<PlayerThrowing>();
         playerController = player.GetComponent<PlayerController>();
         PopupText.gameObject.SetActive(false);
+        Chime.isInDialogue = true;
 
         if (jsonFile == null)
         {
@@ -149,6 +151,8 @@ public class DialogueManager : MonoBehaviour
 
     private void ShowCurrentLine()
     {
+        ContinueArrow.SetActive(false);
+
         DialogueLine line = currentDialogue.dialogueLines[currentIndex];
 
         if (line.requiredMorality != 0)
@@ -227,8 +231,14 @@ public class DialogueManager : MonoBehaviour
 
         IsTyping = false;
 
-        // Show choices if any
+        // show continue arrow after the line is typed and there are no choices to be selected
         var choices = currentDialogue.dialogueLines[currentIndex].choices;
+        if (choices == null || choices.Count == 0)
+        {
+            ContinueArrow.SetActive(true);
+        }
+
+        // Show choices if any
         if (choices != null && choices.Count > 0)
         {
             SpawnChoices(choices);
@@ -346,6 +356,9 @@ public class DialogueManager : MonoBehaviour
 
     private void OnChoiceSelected(DialogueChoice chosen)
     {
+        // prevent confirm from instantly skipping the next line
+        ConfirmPressed = false;
+
         if (choiceTimerRoutine != null)
         {
             StopCoroutine(choiceTimerRoutine);
@@ -511,6 +524,7 @@ public class DialogueManager : MonoBehaviour
             }
         }
 
+        Chime.isInDialogue = false;
         Debug.Log($"Dialogue ended. Final morality = {playerMorality}");
     }
 

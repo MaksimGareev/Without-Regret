@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using UnityEngine;
 
@@ -7,9 +8,17 @@ public static class SaveSystem
 
     public static void Save(SaveData data)
     {
-        string json = JsonUtility.ToJson(data, true);
-        File.WriteAllText(savePath, json);
-        Debug.Log("Game saved to " + savePath);
+        try
+        {
+            string json = JsonUtility.ToJson(data, true);
+            File.WriteAllText(savePath, json);
+            Debug.Log("Game saved to " + savePath);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError("SaveFailed: " + ex);
+        }
+        
     }
 
     public static SaveData Load()
