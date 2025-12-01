@@ -167,8 +167,6 @@ public class GraveObjectiveSlot : MonoBehaviour
 
     private void MakeGhostTransparent(GameObject ghost, float alpha)
     {
-        
-
         if (ghostInstance != null)
         {
             Renderer[] renderers = ghostInstance.GetComponentsInChildren<Renderer>();
