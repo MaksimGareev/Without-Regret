@@ -30,6 +30,17 @@ public class Darry : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // stop enemy when dialogue is active
+        if (DialogueManager.DialogueIsActive)
+        {
+            agent.isStopped = true;
+            return;
+        }
+        else
+        {
+            agent.isStopped = false;
+        }
+
         if (!agent.pathPending && agent.remainingDistance < 0.5f && agent != null)
         {
             agent.SetDestination(target.position);

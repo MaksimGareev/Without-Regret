@@ -7,10 +7,15 @@ public class ChasingEnemy : MonoBehaviour
 {
     // Movement
     public NavMeshAgent agent;
-    public Transform target;
+    public Transform[] targets;
+    private int currentIndex = 0;
     //private Vector3 StoppingDistance;
     public float PursuitTimer;
     public bool Pursuiting = true;
+
+    // cleaver pickup
+    public GameObject CleaverTrig;
+    public GameObject CleaverProp;
 
     // Camera
     public Camera cam;
@@ -28,12 +33,39 @@ public class ChasingEnemy : MonoBehaviour
     void Start()
     {
         //StoppingDistance = new Vector3(.7f, .7f, .7f);
-
+        if (targets.Length > 0)
+        {
+            agent.SetDestination(targets[currentIndex].position);
+        }
+        else
+        {
+            Debug.LogWarning("No targets assigned to ChasingEnemy!");
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
+        // stop enemy when dialogue is active
+        if (DialogueManager.DialogueIsActive)
+        {
+            agent.isStopped = true;
+            return;
+        }
+        else
+        {
+            agent.isStopped = false;
+        }
+
+        if (Possessed || Distracted || targets.Length == 0)
+            return;
+
+        // If close enough to the target, switch to next
+        if (!agent.pathPending && !ReachedNPC && agent.remainingDistance <= agent.stoppingDistance + 0.3f)
+        {
+            GoToNextTarget();
+        }
+
         /* PursuitTimer -= Time.deltaTime;
         PursuitCooldown();
         if (Possessed == false && Distracted == false)
@@ -45,15 +77,15 @@ public class ChasingEnemy : MonoBehaviour
             }
         }*/
 
-        agent.SetDestination(target.position);
+        //agent.SetDestination(target.position);
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("protectedNPC"))
         {
-            ReachedNPC = true;
-            Destroy(target.gameObject);
+            //ReachedNPC = true;
+            //Destroy(target.gameObject);
 
             // Lerp camera over to show enemy reaching NPC
            // cam.transform.position = Vector3.Lerp(transform.position, target.position + offSet, smoothSpeed * Time.deltaTime);
@@ -70,12 +102,41 @@ public class ChasingEnemy : MonoBehaviour
             }*/
             Debug.Log("The enemy has reached the NPC");
         }
+
+        if (other.name ==("CleaverTrig"))
+        {
+            CleaverTrig.SetActive(false);
+            CleaverProp.SetActive(true);
+        }
     }
 
-   /* IEnumerator PursuitCooldown()
+    void GoToNextTarget()
     {
-        yield return new WaitForSeconds(PursuitTimer);
-        //SprintTimer = SprintDuration;
-        Pursuiting = true;
-    }*/
+        ReachedNPC = false;
+
+        // Destroy NPCs or objects if needed
+        if (targets[currentIndex] != null && targets[currentIndex].CompareTag("protectedNPC"))
+        {
+            Debug.Log("Enemy reached NPC!");
+            Destroy(targets[currentIndex].gameObject, 0.1f);
+        }
+
+        // Move to next waypoint
+        currentIndex++;
+
+        if (currentIndex >= targets.Length)
+        {
+            Debug.Log("Enemy reached final target!");
+            return; // Stop here, no more targets
+        }
+
+        agent.SetDestination(targets[currentIndex].position);
+    }
+
+    /* IEnumerator PursuitCooldown()
+     {
+         yield return new WaitForSeconds(PursuitTimer);
+         //SprintTimer = SprintDuration;
+         Pursuiting = true;
+     }*/
 }
