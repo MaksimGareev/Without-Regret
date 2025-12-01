@@ -14,7 +14,7 @@ public class Journal : MonoBehaviour
 
     [Header("Tabs")]
     [SerializeField] private Button objectivesTab;
-    [SerializeField] private Button charactersTab;
+    // [SerializeField] private Button charactersTab;
 
     [Header("Objectives")]
     [SerializeField] private GameObject objectivesPage;
@@ -25,8 +25,8 @@ public class Journal : MonoBehaviour
     [SerializeField] private Color highlightedColor = Color.yellow;
     [SerializeField] private Color originalColor = Color.white;
 
-    [Header("Characters")]
-    [SerializeField] private GameObject charactersPage;
+    //[Header("Characters")]
+    //[SerializeField] private GameObject charactersPage;
 
     [Header("Canvases")]
     [SerializeField] private Canvas[] canvasesToDisable;
@@ -60,7 +60,7 @@ public class Journal : MonoBehaviour
         }
 
         objectivesTab.onClick.AddListener(() => OpenObjectivesPage());
-        charactersTab.onClick.AddListener(() => OpenCharactersPage());
+        // charactersTab.onClick.AddListener(() => OpenCharactersPage());
     }
 
     private void ToggleJournalUI()
@@ -91,14 +91,14 @@ public class Journal : MonoBehaviour
     private void OpenObjectivesPage()
     {
         objectivesPage.SetActive(true);
-        charactersPage.SetActive(false);
+        //charactersPage.SetActive(false);
         RefreshObjectives();
         OnObjectiveSelect(0);
     }
 
     private void OpenCharactersPage()
     {
-        charactersPage.SetActive(true);
+        //charactersPage.SetActive(true);
         objectivesPage.SetActive(false);
     }
 
