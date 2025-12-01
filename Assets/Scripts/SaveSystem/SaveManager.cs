@@ -12,6 +12,7 @@ public class SaveManager : MonoBehaviour
     public bool shouldAutoSave = true;
     private float autoSaveInterval = 300f; // Auto-save every 5 minutes
     private float autoSaveTimer = 0f;
+    private bool isSaving = false;
 
     private void Awake()
     {
@@ -56,11 +57,16 @@ public class SaveManager : MonoBehaviour
     public void ClearSaveData()
     {
         SaveSystem.DeleteSave();
+        if (ObjectiveManager.Instance != null)
+        {
+            ObjectiveManager.Instance.ClearObjectivesOnDelete();
+        }
         Debug.Log("All save data cleared.");
     }
 
     private void RefreshSaveables()
     {
+        //var keep = new List<ISaveable>(saveables);
         saveables.Clear();
         saveables.AddRange(persistentSaveables);
 
@@ -164,6 +170,9 @@ public class SaveManager : MonoBehaviour
 
     public void SaveGame()
     {
+        if (isSaving) return;
+        isSaving = true;
+
         SaveData data = SaveSystem.Load() ?? new SaveData();
 
         data.lastSceneName = SceneManager.GetActiveScene().name;
@@ -182,6 +191,7 @@ public class SaveManager : MonoBehaviour
         Debug.Log($"[SaveManager.SaveGame] objectiveSaveData.objectives.Count = {objCount}");
 
         SaveSystem.Save(data);
+        isSaving = false;
     }
 
     public void LoadGame()
