@@ -18,7 +18,7 @@ public class TransitionToNewLevel : MonoBehaviour
     {
         if (ObjectiveManager.Instance == null || linkedObjective == null) return;
 
-        isObjectiveActive = ObjectiveManager.Instance.IsObjectiveCompleted(linkedObjective.objectiveID);
+        //isObjectiveActive = ObjectiveManager.Instance.IsObjectiveCompleted(linkedObjective.objectiveID);
     }
 
     private void SetObjectiveActive(ObjectiveInstance objective)
@@ -48,7 +48,7 @@ public class TransitionToNewLevel : MonoBehaviour
             {
                 if (obj.data == linkedObjective)
                 {
-                    obj.AddProgress(1);
+                    ObjectiveManager.Instance.AddProgress(linkedObjective.objectiveID, 1);
                     StartCoroutine(WaitToLoadScene());
                     return;
                 }
