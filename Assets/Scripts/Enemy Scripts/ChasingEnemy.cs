@@ -25,6 +25,8 @@ public class ChasingEnemy : MonoBehaviour
     // Check if enemy reached NPC
     public bool ReachedNPC = false;
 
+    private Transform currentTarget;
+
     // Check if the enemy is possessed or distracted
     public bool Possessed = false;
     public bool Distracted = false;
@@ -39,10 +41,13 @@ public class ChasingEnemy : MonoBehaviour
         //StoppingDistance = new Vector3(.7f, .7f, .7f);
         if (targets.Length > 0)
         {
+            currentIndex = 0;
+            currentTarget = targets[currentIndex];
             agent.SetDestination(targets[currentIndex].position);
         }
         else
         {
+            currentTarget = null;
             Debug.LogWarning("No targets assigned to ChasingEnemy!");
         }
     }
@@ -128,10 +133,10 @@ public class ChasingEnemy : MonoBehaviour
 
             // Freeze all other objects
             // Implement a delayed game over here after camera has showed the enemy and NPC
-            /*if (TimerRingUI.Instance != null)
+            if (TimerRingUI.Instance != null)
             {
                 TimerRingUI.Instance.SubtractRingSection(3);
-            }*/
+            }
             Debug.Log("The enemy has reached the NPC");
         }
 
@@ -159,12 +164,15 @@ public class ChasingEnemy : MonoBehaviour
         if (currentIndex >= targets.Length)
         {
             Debug.Log("Enemy reached final target!");
+            currentTarget = null;       // <--- set to null when no more targets
+            agent.isStopped = true;     // stop the NavMeshAgent
             return; // Stop here, no more targets
         }
 
-        if (targets[currentIndex] != null)
+        currentTarget = targets[currentIndex];
+        if (currentTarget != null)
         {
-          agent.SetDestination(targets[currentIndex].position);
+            agent.SetDestination(currentTarget.position);
         }
     }
 

@@ -183,7 +183,13 @@ public class DialogueTrigger : MonoBehaviour
             }
         }
 
-        
+        // **Activate the enemy when dialogue is triggered**
+        if (enemy != null)
+        {
+            enemy.SetActive(true);
+            Debug.Log($"{enemy.name} activated by {NPCName}");
+        }
+
     }
 
     private void OnTriggerEnter(Collider other)
@@ -195,10 +201,10 @@ public class DialogueTrigger : MonoBehaviour
                 dialogueManager.StartDialogueFromJson(jsonDialogueFile);
             }
             TalkedAlready = true;
-            if (this.CompareTag("Spawner") && enemy != null)
+           /* if (this.CompareTag("Spawner") && enemy != null)
             {
                 enemy.SetActive(true);
-            }
+            }*/
         }
     }
 
