@@ -30,6 +30,8 @@ public class DialogueTrigger : MonoBehaviour
     public bool shouldShowIcon = true;
     private GameObject popupInstance;
 
+    public GameObject enemy;
+
     private void Awake()
     {
         controls = new PlayerControls();
@@ -51,6 +53,8 @@ public class DialogueTrigger : MonoBehaviour
 
         if (promptUI != null)
             promptUI.SetActive(false);
+
+        enemy.SetActive(false);
     }
 
     // Update is called once per frame
@@ -191,6 +195,10 @@ public class DialogueTrigger : MonoBehaviour
                 dialogueManager.StartDialogueFromJson(jsonDialogueFile);
             }
             TalkedAlready = true;
+            if (this.CompareTag("Spawner") && enemy != null)
+            {
+                enemy.SetActive(true);
+            }
         }
     }
 
