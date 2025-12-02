@@ -99,6 +99,7 @@ public class Irene : MonoBehaviour
         {
             isTraveling = false;
             arrived = true;
+            dialogueTrigger.enabled = true; // enable dialogue trigger upon arrival
             Debug.Log("Irene reached the destination.");
         }
     }

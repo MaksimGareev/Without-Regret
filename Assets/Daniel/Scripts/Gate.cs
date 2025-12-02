@@ -26,7 +26,7 @@ public class Gate : MonoBehaviour
     {
         if (ObjectiveManager.Instance == null || linkedObjective == null || isObjectiveActive) return;
 
-        isObjectiveActive = ObjectiveManager.Instance.IsObjectiveCompleted(linkedObjective.objectiveID);
+        //isObjectiveActive = ObjectiveManager.Instance.IsObjectiveCompleted(linkedObjective.objectiveID);
     }
 
     private void SetObjectiveComplete(ObjectiveInstance objective)
