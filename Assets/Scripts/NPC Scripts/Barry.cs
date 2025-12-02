@@ -32,11 +32,19 @@ public class Barry : MonoBehaviour
         }*/
     }
 
-    public void StartTravel()
+    public void StartTravel(Transform destination)
     {
-        //IsFollowing = false;
+        if (destination == null)
+        {
+            Debug.LogError($"{npcName} cannot travel — no target assigned!");
+            return;
+        }
+
+        targetSpot = destination;
         isTraveling = true;
-        Debug.Log("Barry is now traveling to her destination");
+        arrived = false;
+
+        Debug.Log($"{npcName} is now traveling toward: {targetSpot.name}");
     }
 
     public void TravelToTarget()
@@ -64,7 +72,7 @@ public class Barry : MonoBehaviour
         {
             isTraveling = false;
             arrived = true;
-            Debug.Log("Irene reached the destination.");
+            Debug.Log("Barry reached the destination.");
         }
     }
 
@@ -78,7 +86,7 @@ public class Barry : MonoBehaviour
         }
     }
 
-    public bool NPCNameMatches(string name)
+   public bool NPCNameMatches(string name)
     {
         return string.Equals(npcName, name, System.StringComparison.OrdinalIgnoreCase);
     }
