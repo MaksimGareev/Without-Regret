@@ -1,7 +1,9 @@
 using UnityEngine;
+using UnityEngine.AI;
 
-public class Barry : MonoBehaviour
+public class DarryNeighborhood : MonoBehaviour
 {
+    // movemnet after dialogue
     public float Speed = 3f;      // movement speed
     public float RotationSpeed = 3f;    // how fast the NPC rotates
 
@@ -11,12 +13,16 @@ public class Barry : MonoBehaviour
     public bool arrived = false;
     public float stopDistance = 0.5f;
 
-    public string npcName = "Barry";
+    public string npcName = "Darry";
+
+    // objectives
+    [SerializeField] ObjectiveData linkedHouseObjective;
+    [SerializeField] ObjectiveData linkedNeighborhoodObjective;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
@@ -26,10 +32,6 @@ public class Barry : MonoBehaviour
         {
             TravelToTarget();
         }
-        /*else if (arrived && lookAtTarget != null)
-        {
-            LookAtObject();
-        }*/
     }
 
     public void StartTravel(Transform destination)
@@ -72,7 +74,7 @@ public class Barry : MonoBehaviour
         {
             isTraveling = false;
             arrived = true;
-            Debug.Log("Barry reached the destination.");
+            Debug.Log("Irene reached the destination.");
         }
     }
 
@@ -84,10 +86,11 @@ public class Barry : MonoBehaviour
             //ObjectiveManager.Instance.AddProgress(linkedHouseObjective.objectiveID, 1);
             Debug.Log("Darry has reached the door.");
         }
-    }
 
-   public bool NPCNameMatches(string name)
-    {
-        return string.Equals(npcName, name, System.StringComparison.OrdinalIgnoreCase);
+        if (other.CompareTag("Finish"))
+        {
+            ObjectiveManager.Instance.AddProgress(linkedNeighborhoodObjective.objectiveID, 1);
+            Debug.Log("Darry has made it to the end.");
+        }
     }
 }
