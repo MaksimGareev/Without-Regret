@@ -4437,7 +4437,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 16a217fec0209484e99537fe962f8b81, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8449996119470504636, guid: 16a217fec0209484e99537fe962f8b81, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
@@ -6178,7 +6178,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 27aa5101c0be3264a802b13e729c3c55, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 102.54
+      value: 102.74
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 27aa5101c0be3264a802b13e729c3c55, type: 3}
       propertyPath: m_LocalRotation.w
@@ -6495,7 +6495,7 @@ MonoBehaviour:
   m_OverrideTileSize: 0
   m_TileSize: 256
   m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.16666667
+  m_VoxelSize: 0.13333334
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: f75056739f283b043819b27c0c4c2781, type: 2}
   m_BuildHeightMesh: 0
@@ -8062,7 +8062,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8861858840841155401, guid: 40edbfae2e8ad844c8d54ff8c5e8a3fd, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -16
+      value: -16.000061
       objectReference: {fileID: 0}
     - target: {fileID: 8861858840841155401, guid: 40edbfae2e8ad844c8d54ff8c5e8a3fd, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -10092,7 +10092,7 @@ MonoBehaviour:
   m_OverrideTileSize: 0
   m_TileSize: 256
   m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.16666667
+  m_VoxelSize: 0.13333334
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: 2ffc83a05fa1fbb4d83246d66dd31c82, type: 2}
   m_BuildHeightMesh: 0
@@ -19158,8 +19158,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 18.693857, y: 12.584406, z: 9.290163}
-  m_Center: {x: -0.35546008, y: -0.71560866, z: -0.00007365088}
+  m_Size: {x: 24.533342, y: 16.581968, z: 9.290163}
+  m_Center: {x: -3.2751918, y: 1.2831733, z: -0.00007361766}
 --- !u!43 &1289200469
 Mesh:
   m_ObjectHideFlags: 0
@@ -24817,7 +24817,7 @@ PrefabInstance:
       objectReference: {fileID: 1311844012}
     - target: {fileID: 3378418996727256961, guid: 558083b16e4ca884ea05b07a66ae7af2, type: 3}
       propertyPath: sceneToLoad
-      value: 
+      value: NeighborhoodAstralPostDarry
       objectReference: {fileID: 0}
     - target: {fileID: 3378418996727256961, guid: 558083b16e4ca884ea05b07a66ae7af2, type: 3}
       propertyPath: interactDistance
@@ -28652,7 +28652,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ChasingEnemy
   agent: {fileID: 1958979920}
   targets:
-  - {fileID: 1337069508}
   - {fileID: 1281538749}
   - {fileID: 2026794752118917812}
   PursuitTimer: 0
@@ -28665,6 +28664,7 @@ MonoBehaviour:
   ReachedNPC: 0
   Possessed: 0
   Distracted: 0
+  updateRate: 0.2
 --- !u!195 &1958979920
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -28675,7 +28675,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 3.5
+  m_Speed: 2.5
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
@@ -28734,9 +28734,9 @@ CapsuleCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.5
-  m_Height: 1
+  m_Height: 2.102076
   m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: 0.5510393, z: 0}
 --- !u!4 &1958979923 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 16a217fec0209484e99537fe962f8b81, type: 3}
@@ -28777,6 +28777,11 @@ Transform:
   - {fileID: 673449207}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!223 &1982080980 stripped
+Canvas:
+  m_CorrespondingSourceObject: {fileID: 1683686441785081775, guid: 060d1994ce174a34196d13cf86d99581, type: 3}
+  m_PrefabInstance: {fileID: 111191503}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1996365495 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 20cc4a866a6c80548b0be708f726e55f, type: 3}
@@ -30339,6 +30344,10 @@ PrefabInstance:
       propertyPath: 'otherCanvasesToDisable.Array.data[3]'
       value: 
       objectReference: {fileID: 956868088}
+    - target: {fileID: 6179802923954327900, guid: c50eebd51b12a4f41a36b29847a91489, type: 3}
+      propertyPath: 'otherCanvasesToDisable.Array.data[4]'
+      value: 
+      objectReference: {fileID: 1982080980}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -30962,6 +30971,7 @@ GameObject:
   - component: {fileID: 3138802798869841172}
   - component: {fileID: 3138802798869841171}
   - component: {fileID: 3138802798869841170}
+  - component: {fileID: 3138802798869841173}
   m_Layer: 0
   m_Name: Darry
   m_TagString: protectedNPC
@@ -31002,7 +31012,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 24.372805
-  m_Speed: 3.5
+  m_Speed: 2.5
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
@@ -31060,6 +31070,33 @@ MonoBehaviour:
   stopDistance: 0.5
   linkedHouseObjective: {fileID: 0}
   linkedNeighborhoodObjective: {fileID: 0}
+--- !u!54 &3138802798869841173
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1687530146369425422}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
