@@ -52,12 +52,11 @@ public class Door : MonoBehaviour
     {
         if (needsObjective)
         {
-            var activeObjectives = ObjectiveManager.Instance.GetActiveObjectives();
-            foreach (var obj in activeObjectives)
+            var completeObjectives = ObjectiveManager.Instance.GetCompletedObjectives();
+            foreach (var obj in completeObjectives)
             {
                 if (obj.data == linkedObjective)
                 {
-                    obj.AddProgress(1);
                     StartCoroutine(WaitToLoadScene());
                     return;
                 }
