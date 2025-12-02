@@ -31,20 +31,11 @@ public class Barry : MonoBehaviour
             LookAtObject();
         }*/
     }
-
-    public void StartTravel(Transform destination)
+    public void StartTravel()
     {
-        if (destination == null)
-        {
-            Debug.LogError($"{npcName} cannot travel — no target assigned!");
-            return;
-        }
-
-        targetSpot = destination;
+        //IsFollowing = false;
         isTraveling = true;
-        arrived = false;
-
-        Debug.Log($"{npcName} is now traveling toward: {targetSpot.name}");
+        Debug.Log("Irene is now traveling to her destination");
     }
 
     public void TravelToTarget()

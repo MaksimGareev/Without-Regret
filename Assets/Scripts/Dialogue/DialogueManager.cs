@@ -290,7 +290,7 @@ public class DialogueManager : MonoBehaviour
             {
                 if (barryDestinationTransform != null)
                 {
-                    barryNPC.StartTravel(barryDestinationTransform);
+                    barryNPC.StartTravel();
                 }
                 else
                 {
