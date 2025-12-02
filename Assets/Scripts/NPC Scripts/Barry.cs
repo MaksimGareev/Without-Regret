@@ -10,6 +10,9 @@ public class Barry : MonoBehaviour
     public bool isTraveling;
     public bool arrived = false;
     public float stopDistance = 0.5f;
+
+    public string npcName = "Barry";
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -63,5 +66,20 @@ public class Barry : MonoBehaviour
             arrived = true;
             Debug.Log("Irene reached the destination.");
         }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("door"))
+        {
+            this.gameObject.SetActive(false);
+            //ObjectiveManager.Instance.AddProgress(linkedHouseObjective.objectiveID, 1);
+            Debug.Log("Darry has reached the door.");
+        }
+    }
+
+    public bool NPCNameMatches(string name)
+    {
+        return string.Equals(npcName, name, System.StringComparison.OrdinalIgnoreCase);
     }
 }
