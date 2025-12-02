@@ -62,7 +62,10 @@ public class DialogueManager : MonoBehaviour
     // NPC references
     private Irene ireneNPC;
     private Barry barryNPC;
-    private Darry darryNPC;
+    private DarryNeighborhood darryNPC;
+
+    public Transform barryDestinationTransform;
+    public Transform darryDestinationTransform;
 
     public static bool DialogueIsActive = false;
 
@@ -123,12 +126,19 @@ public class DialogueManager : MonoBehaviour
         DialogueIsActive = true;
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         ireneNPC = FindObjectOfType<Irene>();
+        barryNPC = FindObjectOfType<Barry>();
+        darryNPC = FindObjectOfType<DarryNeighborhood>();
         playerTransform = player.transform;
         playerFloating = player.GetComponent<PlayerFloating>();
         playerThrowing = player.GetComponent<PlayerThrowing>();
         playerController = player.GetComponent<PlayerController>();
         PopupText.gameObject.SetActive(false);
         Chime.isInDialogue = true;
+
+        if (darryNPC == null)
+        {
+            Debug.LogWarning("DarryNeighborhood NPC not found in the scene!");
+        }
 
         if (jsonFile == null)
         {
@@ -275,13 +285,34 @@ public class DialogueManager : MonoBehaviour
                 ireneNPC.StartTravel();
                 ireneNPC.IsFollowing = false;
             }
-            else if (barryNPC != null)
+            // Move Barry if assigned
+            if (barryNPC != null)
             {
-                barryNPC.StartTravel();
+                if (barryDestinationTransform != null)
+                {
+                    barryNPC.StartTravel(barryDestinationTransform);
+                }
+                else
+                {
+                    Debug.LogWarning("barryDestinationTransform not assigned!");
+                }
             }
-            else if (darryNPC != null)
+            // Move DarryNeighborhood
+            if (darryNPC != null)
             {
-                darryNPC.StartTravel();
+                if (darryDestinationTransform != null)
+                {
+                    Debug.Log("Starting Darry travel...");
+                    darryNPC.StartTravel(darryDestinationTransform);
+                }
+                else
+                {
+                    Debug.LogWarning("darryDestinationTransform not assigned!");
+                }
+            }
+            else
+            {
+                Debug.LogWarning("Darry NPC not found in scene!");
             }
             EndDialogue();
             yield break;
