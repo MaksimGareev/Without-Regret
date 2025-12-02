@@ -92,7 +92,7 @@ public class Darry : MonoBehaviour
         if (other.CompareTag("door"))
         {
             this.gameObject.SetActive(false);
-            ObjectiveManager.Instance.AddProgress(linkedHouseObjective.objectiveID, 1);
+            //ObjectiveManager.Instance.AddProgress(linkedHouseObjective.objectiveID, 1);
             Debug.Log("Darry has reached the door.");
         }
 

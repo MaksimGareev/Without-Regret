@@ -35,6 +35,8 @@ public class DialogueManager : MonoBehaviour
     private bool MoveUpPressed;
     private bool MoveDownPressed;
     private bool ConfirmPressed;
+    private float inputCooldown = 0.2f;
+    private float lastInputTime = 0f;
 
     // Selection
     private int SelectedChoiceIndex = 0;
@@ -337,20 +339,22 @@ public class DialogueManager : MonoBehaviour
     {
         if (!CanChoose || spawnedChoices.Count == 0) return;
 
-        if (MoveUpPressed)
+        if (Time.time - lastInputTime >= inputCooldown)
         {
-            SelectedChoiceIndex = (SelectedChoiceIndex - 1 + spawnedChoices.Count) % spawnedChoices.Count;
-            UpdateChoiceHighlight();
-            MoveUpPressed = false;
-        }
+            if (MoveUpPressed)
+            {
+                SelectedChoiceIndex = (SelectedChoiceIndex - 1 + spawnedChoices.Count) % spawnedChoices.Count;
+                UpdateChoiceHighlight();
+                MoveUpPressed = false;
+            }
 
-        if (MoveDownPressed)
-        {
-            SelectedChoiceIndex = (SelectedChoiceIndex + 1) % spawnedChoices.Count;
-            UpdateChoiceHighlight();
-            MoveDownPressed = false;
+            if (MoveDownPressed)
+            {
+                SelectedChoiceIndex = (SelectedChoiceIndex + 1) % spawnedChoices.Count;
+                UpdateChoiceHighlight();
+                MoveDownPressed = false;
+            }
         }
-
         if (ConfirmPressed)
         {
             OnChoiceSelected(currentDialogue.dialogueLines[currentIndex].choices[SelectedChoiceIndex]);

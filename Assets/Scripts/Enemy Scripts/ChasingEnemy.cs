@@ -29,6 +29,10 @@ public class ChasingEnemy : MonoBehaviour
     public bool Possessed = false;
     public bool Distracted = false;
 
+    // How often to update NavMeshAgent destination (seconds)
+    public float updateRate = 0.2f;
+    private float updateTimer = 0f;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -60,11 +64,35 @@ public class ChasingEnemy : MonoBehaviour
         if (Possessed || Distracted || targets.Length == 0)
             return;
 
+        // Update agent destination periodically
+        updateTimer -= Time.deltaTime;
+        if (updateTimer <= 0f)
+        {
+            if (targets[currentIndex] != null)
+            {
+                agent.SetDestination(targets[currentIndex].position);
+            }
+            updateTimer = updateRate;
+        }
+
+
+        // Correct "reached target" detection
+        if (!agent.pathPending)
+        {
+            if (agent.remainingDistance != Mathf.Infinity &&
+                agent.remainingDistance <= agent.stoppingDistance &&
+                agent.velocity.sqrMagnitude < 0.1f)
+            {
+                GoToNextTarget();
+            }
+        }
+        /*
         // If close enough to the target, switch to next
-        if (!agent.pathPending && !ReachedNPC && agent.remainingDistance <= agent.stoppingDistance + 0.3f)
+        float distanceToTarget = Vector3.Distance(transform.position, targets[currentIndex].position);
+        if (!agent.pathPending && distanceToTarget <= agent.stoppingDistance + 0.1f)
         {
             GoToNextTarget();
-        }
+        }*/
 
         /* PursuitTimer -= Time.deltaTime;
         PursuitCooldown();
@@ -82,8 +110,12 @@ public class ChasingEnemy : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("protectedNPC"))
+        if (other.CompareTag("Darry"))
         {
+            if (TimerRingUI.Instance != null)
+            {
+                TimerRingUI.Instance.SubtractRingSection(3);
+            }
             //ReachedNPC = true;
             //Destroy(target.gameObject);
 
@@ -112,14 +144,14 @@ public class ChasingEnemy : MonoBehaviour
 
     void GoToNextTarget()
     {
-        ReachedNPC = false;
+       // ReachedNPC = false;
 
-        // Destroy NPCs or objects if needed
-        if (targets[currentIndex] != null && targets[currentIndex].CompareTag("protectedNPC"))
+      /*  // Destroy NPCs or objects if needed
+        if (targets[currentIndex] != null && targets[currentIndex].CompareTag("protectedNPC") || targets[currentIndex].CompareTag("Darry"))
         {
             Debug.Log("Enemy reached NPC!");
             Destroy(targets[currentIndex].gameObject, 0.1f);
-        }
+        }*/
 
         // Move to next waypoint
         currentIndex++;
@@ -130,7 +162,10 @@ public class ChasingEnemy : MonoBehaviour
             return; // Stop here, no more targets
         }
 
-        agent.SetDestination(targets[currentIndex].position);
+        if (targets[currentIndex] != null)
+        {
+          agent.SetDestination(targets[currentIndex].position);
+        }
     }
 
     /* IEnumerator PursuitCooldown()
