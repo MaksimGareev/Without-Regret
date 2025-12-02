@@ -24,6 +24,8 @@ public class LockedItem : MonoBehaviour
     public GameObject iconPrefab;
     public bool shouldShowIcon = true;
     private GameObject popupInstance;
+    public ObjectiveData linkedObjective;
+    public bool needsObjective = true;
 
     // Start is called before the first frame update
     void Awake()
@@ -177,6 +179,26 @@ public class LockedItem : MonoBehaviour
         {
             SaveManager.Instance.SetUnlocked(gameObject.name, true);
             SaveManager.Instance.SaveGame();
+        }
+
+        if (needsObjective && linkedObjective != null && ObjectiveManager.Instance != null)
+        {
+            bool objectiveActive = false;
+
+            var activeObjectives = ObjectiveManager.Instance.GetActiveObjectives();
+            foreach (var obj in activeObjectives)
+            {
+                if (obj.data == linkedObjective)
+                {
+                    objectiveActive = true;
+                    break;
+                }
+            }
+
+            if (objectiveActive)
+            {
+                ObjectiveManager.Instance.AddProgress(linkedObjective.objectiveID, 1);
+            }
         }
     }
 
