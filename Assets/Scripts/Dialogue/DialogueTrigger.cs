@@ -120,6 +120,15 @@ public class DialogueTrigger : MonoBehaviour
         if (allCompleted && CompleteJsonDialogueFile != null && TalkedAlready == true)
         {
             dialogueManager.StartDialogueFromJson(CompleteJsonDialogueFile);
+
+            if (ObjectiveManager.Instance != null && linkedObjective != null)
+            {
+                if (ObjectiveManager.Instance.IsObjectiveActive(linkedObjective.objectiveID))
+                {
+                    ObjectiveManager.Instance.AddProgress(linkedObjective.objectiveID, 1);
+                }
+            }
+            
             return;
         }
 
@@ -160,6 +169,14 @@ public class DialogueTrigger : MonoBehaviour
         else if (TalkedAlready == true)
         {
             dialogueManager.StartDialogueFromJson(TalkedJsonDialogueFile);
+
+            if (ObjectiveManager.Instance != null && linkedObjective != null)
+            {
+                if (ObjectiveManager.Instance.IsObjectiveActive(linkedObjective.objectiveID))
+                {
+                    ObjectiveManager.Instance.AddProgress(linkedObjective.objectiveID, 1);
+                }
+            }
         }
 
         
