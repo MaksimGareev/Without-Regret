@@ -25,7 +25,8 @@ public class ObjectiveTriggerVolume : MonoBehaviour
             {
                 if (obj.data == linkedObjective)
                 {
-                    obj.AddProgress(1);
+                    ObjectiveManager.Instance.AddProgress(linkedObjective.objectiveID, 1);
+                    break;
                 }
             }
         }
