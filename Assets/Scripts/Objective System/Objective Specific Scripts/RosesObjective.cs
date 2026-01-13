@@ -4,15 +4,34 @@ public class RosesObjective : MonoBehaviour
 {
     [SerializeField] private ObjectiveData linkedObjective;
     [SerializeField] private ItemData linkedItem;
+    private bool itemsEnabled = false;
 
     private void OnEnable()
     {
         Inventory.OnItemAdded += CheckForRose;
+        ObjectiveManager.Instance.OnObjectiveActivated.AddListener(EnableRoses);
     }
 
     private void OnDisable()
     {
         Inventory.OnItemAdded -= CheckForRose;
+    }
+
+    private void EnableRoses(ObjectiveInstance objective)
+    {
+        if (itemsEnabled || objective.data != linkedObjective) return;
+
+        WorldItem[] items = FindObjectsByType<WorldItem>(FindObjectsSortMode.None);
+
+        foreach (WorldItem item in items)
+        {
+            if (item.ItemData.ItemType == linkedItem.ItemType && item.ItemData.ItemName == linkedItem.ItemName)
+            {
+                item.isCollectible = true;
+            }
+        }
+
+        itemsEnabled = true;
     }
 
     private void CheckForRose(ItemData item)

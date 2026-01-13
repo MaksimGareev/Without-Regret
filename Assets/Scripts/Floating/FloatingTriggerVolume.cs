@@ -4,8 +4,8 @@ using UnityEngine;
 public class FloatingTriggerVolume : MonoBehaviour
 {
     [Header("References")]
-    [SerializeField] private GameObject floatPromptUI;
     [SerializeField] private GameObject iconPrefab;
+    [SerializeField] private Vector3 iconOffset = new Vector3(0f, 2f, 0f);
     [SerializeField] private bool shouldShowIcon = true;
     private GameObject popupInstance;
 
@@ -14,27 +14,43 @@ public class FloatingTriggerVolume : MonoBehaviour
 
     private void Start()
     {
-        popupInstance = PopupManager.Instance.CreatePopup(this.transform, iconPrefab).gameObject;
+        player = GameObject.FindGameObjectWithTag("Player");
+
+        if (player != null)
+        {
+            playerFloating = player.GetComponent<PlayerFloating>();
+        }
     }
 
   private void Update()
     {
-        if (player != null && !playerFloating.isCoolingDown && !playerFloating.isFloating)
+        if (shouldShowIcon && popupInstance == null && !playerFloating.isFloating && !playerFloating.isCoolingDown)
         {
-            floatPromptUI.SetActive(true);
+            EnablePopupIcon();
         }
-        else
+        else if (!shouldShowIcon && popupInstance != null)
         {
-            floatPromptUI.SetActive(false);
+            DisablePopupIcon();
         }
+    }
 
-        if (shouldShowIcon && popupInstance != null && !popupInstance.activeSelf)
+    public void EnablePopupIcon()
+    {
+        if (popupInstance == null && iconPrefab != null && PopupManager.Instance != null)
         {
-            popupInstance.SetActive(true);
+            popupInstance = PopupManager.Instance.CreatePopup(this.transform, iconPrefab).gameObject;
+            gameObject.GetComponent<WorldPopup>().worldOffset = iconOffset;
+            shouldShowIcon = true;
         }
-        else if (!shouldShowIcon && popupInstance != null && popupInstance.activeSelf)
+    }
+
+    public void DisablePopupIcon()
+    {
+        if (popupInstance != null)
         {
-            popupInstance.SetActive(false);
+            Destroy(popupInstance);
+            popupInstance = null;
+            shouldShowIcon = false;
         }
     }
 
@@ -45,11 +61,6 @@ public class FloatingTriggerVolume : MonoBehaviour
             player = other.gameObject;
             playerFloating = player.GetComponent<PlayerFloating>();
             playerFloating.SetCanFloat(true);
-
-            if (floatPromptUI != null)
-            {
-                floatPromptUI.SetActive(true);
-            }
         }
     }
 
@@ -60,11 +71,6 @@ public class FloatingTriggerVolume : MonoBehaviour
             playerFloating.SetCanFloat(false);
             player = null;
             playerFloating = null;
-
-            if (floatPromptUI != null)
-            {
-                floatPromptUI.SetActive(false);
-            }
         }
     } 
 }
