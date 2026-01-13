@@ -29,7 +29,7 @@ public class CameraMovement : MonoBehaviour
     [SerializeField] private float translateSpeed = 5f;
     [SerializeField] private float translateLimit = 4f;
     [SerializeField] private float returnSpeed = 4f;
-    [SerializeField] private float mouseResetTime = 3f; 
+    [SerializeField] private float mouseResetTime = 3f;
 
     [Header("Focus Movement Settings")]
     public Vector3 pickupOffset = new Vector3(3f, 2f, -5f);

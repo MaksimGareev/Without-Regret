@@ -10,8 +10,10 @@ public class WorldItem : MonoBehaviour, IInteractable
     public float interactionPriority => 0f;
     [HideInInspector] public bool hasBeenCollected = false;
     [SerializeField] private GameObject iconPrefab;
+    [SerializeField] private Vector3 iconOffset = new Vector3(0f, 2f, 0f);
     public bool shouldShowIcon = true;
     private GameObject popupInstance;
+    public bool isCollectible = true;
 
     public void Start()
     {
@@ -38,6 +40,8 @@ public class WorldItem : MonoBehaviour, IInteractable
     }
     public void OnPlayerInteraction(GameObject player)
     {
+        if (!isCollectible) return;
+        
         Inventory inventory = player.GetComponent<Inventory>();
         inventory.itemToCollect = this;
         hasBeenCollected = true;
@@ -50,6 +54,7 @@ public class WorldItem : MonoBehaviour, IInteractable
         if (popupInstance == null && iconPrefab != null && PopupManager.Instance != null)
         {
             popupInstance = PopupManager.Instance.CreatePopup(this.transform, iconPrefab).gameObject;
+            gameObject.GetComponent<WorldPopup>().worldOffset = iconOffset;
             shouldShowIcon = true;
         }
     }

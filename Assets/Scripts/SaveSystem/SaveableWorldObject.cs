@@ -31,6 +31,7 @@ public class SaveableWorldObject : MonoBehaviour, ISaveable
         {
             state.objectType = ObjectType.InventoryItem;
             state.hasBeenCollected = GetComponent<WorldItem>()?.hasBeenCollected ?? false;
+            state.isCollectible = GetComponent<WorldItem>()?.isCollectible ?? true;
         }   
         else if (GetComponent<MoveableObject>() != null)
         {

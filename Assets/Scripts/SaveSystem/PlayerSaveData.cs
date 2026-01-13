@@ -13,6 +13,7 @@ public class PlayerTransformEntry
 public class PlayerSaveData
 {
     public List<PlayerTransformEntry> playerTransforms = new List<PlayerTransformEntry>();
+    public TimerRingUI.RingState currentRingState = TimerRingUI.RingState.Full;
 
     public void SetPlayerTransform(string scene, float[] pos, float[] rot)
     {

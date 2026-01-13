@@ -19,6 +19,7 @@ public class DialogueTrigger : MonoBehaviour
 
     // objectives the npc is responisble for
     public List<string> objectiveIDYouCareAbout = new List<string>();
+    public ObjectiveData linkedObjective;
 
     private bool playerInRange = false;
     private Transform player;
@@ -28,6 +29,8 @@ public class DialogueTrigger : MonoBehaviour
     [SerializeField] private GameObject iconPrefab;
     public bool shouldShowIcon = true;
     private GameObject popupInstance;
+
+    public GameObject enemy;
 
     private void Awake()
     {
@@ -50,6 +53,8 @@ public class DialogueTrigger : MonoBehaviour
 
         if (promptUI != null)
             promptUI.SetActive(false);
+
+        enemy.SetActive(false);
     }
 
     // Update is called once per frame
@@ -64,6 +69,8 @@ public class DialogueTrigger : MonoBehaviour
             if (!playerInRange)
             {
                 playerInRange = true;
+                if (iconPrefab != null)
+                    iconPrefab.SetActive(true);
                 if (promptUI != null)
                     promptUI.SetActive(true);
             }
@@ -73,12 +80,14 @@ public class DialogueTrigger : MonoBehaviour
             if (playerInRange)
             {
                 playerInRange = false;
+                if (iconPrefab != null)
+                    iconPrefab.SetActive(false);
                 if (promptUI != null)
                     promptUI.SetActive(false);
             }
         }
 
-        if (shouldShowIcon && popupInstance == null && iconPrefab != null && PopupManager.Instance != null)
+        if (shouldShowIcon && popupInstance == null && iconPrefab != null && PopupManager.Instance != null && !playerInRange)
         {
             EnablePopupIcon();
         }
@@ -115,6 +124,15 @@ public class DialogueTrigger : MonoBehaviour
         if (allCompleted && CompleteJsonDialogueFile != null && TalkedAlready == true)
         {
             dialogueManager.StartDialogueFromJson(CompleteJsonDialogueFile);
+
+            if (ObjectiveManager.Instance != null && linkedObjective != null)
+            {
+                if (ObjectiveManager.Instance.IsObjectiveActive(linkedObjective.objectiveID))
+                {
+                    ObjectiveManager.Instance.AddProgress(linkedObjective.objectiveID, 1);
+                }
+            }
+            
             return;
         }
 
@@ -139,13 +157,39 @@ public class DialogueTrigger : MonoBehaviour
         if (dialogueManager != null && jsonDialogueFile != null && TalkedAlready == false)
         {
             dialogueManager.StartDialogueFromJson(jsonDialogueFile);
+            
+            // Add Progress to objective if there is one to add to, (Talking to irene completes the "talk to irene" objective)
+            if (ObjectiveManager.Instance != null && linkedObjective != null)
+            {
+                if (ObjectiveManager.Instance.IsObjectiveActive(linkedObjective.objectiveID))
+                {
+                    ObjectiveManager.Instance.AddProgress(linkedObjective.objectiveID, 1);
+                }
+            }
+
             TalkedAlready = true;
         }
         // dialogue if the npc has already been talked to and hasn't started any objectives from the npc
         else if (TalkedAlready == true)
         {
             dialogueManager.StartDialogueFromJson(TalkedJsonDialogueFile);
+
+            if (ObjectiveManager.Instance != null && linkedObjective != null)
+            {
+                if (ObjectiveManager.Instance.IsObjectiveActive(linkedObjective.objectiveID))
+                {
+                    ObjectiveManager.Instance.AddProgress(linkedObjective.objectiveID, 1);
+                }
+            }
         }
+
+        // **Activate the enemy when dialogue is triggered**
+        if (enemy != null)
+        {
+            enemy.SetActive(true);
+            Debug.Log($"{enemy.name} activated by {NPCName}");
+        }
+
     }
 
     private void OnTriggerEnter(Collider other)
@@ -157,15 +201,10 @@ public class DialogueTrigger : MonoBehaviour
                 dialogueManager.StartDialogueFromJson(jsonDialogueFile);
             }
             TalkedAlready = true;
-        }
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.CompareTag("Player") && TalkedAlready == false)
-        {
-            //TryInteract();
-            //TalkedAlready = true;
+           /* if (this.CompareTag("Spawner") && enemy != null)
+            {
+                enemy.SetActive(true);
+            }*/
         }
     }
 

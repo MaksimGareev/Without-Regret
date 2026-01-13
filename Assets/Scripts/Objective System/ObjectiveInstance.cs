@@ -27,6 +27,7 @@ public class ObjectiveInstance
 
     public void SetProgress(int amount)
     {
-        currentProgress = amount;
+        currentProgress = 0;
+        AddProgress(amount);
     }
 }

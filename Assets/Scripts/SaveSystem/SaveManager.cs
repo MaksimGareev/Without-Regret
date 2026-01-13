@@ -4,10 +4,18 @@ using UnityEngine.SceneManagement;
 
 public class SaveManager : MonoBehaviour
 {
+    public static SaveManager Instance { get; private set; }
+
     private List<ISaveable> saveables = new List<ISaveable>();
-    public static SaveManager Instance;
+    private List<ISaveable> persistentSaveables = new List<ISaveable>();
+    
+    public bool shouldAutoSave = true;
     private float autoSaveInterval = 300f; // Auto-save every 5 minutes
     private float autoSaveTimer = 0f;
+    private bool isSaving = false;
+
+    // Dictionary to store unlock states
+    private Dictionary<string, bool> unlockedItems = new Dictionary<string, bool>();
 
     private void Awake()
     {
@@ -24,6 +32,21 @@ public class SaveManager : MonoBehaviour
         }
     }
 
+    public bool IsUnlocked(string itemName)
+    {
+        if (unlockedItems.ContainsKey(itemName))
+            return unlockedItems[itemName];
+        return false;
+    }
+
+    public void SetUnlocked(string itemName, bool unlocked)
+    {
+        if (unlockedItems.ContainsKey(itemName))
+            unlockedItems[itemName] = unlocked;
+        else
+            unlockedItems.Add(itemName, unlocked);
+    }
+
     private void OnEnable()
     {
         SceneManager.sceneLoaded += OnSceneLoaded;
@@ -38,25 +61,32 @@ public class SaveManager : MonoBehaviour
     {
         RefreshSaveables();
 
-        if (scene.name != "MainMenu" && saveables.Count > 0)
+        if (saveables.Count > 0)
         {
             LoadGame();
         }
+
         else
         {
-            Debug.Log("No saveables found or in MainMenu scene; skipping load.");
+            Debug.Log("No saveables found; skipping load.");
         }
     }
 
     public void ClearSaveData()
     {
         SaveSystem.DeleteSave();
+        if (ObjectiveManager.Instance != null)
+        {
+            ObjectiveManager.Instance.ClearObjectivesOnDelete();
+        }
         Debug.Log("All save data cleared.");
     }
 
     private void RefreshSaveables()
     {
+        //var keep = new List<ISaveable>(saveables);
         saveables.Clear();
+        saveables.AddRange(persistentSaveables);
 
         MonoBehaviour[] monoBehaviours = Resources.FindObjectsOfTypeAll<MonoBehaviour>();
         var activeScene = SceneManager.GetActiveScene();
@@ -71,7 +101,10 @@ public class SaveManager : MonoBehaviour
             var go = mb.gameObject;
             var scene = go.scene;
 
-            if (!scene.IsValid() || scene != activeScene || mb.hideFlags != HideFlags.None)
+            bool isInScene = scene == activeScene;
+            bool isPersistent = scene.name == null || mb.gameObject.scene.name == "";
+
+            if (!(isInScene || isPersistent) || mb.hideFlags != HideFlags.None)
             {
                 continue;
             }
@@ -95,9 +128,48 @@ public class SaveManager : MonoBehaviour
         }
     }
 
+    public void RegisterSaveable(ISaveable saveable)
+    {
+        if (!persistentSaveables.Contains(saveable))
+        {
+            persistentSaveables.Add(saveable);
+            Debug.Log("saveable object added to persistentSaveables");
+        }
+
+        if (!saveables.Contains(saveable))
+        {
+            saveables.Add(saveable);
+            Debug.Log("saveable object added to saveables");
+        }
+        else
+        {
+            Debug.Log("object is not saveable!");
+        }
+    }
+
+    public void RemoveSaveable(ISaveable saveable)
+    {
+        if (persistentSaveables.Contains(saveable))
+        {
+            persistentSaveables.Remove(saveable);
+        }
+
+        if (saveables.Contains(saveable))
+        {
+            saveables.Remove(saveable);
+        }
+    }
+
     private void Update()
     {
-        autoSaveTimer += Time.deltaTime;
+        if (shouldAutoSave)
+        {
+            autoSaveTimer += Time.deltaTime;
+        }
+        else if (autoSaveTimer != 0f)
+        {
+            autoSaveTimer = 0f;
+        }
 
         if (autoSaveTimer >= autoSaveInterval && SceneManager.GetActiveScene().name != "MainMenu")
         {
@@ -116,18 +188,28 @@ public class SaveManager : MonoBehaviour
 
     public void SaveGame()
     {
+        if (isSaving) return;
+        isSaving = true;
+
         SaveData data = SaveSystem.Load() ?? new SaveData();
 
         data.lastSceneName = SceneManager.GetActiveScene().name;
 
         RefreshSaveables();
 
+        Debug.Log($"[SaveManager.SaveGame] Saveables count = {saveables.Count}");
+
         foreach (ISaveable saveable in saveables)
         {
+            Debug.Log($"[SaveManager.SaveGame] calling SaveTo on {saveable.GetType().Name}");
             saveable.SaveTo(data);
         }
 
+        int objCount = data.objectiveSaveData?.objectives?.Count ?? -1;
+        Debug.Log($"[SaveManager.SaveGame] objectiveSaveData.objectives.Count = {objCount}");
+
         SaveSystem.Save(data);
+        isSaving = false;
     }
 
     public void LoadGame()
@@ -159,6 +241,11 @@ public class SaveManager : MonoBehaviour
                 player.LoadFrom(data);
                 break;
             }
+        }
+
+        if (ObjectiveManager.Instance != null)
+        {
+            ObjectiveManager.Instance.EnsureActiveObjective();
         }
     }
 
