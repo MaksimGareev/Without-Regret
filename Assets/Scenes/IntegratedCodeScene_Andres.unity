@@ -151,7 +151,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3adaafd8c8f10a74a98d24a83d99506e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Box: Box
+  ItemName: 
   PickupRange: 1.5
   promptUI: {fileID: 1766668948}
 --- !u!65 &26101548
@@ -696,7 +696,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3adaafd8c8f10a74a98d24a83d99506e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Box: Box
+  ItemName: 
   PickupRange: 1.5
   promptUI: {fileID: 1766668948}
 --- !u!65 &583022755
@@ -823,7 +823,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3adaafd8c8f10a74a98d24a83d99506e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Box: Box
+  ItemName: 
   PickupRange: 1.5
   promptUI: {fileID: 1766668948}
 --- !u!65 &763302192
@@ -1873,6 +1873,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MantleableObject
   mantleOffset: {x: 0, y: 2, z: 0}
   showGizmos: 1
+  iconPrefab: {fileID: 0}
+  shouldShowIcon: 1
 --- !u!1001 &1882636532
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2290,6 +2292,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 543945369896373031, guid: dc60125b78695de43a450852f8101d10, type: 3}
+      propertyPath: m_Avatar
+      value: 
+      objectReference: {fileID: 9000000, guid: f40e666dab6805244b96ae1049b447ae, type: 3}
     - target: {fileID: 878993099091267819, guid: dc60125b78695de43a450852f8101d10, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.1
