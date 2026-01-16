@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class InventoryUIController : MonoBehaviour//, IPointerEnterHandler, IPointerExitHandler
@@ -18,9 +19,13 @@ public class InventoryUIController : MonoBehaviour//, IPointerEnterHandler, IPoi
     private InventoryTab currentTab = InventoryTab.OtherItems;
 
     [Header("Input Settings")]
-    [SerializeField] private string tabLeftButton;
-    [SerializeField] private string tabRightButton;
-    [SerializeField] private float moveThreshold = 0.5f;
+    [SerializeField] private InputActionAsset inputActions;
+    private InputAction toggleInventoryAction;
+    private InputAction navigateAction;
+    private InputAction tabLeftButton;
+    private InputAction tabRightButton;
+    private InputAction confirmButton;
+    [SerializeField] private float moveThreshold = 0.25f;
     [SerializeField] private float moveCooldown = 0.25f;
 
     [Header("Debugging")]
@@ -48,12 +53,26 @@ public class InventoryUIController : MonoBehaviour//, IPointerEnterHandler, IPoi
         inventory = player?.GetComponent<Inventory>();
 
         RefreshInventoryUI();
+
+        // Initialize input actions
+        navigateAction = inputActions.FindAction("UI/Inventory Navigate");
+        navigateAction.Enable();
+
+        tabLeftButton = inputActions.FindAction("UI/Tab Left");
+        tabLeftButton.Enable();
+
+        tabRightButton = inputActions.FindAction("UI/Tab Right");
+        tabRightButton.Enable();
+
+        confirmButton = inputActions.FindAction("UI/Confirm");
+        confirmButton.Enable();
     }
 
     private void OnEnable()
     {
         InitializeSlots();
         RefreshInventoryUI();
+        EnableInventoryInput();
     }
 
     private void Start()
@@ -174,7 +193,7 @@ public class InventoryUIController : MonoBehaviour//, IPointerEnterHandler, IPoi
 
     private void HandleControllerInput()
     {
-        if (Input.GetButtonDown(tabLeftButton) || Input.GetButtonDown(tabRightButton))
+        if (tabLeftButton.WasPressedThisFrame() || tabRightButton.WasPressedThisFrame())
         {
             if (currentTab == InventoryTab.KeyItems)
             {
@@ -188,8 +207,8 @@ public class InventoryUIController : MonoBehaviour//, IPointerEnterHandler, IPoi
         
         moveTimer -= Time.unscaledDeltaTime;
 
-        float horizontalInput = Input.GetAxis("Xbox RightStick X");
-        float verticalInput = Input.GetAxis("Xbox RightStick Y");
+        float horizontalInput = navigateAction.ReadValue<Vector2>().x;
+        float verticalInput = navigateAction.ReadValue<Vector2>().y;
 
         bool moved = false;
 
@@ -204,7 +223,7 @@ public class InventoryUIController : MonoBehaviour//, IPointerEnterHandler, IPoi
                 }
                 else if (verticalInput < -moveThreshold)
                 {
-                    MoveSelection(-1, -0);
+                    MoveSelection(-1, 0);
                     moved = true;
                 }
             }
@@ -229,7 +248,7 @@ public class InventoryUIController : MonoBehaviour//, IPointerEnterHandler, IPoi
             moveTimer = moveCooldown;
         }
 
-        if (Input.GetButtonDown("Xbox A Button"))
+        if (confirmButton.WasPressedThisFrame())
         {
             OnSlotClicked(selectedRow, selectedColumn, selectedRow * columns + selectedColumn);
         }
@@ -372,5 +391,24 @@ public class InventoryUIController : MonoBehaviour//, IPointerEnterHandler, IPoi
             keyItemsTabButton.image.color = highlightColor;
             otherItemsTabButton.image.color = Color.white;
         }
+    }
+
+    private void OnDisable()
+    {
+        DisableInventoryInput();
+    }
+
+    private void EnableInventoryInput()
+    {
+        inputActions.FindActionMap("UI").Enable();
+        inputActions.FindActionMap("Player").FindAction("Look").Disable();
+        inputActions.FindActionMap("Player").FindAction("Jump").Disable();
+    }
+
+    private void DisableInventoryInput()
+    {
+        inputActions.FindActionMap("UI").Disable();
+        inputActions.FindActionMap("Player").FindAction("Look").Enable();
+        inputActions.FindActionMap("Player").FindAction("Jump").Enable();
     }
 }

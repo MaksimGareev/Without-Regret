@@ -1,12 +1,15 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class ToggleInventoryUI : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private GameObject inventoryGameObject;
-    [SerializeField] private KeyCode inventoryKey;
-    [SerializeField] private string inventoryButton;
+
+    [Header("Input Settings")]
+    [SerializeField] private InputActionAsset inputActions;
+    private InputAction inventoryAction;
 
     [Header("Slide Animation Settings")]
     [SerializeField] private float slideDuration = 0.4f;
@@ -28,12 +31,16 @@ public class ToggleInventoryUI : MonoBehaviour
 
         rectTransform.anchoredPosition = disabledPosition;
         inventoryGameObject.SetActive(false);
+
+        // Initialize input actions
+        inventoryAction = inputActions.FindAction("Player/Inventory");
+        inventoryAction.Enable();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if ((Input.GetKeyDown(inventoryKey) || Input.GetButtonDown(inventoryButton)) && hasBackpack)
+        if (inventoryAction.triggered && hasBackpack && !PauseManager.Instance.isGamePaused && !Journal.Instance.isJournalOpen)
         {
             ToggleInventory();
         }
