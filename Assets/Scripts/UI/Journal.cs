@@ -1,16 +1,21 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class Journal : MonoBehaviour
 {
+    [Header("Singleton")]
+    public static Journal Instance { get; private set; }
+
     [Header("Journal")]
     [SerializeField] private GameObject journalUI;
 
     [Header("Input")]
-    [SerializeField] private KeyCode toggleJournalKey = KeyCode.Tab;
-    [SerializeField] private string toggleJournalButton = "Xbox Select Button";
+    [SerializeField] private InputActionAsset inputActions;
+    private InputAction playerJournalAction;
+    private InputAction UIJournalAction;
 
     [Header("Tabs")]
     [SerializeField] private Button objectivesTab;
@@ -30,8 +35,30 @@ public class Journal : MonoBehaviour
 
     [Header("Canvases")]
     [SerializeField] private Canvas[] canvasesToDisable;
+    [HideInInspector] public bool isJournalOpen = false;
 
     private List<ObjectiveInstance> objectivesList;
+
+    private void Awake()
+    {
+        // Make this a singleton
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+
+        // Initialize input actions
+        playerJournalAction = inputActions.FindAction("Player/Journal");
+        playerJournalAction.Enable();
+
+        UIJournalAction = inputActions.FindAction("UI/Journal");
+        UIJournalAction.Enable();
+    }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -45,7 +72,7 @@ public class Journal : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(toggleJournalKey) || Input.GetButtonDown(toggleJournalButton))
+        if ((playerJournalAction.triggered || UIJournalAction.triggered) && !PauseManager.Instance.isGamePaused)
         {
             ToggleJournalUI();
         }
@@ -66,25 +93,30 @@ public class Journal : MonoBehaviour
     private void ToggleJournalUI()
     {
         journalUI.SetActive(!journalUI.activeSelf);
+        isJournalOpen = journalUI.activeSelf;
 
-        if (journalUI.activeSelf)
+        if (isJournalOpen)
         {
             RefreshObjectives();
             OnObjectiveSelect(0);
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
             Time.timeScale = 0f;
+            inputActions.FindActionMap("Player").Disable();
+            inputActions.FindActionMap("UI").Enable();
         }
         else
         {
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
             Time.timeScale = 1f;
+            inputActions.FindActionMap("UI").Disable();
+            inputActions.FindActionMap("Player").Enable();
         }
 
         foreach (Canvas canvas in canvasesToDisable)
         {
-            canvas.enabled = !journalUI.activeSelf;
+            canvas.enabled = !isJournalOpen;
         }
     }
 
