@@ -16,6 +16,7 @@ public class Journal : MonoBehaviour
     [SerializeField] private InputActionAsset inputActions;
     private InputAction playerJournalAction;
     private InputAction UIJournalAction;
+    private InputAction navigateAction;
 
     [Header("Tabs")]
     [SerializeField] private Button objectivesTab;
@@ -38,6 +39,7 @@ public class Journal : MonoBehaviour
     [HideInInspector] public bool isJournalOpen = false;
 
     private List<ObjectiveInstance> objectivesList;
+    private int currentObjectiveIndex = 0;
 
     private void Awake()
     {
@@ -58,6 +60,9 @@ public class Journal : MonoBehaviour
 
         UIJournalAction = inputActions.FindAction("UI/Journal");
         UIJournalAction.Enable();
+
+        navigateAction = inputActions.FindAction("UI/Navigate");
+        navigateAction.Enable();
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -76,6 +81,8 @@ public class Journal : MonoBehaviour
         {
             ToggleJournalUI();
         }
+
+        HandleControllerNavigation();
     }
 
     private void InitializeButtons()
@@ -134,8 +141,28 @@ public class Journal : MonoBehaviour
         objectivesPage.SetActive(false);
     }
 
+    private void HandleControllerNavigation()
+    {
+        float navigationInput = navigateAction.ReadValue<Vector2>().y;
+
+        if (navigationInput > 0.5f)
+        {
+            // Move up in the objectives list
+            int newIndex = Mathf.Clamp(currentObjectiveIndex - 1, 0, objectivesList.Count - 1);
+            OnObjectiveSelect(newIndex);
+        }
+        else if (navigationInput < -0.5f)
+        {
+            // Move down in the objectives list
+            int newIndex = Mathf.Clamp(currentObjectiveIndex + 1, 0, objectivesList.Count - 1);
+            OnObjectiveSelect(newIndex);
+        }
+    }
+
     public void OnObjectiveSelect(int index)
     {
+        currentObjectiveIndex = index;
+
         if (objectivesList.Count > index)
         {
             var instance = objectivesList[index];
