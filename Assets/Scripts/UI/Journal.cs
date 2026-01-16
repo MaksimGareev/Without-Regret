@@ -72,6 +72,8 @@ public class Journal : MonoBehaviour
         RefreshObjectives();
         OnObjectiveSelect(0);
         journalUI.SetActive(false);
+
+        DisableJournalInput();
     }
 
     // Update is called once per frame
@@ -109,16 +111,14 @@ public class Journal : MonoBehaviour
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
             Time.timeScale = 0f;
-            inputActions.FindActionMap("Player").Disable();
-            inputActions.FindActionMap("UI").Enable();
+            EnableJournalInput();
         }
         else
         {
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
             Time.timeScale = 1f;
-            inputActions.FindActionMap("UI").Disable();
-            inputActions.FindActionMap("Player").Enable();
+            DisableJournalInput();
         }
 
         foreach (Canvas canvas in canvasesToDisable)
@@ -238,5 +238,22 @@ public class Journal : MonoBehaviour
                 objectiveButtons[i].interactable = false;
             }
         }
+    }
+
+    private void OnDisable()
+    {
+        DisableJournalInput();
+    }
+
+    private void EnableJournalInput()
+    {
+        inputActions.FindActionMap("UI").Enable();
+        inputActions.FindActionMap("Player").Disable();
+    }
+
+    private void DisableJournalInput()
+    {
+        inputActions.FindActionMap("UI").Disable();
+        inputActions.FindActionMap("Player").Enable();
     }
 }
