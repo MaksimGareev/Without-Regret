@@ -17,6 +17,10 @@ public class Journal : MonoBehaviour
     private InputAction playerJournalAction;
     private InputAction UIJournalAction;
     private InputAction navigateAction;
+    private InputAction cancelAction;
+    [SerializeField] private float navigationCooldown = 0.2f;
+    private float navigateTimer = 0f;
+    private bool canNavigate = true;
 
     [Header("Tabs")]
     [SerializeField] private Button objectivesTab;
@@ -63,6 +67,9 @@ public class Journal : MonoBehaviour
 
         navigateAction = inputActions.FindAction("UI/Navigate");
         navigateAction.Enable();
+
+        cancelAction = inputActions.FindAction("UI/Cancel");
+        cancelAction.Enable();
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -82,6 +89,21 @@ public class Journal : MonoBehaviour
         if ((playerJournalAction.triggered || UIJournalAction.triggered) && !PauseManager.Instance.isGamePaused)
         {
             ToggleJournalUI();
+        }
+
+        if (cancelAction.triggered && isJournalOpen)
+        {
+            ToggleJournalUI();
+        }
+
+        if (isJournalOpen)
+        {
+            navigateTimer += Time.unscaledDeltaTime;
+
+            if (navigateTimer >= navigationCooldown && !canNavigate)
+            {
+                canNavigate = true;
+            }
         }
 
         HandleControllerNavigation();
@@ -143,6 +165,8 @@ public class Journal : MonoBehaviour
 
     private void HandleControllerNavigation()
     {
+        if (!canNavigate) return;
+
         float navigationInput = navigateAction.ReadValue<Vector2>().y;
 
         if (navigationInput > 0.5f)
@@ -150,12 +174,16 @@ public class Journal : MonoBehaviour
             // Move up in the objectives list
             int newIndex = Mathf.Clamp(currentObjectiveIndex - 1, 0, objectivesList.Count - 1);
             OnObjectiveSelect(newIndex);
+            canNavigate = false;
+            navigateTimer = 0f;
         }
         else if (navigationInput < -0.5f)
         {
             // Move down in the objectives list
             int newIndex = Mathf.Clamp(currentObjectiveIndex + 1, 0, objectivesList.Count - 1);
             OnObjectiveSelect(newIndex);
+            canNavigate = false;
+            navigateTimer = 0f;
         }
     }
 

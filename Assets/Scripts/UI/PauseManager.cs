@@ -13,6 +13,7 @@ public class PauseManager : MonoBehaviour
     [SerializeField] private InputActionAsset inputActions;
     private InputAction playerPauseAction;
     private InputAction UIPauseAction;
+    private InputAction cancelAction;
 
     [Header("UI Button References")]
     [SerializeField] private Button resumeButton;
@@ -46,6 +47,9 @@ public class PauseManager : MonoBehaviour
 
         UIPauseAction = inputActions.FindAction("UI/Pause");
         UIPauseAction.Enable();
+
+        cancelAction = inputActions.FindAction("UI/Cancel");
+        cancelAction.Enable();
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -76,11 +80,15 @@ public class PauseManager : MonoBehaviour
             }
         }
 
-        if (Gamepad.current != null && Gamepad.current.bButton.wasPressedThisFrame)
+        if (cancelAction.triggered)
         {
             if (settingsPanel.activeSelf)
             {
                 BackToPauseMenu();
+            }
+            else if (pauseMenuPanel.activeSelf)
+            {
+                ResumeGame();
             }
         }
 

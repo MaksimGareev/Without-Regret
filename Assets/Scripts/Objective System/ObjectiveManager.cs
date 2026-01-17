@@ -26,6 +26,7 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
 
     private void Awake()
     {
+        // Singleton pattern
         if (Instance == null)
         {
             Instance = this;
@@ -37,6 +38,7 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
             return;
         }
 
+        // Register self with SaveManager as a savable entity
         StartCoroutine(RegisterWhenReady());
     }
 
