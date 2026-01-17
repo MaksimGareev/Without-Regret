@@ -566,7 +566,7 @@ public class DialogueManager : MonoBehaviour
         
         PlayerController.DialogueActive = false;
         playerController.SetDialogueActive(false);
-        cameraMovement.EndDialogueCamera();
+        StartCoroutine(cameraMovement.EndCameraZoom());
 
         if (playerFloating != null) playerFloating.enabled = true;
         if (playerThrowing != null) playerThrowing.enabled = true;

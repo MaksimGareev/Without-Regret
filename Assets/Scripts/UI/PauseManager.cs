@@ -163,7 +163,8 @@ public class PauseManager : MonoBehaviour
         // Disable other canvases
         foreach (var canvas in otherCanvasesToDisable)
         {
-            canvas.enabled = false;
+            if (canvas != null)
+                canvas.enabled = false;
         }
 
         // Set initial selected button
@@ -204,7 +205,10 @@ public class PauseManager : MonoBehaviour
         // Re-enable other canvases
         foreach (var canvas in otherCanvasesToDisable)
         {
+            if (canvas == null) continue;
+
             canvas.enabled = true;
+            
             InventoryUIController inventoryCanvas = canvas.GetComponentInChildren<InventoryUIController>();
             if (inventoryCanvas != null)
             {
