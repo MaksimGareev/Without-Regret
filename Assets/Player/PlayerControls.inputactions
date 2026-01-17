@@ -88,13 +88,13 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "New action",
-                    "type": "Value",
+                    "name": "Submit",
+                    "type": "Button",
                     "id": "7ab4aa53-8fa4-4755-bc6d-de10e55ace10",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": true
+                    "initialStateCheck": false
                 },
                 {
                     "name": "RotateCamera",
@@ -451,11 +451,22 @@
                 {
                     "name": "",
                     "id": "7acbf4cd-c8ea-48f0-bb75-744428826f2b",
-                    "path": "",
+                    "path": "<Gamepad>/buttonSouth",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "New action",
+                    "action": "Submit",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "5e0c9b5a-181a-43aa-94db-a9ca293dcd08",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Submit",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
