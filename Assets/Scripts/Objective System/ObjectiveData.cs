@@ -4,18 +4,14 @@ using UnityEngine;
 public class ObjectiveData : ScriptableObject
 {
     [Header("Objective Info")]
-    public string objectiveID;
-    public string title;
-    [TextArea] public string description;
+    public string objectiveID; // Unique identifier for the objective manager
+    public string title; // Title shown in the Journal UI
+    [TextArea] public string description; // Description shown in the Journal UI
+    [TextArea] public string chimeDialogue; // Dialogue shown by Chime's Hint UI for this objective
 
     [Header("Progress")]
-    // public int currentProgress;
-    public int requiredProgress;
+    public int requiredProgress; // Amount of progress needed to complete the objective
 
     [Header("Scene")]
-    public string sceneName;
-
-    // [Header("Status")]
-    // public bool isCompleted;
-    // public float ProgressPercent => (float)currentProgress / requiredProgress;
+    public string sceneName; // Name of the scene where the objective takes place
 }
