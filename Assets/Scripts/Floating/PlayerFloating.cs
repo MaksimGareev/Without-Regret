@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(Rigidbody))]
@@ -14,6 +15,7 @@ public class PlayerFloating : MonoBehaviour
     [SerializeField] private float stickDeadzone = 0.2f; // deadzone for controllers
 
     [Header("Rhythm / Input")]
+    [SerializeField] private InputActionReference floatAction;
     [SerializeField] private float floatDuration = 5f;
     [SerializeField] private float floatCooldown = 3f;
     [SerializeField] private KeyCode floatKey = KeyCode.Space;
@@ -21,6 +23,9 @@ public class PlayerFloating : MonoBehaviour
     [SerializeField] private Slider rhythmSlider;
     [SerializeField] private float rhythmWindow = 0.3f;
     [SerializeField] private float rhythmInterval = 1f;
+    private PlayerControls controls;
+    private Vector2 moveInput;
+    private bool floatInput;
 
     [Header("Debugging")]
     [SerializeField] private bool showDebugLogs = false;
@@ -46,6 +51,17 @@ public class PlayerFloating : MonoBehaviour
     private float prevRbDrag;
     private bool prevRbKinematic;
 
+    void OnEnable()
+    {
+        controls.Enable();
+        floatAction.action.Enable();
+    }
+    void OnDisable()
+    {
+        controls.Disable();
+        floatAction.action.Disable();
+    }
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
@@ -53,6 +69,38 @@ public class PlayerFloating : MonoBehaviour
         charController = GetComponent<CharacterController>();
         toggleInventoryUI = GetComponent<ToggleInventoryUI>();
         playerCamera = Camera.main;
+        controls = new PlayerControls();
+
+        // Assign floatInput based on the state of the Input Action
+        floatAction.action.performed += ctx => OnSubmit(ctx);
+        floatAction.action.canceled += ctx => OnSubmit(ctx);
+        controls.Player.Move.performed += ctx => OnMove(ctx);
+        controls.Player.Move.canceled += ctx => OnMove(ctx);
+
+        if (floatAction == null)
+        {
+            Debug.LogError("PlayerFloating: Float Input Action Reference is not assigned.");
+        }
+    }
+
+    void OnSubmit(InputAction.CallbackContext context)
+    {
+        floatInput = context.action.triggered;
+
+        //if (showDebugLogs)
+        //{
+        //    Debug.Log("Float Input: " + floatInput);
+        //}
+    }
+
+    private void OnMove(InputAction.CallbackContext context)
+    {
+        moveInput = context.ReadValue<Vector2>();
+
+        //if (showDebugLogs && isFloating)
+        //{
+        //    Debug.Log("PlayerFloating - Move Input: " + moveInput);
+        //}
     }
 
     private void Start()
@@ -68,7 +116,8 @@ public class PlayerFloating : MonoBehaviour
 
             if (!isCoolingDown && canFloat)
             {
-                if (!isFloating && !toggleInventoryUI.isEnabled && (Input.GetKeyDown(floatKey) || Input.GetButtonDown(floatButton)))
+                // Start floating if input detected and not in inventory
+                if (!isFloating && !toggleInventoryUI.isEnabled && floatInput)
                 {
                     StartFloating();
                 }
@@ -164,7 +213,7 @@ public class PlayerFloating : MonoBehaviour
             return;
         }
 
-        if ((Input.GetKeyDown(floatKey) || Input.GetButtonDown(floatButton)) && !toggleInventoryUI.isEnabled)
+        if (floatInput && !toggleInventoryUI.isEnabled)
         {
             float errorMargin = Mathf.Min(rhythmTimer, rhythmInterval - rhythmTimer);
             if (errorMargin <= rhythmWindow)
@@ -253,8 +302,10 @@ public class PlayerFloating : MonoBehaviour
     private Vector3 GetRawCameraRelativeInput()
     {
         // Get input values
-        float x = Input.GetAxis("Horizontal");
-        float z = Input.GetAxis("Vertical");
+        //float x = Input.GetAxis("Horizontal");
+        //float z = Input.GetAxis("Vertical");
+        float x = moveInput.x;
+        float z = moveInput.y;
         Vector3 input = new Vector3(x, 0f, z);
 
         // early out: no input
