@@ -228,25 +228,58 @@ public class CameraMovement : MonoBehaviour
         currentLookAtOffset = Vector3.Lerp(currentLookAtOffset, initialRotation * defaultLookAtOffset, returnSpeed * Time.deltaTime);
     }
 
+    public void TriggerDialogueCamera(Transform dialogueTrigger)
+    {
+        if (!isZooming)
+        {
+            StartCoroutine(ZoomIntoTarget(dialogueTrigger, true));
+        }
+    }
+
+    public void EndDialogueCamera()
+    {
+        if (isZooming)
+        {
+            isZooming = false;
+        }
+    }
+
     public void TriggerPickupCameraEffect(Transform item)
     {
         if (!isZooming)
         {
-            StartCoroutine(PickupCameraRoutine(item));
+            StartCoroutine(ZoomIntoTarget(item, false));
+            StartCoroutine(PauseZoomForItem());
         }
     }
 
-    IEnumerator PickupCameraRoutine(Transform item)
+    IEnumerator PauseZoomForItem()
+    {
+        yield return new WaitForSeconds(zoomDuration / 2f);
+        isZooming = false;
+    }
+
+    public IEnumerator ZoomIntoTarget(Transform target, bool dialogue = false)
     {
         isZooming = true;
+        Vector3 offset;
+
+        if (dialogue)
+        {
+            offset = target.right * 1f + target.forward * 5f + Vector3.up * 2f;
+        }
+        else 
+        {
+            offset = pickupOffset;
+        } 
 
         Vector3 originalCamPos = transform.position;
         Quaternion originalCamRot = transform.rotation;
 
-        Vector3 targetPos = item.position + (transform.forward * 1f) + pickupOffset;
-        Quaternion targetRot = Quaternion.LookRotation(item.position - transform.position);
+        Vector3 targetPos = target.position + (transform.forward * 1f) + offset;
+        Quaternion targetRot = Quaternion.LookRotation(target.position - transform.position);
 
-        Vector3 lookAtPos = item.position;
+        Vector3 lookAtPos = target.position;
 
         float t = 0;
         while (t < zoomDuration)
@@ -257,8 +290,5 @@ public class CameraMovement : MonoBehaviour
             transform.LookAt(lookAtPos);
             yield return null;
         }
-
-        yield return new WaitForSeconds(zoomDuration / 2f);
-        isZooming = false;
     }
 }
