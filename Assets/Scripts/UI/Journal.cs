@@ -145,7 +145,8 @@ public class Journal : MonoBehaviour
 
         foreach (Canvas canvas in canvasesToDisable)
         {
-            canvas.enabled = !isJournalOpen;
+            if (canvas != null)
+                canvas.enabled = !isJournalOpen;
         }
     }
 
