@@ -19,12 +19,20 @@ public class FloatingTriggerVolume : MonoBehaviour
         if (player != null)
         {
             playerFloating = player.GetComponent<PlayerFloating>();
+            if(playerFloating == null)
+            {
+                Debug.LogError("PlayerFloating component not found on the Player GameObject.");
+            }
+        }
+        else
+        {
+            Debug.LogError("Player not found in the scene. Please ensure there is a GameObject tagged 'Player'.");
         }
     }
 
   private void Update()
     {
-        if (shouldShowIcon && popupInstance == null && !playerFloating.isFloating && !playerFloating.isCoolingDown)
+        if (shouldShowIcon && popupInstance == null && !playerFloating.IsFloating && !playerFloating.IsCoolingDown)
         {
             EnablePopupIcon();
         }
@@ -72,5 +80,12 @@ public class FloatingTriggerVolume : MonoBehaviour
             player = null;
             playerFloating = null;
         }
-    } 
+    }
+
+    public void OnDrawGizmos()
+    {
+        // Visualize the trigger volume
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireCube(transform.position, GetComponent<Collider>().bounds.size);
+    }
 }
