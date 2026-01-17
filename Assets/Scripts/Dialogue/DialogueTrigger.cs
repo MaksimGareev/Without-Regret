@@ -31,6 +31,7 @@ public class DialogueTrigger : MonoBehaviour
     private GameObject popupInstance;
 
     public GameObject enemy;
+    public bool focusCameraOnTrigger = false;
 
     private void Awake()
     {
@@ -54,7 +55,8 @@ public class DialogueTrigger : MonoBehaviour
         if (promptUI != null)
             promptUI.SetActive(false);
 
-        enemy.SetActive(false);
+        if (enemy != null)
+            enemy.SetActive(false);
     }
 
     // Update is called once per frame
@@ -123,7 +125,7 @@ public class DialogueTrigger : MonoBehaviour
         // if all are completed play completed dialogue
         if (allCompleted && CompleteJsonDialogueFile != null && TalkedAlready == true)
         {
-            dialogueManager.StartDialogueFromJson(CompleteJsonDialogueFile);
+            dialogueManager.StartDialogueFromJson(CompleteJsonDialogueFile, this);
 
             if (ObjectiveManager.Instance != null && linkedObjective != null)
             {
@@ -149,14 +151,14 @@ public class DialogueTrigger : MonoBehaviour
         // if any are active play active dialogue
         if (anyActive && ActiveJsonDialogueFile != null)
         {
-            dialogueManager.StartDialogueFromJson(ActiveJsonDialogueFile);
+            dialogueManager.StartDialogueFromJson(ActiveJsonDialogueFile, this);
             return;
         }
 
         // Starting dialogue
         if (dialogueManager != null && jsonDialogueFile != null && TalkedAlready == false)
         {
-            dialogueManager.StartDialogueFromJson(jsonDialogueFile);
+            dialogueManager.StartDialogueFromJson(jsonDialogueFile, this);
             
             // Add Progress to objective if there is one to add to, (Talking to irene completes the "talk to irene" objective)
             if (ObjectiveManager.Instance != null && linkedObjective != null)
@@ -172,7 +174,7 @@ public class DialogueTrigger : MonoBehaviour
         // dialogue if the npc has already been talked to and hasn't started any objectives from the npc
         else if (TalkedAlready == true)
         {
-            dialogueManager.StartDialogueFromJson(TalkedJsonDialogueFile);
+            dialogueManager.StartDialogueFromJson(TalkedJsonDialogueFile, this);
 
             if (ObjectiveManager.Instance != null && linkedObjective != null)
             {
@@ -198,7 +200,7 @@ public class DialogueTrigger : MonoBehaviour
         {
             if (dialogueManager != null && jsonDialogueFile != null)
             {
-                dialogueManager.StartDialogueFromJson(jsonDialogueFile);
+                dialogueManager.StartDialogueFromJson(jsonDialogueFile, this);
             }
             TalkedAlready = true;
            /* if (this.CompareTag("Spawner") && enemy != null)
