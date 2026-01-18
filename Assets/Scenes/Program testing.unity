@@ -309,7 +309,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 595475326598494349, guid: 40edbfae2e8ad844c8d54ff8c5e8a3fd, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8861858840841155401, guid: 40edbfae2e8ad844c8d54ff8c5e8a3fd, type: 3}
       propertyPath: m_Pivot.x
@@ -821,7 +821,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BackpackObjective
   linkedObjective: {fileID: 11400000, guid: 2538c85277e38ff4a9135fc1efbb57bb, type: 2}
-  BackpackItemID: Backpack
+  linkedItem: {fileID: 0}
 --- !u!114 &374875013 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 275309398196214682, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
@@ -872,6 +872,11 @@ MonoBehaviour:
   RotationSpeed: 3
   IsFollowing: 0
   dialogueTrigger: {fileID: 0}
+  targetSpot: {fileID: 0}
+  lookAtTarget: {fileID: 0}
+  isTraveling: 0
+  arrived: 0
+  stopDistance: 0.5
 --- !u!23 &395270285
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1458,6 +1463,13 @@ MonoBehaviour:
   LockPickUI: {fileID: 183318634}
   isDoor: 0
   UnlockSound: {fileID: 0}
+  UnlockTop: {fileID: 0}
+  isChest: 0
+  hasBeenLockpicked: 0
+  iconPrefab: {fileID: 0}
+  shouldShowIcon: 1
+  linkedObjective: {fileID: 0}
+  needsObjective: 1
 --- !u!1 &659654508 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2683007292438089793, guid: 1ba6d4f95e67dc24187d02294b3bf2cd, type: 3}
@@ -1658,6 +1670,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+--- !u!1 &801812336 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6918550259054482572, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
+  m_PrefabInstance: {fileID: 1882088447485450807}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &845711829 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7020237606844082684, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
@@ -1989,6 +2006,10 @@ PrefabInstance:
       propertyPath: floatPromptUI
       value: 
       objectReference: {fileID: 659654508}
+    - target: {fileID: 8295676605947000843, guid: b3fe60cdf4dfc5b4699c84384e4d133a, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2107,6 +2128,29 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1464851246}
   m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1483339380 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5575190084026342562, guid: 975880bb2e5406145b377ee649fec541, type: 3}
+  m_PrefabInstance: {fileID: 3483696165192494201}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1483339382
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1483339380}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c04b220a6ce4284c89886c9b35f04de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NpcMovement
+  centerPoint: {fileID: 1796911206}
+  wanderRadius: 5
+  moveSpeed: 3.5
+  stoppingDistance: 0.5
+  minPauseTime: 1.5
+  maxPauseTime: 3.5
 --- !u!1001 &1484812632
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2364,7 +2408,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RosesObjective
   linkedObjective: {fileID: 11400000, guid: 29c3e418a1c36aa4a9f6ff833a3dd117, type: 2}
-  roseItemID: Roses
+  linkedItem: {fileID: 0}
 --- !u!1 &1561195365
 GameObject:
   m_ObjectHideFlags: 0
@@ -2409,6 +2453,10 @@ PrefabInstance:
     - target: {fileID: 565190579125525281, guid: d9bbb212694cb404498f826041308e9e, type: 3}
       propertyPath: m_Name
       value: PlayerUICanvas
+      objectReference: {fileID: 0}
+    - target: {fileID: 565190579125525281, guid: d9bbb212694cb404498f826041308e9e, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2306002789561766859, guid: d9bbb212694cb404498f826041308e9e, type: 3}
       propertyPath: m_Pivot.x
@@ -2664,7 +2712,7 @@ MonoBehaviour:
   m_OverrideTileSize: 0
   m_TileSize: 256
   m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.16666667
+  m_VoxelSize: 0.13333334
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: 3c123495ecb176c46a20b36049ed68b2, type: 2}
   m_BuildHeightMesh: 0
@@ -2712,6 +2760,7 @@ MonoBehaviour:
   BobSpeed: 2
   facePlayer: 1
   lookSmooth: 8
+  model: {fileID: 0}
 --- !u!135 &1758363950
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -3037,6 +3086,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!1 &1796911205
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1796911206}
+  m_Layer: 0
+  m_Name: Movement point
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1796911206
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1796911205}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1.64964, y: -0, z: -10.14}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1823945165
 GameObject:
   m_ObjectHideFlags: 0
@@ -3074,6 +3154,13 @@ MonoBehaviour:
   LockPickUI: {fileID: 183318634}
   isDoor: 1
   UnlockSound: {fileID: 0}
+  UnlockTop: {fileID: 0}
+  isChest: 0
+  hasBeenLockpicked: 0
+  iconPrefab: {fileID: 0}
+  shouldShowIcon: 1
+  linkedObjective: {fileID: 0}
+  needsObjective: 1
 --- !u!65 &1823945167
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3214,6 +3301,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 2538c85277e38ff4a9135fc1efbb57bb, type: 2}
   - {fileID: 11400000, guid: 29c3e418a1c36aa4a9f6ff833a3dd117, type: 2}
   - {fileID: 11400000, guid: a6ce8589d0ff6be45944a21dafbfbe23, type: 2}
+  activeObjectives: []
   OnObjectiveActivated:
     m_PersistentCalls:
       m_Calls: []
@@ -3264,15 +3352,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ChasingEnemy
   agent: {fileID: 1861036034}
-  target: {fileID: 739638546}
+  targets: []
   PursuitTimer: 2
   Pursuiting: 1
+  CleaverTrig: {fileID: 0}
+  CleaverProp: {fileID: 0}
   cam: {fileID: 397513757}
   offSet: {x: 0, y: 0, z: 0}
   smoothSpeed: 5
   ReachedNPC: 0
   Possessed: 0
   Distracted: 0
+  updateRate: 0.2
 --- !u!114 &1861036031
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3718,6 +3809,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: LockPickUI
       objectReference: {fileID: 0}
+    - target: {fileID: 5203188700804547327, guid: 7e895fe3b82fbe446868298d86c17a9c, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5579932507705342025, guid: 7e895fe3b82fbe446868298d86c17a9c, type: 3}
       propertyPath: cam
       value: 
@@ -3735,22 +3830,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1089099932595767087, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 102
-      objectReference: {fileID: 0}
-    - target: {fileID: 1089099932595767087, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 1.000061
-      objectReference: {fileID: 0}
-    - target: {fileID: 3452881812095610319, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3452881812095610319, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 245
-      objectReference: {fileID: 0}
     - target: {fileID: 5273993982251385165, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -3831,7 +3910,19 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7020237606844082684, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
+    - target: {fileID: 7802796153140866665, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7802796153140866665, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7802796153140866665, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -116
+      objectReference: {fileID: 0}
+    - target: {fileID: 8236429404052782044, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
@@ -4006,9 +4097,17 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 402580517}
     - target: {fileID: 6859165905719255502, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
+      propertyPath: ContinueArrow
+      value: 
+      objectReference: {fileID: 801812336}
+    - target: {fileID: 6859165905719255502, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
       propertyPath: DialoguePanel
       value: 
       objectReference: {fileID: 845711829}
+    - target: {fileID: 6859165905719255502, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
+      propertyPath: choiceDistance
+      value: 350
+      objectReference: {fileID: 0}
     - target: {fileID: 6859165905719255502, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
       propertyPath: ChoicesContainer
       value: 
@@ -4030,6 +4129,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2807253959955764097, guid: 975880bb2e5406145b377ee649fec541, type: 3}
+      propertyPath: m_IsTrigger
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3827627095654209518, guid: 975880bb2e5406145b377ee649fec541, type: 3}
       propertyPath: m_LocalPosition.x
       value: 12.58
@@ -4090,10 +4193,17 @@ PrefabInstance:
       propertyPath: jsonDialogueFile
       value: 
       objectReference: {fileID: 4900000, guid: 5012ca5c2c5a9a440b3bd98c8962415a, type: 3}
+    - target: {fileID: 6625594364772789633, guid: 975880bb2e5406145b377ee649fec541, type: 3}
+      propertyPath: TalkedJsonDialogueFile
+      value: 
+      objectReference: {fileID: 4900000, guid: f87c5b14b7c54a1479dffd891305dd7e, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5575190084026342562, guid: 975880bb2e5406145b377ee649fec541, type: 3}
+      insertIndex: 6
+      addedObject: {fileID: 1483339382}
   m_SourcePrefab: {fileID: 100100000, guid: 975880bb2e5406145b377ee649fec541, type: 3}
 --- !u!1001 &3972692124041615074
 PrefabInstance:
@@ -4185,3 +4295,4 @@ SceneRoots:
   - {fileID: 5578811}
   - {fileID: 2111741305}
   - {fileID: 321920504}
+  - {fileID: 1796911206}
