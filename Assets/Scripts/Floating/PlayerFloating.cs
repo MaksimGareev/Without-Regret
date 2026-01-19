@@ -367,8 +367,6 @@ public class PlayerFloating : MonoBehaviour
     private Vector3 GetRawCameraRelativeInput()
     {
         // Get input values
-        //float x = Input.GetAxis("Horizontal");
-        //float z = Input.GetAxis("Vertical");
         float x = moveInput.x;
         float z = moveInput.y;
         Vector3 input = new Vector3(x, 0f, z);
