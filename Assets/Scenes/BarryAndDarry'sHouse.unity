@@ -1193,6 +1193,8 @@ MonoBehaviour:
   ActiveJsonDialogueFile: {fileID: 0}
   objectiveIDYouCareAbout: []
   linkedObjective: {fileID: 0}
+  IsMediation: 0
+  lookSpeed: 5
   TalkedAlready: 0
   iconPrefab: {fileID: 4114033263953508203, guid: 48024210bf4a4394fa37015b90b3b410, type: 3}
   shouldShowIcon: 1
@@ -3534,11 +3536,11 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 1958979923}
+    m_TransformParent: {fileID: 1092773950}
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: f5c463ab78505d54685741243530eb4d, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.023922542
+      value: 0.023922544
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: f5c463ab78505d54685741243530eb4d, type: 3}
       propertyPath: m_LocalScale.y
@@ -3550,15 +3552,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: f5c463ab78505d54685741243530eb4d, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.445
+      value: 0.4450013
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: f5c463ab78505d54685741243530eb4d, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.538
+      value: 0.5379999
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: f5c463ab78505d54685741243530eb4d, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.438
+      value: 0.43800136
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: f5c463ab78505d54685741243530eb4d, type: 3}
       propertyPath: m_LocalRotation.w
@@ -3627,10 +3629,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f5c463ab78505d54685741243530eb4d, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 357876628}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f5c463ab78505d54685741243530eb4d, type: 3}
 --- !u!43 &245564133
 Mesh:
@@ -4269,7 +4268,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
-    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 16a217fec0209484e99537fe962f8b81, type: 3}
+    - targetCorrespondingSourceObject: {fileID: -5861409178561632961, guid: 16a217fec0209484e99537fe962f8b81, type: 3}
       insertIndex: -1
       addedObject: {fileID: 357876627}
     m_AddedComponents:
@@ -5138,27 +5137,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: f5c463ab78505d54685741243530eb4d, type: 3}
   m_PrefabInstance: {fileID: 224535542}
   m_PrefabAsset: {fileID: 0}
---- !u!65 &357876628
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 357876626}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 13.980729, y: 11.0022, z: 9.290164}
-  m_Center: {x: 2.0011075, y: -1.5067084, z: -0.000075028205}
 --- !u!1 &368218358
 GameObject:
   m_ObjectHideFlags: 0
@@ -12349,6 +12327,17 @@ MonoBehaviour:
   m_SelectedFaces: 
   m_SelectedEdges: []
   m_SelectedVertices: 
+--- !u!114 &895057141 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6859165905719255502, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
+  m_PrefabInstance: {fileID: 1369110558}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd385acb2d332ac4591924260df61634, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DialogueManager1
 --- !u!1 &895374179
 GameObject:
   m_ObjectHideFlags: 0
@@ -16062,6 +16051,11 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   objectiveUI: {fileID: 485921705}
+--- !u!4 &1092773950 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -5861409178561632961, guid: 16a217fec0209484e99537fe962f8b81, type: 3}
+  m_PrefabInstance: {fileID: 278284858}
+  m_PrefabAsset: {fileID: 0}
 --- !u!43 &1107295230
 Mesh:
   m_ObjectHideFlags: 0
@@ -20452,6 +20446,10 @@ PrefabInstance:
       propertyPath: DialoguePanel
       value: 
       objectReference: {fileID: 2133045200}
+    - target: {fileID: 6859165905719255502, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
+      propertyPath: playerMorality
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 6859165905719255502, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
       propertyPath: ChoicesContainer
       value: 
@@ -28309,6 +28307,11 @@ MonoBehaviour:
   - {fileID: 2026794752118917812}
   PursuitTimer: 0
   Pursuiting: 1
+  baseSpeed: 3.5
+  minSpeed: 1.5
+  maxSpeed: 6.5
+  moralitySpeedMultiplier: 0.15
+  playerMorality: {fileID: 895057141}
   CleaverTrig: {fileID: 1281538748}
   CleaverProp: {fileID: 357876626}
   cam: {fileID: 0}
@@ -28390,11 +28393,6 @@ CapsuleCollider:
   m_Height: 2.102076
   m_Direction: 1
   m_Center: {x: 0, y: 0.5510393, z: 0}
---- !u!4 &1958979923 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 16a217fec0209484e99537fe962f8b81, type: 3}
-  m_PrefabInstance: {fileID: 278284858}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1981775246
 GameObject:
   m_ObjectHideFlags: 0
