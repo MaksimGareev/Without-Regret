@@ -21,6 +21,8 @@ public class PlayerFloating : MonoBehaviour
     [SerializeField] private Slider rhythmSlider;
     [SerializeField] private float rhythmWindow = 0.3f;
     [SerializeField] private float rhythmInterval = 1f;
+    [SerializeField] private RectTransform rhythmTargetLeft;  // visual region near the start (0)
+    [SerializeField] private RectTransform rhythmTargetRight; // visual region near the end (1)
     private PlayerControls controls;
     private Vector2 moveInput;
     private bool floatInput;
@@ -85,7 +87,7 @@ public class PlayerFloating : MonoBehaviour
     {
         floatInput = context.action.triggered;
 
-        //if (showDebugLogs)
+        //if (showDebugLogs && canFloat)
         //{
         //    Debug.Log("Float Input: " + floatInput);
         //}
@@ -103,7 +105,70 @@ public class PlayerFloating : MonoBehaviour
 
     private void Start()
     {
+        SetupRhythmTargets();
         rhythmSlider.gameObject.SetActive(false);
+    }
+
+    #if UNITY_EDITOR
+    // Update target visuals in editor when values change
+    private void OnValidate()
+    {
+        // avoid calling during domain reload when objects may be destroyed
+        if (!Application.isPlaying)
+            SetupRhythmTargets();
+    }
+    #endif
+
+    private void SetupRhythmTargets()
+    {
+        if (rhythmSlider == null || rhythmTargetLeft == null || rhythmTargetRight == null)
+            return;
+
+        if (rhythmInterval <= 0f)
+        {
+            if (showDebugLogs) Debug.LogWarning("PlayerFloating: rhythmInterval must be > 0 to position targets.");
+            return;
+        }
+
+        float windowNormalized = Mathf.Clamp01(rhythmWindow / rhythmInterval);
+
+        // Make sure the targets are children of the slider rect so anchors are relative to slider
+        if (!rhythmSlider.TryGetComponent<RectTransform>(out var sliderRect)) return;
+
+        rhythmTargetLeft.SetParent(sliderRect, false);
+        rhythmTargetRight.SetParent(sliderRect, false);
+
+        // Clear offsets and set anchors to define the target regions.
+        // For LeftToRight slider: left region = [0, windowNormalized], right region = [1 - windowNormalized, 1]
+        // For RightToLeft swap them.
+        if (rhythmSlider.direction == Slider.Direction.LeftToRight)
+        {
+            rhythmTargetLeft.anchorMin = new Vector2(0f, 0f);
+            rhythmTargetLeft.anchorMax = new Vector2(windowNormalized, 1f);
+            rhythmTargetLeft.offsetMin = Vector2.zero;
+            rhythmTargetLeft.offsetMax = Vector2.zero;
+
+            rhythmTargetRight.anchorMin = new Vector2(1f - windowNormalized, 0f);
+            rhythmTargetRight.anchorMax = new Vector2(1f, 1f);
+            rhythmTargetRight.offsetMin = Vector2.zero;
+            rhythmTargetRight.offsetMax = Vector2.zero;
+        }
+        else if (rhythmSlider.direction == Slider.Direction.RightToLeft)
+        {
+            rhythmTargetLeft.anchorMin = new Vector2(1f - windowNormalized, 0f);
+            rhythmTargetLeft.anchorMax = new Vector2(1f, 1f);
+            rhythmTargetLeft.offsetMin = Vector2.zero;
+            rhythmTargetLeft.offsetMax = Vector2.zero;
+
+            rhythmTargetRight.anchorMin = new Vector2(0f, 0f);
+            rhythmTargetRight.anchorMax = new Vector2(windowNormalized, 1f);
+            rhythmTargetRight.offsetMin = Vector2.zero;
+            rhythmTargetRight.offsetMax = Vector2.zero;
+        }
+        else
+        {
+            if (showDebugLogs) Debug.LogError("PlayerFloating: Unsupported slider direction for rhythm targets.");
+        }
     }
 
     private void Update()
