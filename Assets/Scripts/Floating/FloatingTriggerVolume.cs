@@ -4,17 +4,19 @@ using UnityEngine;
 public class FloatingTriggerVolume : MonoBehaviour
 {
     [Header("References")]
+    [SerializeField] private GameObject player;
     [SerializeField] private GameObject iconPrefab;
     [SerializeField] private Vector3 iconOffset = new Vector3(0f, 2f, 0f);
     [SerializeField] private bool shouldShowIcon = true;
     private GameObject popupInstance;
 
-    private GameObject player;
+    
     private PlayerFloating playerFloating;
 
     private void Start()
     {
-        player = GameObject.FindGameObjectWithTag("Player");
+        if (player == null)
+            player = GameObject.FindGameObjectWithTag("Player");
 
         if (player != null)
         {
@@ -30,8 +32,14 @@ public class FloatingTriggerVolume : MonoBehaviour
         }
     }
 
-  private void Update()
+    private void Update()
     {
+        if (playerFloating == null)
+        {
+            Debug.LogError("PlayerFloating component is missing. Cannot update popup icon state.");
+            return;
+        }
+            
         if (shouldShowIcon && popupInstance == null && !playerFloating.IsFloating && !playerFloating.IsCoolingDown)
         {
             EnablePopupIcon();
