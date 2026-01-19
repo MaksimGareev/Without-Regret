@@ -77,7 +77,7 @@ public class DialogueManager : MonoBehaviour
     public static bool DialogueIsActive = false;
 
     // Player morality
-    private int playerMorality = 0;
+    public int playerMorality = 0;
 
     private string NPCName;
     private Dictionary<string, int> dialogueVariables = new Dictionary<string, int>();
@@ -282,7 +282,7 @@ public class DialogueManager : MonoBehaviour
                 yield return new WaitForSeconds(0.015f);
             }
 
-            yield return new WaitForSeconds(0.09f);
+            yield return new WaitForSeconds(0.02f);
         }
 
         IsTyping = false;
