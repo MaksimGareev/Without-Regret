@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class Journal : MonoBehaviour
@@ -86,6 +87,11 @@ public class Journal : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (SceneManager.GetActiveScene().name == "MainMenu")
+        {
+            return; // Do not allow pausing in the main menu
+        }
+
         if ((playerJournalAction.triggered || UIJournalAction.triggered) && !PauseManager.Instance.isGamePaused)
         {
             ToggleJournalUI();

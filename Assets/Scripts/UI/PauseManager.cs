@@ -64,6 +64,11 @@ public class PauseManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (SceneManager.GetActiveScene().name == "MainMenu")
+        {
+            return; // Do not allow pausing in the main menu
+        }
+        
         if ((playerPauseAction.triggered || UIPauseAction.triggered) && !Journal.Instance.isJournalOpen)
         {
             if (!pauseMenuPanel.activeSelf && !settingsPanel.activeSelf)
@@ -148,7 +153,7 @@ public class PauseManager : MonoBehaviour
         // Save game before pausing
         if (SaveManager.Instance != null)
         {
-            SaveManager.Instance.SaveGame();
+            SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
         }
 
         // Logic to pause the game
@@ -192,7 +197,7 @@ public class PauseManager : MonoBehaviour
         EventSystem.current.SetSelectedGameObject(resumeButton.gameObject);
     }
 
-    private void ResumeGame()
+    public void ResumeGame()
     {
         // Logic to resume the game
         pauseMenuPanel.SetActive(false);
@@ -250,7 +255,7 @@ public class PauseManager : MonoBehaviour
         // Save game before quitting
         if (SaveManager.Instance != null)
         {
-            SaveManager.Instance.SaveGame();
+            SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
         }
 
         // Logic to quit to main menu
