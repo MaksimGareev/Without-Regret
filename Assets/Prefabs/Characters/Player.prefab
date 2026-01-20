@@ -421,13 +421,14 @@ MonoBehaviour:
   moveSmoothing: 8
   hoverDrag: 3
   stickDeadzone: 0.2
+  floatAction: {fileID: 0}
   floatDuration: 5
   floatCooldown: 3
-  floatKey: 32
-  floatButton: Submit
   rhythmSlider: {fileID: 0}
   rhythmWindow: 0.3
   rhythmInterval: 1
+  rhythmTargetLeft: {fileID: 0}
+  rhythmTargetRight: {fileID: 0}
   showDebugLogs: 0
 --- !u!114 &7147037502482933178
 MonoBehaviour:
@@ -468,7 +469,7 @@ MonoBehaviour:
   interactingScript: {fileID: 0}
   backpack: {fileID: 6428672626242342441}
   showDebugLogs: 0
-  hasBackpack: 0
+  hasBackpack: 1
   itemToCollect: {fileID: 0}
 --- !u!114 &771315798553256207
 MonoBehaviour:
@@ -555,6 +556,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInteracting
   promptUI: {fileID: 0}
+  InputActions: {fileID: -944628639613478452, guid: f1f4dbfd8c64cd440924988ec4fb6f6a, type: 3}
   interactionRange: 1
   interactOffset: 1
   interactKey: 101
