@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class InventoryUIController : MonoBehaviour//, IPointerEnterHandler, IPointerExitHandler
@@ -18,8 +19,11 @@ public class InventoryUIController : MonoBehaviour//, IPointerEnterHandler, IPoi
     private InventoryTab currentTab = InventoryTab.OtherItems;
 
     [Header("Input Settings")]
-    [SerializeField] private string tabLeftButton;
-    [SerializeField] private string tabRightButton;
+    [SerializeField] private InputActionAsset inputActions;
+    private InputAction navigateAction;
+    private InputAction tabLeftButton;
+    private InputAction tabRightButton;
+    private InputAction confirmButton;
     [SerializeField] private float moveThreshold = 0.5f;
     [SerializeField] private float moveCooldown = 0.25f;
 
@@ -48,12 +52,20 @@ public class InventoryUIController : MonoBehaviour//, IPointerEnterHandler, IPoi
         inventory = player?.GetComponent<Inventory>();
 
         RefreshInventoryUI();
+
+        // Initialize input actions
+        navigateAction = inputActions.FindAction("Inventory/Navigate", true);
+        tabLeftButton = inputActions.FindAction("Inventory/TabLeft", true);
+        tabRightButton = inputActions.FindAction("Inventory/TabRight", true);
+        confirmButton = inputActions.FindAction("Inventory/Confirm", true);
     }
 
     private void OnEnable()
     {
         InitializeSlots();
         RefreshInventoryUI();
+        EnableInventoryInput();
+        SwitchTabs(currentTab);
     }
 
     private void Start()
@@ -62,6 +74,7 @@ public class InventoryUIController : MonoBehaviour//, IPointerEnterHandler, IPoi
         otherItemsTabButton.onClick.AddListener(() => SwitchTabs(InventoryTab.OtherItems));
 
         RefreshInventoryUI();
+        SwitchTabs(currentTab);
     }
 
     // Update is called once per frame
@@ -174,7 +187,7 @@ public class InventoryUIController : MonoBehaviour//, IPointerEnterHandler, IPoi
 
     private void HandleControllerInput()
     {
-        if (Input.GetButtonDown(tabLeftButton) || Input.GetButtonDown(tabRightButton))
+        if (tabLeftButton.WasPressedThisFrame() || tabRightButton.WasPressedThisFrame())
         {
             if (currentTab == InventoryTab.KeyItems)
             {
@@ -188,8 +201,8 @@ public class InventoryUIController : MonoBehaviour//, IPointerEnterHandler, IPoi
         
         moveTimer -= Time.unscaledDeltaTime;
 
-        float horizontalInput = Input.GetAxis("Xbox RightStick X");
-        float verticalInput = Input.GetAxis("Xbox RightStick Y");
+        float horizontalInput = navigateAction.ReadValue<Vector2>().x;
+        float verticalInput = navigateAction.ReadValue<Vector2>().y;
 
         bool moved = false;
 
@@ -199,12 +212,12 @@ public class InventoryUIController : MonoBehaviour//, IPointerEnterHandler, IPoi
             {
                 if (verticalInput > moveThreshold)
                 {
-                    MoveSelection(1, 0);
+                    MoveSelection(-1, 0);
                     moved = true;
                 }
                 else if (verticalInput < -moveThreshold)
                 {
-                    MoveSelection(-1, -0);
+                    MoveSelection(1, 0);
                     moved = true;
                 }
             }
@@ -213,12 +226,12 @@ public class InventoryUIController : MonoBehaviour//, IPointerEnterHandler, IPoi
             {
                 if (horizontalInput > moveThreshold)
                 {
-                    MoveSelection(0, -1);
+                    MoveSelection(0, 1);
                     moved = true;
                 }
                 else if (horizontalInput < -moveThreshold)
                 {
-                    MoveSelection(0, 1);
+                    MoveSelection(0, -1);
                     moved = true;
                 }
             }
@@ -229,7 +242,7 @@ public class InventoryUIController : MonoBehaviour//, IPointerEnterHandler, IPoi
             moveTimer = moveCooldown;
         }
 
-        if (Input.GetButtonDown("Xbox A Button"))
+        if (confirmButton.WasPressedThisFrame())
         {
             OnSlotClicked(selectedRow, selectedColumn, selectedRow * columns + selectedColumn);
         }
@@ -372,5 +385,24 @@ public class InventoryUIController : MonoBehaviour//, IPointerEnterHandler, IPoi
             keyItemsTabButton.image.color = highlightColor;
             otherItemsTabButton.image.color = Color.white;
         }
+    }
+
+    private void OnDisable()
+    {
+        DisableInventoryInput();
+    }
+
+    private void EnableInventoryInput()
+    {
+        inputActions.FindActionMap("Inventory").Enable();
+        inputActions.FindAction("Player/Look").Disable();
+        inputActions.FindAction("Player/Jump").Disable();
+    }
+
+    private void DisableInventoryInput()
+    {
+        inputActions.FindActionMap("Inventory").Disable();
+        inputActions.FindAction("Player/Look").Enable();
+        inputActions.FindAction("Player/Jump").Enable();
     }
 }

@@ -39,6 +39,7 @@ public class DialogueTrigger : MonoBehaviour
     private GameObject popupInstance;
 
     public GameObject enemy;
+    public bool focusCameraOnTrigger = false;
 
     private void Awake()
     {
@@ -64,7 +65,8 @@ public class DialogueTrigger : MonoBehaviour
         if (promptUI != null)
             promptUI.SetActive(false);
 
-        enemy.SetActive(false);
+        if (enemy != null)
+            enemy.SetActive(false);
     }
 
     // Update is called once per frame
