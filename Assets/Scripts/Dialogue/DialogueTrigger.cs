@@ -21,6 +21,14 @@ public class DialogueTrigger : MonoBehaviour
     public List<string> objectiveIDYouCareAbout = new List<string>();
     public ObjectiveData linkedObjective;
 
+    // Look at player
+    public bool IsMediation = false;
+    public float lookSpeed = 5f;
+    private bool isLookingAtPlayer = false;
+
+    // wandering
+    private NpcMovement npcWander;
+
     private bool playerInRange = false;
     private Transform player;
     private PlayerControls controls;
@@ -48,6 +56,8 @@ public class DialogueTrigger : MonoBehaviour
     {
         // Player reference
         player = GameObject.FindGameObjectWithTag("Player").transform;
+
+        npcWander = GetComponent<NpcMovement>();
 
         // Dialogue Manager
         dialogueManager = FindObjectOfType<DialogueManager>();
@@ -98,6 +108,28 @@ public class DialogueTrigger : MonoBehaviour
             DisablePopupIcon();
         }
 
+        if (isLookingAtPlayer && !IsMediation)
+        {
+            LookAtPlayer();
+        }
+    }
+
+    private void LookAtPlayer()
+    {
+        if (player == null) return;
+
+        Vector3 Direction = player.position - transform.position;
+        Direction.y = 0f; // Prevent tilting
+
+        if (Direction.sqrMagnitude < 0.01f) return;
+
+        Quaternion targetRotation = Quaternion.LookRotation(Direction);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, lookSpeed * Time.deltaTime);
+    }
+
+    public void StopLookingAtPlayer()
+    {
+        isLookingAtPlayer = false;
     }
 
     private void TryInteract()
@@ -106,11 +138,19 @@ public class DialogueTrigger : MonoBehaviour
         if (!playerInRange || PlayerController.DialogueActive)
             return;
 
+        // stop wandering when dialogue starts
+        if (npcWander != null)
+        {
+            npcWander.StopWandering();
+        }
+
         // PlayerController.DialogueActive = true;
         DisablePopupIcon();
 
         if (promptUI != null)
             promptUI.SetActive(false);
+
+        isLookingAtPlayer = true;
 
         // check if the player completed any objectives the npc is responsible for
         bool allCompleted = true;
@@ -192,6 +232,14 @@ public class DialogueTrigger : MonoBehaviour
             Debug.Log($"{enemy.name} activated by {NPCName}");
         }
 
+    }
+
+    public void ResumeWandering()
+    {
+        if(npcWander != null)
+        {
+            npcWander.ResumeWandering();
+        }
     }
 
     private void OnTriggerEnter(Collider other)

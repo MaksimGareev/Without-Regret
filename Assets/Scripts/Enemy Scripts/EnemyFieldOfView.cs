@@ -18,6 +18,9 @@ public class EnemyFieldOfView : MonoBehaviour
     public LayerMask obstructionMask; // layer of objects that block the enmey's view
 
     public bool canSeePlayer; // if the player is in the enemy's field of view
+    public float chaseDuration = 1; 
+    public float maxChaseDuration = 1;
+    
 
     // Start is called before the first frame update
     void Start()
@@ -53,20 +56,43 @@ public class EnemyFieldOfView : MonoBehaviour
                 float distanceToTarget = Vector3.Distance(transform.position, target.position);
                 m_Distance = Vector3.Distance(m_Agent.transform.position, target.position);
 
-                if (!Physics.Raycast(transform.position, directionToTarget, distanceToTarget, obstructionMask)) // raycast vision of the enmey
+                if (!Physics.Raycast(transform.position, directionToTarget, distanceToTarget, obstructionMask)) // raycast vision of the enemy
                 {
+                    chaseDuration = 1;
                     canSeePlayer = true;
                     m_Agent.destination = target.position; // if seen move towards the player
+                    angle = 230; // enemy FOV widens while chasing the player
+                    return;
                     //Debug.Log("Player detected");
                 }
-                else
+            }
+            if (canSeePlayer) //if player breaks line of sight enemy can still chase the player but chase timer will go down
+            {
+                m_Agent.destination = target.position;
+                chaseDuration -= Time.deltaTime;
+                if (chaseDuration <= 0) //if player breaks line of sight/outruns
                 {
                     canSeePlayer = false;
+                    angle = 90;
                     Debug.Log("Player lost");
                 }
             }
+            //canSeePlayer = false;
+            //angle = 90;
+            //if (!canSeePlayer)
+            //{
+            //    canSeePlayer = false;
+            //    angle = 90; //enemy FOV decreases back to normal when player is lost
+            //    Debug.Log("Player lost");
+            //}
         }
-        
+        else
+        {
+            canSeePlayer = false;
+            angle = 90;
+            Debug.Log("Player lost");
+
+        }
     }
 
     // Function for killing the player
@@ -83,7 +109,7 @@ public class EnemyFieldOfView : MonoBehaviour
     {
         if (other.name == "Player")
         {
-            canSeePlayer = false;
+            //canSeePlayer = false;
             Debug.Log("Player is alive");
         }
     }
