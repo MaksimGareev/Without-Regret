@@ -191,7 +191,7 @@ public class SaveManager : MonoBehaviour
         if (isSaving) return;
         isSaving = true;
 
-        SaveData data = SaveSystem.Load(slot) ?? new SaveData();
+        SaveData data = SaveSystem.Load(slot) ?? new SaveData(slot);
 
         data.lastSceneName = SceneManager.GetActiveScene().name;
 
