@@ -36,6 +36,9 @@ public class MainMenu : MonoBehaviour
 
         versionNumberText.text = gameVersion;
         EventSystem.current.SetSelectedGameObject(playButton.gameObject);
+
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
     }
 
     // Update is called once per frame
@@ -47,6 +50,17 @@ public class MainMenu : MonoBehaviour
             {
                 OpenMainMenu();
             }
+        }
+
+        // Debug shortcut to delete all saves and reload main menu
+        if (Input.GetKeyDown(KeyCode.F5))
+        {
+            for (int i = 1; i <= 3; i++)
+            {
+                SaveSystem.DeleteSave(i);
+            }
+
+            SceneManager.LoadScene("MainMenu");
         }
 
         CheckMouseInput();
@@ -65,6 +79,7 @@ public class MainMenu : MonoBehaviour
         if (mouseDelta.sqrMagnitude > 0.1f)
         {
             Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
             
             if (EventSystem.current.currentSelectedGameObject != null)
             {
