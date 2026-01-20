@@ -146,6 +146,7 @@ public class PlayerPossessing : MonoBehaviour
         normalEnemyMovement = target.GetComponent<PatrollingEnemy>();
         enemyRigidbody = target.GetComponent<Rigidbody>();
         possessedEnemyMovement = target;
+        
 
         possessionTimer = possessionDuration;
 
