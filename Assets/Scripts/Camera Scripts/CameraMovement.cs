@@ -36,6 +36,9 @@ public class CameraMovement : MonoBehaviour
     public float zoomDuration = 2f;
     public float transitionSpeed = 2f;
     private bool isZooming = false;
+    private Vector3 camPosCache = Vector3.zero;
+    private Quaternion camRotCache = Quaternion.identity;
+    private Vector3 lookAtCache = Vector3.zero;
 
     private Vector3 currentOffset;
     private Vector3 currentLookAtOffset;
@@ -228,37 +231,87 @@ public class CameraMovement : MonoBehaviour
         currentLookAtOffset = Vector3.Lerp(currentLookAtOffset, initialRotation * defaultLookAtOffset, returnSpeed * Time.deltaTime);
     }
 
-    public void TriggerPickupCameraEffect(Transform item)
+    public void TriggerDialogueCamera(Transform dialogueTrigger)
     {
         if (!isZooming)
         {
-            StartCoroutine(PickupCameraRoutine(item));
+            StartCoroutine(StartCameraZoom(dialogueTrigger, true));
         }
     }
 
-    IEnumerator PickupCameraRoutine(Transform item)
+    public IEnumerator EndCameraZoom()
     {
-        isZooming = true;
+        if (camPosCache == Vector3.zero || camRotCache == Quaternion.identity || lookAtCache == Vector3.zero)
+        {
+            yield break;
+        }
 
-        Vector3 originalCamPos = transform.position;
-        Quaternion originalCamRot = transform.rotation;
-
-        Vector3 targetPos = item.position + (transform.forward * 1f) + pickupOffset;
-        Quaternion targetRot = Quaternion.LookRotation(item.position - transform.position);
-
-        Vector3 lookAtPos = item.position;
+        Vector3 currentPos = transform.position;
+        Quaternion currentRot = transform.rotation;
 
         float t = 0;
         while (t < zoomDuration)
         {
             t += Time.deltaTime * transitionSpeed;
-            transform.position = Vector3.Lerp(originalCamPos, targetPos, t);
-            transform.rotation = Quaternion.Slerp(originalCamRot, targetRot, t);
+            transform.position = Vector3.Lerp(currentPos, camPosCache, t);
+            transform.rotation = Quaternion.Slerp(currentRot, camRotCache, t);
+            Vector3 lookAtPos = Vector3.Lerp(lookAtCache, target.position + currentLookAtOffset, t);
             transform.LookAt(lookAtPos);
             yield return null;
         }
 
-        yield return new WaitForSeconds(zoomDuration / 2f);
         isZooming = false;
+
+        camPosCache = Vector3.zero;
+        camRotCache = Quaternion.identity;
+        lookAtCache = Vector3.zero;
+    }
+
+    public void TriggerPickupCameraEffect(Transform item)
+    {
+        if (!isZooming)
+        {
+            StartCoroutine(StartCameraZoom(item, false));
+            StartCoroutine(PauseZoomForItem());
+        }
+    }
+
+    IEnumerator PauseZoomForItem()
+    {
+        yield return new WaitForSeconds(zoomDuration / 2f);
+        StartCoroutine(EndCameraZoom());
+    }
+
+    public IEnumerator StartCameraZoom(Transform target, bool dialogue = false)
+    {
+        isZooming = true;
+        Vector3 offset;
+
+        if (dialogue)
+        {
+            offset = target.right * 1f + target.forward * 5f + Vector3.up * 2f;
+        }
+        else 
+        {
+            offset = pickupOffset;
+        } 
+
+        camPosCache = transform.position;
+        camRotCache = transform.rotation;
+
+        Vector3 targetPos = target.position + (transform.forward * 1f) + offset;
+        Quaternion targetRot = Quaternion.LookRotation(target.position - transform.position);
+
+        lookAtCache = target.position;
+
+        float t = 0;
+        while (t < zoomDuration)
+        {
+            t += Time.deltaTime * transitionSpeed;
+            transform.position = Vector3.Lerp(camPosCache, targetPos, t);
+            transform.rotation = Quaternion.Slerp(camRotCache, targetRot, t);
+            transform.LookAt(lookAtCache);
+            yield return null;
+        }
     }
 }

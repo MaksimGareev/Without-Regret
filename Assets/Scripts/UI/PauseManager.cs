@@ -6,9 +6,14 @@ using UnityEngine.InputSystem;
 
 public class PauseManager : MonoBehaviour
 {
+    [Header("Singleton")]
+    public static PauseManager Instance { get; private set; }
+
     [Header("Input Settings")]
-    [SerializeField] private string pauseButton = "Xbox Start Button";
-    [SerializeField] private KeyCode pauseKey = KeyCode.Escape;
+    [SerializeField] private InputActionAsset inputActions;
+    private InputAction playerPauseAction;
+    private InputAction UIPauseAction;
+    private InputAction cancelAction;
 
     [Header("UI Button References")]
     [SerializeField] private Button resumeButton;
@@ -21,7 +26,31 @@ public class PauseManager : MonoBehaviour
     [SerializeField] private GameObject pauseMenuPanel;
     [SerializeField] private GameObject settingsPanel;
     [SerializeField] private Canvas[] otherCanvasesToDisable;
-    
+    [HideInInspector] public bool isGamePaused = false;
+
+    private void Awake()
+    {
+        // Make this a singleton
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+
+        // Initialize input actions
+        playerPauseAction = inputActions.FindAction("Player/Pause");
+        playerPauseAction.Enable();
+
+        UIPauseAction = inputActions.FindAction("UI/Pause");
+        UIPauseAction.Enable();
+
+        cancelAction = inputActions.FindAction("UI/Cancel");
+        cancelAction.Enable();
+    }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -35,13 +64,18 @@ public class PauseManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetButtonDown(pauseButton) || Input.GetKeyDown(pauseKey) || Input.GetKeyDown(KeyCode.P))
+        if (SceneManager.GetActiveScene().name == "MainMenu")
+        {
+            return; // Do not allow pausing in the main menu
+        }
+        
+        if ((playerPauseAction.triggered || UIPauseAction.triggered) && !Journal.Instance.isJournalOpen)
         {
             if (!pauseMenuPanel.activeSelf && !settingsPanel.activeSelf)
             {
                 PauseGame();
             }
-            else if (settingsPanel.activeSelf && Input.GetKeyDown(pauseKey))
+            else if (settingsPanel.activeSelf)
             {
                 BackToPauseMenu();
             }
@@ -51,11 +85,15 @@ public class PauseManager : MonoBehaviour
             }
         }
 
-        if (Gamepad.current != null && Gamepad.current.bButton.wasPressedThisFrame)
+        if (cancelAction.triggered)
         {
             if (settingsPanel.activeSelf)
             {
                 BackToPauseMenu();
+            }
+            else if (pauseMenuPanel.activeSelf)
+            {
+                ResumeGame();
             }
         }
 
@@ -112,24 +150,32 @@ public class PauseManager : MonoBehaviour
 
     private void PauseGame()
     {
+        // Save game before pausing
         if (SaveManager.Instance != null)
         {
-            SaveManager.Instance.SaveGame();
+            SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
         }
 
+        // Logic to pause the game
         pauseMenuPanel.SetActive(true);
-        Time.timeScale = 0f; // Freeze game time
+        Time.timeScale = 0f;
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
+        isGamePaused = true;
+        inputActions.FindActionMap("Player").Disable();
+        inputActions.FindActionMap("UI").Enable();
 
+        // Disable other canvases
         foreach (var canvas in otherCanvasesToDisable)
         {
-            canvas.enabled = false;
+            if (canvas != null)
+                canvas.enabled = false;
         }
 
+        // Set initial selected button
         EventSystem.current.SetSelectedGameObject(resumeButton.gameObject);
 
-        Debug.Log("Game Paused");
+        //Debug.Log("Game Paused");
     }
 
     private void SetUpEvents()
@@ -151,7 +197,7 @@ public class PauseManager : MonoBehaviour
         EventSystem.current.SetSelectedGameObject(resumeButton.gameObject);
     }
 
-    private void ResumeGame()
+    public void ResumeGame()
     {
         // Logic to resume the game
         pauseMenuPanel.SetActive(false);
@@ -159,10 +205,15 @@ public class PauseManager : MonoBehaviour
         backButton.gameObject.SetActive(false);
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
+        isGamePaused = false;
 
+        // Re-enable other canvases
         foreach (var canvas in otherCanvasesToDisable)
         {
+            if (canvas == null) continue;
+
             canvas.enabled = true;
+            
             InventoryUIController inventoryCanvas = canvas.GetComponentInChildren<InventoryUIController>();
             if (inventoryCanvas != null)
             {
@@ -171,9 +222,12 @@ public class PauseManager : MonoBehaviour
             }
         }
 
-        Time.timeScale = 1f; // Resume game time
+        Time.timeScale = 1f;
+
+        inputActions.FindActionMap("UI").Disable();
+        inputActions.FindActionMap("Player").Enable();
         
-        Debug.Log("Resuming Game...");
+        //Debug.Log("Resuming Game...");
     }
 
     private void ReloadSave()
@@ -181,32 +235,39 @@ public class PauseManager : MonoBehaviour
         // Logic to reload the last save
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         ResumeGame();
-        Debug.Log("Reloading Save...");
+        //Debug.Log("Reloading Save...");
     }
 
     private void OpenSettings()
     {
         // Logic to open settings menu
-
         pauseMenuPanel.SetActive(false);
         settingsPanel.SetActive(true);
         backButton.gameObject.SetActive(true);
 
         EventSystem.current.SetSelectedGameObject(settingsPanel.GetComponentInChildren<MMSettings>().resolutionDropdown.gameObject);
         
-        Debug.Log("Opening Settings...");
+        //Debug.Log("Opening Settings...");
     }
 
     private void QuitToMainMenu()
     {
+        // Save game before quitting
         if (SaveManager.Instance != null)
         {
-            SaveManager.Instance.SaveGame();
+            SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
         }
+
         // Logic to quit to main menu
         SceneManager.LoadScene("MainMenu");
         Time.timeScale = 1f; // Ensure time scale is reset
+        isGamePaused = false;
         Cursor.visible = true;
-        Debug.Log("Quitting to Main Menu...");
+        Cursor.lockState = CursorLockMode.None;
+    
+        inputActions.FindActionMap("UI").Disable();
+        inputActions.FindActionMap("Player").Enable();
+        
+        //Debug.Log("Quitting to Main Menu...");
     }
 }

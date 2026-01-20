@@ -63,7 +63,7 @@ public class SaveManager : MonoBehaviour
 
         if (saveables.Count > 0)
         {
-            LoadGame();
+            LoadGame(SaveSystem.activeSaveSlot);
         }
 
         else
@@ -72,9 +72,9 @@ public class SaveManager : MonoBehaviour
         }
     }
 
-    public void ClearSaveData()
+    public void ClearSaveData(int slot)
     {
-        SaveSystem.DeleteSave();
+        SaveSystem.DeleteSave(slot);
         if (ObjectiveManager.Instance != null)
         {
             ObjectiveManager.Instance.ClearObjectivesOnDelete();
@@ -173,25 +173,25 @@ public class SaveManager : MonoBehaviour
 
         if (autoSaveTimer >= autoSaveInterval && SceneManager.GetActiveScene().name != "MainMenu")
         {
-            SaveGame();
+            SaveGame(SaveSystem.activeSaveSlot);
             Debug.Log("Game auto-saved.");
             autoSaveTimer = 0f;
         }
 
-        if (Input.GetKeyDown(KeyCode.F5) && SceneManager.GetActiveScene().name == "MainMenu")
-        {
-            ClearSaveData();
-            Debug.Log("Save data cleared via F5 key.");
-            SceneManager.LoadScene("MainMenu");
-        }
+        // if (Input.GetKeyDown(KeyCode.F5) && SceneManager.GetActiveScene().name == "MainMenu")
+        // {
+        //     ClearSaveData();
+        //     Debug.Log("Save data cleared via F5 key.");
+        //     SceneManager.LoadScene("MainMenu");
+        // }
     }
 
-    public void SaveGame()
+    public void SaveGame(int slot)
     {
         if (isSaving) return;
         isSaving = true;
 
-        SaveData data = SaveSystem.Load() ?? new SaveData();
+        SaveData data = SaveSystem.Load(slot) ?? new SaveData();
 
         data.lastSceneName = SceneManager.GetActiveScene().name;
 
@@ -208,13 +208,13 @@ public class SaveManager : MonoBehaviour
         int objCount = data.objectiveSaveData?.objectives?.Count ?? -1;
         Debug.Log($"[SaveManager.SaveGame] objectiveSaveData.objectives.Count = {objCount}");
 
-        SaveSystem.Save(data);
+        SaveSystem.Save(data, slot);
         isSaving = false;
     }
 
-    public void LoadGame()
+    public void LoadGame(int slot)
     {
-        SaveData data = SaveSystem.Load();
+        SaveData data = SaveSystem.Load(slot);
 
         if (data == null)
         {
@@ -247,10 +247,32 @@ public class SaveManager : MonoBehaviour
         {
             ObjectiveManager.Instance.EnsureActiveObjective();
         }
+
+        if (PauseManager.Instance != null)
+        {
+            PauseManager.Instance.ResumeGame();
+        }
     }
 
-    public bool SaveExists()
+    public void SetActiveSaveSlot(int slot)
     {
-        return SaveSystem.SaveExists();
+        SaveSystem.SetActiveSaveSlot(slot);
+    }
+
+    public bool AnySavesExist()
+    {
+        for (int slot = 1; slot <= 3; slot++)
+        {
+            if (SaveSystem.SaveExists(SaveSystem.GetSavePath(slot)))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public bool SaveExists(int slot)
+    {
+        return SaveSystem.SaveExists(SaveSystem.GetSavePath(slot));
     }
 }

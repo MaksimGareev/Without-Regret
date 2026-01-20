@@ -4,6 +4,7 @@ using System.Collections.Generic;
 public class ObjectiveRecord
 {
     public string objectiveID;
+    public string objectiveName;
     public int progress;
     public bool isCompleted;
 }

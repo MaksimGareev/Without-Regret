@@ -64,6 +64,7 @@ public class DialogueManager : MonoBehaviour
     private PlayerThrowing playerThrowing;
     private PlayerFloating playerFloating;
     private PlayerController playerController;
+    private CameraMovement cameraMovement;
 
     // NPC references
     private DialogueTrigger activeDialogueTrigger;
@@ -140,6 +141,7 @@ public class DialogueManager : MonoBehaviour
         playerFloating = player.GetComponent<PlayerFloating>();
         playerThrowing = player.GetComponent<PlayerThrowing>();
         playerController = player.GetComponent<PlayerController>();
+        cameraMovement = Camera.main.GetComponent<CameraMovement>();
         PopupText.gameObject.SetActive(false);
         Chime.isInDialogue = true;
 
@@ -183,6 +185,10 @@ public class DialogueManager : MonoBehaviour
         DialoguePanel.SetActive(true);
         NPCNameText.text = currentDialogue.npcName;
         playerController.SetDialogueActive(true);
+        if (trigger.focusCameraOnTrigger)
+        {
+            cameraMovement.TriggerDialogueCamera(trigger.transform);
+        }
 
         if (playerFloating != null) playerFloating.enabled = false;
         if (playerThrowing != null) playerThrowing.enabled = false;
@@ -699,10 +705,11 @@ public class DialogueManager : MonoBehaviour
         CanChoose = false;
         DialogueIsActive = false;
         ContinueArrow.SetActive(false);
-
+        
         PlayerController.DialogueActive = false;
         playerController.SetDialogueActive(false);
-        
+        StartCoroutine(cameraMovement.EndCameraZoom());
+
         if (playerFloating != null) playerFloating.enabled = true;
         if (playerThrowing != null) playerThrowing.enabled = true;
         if (TypingAudioSource != null) TypingAudioSource.Stop();
