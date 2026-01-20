@@ -21,6 +21,14 @@ public class DialogueTrigger : MonoBehaviour
     public List<string> objectiveIDYouCareAbout = new List<string>();
     public ObjectiveData linkedObjective;
 
+    // Look at player
+    public bool IsMediation = false;
+    public float lookSpeed = 5f;
+    private bool isLookingAtPlayer = false;
+
+    // wandering
+    private NpcMovement npcWander;
+
     private bool playerInRange = false;
     private Transform player;
     private PlayerControls controls;
@@ -47,6 +55,8 @@ public class DialogueTrigger : MonoBehaviour
     {
         // Player reference
         player = GameObject.FindGameObjectWithTag("Player").transform;
+
+        npcWander = GetComponent<NpcMovement>();
 
         // Dialogue Manager
         dialogueManager = FindObjectOfType<DialogueManager>();
@@ -96,6 +106,28 @@ public class DialogueTrigger : MonoBehaviour
             DisablePopupIcon();
         }
 
+        if (isLookingAtPlayer && !IsMediation)
+        {
+            LookAtPlayer();
+        }
+    }
+
+    private void LookAtPlayer()
+    {
+        if (player == null) return;
+
+        Vector3 Direction = player.position - transform.position;
+        Direction.y = 0f; // Prevent tilting
+
+        if (Direction.sqrMagnitude < 0.01f) return;
+
+        Quaternion targetRotation = Quaternion.LookRotation(Direction);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, lookSpeed * Time.deltaTime);
+    }
+
+    public void StopLookingAtPlayer()
+    {
+        isLookingAtPlayer = false;
     }
 
     private void TryInteract()
@@ -104,11 +136,19 @@ public class DialogueTrigger : MonoBehaviour
         if (!playerInRange || PlayerController.DialogueActive)
             return;
 
+        // stop wandering when dialogue starts
+        if (npcWander != null)
+        {
+            npcWander.StopWandering();
+        }
+
         // PlayerController.DialogueActive = true;
         DisablePopupIcon();
 
         if (promptUI != null)
             promptUI.SetActive(false);
+
+        isLookingAtPlayer = true;
 
         // check if the player completed any objectives the npc is responsible for
         bool allCompleted = true;
@@ -123,7 +163,7 @@ public class DialogueTrigger : MonoBehaviour
         // if all are completed play completed dialogue
         if (allCompleted && CompleteJsonDialogueFile != null && TalkedAlready == true)
         {
-            dialogueManager.StartDialogueFromJson(CompleteJsonDialogueFile);
+            dialogueManager.StartDialogueFromJson(CompleteJsonDialogueFile, this);
 
             if (ObjectiveManager.Instance != null && linkedObjective != null)
             {
@@ -149,14 +189,14 @@ public class DialogueTrigger : MonoBehaviour
         // if any are active play active dialogue
         if (anyActive && ActiveJsonDialogueFile != null)
         {
-            dialogueManager.StartDialogueFromJson(ActiveJsonDialogueFile);
+            dialogueManager.StartDialogueFromJson(ActiveJsonDialogueFile, this);
             return;
         }
 
         // Starting dialogue
         if (dialogueManager != null && jsonDialogueFile != null && TalkedAlready == false)
         {
-            dialogueManager.StartDialogueFromJson(jsonDialogueFile);
+            dialogueManager.StartDialogueFromJson(jsonDialogueFile, this);
             
             // Add Progress to objective if there is one to add to, (Talking to irene completes the "talk to irene" objective)
             if (ObjectiveManager.Instance != null && linkedObjective != null)
@@ -172,7 +212,7 @@ public class DialogueTrigger : MonoBehaviour
         // dialogue if the npc has already been talked to and hasn't started any objectives from the npc
         else if (TalkedAlready == true)
         {
-            dialogueManager.StartDialogueFromJson(TalkedJsonDialogueFile);
+            dialogueManager.StartDialogueFromJson(TalkedJsonDialogueFile, this);
 
             if (ObjectiveManager.Instance != null && linkedObjective != null)
             {
@@ -192,13 +232,21 @@ public class DialogueTrigger : MonoBehaviour
 
     }
 
+    public void ResumeWandering()
+    {
+        if(npcWander != null)
+        {
+            npcWander.ResumeWandering();
+        }
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player") && TalkedAlready == false)
         {
             if (dialogueManager != null && jsonDialogueFile != null)
             {
-                dialogueManager.StartDialogueFromJson(jsonDialogueFile);
+                dialogueManager.StartDialogueFromJson(jsonDialogueFile, this);
             }
             TalkedAlready = true;
            /* if (this.CompareTag("Spawner") && enemy != null)
