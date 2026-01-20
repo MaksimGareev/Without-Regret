@@ -67,7 +67,7 @@ public class LockPicking : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(UnlockRange);
+        //Debug.Log(UnlockRange);
         Rigidbody rb = player.GetComponent<Rigidbody>();
 
         if (MovePick == true)
@@ -103,7 +103,7 @@ public class LockPicking : MonoBehaviour
             PickCursor.eulerAngles = new Vector3(0, 0, CurrentAngle + LockLerp);
         }
 
-        Debug.Log(Percentage);
+        //Debug.Log(Percentage);
         //PickCursor.eulerAngles = new Vector3(0, 0, LockLerp);
 
         if (LockLerp >= MaxRotation - 1)
@@ -134,8 +134,8 @@ public class LockPicking : MonoBehaviour
             else
             {
                 //PickCursor.eulerAngles = new Vector3(0, 0, LockLerp);
-                //float RandomRotation = Random.insideUnitCircle.x;
-                //transform.eulerAngles += new Vector3(0, 0, Random.Range(-RandomRotation, RandomRotation));
+                float RandomRotation = Random.insideUnitCircle.x;
+                PickCursor.eulerAngles += new Vector3(0, 0, Random.Range(-RandomRotation, RandomRotation));
             }
 
         }
