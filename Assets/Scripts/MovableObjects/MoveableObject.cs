@@ -44,7 +44,7 @@ public class MoveableObject : MonoBehaviour, IInteractable
 
         if (SaveManager.Instance != null)
         {
-            SaveManager.Instance.SaveGame();
+            SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
         }
 
         EnablePopupIcon();

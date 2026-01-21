@@ -158,7 +158,7 @@ public class LockedItem : MonoBehaviour
 
         if (SaveManager.Instance != null)
         {
-            SaveManager.Instance.SaveGame();
+            SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
         }
 
         //UnlockTop.transform.position = new Vector3(0f, 95f, -23f);
@@ -178,7 +178,7 @@ public class LockedItem : MonoBehaviour
         if (SaveManager.Instance != null)
         {
             SaveManager.Instance.SetUnlocked(gameObject.name, true);
-            SaveManager.Instance.SaveGame();
+            SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
         }
 
         if (needsObjective && linkedObjective != null && ObjectiveManager.Instance != null)

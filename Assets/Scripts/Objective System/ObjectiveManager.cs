@@ -26,6 +26,7 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
 
     private void Awake()
     {
+        // Singleton pattern
         if (Instance == null)
         {
             Instance = this;
@@ -37,12 +38,13 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
             return;
         }
 
+        // Register self with SaveManager as a savable entity
         StartCoroutine(RegisterWhenReady());
     }
 
     private void Start()
     {
-        if (!SaveManager.Instance.SaveExists() && SceneManager.GetActiveScene().name != "Echo'sHouse")
+        if (!SaveManager.Instance.SaveExists(SaveSystem.activeSaveSlot) && SceneManager.GetActiveScene().name != "Echo'sHouse")
         {
             //ActivateObjective(allObjectives[0]);
             //currentObjectiveIndex = 0;
@@ -75,6 +77,7 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
             data.objectiveSaveData.objectives.Add(new ObjectiveRecord
             {
                 objectiveID = inst.data.objectiveID,
+                objectiveName = inst.data.title,
                 progress = inst.currentProgress,
                 isCompleted = false
             });
@@ -86,6 +89,7 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
             data.objectiveSaveData.objectives.Add(new ObjectiveRecord
             {
                 objectiveID = inst.data.objectiveID,
+                objectiveName = inst.data.title,
                 progress = inst.currentProgress,
                 isCompleted = true
             });
@@ -154,7 +158,7 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
         Debug.Log($"Objective '{newObjective.data.title}' has been activated");
         if (SaveManager.Instance != null)
         {
-            SaveManager.Instance.SaveGame();
+            SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
         }
     }
 
@@ -174,7 +178,7 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
 
         if (SaveManager.Instance != null)
         {
-            SaveManager.Instance.SaveGame();
+            SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
         }
     }
 
@@ -197,7 +201,7 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
 
         if (SaveManager.Instance != null)
         {
-            SaveManager.Instance.SaveGame();
+            SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
         }
     }
 
@@ -270,7 +274,7 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
 
         if (SaveManager.Instance != null)
         {
-            SaveManager.Instance.SaveGame();
+            SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
         }
     }
 

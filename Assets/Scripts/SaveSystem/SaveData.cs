@@ -7,11 +7,11 @@ public class SaveData
     public ObjectiveSaveData objectiveSaveData;
     public WorldSaveData worldSaveData;
     public InventorySaveData inventorySaveData;
+    public int slot = 1;
 
-    public int version = 1;
-
-    public SaveData()
+    public SaveData(int slot)
     {
+        this.slot = slot;
         playerSaveData = new PlayerSaveData();
         objectiveSaveData = new ObjectiveSaveData();
         worldSaveData = new WorldSaveData();

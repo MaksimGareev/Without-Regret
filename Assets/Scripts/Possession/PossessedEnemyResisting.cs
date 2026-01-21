@@ -7,7 +7,7 @@ public class PossessedEnemyResisting : MonoBehaviour
 {
     [Header("Possession Settings")]
     [SerializeField] private float moveSpeed = 3f;
-    [SerializeField] private float struggleStrength = 2f; // The strength of the enemy's resistance
+    [SerializeField] private float struggleStrength = 0.5f; // The strength of the enemy's resistance
     [SerializeField, Range(0f, 1f)] private float struggleFrequency = 0.5f; // How often the enemy tries to resist the possession
 
     private Rigidbody rb;
@@ -41,7 +41,7 @@ public class PossessedEnemyResisting : MonoBehaviour
             struggleDirection.y = 0f;
         }
 
-        Vector3 finalMoveDirection = Vector3.Lerp(moveDirection, moveDirection + struggleDirection, 0.5f);
+        Vector3 finalMoveDirection = Vector3.Lerp(moveDirection, moveDirection + struggleDirection, 0.5f)*-1;
 
         rb.MovePosition(rb.position + finalMoveDirection * Time.fixedDeltaTime);
 

@@ -60,7 +60,7 @@ public class TODManager : MonoBehaviour
     {
         if (objective.data != linkedObjective) return;
 
-        SetTOD(TOD.Evening);
+        StartCoroutine(TransitionTo(TOD.Evening, TransitionDuration));
     }
 
     public void SetTOD(TOD newTime)
