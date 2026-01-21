@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.EventSystems;
 
 public class MMSettings : MonoBehaviour
 {
@@ -246,6 +247,7 @@ public class MMSettings : MonoBehaviour
             controlSchemeUI.SetActive(true);
             settingsUI.SetActive(false);
             controlSchemeOpen = true;
+            EventSystem.current.SetSelectedGameObject(controlSchemeUI.GetComponent<ControlSchemeUI>().ControllerButton.gameObject);
         }
     }
 
@@ -256,6 +258,7 @@ public class MMSettings : MonoBehaviour
             controlSchemeUI.SetActive(false);
             settingsUI.SetActive(true);
             controlSchemeOpen = false;
+            EventSystem.current.SetSelectedGameObject(controlSchemeUIButton.gameObject);
         }
     }
 }

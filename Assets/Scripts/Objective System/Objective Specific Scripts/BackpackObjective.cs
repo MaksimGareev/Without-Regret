@@ -6,7 +6,7 @@ public class BackpackObjective : MonoBehaviour
     [SerializeField] private ItemData linkedItem;
     private bool itemsEnabled = false;
 
-    private void Enable()
+    private void OnEnable()
     {
         Inventory.OnItemAdded += CheckForBag;
 
@@ -19,12 +19,23 @@ public class BackpackObjective : MonoBehaviour
         {
             Debug.LogWarning("ObjectiveManager instance is null. Cannot subscribe to OnObjectiveActivated event.");
         }
-        
+
+        // catch up in case the objective is already active
+        foreach (var activeObjective in ObjectiveManager.Instance.GetActiveObjectives())
+        {
+            EnableBackpacks(activeObjective);
+        }
     }
 
     private void OnDisable()
     {
         Inventory.OnItemAdded -= CheckForBag;
+
+        if (ObjectiveManager.Instance != null)
+        {
+            ObjectiveManager.Instance.OnObjectiveActivated.RemoveListener(EnableBackpacks);
+            Debug.Log($"{gameObject.name}: Unsubscribed from OnObjectiveActivated event.");
+        }
     }
 
     private void EnableBackpacks(ObjectiveInstance objective)
