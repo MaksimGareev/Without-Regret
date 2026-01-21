@@ -6,19 +6,33 @@
             "requiredMorality" :  0,
             "choices": [
                 {
-                    "text": "This is the good response",
+                    "text": "This is the first response",
                     "nextIndex": 1,
-                    "moralityChange" :  2
+                    "moralityChange": 2,
+                    "directionString": "Up"
                 },
                 {
-                    "text": "This is the bad response",
+                    "text": "This is the second response",
                     "nextIndex": 2,
-                    "moralityChange": -2
+                    "moralityChange": -2,
+                    "directionString": "Right"
+                },
+                {
+                    "text": "This is the third response",
+                    "nextIndex": 3,
+                    "moralityChange": -2,
+                    "directionString": "Down"
+                },
+                {
+                    "text": "This is the fourth response",
+                    "nextIndex": 4,
+                    "moralityChange": -2,
+                    "directionString": "Left"
                 }
             ]
         },
         {
-            "text": "You chose the good response.",
+            "text": "You chose the first response.",
             "requiredMorality": 1,
             "choices": [
                 {
@@ -27,9 +41,31 @@
             ]
         },
         {
-            "text": "You chose the bad response.",
-            "requiredMorality":  -1,
-            "choices": []
+            "text": "You chose the second response.",
+            "requiredMorality": -1,
+            "choices": [
+                {
+                    "nextIndex": -1
+                }
+            ]
+        },
+        {
+            "text": "You chose the third response.",
+            "requiredMorality": -1,
+            "choices": [
+                {
+                    "nextIndex": -1
+                }
+            ]
+        },
+        {
+            "text": "You chose the fourth response.",
+            "requiredMorality": -1,
+            "choices": [
+                {
+                    "nextIndex": -1
+                }
+            ]
         }
     ]
 }
