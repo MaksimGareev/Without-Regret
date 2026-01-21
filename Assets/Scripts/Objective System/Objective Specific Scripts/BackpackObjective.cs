@@ -6,10 +6,20 @@ public class BackpackObjective : MonoBehaviour
     [SerializeField] private ItemData linkedItem;
     private bool itemsEnabled = false;
 
-    private void OnEnable()
+    private void Enable()
     {
         Inventory.OnItemAdded += CheckForBag;
-        ObjectiveManager.Instance.OnObjectiveActivated.AddListener(EnableBackpacks);
+
+        if (ObjectiveManager.Instance != null)
+        {
+            ObjectiveManager.Instance.OnObjectiveActivated.AddListener(EnableBackpacks);
+            Debug.Log($"{gameObject.name}: Subscribed to OnObjectiveActivated event.");
+        }
+        else
+        {
+            Debug.LogWarning("ObjectiveManager instance is null. Cannot subscribe to OnObjectiveActivated event.");
+        }
+        
     }
 
     private void OnDisable()
@@ -19,15 +29,32 @@ public class BackpackObjective : MonoBehaviour
 
     private void EnableBackpacks(ObjectiveInstance objective)
     {
-        if (itemsEnabled || objective.data != linkedObjective) return;
+        Debug.Log($"{gameObject.name}: EnableBackpacks called for objective: {objective.data.objectiveID}");
+
+        if (itemsEnabled || objective.data != linkedObjective) 
+        {
+            Debug.Log($"{gameObject.name}: Items already enabled or objective does not match. itemsEnabled: {itemsEnabled}, current objective: {objective.data.objectiveID}, linked objective: {linkedObjective.objectiveID}");
+            return;
+        }
 
         WorldItem[] items = FindObjectsByType<WorldItem>(FindObjectsSortMode.None);
+
+        if (items.Length == 0)
+        {
+            Debug.LogWarning("No WorldItem instances found in the scene.");
+            return;
+        }
 
         foreach (WorldItem item in items)
         {
             if (item.ItemData.ItemType == linkedItem.ItemType && item.ItemData.ItemName == linkedItem.ItemName)
             {
+                Debug.Log($"Enabling backpack item: {item.gameObject.name}");
                 item.isCollectible = true;
+            }
+            else 
+            {
+                Debug.Log($"Not enabling item: {item.gameObject.name} - does not match linked item.");
             }
         }
 

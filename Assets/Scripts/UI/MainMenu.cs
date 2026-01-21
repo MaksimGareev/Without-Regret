@@ -25,11 +25,13 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private TextMeshProUGUI playButtonText;
     private string gameVersion = "v.0.0.1";
     private SaveManager saveManager;
+    private MMSettings settingsScript;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         saveManager = FindAnyObjectByType<SaveManager>();
+        settingsScript = settingsPanel.GetComponent<MMSettings>();
 
         UpdatePlayButton();
         OpenMainMenu();
@@ -46,9 +48,20 @@ public class MainMenu : MonoBehaviour
     {
         if (Gamepad.current != null && Gamepad.current.bButton.wasPressedThisFrame)
         {
-            if (settingsPanel.activeSelf || creditsPanel.activeSelf || saveSlotsPanel.activeSelf)
+            if (creditsPanel.activeSelf || saveSlotsPanel.activeSelf)
             {
                 OpenMainMenu();
+            }
+            else if (settingsPanel.activeSelf && settingsScript != null)
+            {
+                if (settingsScript.controlSchemeOpen)
+                {
+                    settingsScript.CloseControlSchemeUI();
+                }
+                else
+                {
+                    OpenMainMenu();
+                }
             }
         }
 
@@ -125,7 +138,7 @@ public class MainMenu : MonoBehaviour
         settingsButton.onClick.AddListener(OpenSettings);
         creditsButton.onClick.AddListener(OpenCredits);
         quitButton.onClick.AddListener(QuitGame);
-        backButton.onClick.AddListener(OpenMainMenu);
+        backButton.onClick.AddListener(HandleBackButton);
     }
 
     private void UpdatePlayButton()
@@ -137,6 +150,18 @@ public class MainMenu : MonoBehaviour
         else
         {
             playButtonText.text = "New Game";
+        }
+    }
+
+    private void HandleBackButton()
+    {
+        if (settingsPanel.activeSelf && settingsScript != null && settingsScript.controlSchemeOpen)
+        {
+            settingsScript.CloseControlSchemeUI();
+        }
+        else
+        {
+            OpenMainMenu();
         }
     }
 

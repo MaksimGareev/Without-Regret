@@ -24,6 +24,12 @@ public class MMSettings : MonoBehaviour
     [SerializeField] private TextMeshProUGUI controllerSensitivityValueText;
     [SerializeField] private TextMeshProUGUI controllerDeadZoneValueText;
 
+    [Header("UI References")]
+    [SerializeField] private GameObject settingsUI;
+    [SerializeField] private GameObject controlSchemeUI;
+    [SerializeField] private Button controlSchemeUIButton;
+    [HideInInspector] public bool controlSchemeOpen = false;
+
     private int tempResolutionIndex;
     private bool tempIsFullscreen;
     private float tempMasterVolume;
@@ -102,8 +108,11 @@ public class MMSettings : MonoBehaviour
         mouseSensitivitySlider.onValueChanged.AddListener(SetMouseSensitivity);
         controllerSensitivitySlider.onValueChanged.AddListener(SetControllerSensitivity);
         controllerDeadZoneSlider.onValueChanged.AddListener(SetControllerDeadZone);
+        
         resetButton.onClick.AddListener(ResetSettings);
         applyButton.onClick.AddListener(LoadSettings);
+
+        controlSchemeUIButton.onClick.AddListener(OpenControlSchemeUI);
     }
 
     public void SetResolution(int index)
@@ -228,5 +237,25 @@ public class MMSettings : MonoBehaviour
         mouseSensitivitySlider.value = tempMouseSensitivity;
         controllerSensitivitySlider.value = tempControllerSensitivity;
         controllerDeadZoneSlider.value = tempControllerDeadZone;
+    }
+
+    private void OpenControlSchemeUI()
+    {
+        if (controlSchemeUI != null && settingsUI != null)
+        {
+            controlSchemeUI.SetActive(true);
+            settingsUI.SetActive(false);
+            controlSchemeOpen = true;
+        }
+    }
+
+    public void CloseControlSchemeUI()
+    {
+        if (controlSchemeUI != null && settingsUI != null)
+        {
+            controlSchemeUI.SetActive(false);
+            settingsUI.SetActive(true);
+            controlSchemeOpen = false;
+        }
     }
 }
