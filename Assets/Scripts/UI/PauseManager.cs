@@ -27,6 +27,7 @@ public class PauseManager : MonoBehaviour
     [SerializeField] private GameObject settingsPanel;
     [SerializeField] private Canvas[] otherCanvasesToDisable;
     [HideInInspector] public bool isGamePaused = false;
+    private MMSettings settingsScript;
 
     private void Awake()
     {
@@ -57,6 +58,7 @@ public class PauseManager : MonoBehaviour
     {
         pauseMenuPanel.SetActive(false);
         settingsPanel.SetActive(false);
+        settingsScript = settingsPanel.GetComponent<MMSettings>();
         backButton.gameObject.SetActive(false);
         SetUpEvents();
     }
@@ -142,7 +144,7 @@ public class PauseManager : MonoBehaviour
                 }
                 else if (settingsPanel.activeSelf)
                 {
-                    EventSystem.current.SetSelectedGameObject(settingsPanel.GetComponentInChildren<MMSettings>().resolutionDropdown.gameObject);
+                    EventSystem.current.SetSelectedGameObject(settingsScript.resolutionDropdown.gameObject);
                 }
             }
         } 
@@ -185,7 +187,19 @@ public class PauseManager : MonoBehaviour
         reloadSaveButton.onClick.AddListener(ReloadSave);
         settingsButton.onClick.AddListener(OpenSettings);
         quitButton.onClick.AddListener(QuitToMainMenu);
-        backButton.onClick.AddListener(BackToPauseMenu);
+        backButton.onClick.AddListener(HandleBackButton);
+    }
+
+    private void HandleBackButton()
+    {
+        if (settingsPanel.activeSelf && settingsScript != null && settingsScript.controlSchemeOpen)
+        {
+            settingsScript.CloseControlSchemeUI();
+        }
+        else
+        {
+            BackToPauseMenu();
+        }
     }
 
     private void BackToPauseMenu()

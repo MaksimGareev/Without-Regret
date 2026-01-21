@@ -53,15 +53,15 @@ public class PlayerInteracting : MonoBehaviour
     {
         ScanForInteractable();
 
-        if (mantleTarget != null && (Mantle.triggered))
+        if (mantleTarget != null && Mantle.triggered)
         {
             mantleTarget.OnPlayerInteraction(gameObject);
         }
-        if (moveTarget != null && (Interact.triggered))
+        if (moveTarget != null && Interact.triggered)
         {
             moveTarget.OnPlayerInteraction(gameObject);
         }
-        else if (currentTarget != null && mantleTarget == null && (Interact.triggered))
+        else if (currentTarget != null && mantleTarget == null && Interact.triggered)
         {
             currentTarget.OnPlayerInteraction(gameObject);
         }
