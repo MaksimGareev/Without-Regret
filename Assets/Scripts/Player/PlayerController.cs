@@ -8,6 +8,7 @@ public class PlayerController : MonoBehaviour, ISaveable
     [Header("Components")]
     public CharacterController Controller;
     public Camera PlayerCamera;
+    public Animator animator;
 
     [Header("Movement Settings")]
     public bool MovementLocked = false;
@@ -47,6 +48,7 @@ public class PlayerController : MonoBehaviour, ISaveable
     private void Awake()
     {
         Controller = GetComponent<CharacterController>();
+        animator = GetComponent<Animator>();
 
         if (PlayerCamera == null)
             PlayerCamera = Camera.main;
@@ -202,6 +204,24 @@ public class PlayerController : MonoBehaviour, ISaveable
         }
 
         float currentSpeed = Speed;
+
+        bool isMoving = move.sqrMagnitude >= 0.01f; //detects if the player is moving
+
+        //animator.SetBool("isWalking", isMoving);
+        //animator.SetBool("isIdle", !isMoving);
+
+        //gets isMoving state to change animator state to idle or walking
+        if (isMoving)
+        {
+            animator.SetBool("isIdle", false);
+            animator.SetBool("isWalking", true);
+        }
+        if (!isMoving)
+        {
+            animator.SetBool("isWalking", false);
+            animator.SetBool("isIdle", true);
+        }
+
 
         // Sprint logic
         if (isSprinting && canSprint)
