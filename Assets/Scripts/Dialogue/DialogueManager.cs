@@ -408,7 +408,7 @@ public class DialogueManager : MonoBehaviour
             buttonText.text = choice.text;
 
             RectTransform rt = buttonObj.GetComponent<RectTransform>();
-            //rt.localScale = Vector3.one;
+            rt.localScale = Vector3.one * 3f;
             rt.anchoredPosition = GetPositionForDirection(choice.direction);
 
 
