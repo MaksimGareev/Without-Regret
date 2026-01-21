@@ -36,10 +36,19 @@ public class SaveSlotUI : MonoBehaviour
 
     private void UpdateAllSlots()
     {
-        for (int i = 1; i <= 3; i++)
+        for (int slot = 1; slot <= 3; slot++)
         {
-            SaveData data = SaveSystem.Load(i);
-            UpdateSlotInfo(i, data);
+            try
+            {
+                Debug.Log($"Loading Save Slot {slot} Data...");
+                SaveData data = SaveSystem.Load(slot);
+                UpdateSlotInfo(slot, data);
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogError($"Failed to Update slot {slot}: {ex.Message}");
+                UpdateSlotInfo(slot, null);
+            }
         }
 
         MainMenu mainMenu = FindAnyObjectByType<MainMenu>();
@@ -63,6 +72,23 @@ public class SaveSlotUI : MonoBehaviour
 
     public void UpdateSlotInfo(int slot, SaveData data)
     {
+        Debug.Log($"Updating Slot {slot} Info");
+        
+        if (slot < 1 || slot > 3)
+        {
+            Debug.LogError("Invalid slot number: " + slot);
+            return;
+        }
+
+        if (data == null)
+        {
+            Debug.Log($"No save data found for slot {slot}");
+        }
+        else 
+        {
+            Debug.Log($"Save data found for slot {slot}: Last Scene - {data.lastSceneName}");
+        }
+
         slotTexts[slot - 1].text = data != null 
         ? $"Save {slot}" 
         : "Empty";
@@ -71,9 +97,15 @@ public class SaveSlotUI : MonoBehaviour
         ? "Current Objective:" 
         : "";
 
-        slotObjectives[slot - 1].text = data != null && data.objectiveSaveData != null 
-        ? $"{data.objectiveSaveData.objectives[data.objectiveSaveData.currentObjectiveIndex].objectiveName}" 
-        : "";
+        string objectiveName = "";
+
+        if (data != null && data.objectiveSaveData != null && data.objectiveSaveData.objectives != null)
+        {
+            var list = data.objectiveSaveData.objectives;
+            objectiveName = (list.Count > 0 && list[0] != null) ? list[0].objectiveName : "";
+        }
+
+        slotObjectives[slot - 1].text = objectiveName;
         
         playButtons[slot - 1].gameObject.SetActive(data != null);
         deleteButtons[slot - 1].gameObject.SetActive(data != null);
@@ -93,9 +125,10 @@ public class SaveSlotUI : MonoBehaviour
         LoadGame(slot);
     }
 
-    public void NewGame(int slot = 0)
+    public void NewGame(int slot = 1)
     {
         SaveManager.Instance.SetActiveSaveSlot(slot);
+        SaveManager.Instance.LoadGame(slot);
         SceneManager.LoadScene(firstLevelName);
         Debug.Log("Starting New Game...");
     }

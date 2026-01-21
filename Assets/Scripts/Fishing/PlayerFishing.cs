@@ -49,7 +49,7 @@ public class PlayerFishing : MonoBehaviour
         line.positionCount = 2;
         line.enabled = false;
 
-        if (hook = null)
+        if (hook == null)
         {
             Debug.LogError("PlayerFishing: Hook prefab reference is missing.");
         }

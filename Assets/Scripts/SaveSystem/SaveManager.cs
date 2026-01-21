@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
 public class SaveManager : MonoBehaviour
@@ -16,6 +17,8 @@ public class SaveManager : MonoBehaviour
 
     // Dictionary to store unlock states
     private Dictionary<string, bool> unlockedItems = new Dictionary<string, bool>();
+
+    public InputActionAsset inputActions;
 
     private void Awake()
     {
@@ -70,6 +73,8 @@ public class SaveManager : MonoBehaviour
         {
             Debug.Log("No saveables found; skipping load.");
         }
+
+        inputActions.FindActionMap("Player").Enable();
     }
 
     public void ClearSaveData(int slot)
@@ -214,7 +219,7 @@ public class SaveManager : MonoBehaviour
 
     public void LoadGame(int slot)
     {
-        SaveData data = SaveSystem.Load(slot);
+        SaveData data = SaveSystem.Load(slot)?? new SaveData(slot);
 
         if (data == null)
         {
