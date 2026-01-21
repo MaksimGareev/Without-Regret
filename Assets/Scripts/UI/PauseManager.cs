@@ -91,7 +91,14 @@ public class PauseManager : MonoBehaviour
         {
             if (settingsPanel.activeSelf)
             {
-                BackToPauseMenu();
+                if (settingsScript != null && settingsScript.controlSchemeOpen)
+                {
+                    settingsScript.CloseControlSchemeUI();
+                }
+                else
+                {
+                    BackToPauseMenu();
+                }
             }
             else if (pauseMenuPanel.activeSelf)
             {

@@ -5,7 +5,7 @@ using UnityEngine.UI;
 public class ControlSchemeUI : MonoBehaviour
 {
     [Header("References")]
-    [SerializeField] private Button ControllerButton;
+    [SerializeField] public Button ControllerButton;
     [SerializeField] private Button KeyboardMouseButton;
     [SerializeField] private TextMeshProUGUI controllerText;
     [SerializeField] private TextMeshProUGUI keyboardMouseText;
