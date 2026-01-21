@@ -179,7 +179,7 @@ public class Inventory : MonoBehaviour, ISaveable
 
         if (SaveManager.Instance != null)
         {
-            SaveManager.Instance.SaveGame();
+            SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
         }
     }
 
@@ -212,7 +212,7 @@ public class Inventory : MonoBehaviour, ISaveable
 
         if (SaveManager.Instance != null)
         {
-            SaveManager.Instance.SaveGame();
+            SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
         }
 
         return;

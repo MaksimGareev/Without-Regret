@@ -1,16 +1,27 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class Journal : MonoBehaviour
 {
+    [Header("Singleton")]
+    public static Journal Instance { get; private set; }
+
     [Header("Journal")]
     [SerializeField] private GameObject journalUI;
 
     [Header("Input")]
-    [SerializeField] private KeyCode toggleJournalKey = KeyCode.Tab;
-    [SerializeField] private string toggleJournalButton = "Xbox Select Button";
+    [SerializeField] private InputActionAsset inputActions;
+    private InputAction playerJournalAction;
+    private InputAction UIJournalAction;
+    private InputAction navigateAction;
+    private InputAction cancelAction;
+    [SerializeField] private float navigationCooldown = 0.2f;
+    private float navigateTimer = 0f;
+    private bool canNavigate = true;
 
     [Header("Tabs")]
     [SerializeField] private Button objectivesTab;
@@ -30,8 +41,37 @@ public class Journal : MonoBehaviour
 
     [Header("Canvases")]
     [SerializeField] private Canvas[] canvasesToDisable;
+    [HideInInspector] public bool isJournalOpen = false;
 
     private List<ObjectiveInstance> objectivesList;
+    private int currentObjectiveIndex = 0;
+
+    private void Awake()
+    {
+        // Make this a singleton
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+
+        // Initialize input actions
+        playerJournalAction = inputActions.FindAction("Player/Journal");
+        playerJournalAction.Enable();
+
+        UIJournalAction = inputActions.FindAction("UI/Journal");
+        UIJournalAction.Enable();
+
+        navigateAction = inputActions.FindAction("UI/Navigate");
+        navigateAction.Enable();
+
+        cancelAction = inputActions.FindAction("UI/Cancel");
+        cancelAction.Enable();
+    }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -40,15 +80,39 @@ public class Journal : MonoBehaviour
         RefreshObjectives();
         OnObjectiveSelect(0);
         journalUI.SetActive(false);
+
+        DisableJournalInput();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(toggleJournalKey) || Input.GetButtonDown(toggleJournalButton))
+        if (SceneManager.GetActiveScene().name == "MainMenu")
+        {
+            return; // Do not allow pausing in the main menu
+        }
+
+        if ((playerJournalAction.triggered || UIJournalAction.triggered) && !PauseManager.Instance.isGamePaused)
         {
             ToggleJournalUI();
         }
+
+        if (cancelAction.triggered && isJournalOpen)
+        {
+            ToggleJournalUI();
+        }
+
+        if (isJournalOpen)
+        {
+            navigateTimer += Time.unscaledDeltaTime;
+
+            if (navigateTimer >= navigationCooldown && !canNavigate)
+            {
+                canNavigate = true;
+            }
+        }
+
+        HandleControllerNavigation();
     }
 
     private void InitializeButtons()
@@ -66,25 +130,29 @@ public class Journal : MonoBehaviour
     private void ToggleJournalUI()
     {
         journalUI.SetActive(!journalUI.activeSelf);
+        isJournalOpen = journalUI.activeSelf;
 
-        if (journalUI.activeSelf)
+        if (isJournalOpen)
         {
             RefreshObjectives();
             OnObjectiveSelect(0);
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
             Time.timeScale = 0f;
+            EnableJournalInput();
         }
         else
         {
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
             Time.timeScale = 1f;
+            DisableJournalInput();
         }
 
         foreach (Canvas canvas in canvasesToDisable)
         {
-            canvas.enabled = !journalUI.activeSelf;
+            if (canvas != null)
+                canvas.enabled = !isJournalOpen;
         }
     }
 
@@ -102,8 +170,34 @@ public class Journal : MonoBehaviour
         objectivesPage.SetActive(false);
     }
 
+    private void HandleControllerNavigation()
+    {
+        if (!canNavigate) return;
+
+        float navigationInput = navigateAction.ReadValue<Vector2>().y;
+
+        if (navigationInput > 0.5f)
+        {
+            // Move up in the objectives list
+            int newIndex = Mathf.Clamp(currentObjectiveIndex - 1, 0, objectivesList.Count - 1);
+            OnObjectiveSelect(newIndex);
+            canNavigate = false;
+            navigateTimer = 0f;
+        }
+        else if (navigationInput < -0.5f)
+        {
+            // Move down in the objectives list
+            int newIndex = Mathf.Clamp(currentObjectiveIndex + 1, 0, objectivesList.Count - 1);
+            OnObjectiveSelect(newIndex);
+            canNavigate = false;
+            navigateTimer = 0f;
+        }
+    }
+
     public void OnObjectiveSelect(int index)
     {
+        currentObjectiveIndex = index;
+
         if (objectivesList.Count > index)
         {
             var instance = objectivesList[index];
@@ -179,5 +273,22 @@ public class Journal : MonoBehaviour
                 objectiveButtons[i].interactable = false;
             }
         }
+    }
+
+    private void OnDisable()
+    {
+        DisableJournalInput();
+    }
+
+    private void EnableJournalInput()
+    {
+        inputActions.FindActionMap("UI").Enable();
+        inputActions.FindActionMap("Player").Disable();
+    }
+
+    private void DisableJournalInput()
+    {
+        inputActions.FindActionMap("UI").Disable();
+        inputActions.FindActionMap("Player").Enable();
     }
 }

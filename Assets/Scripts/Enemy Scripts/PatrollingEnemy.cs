@@ -12,6 +12,13 @@ public class PatrollingEnemy : MonoBehaviour
     public float waitTime = 2f;
     private bool isWaiting = false;
 
+    // Player morality effects
+    public float baseSpeed = 3.5f;
+    public float minSpeed = 1.5f;
+    public float maxSpeed = 6.5f;
+    public float moralitySpeedMultiplier = 0.15f;
+    public DialogueManager playerMorality;
+
     [Header("Debugging")]
     [SerializeField] private bool showDebugLogs = false;
 
@@ -23,11 +30,26 @@ public class PatrollingEnemy : MonoBehaviour
 
     void Update()
     {
+        UpdateSpeedFromMorality();
+
         // If close to destination and not already waiting, start waiting
         if (!isWaiting && !agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
         {
             StartCoroutine(WaitBeforeNextMove());
         }
+    }
+
+    public void UpdateSpeedFromMorality()
+    {
+        if (playerMorality == null) return;
+
+        int morality = playerMorality.playerMorality;
+
+        float speedOffset = -morality * moralitySpeedMultiplier;
+
+        float newSpeed = baseSpeed + speedOffset;
+
+        agent.speed = Mathf.Clamp(newSpeed, minSpeed, maxSpeed);
     }
 
     // Timer for NPC to pick next random point
