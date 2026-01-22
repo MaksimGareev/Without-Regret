@@ -7,7 +7,7 @@ public class Barry : MonoBehaviour
 
     public Transform targetSpot;
     public Transform lookAtTarget;
-    public bool isTraveling;
+    public bool isTraveling = false;
     public bool arrived = false;
     public float stopDistance = 0.5f;
 
@@ -35,13 +35,14 @@ public class Barry : MonoBehaviour
     {
         //IsFollowing = false;
         isTraveling = true;
-        Debug.Log("Irene is now traveling to her destination");
+        Debug.Log("Barry is now traveling to her destination");
     }
 
     public void TravelToTarget()
     {
         if (targetSpot == null)
         {
+            Debug.Log("There is no target for Barry to go to");
             return;
         }
 
