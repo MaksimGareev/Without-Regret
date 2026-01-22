@@ -11,6 +11,7 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private GameObject mainMenuPanel;
     [SerializeField] private GameObject settingsPanel;
     [SerializeField] private GameObject creditsPanel;
+    [SerializeField] private GameObject saveSlotsPanel;
 
     [Header("Buttons")]
     [SerializeField] private Button playButton;
@@ -23,19 +24,23 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private TextMeshProUGUI versionNumberText;
     [SerializeField] private TextMeshProUGUI playButtonText;
     private string gameVersion = "v.0.0.1";
-    private string firstLevelName = "Echo'sHouse";
     private SaveManager saveManager;
+    private MMSettings settingsScript;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         saveManager = FindAnyObjectByType<SaveManager>();
+        settingsScript = settingsPanel.GetComponent<MMSettings>();
 
         UpdatePlayButton();
         OpenMainMenu();
 
         versionNumberText.text = gameVersion;
         EventSystem.current.SetSelectedGameObject(playButton.gameObject);
+
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
     }
 
     // Update is called once per frame
@@ -43,10 +48,32 @@ public class MainMenu : MonoBehaviour
     {
         if (Gamepad.current != null && Gamepad.current.bButton.wasPressedThisFrame)
         {
-            if (settingsPanel.activeSelf || creditsPanel.activeSelf)
+            if (creditsPanel.activeSelf || saveSlotsPanel.activeSelf)
             {
                 OpenMainMenu();
             }
+            else if (settingsPanel.activeSelf && settingsScript != null)
+            {
+                if (settingsScript.controlSchemeOpen)
+                {
+                    settingsScript.CloseControlSchemeUI();
+                }
+                else
+                {
+                    OpenMainMenu();
+                }
+            }
+        }
+
+        // Debug shortcut to delete all saves and reload main menu
+        if (Input.GetKeyDown(KeyCode.F5))
+        {
+            for (int i = 1; i <= 3; i++)
+            {
+                SaveSystem.DeleteSave(i);
+            }
+
+            SceneManager.LoadScene("MainMenu");
         }
 
         CheckMouseInput();
@@ -65,6 +92,7 @@ public class MainMenu : MonoBehaviour
         if (mouseDelta.sqrMagnitude > 0.1f)
         {
             Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
             
             if (EventSystem.current.currentSelectedGameObject != null)
             {
@@ -106,26 +134,34 @@ public class MainMenu : MonoBehaviour
 
     private void OnEnable()
     {
-        playButton.onClick.AddListener(NewGame);
+        playButton.onClick.AddListener(OpenSaveSlotsScreen);
         settingsButton.onClick.AddListener(OpenSettings);
         creditsButton.onClick.AddListener(OpenCredits);
         quitButton.onClick.AddListener(QuitGame);
-        backButton.onClick.AddListener(OpenMainMenu);
+        backButton.onClick.AddListener(HandleBackButton);
     }
 
     private void UpdatePlayButton()
     {
-        if (saveManager.SaveExists())
+        if (saveManager.AnySavesExist())
         {
             playButtonText.text = "Continue";
-            playButton.onClick.RemoveAllListeners();
-            playButton.onClick.AddListener(LoadGame);
         }
         else
         {
             playButtonText.text = "New Game";
-            playButton.onClick.RemoveAllListeners();
-            playButton.onClick.AddListener(NewGame);
+        }
+    }
+
+    private void HandleBackButton()
+    {
+        if (settingsPanel.activeSelf && settingsScript != null && settingsScript.controlSchemeOpen)
+        {
+            settingsScript.CloseControlSchemeUI();
+        }
+        else
+        {
+            OpenMainMenu();
         }
     }
 
@@ -134,34 +170,13 @@ public class MainMenu : MonoBehaviour
         mainMenuPanel.SetActive(true);
         settingsPanel.SetActive(false);
         creditsPanel.SetActive(false);
+        saveSlotsPanel.SetActive(false);
+
+        UpdatePlayButton();
         
         backButton.gameObject.SetActive(false);
 
         EventSystem.current.SetSelectedGameObject(playButton.gameObject);
-    }
-
-    private void NewGame()
-    {
-        SceneManager.LoadScene(firstLevelName);
-        Debug.Log("Starting New Game...");
-    }
-
-    private void LoadGame()
-    {
-        SaveData data = SaveSystem.Load();
-
-        if (data != null && !string.IsNullOrEmpty(data.lastSceneName))
-        {
-            string levelToLoad = data.lastSceneName;
-            SceneManager.LoadScene(levelToLoad);
-            Debug.Log("Continuing Game From Save...");
-            return;
-        }
-        else
-        {
-            Debug.LogWarning("No valid save data found. Starting New Game instead.");
-            NewGame();
-        }
     }
 
     private void OpenSettings()
@@ -169,6 +184,7 @@ public class MainMenu : MonoBehaviour
         mainMenuPanel.SetActive(false);
         settingsPanel.SetActive(true);
         creditsPanel.SetActive(false);
+        saveSlotsPanel.SetActive(false);
         
         backButton.gameObject.SetActive(true);
         
@@ -179,11 +195,31 @@ public class MainMenu : MonoBehaviour
     {
         mainMenuPanel.SetActive(false);
         settingsPanel.SetActive(false);
+        saveSlotsPanel.SetActive(false);
         creditsPanel.SetActive(true);
         
         backButton.gameObject.SetActive(true);
 
         EventSystem.current.SetSelectedGameObject(backButton.gameObject);
+    }
+
+    private void OpenSaveSlotsScreen()
+    {
+        mainMenuPanel.SetActive(false);
+        settingsPanel.SetActive(false);
+        creditsPanel.SetActive(false);
+        saveSlotsPanel.SetActive(true);
+
+        backButton.gameObject.SetActive(true);
+
+        SelectSaveMenuButton();
+    }
+
+    public void SelectSaveMenuButton()
+    {
+        EventSystem.current.SetSelectedGameObject(saveSlotsPanel.GetComponentInChildren<SaveSlotUI>().playButtons[0].gameObject.activeSelf 
+        ? saveSlotsPanel.GetComponentInChildren<SaveSlotUI>().playButtons[0].gameObject
+        : saveSlotsPanel.GetComponentInChildren<SaveSlotUI>().newGameButtons[0].gameObject);
     }
 
     private void QuitGame()

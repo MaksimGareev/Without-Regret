@@ -3,10 +3,11 @@ using UnityEngine;
 [System.Serializable]
 public class ObjectiveInstance
 {
-    public ObjectiveData data;
-    public int currentProgress;
-    public bool isCompleted;
+    public ObjectiveData data; // Reference to the ObjectiveData scriptable object
+    public int currentProgress; // Current progress towards completing the objective
+    public bool isCompleted; // Whether the objective is completed
 
+    // Constructor to initialize the ObjectiveInstance
     public ObjectiveInstance(ObjectiveData data)
     {
         this.data = data;
@@ -14,6 +15,7 @@ public class ObjectiveInstance
         isCompleted = false;
     }
 
+    // Adds progress to the objective and checks for completion
     public void AddProgress(int amount)
     {
         currentProgress += amount;
@@ -25,6 +27,7 @@ public class ObjectiveInstance
         }
     }
 
+    // Sets the current progress to a specific amount, i.e. if an action has a set progress value other than incrementing
     public void SetProgress(int amount)
     {
         currentProgress = 0;

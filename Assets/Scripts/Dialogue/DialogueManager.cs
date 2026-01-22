@@ -43,6 +43,12 @@ public class DialogueManager : MonoBehaviour
     private bool CanChoose = false;
     public TextMeshProUGUI PopupText;
 
+    public float choiceDistance = 250f;
+    private Dictionary<ChoiceDirection, DialogueChoice> directionalChoices = new();
+    public float holdTimeToSelect = 0.5f;
+    private float directionHoldTimer = 0f;
+    private ChoiceDirection? currentHeldDirection = null;
+
     // Typing
     private Coroutine typeingRoutine;
     private string currentFullLine = "";
@@ -58,8 +64,10 @@ public class DialogueManager : MonoBehaviour
     private PlayerThrowing playerThrowing;
     private PlayerFloating playerFloating;
     private PlayerController playerController;
+    private CameraMovement cameraMovement;
 
     // NPC references
+    private DialogueTrigger activeDialogueTrigger;
     private Irene ireneNPC;
     private Barry barryNPC;
     private DarryNeighborhood darryNPC;
@@ -70,7 +78,7 @@ public class DialogueManager : MonoBehaviour
     public static bool DialogueIsActive = false;
 
     // Player morality
-    private int playerMorality = 0;
+    public int playerMorality = 0;
 
     private string NPCName;
     private Dictionary<string, int> dialogueVariables = new Dictionary<string, int>();
@@ -80,9 +88,9 @@ public class DialogueManager : MonoBehaviour
         controls = new PlayerControls();
         controls.Dialogue.Move.performed += ctx =>
         {
-            MoveInput = ctx.ReadValue<float>();
-            if (MoveInput > 0) MoveUpPressed = true;
-            if (MoveInput < 0) MoveDownPressed = true;
+            Vector2 move = ctx.ReadValue<Vector2>();
+            MoveUpPressed = move.y > 0;
+            MoveDownPressed = move.y < 0;
         };
         controls.Dialogue.Move.canceled += ctx =>
         {
@@ -121,8 +129,9 @@ public class DialogueManager : MonoBehaviour
     }
 
     // -------------------- JSON Dialogue --------------------
-    public void StartDialogueFromJson(TextAsset jsonFile)
+    public void StartDialogueFromJson(TextAsset jsonFile, DialogueTrigger trigger)
     {
+        activeDialogueTrigger = trigger;
         DialogueIsActive = true;
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         ireneNPC = FindObjectOfType<Irene>();
@@ -132,6 +141,7 @@ public class DialogueManager : MonoBehaviour
         playerFloating = player.GetComponent<PlayerFloating>();
         playerThrowing = player.GetComponent<PlayerThrowing>();
         playerController = player.GetComponent<PlayerController>();
+        cameraMovement = Camera.main.GetComponent<CameraMovement>();
         PopupText.gameObject.SetActive(false);
         Chime.isInDialogue = true;
 
@@ -149,6 +159,23 @@ public class DialogueManager : MonoBehaviour
         currentDialogue = JsonUtility.FromJson<DialogueData>(jsonFile.text);
         currentIndex = 0;
 
+        if (currentDialogue != null && currentDialogue.dialogueLines != null)
+        {
+            foreach ( var line in currentDialogue.dialogueLines)
+            {
+                if (line.choices != null)
+                {
+                    if (line.choices != null)
+                    {
+                        foreach (var choice in line.choices)
+                        {
+                            choice.ParseDirection();
+                        }
+                    }
+                }
+            }
+        }
+
         if (currentDialogue == null || currentDialogue.dialogueLines.Count == 0)
         {
             Debug.LogWarning("Dialogue JSON invalid or empty");
@@ -158,6 +185,10 @@ public class DialogueManager : MonoBehaviour
         DialoguePanel.SetActive(true);
         NPCNameText.text = currentDialogue.npcName;
         playerController.SetDialogueActive(true);
+        if (trigger.focusCameraOnTrigger)
+        {
+            cameraMovement.TriggerDialogueCamera(trigger.transform);
+        }
 
         if (playerFloating != null) playerFloating.enabled = false;
         if (playerThrowing != null) playerThrowing.enabled = false;
@@ -225,8 +256,14 @@ public class DialogueManager : MonoBehaviour
         DialogueText.text = "";
         currentFullLine = text;
 
-        foreach (char c in text)
+        string[] words = text.Split(' ');
+
+        foreach (string word in words)
         {
+            // Skip empty entries
+            if (string.IsNullOrWhiteSpace(word))
+                continue;
+
             // If skip requested, instantly finish
             if (ConfirmPressed)
             {
@@ -235,12 +272,20 @@ public class DialogueManager : MonoBehaviour
                 break;
             }
 
-            DialogueText.text += c;
+            DialogueText.text += word + " ";
             
-            char upperChar = char.ToUpper(c);
-            if (letterSounds.ContainsKey(upperChar))
+            //char firstChar = char.ToUpper(word[0]);
+            foreach (char c in word)
             {
-                TypingAudioSource.PlayOneShot(letterSounds[upperChar]);
+                char upperChar = char.ToUpper(c);
+
+                if (letterSounds.ContainsKey(upperChar))
+                {
+                    TypingAudioSource.PlayOneShot(letterSounds[upperChar]);
+                }
+
+                // small delay so sounds to overlap
+                yield return new WaitForSeconds(0.015f);
             }
 
             yield return new WaitForSeconds(0.02f);
@@ -286,17 +331,15 @@ public class DialogueManager : MonoBehaviour
                 ireneNPC.IsFollowing = false;
             }
             // Move Barry if assigned
-            if (barryNPC != null)
+            if (barryNPC != null && (activeDialogueTrigger.NPCName == "Barry" || activeDialogueTrigger.NPCName == "Darry") && activeDialogueTrigger.TalkedAlready)
             {
-                if (barryDestinationTransform != null)
-                {
-                    barryNPC.StartTravel();
-                }
-                else
-                {
-                    Debug.LogWarning("barryDestinationTransform not assigned!");
-                }
+                barryNPC.StartTravel();
             }
+            else
+            {
+                Debug.LogWarning("Barry will not move");
+            }
+
             // Move DarryNeighborhood
             if (darryNPC != null)
             {
@@ -334,11 +377,25 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
+    private Vector2 GetPositionForDirection(ChoiceDirection dir)
+    {
+        float distance = choiceDistance;
+        switch(dir)
+        {
+            case ChoiceDirection.Up: return new Vector2(0, distance);
+            case ChoiceDirection.Down: return new Vector2(0, -distance);
+            case ChoiceDirection.Left: return new Vector2(-distance, 0);
+            case ChoiceDirection.Right: return new Vector2(distance, 0);
+            default: return Vector2.zero;
+        };
+    }
+
     private void SpawnChoices(List<DialogueChoice> choices)
     {
         // Clear old
         foreach (var b in spawnedChoices) Destroy(b);
         spawnedChoices.Clear();
+        directionalChoices.Clear();
         ChoicesContainer.gameObject.SetActive(true);
 
         foreach (DialogueChoice choice in choices)
@@ -348,15 +405,23 @@ public class DialogueManager : MonoBehaviour
             TextMeshProUGUI buttonText = buttonObj.GetComponentInChildren<TextMeshProUGUI>();
             buttonText.text = choice.text;
 
-            Button btn = buttonObj.GetComponent<Button>();
-            int next = choice.nextIndex;
-            btn.onClick.AddListener(() => OnChoiceSelected(choice));
+            RectTransform rt = buttonObj.GetComponent<RectTransform>();
+            rt.localScale = Vector3.one * 3f;
+            rt.anchoredPosition = GetPositionForDirection(choice.direction);
+
+
+           // Button btn = buttonObj.GetComponent<Button>();
+           // int next = choice.nextIndex;
+           // btn.onClick.AddListener(() => OnChoiceSelected(choice));
             spawnedChoices.Add(buttonObj);
+            directionalChoices[choice.direction] = choice;
+
+            Debug.Log($"Choice '{choice.text}' spawned at {rt.anchoredPosition} for direction {choice.direction}");
         }
 
         CanChoose = true;
         SelectedChoiceIndex = 0;
-        UpdateChoiceHighlight();
+        //UpdateChoiceHighlight();
 
         // Start timer countdown for auto-select
         if (choiceTimerRoutine != null)
@@ -364,13 +429,44 @@ public class DialogueManager : MonoBehaviour
             StopCoroutine(choiceTimerRoutine);
         }
         choiceTimerRoutine = StartCoroutine(ChoiceTimerCountdown(choices));
+
     }
 
     private void HandleChoiceInput()
     {
         if (!CanChoose || spawnedChoices.Count == 0) return;
 
-        if (Time.time - lastInputTime >= inputCooldown)
+        Vector2 input = new Vector2(
+            controls.Dialogue.Move.ReadValue<Vector2>().x,
+            controls.Dialogue.Move.ReadValue<Vector2>().y
+            );
+
+        if (input.magnitude < 0.6f)
+        {
+            directionHoldTimer = 0f;
+            currentHeldDirection = null;
+            return;
+        }
+
+        ChoiceDirection dir = GetDirectionFromInput(input);
+
+        if (currentHeldDirection != dir)
+        {
+            currentHeldDirection = dir;
+            directionHoldTimer = 0f;
+        }
+
+        directionHoldTimer += Time.deltaTime;
+
+        HighlightDirection(dir);
+
+        if (directionHoldTimer >= holdTimeToSelect)
+        {
+            SelectDirectionalChoice(dir);
+            directionHoldTimer = 0f;
+        }
+
+        /*if (Time.time - lastInputTime >= inputCooldown)
         {
             if (MoveUpPressed)
             {
@@ -390,17 +486,60 @@ public class DialogueManager : MonoBehaviour
         {
             OnChoiceSelected(currentDialogue.dialogueLines[currentIndex].choices[SelectedChoiceIndex]);
             ConfirmPressed = false;
+        }*/
+    }
+
+    private ChoiceDirection GetDirectionFromInput(Vector2 input)
+    {
+        if(Mathf.Abs(input.x) > Mathf.Abs(input.y))
+        {
+            return input.x > 0 ? ChoiceDirection.Right : ChoiceDirection.Left;
+        }
+        else
+        {
+            return input.y > 0 ? ChoiceDirection.Up : ChoiceDirection.Down;
         }
     }
 
-    private void UpdateChoiceHighlight()
+    private void SelectDirectionalChoice(ChoiceDirection dir)
+    {
+        if (!directionalChoices.ContainsKey(dir))
+        {
+            return;
+        }
+
+        OnChoiceSelected(directionalChoices[dir]);
+    }
+
+    private void HighlightDirection(ChoiceDirection dir)
+    {
+        foreach (var obj in spawnedChoices)
+        {
+            var txt = obj.GetComponentInChildren<TextMeshProUGUI>();
+            txt.color = Color.white;
+        }
+
+        if (!directionalChoices.ContainsKey(dir)) return;
+
+        DialogueChoice choice = directionalChoices[dir];
+
+        int index = spawnedChoices.FindIndex(o =>
+            o.GetComponentInChildren<TextMeshProUGUI>().text == choice.text);
+
+        if (index >= 0)
+        {
+            spawnedChoices[index].GetComponentInChildren<TextMeshProUGUI>().color = Color.yellow;
+        }
+    }
+
+   /* private void UpdateChoiceHighlight()
     {
         for (int i = 0; i < spawnedChoices.Count; i++)
         {
             var text = spawnedChoices[i].GetComponentInChildren<TextMeshProUGUI>();
             text.color = (i == SelectedChoiceIndex) ? Color.yellow : Color.white;
         }
-    }
+    }*/
 
     private void OnChoiceSelected(DialogueChoice chosen)
     {
@@ -549,6 +688,13 @@ public class DialogueManager : MonoBehaviour
 
     public void EndDialogue()
     {
+        if (activeDialogueTrigger != null)
+        {
+            activeDialogueTrigger.StopLookingAtPlayer();
+            activeDialogueTrigger.ResumeWandering();
+            activeDialogueTrigger = null;
+        }
+
         DialoguePanel.SetActive(false);
         currentDialogue = null;
         currentIndex = 0;
@@ -557,10 +703,11 @@ public class DialogueManager : MonoBehaviour
         CanChoose = false;
         DialogueIsActive = false;
         ContinueArrow.SetActive(false);
-
+        
         PlayerController.DialogueActive = false;
         playerController.SetDialogueActive(false);
-        
+        StartCoroutine(cameraMovement.EndCameraZoom());
+
         if (playerFloating != null) playerFloating.enabled = true;
         if (playerThrowing != null) playerThrowing.enabled = true;
         if (TypingAudioSource != null) TypingAudioSource.Stop();

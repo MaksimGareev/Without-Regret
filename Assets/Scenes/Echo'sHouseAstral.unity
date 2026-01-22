@@ -1250,6 +1250,7 @@ GameObject:
   - component: {fileID: 179912109}
   - component: {fileID: 179912108}
   - component: {fileID: 179912107}
+  - component: {fileID: 179912110}
   m_Layer: 0
   m_Name: door (1)
   m_TagString: Untagged
@@ -1328,6 +1329,24 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: -0.093, y: 178.216, z: -2.997}
+--- !u!114 &179912110
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 179912106}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc6995ddd5c98c7439fad9eded40dc8f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Door
+  sceneToLoad: GraveyardLevelBlockout
+  interactDistance: 3
+  player: {fileID: 1311844012}
+  linkedObjective: {fileID: 0}
+  needsObjective: 0
+  interactSound: {fileID: 0}
 --- !u!1001 &190689551
 PrefabInstance:
   m_ObjectHideFlags: 0

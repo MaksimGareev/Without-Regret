@@ -76,7 +76,7 @@ public class Door : MonoBehaviour
     {
         if (SaveManager.Instance != null)
         {
-            SaveManager.Instance.SaveGame();
+            SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
         }
         
         yield return new WaitForSeconds(0.1f);

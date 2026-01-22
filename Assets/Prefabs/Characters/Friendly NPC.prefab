@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 193420249962566702}
   - component: {fileID: 5147423432256284129}
   - component: {fileID: 6625594364772789633}
+  - component: {fileID: -3710363329669676532}
   m_Layer: 0
   m_Name: Friendly NPC
   m_TagString: Untagged
@@ -175,8 +176,33 @@ MonoBehaviour:
   CompleteJsonDialogueFile: {fileID: 0}
   ActiveJsonDialogueFile: {fileID: 0}
   objectiveIDYouCareAbout: []
+  linkedObjective: {fileID: 0}
   TalkedAlready: 0
   iconPrefab: {fileID: 4114033263953508203, guid: 48024210bf4a4394fa37015b90b3b410, type: 3}
+  shouldShowIcon: 1
+  enemy: {fileID: 0}
+--- !u!95 &-3710363329669676532
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5575190084026342562}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 6533aeb446882174295a8ea5e13f30ce, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1001 &2450059718260835713
 PrefabInstance:
   m_ObjectHideFlags: 0
