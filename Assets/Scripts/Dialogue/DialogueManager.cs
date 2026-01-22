@@ -45,7 +45,7 @@ public class DialogueManager : MonoBehaviour
 
     public float choiceDistance = 250f;
     private Dictionary<ChoiceDirection, DialogueChoice> directionalChoices = new();
-    public float holdTimeToSelect = 0.35f;
+    public float holdTimeToSelect = 0.5f;
     private float directionHoldTimer = 0f;
     private ChoiceDirection? currentHeldDirection = null;
 
@@ -331,17 +331,15 @@ public class DialogueManager : MonoBehaviour
                 ireneNPC.IsFollowing = false;
             }
             // Move Barry if assigned
-            if (barryNPC != null)
+            if (barryNPC != null && (activeDialogueTrigger.NPCName == "Barry" || activeDialogueTrigger.NPCName == "Darry") && activeDialogueTrigger.TalkedAlready)
             {
-                if (barryDestinationTransform != null)
-                {
-                    barryNPC.StartTravel();
-                }
-                else
-                {
-                    Debug.LogWarning("barryDestinationTransform not assigned!");
-                }
+                barryNPC.StartTravel();
             }
+            else
+            {
+                Debug.LogWarning("Barry will not move");
+            }
+
             // Move DarryNeighborhood
             if (darryNPC != null)
             {
