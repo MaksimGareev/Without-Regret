@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerInteracting : MonoBehaviour
 {
@@ -8,18 +9,24 @@ public class PlayerInteracting : MonoBehaviour
     [SerializeField] private GameObject promptUI;
 
     [Header("General Settings")]
+    [SerializeField] private InputActionAsset InputActions;
     [SerializeField] private float interactionRange = 1f;
     [SerializeField] private float interactOffset = 1f;
-    [SerializeField] private KeyCode interactKey = KeyCode.E;
-    [SerializeField] private string interactButton = "Xbox X Button";
-    [SerializeField] private KeyCode mantleKey = KeyCode.Space;
-    [SerializeField] private string mantleButton = "Xbox A Button";
+    private InputAction Interact;
+    private InputAction Mantle;
 
     [Header("Debugging")]
     [SerializeField] private bool showDebugLogs;
     private IInteractable currentTarget;
     private MantleableObject mantleTarget;
     private MoveableObject moveTarget;
+
+    private void Awake()
+    {
+        Mantle = InputActions.FindActionMap("Player").FindAction("Jump");
+        Interact = InputActions.FindActionMap("Player").FindAction("Interact");
+    }
+
 
     private void Start()
     {
@@ -29,20 +36,32 @@ public class PlayerInteracting : MonoBehaviour
         }
     }
 
+    private void OnEnable()
+    {
+        Mantle.Enable();
+        Interact.Enable();
+    }
+
+    private void OnDisable()
+    {
+        Mantle.Disable();
+        Interact.Disable();
+    }
+
     // Update is called once per frame
     void Update()
     {
         ScanForInteractable();
 
-        if (mantleTarget != null && (Input.GetKeyDown(mantleKey) || Input.GetButtonDown(mantleButton)))
+        if (mantleTarget != null && Mantle.triggered)
         {
             mantleTarget.OnPlayerInteraction(gameObject);
         }
-        if (moveTarget != null && (Input.GetKeyDown(interactKey) || Input.GetButtonDown(interactButton)))
+        if (moveTarget != null && Interact.triggered)
         {
             moveTarget.OnPlayerInteraction(gameObject);
         }
-        else if (currentTarget != null && mantleTarget == null && (Input.GetKeyDown(interactKey) || Input.GetButtonDown(interactButton)))
+        else if (currentTarget != null && mantleTarget == null && Interact.triggered)
         {
             currentTarget.OnPlayerInteraction(gameObject);
         }
