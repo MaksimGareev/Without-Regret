@@ -151,7 +151,7 @@ public class PauseManager : MonoBehaviour
                 }
                 else if (settingsPanel.activeSelf)
                 {
-                    EventSystem.current.SetSelectedGameObject(settingsScript.resolutionDropdown.gameObject);
+                    EventSystem.current.SetSelectedGameObject(settingsScript.videoSettingsButton.gameObject);
                 }
             }
         } 
@@ -266,7 +266,7 @@ public class PauseManager : MonoBehaviour
         settingsPanel.SetActive(true);
         backButton.gameObject.SetActive(true);
 
-        EventSystem.current.SetSelectedGameObject(settingsPanel.GetComponentInChildren<MMSettings>().resolutionDropdown.gameObject);
+        EventSystem.current.SetSelectedGameObject(settingsPanel.GetComponentInChildren<MMSettings>().videoSettingsButton.gameObject);
         
         //Debug.Log("Opening Settings...");
     }

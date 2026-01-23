@@ -122,7 +122,7 @@ public class MainMenu : MonoBehaviour
                 }
                 else if (settingsPanel.activeSelf)
                 {
-                    EventSystem.current.SetSelectedGameObject(settingsPanel.GetComponentInChildren<MMSettings>().resolutionDropdown.gameObject);
+                    EventSystem.current.SetSelectedGameObject(settingsPanel.GetComponentInChildren<MMSettings>().videoSettingsButton.gameObject);
                 }
                 else if (creditsPanel.activeSelf)
                 {
@@ -188,7 +188,7 @@ public class MainMenu : MonoBehaviour
         
         backButton.gameObject.SetActive(true);
         
-        EventSystem.current.SetSelectedGameObject(settingsPanel.GetComponentInChildren<MMSettings>().resolutionDropdown.gameObject);
+        EventSystem.current.SetSelectedGameObject(settingsPanel.GetComponentInChildren<MMSettings>().videoSettingsButton.gameObject);
     }
 
     private void OpenCredits()
