@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Irene : MonoBehaviour
 {
@@ -15,8 +16,10 @@ public class Irene : MonoBehaviour
 
     public Transform targetSpot;
     public Transform lookAtTarget;
+    public NavMeshAgent agent;
     public bool isTraveling;
     public bool arrived = false;
+    public bool CanFollowPlayer = true;
     public float stopDistance = 0.5f;
 
 
@@ -87,7 +90,10 @@ public class Irene : MonoBehaviour
 
         // Movement
         transform.position = Vector3.MoveTowards(transform.position, targetSpot.position, FollowSpeed * Time.deltaTime);
-
+        /*if (!agent.pathPending && agent.remainingDistance < 0.5f && agent != null)
+        {
+            agent.SetDestination(targetSpot.position);
+        }*/
         // Rotate towards target
         if (direction.sqrMagnitude > 0.001f)
         {
@@ -107,8 +113,10 @@ public class Irene : MonoBehaviour
 
     public void StartTravel()
     {
+        CanFollowPlayer = false;
         IsFollowing = false;
         isTraveling = true;
+        arrived = false;
         Debug.Log("Irene is now traveling to her destination");
     }
 
@@ -121,6 +129,16 @@ public class Irene : MonoBehaviour
         {
             Quaternion targetRotation = Quaternion.LookRotation(direction);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, RotationSpeed * Time.deltaTime);
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("door"))
+        {
+            this.gameObject.SetActive(false);
+            //ObjectiveManager.Instance.AddProgress(linkedHouseObjective.objectiveID, 1);
+            Debug.Log("Irene has reached the door.");
         }
     }
 

@@ -74,6 +74,7 @@ public class DialogueManager : MonoBehaviour
 
     public Transform barryDestinationTransform;
     public Transform darryDestinationTransform;
+    public Transform ireneDestinationTransform;
 
     public static bool DialogueIsActive = false;
 
@@ -325,13 +326,20 @@ public class DialogueManager : MonoBehaviour
         // End dialogue if the line says to
         if (line.endDialogueAfterLine)
         {
-            if (ireneNPC != null)
+            if (ireneNPC != null && activeDialogueTrigger.TalkedAlready == false)
             {
                 ireneNPC.StartTravel();
                 ireneNPC.IsFollowing = false;
             }
+
+            if (ireneNPC != null && activeDialogueTrigger.NPCName == "Irene" && activeDialogueTrigger.TalkedAlready)
+            {
+                ireneNPC.targetSpot = ireneDestinationTransform;
+                ireneNPC.StartTravel();
+            }
+
             // Move Barry if assigned
-            if (barryNPC != null && (activeDialogueTrigger.NPCName == "Barry" || activeDialogueTrigger.NPCName == "Darry") && activeDialogueTrigger.TalkedAlready)
+                if (barryNPC != null && (activeDialogueTrigger.NPCName == "Barry" || activeDialogueTrigger.NPCName == "Darry") && activeDialogueTrigger.TalkedAlready)
             {
                 barryNPC.StartTravel();
             }
@@ -715,7 +723,7 @@ public class DialogueManager : MonoBehaviour
         // Only auto follwo if Irene does not have a destination to travel to
         if (ireneNPC != null && ireneNPC.NPCNameMatches(NPCNameText.text))
         {
-            if (!ireneNPC.isTraveling)
+            if (ireneNPC.CanFollowPlayer)
             {
                 ireneNPC.IsFollowing = true;
             }
