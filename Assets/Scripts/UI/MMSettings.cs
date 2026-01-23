@@ -6,39 +6,52 @@ using UnityEngine.EventSystems;
 public class MMSettings : MonoBehaviour
 {
     [Header("Settings References")]
-    [SerializeField] public TMP_Dropdown resolutionDropdown;
+    [SerializeField] private TMP_Dropdown resolutionDropdown;
     [SerializeField] private Toggle fullscreenToggle;
     [SerializeField] private Slider masterVolumeSlider;
     [SerializeField] private Slider SFXVolumeSlider;
     [SerializeField] private Slider musicVolumeSlider;
     [SerializeField] private Slider mouseSensitivitySlider;
-    [SerializeField] private Slider controllerSensitivitySlider;
-    [SerializeField] private Slider controllerDeadZoneSlider;
-    [SerializeField] private Button resetButton;
-    [SerializeField] private Button applyButton;
-
-    [Header("Text References")]
+    [SerializeField] private Slider leftStickSensitivitySlider;
+    [SerializeField] private Slider leftStickDeadZoneSlider;
+    [SerializeField] private Slider rightStickSensitivitySlider;
+    [SerializeField] private Slider rightStickDeadZoneSlider;
+    
+    [Header("Text Value References")]
     [SerializeField] private TextMeshProUGUI masterVolumeValueText;
     [SerializeField] private TextMeshProUGUI SFXVolumeValueText;
     [SerializeField] private TextMeshProUGUI musicVolumeValueText;
     [SerializeField] private TextMeshProUGUI mouseSensitivityValueText;
-    [SerializeField] private TextMeshProUGUI controllerSensitivityValueText;
-    [SerializeField] private TextMeshProUGUI controllerDeadZoneValueText;
+    [SerializeField] private TextMeshProUGUI leftStickSensitivityValueText;
+    [SerializeField] private TextMeshProUGUI leftStickDeadZoneValueText;
+    [SerializeField] private TextMeshProUGUI rightStickSensitivityValueText;
+    [SerializeField] private TextMeshProUGUI rightStickDeadZoneValueText;
 
-    [Header("UI References")]
+    [Header("Buttons and UI Panels")]
     [SerializeField] private GameObject settingsUI;
     [SerializeField] private GameObject controlSchemeUI;
+    [SerializeField] private GameObject videoSettingsUI;
+    [SerializeField] private GameObject audioSettingsUI;
+    [SerializeField] private GameObject controlsSettingsUI;
     [SerializeField] private Button controlSchemeUIButton;
+    [SerializeField] public Button videoSettingsButton;
+    [SerializeField] private Button audioSettingsButton;
+    [SerializeField] private Button controlsSettingsButton;
+    [SerializeField] private Button resetButton;
+    [SerializeField] private Button applyButton;
     [HideInInspector] public bool controlSchemeOpen = false;
 
+    // Temporary variables to hold settings before applying
     private int tempResolutionIndex;
     private bool tempIsFullscreen;
     private float tempMasterVolume;
     private float tempSFXVolume;
     private float tempMusicVolume;
     private float tempMouseSensitivity;
-    private float tempControllerSensitivity;
-    private float tempControllerDeadZone;
+    private float tempLeftStickSensitivity;
+    private float tempRightStickSensitivity;
+    private float tempLeftStickDeadZone;
+    private float tempRightStickDeadZone;
 
     private Resolution[] resolutions;
     
@@ -50,10 +63,9 @@ public class MMSettings : MonoBehaviour
         LoadSettings();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnEnable()
     {
-        
+        OpenVideoSettings();
     }
 
     private void LoadResolutions()
@@ -107,13 +119,42 @@ public class MMSettings : MonoBehaviour
         SFXVolumeSlider.onValueChanged.AddListener(SetSFXVolume);
         musicVolumeSlider.onValueChanged.AddListener(SetMusicVolume);
         mouseSensitivitySlider.onValueChanged.AddListener(SetMouseSensitivity);
-        controllerSensitivitySlider.onValueChanged.AddListener(SetControllerSensitivity);
-        controllerDeadZoneSlider.onValueChanged.AddListener(SetControllerDeadZone);
+        leftStickSensitivitySlider.onValueChanged.AddListener(SetLeftStickSensitivity);
+        rightStickSensitivitySlider.onValueChanged.AddListener(SetRightStickSensitivity);
+        leftStickDeadZoneSlider.onValueChanged.AddListener(SetLeftStickDeadZone);
+        rightStickDeadZoneSlider.onValueChanged.AddListener(SetRightStickDeadZone);
         
+        // Set up button listeners
+        controlSchemeUIButton.onClick.AddListener(OpenControlSchemeUI);
+        videoSettingsButton.onClick.AddListener(OpenVideoSettings);
+        audioSettingsButton.onClick.AddListener(OpenAudioSettings);
+        controlsSettingsButton.onClick.AddListener(OpenControlsSettings);
         resetButton.onClick.AddListener(ResetSettings);
         applyButton.onClick.AddListener(LoadSettings);
+    }
 
-        controlSchemeUIButton.onClick.AddListener(OpenControlSchemeUI);
+    private void OpenVideoSettings()
+    {
+        // Close other settings UIs, open video settings
+        videoSettingsUI.SetActive(true);
+        audioSettingsUI.SetActive(false);
+        controlsSettingsUI.SetActive(false);
+    }
+
+    private void OpenAudioSettings()
+    {
+        // Close other settings UIs, open audio settings
+        audioSettingsUI.SetActive(true);
+        videoSettingsUI.SetActive(false);
+        controlsSettingsUI.SetActive(false);
+    }
+
+    private void OpenControlsSettings()
+    {
+        // Close other settings UIs, open controls settings
+        controlsSettingsUI.SetActive(true);
+        videoSettingsUI.SetActive(false);
+        audioSettingsUI.SetActive(false);
     }
 
     public void SetResolution(int index)
@@ -161,20 +202,36 @@ public class MMSettings : MonoBehaviour
         mouseSensitivityValueText.text = Mathf.RoundToInt(sensitivity * 100).ToString("F0") + "%";
     }
 
-    public void SetControllerSensitivity(float sensitivity)
+    public void SetLeftStickSensitivity(float sensitivity)
     {
-        // Assuming a PlayerController exists to handle controller sensitivity
-        // PlayerController.controllerSensitivity = sensitivity;
-        tempControllerSensitivity = sensitivity;
-        controllerSensitivityValueText.text = Mathf.RoundToInt(sensitivity * 100).ToString("F0") + "%";
+        // Assuming a PlayerController exists to handle left stick sensitivity
+        // PlayerController.leftStickSensitivity = sensitivity;
+        tempLeftStickSensitivity = sensitivity;
+        leftStickSensitivityValueText.text = Mathf.RoundToInt(sensitivity * 100).ToString("F0") + "%";
     }
 
-    public void SetControllerDeadZone(float deadZone)
+    public void SetRightStickSensitivity(float sensitivity)
     {
-        // Assuming a PlayerController exists to handle controller dead zone
-        // PlayerController.controllerDeadZone = deadZone;
-        tempControllerDeadZone = deadZone;
-        controllerDeadZoneValueText.text = Mathf.RoundToInt(deadZone * 100).ToString("F0") + "%";
+        // Assuming a PlayerController exists to handle right stick sensitivity
+        // PlayerController.rightStickSensitivity = sensitivity;
+        tempRightStickSensitivity = sensitivity;
+        rightStickSensitivityValueText.text = Mathf.RoundToInt(sensitivity * 100).ToString("F0") + "%";
+    }
+
+    public void SetLeftStickDeadZone(float deadZone)
+    {
+        // Assuming a PlayerController exists to handle left stick dead zone
+        // PlayerController.leftStickDeadZone = deadZone;
+        tempLeftStickDeadZone = deadZone;
+        leftStickDeadZoneValueText.text = Mathf.RoundToInt(deadZone * 100).ToString("F0") + "%";
+    }
+
+    public void SetRightStickDeadZone(float deadZone)
+    {
+        // Assuming a PlayerController exists to handle right stick dead zone
+        // PlayerController.rightStickDeadZone = deadZone;
+        tempRightStickDeadZone = deadZone;
+        rightStickDeadZoneValueText.text = Mathf.RoundToInt(deadZone * 100).ToString("F0") + "%";
     }
 
     public void ApplySettings()
@@ -191,8 +248,10 @@ public class MMSettings : MonoBehaviour
 
         // Assuming a PlayerController exists to handle sensitivities and dead zone
         // PlayerController.mouseSensitivity = tempMouseSensitivity;
-        // PlayerController.controllerSensitivity = tempControllerSensitivity;
-        // PlayerController.controllerDeadZone = tempControllerDeadZone;
+        // PlayerController.leftStickSensitivity = tempLeftStickSensitivity;
+        // PlayerController.rightStickSensitivity = tempRightStickSensitivity;
+        // PlayerController.leftStickDeadZone = tempLeftStickDeadZone;
+        // PlayerController.rightStickDeadZone = tempRightStickDeadZone;
         
         PlayerPrefs.SetInt("resolution", tempResolutionIndex);
         PlayerPrefs.SetInt("fullscreen", tempIsFullscreen ? 1 : 0);
@@ -200,8 +259,10 @@ public class MMSettings : MonoBehaviour
         PlayerPrefs.SetFloat("SFXVolume", tempSFXVolume);
         PlayerPrefs.SetFloat("musicVolume", tempMusicVolume);
         PlayerPrefs.SetFloat("mouseSensitivity", tempMouseSensitivity);
-        PlayerPrefs.SetFloat("controllerSensitivity", tempControllerSensitivity);
-        PlayerPrefs.SetFloat("controllerDeadZone", tempControllerDeadZone);
+        PlayerPrefs.SetFloat("leftStickSensitivity", tempLeftStickSensitivity);
+        PlayerPrefs.SetFloat("rightStickSensitivity", tempRightStickSensitivity);
+        PlayerPrefs.SetFloat("leftStickDeadZone", tempLeftStickDeadZone);
+        PlayerPrefs.SetFloat("rightStickDeadZone", tempRightStickDeadZone);
 
         PlayerPrefs.Save();
     }
@@ -214,8 +275,10 @@ public class MMSettings : MonoBehaviour
         PlayerPrefs.DeleteKey("SFXVolume");
         PlayerPrefs.DeleteKey("musicVolume");
         PlayerPrefs.DeleteKey("mouseSensitivity");
-        PlayerPrefs.DeleteKey("controllerSensitivity");
-        PlayerPrefs.DeleteKey("controllerDeadZone");
+        PlayerPrefs.DeleteKey("leftStickSensitivity");
+        PlayerPrefs.DeleteKey("rightStickSensitivity");
+        PlayerPrefs.DeleteKey("leftStickDeadZone");
+        PlayerPrefs.DeleteKey("rightStickDeadZone");
         LoadSettings();
     }
 
@@ -227,8 +290,10 @@ public class MMSettings : MonoBehaviour
         tempSFXVolume = PlayerPrefs.GetFloat("SFXVolume", 1f);
         tempMusicVolume = PlayerPrefs.GetFloat("musicVolume", 1f);
         tempMouseSensitivity = PlayerPrefs.GetFloat("mouseSensitivity", 1f);
-        tempControllerSensitivity = PlayerPrefs.GetFloat("controllerSensitivity", 1f);
-        tempControllerDeadZone = PlayerPrefs.GetFloat("controllerDeadZone", 0.1f);
+        tempLeftStickSensitivity = PlayerPrefs.GetFloat("leftStickSensitivity", 1f);
+        tempRightStickSensitivity = PlayerPrefs.GetFloat("rightStickSensitivity", 1f);
+        tempLeftStickDeadZone = PlayerPrefs.GetFloat("leftStickDeadZone", 0.1f);
+        tempRightStickDeadZone = PlayerPrefs.GetFloat("rightStickDeadZone", 0.1f);
 
         resolutionDropdown.value = tempResolutionIndex;
         fullscreenToggle.isOn = tempIsFullscreen;
@@ -236,8 +301,10 @@ public class MMSettings : MonoBehaviour
         SFXVolumeSlider.value = tempSFXVolume;
         musicVolumeSlider.value = tempMusicVolume;
         mouseSensitivitySlider.value = tempMouseSensitivity;
-        controllerSensitivitySlider.value = tempControllerSensitivity;
-        controllerDeadZoneSlider.value = tempControllerDeadZone;
+        leftStickSensitivitySlider.value = tempLeftStickSensitivity;
+        rightStickSensitivitySlider.value = tempRightStickSensitivity;
+        leftStickDeadZoneSlider.value = tempLeftStickDeadZone;
+        rightStickDeadZoneSlider.value = tempRightStickDeadZone;
     }
 
     private void OpenControlSchemeUI()
@@ -258,7 +325,7 @@ public class MMSettings : MonoBehaviour
             controlSchemeUI.SetActive(false);
             settingsUI.SetActive(true);
             controlSchemeOpen = false;
-            EventSystem.current.SetSelectedGameObject(controlSchemeUIButton.gameObject);
+            EventSystem.current.SetSelectedGameObject(controlsSettingsButton.gameObject);
         }
     }
 }
