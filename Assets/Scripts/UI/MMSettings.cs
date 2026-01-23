@@ -33,12 +33,15 @@ public class MMSettings : MonoBehaviour
     [SerializeField] private GameObject videoSettingsUI;
     [SerializeField] private GameObject audioSettingsUI;
     [SerializeField] private GameObject controlsSettingsUI;
+    [SerializeField] private GameObject confirmationPanel;
+
     [SerializeField] private Button controlSchemeUIButton;
     [SerializeField] public Button videoSettingsButton;
     [SerializeField] private Button audioSettingsButton;
     [SerializeField] private Button controlsSettingsButton;
     [SerializeField] private Button resetButton;
     [SerializeField] private Button applyButton;
+
     [HideInInspector] public bool controlSchemeOpen = false;
 
     // Temporary variables to hold settings before applying
@@ -129,8 +132,8 @@ public class MMSettings : MonoBehaviour
         videoSettingsButton.onClick.AddListener(OpenVideoSettings);
         audioSettingsButton.onClick.AddListener(OpenAudioSettings);
         controlsSettingsButton.onClick.AddListener(OpenControlsSettings);
-        resetButton.onClick.AddListener(ResetSettings);
-        applyButton.onClick.AddListener(LoadSettings);
+        resetButton.onClick.AddListener(ConfirmBeforeReset);
+        applyButton.onClick.AddListener(ConfirmBeforeApply);
     }
 
     private void OpenVideoSettings()
@@ -160,14 +163,11 @@ public class MMSettings : MonoBehaviour
     public void SetResolution(int index)
     {
         tempResolutionIndex = index;
-        Resolution resolution = resolutions[index];
-        Screen.SetResolution(resolution.width, resolution.height, Screen.fullScreen);
     }
 
     public void SetFullscreen(bool isFullscreen)
     {
         tempIsFullscreen = isFullscreen;
-        Screen.fullScreen = isFullscreen;
     }
 
     public void SetMasterVolume(float volume)
@@ -232,6 +232,40 @@ public class MMSettings : MonoBehaviour
         // PlayerController.rightStickDeadZone = deadZone;
         tempRightStickDeadZone = deadZone;
         rightStickDeadZoneValueText.text = Mathf.RoundToInt(deadZone * 100).ToString("F0") + "%";
+    }
+
+    private void ConfirmBeforeApply()
+    {
+        confirmationPanel.SetActive(true);
+
+        ConfirmationUI confirmationUI = confirmationPanel.GetComponent<ConfirmationUI>();
+        confirmationUI.ConfirmTask(ConfirmationType.ApplySettings, 
+            () => 
+            {
+                ApplySettings();
+                confirmationPanel.SetActive(false);
+            },
+            () => 
+            {
+                confirmationPanel.SetActive(false);
+            });
+    }
+
+    private void ConfirmBeforeReset()
+    {
+        confirmationPanel.SetActive(true);
+
+        ConfirmationUI confirmationUI = confirmationPanel.GetComponent<ConfirmationUI>();
+        confirmationUI.ConfirmTask(ConfirmationType.ResetSettings, 
+            () => 
+            {
+                ResetSettings();
+                confirmationPanel.SetActive(false);
+            },
+            () => 
+            {
+                confirmationPanel.SetActive(false);
+            });
     }
 
     public void ApplySettings()
