@@ -12,6 +12,7 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private GameObject settingsPanel;
     [SerializeField] private GameObject creditsPanel;
     [SerializeField] private GameObject saveSlotsPanel;
+    [SerializeField] private GameObject confirmationPanel;
 
     [Header("Buttons")]
     [SerializeField] private Button playButton;
@@ -137,7 +138,7 @@ public class MainMenu : MonoBehaviour
         playButton.onClick.AddListener(OpenSaveSlotsScreen);
         settingsButton.onClick.AddListener(OpenSettings);
         creditsButton.onClick.AddListener(OpenCredits);
-        quitButton.onClick.AddListener(QuitGame);
+        quitButton.onClick.AddListener(ConfirmBeforeQuit);
         backButton.onClick.AddListener(HandleBackButton);
     }
 
@@ -171,6 +172,7 @@ public class MainMenu : MonoBehaviour
         settingsPanel.SetActive(false);
         creditsPanel.SetActive(false);
         saveSlotsPanel.SetActive(false);
+        confirmationPanel.SetActive(false);
 
         UpdatePlayButton();
         
@@ -220,6 +222,15 @@ public class MainMenu : MonoBehaviour
         EventSystem.current.SetSelectedGameObject(saveSlotsPanel.GetComponentInChildren<SaveSlotUI>().playButtons[0].gameObject.activeSelf 
         ? saveSlotsPanel.GetComponentInChildren<SaveSlotUI>().playButtons[0].gameObject
         : saveSlotsPanel.GetComponentInChildren<SaveSlotUI>().newGameButtons[0].gameObject);
+    }
+
+    private void ConfirmBeforeQuit()
+    {
+        confirmationPanel.SetActive(true);
+        mainMenuPanel.SetActive(false);
+
+        ConfirmationUI confirmationUI = confirmationPanel.GetComponent<ConfirmationUI>();
+        confirmationUI.ConfirmTask(ConfirmationType.QuitToDesktop, QuitGame, OpenMainMenu);
     }
 
     private void QuitGame()
