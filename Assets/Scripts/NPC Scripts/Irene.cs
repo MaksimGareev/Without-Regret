@@ -89,11 +89,11 @@ public class Irene : MonoBehaviour
         direction.y = 0f;
 
         // Movement
-        transform.position = Vector3.MoveTowards(transform.position, targetSpot.position, FollowSpeed * Time.deltaTime);
-        /*if (!agent.pathPending && agent.remainingDistance < 0.5f && agent != null)
+        //transform.position = Vector3.MoveTowards(transform.position, targetSpot.position, FollowSpeed * Time.deltaTime);
+        if (!agent.pathPending && agent.remainingDistance < 0.5f && agent != null)
         {
             agent.SetDestination(targetSpot.position);
-        }*/
+        }
         // Rotate towards target
         if (direction.sqrMagnitude > 0.001f)
         {
