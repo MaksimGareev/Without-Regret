@@ -184,6 +184,11 @@ MonoBehaviour:
   range: 5
   centrePoint: {fileID: 0}
   waitTime: 2
+  baseSpeed: 3.5
+  minSpeed: 1.5
+  maxSpeed: 6.5
+  moralitySpeedMultiplier: 0.15
+  playerMorality: {fileID: 0}
   showDebugLogs: 0
 --- !u!114 &1380278693743089735
 MonoBehaviour:
@@ -207,6 +212,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   canSeePlayer: 0
+  chaseDuration: 1
+  maxChaseDuration: 1
 --- !u!114 &7884651440600371946
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -219,7 +226,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0533f1ed123acf041884b16faa1a16ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lingerDistance: 1.5
   moveSpeed: 5
   lingerTime: 2
   stoppingRadius: 2
@@ -235,6 +241,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d086f8a1a3c41e84dbb9eef25e785fb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Agent: {fileID: 7348955320931083906}
   moveSpeed: 1
   struggleStrength: 10
   struggleFrequency: 0.1
