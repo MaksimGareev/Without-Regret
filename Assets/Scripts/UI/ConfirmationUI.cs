@@ -9,7 +9,8 @@ public enum ConfirmationType
     ReloadSave,
     DeleteSave,
     ApplySettings,
-    ResetSettings
+    ResetSettings,
+    DiscardChanges
 }
 
 public class ConfirmationUI : MonoBehaviour
@@ -40,6 +41,9 @@ public class ConfirmationUI : MonoBehaviour
                 break;
             case ConfirmationType.ResetSettings:
                 taskText.text = "reset all settings to default?";
+                break;
+            case ConfirmationType.DiscardChanges:
+                taskText.text = "discard all changes?";
                 break;
             default:
                 taskText.text = "to proceed?";
