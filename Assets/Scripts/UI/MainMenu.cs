@@ -34,6 +34,12 @@ public class MainMenu : MonoBehaviour
         saveManager = FindAnyObjectByType<SaveManager>();
         settingsScript = settingsPanel.GetComponent<MMSettings>();
 
+        // Flash settings panel to load settings without displaying it
+        settingsPanel.SetActive(true);
+        settingsScript.LoadResolutions();
+        settingsScript.LoadSettings();
+        settingsPanel.SetActive(false);
+
         UpdatePlayButton();
         OpenMainMenu();
 

@@ -42,7 +42,7 @@ AudioSource:
   m_GameObject: {fileID: 7723209263034436145}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: 1358079026614987775, guid: f09a44cefc8eb4247a0cbc3396985638, type: 2}
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
@@ -147,6 +147,7 @@ MonoBehaviour:
   DialogueText: {fileID: 0}
   ChoicesContainer: {fileID: 0}
   ChoiceButton: {fileID: 480542614812243105, guid: c0bcf03c9221ad94ba740b5fd1572722, type: 3}
+  ContinueArrow: {fileID: 0}
   TypingAudioSource: {fileID: 1940466084136260643}
   letterClips:
   - {fileID: 8300000, guid: 46955f2bd3e9e2e49b5658667a378641, type: 3}
@@ -177,4 +178,10 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 2ac35b0aca60abd40a465433a835605f, type: 3}
   uiAudioSource: {fileID: 1940466084136260643}
   PopupText: {fileID: 0}
-  globalsInkJSON: {fileID: 4900000, guid: 2ed2b40c7681ece4ea7d30e9583fb7b1, type: 3}
+  choiceDistance: 250
+  holdTimeToSelect: 0.5
+  choiceTimeLimit: 5
+  TimerText: {fileID: 0}
+  barryDestinationTransform: {fileID: 0}
+  darryDestinationTransform: {fileID: 0}
+  playerMorality: 0
