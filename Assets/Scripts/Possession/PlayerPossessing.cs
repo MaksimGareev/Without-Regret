@@ -16,6 +16,7 @@ public class PlayerPossessing : MonoBehaviour
     private Rigidbody playerRigidbody;
     private PossessedEnemyResisting possessedEnemyMovement;
     private PatrollingEnemy normalEnemyMovement;
+    private EnemyFieldOfView enemyPOV;
     private NavMeshAgent enemyNavMeshAgent;
     private Rigidbody enemyRigidbody;
     private float possessionTimer;
@@ -145,6 +146,7 @@ public class PlayerPossessing : MonoBehaviour
 
         normalEnemyMovement = target.GetComponent<PatrollingEnemy>();
         enemyRigidbody = target.GetComponent<Rigidbody>();
+        enemyPOV = target.GetComponent<EnemyFieldOfView>();
         possessedEnemyMovement = target;
         
 
@@ -172,16 +174,17 @@ public class PlayerPossessing : MonoBehaviour
             normalEnemyMovement.enabled = false;
         }
 
+        if (enemyPOV != null)
+        {
+            enemyPOV.enabled = false;
+        }
+
         if (enemyRigidbody != null)
         {
             //enemyRigidbody.useGravity = false;
         }
 
-        enemyNavMeshAgent = target.GetComponent<NavMeshAgent>();
-        if (enemyNavMeshAgent != null)
-        {
-            enemyNavMeshAgent.enabled = false;
-        }
+
 
         if (!possessedEnemyMovement.enabled)
         {
@@ -203,13 +206,14 @@ public class PlayerPossessing : MonoBehaviour
             }
         }
 
+        if (enemyPOV != null)
+        {
+            enemyPOV.enabled = true;
+        }
+
         possessedEnemyMovement = null;
         normalEnemyMovement = null;
-
-        if (enemyNavMeshAgent != null)
-        {
-            enemyNavMeshAgent.enabled = true;
-        }
+        enemyPOV = null;
 
         if (enemyRigidbody != null)
         {
