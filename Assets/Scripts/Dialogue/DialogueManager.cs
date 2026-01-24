@@ -326,7 +326,7 @@ public class DialogueManager : MonoBehaviour
         // End dialogue if the line says to
         if (line.endDialogueAfterLine)
         {
-            if (ireneNPC != null && activeDialogueTrigger.TalkedAlready == false)
+            if (ireneNPC != null)
             {
                 ireneNPC.StartTravel();
                 ireneNPC.IsFollowing = false;
