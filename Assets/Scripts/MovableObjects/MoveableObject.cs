@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using Unity.AI.Navigation;
 using System.Reflection;
+using System;
 
 [RequireComponent(typeof(Rigidbody))]
 public class MoveableObject : MonoBehaviour, IInteractable
@@ -16,6 +17,7 @@ public class MoveableObject : MonoBehaviour, IInteractable
     public float InteractionPriority => 1;
     [SerializeField] private GameObject iconPrefab;
     public bool shouldShowIcon = true;
+    public event Action OnInteracted;
     private GameObject popupInstance;
     private Collider coll;
 
@@ -161,6 +163,9 @@ public class MoveableObject : MonoBehaviour, IInteractable
             Release();
             playerMovingObjects.OnReleaseObject();
         }
+
+        // Notify any listeners
+        OnInteracted?.Invoke();
     }
 
     private bool IsOnGround()
