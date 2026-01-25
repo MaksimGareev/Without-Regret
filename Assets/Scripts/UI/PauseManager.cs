@@ -25,7 +25,9 @@ public class PauseManager : MonoBehaviour
     [Header("UI Panels")]
     [SerializeField] private GameObject pauseMenuPanel;
     [SerializeField] private GameObject settingsPanel;
+    [SerializeField] private GameObject confirmationPanel;
     [SerializeField] private Canvas[] otherCanvasesToDisable;
+
     [HideInInspector] public bool isGamePaused = false;
     private MMSettings settingsScript;
 
@@ -151,7 +153,7 @@ public class PauseManager : MonoBehaviour
                 }
                 else if (settingsPanel.activeSelf)
                 {
-                    EventSystem.current.SetSelectedGameObject(settingsScript.resolutionDropdown.gameObject);
+                    EventSystem.current.SetSelectedGameObject(settingsScript.videoSettingsButton.gameObject);
                 }
             }
         } 
@@ -191,9 +193,9 @@ public class PauseManager : MonoBehaviour
     {
         // Assign button listeners
         resumeButton.onClick.AddListener(ResumeGame);
-        reloadSaveButton.onClick.AddListener(ReloadSave);
+        reloadSaveButton.onClick.AddListener(ConfirmBeforeReload);
         settingsButton.onClick.AddListener(OpenSettings);
-        quitButton.onClick.AddListener(QuitToMainMenu);
+        quitButton.onClick.AddListener(ConfirmBeforeQuit);
         backButton.onClick.AddListener(HandleBackButton);
     }
 
@@ -251,6 +253,40 @@ public class PauseManager : MonoBehaviour
         //Debug.Log("Resuming Game...");
     }
 
+    private void ConfirmBeforeQuit()
+    {
+        confirmationPanel.SetActive(true);
+
+        ConfirmationUI confirmationUI = confirmationPanel.GetComponent<ConfirmationUI>();
+        confirmationUI.ConfirmTask(ConfirmationType.QuitToMainMenu, 
+            () => 
+            {
+                QuitToMainMenu();
+                confirmationPanel.SetActive(false);
+            },
+            () => 
+            {
+                confirmationPanel.SetActive(false);
+            });
+    }
+
+    private void ConfirmBeforeReload()
+    {
+        confirmationPanel.SetActive(true);
+
+        ConfirmationUI confirmationUI = confirmationPanel.GetComponent<ConfirmationUI>();
+        confirmationUI.ConfirmTask(ConfirmationType.ReloadSave, 
+            () => 
+            {
+                ReloadSave();
+                confirmationPanel.SetActive(false);
+            },
+            () => 
+            {
+                confirmationPanel.SetActive(false);
+            });
+    }
+
     private void ReloadSave()
     {
         // Logic to reload the last save
@@ -266,7 +302,7 @@ public class PauseManager : MonoBehaviour
         settingsPanel.SetActive(true);
         backButton.gameObject.SetActive(true);
 
-        EventSystem.current.SetSelectedGameObject(settingsPanel.GetComponentInChildren<MMSettings>().resolutionDropdown.gameObject);
+        EventSystem.current.SetSelectedGameObject(settingsPanel.GetComponentInChildren<MMSettings>().videoSettingsButton.gameObject);
         
         //Debug.Log("Opening Settings...");
     }
