@@ -13,7 +13,10 @@ public class PlayerPossessing : MonoBehaviour
     [SerializeField] private KeyCode possessKey = KeyCode.R;
     [SerializeField] private KeyCode possessButton = KeyCode.JoystickButton9;
     [SerializeField] private Slider posessionBar;
+    [SerializeField] private GameObject iconPrefab;
+    [SerializeField] private Vector3 iconOffset = new Vector3(0f, 2f, 0f);
 
+    private GameObject popupInstance;
     private PlayerController playerController;
     private Rigidbody playerRigidbody;
     private PossessedEnemyResisting possessedEnemyMovement;
@@ -26,6 +29,7 @@ public class PlayerPossessing : MonoBehaviour
     public LayerMask mask;
     RaycastHit hit;
     private bool posessing = false;
+    public bool shouldShowIcon = true;
 
     private void Awake()
     {
@@ -55,11 +59,13 @@ public class PlayerPossessing : MonoBehaviour
             {
                 normalEnemyMovement = hit.collider.GetComponent<PatrollingEnemy>();
                 target = hit.collider.GetComponent<PossessedEnemyResisting>();
+                EnablePopupIcon();
             }
         }
-        else if (posessing != true)
+        else if (posessing != true && target != null)
         {
             ClearTargetInfo();
+            DisablePopupIcon();
         }
 
         if (possessedEnemyMovement != null)
@@ -253,5 +259,25 @@ public class PlayerPossessing : MonoBehaviour
         normalEnemyMovement = null;
         enemyPOV = null;
         target = null;
+    }
+
+    public void EnablePopupIcon()
+    {
+        if (popupInstance == null && iconPrefab != null && PopupManager.Instance != null)
+        {
+            popupInstance = PopupManager.Instance.CreatePopup(target.transform, iconPrefab).gameObject;
+            target.GetComponent<GameObject>().GetComponent<WorldPopup>().worldOffset = iconOffset;
+            shouldShowIcon = true;
+        }
+    }
+
+    public void DisablePopupIcon()
+    {
+        if (popupInstance != null)
+        {
+            Destroy(popupInstance);
+            popupInstance = null;
+            shouldShowIcon = false;
+        }
     }
 }
