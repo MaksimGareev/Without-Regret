@@ -133,7 +133,7 @@ public class LockPickUI : MonoBehaviour
         else
         {
             Debug.Log("Failed, try again");
-            StartCoroutine(ShakePick());
+            ShakePick();
         }
         Debug.Log(angleDifference);
         Debug.Log(UnlockTolerance);
@@ -182,7 +182,7 @@ public class LockPickUI : MonoBehaviour
         }
     }
 
-    private IEnumerator ShakePick()
+    private void ShakePick()
     {
         float elapsed = 0f;
 
@@ -195,7 +195,7 @@ public class LockPickUI : MonoBehaviour
 
             PickCursor.localPosition = originalPosition + new Vector3(offsetX, offsetY, 0);
 
-            yield return null;
+            
  
         }
 

@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(Rigidbody))]
@@ -14,13 +15,17 @@ public class PlayerFloating : MonoBehaviour
     [SerializeField] private float stickDeadzone = 0.2f; // deadzone for controllers
 
     [Header("Rhythm / Input")]
+    [SerializeField] private InputActionReference floatAction;
     [SerializeField] private float floatDuration = 5f;
     [SerializeField] private float floatCooldown = 3f;
-    [SerializeField] private KeyCode floatKey = KeyCode.Space;
-    [SerializeField] private string floatButton = "Submit";
     [SerializeField] private Slider rhythmSlider;
     [SerializeField] private float rhythmWindow = 0.3f;
     [SerializeField] private float rhythmInterval = 1f;
+    [SerializeField] private RectTransform rhythmTargetLeft;  // visual region near the start (0)
+    [SerializeField] private RectTransform rhythmTargetRight; // visual region near the end (1)
+    private PlayerControls controls;
+    private Vector2 moveInput;
+    private bool floatInput;
 
     [Header("Debugging")]
     [SerializeField] private bool showDebugLogs = false;
@@ -31,11 +36,11 @@ public class PlayerFloating : MonoBehaviour
     private Camera playerCamera;
     private ToggleInventoryUI toggleInventoryUI;
 
-    public bool isFloating { get; private set; } = false;
+    public bool IsFloating { get; private set; } = false;
     private bool canFloat = false;
     private float floatTimer = 0f;
     private float cooldownTimer = 0f;
-    public bool isCoolingDown { get; private set; } = false;
+    public bool IsCoolingDown { get; private set; } = false;
     private float rhythmTimer = 0f;
     private float hoverTargetY;
 
@@ -46,6 +51,17 @@ public class PlayerFloating : MonoBehaviour
     private float prevRbDrag;
     private bool prevRbKinematic;
 
+    void OnEnable()
+    {
+        controls.Enable();
+        floatAction.action.Enable();
+    }
+    void OnDisable()
+    {
+        controls.Disable();
+        floatAction.action.Disable();
+    }
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
@@ -53,11 +69,106 @@ public class PlayerFloating : MonoBehaviour
         charController = GetComponent<CharacterController>();
         toggleInventoryUI = GetComponent<ToggleInventoryUI>();
         playerCamera = Camera.main;
+        controls = new PlayerControls();
+
+        // Assign floatInput based on the state of the Input Action
+        floatAction.action.performed += ctx => ReadSubmit(ctx);
+        floatAction.action.canceled += ctx => ReadSubmit(ctx);
+        controls.Player.Move.performed += ctx => ReadMove(ctx);
+        controls.Player.Move.canceled += ctx => ReadMove(ctx);
+
+        if (floatAction == null)
+        {
+            Debug.LogError("PlayerFloating: Float Input Action Reference is not assigned.");
+        }
+    }
+
+    public void ReadSubmit(InputAction.CallbackContext context)
+    {
+        floatInput = context.action.triggered;
+
+        //if (showDebugLogs && canFloat)
+        //{
+        //    Debug.Log("Float Input: " + floatInput);
+        //}
+    }
+
+    public void ReadMove(InputAction.CallbackContext context)
+    {
+        moveInput = context.ReadValue<Vector2>();
+
+        //if (showDebugLogs && isFloating)
+        //{
+        //    Debug.Log("PlayerFloating - Move Input: " + moveInput);
+        //}
     }
 
     private void Start()
     {
+        SetupRhythmTargets();
         rhythmSlider.gameObject.SetActive(false);
+    }
+
+    #if UNITY_EDITOR
+    // Update target visuals in editor when values change
+    private void OnValidate()
+    {
+        // avoid calling during domain reload when objects may be destroyed
+        if (!Application.isPlaying)
+            SetupRhythmTargets();
+    }
+    #endif
+
+    private void SetupRhythmTargets()
+    {
+        if (rhythmSlider == null || rhythmTargetLeft == null || rhythmTargetRight == null)
+            return;
+
+        if (rhythmInterval <= 0f)
+        {
+            if (showDebugLogs) Debug.LogWarning("PlayerFloating: rhythmInterval must be > 0 to position targets.");
+            return;
+        }
+
+        float windowNormalized = Mathf.Clamp01(rhythmWindow / rhythmInterval);
+
+        // Make sure the targets are children of the slider rect so anchors are relative to slider
+        if (!rhythmSlider.TryGetComponent<RectTransform>(out var sliderRect)) return;
+
+        rhythmTargetLeft.SetParent(sliderRect, false);
+        rhythmTargetRight.SetParent(sliderRect, false);
+
+        // Clear offsets and set anchors to define the target regions.
+        // For LeftToRight slider: left region = [0, windowNormalized], right region = [1 - windowNormalized, 1]
+        // For RightToLeft swap them.
+        if (rhythmSlider.direction == Slider.Direction.LeftToRight)
+        {
+            rhythmTargetLeft.anchorMin = new Vector2(0f, 0f);
+            rhythmTargetLeft.anchorMax = new Vector2(windowNormalized, 1f);
+            rhythmTargetLeft.offsetMin = Vector2.zero;
+            rhythmTargetLeft.offsetMax = Vector2.zero;
+
+            rhythmTargetRight.anchorMin = new Vector2(1f - windowNormalized, 0f);
+            rhythmTargetRight.anchorMax = new Vector2(1f, 1f);
+            rhythmTargetRight.offsetMin = Vector2.zero;
+            rhythmTargetRight.offsetMax = Vector2.zero;
+        }
+        else if (rhythmSlider.direction == Slider.Direction.RightToLeft)
+        {
+            rhythmTargetLeft.anchorMin = new Vector2(1f - windowNormalized, 0f);
+            rhythmTargetLeft.anchorMax = new Vector2(1f, 1f);
+            rhythmTargetLeft.offsetMin = Vector2.zero;
+            rhythmTargetLeft.offsetMax = Vector2.zero;
+
+            rhythmTargetRight.anchorMin = new Vector2(0f, 0f);
+            rhythmTargetRight.anchorMax = new Vector2(windowNormalized, 1f);
+            rhythmTargetRight.offsetMin = Vector2.zero;
+            rhythmTargetRight.offsetMax = Vector2.zero;
+        }
+        else
+        {
+            if (showDebugLogs) Debug.LogError("PlayerFloating: Unsupported slider direction for rhythm targets.");
+        }
     }
 
     private void Update()
@@ -66,15 +177,17 @@ public class PlayerFloating : MonoBehaviour
         {
             HandleCooldown();
 
-            if (!isCoolingDown && canFloat)
+            if (!IsCoolingDown && canFloat)
             {
-                if (!isFloating && !toggleInventoryUI.isEnabled && (Input.GetKeyDown(floatKey) || Input.GetButtonDown(floatButton)))
+                // Start floating if input detected and not in inventory
+                if (!IsFloating && !toggleInventoryUI.isEnabled && floatInput)
                 {
                     StartFloating();
+                    floatInput = false; // consume input
                 }
             }
 
-            if (isFloating)
+            if (IsFloating)
             {
                 HandleRhythmInput();
                 UpdateRhythmUI();
@@ -84,7 +197,7 @@ public class PlayerFloating : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (isFloating)
+        if (IsFloating)
         {
             ApplyFloatPhysics();
         }
@@ -93,7 +206,7 @@ public class PlayerFloating : MonoBehaviour
     private void StartFloating()
     {
         rhythmSlider.gameObject.SetActive(true);
-        isFloating = true;
+        IsFloating = true;
         floatTimer = 0f;
         rhythmTimer = 0f;
 
@@ -126,12 +239,12 @@ public class PlayerFloating : MonoBehaviour
     private void StopFloating()
     {
         rhythmSlider.gameObject.SetActive(false);
-        isFloating = false;
+        IsFloating = false;
         rhythmTimer = 0f;
         floatTimer = 0f;
         if (rhythmSlider != null) rhythmSlider.value = 0f;
 
-        isCoolingDown = true;
+        IsCoolingDown = true;
         cooldownTimer = floatCooldown;
 
         // restore rigidbody settings
@@ -164,8 +277,9 @@ public class PlayerFloating : MonoBehaviour
             return;
         }
 
-        if ((Input.GetKeyDown(floatKey) || Input.GetButtonDown(floatButton)) && !toggleInventoryUI.isEnabled)
+        if (floatInput && !toggleInventoryUI.isEnabled)
         {
+            floatInput = false; // consume input
             float errorMargin = Mathf.Min(rhythmTimer, rhythmInterval - rhythmTimer);
             if (errorMargin <= rhythmWindow)
             {
@@ -177,14 +291,14 @@ public class PlayerFloating : MonoBehaviour
 
                 if (showDebugLogs)
                 {
-                    Debug.Log("Floating Rhythm Success");
+                    Debug.Log($"Floating Rhythm Success. Achieved Window of {rhythmWindow} with error margin of {errorMargin}. Rhythm Timer: {rhythmTimer}, Rhythm Interval: {rhythmInterval}");
                 }
             }
             else
             {
                 if (showDebugLogs)
                 {
-                    Debug.Log("Floating failed: missed timing");
+                    Debug.Log($"Floating Rhythm Failure. Missed Window of {rhythmWindow} with error margin of {errorMargin}. Rhythm Timer: {rhythmTimer}, Rhythm Interval: {rhythmInterval}");
                 }
                 StopFloating();
             }
@@ -194,7 +308,7 @@ public class PlayerFloating : MonoBehaviour
         {
             if (showDebugLogs)
             {
-                Debug.Log("Floating failed: missed timing");
+                Debug.Log($"Floating Rhythm Failure. Time exceeded rhythmInterval + rhythmWindow. Rhythm Timer: {rhythmTimer}, Rhythm Window: {rhythmWindow}, Rhythm Interval: {rhythmInterval}");
             }
             StopFloating();
         }
@@ -253,8 +367,8 @@ public class PlayerFloating : MonoBehaviour
     private Vector3 GetRawCameraRelativeInput()
     {
         // Get input values
-        float x = Input.GetAxis("Horizontal");
-        float z = Input.GetAxis("Vertical");
+        float x = moveInput.x;
+        float z = moveInput.y;
         Vector3 input = new Vector3(x, 0f, z);
 
         // early out: no input
@@ -273,10 +387,10 @@ public class PlayerFloating : MonoBehaviour
 
     private void HandleCooldown()
     {
-        if (isCoolingDown)
+        if (IsCoolingDown)
         {
             cooldownTimer -= Time.deltaTime;
-            if (cooldownTimer <= 0f) isCoolingDown = false;
+            if (cooldownTimer <= 0f) IsCoolingDown = false;
         }
     }
 

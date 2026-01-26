@@ -7,7 +7,7 @@ public class EnemyDistracted : MonoBehaviour
     [Header("Distraction Settings")]
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float lingerTime = 2f;
-    [SerializeField] private float stoppingRadius = 1f;
+    [SerializeField] private float stoppingRadius = 3f;
 
 
     private PatrollingEnemy enemyMovement;

@@ -13,6 +13,13 @@ public class ChasingEnemy : MonoBehaviour
     public float PursuitTimer;
     public bool Pursuiting = true;
 
+    // Player morality effects
+    public float baseSpeed = 3.5f;
+    public float minSpeed = 1.5f;
+    public float maxSpeed = 6.5f;
+    public float moralitySpeedMultiplier = 0.15f;
+    public DialogueManager playerMorality;
+
     // cleaver pickup
     public GameObject CleaverTrig;
     public GameObject CleaverProp;
@@ -38,6 +45,13 @@ public class ChasingEnemy : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        if (playerMorality == null)
+        {
+            playerMorality = FindObjectOfType<DialogueManager>();
+        }
+
+        agent.speed = baseSpeed;
+
         //StoppingDistance = new Vector3(.7f, .7f, .7f);
         if (targets.Length > 0)
         {
@@ -55,6 +69,8 @@ public class ChasingEnemy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        UpdateSpeedFromMorality();
+
         // stop enemy when dialogue is active
         if (DialogueManager.DialogueIsActive)
         {
@@ -111,6 +127,19 @@ public class ChasingEnemy : MonoBehaviour
         }*/
 
         //agent.SetDestination(target.position);
+    }
+
+    public void UpdateSpeedFromMorality()
+    {
+        if (playerMorality == null) return;
+
+        int morality = playerMorality.playerMorality;
+
+        float speedOffset = -morality * moralitySpeedMultiplier;
+
+        float newSpeed = baseSpeed + speedOffset;
+
+        agent.speed = Mathf.Clamp(newSpeed, minSpeed, maxSpeed);
     }
 
     private void OnTriggerEnter(Collider other)

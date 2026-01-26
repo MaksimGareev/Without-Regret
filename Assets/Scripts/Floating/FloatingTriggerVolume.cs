@@ -4,27 +4,43 @@ using UnityEngine;
 public class FloatingTriggerVolume : MonoBehaviour
 {
     [Header("References")]
+    [SerializeField] private GameObject player;
     [SerializeField] private GameObject iconPrefab;
     [SerializeField] private Vector3 iconOffset = new Vector3(0f, 2f, 0f);
     [SerializeField] private bool shouldShowIcon = true;
     private GameObject popupInstance;
 
-    private GameObject player;
+    
     private PlayerFloating playerFloating;
 
     private void Start()
     {
-        player = GameObject.FindGameObjectWithTag("Player");
+        if (player == null)
+            player = GameObject.FindGameObjectWithTag("Player");
 
         if (player != null)
         {
             playerFloating = player.GetComponent<PlayerFloating>();
+            if(playerFloating == null)
+            {
+                Debug.LogError("PlayerFloating component not found on the Player GameObject.");
+            }
+        }
+        else
+        {
+            Debug.LogError("Player not found in the scene. Please ensure there is a GameObject tagged 'Player'.");
         }
     }
 
-  private void Update()
+    private void Update()
     {
-        if (shouldShowIcon && popupInstance == null && !playerFloating.isFloating && !playerFloating.isCoolingDown)
+        if (playerFloating == null)
+        {
+            Debug.LogError("PlayerFloating component is missing. Cannot update popup icon state.");
+            return;
+        }
+            
+        if (shouldShowIcon && popupInstance == null && !playerFloating.IsFloating && !playerFloating.IsCoolingDown)
         {
             EnablePopupIcon();
         }
@@ -72,5 +88,12 @@ public class FloatingTriggerVolume : MonoBehaviour
             player = null;
             playerFloating = null;
         }
-    } 
+    }
+
+    public void OnDrawGizmos()
+    {
+        // Visualize the trigger volume
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireCube(transform.position, GetComponent<Collider>().bounds.size);
+    }
 }
