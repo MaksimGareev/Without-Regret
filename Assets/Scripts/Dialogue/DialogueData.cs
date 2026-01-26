@@ -25,5 +25,20 @@ public class DialogueChoice
     public int nextIndex; // index of the next dialogue line
     public int moralityChange;
     public string objectiveToActivate; // add objective 
+
+    public string directionString;
+    [System.NonSerialized] public ChoiceDirection direction;
+
+    public void ParseDirection()
+    {
+        if (System.Enum.TryParse(directionString, true, out ChoiceDirection dir))
+        {
+            direction = dir;
+        }
+        else
+        {
+            direction = ChoiceDirection.Up;
+        }
+    }
 }
 

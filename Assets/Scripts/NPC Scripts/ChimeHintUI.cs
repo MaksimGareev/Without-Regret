@@ -2,12 +2,13 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.InputSystem;
 
 public class ChimeHintUI : MonoBehaviour
 {
     [Header("Input Settings")]
-    [SerializeField] private KeyCode hintKey = KeyCode.H;
-    [SerializeField] private string hintButton = "Xbox Select Button";
+    [SerializeField] private InputActionAsset inputActions;
+    private InputAction hintAction;
     public GameObject hintBubbleUI;
     public TextMeshProUGUI hintText;
     private Transform cam;
@@ -25,12 +26,16 @@ public class ChimeHintUI : MonoBehaviour
             hintBubbleUI.SetActive(false);
         }
         cam = Camera.main.transform;
+
+        // Setup input action
+        hintAction = inputActions.FindAction("Player/ChimeHint");
+        hintAction.Enable();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(hintKey) || Input.GetButtonDown(hintButton))
+        if (hintAction.triggered)
         {
             ShowHint();
         }
@@ -66,7 +71,7 @@ public class ChimeHintUI : MonoBehaviour
         }
         else
         {
-            hintText.text = activeObjective.data.description;
+            hintText.text = activeObjective.data.chimeDialogue;
         }
 
         // Show UI

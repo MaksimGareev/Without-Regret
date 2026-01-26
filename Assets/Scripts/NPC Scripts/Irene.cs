@@ -78,6 +78,7 @@ public class Irene : MonoBehaviour
     {
         if (targetSpot == null)
         {
+            Debug.Log("There is no target for Irene to go to");
             return;
         }
 

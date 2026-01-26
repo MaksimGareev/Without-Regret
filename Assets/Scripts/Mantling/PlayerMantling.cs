@@ -4,7 +4,7 @@ public class PlayerMantling : MonoBehaviour
 {
     [Header("Mantling Settings")]
     //[SerializeField] private float mantleRange = 2f;
-    [SerializeField] private float mantleSpeed = 3f;
+    [SerializeField] private float mantleSpeed = 6f;
     
     [Header("Debugging")]
     [SerializeField] private bool showDebugLogs = false;
@@ -83,9 +83,15 @@ public class PlayerMantling : MonoBehaviour
     private void PerformMantle()
     {
         mantleProgress += Time.deltaTime * mantleSpeed;
-        transform.position = Vector3.Lerp(mantleStartPos, mantleEndPos, mantleProgress);
-
-        if (mantleProgress >= 1f)
+        if (mantleProgress < 1)
+        {
+            transform.position = Vector3.Lerp(mantleStartPos, new Vector3(mantleStartPos.x, mantleEndPos.y, mantleStartPos.z), mantleProgress);
+        }
+        else if (mantleProgress >= 1)
+        {
+            transform.position = Vector3.Lerp(new Vector3(mantleStartPos.x, mantleEndPos.y, mantleStartPos.z), mantleEndPos, mantleProgress-1);
+        }
+        if (mantleProgress >= 2f)
         {
             EndMantle();
         }

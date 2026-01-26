@@ -8,12 +8,14 @@
                 {
                     "text": "Yeah I don't have much going on.",
                     "nextIndex": 1,
-                    "moralityChange": 1
+                    "moralityChange": 1,
+                    "directionString": "Up"
                 },
                 {
                     "text": "I'm in a rush but fine.",
                     "nextIndex": 2,
-                    "moralityChange": -1
+                    "moralityChange": -1,
+                    "directionString": "Down"
                 }
             ]
         },
@@ -34,12 +36,14 @@
                 {
                     "text": "Stay Focused",
                     "nextIndex": 4,
-                    "moralityChange": 1
+                    "moralityChange": 1,
+                    "directionString": "Up"
                 },
                 {
                     "text": "Doze off",
                     "nextIndex": 4,
-                    "moralityChange": -1
+                    "moralityChange": -1,
+                    "directionString": "Down"
                 }
             ]
         },
@@ -62,7 +66,7 @@
             "text": "I'm going to walk back home now, I lost my keys around here and can't find them.  If you want to help me find them they might be in one of those leaf piles over there.",
             "requiredMorality": 0,
             "choices": [],
-            "objectiveToActivate": [ "stackLeaves" ],
+            "objectiveToActivate": ["stackLeaves"],
             "endDialogueAfterLine": true
         }
     ]
