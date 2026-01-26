@@ -27,6 +27,10 @@ public class PlayerFloating : MonoBehaviour
     private Vector2 moveInput;
     private bool floatInput;
 
+    [Header("Cooldown UI")]
+    [SerializeField] private GameObject cooldownObject;
+    private Slider cooldownSlider;
+
     [Header("Debugging")]
     [SerializeField] private bool showDebugLogs = false;
 
@@ -70,6 +74,12 @@ public class PlayerFloating : MonoBehaviour
         toggleInventoryUI = GetComponent<ToggleInventoryUI>();
         playerCamera = Camera.main;
         controls = new PlayerControls();
+
+        if (cooldownObject != null)
+        {
+            cooldownSlider = cooldownObject.GetComponent<Slider>();
+            cooldownObject.SetActive(false);
+        }
 
         // Assign floatInput based on the state of the Input Action
         floatAction.action.performed += ctx => ReadSubmit(ctx);
@@ -389,8 +399,19 @@ public class PlayerFloating : MonoBehaviour
     {
         if (IsCoolingDown)
         {
+            if (cooldownSlider != null)
+            {
+                cooldownObject.SetActive(true);
+                cooldownSlider.value = Mathf.Clamp01(1f - (cooldownTimer / floatCooldown));
+            }
+            
             cooldownTimer -= Time.deltaTime;
             if (cooldownTimer <= 0f) IsCoolingDown = false;
+        }
+        else if (cooldownObject != null)
+        {
+            cooldownObject.SetActive(false);
+            cooldownSlider.value = 0f;
         }
     }
 
