@@ -176,8 +176,8 @@ public class PlayerThrowing : MonoBehaviour
         {
             Vector3 direction;
 
-            if (usingController)
-            {
+            //if (usingController)
+            //{
                 Vector3 aimDirection = CalculateInputFromPOV();
 
                 if (aimDirection.magnitude < 0.01f)
@@ -187,26 +187,26 @@ public class PlayerThrowing : MonoBehaviour
                 }
 
                 direction = aimDirection.normalized;
-            }
-            else
-            {
-                Cursor.visible = false;
-                Cursor.lockState = CursorLockMode.Locked;
+            //}
+            //else
+            //{
+            //    Cursor.visible = false;
+            //    Cursor.lockState = CursorLockMode.Locked;
 
-                Ray ray = playerCamera.ScreenPointToRay(Input.mousePosition);
-                Vector3 targetPoint;
+            //    Ray ray = playerCamera.ScreenPointToRay(Input.mousePosition);
+            //    Vector3 targetPoint;
 
-                if (Physics.Raycast(ray, out RaycastHit hit))
-                {
-                    targetPoint = hit.point;   
-                }
-                else
-                {
-                    targetPoint = ray.GetPoint(30f);   
-                }
+            //    if (Physics.Raycast(ray, out RaycastHit hit))
+            //    {
+            //        targetPoint = hit.point;   
+            //    }
+            //    else
+            //    {
+            //        targetPoint = ray.GetPoint(30f);   
+            //    }
 
-                direction = (targetPoint - transform.position).normalized;
-            }
+            //    direction = (targetPoint - transform.position).normalized;
+            //}
 
             float throwForce = Mathf.Lerp(minThrowForce, maxThrowForce, normalizedPower);
             Debug.Log("Direction: " + direction + ", ThrowForce: " + throwForce + ", NormalizedPower: " + normalizedPower);
