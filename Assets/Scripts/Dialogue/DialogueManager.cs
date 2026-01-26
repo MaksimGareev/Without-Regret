@@ -42,19 +42,21 @@ public class DialogueManager : MonoBehaviour
     private int SelectedChoiceIndex = 0;
     private bool CanChoose = false;
     public TextMeshProUGUI PopupText;
-
+    public Image holdCircleImage;
     public float choiceDistance = 250f;
     private Dictionary<ChoiceDirection, DialogueChoice> directionalChoices = new();
-    public float holdTimeToSelect = 0.5f;
+    public float holdTimeToSelect = 1.2f;
     private float directionHoldTimer = 0f;
-    private ChoiceDirection? currentHeldDirection = null;
+    private ChoiceDirection? currentHeldDirection;
+    private bool isHoldingDirection = false;
 
     // Typing
     private Coroutine typeingRoutine;
     private string currentFullLine = "";
 
     // Random choice timer
-    public float choiceTimeLimit = 5f;
+    public float choiceTimeLimit = 15f;
+    public Slider ChoiceTimeSlider;
     private float choiceTimer;
     private Coroutine choiceTimerRoutine;
     public TextMeshProUGUI TimerText;
@@ -104,7 +106,11 @@ public class DialogueManager : MonoBehaviour
         controls.Dialogue.Confirm.canceled += ctx => ConfirmPressed = false;
     }
 
-    private void OnEnable() => controls.Enable();
+    private void OnEnable()
+    {
+        controls.Enable();
+        ResetHoldUI();
+    }
     private void OnDisable() => controls.Disable();
 
     void Start()
@@ -202,6 +208,12 @@ public class DialogueManager : MonoBehaviour
     {
         ContinueArrow.SetActive(false);
 
+        // hide slider durring NPC talking
+        if (ChoiceTimeSlider != null)
+        {
+            ChoiceTimeSlider.gameObject.SetActive(false);
+        }
+
         DialogueLine line = currentDialogue.dialogueLines[currentIndex];
 
         if (line.requiredMorality != 0)
@@ -257,8 +269,69 @@ public class DialogueManager : MonoBehaviour
         DialogueText.text = "";
         currentFullLine = text;
 
+        int soundCounter = 0;
+        int soundInterval = 2;
+
         string[] words = text.Split(' ');
 
+        foreach (char c in text)
+        {
+            // Finish line instantly if confirm pressed
+            if (ConfirmPressed)
+            {
+                DialogueText.text = currentFullLine;
+                ConfirmPressed = false;
+                break;
+            }
+
+            DialogueText.text += c;
+
+            // Skip sounds for spaces
+            if (!char.IsWhiteSpace(c))
+            {
+                soundCounter++;
+
+                char lookupChar = char.ToUpper(c);
+
+                if (soundCounter % soundInterval == 0 && letterSounds.ContainsKey(lookupChar))
+                {
+                    TypingAudioSource.PlayOneShot(letterSounds[lookupChar], 0.7f);
+                }
+            }
+
+            float baseDelay = 0.035f;
+            float randomOffset = Random.Range(-0.02f, 0.02f);
+            yield return new WaitForSeconds(baseDelay + randomOffset);
+
+            float punctuationPause = GetPauseForCharacter(c);
+            if (punctuationPause > 0f)
+            {
+                yield return new WaitForSeconds(punctuationPause);
+            }
+        }
+
+        float GetPauseForCharacter(char c)
+        {
+            switch (c)
+            {
+                case '.':
+                case '!':
+                case '?':
+                    return 0.25f;
+
+                case ',':
+                case ';':
+                case ':':
+                    return 0.12f;
+
+                default:
+                    return 0f;
+            }
+        }
+
+        /*
+        string[] words = text.Split(' ');
+        
         foreach (string word in words)
         {
             // Skip empty entries
@@ -286,11 +359,11 @@ public class DialogueManager : MonoBehaviour
                 }
 
                 // small delay so sounds to overlap
-                yield return new WaitForSeconds(0.015f);
+                yield return new WaitForSeconds(0.03f);
             }
 
             yield return new WaitForSeconds(0.02f);
-        }
+        }*/
 
         IsTyping = false;
 
@@ -431,6 +504,13 @@ public class DialogueManager : MonoBehaviour
         SelectedChoiceIndex = 0;
         //UpdateChoiceHighlight();
 
+        // activate slider
+        if (ChoiceTimeSlider != null)
+        {
+            ChoiceTimeSlider.gameObject.SetActive(true);
+            ChoiceTimeSlider.value = 1f;
+        }
+
         // Start timer countdown for auto-select
         if (choiceTimerRoutine != null)
         {
@@ -444,34 +524,45 @@ public class DialogueManager : MonoBehaviour
     {
         if (!CanChoose || spawnedChoices.Count == 0) return;
 
-        Vector2 input = new Vector2(
+        Vector2 input = controls.Dialogue.Move.ReadValue<Vector2>();
+
+        const float deadzone = 0.4f;
+
+       /* Vector2 input = new Vector2(
             controls.Dialogue.Move.ReadValue<Vector2>().x,
             controls.Dialogue.Move.ReadValue<Vector2>().y
-            );
+            );*/
 
-        if (input.magnitude < 0.6f)
+        // if released cancel circle
+        if (input.sqrMagnitude < deadzone * deadzone)
         {
-            directionHoldTimer = 0f;
-            currentHeldDirection = null;
+            ResetHoldUI();
             return;
         }
 
-        ChoiceDirection dir = GetDirectionFromInput(input);
-
-        if (currentHeldDirection != dir)
+        if (!isHoldingDirection)
         {
-            currentHeldDirection = dir;
+            currentHeldDirection = GetDirectionFromInput(input);
             directionHoldTimer = 0f;
+            isHoldingDirection = true;
+        }
+
+        // check
+        if (currentHeldDirection == null)
+        {
+            return;
         }
 
         directionHoldTimer += Time.deltaTime;
 
+        ChoiceDirection dir = currentHeldDirection.Value;
+
         HighlightDirection(dir);
+        UpdateHoldUI(directionHoldTimer / holdTimeToSelect);
 
         if (directionHoldTimer >= holdTimeToSelect)
         {
-            SelectDirectionalChoice(dir);
-            directionHoldTimer = 0f;
+            CompleteHold(dir);
         }
 
         /*if (Time.time - lastInputTime >= inputCooldown)
@@ -495,6 +586,35 @@ public class DialogueManager : MonoBehaviour
             OnChoiceSelected(currentDialogue.dialogueLines[currentIndex].choices[SelectedChoiceIndex]);
             ConfirmPressed = false;
         }*/
+    }
+
+    private void UpdateHoldUI(float progress)
+    {
+        if (!holdCircleImage.gameObject.activeSelf)
+        {
+            holdCircleImage.gameObject.SetActive(true);
+        }
+
+        holdCircleImage.fillAmount = Mathf.Clamp01(progress);
+    }
+
+    private void ResetHoldUI()
+    {
+        directionHoldTimer = 0f;
+        isHoldingDirection = false;
+
+        if (holdCircleImage.gameObject.activeSelf)
+        {
+            holdCircleImage.fillAmount = 0f;
+            holdCircleImage.gameObject.SetActive(false);
+        }
+    }
+
+    private void CompleteHold(ChoiceDirection dir)
+    {
+        holdCircleImage.fillAmount = 1f;
+        SelectDirectionalChoice(dir);
+        ResetHoldUI();
     }
 
     private ChoiceDirection GetDirectionFromInput(Vector2 input)
@@ -521,6 +641,7 @@ public class DialogueManager : MonoBehaviour
 
     private void HighlightDirection(ChoiceDirection dir)
     {
+        // base color of text is white
         foreach (var obj in spawnedChoices)
         {
             var txt = obj.GetComponentInChildren<TextMeshProUGUI>();
@@ -529,14 +650,32 @@ public class DialogueManager : MonoBehaviour
 
         if (!directionalChoices.ContainsKey(dir)) return;
 
-        DialogueChoice choice = directionalChoices[dir];
+        DialogueChoice selectedChoice = directionalChoices[dir];
 
-        int index = spawnedChoices.FindIndex(o =>
-            o.GetComponentInChildren<TextMeshProUGUI>().text == choice.text);
+        int selectedIndex = spawnedChoices.FindIndex(o =>
+            o.GetComponentInChildren<TextMeshProUGUI>().text == selectedChoice.text);
 
-        if (index >= 0)
+        if (selectedIndex >= 0)
         {
-            spawnedChoices[index].GetComponentInChildren<TextMeshProUGUI>().color = Color.yellow;
+            var selectedText = spawnedChoices[selectedIndex].GetComponentInChildren<TextMeshProUGUI>();
+
+            // highlight good choice to green
+            if (selectedChoice.moralityChange > 0)
+            {
+                selectedText.color = Color.green;
+            }
+            // highlight bad choice to red
+            else if (selectedChoice.moralityChange < 0)
+            {
+                selectedText.color = Color.red;
+            }
+            // highlight nuetral choice to yellow
+            else
+            {
+                selectedText.color = Color.yellow;
+            }
+
+            holdCircleImage.transform.position = spawnedChoices[selectedIndex].transform.position;
         }
     }
 
@@ -602,12 +741,69 @@ public class DialogueManager : MonoBehaviour
             TimerText.text = "";
         }
 
+        // hide slider agian when choice is selected
+        if (ChoiceTimeSlider != null)
+        {
+            ChoiceTimeSlider.gameObject.SetActive(false);
+        }
+
     }
 
     private IEnumerator ChoiceTimerCountdown(List<DialogueChoice> choices)
     {
         choiceTimer = choiceTimeLimit;
 
+        if (ChoiceTimeSlider != null)
+        {
+            ChoiceTimeSlider.gameObject.SetActive(true);
+            ChoiceTimeSlider.value = 1f;
+        }
+
+        while (choiceTimer > 0f && CanChoose)
+        {
+            choiceTimer -= Time.deltaTime;
+
+            if (ChoiceTimeSlider != null)
+            {
+                // Normalize time (1 to 0)
+                ChoiceTimeSlider.value = choiceTimer / choiceTimeLimit;
+            }
+
+            yield return null;
+        }
+
+        if (ChoiceTimeSlider != null)
+        {
+            ChoiceTimeSlider.gameObject.SetActive(false);
+        }
+
+        // Timer expired and player didn't choose
+        if (CanChoose)
+        {
+            DialogueChoice fallback = null;
+            
+            foreach (var c in choices)
+            {
+                if(c.moralityChange <= 0)
+                {
+                    fallback = c;
+                    break;
+                }
+            }
+
+            if (fallback == null && choices.Count > 0)
+            {
+                fallback = choices[0];
+            }
+
+            if (fallback != null)
+            {
+                Debug.Log("Timer expired, auto-selecting choice: " + fallback.text);
+                OnChoiceSelected(fallback);
+            }
+        }
+
+        /*
         while (choiceTimer > 0f && CanChoose)
         {
             if (TimerText != null)
@@ -649,7 +845,7 @@ public class DialogueManager : MonoBehaviour
                 Debug.Log("timer expired auto selecting choice: " + fallback.text);
                 OnChoiceSelected(fallback);
             }
-        }
+        }*/
     }
 
     public void ShowPopUp(string message, float duration = 1f)
