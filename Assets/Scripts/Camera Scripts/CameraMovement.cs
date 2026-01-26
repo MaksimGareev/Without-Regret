@@ -286,7 +286,7 @@ public class CameraMovement : MonoBehaviour
     {
         isZooming = true;
         Vector3 offset;
-
+        Debug.Log("Camera is zooming in on the npc");
         if (dialogue)
         {
             offset = target.right * 1f + target.forward * 5f + Vector3.up * 2f;
