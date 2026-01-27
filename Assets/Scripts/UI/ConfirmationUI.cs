@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 
 public enum ConfirmationType
 {
@@ -15,10 +16,49 @@ public enum ConfirmationType
 
 public class ConfirmationUI : MonoBehaviour
 {
+    [Header("Input Settings")]
+    [SerializeField] private InputActionAsset inputActions;
+    private InputAction confirmAction;
+    private InputAction cancelAction;
+
     [Header("References")]
     [SerializeField] private TextMeshProUGUI taskText;
     [SerializeField] private Button confirmButton;
     [SerializeField] private Button cancelButton;
+
+    private bool isConfirming = false;
+
+    private void Start()
+    {
+        // Initialize input actions
+        confirmAction = inputActions.FindActionMap("UI").FindAction("Submit");
+        if (confirmAction == null)
+        {
+            Debug.LogError("Confirm action not found in InputActionAsset.");
+            return;
+        }
+        confirmAction.Enable();
+
+        cancelAction = inputActions.FindActionMap("UI").FindAction("Cancel");
+        if (cancelAction == null)
+        {
+            Debug.LogError("Cancel action not found in InputActionAsset.");
+            return;
+        }
+        cancelAction.Enable();
+    }
+
+    private void Update()
+    {
+        if (confirmAction.triggered && isConfirming)
+        {
+            confirmButton.onClick.Invoke();
+        }
+        else if (cancelAction.triggered && isConfirming)
+        {
+            cancelButton.onClick.Invoke();
+        }
+    }
 
     private void UpdateTaskText(ConfirmationType type)
     {
@@ -53,12 +93,23 @@ public class ConfirmationUI : MonoBehaviour
 
     public void ConfirmTask(ConfirmationType type, System.Action onConfirm, System.Action onCancel)
     {
+        isConfirming = true;
         UpdateTaskText(type);
+        
+        confirmButton.onClick.AddListener(() => onConfirm.Invoke());
+        cancelButton.onClick.AddListener(() => onCancel.Invoke());
+    }
+
+    public void EndConfirmation()
+    {
+        isConfirming = false;
 
         confirmButton.onClick.RemoveAllListeners();
-        confirmButton.onClick.AddListener(() => onConfirm.Invoke());
-
         cancelButton.onClick.RemoveAllListeners();
-        cancelButton.onClick.AddListener(() => onCancel.Invoke());
+    }
+
+    private void OnDisable()
+    {
+        EndConfirmation();
     }
 }

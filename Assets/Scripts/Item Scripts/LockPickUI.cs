@@ -28,7 +28,7 @@ public class LockPickUI : MonoBehaviour
     private GameObject targetLockedItem;
 
     private PlayerControls controls;
-    private float rotateInput;
+    private Vector2 rotateInput;
     private float KeyPressTime = 0;
 
     // Start is called before the first frame update
@@ -43,8 +43,8 @@ public class LockPickUI : MonoBehaviour
         controls = new PlayerControls();
 
         // Rotation
-        controls.LockPicking.Rotate.performed += ctx => rotateInput = ctx.ReadValue<float>();
-        controls.LockPicking.Rotate.canceled += ctx => rotateInput = 0f;
+        controls.LockPicking.Rotate.performed += ctx => rotateInput = ctx.ReadValue<Vector2>();
+        controls.LockPicking.Rotate.canceled += ctx => rotateInput = Vector2.zero;
 
         // Attempt unlock
         controls.LockPicking.Unlock.performed += ctx => TryUnlock();
@@ -69,14 +69,16 @@ public class LockPickUI : MonoBehaviour
         if (!isActive) return;
 
         // Rotate pick cursor with horisontal input (A/D)
-        float RotationAmount = -rotateInput * CursorSpeed * Time.deltaTime;
+        //float RotationAmount = -rotateInput * CursorSpeed * Time.deltaTime;
+
+        CurrentAngle = Mathf.Atan2(rotateInput.y, rotateInput.x) * Mathf.Rad2Deg;
 
         // Update and clamp rotation
-        CurrentAngle += RotationAmount;
-        CurrentAngle = Mathf.Clamp(CurrentAngle, -MaxRotation, MaxRotation);
+        //CurrentAngle += RotationAmount;
+        //CurrentAngle = Mathf.Clamp(CurrentAngle, -MaxRotation, MaxRotation);
 
         // Apply rotation to pick cursor
-        PickCursor.localEulerAngles = new Vector3(0, 0, CurrentAngle);
+        PickCursor.rotation = Quaternion.Euler(0, 0, CurrentAngle);
 
         // Press space to attempt unlocking
        /* if (Input.GetKeyDown(KeyCode.F) || Input.GetButtonDown("Submit"))

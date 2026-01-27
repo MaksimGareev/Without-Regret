@@ -4,11 +4,18 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using System.Collections;
 
 public class MainMenu : MonoBehaviour
 {
+    [Header("Input Settings")]
+    [SerializeField] private InputActionAsset inputActions;
+    private InputAction confirmAction;
+    private InputAction cancelAction;
+
     [Header("UI Panels")]
     [SerializeField] private GameObject mainMenuPanel;
+    [SerializeField] private MMSettings settingsScript;
     [SerializeField] private GameObject settingsPanel;
     [SerializeField] private GameObject creditsPanel;
     [SerializeField] private GameObject saveSlotsPanel;
@@ -24,42 +31,78 @@ public class MainMenu : MonoBehaviour
     [Header("Text References")]
     [SerializeField] private TextMeshProUGUI versionNumberText;
     [SerializeField] private TextMeshProUGUI playButtonText;
+
+    [Header("Music")]
+    [SerializeField] private GameObject musicSource;
+
     private string gameVersion = "v.0.0.1";
     private SaveManager saveManager;
-    private MMSettings settingsScript;
+    
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         saveManager = FindAnyObjectByType<SaveManager>();
-        settingsScript = settingsPanel.GetComponent<MMSettings>();
-
-        // Flash settings panel to load settings without displaying it
-        settingsPanel.SetActive(true);
-        settingsScript.LoadResolutions();
-        settingsScript.LoadSettings();
-        settingsPanel.SetActive(false);
 
         UpdatePlayButton();
         OpenMainMenu();
+        StartCoroutine(WaitToStartMusic());
 
         versionNumberText.text = gameVersion;
         EventSystem.current.SetSelectedGameObject(playButton.gameObject);
 
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
+
+        // Initialize input actions
+        confirmAction = inputActions.FindActionMap("UI").FindAction("Submit");
+        if (confirmAction == null)
+        {
+            Debug.LogError("Confirm action not found in InputActionAsset.");
+            return;
+        }
+        confirmAction.Enable();
+
+        cancelAction = inputActions.FindActionMap("UI").FindAction("Cancel");
+        if (cancelAction == null)
+        {
+            Debug.LogError("Cancel action not found in InputActionAsset.");
+            return;
+        }
+        cancelAction.Enable();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Gamepad.current != null && Gamepad.current.bButton.wasPressedThisFrame)
+        HandleControllerCancelInput();
+        DeleteSavesDebug(); // Debug shortcut to delete all saves and reload main menu
+        CheckMouseInput();
+        CheckControllerInput();
+    }
+
+    private void DeleteSavesDebug()
+    {
+        if (Input.GetKeyDown(KeyCode.F5))
+        {
+            for (int i = 1; i <= 3; i++)
+            {
+                SaveSystem.DeleteSave(i);
+            }
+
+            SceneManager.LoadScene("MainMenu");
+        }
+    }
+
+    private void HandleControllerCancelInput()
+    {
+        if (cancelAction != null && cancelAction.triggered)
         {
             if (creditsPanel.activeSelf || saveSlotsPanel.activeSelf)
             {
                 OpenMainMenu();
             }
-            else if (settingsPanel.activeSelf && settingsScript != null)
+            else if (settingsPanel.activeSelf && settingsScript != null && !confirmationPanel.activeSelf)
             {
                 if (settingsScript.controlSchemeOpen)
                 {
@@ -71,20 +114,6 @@ public class MainMenu : MonoBehaviour
                 }
             }
         }
-
-        // Debug shortcut to delete all saves and reload main menu
-        if (Input.GetKeyDown(KeyCode.F5))
-        {
-            for (int i = 1; i <= 3; i++)
-            {
-                SaveSystem.DeleteSave(i);
-            }
-
-            SceneManager.LoadScene("MainMenu");
-        }
-
-        CheckMouseInput();
-        CheckControllerInput();
     }
 
     private void CheckMouseInput()
@@ -129,7 +158,7 @@ public class MainMenu : MonoBehaviour
                 }
                 else if (settingsPanel.activeSelf)
                 {
-                    EventSystem.current.SetSelectedGameObject(settingsPanel.GetComponentInChildren<MMSettings>().videoSettingsButton.gameObject);
+                    EventSystem.current.SetSelectedGameObject(settingsScript.videoSettingsButton.gameObject);
                 }
                 else if (creditsPanel.activeSelf)
                 {
@@ -145,7 +174,7 @@ public class MainMenu : MonoBehaviour
         settingsButton.onClick.AddListener(OpenSettings);
         creditsButton.onClick.AddListener(OpenCredits);
         quitButton.onClick.AddListener(ConfirmBeforeQuit);
-        backButton.onClick.AddListener(HandleBackButton);
+        backButton.onClick.AddListener(UIBackButton);
     }
 
     private void UpdatePlayButton()
@@ -160,7 +189,7 @@ public class MainMenu : MonoBehaviour
         }
     }
 
-    private void HandleBackButton()
+    private void UIBackButton()
     {
         if (settingsPanel.activeSelf && settingsScript != null && settingsScript.controlSchemeOpen)
         {
@@ -190,13 +219,13 @@ public class MainMenu : MonoBehaviour
     private void OpenSettings()
     {
         mainMenuPanel.SetActive(false);
-        settingsPanel.SetActive(true);
+        settingsScript.EnableSettingsPanel();
         creditsPanel.SetActive(false);
         saveSlotsPanel.SetActive(false);
         
         backButton.gameObject.SetActive(true);
         
-        EventSystem.current.SetSelectedGameObject(settingsPanel.GetComponentInChildren<MMSettings>().videoSettingsButton.gameObject);
+        EventSystem.current.SetSelectedGameObject(settingsScript.videoSettingsButton.gameObject);
     }
 
     private void OpenCredits()
@@ -243,5 +272,11 @@ public class MainMenu : MonoBehaviour
     {
         Debug.Log("Quitting Game...");
         Application.Quit();
+    }
+
+    private IEnumerator WaitToStartMusic()
+    {
+        yield return new WaitUntil(() => AudioManager.Instance != null);
+        musicSource.SetActive(true);
     }
 }

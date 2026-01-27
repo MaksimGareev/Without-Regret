@@ -27,6 +27,10 @@ public class PlayerFloating : MonoBehaviour
     private Vector2 moveInput;
     private bool floatInput;
 
+    [Header("Cooldown UI")]
+    [SerializeField] private GameObject cooldownObject;
+    private Slider cooldownSlider;
+
     [Header("Debugging")]
     [SerializeField] private bool showDebugLogs = false;
 
@@ -35,6 +39,7 @@ public class PlayerFloating : MonoBehaviour
     private CharacterController charController;
     private Camera playerCamera;
     private ToggleInventoryUI toggleInventoryUI;
+    public Animator animator;
 
     public bool IsFloating { get; private set; } = false;
     private bool canFloat = false;
@@ -70,6 +75,12 @@ public class PlayerFloating : MonoBehaviour
         toggleInventoryUI = GetComponent<ToggleInventoryUI>();
         playerCamera = Camera.main;
         controls = new PlayerControls();
+
+        if (cooldownObject != null)
+        {
+            cooldownSlider = cooldownObject.GetComponent<Slider>();
+            cooldownObject.SetActive(false);
+        }
 
         // Assign floatInput based on the state of the Input Action
         floatAction.action.performed += ctx => ReadSubmit(ctx);
@@ -205,6 +216,8 @@ public class PlayerFloating : MonoBehaviour
 
     private void StartFloating()
     {
+        resetAnimations();
+        animator.SetBool("isFloating", true);
         rhythmSlider.gameObject.SetActive(true);
         IsFloating = true;
         floatTimer = 0f;
@@ -280,6 +293,7 @@ public class PlayerFloating : MonoBehaviour
         if (floatInput && !toggleInventoryUI.isEnabled)
         {
             floatInput = false; // consume input
+            animator.SetTrigger("Flap"); //flap animation when input is taken
             float errorMargin = Mathf.Min(rhythmTimer, rhythmInterval - rhythmTimer);
             if (errorMargin <= rhythmWindow)
             {
@@ -389,13 +403,34 @@ public class PlayerFloating : MonoBehaviour
     {
         if (IsCoolingDown)
         {
+            if (cooldownSlider != null)
+            {
+                cooldownObject.SetActive(true);
+                cooldownSlider.value = Mathf.Clamp01(1f - (cooldownTimer / floatCooldown));
+            }
+            
             cooldownTimer -= Time.deltaTime;
             if (cooldownTimer <= 0f) IsCoolingDown = false;
+        }
+        else if (cooldownObject != null)
+        {
+            cooldownObject.SetActive(false);
+            cooldownSlider.value = 0f;
         }
     }
 
     public void SetCanFloat (bool newCanfloat)
     {
         canFloat = newCanfloat;
+    }
+
+    private void resetAnimations()
+    {
+        animator.SetBool("isIdle", false);
+        animator.SetBool("isWalking", false);
+        animator.SetBool("isGrabbing", false);
+        animator.SetBool("isFloating", false);
+        animator.SetBool("isPulling", false);
+        animator.SetBool("isPushing", false);
     }
 }
