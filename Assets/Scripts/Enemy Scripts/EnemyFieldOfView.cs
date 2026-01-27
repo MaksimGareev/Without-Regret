@@ -138,7 +138,7 @@ public class EnemyFieldOfView : MonoBehaviour
         if (closeTargets.Length > 0)
         {
             Transform target = closeTargets[0].transform;
-            chaseDuration = maxChaseDuration;
+            chaseDuration = 1;
             canSeePlayer = true;
             m_Agent.destination = target.position;
             angle = 230;
