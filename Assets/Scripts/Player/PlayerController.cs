@@ -50,7 +50,7 @@ public class PlayerController : MonoBehaviour, ISaveable
     private void Awake()
     {
         Controller = GetComponent<CharacterController>();
-        animator = GetComponent<Animator>();
+        animator = GetComponentInChildren<Animator>();
         staminaSlider = GameObject.Find("StaminaSlider").GetComponent<Slider>();
         staminaSlider.maxValue = SprintDuration;
 
