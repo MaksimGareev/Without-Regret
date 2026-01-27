@@ -39,7 +39,7 @@ public class PlayerPossessing : MonoBehaviour
         posessionBar.gameObject.SetActive(false);
     }
 
-    private void FixedUpdate()
+    private void Update()
     {
         if (Input.GetKeyDown(possessKey))
         {
