@@ -10,7 +10,7 @@ public class PlayerInteracting : MonoBehaviour
 
     [Header("General Settings")]
     [SerializeField] private InputActionAsset InputActions;
-    [SerializeField] private float interactionRange = 1f;
+    [SerializeField] private float interactionRange = 3f;
     [SerializeField] private float interactOffset = 1f;
     private InputAction Interact;
     private InputAction Mantle;
@@ -52,7 +52,21 @@ public class PlayerInteracting : MonoBehaviour
     void Update()
     {
         ScanForInteractable();
+        
+        if (currentTarget != null && Interact.triggered)
+        {
+            currentTarget.OnPlayerInteraction(gameObject);
 
+            ButtonIcons.Instance?.Clear();
+            currentTarget = null;
+        }
+        
+        /*else if (ButtonIcons.Instance != null)
+        {
+            ButtonIcons.Instance.Clear();
+        }*/
+        
+        /*
         if (mantleTarget != null && Mantle.triggered)
         {
             mantleTarget.OnPlayerInteraction(gameObject);
@@ -64,26 +78,28 @@ public class PlayerInteracting : MonoBehaviour
         else if (currentTarget != null && mantleTarget == null && Interact.triggered)
         {
             currentTarget.OnPlayerInteraction(gameObject);
-        }
+        }*/
     }
 
     private void ScanForInteractable()
     {
-        Collider[] hits = Physics.OverlapSphere(transform.position + transform.forward * interactOffset, interactionRange);
-        List<IInteractable> interactableList = new List<IInteractable>();
+        Collider[] hits = Physics.OverlapSphere(transform.position, interactionRange);
+        //List<IInteractable> interactableList = new List<IInteractable>();
+        List<IInteractable> found = new();
 
         foreach (Collider hit in hits)
         {
             IInteractable interactable = hit.GetComponent<IInteractable>();
             if (interactable != null)
             {
-                interactableList.Add(interactable);
+                found.Add(interactable);
             }
         }
 
-        if (interactableList.Count == 0)
+        if (found.Count == 0)
         {
             currentTarget = null;
+            ButtonIcons.Instance?.Clear();
             mantleTarget = null;
             moveTarget = null;
 
@@ -97,20 +113,30 @@ public class PlayerInteracting : MonoBehaviour
                 promptUI.SetActive(false);
             }
 
+            if (ButtonIcons.Instance != null)
+            {
+                ButtonIcons.Instance.Clear();
+            }
+
             return;
         }
 
-        currentTarget = interactableList
+        currentTarget = found
             .OrderByDescending(i => i.interactionPriority)
             .ThenBy(i => Vector3.Distance(transform.position, ((MonoBehaviour)i).transform.position))
             .FirstOrDefault();
 
         if(currentTarget != null)
         {
-            var targetMono = (currentTarget as MonoBehaviour);
+            if (ButtonIcons.Instance != null)
+            {
+                ButtonIcons.Instance?.Highlight(currentTarget.interactType);
+            }
 
-            mantleTarget = targetMono.GetComponent<MantleableObject>();
-            moveTarget = targetMono.GetComponent<MoveableObject>();
+            //var targetMono = (currentTarget as MonoBehaviour);
+
+           // mantleTarget = targetMono.GetComponent<MantleableObject>();
+           // moveTarget = targetMono.GetComponent<MoveableObject>();
 
             if (showDebugLogs)
             {
@@ -121,6 +147,15 @@ public class PlayerInteracting : MonoBehaviour
             {
                 promptUI.SetActive(true);
             }
+        }
+        else
+        {
+            if (ButtonIcons.Instance != null)
+            {
+                ButtonIcons.Instance.Clear();
+            }
+            mantleTarget = null;
+            moveTarget = null;
         }
     }
     

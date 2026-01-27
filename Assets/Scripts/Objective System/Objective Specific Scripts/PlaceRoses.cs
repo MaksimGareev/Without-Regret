@@ -8,6 +8,7 @@ public class PlaceRoses : MonoBehaviour, IInteractable
     private Inventory playerInventory;
 
     public float interactionPriority => 0f;
+    public InteractType interactType => InteractType.Pickup;
 
     private void Start()
     {
