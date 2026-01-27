@@ -15,7 +15,6 @@ public class PlayerCrawling : MonoBehaviour
     [SerializeField] private float crawlSpeed = 1f;
     [SerializeField] private GameObject playerModel;
     [SerializeField] private float heightReduction = 0.7f;
-    [SerializeField] private Vector3 crawlModelEuler = new Vector3(90f, 0f, 0f); // visual rotation while crawling
     [SerializeField] private float heightLerpSpeed = 8f; // speed of collider/controller height smoothing
     [SerializeField] private Collider regularCollider;
     [SerializeField] private Collider crawlingCollider;
@@ -36,16 +35,7 @@ public class PlayerCrawling : MonoBehaviour
 
     private bool prevRbUseGravity;
     private bool prevRbKinematic;
-    private Quaternion originalRotation;
-    private Collider playerCollider;
 
-    // cached original collider values to restore when stopping crawl
-    private bool _hasCapsule;
-    private CapsuleCollider _capsule;
-    private float _origCapsuleHeight;
-    private Vector3 _origCapsuleCenter;
-    private Vector3 _origColliderScale;
-    private BoxCollider _box;
 
     void OnEnable()
     {
@@ -69,27 +59,6 @@ public class PlayerCrawling : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         controller = GetComponent<CharacterController>();
         inventoryToggle = GetComponent<ToggleInventoryUI>();
-        originalRotation = playerModel != null ? playerModel.transform.localRotation : Quaternion.identity;
-        playerCollider = GetComponent<Collider>();
-
-        // cache collider details
-        if (playerCollider is CapsuleCollider cap)
-        {
-            _hasCapsule = true;
-            _capsule = cap;
-            _origCapsuleHeight = cap.height;
-            _origCapsuleCenter = cap.center;
-        }
-        else if (playerCollider is BoxCollider box)
-        {
-            _box = box;
-            _origColliderScale = box.size;
-        }
-        else
-        {
-            // store transform scale as fallback
-            _origColliderScale = playerCollider.transform.localScale;
-        }
 
         controls = new PlayerControls();
         crawlAction.action.performed += ctx => ReadCrawl(ctx);
@@ -119,9 +88,6 @@ public class PlayerCrawling : MonoBehaviour
         {
             ApplyCrawlingMovement();
         }
-
-        // Smoothly adjust heights each frame (visual + physics)
-        //AdjustHeights();
     }
 
     public void ReadMove(InputAction.CallbackContext context)

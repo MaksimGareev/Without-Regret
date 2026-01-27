@@ -12,6 +12,7 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private GameObject settingsPanel;
     [SerializeField] private GameObject creditsPanel;
     [SerializeField] private GameObject saveSlotsPanel;
+    [SerializeField] private GameObject confirmationPanel;
 
     [Header("Buttons")]
     [SerializeField] private Button playButton;
@@ -32,6 +33,12 @@ public class MainMenu : MonoBehaviour
     {
         saveManager = FindAnyObjectByType<SaveManager>();
         settingsScript = settingsPanel.GetComponent<MMSettings>();
+
+        // Flash settings panel to load settings without displaying it
+        settingsPanel.SetActive(true);
+        settingsScript.LoadResolutions();
+        settingsScript.LoadSettings();
+        settingsPanel.SetActive(false);
 
         UpdatePlayButton();
         OpenMainMenu();
@@ -122,7 +129,7 @@ public class MainMenu : MonoBehaviour
                 }
                 else if (settingsPanel.activeSelf)
                 {
-                    EventSystem.current.SetSelectedGameObject(settingsPanel.GetComponentInChildren<MMSettings>().resolutionDropdown.gameObject);
+                    EventSystem.current.SetSelectedGameObject(settingsPanel.GetComponentInChildren<MMSettings>().videoSettingsButton.gameObject);
                 }
                 else if (creditsPanel.activeSelf)
                 {
@@ -137,7 +144,7 @@ public class MainMenu : MonoBehaviour
         playButton.onClick.AddListener(OpenSaveSlotsScreen);
         settingsButton.onClick.AddListener(OpenSettings);
         creditsButton.onClick.AddListener(OpenCredits);
-        quitButton.onClick.AddListener(QuitGame);
+        quitButton.onClick.AddListener(ConfirmBeforeQuit);
         backButton.onClick.AddListener(HandleBackButton);
     }
 
@@ -171,6 +178,7 @@ public class MainMenu : MonoBehaviour
         settingsPanel.SetActive(false);
         creditsPanel.SetActive(false);
         saveSlotsPanel.SetActive(false);
+        confirmationPanel.SetActive(false);
 
         UpdatePlayButton();
         
@@ -188,7 +196,7 @@ public class MainMenu : MonoBehaviour
         
         backButton.gameObject.SetActive(true);
         
-        EventSystem.current.SetSelectedGameObject(settingsPanel.GetComponentInChildren<MMSettings>().resolutionDropdown.gameObject);
+        EventSystem.current.SetSelectedGameObject(settingsPanel.GetComponentInChildren<MMSettings>().videoSettingsButton.gameObject);
     }
 
     private void OpenCredits()
@@ -220,6 +228,15 @@ public class MainMenu : MonoBehaviour
         EventSystem.current.SetSelectedGameObject(saveSlotsPanel.GetComponentInChildren<SaveSlotUI>().playButtons[0].gameObject.activeSelf 
         ? saveSlotsPanel.GetComponentInChildren<SaveSlotUI>().playButtons[0].gameObject
         : saveSlotsPanel.GetComponentInChildren<SaveSlotUI>().newGameButtons[0].gameObject);
+    }
+
+    private void ConfirmBeforeQuit()
+    {
+        confirmationPanel.SetActive(true);
+        mainMenuPanel.SetActive(false);
+
+        ConfirmationUI confirmationUI = confirmationPanel.GetComponent<ConfirmationUI>();
+        confirmationUI.ConfirmTask(ConfirmationType.QuitToDesktop, QuitGame, OpenMainMenu);
     }
 
     private void QuitGame()
