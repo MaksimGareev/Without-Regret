@@ -40,6 +40,7 @@ public class Irene : MonoBehaviour
             if (dialogueTrigger != null && dialogueTrigger.enabled)
             {
                 dialogueTrigger.enabled = false;
+
                 Collider col = dialogueTrigger.GetComponent<Collider>();
                 if (col != null)
                 {
@@ -84,22 +85,23 @@ public class Irene : MonoBehaviour
 
     public void TravelToTarget()
     {
-        if (targetSpot == null)
+        if (targetSpot == null || agent == null)
         {
             Debug.Log("There is no target for Irene to go to");
             return;
         }
 
-        Vector3 direction = targetSpot.position - transform.position;
-        direction.y = 0f;
-
         // Movement
         //transform.position = Vector3.MoveTowards(transform.position, targetSpot.position, FollowSpeed * Time.deltaTime);
-        if (!agent.pathPending && agent.remainingDistance < 0.5f && agent != null)
+        if (!agent.hasPath)//(!agent.pathPending && agent.remainingDistance < 0.5f && agent != null)
         {
             agent.SetDestination(targetSpot.position);
         }
+
         // Rotate towards target
+        Vector3 direction = targetSpot.position - transform.position;
+        direction.y = 0f;
+
         if (direction.sqrMagnitude > 0.001f)
         {
             Quaternion targetRot = Quaternion.LookRotation(direction);
@@ -107,13 +109,29 @@ public class Irene : MonoBehaviour
         }
 
         // Stop when close to target destination
-        if (Vector3.Distance(transform.position, targetSpot.position)< stopDistance)
+        if (!agent.pathPending && agent.remainingDistance <= stopDistance)
         {
             isTraveling = false;
             arrived = true;
-            dialogueTrigger.enabled = true; // enable dialogue trigger upon arrival
+            agent.ResetPath();
+            ReactivateDialogue(); ; // enable dialogue trigger upon arrival
             Debug.Log("Irene reached the destination.");
         }
+    }
+
+    private void ReactivateDialogue()
+    {
+        if (dialogueTrigger == null) return;
+
+        dialogueTrigger.enabled = true;
+
+        Collider col = dialogueTrigger.GetComponent<Collider>();
+        if (col != null)
+        {
+            col.enabled = true;
+        }
+
+        Debug.Log("Irene's dialogue trigger has been reactivated");
     }
 
     public void StartTravel()
