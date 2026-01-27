@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.EventSystems;
+using System.Collections;
 
 public class MMSettings : MonoBehaviour
 {
@@ -55,6 +56,7 @@ public class MMSettings : MonoBehaviour
     [SerializeField] private TextMeshProUGUI rightStickDeadZoneValueText;
 
     [Header("Buttons and UI Panels")]
+    [SerializeField] private GameObject settingsPanel;
     [SerializeField] private GameObject settingsUI;
     [SerializeField] private GameObject controlSchemeUI;
     [SerializeField] private GameObject videoSettingsUI;
@@ -97,6 +99,7 @@ public class MMSettings : MonoBehaviour
         LoadResolutions();
         SetUpEvents();
         LoadSettings();
+        StartCoroutine(WaitToApplySettings());
 
         if (confirmationPanel == null)
         {
@@ -110,11 +113,6 @@ public class MMSettings : MonoBehaviour
         {
             Debug.LogError("ConfirmationUI component not found on confirmationPanel.");
         }
-    }
-
-    private void OnEnable()
-    {
-        OpenVideoSettings();
     }
 
     private void Update()
@@ -152,6 +150,12 @@ public class MMSettings : MonoBehaviour
                 discardChangesButton.interactable = false;
             }
         }
+    }
+
+    public void EnableSettingsPanel()
+    {
+        settingsPanel.SetActive(true);
+        OpenVideoSettings();
     }
 
     public void LoadResolutions()
@@ -358,6 +362,7 @@ public class MMSettings : MonoBehaviour
 
     private void ConfirmBeforeApply()
     {
+        confirmationUI = confirmationPanel.GetComponent<ConfirmationUI>();
         if (confirmationPanel == null)
         {
             Debug.LogError("confirmationPanel reference is missing.");
@@ -386,6 +391,7 @@ public class MMSettings : MonoBehaviour
 
     private void ConfirmBeforeReset()
     {
+        confirmationUI = confirmationPanel.GetComponent<ConfirmationUI>();
         if (confirmationPanel == null)
         {
             Debug.LogError("confirmationPanel reference is missing.");
@@ -414,6 +420,7 @@ public class MMSettings : MonoBehaviour
 
     private void ConfirmBeforeDiscardChanges()
     {
+        confirmationUI = confirmationPanel.GetComponent<ConfirmationUI>();
         if (confirmationPanel == null)
         {
             Debug.LogError("confirmationPanel reference is missing.");
@@ -523,6 +530,7 @@ public class MMSettings : MonoBehaviour
         LoadSettings();
         hasUnappliedChanges = false;
         CheckIfHasDefaultSettings();
+        ApplySettings();
     }
 
     private void DiscardChanges()
@@ -582,8 +590,12 @@ public class MMSettings : MonoBehaviour
         rightStickSensitivitySlider.value = tempRightStickSensitivity;
         leftStickDeadZoneSlider.value = tempLeftStickDeadZone;
         rightStickDeadZoneSlider.value = tempRightStickDeadZone;
+    }
 
-        // Apply settings immediately
+    private IEnumerator WaitToApplySettings()
+    {
+        // Wait until AudioManager is initialized
+        yield return new WaitUntil(() => AudioManager.Instance != null);
         ApplySettings();
     }
 
