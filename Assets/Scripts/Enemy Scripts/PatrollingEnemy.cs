@@ -30,7 +30,7 @@ public class PatrollingEnemy : MonoBehaviour
 
     void Update()
     {
-        UpdateSpeedFromMorality();
+        UpdateSpeedFromMorality();//this check will keep happening every frame. perhaps we could change it to happen only once upon seeing the player? It might not affect to much in terms of performance now, but could be an issue if we have a lot of enemies in a level.
 
         // If close to destination and not already waiting, start waiting
         if (!isWaiting && !agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)

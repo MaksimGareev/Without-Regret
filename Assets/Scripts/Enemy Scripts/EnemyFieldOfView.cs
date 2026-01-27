@@ -81,7 +81,7 @@ public class EnemyFieldOfView : MonoBehaviour
                     canSeePlayer = false;
                     angle = 90;
                     radius = 5;
-                    Debug.Log("Player lost");
+                    //Debug.Log("Player lost");
                 }
             }
             //canSeePlayer = false;
@@ -98,7 +98,7 @@ public class EnemyFieldOfView : MonoBehaviour
             canSeePlayer = false;
             angle = 90;
             radius = 5;
-            Debug.Log("Player lost");
+            //Debug.Log("Player lost");
 
         }
     }
