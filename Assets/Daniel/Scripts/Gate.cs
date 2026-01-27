@@ -5,6 +5,7 @@ public class Gate : MonoBehaviour
     [SerializeField] private GameObject RotateRightDoor;
     [SerializeField] private GameObject RotateLeftDoor;
     [SerializeField] private ObjectiveData linkedObjective;
+    public bool needsObjective = true;
     private bool isObjectiveActive = false;
 
     private Animator rightDoorAnimator;
@@ -25,7 +26,7 @@ public class Gate : MonoBehaviour
     {
         if (ObjectiveManager.Instance == null || linkedObjective == null || isObjectiveActive) return;
 
-        isObjectiveActive = ObjectiveManager.Instance.IsObjectiveCompleted(linkedObjective.objectiveID);
+        //isObjectiveActive = ObjectiveManager.Instance.IsObjectiveCompleted(linkedObjective.objectiveID);
     }
 
     private void SetObjectiveComplete(ObjectiveInstance objective)
@@ -39,7 +40,7 @@ public class Gate : MonoBehaviour
     
     void OnTriggerEnter(Collider other)
     {
-        if (!isObjectiveActive) return;
+        if (!isObjectiveActive && needsObjective) return;
 
         if (other.gameObject.CompareTag("Player"))
         {

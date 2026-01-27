@@ -35,6 +35,8 @@ public class DialogueManager : MonoBehaviour
     private bool MoveUpPressed;
     private bool MoveDownPressed;
     private bool ConfirmPressed;
+    private float inputCooldown = 0.2f;
+    private float lastInputTime = 0f;
 
     // Selection
     private int SelectedChoiceIndex = 0;
@@ -59,6 +61,13 @@ public class DialogueManager : MonoBehaviour
 
     // NPC references
     private Irene ireneNPC;
+    private Barry barryNPC;
+    private DarryNeighborhood darryNPC;
+
+    public Transform barryDestinationTransform;
+    public Transform darryDestinationTransform;
+
+    public static bool DialogueIsActive = false;
 
     // Player morality
     private int playerMorality = 0;
@@ -114,14 +123,22 @@ public class DialogueManager : MonoBehaviour
     // -------------------- JSON Dialogue --------------------
     public void StartDialogueFromJson(TextAsset jsonFile)
     {
+        DialogueIsActive = true;
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         ireneNPC = FindObjectOfType<Irene>();
+        barryNPC = FindObjectOfType<Barry>();
+        darryNPC = FindObjectOfType<DarryNeighborhood>();
         playerTransform = player.transform;
         playerFloating = player.GetComponent<PlayerFloating>();
         playerThrowing = player.GetComponent<PlayerThrowing>();
         playerController = player.GetComponent<PlayerController>();
         PopupText.gameObject.SetActive(false);
         Chime.isInDialogue = true;
+
+        if (darryNPC == null)
+        {
+            Debug.LogWarning("DarryNeighborhood NPC not found in the scene!");
+        }
 
         if (jsonFile == null)
         {
@@ -268,6 +285,35 @@ public class DialogueManager : MonoBehaviour
                 ireneNPC.StartTravel();
                 ireneNPC.IsFollowing = false;
             }
+            // Move Barry if assigned
+            if (barryNPC != null)
+            {
+                if (barryDestinationTransform != null)
+                {
+                    barryNPC.StartTravel();
+                }
+                else
+                {
+                    Debug.LogWarning("barryDestinationTransform not assigned!");
+                }
+            }
+            // Move DarryNeighborhood
+            if (darryNPC != null)
+            {
+                if (darryDestinationTransform != null)
+                {
+                    Debug.Log("Starting Darry travel...");
+                    darryNPC.StartTravel(darryDestinationTransform);
+                }
+                else
+                {
+                    Debug.LogWarning("darryDestinationTransform not assigned!");
+                }
+            }
+            else
+            {
+                Debug.LogWarning("Darry NPC not found in scene!");
+            }
             EndDialogue();
             yield break;
         }
@@ -324,20 +370,22 @@ public class DialogueManager : MonoBehaviour
     {
         if (!CanChoose || spawnedChoices.Count == 0) return;
 
-        if (MoveUpPressed)
+        if (Time.time - lastInputTime >= inputCooldown)
         {
-            SelectedChoiceIndex = (SelectedChoiceIndex - 1 + spawnedChoices.Count) % spawnedChoices.Count;
-            UpdateChoiceHighlight();
-            MoveUpPressed = false;
-        }
+            if (MoveUpPressed)
+            {
+                SelectedChoiceIndex = (SelectedChoiceIndex - 1 + spawnedChoices.Count) % spawnedChoices.Count;
+                UpdateChoiceHighlight();
+                MoveUpPressed = false;
+            }
 
-        if (MoveDownPressed)
-        {
-            SelectedChoiceIndex = (SelectedChoiceIndex + 1) % spawnedChoices.Count;
-            UpdateChoiceHighlight();
-            MoveDownPressed = false;
+            if (MoveDownPressed)
+            {
+                SelectedChoiceIndex = (SelectedChoiceIndex + 1) % spawnedChoices.Count;
+                UpdateChoiceHighlight();
+                MoveDownPressed = false;
+            }
         }
-
         if (ConfirmPressed)
         {
             OnChoiceSelected(currentDialogue.dialogueLines[currentIndex].choices[SelectedChoiceIndex]);
@@ -507,6 +555,8 @@ public class DialogueManager : MonoBehaviour
         spawnedChoices.Clear();
         ConfirmPressed = false;
         CanChoose = false;
+        DialogueIsActive = false;
+        ContinueArrow.SetActive(false);
 
         PlayerController.DialogueActive = false;
         playerController.SetDialogueActive(false);

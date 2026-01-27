@@ -97,4 +97,17 @@ public class ChimeHintUI : MonoBehaviour
 
         return null;
     }
+
+    public void ShowHintMessage(string message)
+    {
+        hintText.text = message;
+        hintBubbleUI.SetActive(true);
+
+        if (hideRoutine != null)
+        {
+            StopCoroutine(hideRoutine);
+        }
+
+        hideRoutine = StartCoroutine(HideBubbleAfterDelay());
+    }
 }
