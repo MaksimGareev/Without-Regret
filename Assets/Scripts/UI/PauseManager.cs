@@ -24,12 +24,12 @@ public class PauseManager : MonoBehaviour
 
     [Header("UI Panels")]
     [SerializeField] private GameObject pauseMenuPanel;
+    [SerializeField] private MMSettings settingsScript;
     [SerializeField] private GameObject settingsPanel;
     [SerializeField] private GameObject confirmationPanel;
     [SerializeField] private Canvas[] otherCanvasesToDisable;
 
     [HideInInspector] public bool isGamePaused = false;
-    private MMSettings settingsScript;
 
     private void Awake()
     {
@@ -60,7 +60,6 @@ public class PauseManager : MonoBehaviour
     {
         pauseMenuPanel.SetActive(false);
         settingsPanel.SetActive(false);
-        settingsScript = settingsPanel.GetComponent<MMSettings>();
         backButton.gameObject.SetActive(false);
         SetUpEvents();
     }
@@ -89,9 +88,17 @@ public class PauseManager : MonoBehaviour
             }
         }
 
+        HandleControllerCancelInput();
+
+        CheckMouseInput();
+        CheckControllerInput();
+    }
+
+    private void HandleControllerCancelInput()
+    {
         if (cancelAction.triggered)
         {
-            if (settingsPanel.activeSelf)
+            if (settingsPanel.activeSelf && !confirmationPanel.activeSelf)
             {
                 if (settingsScript != null && settingsScript.controlSchemeOpen)
                 {
@@ -102,14 +109,11 @@ public class PauseManager : MonoBehaviour
                     BackToPauseMenu();
                 }
             }
-            else if (pauseMenuPanel.activeSelf)
+            else if (pauseMenuPanel.activeSelf && !confirmationPanel.activeSelf)
             {
                 ResumeGame();
             }
         }
-
-        CheckMouseInput();
-        CheckControllerInput();
     }
 
     private void CheckMouseInput()
@@ -299,7 +303,7 @@ public class PauseManager : MonoBehaviour
     {
         // Logic to open settings menu
         pauseMenuPanel.SetActive(false);
-        settingsPanel.SetActive(true);
+        settingsScript.EnableSettingsPanel();
         backButton.gameObject.SetActive(true);
 
         EventSystem.current.SetSelectedGameObject(settingsPanel.GetComponentInChildren<MMSettings>().videoSettingsButton.gameObject);
