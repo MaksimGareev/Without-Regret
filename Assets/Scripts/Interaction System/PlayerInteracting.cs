@@ -101,7 +101,7 @@ public class PlayerInteracting : MonoBehaviour
         }
 
         currentTarget = interactableList
-            .OrderByDescending(i => i.interactionPriority)
+            .OrderByDescending(i => i.InteractionPriority)
             .ThenBy(i => Vector3.Distance(transform.position, ((MonoBehaviour)i).transform.position))
             .FirstOrDefault();
 
