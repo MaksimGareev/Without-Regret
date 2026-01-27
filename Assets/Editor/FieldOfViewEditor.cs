@@ -24,7 +24,6 @@ public class FieldOfViewEditor : Editor
             Handles.DrawLine(fov.transform.position, fov.playerRef.transform.position);
         }
     }
-
     private Vector3 DirectionFromAngle(float eulerY, float angleInDegrees)
     {
         angleInDegrees += eulerY;

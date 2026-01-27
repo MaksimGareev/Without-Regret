@@ -2,6 +2,7 @@ using UnityEngine;
 
 public interface IInteractable
 {
-    float InteractionPriority { get; }
+    float interactionPriority { get; }
+    InteractType interactType { get; }
     void OnPlayerInteraction(GameObject player);
 }

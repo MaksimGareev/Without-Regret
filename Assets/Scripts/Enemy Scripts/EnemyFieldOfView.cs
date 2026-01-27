@@ -1,4 +1,97 @@
-using System;
+using UnityEngine;
+
+public class EnemyFieldOfView : MonoBehaviour
+{
+    // FOV settings
+    public float minRadius = 4f;
+    public float maxRadius = 8f;
+    public float minAngle = 50f;
+    public float maxAngle = 130f;
+    public float moralityEffect = 0.5f;
+
+    // Detection Settings
+    public LayerMask obstacleMask;
+    public LayerMask playerMask;
+
+    // player reference
+    public Transform playerRef;
+
+    [HideInInspector] public float radius;
+    [HideInInspector] public float angle;
+
+    public bool canSeePlayer;
+
+    // Smoothing
+    public bool smoothFOV = true;
+    public float fovSmoothSpeed = 2f;
+
+    public DialogueManager dialogueManager;
+
+    void Update()
+    {
+        if (playerRef == null)
+        {
+            GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+            if (playerObj != null)
+            {
+                playerRef = playerObj.transform;
+            }
+        }
+
+        UpdateFOVBasedOnMorality();
+
+        DetectPlayer();
+    }
+
+    private void UpdateFOVBasedOnMorality()
+    {
+        if (playerRef == null) return;
+
+        // Get plalyers current morality
+        int playerMorality = dialogueManager.playerMorality;
+        float normalizedMorality = Mathf.Clamp(playerMorality / 10f, -1f, 1f) * moralityEffect;
+
+        float targetRadius = Mathf.Lerp(maxRadius, minRadius, (normalizedMorality + 1f) / 2f);
+        float targetAngle = Mathf.Lerp(maxAngle, minAngle, (normalizedMorality + 1f) / 2f);
+
+        if (smoothFOV)
+        {
+            radius = Mathf.Lerp(radius, targetRadius, Time.deltaTime * fovSmoothSpeed);
+            angle = Mathf.Lerp(angle, targetAngle, Time.deltaTime * fovSmoothSpeed);
+        }
+        else
+        {
+            radius = targetRadius;
+            angle = targetAngle;
+        }
+
+        Debug.Log($"Morality : {playerMorality}, Radius: {radius}, Angle: {angle}");
+    }
+
+    private void DetectPlayer()
+    {
+        if (playerRef == null) return;
+
+        Vector3 directionToPlayer = (playerRef.position - transform.position).normalized;
+
+        if (Vector3.Distance(transform.position, playerRef.position) <= radius)
+        {
+            float angleToPlayer = Vector3.Angle(transform.forward, directionToPlayer);
+            if (angleToPlayer <= angle / 2f)
+            {
+                if (!Physics.Raycast(transform.position + Vector3.up * 1.5f, directionToPlayer, out RaycastHit hit, radius, obstacleMask))
+                {
+                    canSeePlayer = true;
+                    return;
+                }
+            }
+        }
+
+        canSeePlayer = false;
+    }
+}
+
+/*using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,6 +100,7 @@ using UnityEngine.AI;
 public class EnemyFieldOfView : MonoBehaviour
 {
     public float radius; // field of view radius around player
+    public float aggroRadius; // bigger radius that the enemy uses when chasing an entity
     [Range(0, 360)]
     public float angle; // viewing angle of enemy
     private float m_Distance;
@@ -20,6 +114,8 @@ public class EnemyFieldOfView : MonoBehaviour
     public bool canSeePlayer; // if the player is in the enemy's field of view
     public float chaseDuration = 1; 
     public float maxChaseDuration = 1;
+
+    public float detectionRadius = 4f; //detects player/NPC if they get too close, regardless of whether they are in the FOV or not
     
 
     // Start is called before the first frame update
@@ -41,9 +137,11 @@ public class EnemyFieldOfView : MonoBehaviour
         }
     }
 
-    // Function for enemy's feild of view
+    // Function for enemy's field of view
     private void FieldOfViewCheck()
     {
+        if (CloseDetectionCheck())
+            return;
         Collider[] rangeChecks = Physics.OverlapSphere(transform.position, radius, targetMask);
 
         if (rangeChecks.Length != 0) // checking if the player is in the given range of the enemy
@@ -62,6 +160,7 @@ public class EnemyFieldOfView : MonoBehaviour
                     canSeePlayer = true;
                     m_Agent.destination = target.position; // if seen move towards the player
                     angle = 230; // enemy FOV widens while chasing the player
+                    radius = aggroRadius;
                     return;
                     //Debug.Log("Player detected");
                 }
@@ -74,6 +173,7 @@ public class EnemyFieldOfView : MonoBehaviour
                 {
                     canSeePlayer = false;
                     angle = 90;
+                    radius = 5;
                     //Debug.Log("Player lost");
                 }
             }
@@ -90,6 +190,7 @@ public class EnemyFieldOfView : MonoBehaviour
         {
             canSeePlayer = false;
             angle = 90;
+            radius = 5;
             //Debug.Log("Player lost");
 
         }
@@ -101,6 +202,15 @@ public class EnemyFieldOfView : MonoBehaviour
         if (other.name == "Player")
         {
             Debug.Log("Player is killed");
+        }
+
+        if (other.gameObject.CompareTag("protectedNPC"))
+        {
+            if (TimerRingUI.Instance != null)
+            {
+                TimerRingUI.Instance.SubtractRingSection(3);
+            }
+            //if enemy attacks NPC, trigger game over screen
         }
     }
 
@@ -114,4 +224,22 @@ public class EnemyFieldOfView : MonoBehaviour
         }
     }
 
+    private bool CloseDetectionCheck() //handles detection of target layer mask, when entity gets to close to an enemy, the enemy will aggro onto that enemy, regardless of it being in FOV or not
+    {
+        Collider[] closeTargets = Physics.OverlapSphere(transform.position, detectionRadius, targetMask);
+
+        if (closeTargets.Length > 0)
+        {
+            Transform target = closeTargets[0].transform;
+            chaseDuration = 1;
+            canSeePlayer = true;
+            m_Agent.destination = target.position;
+            angle = 230;
+            radius = aggroRadius;
+
+            return true;
+        }
+        return false;
+    }
 }
+*/
