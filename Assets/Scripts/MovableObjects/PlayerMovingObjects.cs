@@ -29,7 +29,15 @@ public class PlayerMovingObjects : MonoBehaviour
         normalMoveSpeed = playerController.Speed;
         playerController.Speed = normalMoveSpeed / moveSlowdownMult;
         playerController.SetCanSprint(false);
+
+        if (playerController.animator != null)
+        {
+            playerController.animator.SetBool("isIdle", false);
+            playerController.animator.SetBool("isWalking", false);
+            playerController.animator.SetBool("isGrabbing", true);
+        }
         
+
         if (showDebugLogs)
         {
             Debug.Log($"Grabbed");
@@ -38,6 +46,8 @@ public class PlayerMovingObjects : MonoBehaviour
 
     public void OnReleaseObject()
     {
+        if (playerController.animator != null)
+            playerController.animator.SetBool("isGrabbing", false);
         playerController.Speed = normalMoveSpeed;
         playerController.SetCanSprint(true);
         resetAnimations(); //exit animation state
