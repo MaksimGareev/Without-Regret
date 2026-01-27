@@ -35,8 +35,12 @@ public class PlayerPossessing : MonoBehaviour
     {
         playerController = GetComponent<PlayerController>();
         playerRigidbody = GetComponent<Rigidbody>();
-        posessionBar.value = 1;
-        posessionBar.gameObject.SetActive(false);
+
+        if (posessionBar != null)
+        {
+            posessionBar.value = 1;
+            posessionBar.gameObject.SetActive(false);
+        }
     }
 
     private void Update()

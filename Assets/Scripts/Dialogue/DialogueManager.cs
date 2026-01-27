@@ -110,7 +110,10 @@ public class DialogueManager : MonoBehaviour
     private void OnEnable()
     {
         controls.Enable();
-        ResetHoldUI();
+        if (holdCircleImage != null)
+        {
+            ResetHoldUI();
+        }
     }
     private void OnDisable() => controls.Disable();
 
@@ -521,7 +524,7 @@ public class DialogueManager : MonoBehaviour
 
     private void HandleChoiceInput()
     {
-        if (!CanChoose || spawnedChoices.Count == 0)
+        if ((!CanChoose || spawnedChoices.Count == 0) && holdCircleImage != null)
         {
             ResetHoldUI();
             return;
@@ -556,9 +559,12 @@ public class DialogueManager : MonoBehaviour
         ChoiceDirection dir = currentHeldDirection.Value;
 
         HighlightDirection(dir);
-        UpdateHoldUI(directionHoldTimer / holdTimeToSelect);
-
-        if (directionHoldTimer >= holdTimeToSelect)
+        if (holdCircleImage != null)
+        {
+            UpdateHoldUI(directionHoldTimer / holdTimeToSelect);
+        }
+        
+        if (directionHoldTimer >= holdTimeToSelect && holdCircleImage != null)
         {
             CompleteHold(dir);
         }
@@ -566,6 +572,12 @@ public class DialogueManager : MonoBehaviour
 
     private void UpdateHoldUI(float progress)
     {
+        if (holdCircleImage == null) 
+        {
+            Debug.LogWarning("Hold circle image not assigned!");
+            return;
+        }
+
         if (!holdCircleImage.gameObject.activeSelf)
         {
             holdCircleImage.gameObject.SetActive(true);
@@ -576,6 +588,12 @@ public class DialogueManager : MonoBehaviour
 
     private void ResetHoldUI()
     {
+        if (holdCircleImage == null) 
+        {
+            Debug.LogWarning("Hold circle image not assigned!");
+            return;
+        }
+        
         directionHoldTimer = 0f;
         isHoldingDirection = false;
 
@@ -588,6 +606,12 @@ public class DialogueManager : MonoBehaviour
 
     private void CompleteHold(ChoiceDirection dir)
     {
+        if (holdCircleImage == null) 
+        {
+            Debug.LogWarning("Hold circle image not assigned!");
+            return;
+        }
+
         holdCircleImage.fillAmount = 1f;
         SelectDirectionalChoice(dir);
         ResetHoldUI();
