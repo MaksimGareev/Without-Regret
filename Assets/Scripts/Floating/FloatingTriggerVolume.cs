@@ -36,7 +36,7 @@ public class FloatingTriggerVolume : MonoBehaviour
     {
         if (playerFloating == null)
         {
-            Debug.LogError("PlayerFloating component is missing. Cannot update popup icon state.");
+            //Debug.LogError("PlayerFloating component is missing. Cannot update popup icon state.");
             return;
         }
             
