@@ -7,7 +7,8 @@ public class PlaceRoses : MonoBehaviour, IInteractable
     [SerializeField] private ItemData roseItem;
     private Inventory playerInventory;
 
-    public float interactionPriority => 0f;
+    public float InteractionPriority => 0f;
+    public InteractType interactType => InteractType.Pickup;
 
     private void Start()
     {
