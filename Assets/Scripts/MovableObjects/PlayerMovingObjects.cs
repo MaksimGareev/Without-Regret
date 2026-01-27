@@ -24,7 +24,7 @@ public class PlayerMovingObjects : MonoBehaviour
 
     public void OnMovingObject(float moveSlowdownMult)
     {
-        if (animator == null)
+        if (animator != null)
         {
             resetAnimations();
             animator.SetBool("isGrabbing", true); //enter grabbing anim state
