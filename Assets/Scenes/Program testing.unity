@@ -1121,6 +1121,7 @@ MonoBehaviour:
   smoothSpeed: 2
   defaultFacingDirection: 0
   rotateCamera: 0
+  restrictYaw: 0
   rotateSpeed: 120
   maxPitch: 45
   maxYaw: 120
@@ -1191,7 +1192,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 494880814}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: efdca141980251c48b810cfcd47385c5, type: 3}
   m_Name: 
@@ -1208,12 +1209,23 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   playerRef: {fileID: 1160335372}
-  radius: 6
-  angle: 90
-  canSeePlayer: 0
   smoothFOV: 1
   fovSmoothSpeed: 2
   dialogueManager: {fileID: 1823086129}
+  radius: 6
+  aggroRadius: 0
+  angle: 90
+  playerObj: {fileID: 0}
+  targetMask:
+    serializedVersion: 2
+    m_Bits: 0
+  obstructionMask:
+    serializedVersion: 2
+    m_Bits: 0
+  canSeePlayer: 0
+  chaseDuration: 1
+  maxChaseDuration: 1
+  detectionRadius: 4
 --- !u!114 &494880816
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3696,12 +3708,23 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   playerRef: {fileID: 0}
-  radius: 5
-  angle: 90
-  canSeePlayer: 0
   smoothFOV: 1
   fovSmoothSpeed: 2
   dialogueManager: {fileID: 0}
+  radius: 5
+  aggroRadius: 0
+  angle: 90
+  playerObj: {fileID: 0}
+  targetMask:
+    serializedVersion: 2
+    m_Bits: 0
+  obstructionMask:
+    serializedVersion: 2
+    m_Bits: 0
+  canSeePlayer: 0
+  chaseDuration: 1
+  maxChaseDuration: 1
+  detectionRadius: 4
 --- !u!136 &1861036032
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -3857,6 +3880,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d086f8a1a3c41e84dbb9eef25e785fb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PossessedEnemyResisting
+  Agent: {fileID: 0}
   moveSpeed: 1
   struggleStrength: 10
   struggleFrequency: 0.1
@@ -4148,11 +4172,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 599141881521633937, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 599141881521633937, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5273993982251385165, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
       propertyPath: m_Pivot.x
@@ -4244,7 +4268,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8472669192102556517, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -4356,6 +4380,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1561195366}
     m_Modifications:
+    - target: {fileID: 415475124053571862, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1909011670422841878, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
       propertyPath: m_LocalPosition.x
       value: 369.95255
@@ -4435,6 +4463,14 @@ PrefabInstance:
     - target: {fileID: 7723209263034436145, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
       propertyPath: m_Name
       value: DialogueManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 8647038329997865186, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8647038329997865186, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

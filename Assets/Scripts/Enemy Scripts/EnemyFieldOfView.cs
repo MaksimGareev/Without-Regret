@@ -13,6 +13,9 @@ public class EnemyFieldOfView : MonoBehaviour
     public float maxAngle = 130f;
     public float moralityEffect = 0.5f;
 
+    private float baseRadius;
+    private float baseAngle;
+
     // Detection Settings
     public LayerMask obstacleMask;
     public LayerMask playerMask;
@@ -44,6 +47,11 @@ public class EnemyFieldOfView : MonoBehaviour
 
     public float detectionRadius = 4f; //detects player/NPC if they get too close, regardless of whether they are in the FOV or not
 
+    private void Start()
+    {
+        StartCoroutine(FOVRoutine());
+    }
+
     void Update()
     {
         playerObj = GameObject.FindGameObjectWithTag("Player");
@@ -53,35 +61,39 @@ public class EnemyFieldOfView : MonoBehaviour
             playerRef = playerObj.transform;
         }
         
-        StartCoroutine(FOVRoutine());
         m_Agent = GetComponent<NavMeshAgent>();
 
         UpdateFOVBasedOnMorality();
-
+        ApplyFOV();
         DetectPlayer();
     }
 
     private void UpdateFOVBasedOnMorality()
     {
-        if (playerRef == null) return;
+        if (dialogueManager == null) return;
 
         // Get plalyers current morality
         int playerMorality = dialogueManager.playerMorality;
         float normalizedMorality = Mathf.Clamp(playerMorality / 10f, -1f, 1f) * moralityEffect;
+        float t = (normalizedMorality + 1f) / 2f;
 
-        float targetRadius = Mathf.Lerp(maxRadius, minRadius, (normalizedMorality + 1f) / 2f);
-        float targetAngle = Mathf.Lerp(maxAngle, minAngle, (normalizedMorality + 1f) / 2f);
+        baseRadius = Mathf.Lerp(maxRadius, minRadius, (normalizedMorality + 1f) / 2f);
+        baseAngle = Mathf.Lerp(maxAngle, minAngle, (normalizedMorality + 1f) / 2f);
 
-        if (smoothFOV)
+        /*if (!canSeePlayer)
         {
-            radius = Mathf.Lerp(radius, targetRadius, Time.deltaTime * fovSmoothSpeed);
-            angle = Mathf.Lerp(angle, targetAngle, Time.deltaTime * fovSmoothSpeed);
+
+            radius = baseRadius;
+            angle = baseAngle;
+
+            //radius = Mathf.Lerp(radius, targetRadius, Time.deltaTime * fovSmoothSpeed);
+            //angle = Mathf.Lerp(angle, targetAngle, Time.deltaTime * fovSmoothSpeed);
         }
         else
         {
-            radius = targetRadius;
-            angle = targetAngle;
-        }
+           // radius = targetRadius;
+            //angle = targetAngle;
+        }*/
 
         Debug.Log($"Morality : {playerMorality}, Radius: {radius}, Angle: {angle}");
     }
@@ -141,8 +153,9 @@ public class EnemyFieldOfView : MonoBehaviour
                     chaseDuration = 1;
                     canSeePlayer = true;
                     m_Agent.destination = target.position; // if seen move towards the player
-                    angle = 230; // enemy FOV widens while chasing the player
-                    radius = aggroRadius;
+                    //angle = Mathf.Max(baseAngle,230); // enemy FOV widens while chasing the player
+                    //radius = aggroRadius;
+                    currentState = FOVState.Chasing;
                     return;
                     //Debug.Log("Player detected");
                 }
@@ -154,8 +167,9 @@ public class EnemyFieldOfView : MonoBehaviour
                 if (chaseDuration <= 0) //if player breaks line of sight/outruns
                 {
                     canSeePlayer = false;
-                    angle = 90;
-                    radius = 5;
+                    currentState = FOVState.Idle;
+                    //angle = 90;
+                    //radius = 5;
                     //Debug.Log("Player lost");
                 }
             }
@@ -171,10 +185,46 @@ public class EnemyFieldOfView : MonoBehaviour
         else
         {
             canSeePlayer = false;
-            angle = 90;
-            radius = 5;
+            currentState = FOVState.Idle;
+            //angle = 90;
+            //radius = 5;
             //Debug.Log("Player lost");
+           
+        }
+    }
 
+    private void ApplyFOV()
+    {
+        float targetRadius = radius;
+        float targetAngle = angle;
+
+        switch (currentState)
+        {
+            case FOVState.Idle:
+                radius = baseRadius;
+                angle = baseAngle;
+                break;
+
+            case FOVState.Alerted:
+                radius = baseRadius * 1.2f;
+                angle = Mathf.Max(baseAngle, 150f);
+                break;
+
+            case FOVState.Chasing:
+                radius = aggroRadius;
+                angle = Mathf.Max(baseAngle, 230f);
+                break;
+        }
+
+        if (smoothFOV)
+        {
+            radius = Mathf.Lerp(radius, targetRadius, Time.deltaTime * fovSmoothSpeed);
+            angle = Mathf.Lerp(angle, targetAngle, Time.deltaTime * fovSmoothSpeed);
+        }
+        else
+        {
+            radius = targetRadius;
+            angle = targetAngle;
         }
     }
 
@@ -223,4 +273,13 @@ public class EnemyFieldOfView : MonoBehaviour
         }
         return false;
     }
+
+    private enum FOVState
+    {
+        Idle,
+        Alerted,
+        Chasing
+    }
+
+    private FOVState currentState = FOVState.Idle;
 }
