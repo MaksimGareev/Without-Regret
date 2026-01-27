@@ -35,6 +35,7 @@ public class PlayerFloating : MonoBehaviour
     private CharacterController charController;
     private Camera playerCamera;
     private ToggleInventoryUI toggleInventoryUI;
+    public Animator animator;
 
     public bool IsFloating { get; private set; } = false;
     private bool canFloat = false;
@@ -205,6 +206,8 @@ public class PlayerFloating : MonoBehaviour
 
     private void StartFloating()
     {
+        resetAnimations();
+        animator.SetBool("isFloating", true);
         rhythmSlider.gameObject.SetActive(true);
         IsFloating = true;
         floatTimer = 0f;
@@ -280,6 +283,7 @@ public class PlayerFloating : MonoBehaviour
         if (floatInput && !toggleInventoryUI.isEnabled)
         {
             floatInput = false; // consume input
+            animator.SetTrigger("Flap"); //flap animation when input is taken
             float errorMargin = Mathf.Min(rhythmTimer, rhythmInterval - rhythmTimer);
             if (errorMargin <= rhythmWindow)
             {
@@ -397,5 +401,15 @@ public class PlayerFloating : MonoBehaviour
     public void SetCanFloat (bool newCanfloat)
     {
         canFloat = newCanfloat;
+    }
+
+    private void resetAnimations()
+    {
+        animator.SetBool("isIdle", false);
+        animator.SetBool("isWalking", false);
+        animator.SetBool("isGrabbing", false);
+        animator.SetBool("isFloating", false);
+        animator.SetBool("isPulling", false);
+        animator.SetBool("isPushing", false);
     }
 }
