@@ -66,7 +66,7 @@ public class PlayerInteracting : MonoBehaviour
             ButtonIcons.Instance.Clear();
         }*/
         
-        /*
+        
         if (mantleTarget != null && Mantle.triggered)
         {
             mantleTarget.OnPlayerInteraction(gameObject);
@@ -78,7 +78,7 @@ public class PlayerInteracting : MonoBehaviour
         else if (currentTarget != null && mantleTarget == null && Interact.triggered)
         {
             currentTarget.OnPlayerInteraction(gameObject);
-        }*/
+        }
     }
 
     private void ScanForInteractable()
@@ -133,10 +133,10 @@ public class PlayerInteracting : MonoBehaviour
                 ButtonIcons.Instance?.Highlight(currentTarget.interactType);
             }
 
-            //var targetMono = (currentTarget as MonoBehaviour);
+            var targetMono = (currentTarget as MonoBehaviour);
 
-           // mantleTarget = targetMono.GetComponent<MantleableObject>();
-           // moveTarget = targetMono.GetComponent<MoveableObject>();
+            mantleTarget = targetMono.GetComponent<MantleableObject>();
+            moveTarget = targetMono.GetComponent<MoveableObject>();
 
             if (showDebugLogs)
             {
