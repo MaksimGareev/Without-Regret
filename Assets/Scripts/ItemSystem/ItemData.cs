@@ -6,8 +6,7 @@ public enum ItemType
     ThrowableItem,
     GrabbableItem,
     Backpack,
-    MiscItem,
-    FishingRod
+    MiscItem
 }
 
 [CreateAssetMenu(menuName = "ScriptableObjects/Item", order = 1)]
