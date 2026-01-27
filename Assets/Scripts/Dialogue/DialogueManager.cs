@@ -13,6 +13,7 @@ public class DialogueManager : MonoBehaviour
     public Transform ChoicesContainer;
     public GameObject ChoiceButton;
     public GameObject ContinueArrow;
+    public GameObject DirectionalImage;
 
     private List<GameObject> spawnedChoices = new List<GameObject>();
     private DialogueData currentDialogue;
@@ -59,7 +60,7 @@ public class DialogueManager : MonoBehaviour
     public Slider ChoiceTimeSlider;
     private float choiceTimer;
     private Coroutine choiceTimerRoutine;
-    public TextMeshProUGUI TimerText;
+    //public TextMeshProUGUI TimerText;
 
     // Player references
     private Transform playerTransform;
@@ -138,6 +139,21 @@ public class DialogueManager : MonoBehaviour
     // -------------------- JSON Dialogue --------------------
     public void StartDialogueFromJson(TextAsset jsonFile, DialogueTrigger trigger)
     {
+
+        Debug.Log("DialogueManager: StartDialogueFromJson called");
+
+        if (!gameObject.activeInHierarchy)
+        {
+            Debug.LogError("DialogueManager GameObject is DISABLED!");
+            return;
+        }
+
+        if (DialoguePanel == null)
+        {
+            Debug.LogError("DialogueManager: DialoguePanel is NULL!");
+            return;
+        }
+
         activeDialogueTrigger = trigger;
         DialogueIsActive = true;
         GameObject player = GameObject.FindGameObjectWithTag("Player");
@@ -165,6 +181,19 @@ public class DialogueManager : MonoBehaviour
 
         currentDialogue = JsonUtility.FromJson<DialogueData>(jsonFile.text);
         currentIndex = 0;
+
+        if (currentDialogue == null)
+        {
+            Debug.LogError("DialogueData is NULL!");
+        }
+        else if (currentDialogue.dialogueLines == null)
+        {
+            Debug.LogError("Dialogue lines are NULL! Check JSON field names");
+        }
+        else
+        {
+            Debug.Log($"Dialogue parsed successfully. Lines: {currentDialogue.dialogueLines.Count}");
+        }
 
         if (currentDialogue != null && currentDialogue.dialogueLines != null)
         {
@@ -206,6 +235,38 @@ public class DialogueManager : MonoBehaviour
 
     private void ShowCurrentLine()
     {
+
+        if (currentIndex >= currentDialogue.dialogueLines.Count)
+        {
+            EndDialogue();
+            return;
+        }
+
+        DialogueLine line = currentDialogue.dialogueLines[currentIndex];
+
+        if (line.requiredMorality != 0)
+        {
+            if((line.requiredMorality > 0 && playerMorality < line.requiredMorality)|| (line.requiredMorality < 0 && playerMorality > line.requiredMorality))
+            {
+                currentIndex++;
+                ShowCurrentLine();
+                return;
+            }
+        }
+
+        if (typeingRoutine != null)
+        {
+            StopCoroutine(typeingRoutine);
+        }
+
+        typeingRoutine = StartCoroutine(TypeLine(line.text));
+
+        foreach (var b in spawnedChoices)
+        {
+            Destroy(b);
+        }
+        spawnedChoices.Clear();
+
         ContinueArrow.SetActive(false);
 
         // hide slider durring NPC talking
@@ -214,53 +275,6 @@ public class DialogueManager : MonoBehaviour
             ChoiceTimeSlider.gameObject.SetActive(false);
         }
 
-        DialogueLine line = currentDialogue.dialogueLines[currentIndex];
-
-        if (line.requiredMorality != 0)
-        {
-            if ((line.requiredMorality > 0 && playerMorality < line.requiredMorality) || (line.requiredMorality < 0 && playerMorality > line.requiredMorality))
-            {
-                currentIndex++;
-                if (currentIndex < currentDialogue.dialogueLines.Count)
-                {
-                    ShowCurrentLine();
-                }
-                else
-                {
-                    EndDialogue();
-                }
-                return;
-            }
-        }
-
-        // Activate objective immediately when line is shown
-        if (line.objectivesToActivate != null && line.objectivesToActivate.Count > 0)
-        {
-            foreach (string objectiveID in line.objectivesToActivate)
-            {
-                if (!string.IsNullOrEmpty(objectiveID))
-                {
-                    Debug.Log("Activating objective from dialogue line: " + objectiveID);
-                    ObjectiveManager.Instance.ActivateObjectiveByID(objectiveID);
-                }
-            }
-        }
-        /*
-        StopCoroutine(nameof(TypeLine));
-        StartCoroutine(TypeLine(line.text));
-        */
-        if (typeingRoutine != null)
-        {
-            StopCoroutine(typeingRoutine);
-        }
-
-        typeingRoutine = StartCoroutine(TypeLine(line.text));
-        // clear previous choices
-        foreach (var b in spawnedChoices)
-        {
-            Destroy(b);
-        }
-        spawnedChoices.Clear();
     }
 
     private IEnumerator TypeLine(string text)
@@ -277,10 +291,11 @@ public class DialogueManager : MonoBehaviour
         foreach (char c in text)
         {
             // Finish line instantly if confirm pressed
-            if (ConfirmPressed)
+            if (ConfirmPressed && IsTyping)
             {
                 DialogueText.text = currentFullLine;
                 ConfirmPressed = false;
+                IsTyping = false;
                 break;
             }
 
@@ -329,42 +344,6 @@ public class DialogueManager : MonoBehaviour
             }
         }
 
-        /*
-        string[] words = text.Split(' ');
-        
-        foreach (string word in words)
-        {
-            // Skip empty entries
-            if (string.IsNullOrWhiteSpace(word))
-                continue;
-
-            // If skip requested, instantly finish
-            if (ConfirmPressed)
-            {
-                DialogueText.text = currentFullLine;
-                ConfirmPressed = false;
-                break;
-            }
-
-            DialogueText.text += word + " ";
-            
-            //char firstChar = char.ToUpper(word[0]);
-            foreach (char c in word)
-            {
-                char upperChar = char.ToUpper(c);
-
-                if (letterSounds.ContainsKey(upperChar))
-                {
-                    TypingAudioSource.PlayOneShot(letterSounds[upperChar]);
-                }
-
-                // small delay so sounds to overlap
-                yield return new WaitForSeconds(0.03f);
-            }
-
-            yield return new WaitForSeconds(0.02f);
-        }*/
-
         IsTyping = false;
 
         // show continue arrow after the line is typed and there are no choices to be selected
@@ -387,6 +366,8 @@ public class DialogueManager : MonoBehaviour
 
     private IEnumerator WaitForNextLine()
     {
+        if (IsTyping) yield break;
+
         // Wait for player confirm to advance
         while (!ConfirmPressed)
         {
@@ -471,6 +452,17 @@ public class DialogueManager : MonoBehaviour
         };
     }
 
+    private void PositionDirectionalCross()
+    {
+        if (DirectionalImage == null) return;
+
+        RectTransform rt = DirectionalImage.GetComponent<RectTransform>();
+        rt.SetParent(ChoicesContainer, false);
+        rt.anchoredPosition = Vector2.zero;
+        rt.localScale = Vector3.one;
+
+    }
+
     private void SpawnChoices(List<DialogueChoice> choices)
     {
         // Clear old
@@ -478,6 +470,13 @@ public class DialogueManager : MonoBehaviour
         spawnedChoices.Clear();
         directionalChoices.Clear();
         ChoicesContainer.gameObject.SetActive(true);
+
+        // Spawn direction cross
+        if (DirectionalImage != null)
+        {
+            DirectionalImage.SetActive(true);
+            PositionDirectionalCross();
+        }
 
         foreach (DialogueChoice choice in choices)
         {
@@ -522,16 +521,15 @@ public class DialogueManager : MonoBehaviour
 
     private void HandleChoiceInput()
     {
-        if (!CanChoose || spawnedChoices.Count == 0) return;
+        if (!CanChoose || spawnedChoices.Count == 0)
+        {
+            ResetHoldUI();
+            return;
+        }
 
         Vector2 input = controls.Dialogue.Move.ReadValue<Vector2>();
 
         const float deadzone = 0.4f;
-
-       /* Vector2 input = new Vector2(
-            controls.Dialogue.Move.ReadValue<Vector2>().x,
-            controls.Dialogue.Move.ReadValue<Vector2>().y
-            );*/
 
         // if released cancel circle
         if (input.sqrMagnitude < deadzone * deadzone)
@@ -564,28 +562,6 @@ public class DialogueManager : MonoBehaviour
         {
             CompleteHold(dir);
         }
-
-        /*if (Time.time - lastInputTime >= inputCooldown)
-        {
-            if (MoveUpPressed)
-            {
-                SelectedChoiceIndex = (SelectedChoiceIndex - 1 + spawnedChoices.Count) % spawnedChoices.Count;
-                UpdateChoiceHighlight();
-                MoveUpPressed = false;
-            }
-
-            if (MoveDownPressed)
-            {
-                SelectedChoiceIndex = (SelectedChoiceIndex + 1) % spawnedChoices.Count;
-                UpdateChoiceHighlight();
-                MoveDownPressed = false;
-            }
-        }
-        if (ConfirmPressed)
-        {
-            OnChoiceSelected(currentDialogue.dialogueLines[currentIndex].choices[SelectedChoiceIndex]);
-            ConfirmPressed = false;
-        }*/
     }
 
     private void UpdateHoldUI(float progress)
@@ -679,15 +655,6 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
-   /* private void UpdateChoiceHighlight()
-    {
-        for (int i = 0; i < spawnedChoices.Count; i++)
-        {
-            var text = spawnedChoices[i].GetComponentInChildren<TextMeshProUGUI>();
-            text.color = (i == SelectedChoiceIndex) ? Color.yellow : Color.white;
-        }
-    }*/
-
     private void OnChoiceSelected(DialogueChoice chosen)
     {
         // prevent confirm from instantly skipping the next line
@@ -697,6 +664,11 @@ public class DialogueManager : MonoBehaviour
         {
             StopCoroutine(choiceTimerRoutine);
             choiceTimerRoutine = null;
+        }
+
+        if (DirectionalImage != null)
+        {
+            DirectionalImage.SetActive(false);
         }
 
         CanChoose = false;
@@ -736,10 +708,10 @@ public class DialogueManager : MonoBehaviour
             EndDialogue();
         }
 
-        if (TimerText != null)
+        /*if (TimerText != null)
         {
             TimerText.text = "";
-        }
+        }*/
 
         // hide slider agian when choice is selected
         if (ChoiceTimeSlider != null)
@@ -803,49 +775,7 @@ public class DialogueManager : MonoBehaviour
             }
         }
 
-        /*
-        while (choiceTimer > 0f && CanChoose)
-        {
-            if (TimerText != null)
-            {
-                TimerText.gameObject.SetActive(true);
-                TimerText.text = Mathf.CeilToInt(choiceTimer).ToString();
-            }
-            else
-            {
-                TimerText.gameObject.SetActive(false);
-            }
-            choiceTimer -= Time.deltaTime;
-            yield return null;
-        }
-
-        // Timer has expired and the player hasnt chosen anything
-        if (CanChoose)
-        {
-            DialogueChoice fallback = null;
-
-            // Try to find a neutral or negative morality choice
-            foreach (var c in choices)
-            {
-                if (c.moralityChange <= 0)
-                {
-                    fallback = c;
-                    break;
-                }
-            }
-
-            // If no suitable one, just pick the first
-            if (fallback == null && choices.Count > 0)
-            {
-                fallback = choices[0];
-            }
-
-            if (fallback != null)
-            {
-                Debug.Log("timer expired auto selecting choice: " + fallback.text);
-                OnChoiceSelected(fallback);
-            }
-        }*/
+    
     }
 
     public void ShowPopUp(string message, float duration = 1f)
@@ -896,6 +826,12 @@ public class DialogueManager : MonoBehaviour
         {
             activeDialogueTrigger.StopLookingAtPlayer();
             activeDialogueTrigger.ResumeWandering();
+
+            if (ButtonIcons.Instance != null)
+            {
+                ButtonIcons.Instance.Highlight(activeDialogueTrigger.interactType);
+            }
+
             activeDialogueTrigger = null;
         }
 

@@ -40,6 +40,11 @@ public class Irene : MonoBehaviour
             if (dialogueTrigger != null && dialogueTrigger.enabled)
             {
                 dialogueTrigger.enabled = false;
+                Collider col = dialogueTrigger.GetComponent<Collider>();
+                if (col != null)
+                {
+                    col.enabled = false;
+                }
                 Debug.Log("Irene's dialogue trigger has been deactivated.");
             }
         }

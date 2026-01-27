@@ -9,12 +9,19 @@ public class MoveableObject : MonoBehaviour, IInteractable
     private PlayerMovingObjects playerMovingObjects; 
     private Transform grabPoint;
     private Rigidbody rb;
+    private PlayerMovingObjects mover;
     public bool isGrabbed { get; private set; } = false;
     public bool isGrabbable = true;
-    public float interactionPriority => 1;
+    public float interactionPriority => 1f;
+    public InteractType interactType => InteractType.Move;
+
+    [SerializeField] private float iconDistance = 3f;
+
     [SerializeField] private GameObject iconPrefab;
     public bool shouldShowIcon = true;
     private GameObject popupInstance;
+
+    private Transform player;
 
    // [SerializeField] private NavMeshSurface navMeshSurface;
 
@@ -23,14 +30,30 @@ public class MoveableObject : MonoBehaviour, IInteractable
         rb = GetComponent<Rigidbody>();
     }
 
-    private void Grab(Transform grabPoint)
+    public void Start()
     {
-        this.grabPoint = grabPoint;
+        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+
+        if (playerObj != null)
+        {
+            player = playerObj.transform;
+        }
+        else
+        {
+            Debug.LogError("MoveableObject: Player not found! Make sure the Player has the 'Player' tag.", this);
+        }
+    }
+
+    private void Grab(Transform grabTransform)
+    {
+        grabPoint = grabTransform;
+        //this.grabPoint = grabPoint;
         isGrabbed = true;
 
         rb.isKinematic = true;
 
-        DisablePopupIcon();
+        // remove Icon
+        ButtonIcons.Instance.Clear();
     }
 
     public void Release()
@@ -42,12 +65,24 @@ public class MoveableObject : MonoBehaviour, IInteractable
         rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
 
+        /*
+        // reshow Icon if close to item
+        float dist = Vector3.Distance(transform.position, player.position);
+        if (dist <= iconDistance)
+        {
+            ButtonIcons.Instance.Highlight(interactType);
+        }
+        else
+        {
+            ButtonIcons.Instance.Clear();
+        }
+
         if (SaveManager.Instance != null)
         {
             SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
         }
 
-        EnablePopupIcon();
+        EnablePopupIcon();*/
 
        /* // Rebuild NavMesh after the object is moved
         if (navMeshSurface != null)
@@ -103,29 +138,34 @@ public class MoveableObject : MonoBehaviour, IInteractable
 
     private void Update()
     {
-        if (shouldShowIcon && popupInstance == null && iconPrefab != null && PopupManager.Instance != null)
+        float distance = Vector3.Distance(transform.position, player.position);
+
+        if (distance > iconDistance) return;
+
+       /* if (shouldShowIcon && popupInstance == null && iconPrefab != null && PopupManager.Instance != null)
         {
-            EnablePopupIcon();
+            ButtonIcons.Instance.Highlight(interactType);
         }
         else if (!shouldShowIcon && popupInstance != null)
         {
-            DisablePopupIcon();
-        }
+            ButtonIcons.Instance.Clear();
+        }*/
     }
 
     public void OnPlayerInteraction(GameObject player)
     {
-        playerMovingObjects = player.GetComponent<PlayerMovingObjects>();
+        mover = player.GetComponent<PlayerMovingObjects>();
+        if (mover == null) return;
 
         if (!isGrabbed && isGrabbable)
         {
-            Grab(playerMovingObjects.grabPoint);
-            playerMovingObjects.OnMovingObject(moveSlowdownMultiplier);
+            Grab(mover.grabPoint);
+            mover.OnMovingObject(moveSlowdownMultiplier);
         }
         else
         {
             Release();
-            playerMovingObjects.OnReleaseObject();
+            mover.OnReleaseObject();
         }
     }
 }
