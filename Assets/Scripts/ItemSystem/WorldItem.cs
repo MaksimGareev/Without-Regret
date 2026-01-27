@@ -7,7 +7,7 @@ public class WorldItem : MonoBehaviour, IInteractable
 {
     [SerializeField] private ItemData itemData;
     public ItemData ItemData => itemData;
-    public float interactionPriority => 0f;
+    public float InteractionPriority => 0f;
     [HideInInspector] public bool hasBeenCollected = false;
     [SerializeField] private GameObject iconPrefab;
     [SerializeField] private Vector3 iconOffset = new Vector3(0f, 2f, 0f);

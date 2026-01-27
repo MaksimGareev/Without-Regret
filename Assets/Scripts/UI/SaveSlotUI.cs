@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class SaveSlotUI : MonoBehaviour
 {
+    [SerializeField] private GameObject confirmationPanel;
+
     [Header("Text References")]
     [SerializeField] private TextMeshProUGUI[] slotTexts = new TextMeshProUGUI[3];
     [SerializeField] private TextMeshProUGUI[] slotObjectives = new TextMeshProUGUI[3];
@@ -58,15 +60,15 @@ public class SaveSlotUI : MonoBehaviour
     private void SetUpEvents()
     {
         playButtons[0].onClick.AddListener(() => PlaySelectedSave(1));
-        deleteButtons[0].onClick.AddListener(() => ClearSelectedSave(1));
+        deleteButtons[0].onClick.AddListener(() => ConfirmBeforeDelete(1));
         newGameButtons[0].onClick.AddListener(() => NewGame(1));
 
         playButtons[1].onClick.AddListener(() => PlaySelectedSave(2));
-        deleteButtons[1].onClick.AddListener(() => ClearSelectedSave(2));
+        deleteButtons[1].onClick.AddListener(() => ConfirmBeforeDelete(2));
         newGameButtons[1].onClick.AddListener(() => NewGame(2));
         
         playButtons[2].onClick.AddListener(() => PlaySelectedSave(3));
-        deleteButtons[2].onClick.AddListener(() => ClearSelectedSave(3));
+        deleteButtons[2].onClick.AddListener(() => ConfirmBeforeDelete(3));
         newGameButtons[2].onClick.AddListener(() => NewGame(3));
     }
 
@@ -113,19 +115,36 @@ public class SaveSlotUI : MonoBehaviour
         newGameButtons[slot - 1].gameObject.SetActive(data == null);
     }
 
-    public void ClearSelectedSave(int slot)
+    private void ConfirmBeforeDelete(int slot)
+    {
+        confirmationPanel.SetActive(true);
+
+        ConfirmationUI confirmationUI = confirmationPanel.GetComponent<ConfirmationUI>();
+        confirmationUI.ConfirmTask(ConfirmationType.DeleteSave, 
+            () => 
+            {
+                ClearSelectedSave(slot);
+                confirmationPanel.SetActive(false);
+            },
+            () => 
+            {
+                confirmationPanel.SetActive(false);
+            });
+    }
+
+    private void ClearSelectedSave(int slot)
     {
         SaveManager.Instance.ClearSaveData(slot);
         UpdateAllSlots();
     }
 
-    public void PlaySelectedSave(int slot)
+    private void PlaySelectedSave(int slot)
     {
         SaveManager.Instance.SetActiveSaveSlot(slot);
         LoadGame(slot);
     }
 
-    public void NewGame(int slot = 1)
+    private void NewGame(int slot = 1)
     {
         SaveManager.Instance.SetActiveSaveSlot(slot);
         SaveManager.Instance.LoadGame(slot);

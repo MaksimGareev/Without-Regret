@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
 
 public class PlayerPossessing : MonoBehaviour
 {
@@ -11,11 +12,13 @@ public class PlayerPossessing : MonoBehaviour
     [SerializeField] private float searchConeAngle = 30f;
     [SerializeField] private KeyCode possessKey = KeyCode.R;
     [SerializeField] private string possessButton = "Xbox Y Button";
+    [SerializeField] private Slider posessionBar;
 
     private PlayerController playerController;
     private Rigidbody playerRigidbody;
     private PossessedEnemyResisting possessedEnemyMovement;
     private PatrollingEnemy normalEnemyMovement;
+    private EnemyFieldOfView enemyPOV;
     private NavMeshAgent enemyNavMeshAgent;
     private Rigidbody enemyRigidbody;
     private float possessionTimer;
@@ -24,6 +27,8 @@ public class PlayerPossessing : MonoBehaviour
     {
         playerController = GetComponent<PlayerController>();
         playerRigidbody = GetComponent<Rigidbody>();
+        posessionBar.value = 1;
+        posessionBar.gameObject.SetActive(false);
     }
 
     private void Update()
@@ -40,8 +45,9 @@ public class PlayerPossessing : MonoBehaviour
         }
 
         if (possessedEnemyMovement != null)
-            {
-                possessionTimer -= Time.deltaTime;
+        {
+            possessionTimer -= Time.deltaTime;
+            posessionBar.value = Mathf.InverseLerp(0, possessionDuration, possessionTimer);
 
                 Vector3 input = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
                 possessedEnemyMovement.UpdatePossession(input);
@@ -50,7 +56,7 @@ public class PlayerPossessing : MonoBehaviour
                 {
                     EndPossession();
                 }
-            }
+        }
     }
 
     private void TryStartPossession(bool IsUsingKeyboard)
@@ -143,8 +149,10 @@ public class PlayerPossessing : MonoBehaviour
             return;
         }
 
+        posessionBar.gameObject.SetActive(true);
         normalEnemyMovement = target.GetComponent<PatrollingEnemy>();
         enemyRigidbody = target.GetComponent<Rigidbody>();
+        enemyPOV = target.GetComponent<EnemyFieldOfView>();
         possessedEnemyMovement = target;
         
 
@@ -172,16 +180,17 @@ public class PlayerPossessing : MonoBehaviour
             normalEnemyMovement.enabled = false;
         }
 
+        if (enemyPOV != null)
+        {
+            enemyPOV.enabled = false;
+        }
+
         if (enemyRigidbody != null)
         {
             //enemyRigidbody.useGravity = false;
         }
 
-        enemyNavMeshAgent = target.GetComponent<NavMeshAgent>();
-        if (enemyNavMeshAgent != null)
-        {
-            enemyNavMeshAgent.enabled = false;
-        }
+
 
         if (!possessedEnemyMovement.enabled)
         {
@@ -203,13 +212,17 @@ public class PlayerPossessing : MonoBehaviour
             }
         }
 
+        posessionBar.gameObject.SetActive(false);
+        posessionBar.value = 1;
+
+        if (enemyPOV != null)
+        {
+            enemyPOV.enabled = true;
+        }
+
         possessedEnemyMovement = null;
         normalEnemyMovement = null;
-
-        if (enemyNavMeshAgent != null)
-        {
-            enemyNavMeshAgent.enabled = true;
-        }
+        enemyPOV = null;
 
         if (enemyRigidbody != null)
         {

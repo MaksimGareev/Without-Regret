@@ -23,6 +23,7 @@ public class CameraMovement : MonoBehaviour
 
     [Header("Camera Control Settings")]
     [SerializeField] private bool rotateCamera = false;
+    [SerializeField] private bool restrictYaw = false;
     [SerializeField] private float rotateSpeed = 120f;
     [SerializeField] private float maxPitch = 45f;
     [SerializeField] private float maxYaw = 120f;
@@ -181,7 +182,15 @@ public class CameraMovement : MonoBehaviour
         yaw -= horizontalInput * rotateSpeed * Time.deltaTime;
         pitch -= verticalInput * rotateSpeed * Time.deltaTime;
 
-        yaw = Mathf.Clamp(yaw, -Mathf.Abs(maxYaw), Mathf.Abs(maxYaw));
+        if (restrictYaw)
+        {
+            yaw = Mathf.Clamp(yaw, -maxYaw, maxYaw);
+        }
+        else
+        {
+            yaw = Mathf.Repeat(yaw + 180f, 360f) - 180f;
+        }
+
         pitch = Mathf.Clamp(pitch, -Mathf.Abs(maxPitch), Mathf.Abs(maxPitch));
 
         Quaternion rotation = initialRotation * Quaternion.Euler(pitch, yaw, 0f);
@@ -198,7 +207,11 @@ public class CameraMovement : MonoBehaviour
             return;
         }
 
-        yaw = Mathf.Lerp(yaw, 0f, returnSpeed * Time.deltaTime);
+        if (restrictYaw)
+        {
+            yaw = Mathf.Lerp(yaw, 0f, returnSpeed * Time.deltaTime);
+        }
+        
         pitch = Mathf.Lerp(pitch, 0f, returnSpeed * Time.deltaTime);
 
         Quaternion rotation = initialRotation * Quaternion.Euler(pitch, yaw, 0f);
