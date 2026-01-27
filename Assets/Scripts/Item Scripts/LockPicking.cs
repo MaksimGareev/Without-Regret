@@ -19,6 +19,7 @@ public class LockPicking : MonoBehaviour
     private float EulerAngle;
     private float UnlockAngle;
     private Vector2 UnlockRange;
+    private LockedItem currentLockedItem;
 
     private float KeyPressTime = 0;
     private Vector3 originalPosition;
@@ -123,6 +124,12 @@ public class LockPicking : MonoBehaviour
                     pc.MovementLocked = false;
                     pc.enabled = true;
                 }
+
+                if (currentLockedItem != null)
+                {
+                    currentLockedItem.OnUnlocked();
+                    currentLockedItem = null;
+                }
             }
             else
             {
@@ -163,8 +170,9 @@ public class LockPicking : MonoBehaviour
 
     }
 
-    public void NewLock()
+    public void NewLock(LockedItem lockedItem)
     {
+        currentLockedItem = lockedItem;
         LockPickUi.SetActive(true);
         Rigidbody rb = player.GetComponent<Rigidbody>();
         PickCursor.eulerAngles = new Vector3(0, 0, 0);

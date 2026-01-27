@@ -30,6 +30,8 @@ public class DialogueTrigger : MonoBehaviour
     public bool shouldShowIcon = true;
     private GameObject popupInstance;
 
+    public GameObject enemy;
+
     private void Awake()
     {
         controls = new PlayerControls();
@@ -51,6 +53,8 @@ public class DialogueTrigger : MonoBehaviour
 
         if (promptUI != null)
             promptUI.SetActive(false);
+
+        enemy.SetActive(false);
     }
 
     // Update is called once per frame
@@ -65,6 +69,8 @@ public class DialogueTrigger : MonoBehaviour
             if (!playerInRange)
             {
                 playerInRange = true;
+                if (iconPrefab != null)
+                    iconPrefab.SetActive(true);
                 if (promptUI != null)
                     promptUI.SetActive(true);
             }
@@ -74,12 +80,14 @@ public class DialogueTrigger : MonoBehaviour
             if (playerInRange)
             {
                 playerInRange = false;
+                if (iconPrefab != null)
+                    iconPrefab.SetActive(false);
                 if (promptUI != null)
                     promptUI.SetActive(false);
             }
         }
 
-        if (shouldShowIcon && popupInstance == null && iconPrefab != null && PopupManager.Instance != null)
+        if (shouldShowIcon && popupInstance == null && iconPrefab != null && PopupManager.Instance != null && !playerInRange)
         {
             EnablePopupIcon();
         }
@@ -116,6 +124,15 @@ public class DialogueTrigger : MonoBehaviour
         if (allCompleted && CompleteJsonDialogueFile != null && TalkedAlready == true)
         {
             dialogueManager.StartDialogueFromJson(CompleteJsonDialogueFile);
+
+            if (ObjectiveManager.Instance != null && linkedObjective != null)
+            {
+                if (ObjectiveManager.Instance.IsObjectiveActive(linkedObjective.objectiveID))
+                {
+                    ObjectiveManager.Instance.AddProgress(linkedObjective.objectiveID, 1);
+                }
+            }
+            
             return;
         }
 
@@ -156,9 +173,23 @@ public class DialogueTrigger : MonoBehaviour
         else if (TalkedAlready == true)
         {
             dialogueManager.StartDialogueFromJson(TalkedJsonDialogueFile);
+
+            if (ObjectiveManager.Instance != null && linkedObjective != null)
+            {
+                if (ObjectiveManager.Instance.IsObjectiveActive(linkedObjective.objectiveID))
+                {
+                    ObjectiveManager.Instance.AddProgress(linkedObjective.objectiveID, 1);
+                }
+            }
         }
 
-        
+        // **Activate the enemy when dialogue is triggered**
+        if (enemy != null)
+        {
+            enemy.SetActive(true);
+            Debug.Log($"{enemy.name} activated by {NPCName}");
+        }
+
     }
 
     private void OnTriggerEnter(Collider other)
@@ -170,6 +201,10 @@ public class DialogueTrigger : MonoBehaviour
                 dialogueManager.StartDialogueFromJson(jsonDialogueFile);
             }
             TalkedAlready = true;
+           /* if (this.CompareTag("Spawner") && enemy != null)
+            {
+                enemy.SetActive(true);
+            }*/
         }
     }
 

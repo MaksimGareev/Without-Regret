@@ -5,6 +5,7 @@ public class FloatingTriggerVolume : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private GameObject iconPrefab;
+    [SerializeField] private Vector3 iconOffset = new Vector3(0f, 2f, 0f);
     [SerializeField] private bool shouldShowIcon = true;
     private GameObject popupInstance;
 
@@ -13,21 +14,43 @@ public class FloatingTriggerVolume : MonoBehaviour
 
     private void Start()
     {
-        popupInstance = PopupManager.Instance.CreatePopup(this.transform, iconPrefab).gameObject;
+        player = GameObject.FindGameObjectWithTag("Player");
+
+        if (player != null)
+        {
+            playerFloating = player.GetComponent<PlayerFloating>();
+        }
     }
 
   private void Update()
     {
-        if (player == null || playerFloating == null)
-            return;
-
-        if (shouldShowIcon && popupInstance != null && !popupInstance.activeSelf && !playerFloating.isFloating && !playerFloating.isCoolingDown)
+        if (shouldShowIcon && popupInstance == null && !playerFloating.isFloating && !playerFloating.isCoolingDown)
         {
-            popupInstance.SetActive(true);
+            EnablePopupIcon();
         }
-        else if (!shouldShowIcon && popupInstance != null && popupInstance.activeSelf)
+        else if (!shouldShowIcon && popupInstance != null)
         {
-            popupInstance.SetActive(false);
+            DisablePopupIcon();
+        }
+    }
+
+    public void EnablePopupIcon()
+    {
+        if (popupInstance == null && iconPrefab != null && PopupManager.Instance != null)
+        {
+            popupInstance = PopupManager.Instance.CreatePopup(this.transform, iconPrefab).gameObject;
+            gameObject.GetComponent<WorldPopup>().worldOffset = iconOffset;
+            shouldShowIcon = true;
+        }
+    }
+
+    public void DisablePopupIcon()
+    {
+        if (popupInstance != null)
+        {
+            Destroy(popupInstance);
+            popupInstance = null;
+            shouldShowIcon = false;
         }
     }
 
