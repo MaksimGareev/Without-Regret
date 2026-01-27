@@ -7,7 +7,7 @@ public class MantleableObject : MonoBehaviour, IInteractable
     [Header("Mantle Target Offset")]
     [SerializeField] private Vector3 mantleOffset = new Vector3(0f, 2.0f, 0.5f);
     [SerializeField] private bool showGizmos = true;
-    public float interactionPriority => 1f;
+    public float InteractionPriority => 1f;
     [SerializeField] private GameObject iconPrefab;
     public bool shouldShowIcon = true;
     private GameObject popupInstance;
