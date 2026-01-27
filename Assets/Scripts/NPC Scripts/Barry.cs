@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Barry : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class Barry : MonoBehaviour
     public bool isTraveling = false;
     public bool arrived = false;
     public float stopDistance = 0.5f;
+    public NavMeshAgent agent;
 
     public string npcName = "Barry";
 
@@ -50,7 +52,12 @@ public class Barry : MonoBehaviour
         direction.y = 0f;
 
         // Movement
-        transform.position = Vector3.MoveTowards(transform.position, targetSpot.position, Speed * Time.deltaTime);
+        //transform.position = Vector3.MoveTowards(transform.position, targetSpot.position, Speed * Time.deltaTime);
+
+        if (!agent.pathPending && agent.remainingDistance < 0.5f && agent != null)
+        {
+            agent.SetDestination(targetSpot.position);
+        }
 
         // Rotate towards target
         if (direction.sqrMagnitude > 0.001f)
@@ -74,7 +81,7 @@ public class Barry : MonoBehaviour
         {
             this.gameObject.SetActive(false);
             //ObjectiveManager.Instance.AddProgress(linkedHouseObjective.objectiveID, 1);
-            Debug.Log("Darry has reached the door.");
+            Debug.Log("Barry has reached the door.");
         }
     }
 

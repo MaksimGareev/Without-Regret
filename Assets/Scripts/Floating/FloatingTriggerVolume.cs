@@ -5,12 +5,15 @@ public class FloatingTriggerVolume : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private GameObject player;
-    [SerializeField] private GameObject iconPrefab;
-    [SerializeField] private Vector3 iconOffset = new Vector3(0f, 2f, 0f);
-    [SerializeField] private bool shouldShowIcon = true;
-    private GameObject popupInstance;
 
-    
+    public float interactionPriority => 1f;
+    [SerializeField] private InteractType interactType => InteractType.Float;
+    //[SerializeField] private GameObject iconPrefab;
+    //[SerializeField] private Vector3 iconOffset = new Vector3(0f, 2f, 0f);
+    //[SerializeField] private bool shouldShowIcon = true;
+    //private GameObject popupInstance;
+
+    private bool playerInRange = false;
     private PlayerFloating playerFloating;
 
     private void Start()
@@ -34,12 +37,22 @@ public class FloatingTriggerVolume : MonoBehaviour
 
     private void Update()
     {
-        if (playerFloating == null)
+        if (!playerInRange || playerFloating == null || ButtonIcons.Instance == null)
         {
-            //Debug.LogError("PlayerFloating component is missing. Cannot update popup icon state.");
+           // Debug.LogError("PlayerFloating component is missing. Cannot update popup icon state.");
             return;
         }
-            
+
+        if (playerFloating.IsFloating || playerFloating.IsCoolingDown)
+        {
+            ButtonIcons.Instance.Clear();
+        }
+        else
+        {
+            ButtonIcons.Instance.Highlight(InteractType.Float);
+        }
+
+         /*   
         if (shouldShowIcon && popupInstance == null && !playerFloating.IsFloating && !playerFloating.IsCoolingDown)
         {
             EnablePopupIcon();
@@ -47,9 +60,10 @@ public class FloatingTriggerVolume : MonoBehaviour
         else if (!shouldShowIcon && popupInstance != null)
         {
             DisablePopupIcon();
-        }
+        }*/
     }
 
+    /*
     public void EnablePopupIcon()
     {
         if (popupInstance == null && iconPrefab != null && PopupManager.Instance != null)
@@ -69,6 +83,7 @@ public class FloatingTriggerVolume : MonoBehaviour
             shouldShowIcon = false;
         }
     }
+    */
 
     private void OnTriggerEnter(Collider other)
     {
@@ -77,6 +92,12 @@ public class FloatingTriggerVolume : MonoBehaviour
             player = other.gameObject;
             playerFloating = player.GetComponent<PlayerFloating>();
             playerFloating.SetCanFloat(true);
+            playerInRange = true;
+
+            if (!playerFloating.IsFloating && !playerFloating.IsCoolingDown)
+            {
+                ButtonIcons.Instance?.Highlight(InteractType.Float);
+            }
         }
     }
 
@@ -87,6 +108,9 @@ public class FloatingTriggerVolume : MonoBehaviour
             playerFloating.SetCanFloat(false);
             player = null;
             playerFloating = null;
+            playerInRange = false;
+
+            ButtonIcons.Instance?.Clear();
         }
     }
 
