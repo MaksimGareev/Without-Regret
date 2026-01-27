@@ -29,6 +29,8 @@ public class PlayerThrowing : MonoBehaviour
     private float currentCharge = 0f;
     private bool usingController;
 
+    public Animator animator;
+
     private void Start()
     {
         if (powerSlider != null)
@@ -43,6 +45,7 @@ public class PlayerThrowing : MonoBehaviour
     }
     private void Awake()
     {
+        animator = GetComponent<Animator>();
         if (inventory == null)
         {
             inventory = GetComponent<Inventory>();
@@ -137,6 +140,7 @@ public class PlayerThrowing : MonoBehaviour
                         powerSlider.value = 0f;
                         powerSlider.gameObject.SetActive(false);
                     }
+                    animator.SetTrigger("Throw"); //play throw animation when button is released
                 }
             }
             else
@@ -151,6 +155,7 @@ public class PlayerThrowing : MonoBehaviour
                         powerSlider.value = 0f;
                         powerSlider.gameObject.SetActive(false);
                     }
+                    animator.SetTrigger("Throw"); //play throw animation when button is released
                 }
             }
         }
