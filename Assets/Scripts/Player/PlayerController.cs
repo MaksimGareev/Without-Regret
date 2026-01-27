@@ -53,7 +53,11 @@ public class PlayerController : MonoBehaviour, ISaveable
         animator = GetComponentInChildren<Animator>();
 
 
-        staminaSlider = GameObject.Find("StaminaSlider")?.GetComponent<Slider>();
+        if (staminaSlider == null)
+        {
+            staminaSlider = GameObject.Find("StaminaSlider")?.GetComponent<Slider>();
+        }
+
         if (staminaSlider != null)
         {
             staminaSlider.maxValue = SprintDuration;
