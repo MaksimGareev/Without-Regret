@@ -1,4 +1,8 @@
 using UnityEngine;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine.AI;
 
 public class EnemyFieldOfView : MonoBehaviour
 {
@@ -16,27 +20,41 @@ public class EnemyFieldOfView : MonoBehaviour
     // player reference
     public Transform playerRef;
 
-    [HideInInspector] public float radius;
-    [HideInInspector] public float angle;
-
-    public bool canSeePlayer;
-
     // Smoothing
     public bool smoothFOV = true;
     public float fovSmoothSpeed = 2f;
 
     public DialogueManager dialogueManager;
 
+    public float radius; // field of view radius around player
+    public float aggroRadius; // bigger radius that the enemy uses when chasing an entity
+    [Range(0, 360)]
+    public float angle; // viewing angle of enemy
+    private float m_Distance;
+
+    public GameObject playerObj; // object enemy is looking for
+    private NavMeshAgent m_Agent; // NavMesh variable for enemy
+
+    public LayerMask targetMask; // layer of what the enemy targets
+    public LayerMask obstructionMask; // layer of objects that block the enmey's view
+
+    public bool canSeePlayer; // if the player is in the enemy's field of view
+    public float chaseDuration = 1; 
+    public float maxChaseDuration = 1;
+
+    public float detectionRadius = 4f; //detects player/NPC if they get too close, regardless of whether they are in the FOV or not
+
     void Update()
     {
-        if (playerRef == null)
+        playerObj = GameObject.FindGameObjectWithTag("Player");
+
+        if (playerRef == null && playerObj != null)
         {
-            GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
-            if (playerObj != null)
-            {
-                playerRef = playerObj.transform;
-            }
+            playerRef = playerObj.transform;
         }
+        
+        StartCoroutine(FOVRoutine());
+        m_Agent = GetComponent<NavMeshAgent>();
 
         UpdateFOVBasedOnMorality();
 
@@ -88,42 +106,6 @@ public class EnemyFieldOfView : MonoBehaviour
         }
 
         canSeePlayer = false;
-    }
-}
-
-/*using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.AI;
-
-public class EnemyFieldOfView : MonoBehaviour
-{
-    public float radius; // field of view radius around player
-    public float aggroRadius; // bigger radius that the enemy uses when chasing an entity
-    [Range(0, 360)]
-    public float angle; // viewing angle of enemy
-    private float m_Distance;
-
-    public GameObject playerRef; // object enemy is looking for
-    private NavMeshAgent m_Agent; // NavMesh variable for enemy
-
-    public LayerMask targetMask; // layer of what the enemy targets
-    public LayerMask obstructionMask; // layer of objects that block the enmey's view
-
-    public bool canSeePlayer; // if the player is in the enemy's field of view
-    public float chaseDuration = 1; 
-    public float maxChaseDuration = 1;
-
-    public float detectionRadius = 4f; //detects player/NPC if they get too close, regardless of whether they are in the FOV or not
-    
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        playerRef = GameObject.FindGameObjectWithTag("Player");
-        StartCoroutine(FOVRoutine());
-        m_Agent = GetComponent<NavMeshAgent>();
     }
 
     private IEnumerator FOVRoutine()
@@ -242,4 +224,3 @@ public class EnemyFieldOfView : MonoBehaviour
         return false;
     }
 }
-*/
