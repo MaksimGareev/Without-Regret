@@ -74,7 +74,7 @@ public class EnemyFieldOfView : MonoBehaviour
                 {
                     canSeePlayer = false;
                     angle = 90;
-                    Debug.Log("Player lost");
+                    //Debug.Log("Player lost");
                 }
             }
             //canSeePlayer = false;
@@ -90,7 +90,7 @@ public class EnemyFieldOfView : MonoBehaviour
         {
             canSeePlayer = false;
             angle = 90;
-            Debug.Log("Player lost");
+            //Debug.Log("Player lost");
 
         }
     }
