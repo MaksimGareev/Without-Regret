@@ -876,7 +876,7 @@ public class DialogueManager : MonoBehaviour
         if (playerThrowing != null) playerThrowing.enabled = true;
         if (TypingAudioSource != null) TypingAudioSource.Stop();
 
-        // Only auto follwo if Irene does not have a destination to travel to
+        // Only auto follow if Irene does not have a destination to travel to
         if (ireneNPC != null && ireneNPC.NPCNameMatches(NPCNameText.text))
         {
             if (ireneNPC.CanFollowPlayer)
