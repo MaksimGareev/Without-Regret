@@ -126,7 +126,7 @@ public class PlayerFishing : MonoBehaviour
         // enable line
         if (showLineRenderer) line.enabled = true;
 
-        // don't allow immediate reeling — enable after distance or delay
+        // don't allow immediate reeling ï¿½ enable after distance or delay
         canReel = false;
         input = false;
     }
