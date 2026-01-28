@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 public class PlayerInteracting : MonoBehaviour
 {
     [Header("References")]
-    [SerializeField] private GameObject promptUI;
+    //[SerializeField] private GameObject promptUI;
 
     [Header("General Settings")]
     [SerializeField] private InputActionAsset InputActions;
@@ -45,21 +45,26 @@ public class PlayerInteracting : MonoBehaviour
     {
         ScanForInteractable();
 
-    switch (currentTarget.interactType)
-        {
-            case InteractType.Mantle:
-                if (Mantle.triggered)
-                {
-                    currentTarget.OnPlayerInteraction(gameObject);
-                }
-                break;
+        if (currentTarget == null)
+            return;
 
-            case InteractType.Move:
-                if (Interact.triggered)
-                {
-                    currentTarget.OnPlayerInteraction(gameObject);
-                }
-                break;
+        var targetMono = currentTarget as MonoBehaviour;
+        if (targetMono == null)
+            return;
+
+        if (currentTarget.interactType == InteractType.Mantle)
+        {
+            if (Mantle != null && Mantle.triggered)
+            {
+                currentTarget.OnPlayerInteraction(gameObject);
+            }
+        }
+        else if (currentTarget.interactType == InteractType.Move)
+        {
+            if (Interact != null && Interact.triggered)
+            {
+                currentTarget.OnPlayerInteraction(gameObject);
+            }
         }
 
         /*
