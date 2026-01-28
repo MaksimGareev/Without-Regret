@@ -13,6 +13,7 @@ public class DialogueManager : MonoBehaviour
     public Transform ChoicesContainer;
     public GameObject ChoiceButton;
     public GameObject ContinueArrow;
+    public GameObject DirectionalImage;
 
     private List<GameObject> spawnedChoices = new List<GameObject>();
     private DialogueData currentDialogue;
@@ -42,22 +43,24 @@ public class DialogueManager : MonoBehaviour
     private int SelectedChoiceIndex = 0;
     private bool CanChoose = false;
     public TextMeshProUGUI PopupText;
-
+    public Image holdCircleImage;
     public float choiceDistance = 250f;
     private Dictionary<ChoiceDirection, DialogueChoice> directionalChoices = new();
-    public float holdTimeToSelect = 0.5f;
+    public float holdTimeToSelect = 1.2f;
     private float directionHoldTimer = 0f;
-    private ChoiceDirection? currentHeldDirection = null;
+    private ChoiceDirection? currentHeldDirection;
+    private bool isHoldingDirection = false;
 
     // Typing
     private Coroutine typeingRoutine;
     private string currentFullLine = "";
 
     // Random choice timer
-    public float choiceTimeLimit = 5f;
+    public float choiceTimeLimit = 15f;
+    public Slider ChoiceTimeSlider;
     private float choiceTimer;
     private Coroutine choiceTimerRoutine;
-    public TextMeshProUGUI TimerText;
+    //public TextMeshProUGUI TimerText;
 
     // Player references
     private Transform playerTransform;
@@ -74,6 +77,7 @@ public class DialogueManager : MonoBehaviour
 
     public Transform barryDestinationTransform;
     public Transform darryDestinationTransform;
+    public Transform ireneDestinationTransform;
 
     public static bool DialogueIsActive = false;
 
@@ -103,7 +107,14 @@ public class DialogueManager : MonoBehaviour
         controls.Dialogue.Confirm.canceled += ctx => ConfirmPressed = false;
     }
 
-    private void OnEnable() => controls.Enable();
+    private void OnEnable()
+    {
+        controls.Enable();
+        if (holdCircleImage != null)
+        {
+            ResetHoldUI();
+        }
+    }
     private void OnDisable() => controls.Disable();
 
     void Start()
@@ -131,6 +142,21 @@ public class DialogueManager : MonoBehaviour
     // -------------------- JSON Dialogue --------------------
     public void StartDialogueFromJson(TextAsset jsonFile, DialogueTrigger trigger)
     {
+
+        Debug.Log("DialogueManager: StartDialogueFromJson called");
+
+        if (!gameObject.activeInHierarchy)
+        {
+            Debug.LogError("DialogueManager GameObject is DISABLED!");
+            return;
+        }
+
+        if (DialoguePanel == null)
+        {
+            Debug.LogError("DialogueManager: DialoguePanel is NULL!");
+            return;
+        }
+
         activeDialogueTrigger = trigger;
         DialogueIsActive = true;
         GameObject player = GameObject.FindGameObjectWithTag("Player");
@@ -158,6 +184,19 @@ public class DialogueManager : MonoBehaviour
 
         currentDialogue = JsonUtility.FromJson<DialogueData>(jsonFile.text);
         currentIndex = 0;
+
+        if (currentDialogue == null)
+        {
+            Debug.LogError("DialogueData is NULL!");
+        }
+        else if (currentDialogue.dialogueLines == null)
+        {
+            Debug.LogError("Dialogue lines are NULL! Check JSON field names");
+        }
+        else
+        {
+            Debug.Log($"Dialogue parsed successfully. Lines: {currentDialogue.dialogueLines.Count}");
+        }
 
         if (currentDialogue != null && currentDialogue.dialogueLines != null)
         {
@@ -199,55 +238,46 @@ public class DialogueManager : MonoBehaviour
 
     private void ShowCurrentLine()
     {
-        ContinueArrow.SetActive(false);
+
+        if (currentIndex >= currentDialogue.dialogueLines.Count)
+        {
+            EndDialogue();
+            return;
+        }
 
         DialogueLine line = currentDialogue.dialogueLines[currentIndex];
 
         if (line.requiredMorality != 0)
         {
-            if ((line.requiredMorality > 0 && playerMorality < line.requiredMorality) || (line.requiredMorality < 0 && playerMorality > line.requiredMorality))
+            if((line.requiredMorality > 0 && playerMorality < line.requiredMorality)|| (line.requiredMorality < 0 && playerMorality > line.requiredMorality))
             {
                 currentIndex++;
-                if (currentIndex < currentDialogue.dialogueLines.Count)
-                {
-                    ShowCurrentLine();
-                }
-                else
-                {
-                    EndDialogue();
-                }
+                ShowCurrentLine();
                 return;
             }
         }
 
-        // Activate objective immediately when line is shown
-        if (line.objectivesToActivate != null && line.objectivesToActivate.Count > 0)
-        {
-            foreach (string objectiveID in line.objectivesToActivate)
-            {
-                if (!string.IsNullOrEmpty(objectiveID))
-                {
-                    Debug.Log("Activating objective from dialogue line: " + objectiveID);
-                    ObjectiveManager.Instance.ActivateObjectiveByID(objectiveID);
-                }
-            }
-        }
-        /*
-        StopCoroutine(nameof(TypeLine));
-        StartCoroutine(TypeLine(line.text));
-        */
         if (typeingRoutine != null)
         {
             StopCoroutine(typeingRoutine);
         }
 
         typeingRoutine = StartCoroutine(TypeLine(line.text));
-        // clear previous choices
+
         foreach (var b in spawnedChoices)
         {
             Destroy(b);
         }
         spawnedChoices.Clear();
+
+        ContinueArrow.SetActive(false);
+
+        // hide slider durring NPC talking
+        if (ChoiceTimeSlider != null)
+        {
+            ChoiceTimeSlider.gameObject.SetActive(false);
+        }
+
     }
 
     private IEnumerator TypeLine(string text)
@@ -256,39 +286,65 @@ public class DialogueManager : MonoBehaviour
         DialogueText.text = "";
         currentFullLine = text;
 
+        int soundCounter = 0;
+        int soundInterval = 2;
+
         string[] words = text.Split(' ');
 
-        foreach (string word in words)
+        foreach (char c in text)
         {
-            // Skip empty entries
-            if (string.IsNullOrWhiteSpace(word))
-                continue;
-
-            // If skip requested, instantly finish
-            if (ConfirmPressed)
+            // Finish line instantly if confirm pressed
+            if (ConfirmPressed && IsTyping)
             {
                 DialogueText.text = currentFullLine;
                 ConfirmPressed = false;
+                IsTyping = false;
                 break;
             }
 
-            DialogueText.text += word + " ";
-            
-            //char firstChar = char.ToUpper(word[0]);
-            foreach (char c in word)
+            DialogueText.text += c;
+
+            // Skip sounds for spaces
+            if (!char.IsWhiteSpace(c))
             {
-                char upperChar = char.ToUpper(c);
+                soundCounter++;
 
-                if (letterSounds.ContainsKey(upperChar))
+                char lookupChar = char.ToUpper(c);
+
+                if (soundCounter % soundInterval == 0 && letterSounds.ContainsKey(lookupChar))
                 {
-                    TypingAudioSource.PlayOneShot(letterSounds[upperChar]);
+                    TypingAudioSource.PlayOneShot(letterSounds[lookupChar], 0.7f);
                 }
-
-                // small delay so sounds to overlap
-                yield return new WaitForSeconds(0.015f);
             }
 
-            yield return new WaitForSeconds(0.02f);
+            float baseDelay = 0.035f;
+            float randomOffset = Random.Range(-0.02f, 0.02f);
+            yield return new WaitForSeconds(baseDelay + randomOffset);
+
+            float punctuationPause = GetPauseForCharacter(c);
+            if (punctuationPause > 0f)
+            {
+                yield return new WaitForSeconds(punctuationPause);
+            }
+        }
+
+        float GetPauseForCharacter(char c)
+        {
+            switch (c)
+            {
+                case '.':
+                case '!':
+                case '?':
+                    return 0.25f;
+
+                case ',':
+                case ';':
+                case ':':
+                    return 0.12f;
+
+                default:
+                    return 0f;
+            }
         }
 
         IsTyping = false;
@@ -313,6 +369,8 @@ public class DialogueManager : MonoBehaviour
 
     private IEnumerator WaitForNextLine()
     {
+        if (IsTyping) yield break;
+
         // Wait for player confirm to advance
         while (!ConfirmPressed)
         {
@@ -330,8 +388,15 @@ public class DialogueManager : MonoBehaviour
                 ireneNPC.StartTravel();
                 ireneNPC.IsFollowing = false;
             }
+
+            if (ireneNPC != null && activeDialogueTrigger.NPCName == "Irene" && activeDialogueTrigger.TalkedAlready)
+            {
+                ireneNPC.targetSpot = ireneDestinationTransform;
+                ireneNPC.StartTravel();
+            }
+
             // Move Barry if assigned
-            if (barryNPC != null && (activeDialogueTrigger.NPCName == "Barry" || activeDialogueTrigger.NPCName == "Darry") && activeDialogueTrigger.TalkedAlready)
+                if (barryNPC != null && (activeDialogueTrigger.NPCName == "Barry" || activeDialogueTrigger.NPCName == "Darry") && activeDialogueTrigger.TalkedAlready)
             {
                 barryNPC.StartTravel();
             }
@@ -390,6 +455,17 @@ public class DialogueManager : MonoBehaviour
         };
     }
 
+    private void PositionDirectionalCross()
+    {
+        if (DirectionalImage == null) return;
+
+        RectTransform rt = DirectionalImage.GetComponent<RectTransform>();
+        rt.SetParent(ChoicesContainer, false);
+        rt.anchoredPosition = Vector2.zero;
+        rt.localScale = Vector3.one;
+
+    }
+
     private void SpawnChoices(List<DialogueChoice> choices)
     {
         // Clear old
@@ -397,6 +473,13 @@ public class DialogueManager : MonoBehaviour
         spawnedChoices.Clear();
         directionalChoices.Clear();
         ChoicesContainer.gameObject.SetActive(true);
+
+        // Spawn direction cross
+        if (DirectionalImage != null)
+        {
+            DirectionalImage.SetActive(true);
+            PositionDirectionalCross();
+        }
 
         foreach (DialogueChoice choice in choices)
         {
@@ -423,6 +506,13 @@ public class DialogueManager : MonoBehaviour
         SelectedChoiceIndex = 0;
         //UpdateChoiceHighlight();
 
+        // activate slider
+        if (ChoiceTimeSlider != null)
+        {
+            ChoiceTimeSlider.gameObject.SetActive(true);
+            ChoiceTimeSlider.value = 1f;
+        }
+
         // Start timer countdown for auto-select
         if (choiceTimerRoutine != null)
         {
@@ -434,59 +524,97 @@ public class DialogueManager : MonoBehaviour
 
     private void HandleChoiceInput()
     {
-        if (!CanChoose || spawnedChoices.Count == 0) return;
-
-        Vector2 input = new Vector2(
-            controls.Dialogue.Move.ReadValue<Vector2>().x,
-            controls.Dialogue.Move.ReadValue<Vector2>().y
-            );
-
-        if (input.magnitude < 0.6f)
+        if ((!CanChoose || spawnedChoices.Count == 0) && holdCircleImage != null)
         {
-            directionHoldTimer = 0f;
-            currentHeldDirection = null;
+            ResetHoldUI();
             return;
         }
 
-        ChoiceDirection dir = GetDirectionFromInput(input);
+        Vector2 input = controls.Dialogue.Move.ReadValue<Vector2>();
 
-        if (currentHeldDirection != dir)
+        const float deadzone = 0.4f;
+
+        // if released cancel circle
+        if (input.sqrMagnitude < deadzone * deadzone)
         {
-            currentHeldDirection = dir;
+            ResetHoldUI();
+            return;
+        }
+
+        if (!isHoldingDirection)
+        {
+            currentHeldDirection = GetDirectionFromInput(input);
             directionHoldTimer = 0f;
+            isHoldingDirection = true;
+        }
+
+        // check
+        if (currentHeldDirection == null)
+        {
+            return;
         }
 
         directionHoldTimer += Time.deltaTime;
 
+        ChoiceDirection dir = currentHeldDirection.Value;
+
         HighlightDirection(dir);
-
-        if (directionHoldTimer >= holdTimeToSelect)
+        if (holdCircleImage != null)
         {
-            SelectDirectionalChoice(dir);
-            directionHoldTimer = 0f;
+            UpdateHoldUI(directionHoldTimer / holdTimeToSelect);
+        }
+        
+        if (directionHoldTimer >= holdTimeToSelect && holdCircleImage != null)
+        {
+            CompleteHold(dir);
+        }
+    }
+
+    private void UpdateHoldUI(float progress)
+    {
+        if (holdCircleImage == null) 
+        {
+            Debug.LogWarning("Hold circle image not assigned!");
+            return;
         }
 
-        /*if (Time.time - lastInputTime >= inputCooldown)
+        if (!holdCircleImage.gameObject.activeSelf)
         {
-            if (MoveUpPressed)
-            {
-                SelectedChoiceIndex = (SelectedChoiceIndex - 1 + spawnedChoices.Count) % spawnedChoices.Count;
-                UpdateChoiceHighlight();
-                MoveUpPressed = false;
-            }
-
-            if (MoveDownPressed)
-            {
-                SelectedChoiceIndex = (SelectedChoiceIndex + 1) % spawnedChoices.Count;
-                UpdateChoiceHighlight();
-                MoveDownPressed = false;
-            }
+            holdCircleImage.gameObject.SetActive(true);
         }
-        if (ConfirmPressed)
+
+        holdCircleImage.fillAmount = Mathf.Clamp01(progress);
+    }
+
+    private void ResetHoldUI()
+    {
+        if (holdCircleImage == null) 
         {
-            OnChoiceSelected(currentDialogue.dialogueLines[currentIndex].choices[SelectedChoiceIndex]);
-            ConfirmPressed = false;
-        }*/
+            Debug.LogWarning("Hold circle image not assigned!");
+            return;
+        }
+        
+        directionHoldTimer = 0f;
+        isHoldingDirection = false;
+
+        if (holdCircleImage.gameObject.activeSelf)
+        {
+            holdCircleImage.fillAmount = 0f;
+            holdCircleImage.gameObject.SetActive(false);
+        }
+    }
+
+    private void CompleteHold(ChoiceDirection dir)
+    {
+        if (holdCircleImage == null) 
+        {
+            Debug.LogWarning("Hold circle image not assigned!");
+            return;
+        }
+
+        holdCircleImage.fillAmount = 1f;
+        SelectDirectionalChoice(dir);
+        ResetHoldUI();
     }
 
     private ChoiceDirection GetDirectionFromInput(Vector2 input)
@@ -513,6 +641,7 @@ public class DialogueManager : MonoBehaviour
 
     private void HighlightDirection(ChoiceDirection dir)
     {
+        // base color of text is white
         foreach (var obj in spawnedChoices)
         {
             var txt = obj.GetComponentInChildren<TextMeshProUGUI>();
@@ -521,25 +650,34 @@ public class DialogueManager : MonoBehaviour
 
         if (!directionalChoices.ContainsKey(dir)) return;
 
-        DialogueChoice choice = directionalChoices[dir];
+        DialogueChoice selectedChoice = directionalChoices[dir];
 
-        int index = spawnedChoices.FindIndex(o =>
-            o.GetComponentInChildren<TextMeshProUGUI>().text == choice.text);
+        int selectedIndex = spawnedChoices.FindIndex(o =>
+            o.GetComponentInChildren<TextMeshProUGUI>().text == selectedChoice.text);
 
-        if (index >= 0)
+        if (selectedIndex >= 0)
         {
-            spawnedChoices[index].GetComponentInChildren<TextMeshProUGUI>().color = Color.yellow;
+            var selectedText = spawnedChoices[selectedIndex].GetComponentInChildren<TextMeshProUGUI>();
+
+            // highlight good choice to green
+            if (selectedChoice.moralityChange > 0)
+            {
+                selectedText.color = Color.green;
+            }
+            // highlight bad choice to red
+            else if (selectedChoice.moralityChange < 0)
+            {
+                selectedText.color = Color.red;
+            }
+            // highlight nuetral choice to yellow
+            else
+            {
+                selectedText.color = Color.yellow;
+            }
+
+            holdCircleImage.transform.position = spawnedChoices[selectedIndex].transform.position;
         }
     }
-
-   /* private void UpdateChoiceHighlight()
-    {
-        for (int i = 0; i < spawnedChoices.Count; i++)
-        {
-            var text = spawnedChoices[i].GetComponentInChildren<TextMeshProUGUI>();
-            text.color = (i == SelectedChoiceIndex) ? Color.yellow : Color.white;
-        }
-    }*/
 
     private void OnChoiceSelected(DialogueChoice chosen)
     {
@@ -550,6 +688,11 @@ public class DialogueManager : MonoBehaviour
         {
             StopCoroutine(choiceTimerRoutine);
             choiceTimerRoutine = null;
+        }
+
+        if (DirectionalImage != null)
+        {
+            DirectionalImage.SetActive(false);
         }
 
         CanChoose = false;
@@ -589,9 +732,15 @@ public class DialogueManager : MonoBehaviour
             EndDialogue();
         }
 
-        if (TimerText != null)
+        /*if (TimerText != null)
         {
             TimerText.text = "";
+        }*/
+
+        // hide slider agian when choice is selected
+        if (ChoiceTimeSlider != null)
+        {
+            ChoiceTimeSlider.gameObject.SetActive(false);
         }
 
     }
@@ -600,37 +749,44 @@ public class DialogueManager : MonoBehaviour
     {
         choiceTimer = choiceTimeLimit;
 
+        if (ChoiceTimeSlider != null)
+        {
+            ChoiceTimeSlider.gameObject.SetActive(true);
+            ChoiceTimeSlider.value = 1f;
+        }
+
         while (choiceTimer > 0f && CanChoose)
         {
-            if (TimerText != null)
-            {
-                TimerText.gameObject.SetActive(true);
-                TimerText.text = Mathf.CeilToInt(choiceTimer).ToString();
-            }
-            else
-            {
-                TimerText.gameObject.SetActive(false);
-            }
             choiceTimer -= Time.deltaTime;
+
+            if (ChoiceTimeSlider != null)
+            {
+                // Normalize time (1 to 0)
+                ChoiceTimeSlider.value = choiceTimer / choiceTimeLimit;
+            }
+
             yield return null;
         }
 
-        // Timer has expired and the player hasnt chosen anything
+        if (ChoiceTimeSlider != null)
+        {
+            ChoiceTimeSlider.gameObject.SetActive(false);
+        }
+
+        // Timer expired and player didn't choose
         if (CanChoose)
         {
             DialogueChoice fallback = null;
-
-            // Try to find a neutral or negative morality choice
+            
             foreach (var c in choices)
             {
-                if (c.moralityChange <= 0)
+                if(c.moralityChange <= 0)
                 {
                     fallback = c;
                     break;
                 }
             }
 
-            // If no suitable one, just pick the first
             if (fallback == null && choices.Count > 0)
             {
                 fallback = choices[0];
@@ -638,10 +794,12 @@ public class DialogueManager : MonoBehaviour
 
             if (fallback != null)
             {
-                Debug.Log("timer expired auto selecting choice: " + fallback.text);
+                Debug.Log("Timer expired, auto-selecting choice: " + fallback.text);
                 OnChoiceSelected(fallback);
             }
         }
+
+    
     }
 
     public void ShowPopUp(string message, float duration = 1f)
@@ -692,6 +850,12 @@ public class DialogueManager : MonoBehaviour
         {
             activeDialogueTrigger.StopLookingAtPlayer();
             activeDialogueTrigger.ResumeWandering();
+
+            if (ButtonIcons.Instance != null)
+            {
+                ButtonIcons.Instance.Highlight(activeDialogueTrigger.interactType);
+            }
+
             activeDialogueTrigger = null;
         }
 
@@ -712,10 +876,10 @@ public class DialogueManager : MonoBehaviour
         if (playerThrowing != null) playerThrowing.enabled = true;
         if (TypingAudioSource != null) TypingAudioSource.Stop();
 
-        // Only auto follwo if Irene does not have a destination to travel to
+        // Only auto follow if Irene does not have a destination to travel to
         if (ireneNPC != null && ireneNPC.NPCNameMatches(NPCNameText.text))
         {
-            if (!ireneNPC.isTraveling)
+            if (ireneNPC.CanFollowPlayer)
             {
                 ireneNPC.IsFollowing = true;
             }

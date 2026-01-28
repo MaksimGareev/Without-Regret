@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class LockedItem : MonoBehaviour
+public class LockedItem : MonoBehaviour, IInteractable
 {
+   public InteractType interactType => InteractType.Lockpick;
+    public float interactionPriority => 5f;
+
     public float LockpickRange = 1.5f;
     private Transform player;
 
@@ -17,7 +20,7 @@ public class LockedItem : MonoBehaviour
     public bool isChest = false;
     private AudioSource audioSource;
     public bool hasBeenLockpicked = false;
-    private bool isInRange = false;
+    public bool isInRange = false;
 
     private PlayerControls controls;
 
@@ -34,7 +37,8 @@ public class LockedItem : MonoBehaviour
         audioSource.playOnAwake = false;
         hasBeenLockpicked = false;
 
-        player = GameObject.FindGameObjectWithTag("Player").transform;
+        player = GameObject.FindGameObjectWithTag("Player")?.transform;
+
         if (promptUI != null)
         {
             promptUI.SetActive(false);
@@ -56,9 +60,10 @@ public class LockedItem : MonoBehaviour
         // Disable interaction if already unlocked
         if (hasBeenLockpicked)
         {
-            DisablePopupIcon();
+            //DisablePopupIcon();
             Collider col = GetComponent<Collider>();
             if (col != null) col.enabled = false;
+            ButtonIcons.Instance?.Clear();
         }
     }
 
@@ -68,6 +73,11 @@ public class LockedItem : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (hasBeenLockpicked || player == null || ButtonIcons.Instance == null)
+        {
+            return;
+        }
+
         float dist = Vector3.Distance(player.position, transform.position); // Players position in relation to the pick up item
 
         if (dist <= LockpickRange)
@@ -75,10 +85,12 @@ public class LockedItem : MonoBehaviour
             if (!isInRange)
             {
                 isInRange = true;
-                if (!hasBeenLockpicked && promptUI != null)
+                /*if (!hasBeenLockpicked && promptUI != null)
                 {
                     promptUI.SetActive(true); // Show the prompt when the player is in range
-                }
+                }*/
+                 Debug.Log("Trying to highlight Lockpick icon");
+                 ButtonIcons.Instance.Highlight(InteractType.Lockpick);
             }
         }
         else
@@ -86,13 +98,16 @@ public class LockedItem : MonoBehaviour
             if (isInRange)
             {
                 isInRange = false;
-                if (promptUI != null)
+                /*if (promptUI != null)
                 {
                     promptUI.SetActive(false);
-                }
+                }*/
+                ButtonIcons.Instance.Clear();
+                
             }
         }
 
+        /*
         if (shouldShowIcon && popupInstance == null && iconPrefab != null && PopupManager.Instance != null && !hasBeenLockpicked)
         {
             EnablePopupIcon();
@@ -100,6 +115,15 @@ public class LockedItem : MonoBehaviour
         else if (hasBeenLockpicked && popupInstance != null)
         {
             DisablePopupIcon();
+        }*/
+    }
+
+    public void OnPlayerInteraction(GameObject player)
+    {
+        // Only try interaction if player is in range
+        if (isInRange && !hasBeenLockpicked)
+        {
+            TryInteract();
         }
     }
 
@@ -112,9 +136,9 @@ public class LockedItem : MonoBehaviour
         LockPickUI.SetActive(true);
         LockPickUI.GetComponent<LockPicking>().NewLock(this);//(this.gameObject);
 
-        if (promptUI != null)
+        /*if (promptUI != null)
             promptUI.SetActive(false);
-
+        */
         // Disable player movement
         PlayerController pc = player.GetComponent<PlayerController>();
         if (pc != null)
@@ -126,6 +150,7 @@ public class LockedItem : MonoBehaviour
         PlayerFloating pf = player.GetComponent<PlayerFloating>();
         if (pf != null)
             pf.enabled = false;
+        ButtonIcons.Instance?.Clear();
     }
 
     public void OnUnlocked()
@@ -156,8 +181,11 @@ public class LockedItem : MonoBehaviour
             // add animation for chest or drawer
         }
 
+        ButtonIcons.Instance?.Clear();
+
         if (SaveManager.Instance != null)
         {
+            SaveManager.Instance.SetUnlocked(gameObject.name, true);
             SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
         }
 
