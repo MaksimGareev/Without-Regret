@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class DialogueTrigger : MonoBehaviour
+public class DialogueTrigger : MonoBehaviour, IInteractable
 {
+    public float interactionPriority => 10f;
+    public InteractType interactType => InteractType.Dialogue;
+
     public string NPCName = "Friendly NPC";
     public GameObject promptUI;
     public float chatRange = 3f;
@@ -31,7 +34,7 @@ public class DialogueTrigger : MonoBehaviour
 
     private bool playerInRange = false;
     private Transform player;
-    private PlayerControls controls;
+    //private PlayerControls controls;
     public bool TalkedAlready = false;
 
     [SerializeField] private GameObject iconPrefab;
@@ -43,13 +46,13 @@ public class DialogueTrigger : MonoBehaviour
 
     private void Awake()
     {
-        controls = new PlayerControls();
+        //controls = new PlayerControls();
 
-        controls.Player.Interact.performed += ctx => TryInteract();
+       // controls.Player.Interact.performed += ctx => TryInteract();
     }
 
-    private void OnEnable() => controls.Enable();
-    private void OnDisable() => controls.Disable();
+   // private void OnEnable() => controls.Enable();
+   // private void OnDisable() => controls.Disable();
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -62,6 +65,12 @@ public class DialogueTrigger : MonoBehaviour
         // Dialogue Manager
         dialogueManager = FindObjectOfType<DialogueManager>();
 
+        if (NPCName == "Story")
+        {
+            shouldShowIcon = false;
+            DisablePopupIcon();
+        }
+
         if (promptUI != null)
             promptUI.SetActive(false);
 
@@ -69,44 +78,29 @@ public class DialogueTrigger : MonoBehaviour
             enemy.SetActive(false);
     }
 
+    public void OnPlayerInteraction(GameObject player)
+    {
+        Irene irene = GetComponent<Irene>();
+        if (irene != null && irene.IsFollowing)
+        {
+            Debug.Log("Irene Cannot talk to Irene while she is following");
+            return;
+        }
+
+        TryInteract();
+    }
+
     // Update is called once per frame
     void Update()
     {
-        // Distance to player
-        float dist = Vector3.Distance(player.position, transform.position);
-
-        // Show/Hide prompt UI
-        if (dist <= chatRange)
-        {
-            if (!playerInRange)
-            {
-                playerInRange = true;
-                if (iconPrefab != null)
-                    iconPrefab.SetActive(true);
-                if (promptUI != null)
-                    promptUI.SetActive(true);
-            }
-        }
-        else
-        {
-            if (playerInRange)
-            {
-                playerInRange = false;
-                if (iconPrefab != null)
-                    iconPrefab.SetActive(false);
-                if (promptUI != null)
-                    promptUI.SetActive(false);
-            }
-        }
-
-        if (shouldShowIcon && popupInstance == null && iconPrefab != null && PopupManager.Instance != null && !playerInRange)
+        /*if (shouldShowIcon && popupInstance == null && iconPrefab != null && PopupManager.Instance != null && !playerInRange)
         {
             EnablePopupIcon();
         }
         else if (!shouldShowIcon && popupInstance != null)
         {
             DisablePopupIcon();
-        }
+        }*/
 
         if (isLookingAtPlayer && !IsMediation)
         {
@@ -134,9 +128,18 @@ public class DialogueTrigger : MonoBehaviour
 
     private void TryInteract()
     {
-        // Only trigger if player is close enough and not already in dialogue
-        if (!playerInRange || PlayerController.DialogueActive)
+        if (DialogueManager.DialogueIsActive)
+        {
+            Debug.Log("Dialogue already active, ignoring interaction.");
             return;
+        }
+
+        Debug.Log("DialogueTrigger: TryInteract called");
+
+        if (ButtonIcons.Instance != null)
+        {
+            ButtonIcons.Instance.Clear();
+        }
 
         // stop wandering when dialogue starts
         if (npcWander != null)
@@ -165,6 +168,7 @@ public class DialogueTrigger : MonoBehaviour
         // if all are completed play completed dialogue
         if (allCompleted && CompleteJsonDialogueFile != null && TalkedAlready == true)
         {
+            Debug.Log("DialogueTrigger: Starting dialogue from JSON");
             dialogueManager.StartDialogueFromJson(CompleteJsonDialogueFile, this);
 
             if (ObjectiveManager.Instance != null && linkedObjective != null)
@@ -191,6 +195,7 @@ public class DialogueTrigger : MonoBehaviour
         // if any are active play active dialogue
         if (anyActive && ActiveJsonDialogueFile != null)
         {
+            Debug.Log("DialogueTrigger: Starting dialogue from JSON");
             dialogueManager.StartDialogueFromJson(ActiveJsonDialogueFile, this);
             return;
         }
@@ -198,6 +203,7 @@ public class DialogueTrigger : MonoBehaviour
         // Starting dialogue
         if (dialogueManager != null && jsonDialogueFile != null && TalkedAlready == false)
         {
+            Debug.Log("DialogueTrigger: Starting dialogue from JSON");
             dialogueManager.StartDialogueFromJson(jsonDialogueFile, this);
             
             // Add Progress to objective if there is one to add to, (Talking to irene completes the "talk to irene" objective)
@@ -212,8 +218,9 @@ public class DialogueTrigger : MonoBehaviour
             TalkedAlready = true;
         }
         // dialogue if the npc has already been talked to and hasn't started any objectives from the npc
-        else if (TalkedAlready == true)
+        else if (TalkedAlready == true && TalkedJsonDialogueFile != null)
         {
+            Debug.Log("DialogueTrigger: Starting dialogue from JSON");
             dialogueManager.StartDialogueFromJson(TalkedJsonDialogueFile, this);
 
             if (ObjectiveManager.Instance != null && linkedObjective != null)
@@ -260,6 +267,8 @@ public class DialogueTrigger : MonoBehaviour
 
     public void EnablePopupIcon()
     {
+        if (NPCName == "Story") return;
+
         if (popupInstance == null && iconPrefab != null && PopupManager.Instance != null)
         {
             popupInstance = PopupManager.Instance.CreatePopup(this.transform, iconPrefab).gameObject;

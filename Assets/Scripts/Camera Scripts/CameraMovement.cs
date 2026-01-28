@@ -23,6 +23,7 @@ public class CameraMovement : MonoBehaviour
 
     [Header("Camera Control Settings")]
     [SerializeField] private bool rotateCamera = false;
+    [SerializeField] private bool restrictYaw = false;
     [SerializeField] private float rotateSpeed = 120f;
     [SerializeField] private float maxPitch = 45f;
     [SerializeField] private float maxYaw = 120f;
@@ -39,6 +40,7 @@ public class CameraMovement : MonoBehaviour
     private Vector3 camPosCache = Vector3.zero;
     private Quaternion camRotCache = Quaternion.identity;
     private Vector3 lookAtCache = Vector3.zero;
+    //public Transform player;
 
     private Vector3 currentOffset;
     private Vector3 currentLookAtOffset;
@@ -181,7 +183,15 @@ public class CameraMovement : MonoBehaviour
         yaw -= horizontalInput * rotateSpeed * Time.deltaTime;
         pitch -= verticalInput * rotateSpeed * Time.deltaTime;
 
-        yaw = Mathf.Clamp(yaw, -Mathf.Abs(maxYaw), Mathf.Abs(maxYaw));
+        if (restrictYaw)
+        {
+            yaw = Mathf.Clamp(yaw, -maxYaw, maxYaw);
+        }
+        else
+        {
+            yaw = Mathf.Repeat(yaw + 180f, 360f) - 180f;
+        }
+
         pitch = Mathf.Clamp(pitch, -Mathf.Abs(maxPitch), Mathf.Abs(maxPitch));
 
         Quaternion rotation = initialRotation * Quaternion.Euler(pitch, yaw, 0f);
@@ -198,7 +208,11 @@ public class CameraMovement : MonoBehaviour
             return;
         }
 
-        yaw = Mathf.Lerp(yaw, 0f, returnSpeed * Time.deltaTime);
+        if (restrictYaw)
+        {
+            yaw = Mathf.Lerp(yaw, 0f, returnSpeed * Time.deltaTime);
+        }
+        
         pitch = Mathf.Lerp(pitch, 0f, returnSpeed * Time.deltaTime);
 
         Quaternion rotation = initialRotation * Quaternion.Euler(pitch, yaw, 0f);
@@ -282,36 +296,50 @@ public class CameraMovement : MonoBehaviour
         StartCoroutine(EndCameraZoom());
     }
 
-    public IEnumerator StartCameraZoom(Transform target, bool dialogue = false)
+    public IEnumerator StartCameraZoom(Transform npc, bool dialogue = false)
     {
         isZooming = true;
-        Vector3 offset;
 
-        if (dialogue)
-        {
-            offset = target.right * 1f + target.forward * 5f + Vector3.up * 2f;
-        }
-        else 
-        {
-            offset = pickupOffset;
-        } 
-
+        // Cashe current camera transform
         camPosCache = transform.position;
         camRotCache = transform.rotation;
 
-        Vector3 targetPos = target.position + (transform.forward * 1f) + offset;
-        Quaternion targetRot = Quaternion.LookRotation(target.position - transform.position);
+        // Direction the player is facing
+        Vector3 playerForward = npc.position - target.position;
+        playerForward.y = 0f;
+        playerForward.Normalize();
 
-        lookAtCache = target.position;
+        // Offset relative to the player
+        Vector3 offset;
+        if (dialogue)
+        {
+            // Offset behind player, up, and to the right
+            offset = -playerForward * 3f + target.right * 2f + Vector3.up * 2f;
+        }
+        else
+        {
+            offset = pickupOffset;
+        }
 
-        float t = 0;
+        // Target position
+        Vector3 targetPos = target.position + offset;
+
+        // Target Rotation
+        Quaternion targetRot = Quaternion.LookRotation(npc.position - targetPos);
+
+        lookAtCache = npc.position;
+
+        float t = 0f;
         while (t < zoomDuration)
         {
             t += Time.deltaTime * transitionSpeed;
             transform.position = Vector3.Lerp(camPosCache, targetPos, t);
             transform.rotation = Quaternion.Slerp(camRotCache, targetRot, t);
-            transform.LookAt(lookAtCache);
             yield return null;
         }
+
+        transform.position = targetPos;
+        transform.rotation = targetRot;
     }
+
 }
