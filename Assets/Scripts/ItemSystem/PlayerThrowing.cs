@@ -33,6 +33,8 @@ public class PlayerThrowing : MonoBehaviour
     private bool usingController;
     private Vector3 PointerScale;
 
+    public Animator animator;
+
     private void Start()
     {
         if (powerSlider != null)
@@ -49,6 +51,7 @@ public class PlayerThrowing : MonoBehaviour
     }
     private void Awake()
     {
+        animator = GetComponent<Animator>();
         if (inventory == null)
         {
             inventory = GetComponent<Inventory>();
@@ -154,6 +157,7 @@ public class PlayerThrowing : MonoBehaviour
                         WorldThrowPointer.transform.localScale = PointerScale;
                         WorldThrowPointer.SetActive(false);
                     }
+                    animator.SetTrigger("Throw"); //play throw animation when button is released
                 }
             }
             else
@@ -171,6 +175,7 @@ public class PlayerThrowing : MonoBehaviour
                         WorldThrowPointer.transform.localScale = PointerScale;
                         WorldThrowPointer.SetActive(false);
                     }
+                    animator.SetTrigger("Throw"); //play throw animation when button is released
                 }
             }
         }
