@@ -12,6 +12,7 @@ public class PlayerInteracting : MonoBehaviour
     [SerializeField] private InputActionAsset InputActions;
     [SerializeField] private float interactionRange = 3f;
     [SerializeField] private float interactOffset = 1f;
+    
     private InputAction Interact;
     private InputAction Mantle;
 
@@ -25,15 +26,6 @@ public class PlayerInteracting : MonoBehaviour
     {
         Mantle = InputActions.FindActionMap("Player").FindAction("Jump");
         Interact = InputActions.FindActionMap("Player").FindAction("Interact");
-    }
-
-
-    private void Start()
-    {
-        if (promptUI != null)
-        {
-            promptUI.SetActive(false);
-        }
     }
 
     private void OnEnable()
@@ -52,20 +44,20 @@ public class PlayerInteracting : MonoBehaviour
     void Update()
     {
         ScanForInteractable();
-        
+
+        if (currentTarget != null && Interact.triggered)
+        {
+            currentTarget.OnPlayerInteraction(gameObject);
+        }
+
+        /*
         if (currentTarget != null && Interact.triggered)
         {
             currentTarget.OnPlayerInteraction(gameObject);
 
             ButtonIcons.Instance?.Clear();
             currentTarget = null;
-        }
-        
-        /*else if (ButtonIcons.Instance != null)
-        {
-            ButtonIcons.Instance.Clear();
-        }*/
-        
+        }        
         
         if (mantleTarget != null && Mantle.triggered)
         {
@@ -78,15 +70,27 @@ public class PlayerInteracting : MonoBehaviour
         else if (currentTarget != null && mantleTarget == null && Interact.triggered)
         {
             currentTarget.OnPlayerInteraction(gameObject);
-        }
+        }*/
     }
 
     private void ScanForInteractable()
     {
         Collider[] hits = Physics.OverlapSphere(transform.position, interactionRange);
-        //List<IInteractable> interactableList = new List<IInteractable>();
-        List<IInteractable> found = new();
 
+        currentTarget = hits.Select(h => h.GetComponent<IInteractable>()).Where(i => i != null).OrderByDescending(i => i.interactionPriority).FirstOrDefault();
+
+        if (currentTarget != null)
+        {
+            ButtonIcons.Instance?.Highlight(currentTarget.interactType);
+        }
+        else
+        {
+            ButtonIcons.Instance?.Clear();
+        }
+
+        //List<IInteractable> interactableList = new List<IInteractable>();
+        //List<IInteractable> found = new();
+        /*
         foreach (Collider hit in hits)
         {
             IInteractable interactable = hit.GetComponent<IInteractable>();
@@ -156,7 +160,7 @@ public class PlayerInteracting : MonoBehaviour
             }
             mantleTarget = null;
             moveTarget = null;
-        }
+        }*/
     }
     
     private void OnDrawGizmosSelected()
