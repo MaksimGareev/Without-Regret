@@ -45,9 +45,21 @@ public class PlayerInteracting : MonoBehaviour
     {
         ScanForInteractable();
 
-        if (currentTarget != null && Interact.triggered)
+    switch (currentTarget.interactType)
         {
-            currentTarget.OnPlayerInteraction(gameObject);
+            case InteractType.Mantle:
+                if (Mantle.triggered)
+                {
+                    currentTarget.OnPlayerInteraction(gameObject);
+                }
+                break;
+
+            case InteractType.Move:
+                if (Interact.triggered)
+                {
+                    currentTarget.OnPlayerInteraction(gameObject);
+                }
+                break;
         }
 
         /*
