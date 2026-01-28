@@ -1,6 +1,6 @@
 using UnityEngine;
 using System.Collections;
-using Unity.AI.Navigation;
+//using Unity.AI.Navigation;
 using System.Reflection;
 using System;
 
@@ -37,6 +37,7 @@ public class MoveableObject : MonoBehaviour, IInteractable
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
+        rb.interpolation = RigidbodyInterpolation.Interpolate;
         coll = GetComponent<Collider>();
     }
 
@@ -56,9 +57,13 @@ public class MoveableObject : MonoBehaviour, IInteractable
 
     private void Grab(Transform grabTransform)
     {
+        if (!isGrabbable) return;
+
         grabPoint = grabTransform;
         //this.grabPoint = grabPoint;
         IsGrabbed = true;
+        rb.linearVelocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
 
         rb.isKinematic = true;
 
@@ -72,8 +77,9 @@ public class MoveableObject : MonoBehaviour, IInteractable
         grabPoint = null;
 
         rb.isKinematic = false;
-        rb.linearVelocity = Vector3.zero;
-        rb.angularVelocity = Vector3.zero;
+        rb.WakeUp();
+        //rb.linearVelocity = Vector3.zero;
+        //rb.angularVelocity = Vector3.zero;
 
         /*
         // reshow Icon if close to item
@@ -132,6 +138,7 @@ public class MoveableObject : MonoBehaviour, IInteractable
         }
     }
 
+    /*
     private void FixedUpdate()
     {
         if (IsGrabbed && grabPoint != null)
@@ -154,7 +161,7 @@ public class MoveableObject : MonoBehaviour, IInteractable
         }
 
         // Debugging
-        /*
+        
         if (!IsGrabbed && IsOnGround() && rb.linearVelocity != Vector3.zero)
         {
             Debug.LogWarning($"MovableObject {gameObject.name} is moving at Linear Velocity: {rb.linearVelocity} while not grabbed.");
@@ -169,16 +176,23 @@ public class MoveableObject : MonoBehaviour, IInteractable
             // Not grabbed and not on ground; issue if it should be on ground
             Debug.DrawLine(coll.bounds.center, coll.bounds.center + Vector3.up * (coll.bounds.extents.y + groundCheckDistance), Color.red);
         }
-        */
-    }
+        
+    }*/
 
-    private void Update()
+    private void FixedUpdate()
     {
+        if (IsGrabbed && grabPoint != null)
+        {
+            transform.position = grabPoint.position;
+            transform.rotation = grabPoint.rotation;
+        }
+
+        /*
         float distance = Vector3.Distance(transform.position, player.position);
 
         if (distance > iconDistance) return;
 
-       /* if (shouldShowIcon && popupInstance == null && iconPrefab != null && PopupManager.Instance != null)
+        if (shouldShowIcon && popupInstance == null && iconPrefab != null && PopupManager.Instance != null)
         {
             ButtonIcons.Instance.Highlight(interactType);
         }
@@ -193,7 +207,7 @@ public class MoveableObject : MonoBehaviour, IInteractable
         mover = player.GetComponent<PlayerMovingObjects>();
         if (mover == null) return;
 
-        if (!IsGrabbed && isGrabbable)
+        if (!IsGrabbed)
         {
             Grab(mover.grabPoint);
             mover.OnMovingObject(moveSlowdownMultiplier);
@@ -208,6 +222,7 @@ public class MoveableObject : MonoBehaviour, IInteractable
         OnInteracted?.Invoke();
     }
 
+    /*
     private bool IsOnGround()
     {
         if (coll == null) return false;
@@ -224,5 +239,5 @@ public class MoveableObject : MonoBehaviour, IInteractable
         }
 
         return false;
-    }
+    }*/
 }

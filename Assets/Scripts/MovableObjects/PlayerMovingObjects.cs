@@ -15,9 +15,6 @@ public class PlayerMovingObjects : MonoBehaviour
     private void Awake()
     {
         animator = GetComponentInChildren<Animator>();
-    }
-    private void Start()
-    {
         playerController = gameObject.GetComponent<PlayerController>();
         normalMoveSpeed = playerController.Speed;
     }
@@ -55,9 +52,10 @@ public class PlayerMovingObjects : MonoBehaviour
         playerController.Speed = normalMoveSpeed;
         playerController.SetCanSprint(true);
 
-        if (animator != null)
+        if (playerController.animator != null)
         {
-            resetAnimations(); //exit animation state
+            playerController.animator.SetBool("isGrabbing", false);
+            //resetAnimations(); //exit animation state
         }
     }
 
