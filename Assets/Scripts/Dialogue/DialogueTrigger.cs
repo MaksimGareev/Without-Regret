@@ -65,6 +65,12 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
         // Dialogue Manager
         dialogueManager = FindObjectOfType<DialogueManager>();
 
+        if (NPCName == "Story")
+        {
+            shouldShowIcon = false;
+            DisablePopupIcon();
+        }
+
         if (promptUI != null)
             promptUI.SetActive(false);
 
@@ -87,14 +93,14 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
     // Update is called once per frame
     void Update()
     {
-        if (shouldShowIcon && popupInstance == null && iconPrefab != null && PopupManager.Instance != null && !playerInRange)
+        /*if (shouldShowIcon && popupInstance == null && iconPrefab != null && PopupManager.Instance != null && !playerInRange)
         {
             EnablePopupIcon();
         }
         else if (!shouldShowIcon && popupInstance != null)
         {
             DisablePopupIcon();
-        }
+        }*/
 
         if (isLookingAtPlayer && !IsMediation)
         {
@@ -261,6 +267,8 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
 
     public void EnablePopupIcon()
     {
+        if (NPCName == "Story") return;
+
         if (popupInstance == null && iconPrefab != null && PopupManager.Instance != null)
         {
             popupInstance = PopupManager.Instance.CreatePopup(this.transform, iconPrefab).gameObject;

@@ -10,7 +10,7 @@ public class PlaceRoses : MonoBehaviour, IInteractable
     public float interactionPriority => 0f;
     public InteractType interactType => InteractType.Pickup;
 
-    private void Start()
+  private void Start()
     {
         if (rosesVisual != null)
         {
