@@ -203,18 +203,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: efdca141980251c48b810cfcd47385c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  radius: 5
-  angle: 90
+  minRadius: 4
+  maxRadius: 8
+  minAngle: 50
+  maxAngle: 130
+  moralityEffect: 0.5
+  obstacleMask:
+    serializedVersion: 2
+    m_Bits: 0
+  playerMask:
+    serializedVersion: 2
+    m_Bits: 0
   playerRef: {fileID: 0}
+  smoothFOV: 1
+  fovSmoothSpeed: 2
+  dialogueManager: {fileID: 0}
+  radius: 5
+  aggroRadius: 0
+  angle: 90
+  playerObj: {fileID: 0}
   targetMask:
     serializedVersion: 2
     m_Bits: 8
   obstructionMask:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 1
   canSeePlayer: 0
   chaseDuration: 1
   maxChaseDuration: 1
+  detectionRadius: 4
 --- !u!114 &7884651440600371946
 MonoBehaviour:
   m_ObjectHideFlags: 0

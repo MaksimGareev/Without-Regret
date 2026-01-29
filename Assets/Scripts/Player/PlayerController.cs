@@ -51,15 +51,29 @@ public class PlayerController : MonoBehaviour, ISaveable
     {
         Controller = GetComponent<CharacterController>();
         animator = GetComponentInChildren<Animator>();
-        staminaSlider = GameObject.Find("StaminaSlider").GetComponent<Slider>();
-        staminaSlider.maxValue = SprintDuration;
+
+
+        if (staminaSlider == null)
+        {
+            staminaSlider = GameObject.Find("StaminaSlider")?.GetComponent<Slider>();
+        }
+
+        if (staminaSlider != null)
+        {
+            staminaSlider.maxValue = SprintDuration;
+        }
 
         if (PlayerCamera == null)
             PlayerCamera = Camera.main;
 
         SprintTimer = SprintDuration;
-        staminaSlider.value = SprintTimer;
-        staminaSlider.gameObject.SetActive(false);
+
+        if (staminaSlider != null)
+        {
+            staminaSlider.value = SprintTimer;
+            staminaSlider.gameObject.SetActive(false);
+        }
+        
         // Create ground check if missing
         if (groundCheck == null)
         {
@@ -250,7 +264,7 @@ public class PlayerController : MonoBehaviour, ISaveable
         else if (!isSprinting && SprintTimer < SprintDuration)
         {
             SprintTimer += Time.deltaTime;
-            staminaSlider.value = SprintTimer; //sets slider to stamina when going up
+            staminaSlider.value = SprintTimer; //sets slider to stamina when going ups
             if (staminaSlider.value >= staminaSlider.maxValue)
             {
                 staminaSlider.gameObject.SetActive(false);

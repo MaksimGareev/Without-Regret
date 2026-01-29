@@ -306,7 +306,7 @@ public class PauseManager : MonoBehaviour
         settingsScript.EnableSettingsPanel();
         backButton.gameObject.SetActive(true);
 
-        EventSystem.current.SetSelectedGameObject(settingsPanel.GetComponentInChildren<MMSettings>().videoSettingsButton.gameObject);
+        EventSystem.current.SetSelectedGameObject(settingsScript.videoSettingsButton.gameObject);
         
         //Debug.Log("Opening Settings...");
     }

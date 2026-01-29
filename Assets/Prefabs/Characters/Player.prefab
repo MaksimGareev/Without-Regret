@@ -324,7 +324,6 @@ GameObject:
   - component: {fileID: 3930968705077024376}
   - component: {fileID: 2250357011382021346}
   - component: {fileID: 6640155716822935536}
-  - component: {fileID: 543945369896373031}
   - component: {fileID: 3454833822202369156}
   - component: {fileID: 2374127022973696450}
   m_Layer: 3
@@ -352,6 +351,7 @@ Transform:
   - {fileID: 1136661512570076457}
   - {fileID: 6407254518141406199}
   - {fileID: 4954294786082375936}
+  - {fileID: 5865921332758024742}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &6851671115391786562
@@ -524,7 +524,6 @@ MonoBehaviour:
   crawlSpeed: 1
   playerModel: {fileID: 0}
   heightReduction: 0.7
-  crawlModelEuler: {x: 90, y: 0, z: 0}
   heightLerpSpeed: 8
   regularCollider: {fileID: 4804980216258344789}
   crawlingCollider: {fileID: 1036373522787229309}
@@ -610,6 +609,7 @@ MonoBehaviour:
   rhythmInterval: 1
   rhythmTargetLeft: {fileID: 0}
   rhythmTargetRight: {fileID: 0}
+  cooldownObject: {fileID: 0}
   showDebugLogs: 0
   animator: {fileID: 1306356219283198842}
 --- !u!114 &7147037502482933178
@@ -740,8 +740,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f78a7fb4d2306884f91c728f43a6e04d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerFishing
-  castAction: {fileID: 0}
-  reelAction: {fileID: 0}
+  fishingAction: {fileID: 0}
   castOrigin: {fileID: 0}
   hook: {fileID: 0}
   playerEquipItem: {fileID: 0}
@@ -749,8 +748,10 @@ MonoBehaviour:
   maxCastDistance: 15
   minCastDistance: 2
   reelSpeed: 8
-  retractSpeed: 12
   pickupDistance: 1
+  castCooldown: 0.5
+  reelEnableDistance: 2.5
+  reelEnableDelay: 0.15
   showDebugLogs: 0
   showLineRenderer: 1
 --- !u!114 &3930968705077024376
@@ -815,28 +816,6 @@ MonoBehaviour:
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
---- !u!95 &543945369896373031
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5675321481151379428}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 6fe0bfcf738b22048be9c464a06350fb, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!114 &3454833822202369156
 MonoBehaviour:
   m_ObjectHideFlags: 0

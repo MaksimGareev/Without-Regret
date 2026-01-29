@@ -6,12 +6,13 @@ using UnityEngine.InputSystem;
 public class PlayerInteracting : MonoBehaviour
 {
     [Header("References")]
-    [SerializeField] private GameObject promptUI;
+    //[SerializeField] private GameObject promptUI;
 
     [Header("General Settings")]
     [SerializeField] private InputActionAsset InputActions;
     [SerializeField] private float interactionRange = 3f;
     [SerializeField] private float interactOffset = 1f;
+    
     private InputAction Interact;
     private InputAction Mantle;
 
@@ -25,15 +26,6 @@ public class PlayerInteracting : MonoBehaviour
     {
         Mantle = InputActions.FindActionMap("Player").FindAction("Jump");
         Interact = InputActions.FindActionMap("Player").FindAction("Interact");
-    }
-
-
-    private void Start()
-    {
-        if (promptUI != null)
-        {
-            promptUI.SetActive(false);
-        }
     }
 
     private void OnEnable()
@@ -52,21 +44,38 @@ public class PlayerInteracting : MonoBehaviour
     void Update()
     {
         ScanForInteractable();
-        
+
+        if (currentTarget == null)
+            return;
+
+        var targetMono = currentTarget as MonoBehaviour;
+        if (targetMono == null)
+            return;
+
+        if (currentTarget.interactType == InteractType.Mantle)
+        {
+            if (Mantle != null && Mantle.triggered)
+            {
+                currentTarget.OnPlayerInteraction(gameObject);
+            }
+        }
+        else if (currentTarget.interactType == InteractType.Move || currentTarget.interactType == InteractType.Pickup || currentTarget.interactType == InteractType.Dialogue)
+        {
+            if (Interact != null && Interact.triggered)
+            {
+                currentTarget.OnPlayerInteraction(gameObject);
+            }
+        }
+
+        /*
         if (currentTarget != null && Interact.triggered)
         {
             currentTarget.OnPlayerInteraction(gameObject);
 
             ButtonIcons.Instance?.Clear();
             currentTarget = null;
-        }
+        }        
         
-        /*else if (ButtonIcons.Instance != null)
-        {
-            ButtonIcons.Instance.Clear();
-        }*/
-        
-        /*
         if (mantleTarget != null && Mantle.triggered)
         {
             mantleTarget.OnPlayerInteraction(gameObject);
@@ -84,9 +93,21 @@ public class PlayerInteracting : MonoBehaviour
     private void ScanForInteractable()
     {
         Collider[] hits = Physics.OverlapSphere(transform.position, interactionRange);
-        //List<IInteractable> interactableList = new List<IInteractable>();
-        List<IInteractable> found = new();
 
+        currentTarget = hits.Select(h => h.GetComponent<IInteractable>()).Where(i => i != null).OrderByDescending(i => i.interactionPriority).FirstOrDefault();
+
+        if (currentTarget != null)
+        {
+            ButtonIcons.Instance?.Highlight(currentTarget.interactType);
+        }
+        else
+        {
+            ButtonIcons.Instance?.Clear();
+        }
+
+        //List<IInteractable> interactableList = new List<IInteractable>();
+        //List<IInteractable> found = new();
+        /*
         foreach (Collider hit in hits)
         {
             IInteractable interactable = hit.GetComponent<IInteractable>();
@@ -133,10 +154,10 @@ public class PlayerInteracting : MonoBehaviour
                 ButtonIcons.Instance?.Highlight(currentTarget.interactType);
             }
 
-            //var targetMono = (currentTarget as MonoBehaviour);
+            var targetMono = (currentTarget as MonoBehaviour);
 
-           // mantleTarget = targetMono.GetComponent<MantleableObject>();
-           // moveTarget = targetMono.GetComponent<MoveableObject>();
+            mantleTarget = targetMono.GetComponent<MantleableObject>();
+            moveTarget = targetMono.GetComponent<MoveableObject>();
 
             if (showDebugLogs)
             {
@@ -156,7 +177,7 @@ public class PlayerInteracting : MonoBehaviour
             }
             mantleTarget = null;
             moveTarget = null;
-        }
+        }*/
     }
     
     private void OnDrawGizmosSelected()
