@@ -16,6 +16,10 @@ public class LockPicking : MonoBehaviour
     [Range(1, 25)]
     public float LockRange = 10;
 
+    public AudioSource Source;
+    public AudioClip UnlockSound;
+    public AudioClip FailSound;
+
     private float EulerAngle;
     private float UnlockAngle;
     private Vector2 UnlockRange;
@@ -113,10 +117,15 @@ public class LockPicking : MonoBehaviour
             {
                 Debug.Log("Unlocked");
                 // NewLock();
-
+                Source.Stop();
+                if (!Source.isPlaying)
+                {
+                    Source.PlayOneShot(UnlockSound);
+                }
                 MovePick = true;
                 KeyPressTime = 0;
                 LockPickUi.SetActive(false);
+
 
                 // Unlock player movement
                 PlayerController pc = player.GetComponent<PlayerController>();
@@ -132,11 +141,15 @@ public class LockPicking : MonoBehaviour
                     currentLockedItem = null;
                 }
             }
-            else
+            else if (MovePick == false)
             {
                 //PickCursor.eulerAngles = new Vector3(0, 0, LockLerp);
                 float RandomRotation = Random.insideUnitCircle.x;
                 PickCursor.eulerAngles += new Vector3(0, 0, Random.Range(-RandomRotation, RandomRotation));
+                if (!Source.isPlaying)
+                {
+                    Source.PlayOneShot(FailSound);
+                }
             }
 
         }
