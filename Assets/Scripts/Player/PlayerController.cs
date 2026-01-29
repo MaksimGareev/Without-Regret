@@ -264,7 +264,7 @@ public class PlayerController : MonoBehaviour, ISaveable
         else if (!isSprinting && SprintTimer < SprintDuration)
         {
             SprintTimer += Time.deltaTime;
-            staminaSlider.value = SprintTimer; //sets slider to stamina when going up
+            staminaSlider.value = SprintTimer; //sets slider to stamina when going ups
             if (staminaSlider.value >= staminaSlider.maxValue)
             {
                 staminaSlider.gameObject.SetActive(false);

@@ -7,7 +7,7 @@ public class WorldItem : MonoBehaviour, IInteractable
 {
     [SerializeField] private ItemData itemData;
     public ItemData ItemData => itemData;
-    public float interactionPriority => 0f;
+    public float interactionPriority => 5f;
     public InteractType interactType => InteractType.Pickup;
 
     [HideInInspector] public bool hasBeenCollected = false;
