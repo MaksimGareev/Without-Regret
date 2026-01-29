@@ -26,7 +26,7 @@ public class LockPicking : MonoBehaviour
     private bool MovePick = true;
     private Transform player;
     private PlayerControls controls;
-    private float rotateInput;
+    private Vector2 rotateInput;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Start()
@@ -44,8 +44,8 @@ public class LockPicking : MonoBehaviour
         controls = new PlayerControls();
 
         // Rotation
-        controls.LockPicking.Rotate.performed += ctx => rotateInput = ctx.ReadValue<float>();
-        controls.LockPicking.Rotate.canceled += ctx => rotateInput = 0f;
+        controls.LockPicking.Rotate.performed += ctx => rotateInput = ctx.ReadValue<Vector2>();
+        controls.LockPicking.Rotate.canceled += ctx => rotateInput = Vector2.zero;
 
         // Attempt unlock
         controls.LockPicking.Unlock.performed += ctx => TryUnlock();
@@ -73,14 +73,15 @@ public class LockPicking : MonoBehaviour
         if (MovePick == true)
         {
             // Rotate pick cursor with horisontal input (A/D)
-            RotationAmount = -rotateInput * CursorSpeed * Time.deltaTime;
+            //RotationAmount = -rotateInput * CursorSpeed * Time.deltaTime;
+            CurrentAngle = Mathf.Atan2(rotateInput.y, rotateInput.x) * Mathf.Rad2Deg;
 
             // Update and clamp rotation
-            CurrentAngle += RotationAmount;
-            CurrentAngle = Mathf.Clamp(CurrentAngle, -MaxAngle, MaxAngle);
+            //CurrentAngle += RotationAmount;
+            //CurrentAngle = Mathf.Clamp(CurrentAngle, -MaxAngle, MaxAngle);
 
             // Apply rotation to pick cursor
-            PickCursor.localEulerAngles = new Vector3(0, 0, CurrentAngle);
+            PickCursor.localEulerAngles = new Vector3(0, 0, CurrentAngle-90);
         }
 
         KeyPressTime = Mathf.Clamp(KeyPressTime, 0, 1);
@@ -100,7 +101,7 @@ public class LockPicking : MonoBehaviour
 
         if (MovePick == false)
         {
-            PickCursor.eulerAngles = new Vector3(0, 0, CurrentAngle + LockLerp);
+            PickCursor.eulerAngles = new Vector3(0, 0, CurrentAngle-90 + LockLerp);
         }
 
         //Debug.Log(Percentage);

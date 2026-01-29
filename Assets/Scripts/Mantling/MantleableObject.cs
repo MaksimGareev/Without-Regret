@@ -7,13 +7,14 @@ public class MantleableObject : MonoBehaviour, IInteractable
     [Header("Mantle Target Offset")]
     [SerializeField] private Vector3 mantleOffset = new Vector3(0f, 2.0f, 0.5f);
     [SerializeField] private bool showGizmos = true;
-    public float interactionPriority => 1f;
-    [SerializeField] private GameObject iconPrefab;
-    public bool shouldShowIcon = true;
-    private GameObject popupInstance;
+    public float interactionPriority => 20f;
+    //[SerializeField] private GameObject iconPrefab;
+    //public bool shouldShowIcon = true;
+    //private GameObject popupInstance;
+    public InteractType interactType => InteractType.Mantle;
 
     private void Update()
-    {
+    {/*
         if (shouldShowIcon && popupInstance == null && iconPrefab != null && PopupManager.Instance != null)
         {
             EnablePopupIcon();
@@ -21,16 +22,20 @@ public class MantleableObject : MonoBehaviour, IInteractable
         else if (!shouldShowIcon && popupInstance != null)
         {
             DisablePopupIcon();
-        }
+        }*/
     }
 
     public void OnPlayerInteraction(GameObject player)
     {
         PlayerMantling playerMantling = player.GetComponent<PlayerMantling>();
+        if (playerMantling == null) return;
+
+        ButtonIcons.Instance?.Clear();
         playerMantling.StartMantle(this);
-        StartCoroutine(HideIconWhileMantling());
+        //StartCoroutine(HideIconWhileMantling());
     }
 
+    /*
     private IEnumerator HideIconWhileMantling()
     {
         DisablePopupIcon();
@@ -38,7 +43,7 @@ public class MantleableObject : MonoBehaviour, IInteractable
         yield return new WaitForSeconds(1.0f);
 
         EnablePopupIcon();
-    }
+    }*/
 
     public Vector3 GetMantlePosition()
     {
@@ -57,6 +62,7 @@ public class MantleableObject : MonoBehaviour, IInteractable
         Gizmos.DrawLine(transform.position, GetMantlePosition());
     }
 
+    /*
     public void EnablePopupIcon()
     {
         if (popupInstance == null && iconPrefab != null && PopupManager.Instance != null)
@@ -74,5 +80,5 @@ public class MantleableObject : MonoBehaviour, IInteractable
             popupInstance = null;
             shouldShowIcon = false;
         }
-    }
+    }*/
 }

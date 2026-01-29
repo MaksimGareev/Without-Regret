@@ -7,19 +7,31 @@ public class WorldItem : MonoBehaviour, IInteractable
 {
     [SerializeField] private ItemData itemData;
     public ItemData ItemData => itemData;
-    public float interactionPriority => 0f;
+    public float interactionPriority => 5f;
+    public InteractType interactType => InteractType.Pickup;
+
     [HideInInspector] public bool hasBeenCollected = false;
-    [SerializeField] private GameObject iconPrefab;
-    [SerializeField] private Vector3 iconOffset = new Vector3(0f, 2f, 0f);
-    public bool shouldShowIcon = true;
-    private GameObject popupInstance;
+
+    //[SerializeField] private GameObject iconPrefab;
+    //[SerializeField] private Vector3 iconOffset = new Vector3(0f, 2f, 0f);
+
+    //public bool shouldShowIcon = true;
+    //private GameObject popupInstance;
+
+    [SerializeField] private float icondDistance = 3f;
+
     public bool isCollectible = true;
 
+    private Transform player;
     public void Start()
     {
+        // Player reference
+        player = GameObject.FindGameObjectWithTag("Player")?.transform;
+
         if (hasBeenCollected)
         {
             gameObject.SetActive(false);
+            return;
         }
         else
         {
@@ -27,8 +39,23 @@ public class WorldItem : MonoBehaviour, IInteractable
         }
     }
 
-    private void Update()
+    void Update()
     {
+        /*
+        if (hasBeenCollected || player == null) return;
+
+        float distance = Vector3.Distance(transform.position, player.position);
+
+        if (distance <= icondDistance && isCollectible)
+        {
+            ButtonIcons.Instance.Highlight(interactType);
+        }
+        else
+        {
+            ButtonIcons.Instance.Clear();
+        }
+
+        
         if (shouldShowIcon && popupInstance == null && iconPrefab != null && PopupManager.Instance != null)
         {
             EnablePopupIcon();
@@ -36,19 +63,23 @@ public class WorldItem : MonoBehaviour, IInteractable
         else if (!shouldShowIcon && popupInstance != null)
         {
             DisablePopupIcon();
-        }
+        }*/
     }
     public void OnPlayerInteraction(GameObject player)
     {
-        if (!isCollectible) return;
+        if (!isCollectible || hasBeenCollected) return;
         
         Inventory inventory = player.GetComponent<Inventory>();
+        if (inventory == null) return;
         inventory.itemToCollect = this;
+
         hasBeenCollected = true;
         gameObject.SetActive(false);
-        DisablePopupIcon();
+
+        ButtonIcons.Instance?.Clear();
     }
 
+    /*
     public void EnablePopupIcon()
     {
         if (popupInstance == null && iconPrefab != null && PopupManager.Instance != null)
@@ -67,6 +98,6 @@ public class WorldItem : MonoBehaviour, IInteractable
             popupInstance = null;
             shouldShowIcon = false;
         }
-    }
+    }*/
     
 }

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
 
 public class PlayerPossessing : MonoBehaviour
 {
@@ -10,115 +11,141 @@ public class PlayerPossessing : MonoBehaviour
     [SerializeField] private float possessionRange = 50f;
     [SerializeField] private float searchConeAngle = 30f;
     [SerializeField] private KeyCode possessKey = KeyCode.R;
-    [SerializeField] private string possessButton = "Xbox Y Button";
+    [SerializeField] private KeyCode possessButton = KeyCode.JoystickButton9;
+    [SerializeField] private Slider posessionBar;
+    [SerializeField] private GameObject iconPrefab;
+    [SerializeField] private Vector3 iconOffset = new Vector3(0f, 2f, 0f);
 
+    private GameObject popupInstance;
     private PlayerController playerController;
     private Rigidbody playerRigidbody;
     private PossessedEnemyResisting possessedEnemyMovement;
-    private PatrollingEnemy normalEnemyMovement;
+    [SerializeField] private PatrollingEnemy normalEnemyMovement;
+    private EnemyFieldOfView enemyPOV;
     private NavMeshAgent enemyNavMeshAgent;
     private Rigidbody enemyRigidbody;
     private float possessionTimer;
+    public PossessedEnemyResisting target = null;
+    public LayerMask mask;
+    RaycastHit hit;
+    private bool posessing = false;
+    public bool shouldShowIcon = true;
 
     private void Awake()
     {
         playerController = GetComponent<PlayerController>();
         playerRigidbody = GetComponent<Rigidbody>();
+
+        if (posessionBar != null)
+        {
+            posessionBar.value = 1;
+            posessionBar.gameObject.SetActive(false);
+        }
     }
 
     private void Update()
     {
         if (Input.GetKeyDown(possessKey))
         {
-            TryStartPossession(true);
+            TryStartPossession();
             Debug.Log("Tried Possessing Keyboard");
         }
-        else if (Input.GetButtonDown(possessButton))
+        else if (Input.GetKeyDown(possessButton))
         {
-            TryStartPossession(false);
+            TryStartPossession();
             Debug.Log("Tried Possessing Controller");
         }
 
-        if (possessedEnemyMovement != null)
+        Debug.DrawRay(gameObject.transform.position, gameObject.transform.forward*15f, Color.red);
+        if (Physics.Raycast(gameObject.transform.position, gameObject.transform.forward, out hit, 15f, mask))
+        {
+            if (hit.collider.GetComponent<PossessedEnemyResisting>() != null)
             {
-                possessionTimer -= Time.deltaTime;
+                normalEnemyMovement = hit.collider.GetComponent<PatrollingEnemy>();
+                target = hit.collider.GetComponent<PossessedEnemyResisting>();
+                EnablePopupIcon();
+            }
+        }
+        else if (posessing != true && target != null)
+        {
+            ClearTargetInfo();
+            DisablePopupIcon();
+        }
+
+        if (possessedEnemyMovement != null)
+        {
+            possessionTimer -= Time.deltaTime;
+            posessionBar.value = Mathf.InverseLerp(0, possessionDuration, possessionTimer);
 
                 Vector3 input = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
                 possessedEnemyMovement.UpdatePossession(input);
 
-                if (possessionTimer <= 0f || Input.GetKeyUp(possessKey) || Input.GetButtonUp(possessButton))
+                if (possessionTimer <= 0f || Input.GetKeyUp(possessKey) || Input.GetKeyUp(possessButton))
                 {
                     EndPossession();
                 }
-            }
+        }
     }
 
-    private void TryStartPossession(bool IsUsingKeyboard)
+    private void TryStartPossession()
     {
-        PossessedEnemyResisting target = null;
-
-        if (IsUsingKeyboard)
-        {
-            target = SelectEnemyMouse();
-        }
-        else
-        {
-            target = SelectEnemyController();
-        }
-
         if (target != null)
         {
             StartPossession(target);
         }
+        else
+        {
+            Debug.Log("No Valid Target");
+        }
     }
 
-    private PossessedEnemyResisting SelectEnemyMouse()
-    {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(ray, out RaycastHit hit, 100f))
-        {
-            if (hit.collider.TryGetComponent<PossessedEnemyResisting>(out var target))
-            {
-                normalEnemyMovement = hit.collider.GetComponent<PatrollingEnemy>();
-                Debug.Log("Enemy found :" + hit.collider.gameObject.name);
-                StartPossession(target);
-            }
-        }
+    //private PossessedEnemyResisting SelectEnemyMouse()
+    //{
+    //    Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+    //    if (Physics.Raycast(ray, out RaycastHit hit, 100f))
+    //    {
+    //        if (hit.collider.TryGetComponent<PossessedEnemyResisting>(out var target))
+    //        {
+    //            normalEnemyMovement = hit.collider.GetComponent<PatrollingEnemy>();
+    //            Debug.Log("Enemy found :" + hit.collider.gameObject.name);
+    //            StartPossession(target);
+    //        }
+    //    }
 
-        return null;
-    }
+    //    return null;
+    //}
 
-    private PossessedEnemyResisting SelectEnemyController()
-    {
-        Vector3 rightStick = CalculateInputFromPOV();
+    //private PossessedEnemyResisting SelectEnemyController()
+    //{
+    //    Vector3 rightStick = CalculateInputFromPOV();
 
-        if (rightStick.sqrMagnitude < 0.1f)
-        {
-            return null;
-        }
-        Debug.DrawRay(transform.position, rightStick.normalized * possessionRange, Color.red, 0.5f);
+    //    if (rightStick.sqrMagnitude < 0.1f)
+    //    {
+    //        return null;
+    //    }
+    //    Debug.DrawRay(transform.position, rightStick.normalized * possessionRange, Color.red, 0.5f);
 
-        Collider[] hits = Physics.OverlapSphere(transform.position, possessionRange);
-        Debug.Log("Found " + hits.Length + " colliders in range");
+    //    Collider[] hits = Physics.OverlapSphere(transform.position, possessionRange);
+    //    Debug.Log("Found " + hits.Length + " colliders in range");
         
-        foreach (var hit in hits)
-        {
-            Debug.Log("Collider: " + hit.name + " | Layer: " + LayerMask.LayerToName(hit.gameObject.layer) + " | Tag: " + hit.tag);
-            if (hit.CompareTag("Enemy"))
-            {
-                Vector3 directionToEnemy = (hit.transform.position - transform.position).normalized;
-                float angle = Vector3.Angle(rightStick, directionToEnemy);
-                if (angle < searchConeAngle)
-                {
-                    normalEnemyMovement = hit.GetComponent<PatrollingEnemy>();
-                    Debug.Log("Enemy found: " + hit.name);
-                    return hit.GetComponent<PossessedEnemyResisting>();
-                }
-            }
-        }
+    //    foreach (var hit in hits)
+    //    {
+    //        Debug.Log("Collider: " + hit.name + " | Layer: " + LayerMask.LayerToName(hit.gameObject.layer) + " | Tag: " + hit.tag);
+    //        if (hit.CompareTag("Enemy"))
+    //        {
+    //            Vector3 directionToEnemy = (hit.transform.position - transform.position).normalized;
+    //            float angle = Vector3.Angle(rightStick, directionToEnemy);
+    //            if (angle < searchConeAngle)
+    //            {
+    //                normalEnemyMovement = hit.GetComponent<PatrollingEnemy>();
+    //                Debug.Log("Enemy found: " + hit.name);
+    //                return hit.GetComponent<PossessedEnemyResisting>();
+    //            }
+    //        }
+    //    }
 
-        return null;
-    }
+    //    return null;
+    //}
 
     private Vector3 CalculateInputFromPOV()
     {
@@ -143,8 +170,11 @@ public class PlayerPossessing : MonoBehaviour
             return;
         }
 
+        posessing = true;
+        posessionBar.gameObject.SetActive(true);
         normalEnemyMovement = target.GetComponent<PatrollingEnemy>();
         enemyRigidbody = target.GetComponent<Rigidbody>();
+        enemyPOV = target.GetComponent<EnemyFieldOfView>();
         possessedEnemyMovement = target;
         
 
@@ -172,16 +202,17 @@ public class PlayerPossessing : MonoBehaviour
             normalEnemyMovement.enabled = false;
         }
 
+        if (enemyPOV != null)
+        {
+            enemyPOV.enabled = false;
+        }
+
         if (enemyRigidbody != null)
         {
             //enemyRigidbody.useGravity = false;
         }
 
-        enemyNavMeshAgent = target.GetComponent<NavMeshAgent>();
-        if (enemyNavMeshAgent != null)
-        {
-            enemyNavMeshAgent.enabled = false;
-        }
+
 
         if (!possessedEnemyMovement.enabled)
         {
@@ -203,12 +234,12 @@ public class PlayerPossessing : MonoBehaviour
             }
         }
 
-        possessedEnemyMovement = null;
-        normalEnemyMovement = null;
+        posessionBar.gameObject.SetActive(false);
+        posessionBar.value = 1;
 
-        if (enemyNavMeshAgent != null)
+        if (enemyPOV != null)
         {
-            enemyNavMeshAgent.enabled = true;
+            enemyPOV.enabled = true;
         }
 
         if (enemyRigidbody != null)
@@ -221,6 +252,36 @@ public class PlayerPossessing : MonoBehaviour
             playerController.enabled = true;
             playerController.MovementLocked = false;
             GetComponent<CharacterController>().enabled = true;
+        }
+        posessing = false;
+        ClearTargetInfo();
+    }
+
+    private void ClearTargetInfo()
+    {
+        possessedEnemyMovement = null;
+        normalEnemyMovement = null;
+        enemyPOV = null;
+        target = null;
+    }
+
+    public void EnablePopupIcon()
+    {
+        if (popupInstance == null && iconPrefab != null && PopupManager.Instance != null)
+        {
+            popupInstance = PopupManager.Instance.CreatePopup(target.transform, iconPrefab).gameObject;
+            target.GetComponent<GameObject>().GetComponent<WorldPopup>().worldOffset = iconOffset;
+            shouldShowIcon = true;
+        }
+    }
+
+    public void DisablePopupIcon()
+    {
+        if (popupInstance != null)
+        {
+            Destroy(popupInstance);
+            popupInstance = null;
+            shouldShowIcon = false;
         }
     }
 }
