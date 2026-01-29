@@ -101,7 +101,7 @@ public class LockPicking : MonoBehaviour
 
         if (MovePick == false)
         {
-            PickCursor.eulerAngles = new Vector3(0, 0, CurrentAngle + LockLerp);
+            PickCursor.eulerAngles = new Vector3(0, 0, CurrentAngle-90 + LockLerp);
         }
 
         //Debug.Log(Percentage);
