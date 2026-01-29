@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 
@@ -9,6 +10,7 @@ public class PlayerController : MonoBehaviour, ISaveable
     public CharacterController Controller;
     public Camera PlayerCamera;
     public Animator animator;
+    public Slider staminaSlider;
 
     [Header("Movement Settings")]
     public bool MovementLocked = false;
@@ -17,7 +19,7 @@ public class PlayerController : MonoBehaviour, ISaveable
     public float SprintDuration = 3f;
     public float sprintCooldown = 4f;
 
-    private float SprintTimer;
+    public float SprintTimer = 3f;
     private bool canSprint = true;
     private bool isSprinting = false;
 
@@ -48,13 +50,30 @@ public class PlayerController : MonoBehaviour, ISaveable
     private void Awake()
     {
         Controller = GetComponent<CharacterController>();
-        animator = GetComponent<Animator>();
+        animator = GetComponentInChildren<Animator>();
+
+
+        if (staminaSlider == null)
+        {
+            staminaSlider = GameObject.Find("StaminaSlider")?.GetComponent<Slider>();
+        }
+
+        if (staminaSlider != null)
+        {
+            staminaSlider.maxValue = SprintDuration;
+        }
 
         if (PlayerCamera == null)
             PlayerCamera = Camera.main;
 
         SprintTimer = SprintDuration;
 
+        if (staminaSlider != null)
+        {
+            staminaSlider.value = SprintTimer;
+            staminaSlider.gameObject.SetActive(false);
+        }
+        
         // Create ground check if missing
         if (groundCheck == null)
         {
@@ -213,12 +232,12 @@ public class PlayerController : MonoBehaviour, ISaveable
         //gets isMoving state to change animator state to idle or walking
         if (isMoving)
         {
-            animator.SetBool("isIdle", false);
+            resetAnimations();
             animator.SetBool("isWalking", true);
         }
         if (!isMoving)
         {
-            animator.SetBool("isWalking", false);
+            resetAnimations();
             animator.SetBool("isIdle", true);
         }
 
@@ -230,6 +249,9 @@ public class PlayerController : MonoBehaviour, ISaveable
             {
                 currentSpeed = SprintSpeed;
                 SprintTimer -= Time.deltaTime;
+                staminaSlider.gameObject.SetActive(true);
+                staminaSlider.value = SprintTimer; //sets slider to stamina when going down
+                animator.speed = 1.4f; // speeds up walk animation when sprinting
             }
             else
             {
@@ -242,6 +264,11 @@ public class PlayerController : MonoBehaviour, ISaveable
         else if (!isSprinting && SprintTimer < SprintDuration)
         {
             SprintTimer += Time.deltaTime;
+            staminaSlider.value = SprintTimer; //sets slider to stamina when going ups
+            if (staminaSlider.value >= staminaSlider.maxValue)
+            {
+                staminaSlider.gameObject.SetActive(false);
+            }
         }
 
         if (gravityEnabled)
@@ -395,5 +422,15 @@ public class PlayerController : MonoBehaviour, ISaveable
     private void LoadMenuScene()
     {
         SceneManager.LoadScene("MenuTesting");
+    }
+
+    private void resetAnimations()
+    {
+        animator.SetBool("isIdle", false);
+        animator.SetBool("isWalking", false);
+        animator.SetBool("isGrabbing", false);
+        animator.SetBool("isFloating", false);
+        animator.SetBool("isPulling", false);
+        animator.SetBool("isPushing", false);
     }
 }

@@ -78,7 +78,7 @@ public class GraveObjectiveSlot : MonoBehaviour
 
             if (moveable != null)
             {
-                if (isObjectiveActive && moveable.isGrabbed)
+                if (isObjectiveActive && moveable.IsGrabbed)
                 {
                     EnableGhost();
                     return;

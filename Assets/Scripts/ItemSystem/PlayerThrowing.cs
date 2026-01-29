@@ -11,6 +11,9 @@ public class PlayerThrowing : MonoBehaviour
     [SerializeField] private Slider powerSlider;
     [SerializeField] private PlayerEquipItem playerEquipItem;
     [SerializeField] private GameObject interactingScript;
+    [SerializeField] private GameObject WorldThrowPointer;
+    [SerializeField] private float MaxPointerLength = 10;
+    [SerializeField] private float MinPointerLength = 1;
     private InventoryUIController inventoryUI;
     private ToggleInventoryUI inventoryToggle;
     
@@ -28,6 +31,9 @@ public class PlayerThrowing : MonoBehaviour
     private bool isCharging = false;
     private float currentCharge = 0f;
     private bool usingController;
+    private Vector3 PointerScale;
+
+    public Animator animator;
 
     private void Start()
     {
@@ -38,11 +44,14 @@ public class PlayerThrowing : MonoBehaviour
             powerSlider.value = 0f;
             powerSlider.gameObject.SetActive(false);
         }
+        WorldThrowPointer.SetActive(false);
+        PointerScale = WorldThrowPointer.transform.localScale;
 
         chargeKeyInt = (int)chargeKey;
     }
     private void Awake()
     {
+        animator = GetComponent<Animator>();
         if (inventory == null)
         {
             inventory = GetComponent<Inventory>();
@@ -102,8 +111,8 @@ public class PlayerThrowing : MonoBehaviour
             isCharging = true;
             currentCharge = 0f;
             usingController = false;
-            Cursor.visible = true;
-            Cursor.lockState = CursorLockMode.Confined;
+            //Cursor.visible = true;
+            //Cursor.lockState = CursorLockMode.Confined;
         }
 
         if ((Input.GetAxis(chargeButton) > 0.1f) && !isCharging)
@@ -119,10 +128,18 @@ public class PlayerThrowing : MonoBehaviour
 
             float normalized = Mathf.PingPong(currentCharge, 1f);
 
+
             if (powerSlider != null)
             {
                 powerSlider.value = normalized;
                 powerSlider.gameObject.SetActive(true);
+            }
+
+            if (WorldThrowPointer != null)
+            {
+                PointerScale = Vector3.Lerp(new Vector3(MinPointerLength, PointerScale.y, PointerScale.z), new Vector3(MaxPointerLength, PointerScale.y, PointerScale.z), normalized);
+                WorldThrowPointer.transform.localScale = PointerScale;
+                WorldThrowPointer.gameObject.SetActive(true);
             }
 
             if (usingController)
@@ -136,7 +153,11 @@ public class PlayerThrowing : MonoBehaviour
                     {
                         powerSlider.value = 0f;
                         powerSlider.gameObject.SetActive(false);
+                        PointerScale.x = MinPointerLength;
+                        WorldThrowPointer.transform.localScale = PointerScale;
+                        WorldThrowPointer.SetActive(false);
                     }
+                    animator.SetTrigger("Throw"); //play throw animation when button is released
                 }
             }
             else
@@ -150,7 +171,11 @@ public class PlayerThrowing : MonoBehaviour
                     {
                         powerSlider.value = 0f;
                         powerSlider.gameObject.SetActive(false);
+                        PointerScale.x = MinPointerLength;
+                        WorldThrowPointer.transform.localScale = PointerScale;
+                        WorldThrowPointer.SetActive(false);
                     }
+                    animator.SetTrigger("Throw"); //play throw animation when button is released
                 }
             }
         }
@@ -176,8 +201,8 @@ public class PlayerThrowing : MonoBehaviour
         {
             Vector3 direction;
 
-            if (usingController)
-            {
+            //if (usingController)
+            //{
                 Vector3 aimDirection = CalculateInputFromPOV();
 
                 if (aimDirection.magnitude < 0.01f)
@@ -187,26 +212,26 @@ public class PlayerThrowing : MonoBehaviour
                 }
 
                 direction = aimDirection.normalized;
-            }
-            else
-            {
-                Cursor.visible = false;
-                Cursor.lockState = CursorLockMode.Locked;
+            //}
+            //else
+            //{
+            //    Cursor.visible = false;
+            //    Cursor.lockState = CursorLockMode.Locked;
 
-                Ray ray = playerCamera.ScreenPointToRay(Input.mousePosition);
-                Vector3 targetPoint;
+            //    Ray ray = playerCamera.ScreenPointToRay(Input.mousePosition);
+            //    Vector3 targetPoint;
 
-                if (Physics.Raycast(ray, out RaycastHit hit))
-                {
-                    targetPoint = hit.point;   
-                }
-                else
-                {
-                    targetPoint = ray.GetPoint(30f);   
-                }
+            //    if (Physics.Raycast(ray, out RaycastHit hit))
+            //    {
+            //        targetPoint = hit.point;   
+            //    }
+            //    else
+            //    {
+            //        targetPoint = ray.GetPoint(30f);   
+            //    }
 
-                direction = (targetPoint - transform.position).normalized;
-            }
+            //    direction = (targetPoint - transform.position).normalized;
+            //}
 
             float throwForce = Mathf.Lerp(minThrowForce, maxThrowForce, normalizedPower);
             Debug.Log("Direction: " + direction + ", ThrowForce: " + throwForce + ", NormalizedPower: " + normalizedPower);

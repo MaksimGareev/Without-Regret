@@ -6,12 +6,13 @@ using UnityEngine.InputSystem;
 public class PlayerInteracting : MonoBehaviour
 {
     [Header("References")]
-    [SerializeField] private GameObject promptUI;
+    //[SerializeField] private GameObject promptUI;
 
     [Header("General Settings")]
     [SerializeField] private InputActionAsset InputActions;
-    [SerializeField] private float interactionRange = 1f;
+    [SerializeField] private float interactionRange = 3f;
     [SerializeField] private float interactOffset = 1f;
+    
     private InputAction Interact;
     private InputAction Mantle;
 
@@ -25,15 +26,6 @@ public class PlayerInteracting : MonoBehaviour
     {
         Mantle = InputActions.FindActionMap("Player").FindAction("Jump");
         Interact = InputActions.FindActionMap("Player").FindAction("Interact");
-    }
-
-
-    private void Start()
-    {
-        if (promptUI != null)
-        {
-            promptUI.SetActive(false);
-        }
     }
 
     private void OnEnable()
@@ -53,6 +45,37 @@ public class PlayerInteracting : MonoBehaviour
     {
         ScanForInteractable();
 
+        if (currentTarget == null)
+            return;
+
+        var targetMono = currentTarget as MonoBehaviour;
+        if (targetMono == null)
+            return;
+
+        if (currentTarget.interactType == InteractType.Mantle)
+        {
+            if (Mantle != null && Mantle.triggered)
+            {
+                currentTarget.OnPlayerInteraction(gameObject);
+            }
+        }
+        else if (currentTarget.interactType == InteractType.Move || currentTarget.interactType == InteractType.Pickup || currentTarget.interactType == InteractType.Dialogue)
+        {
+            if (Interact != null && Interact.triggered)
+            {
+                currentTarget.OnPlayerInteraction(gameObject);
+            }
+        }
+
+        /*
+        if (currentTarget != null && Interact.triggered)
+        {
+            currentTarget.OnPlayerInteraction(gameObject);
+
+            ButtonIcons.Instance?.Clear();
+            currentTarget = null;
+        }        
+        
         if (mantleTarget != null && Mantle.triggered)
         {
             mantleTarget.OnPlayerInteraction(gameObject);
@@ -64,26 +87,40 @@ public class PlayerInteracting : MonoBehaviour
         else if (currentTarget != null && mantleTarget == null && Interact.triggered)
         {
             currentTarget.OnPlayerInteraction(gameObject);
-        }
+        }*/
     }
 
     private void ScanForInteractable()
     {
-        Collider[] hits = Physics.OverlapSphere(transform.position + transform.forward * interactOffset, interactionRange);
-        List<IInteractable> interactableList = new List<IInteractable>();
+        Collider[] hits = Physics.OverlapSphere(transform.position, interactionRange);
 
+        currentTarget = hits.Select(h => h.GetComponent<IInteractable>()).Where(i => i != null).OrderByDescending(i => i.interactionPriority).FirstOrDefault();
+
+        if (currentTarget != null)
+        {
+            ButtonIcons.Instance?.Highlight(currentTarget.interactType);
+        }
+        else
+        {
+            ButtonIcons.Instance?.Clear();
+        }
+
+        //List<IInteractable> interactableList = new List<IInteractable>();
+        //List<IInteractable> found = new();
+        /*
         foreach (Collider hit in hits)
         {
             IInteractable interactable = hit.GetComponent<IInteractable>();
             if (interactable != null)
             {
-                interactableList.Add(interactable);
+                found.Add(interactable);
             }
         }
 
-        if (interactableList.Count == 0)
+        if (found.Count == 0)
         {
             currentTarget = null;
+            ButtonIcons.Instance?.Clear();
             mantleTarget = null;
             moveTarget = null;
 
@@ -97,16 +134,26 @@ public class PlayerInteracting : MonoBehaviour
                 promptUI.SetActive(false);
             }
 
+            if (ButtonIcons.Instance != null)
+            {
+                ButtonIcons.Instance.Clear();
+            }
+
             return;
         }
 
-        currentTarget = interactableList
+        currentTarget = found
             .OrderByDescending(i => i.interactionPriority)
             .ThenBy(i => Vector3.Distance(transform.position, ((MonoBehaviour)i).transform.position))
             .FirstOrDefault();
 
         if(currentTarget != null)
         {
+            if (ButtonIcons.Instance != null)
+            {
+                ButtonIcons.Instance?.Highlight(currentTarget.interactType);
+            }
+
             var targetMono = (currentTarget as MonoBehaviour);
 
             mantleTarget = targetMono.GetComponent<MantleableObject>();
@@ -122,6 +169,15 @@ public class PlayerInteracting : MonoBehaviour
                 promptUI.SetActive(true);
             }
         }
+        else
+        {
+            if (ButtonIcons.Instance != null)
+            {
+                ButtonIcons.Instance.Clear();
+            }
+            mantleTarget = null;
+            moveTarget = null;
+        }*/
     }
     
     private void OnDrawGizmosSelected()

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Irene : MonoBehaviour
 {
@@ -15,8 +16,10 @@ public class Irene : MonoBehaviour
 
     public Transform targetSpot;
     public Transform lookAtTarget;
+    public NavMeshAgent agent;
     public bool isTraveling;
     public bool arrived = false;
+    public bool CanFollowPlayer = true;
     public float stopDistance = 0.5f;
 
 
@@ -37,6 +40,12 @@ public class Irene : MonoBehaviour
             if (dialogueTrigger != null && dialogueTrigger.enabled)
             {
                 dialogueTrigger.enabled = false;
+
+                Collider col = dialogueTrigger.GetComponent<Collider>();
+                if (col != null)
+                {
+                    col.enabled = false;
+                }
                 Debug.Log("Irene's dialogue trigger has been deactivated.");
             }
         }
@@ -76,19 +85,23 @@ public class Irene : MonoBehaviour
 
     public void TravelToTarget()
     {
-        if (targetSpot == null)
+        if (targetSpot == null || agent == null)
         {
             Debug.Log("There is no target for Irene to go to");
             return;
         }
 
+        // Movement
+        //transform.position = Vector3.MoveTowards(transform.position, targetSpot.position, FollowSpeed * Time.deltaTime);
+        if (!agent.hasPath)//(!agent.pathPending && agent.remainingDistance < 0.5f && agent != null)
+        {
+            agent.SetDestination(targetSpot.position);
+        }
+
+        // Rotate towards target
         Vector3 direction = targetSpot.position - transform.position;
         direction.y = 0f;
 
-        // Movement
-        transform.position = Vector3.MoveTowards(transform.position, targetSpot.position, FollowSpeed * Time.deltaTime);
-
-        // Rotate towards target
         if (direction.sqrMagnitude > 0.001f)
         {
             Quaternion targetRot = Quaternion.LookRotation(direction);
@@ -96,19 +109,37 @@ public class Irene : MonoBehaviour
         }
 
         // Stop when close to target destination
-        if (Vector3.Distance(transform.position, targetSpot.position)< stopDistance)
+        if (!agent.pathPending && agent.remainingDistance <= stopDistance)
         {
             isTraveling = false;
             arrived = true;
-            dialogueTrigger.enabled = true; // enable dialogue trigger upon arrival
+            agent.ResetPath();
+            ReactivateDialogue(); ; // enable dialogue trigger upon arrival
             Debug.Log("Irene reached the destination.");
         }
     }
 
+    private void ReactivateDialogue()
+    {
+        if (dialogueTrigger == null) return;
+
+        dialogueTrigger.enabled = true;
+
+        Collider col = dialogueTrigger.GetComponent<Collider>();
+        if (col != null)
+        {
+            col.enabled = true;
+        }
+
+        Debug.Log("Irene's dialogue trigger has been reactivated");
+    }
+
     public void StartTravel()
     {
+        CanFollowPlayer = false;
         IsFollowing = false;
         isTraveling = true;
+        arrived = false;
         Debug.Log("Irene is now traveling to her destination");
     }
 
@@ -121,6 +152,16 @@ public class Irene : MonoBehaviour
         {
             Quaternion targetRotation = Quaternion.LookRotation(direction);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, RotationSpeed * Time.deltaTime);
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("door"))
+        {
+            this.gameObject.SetActive(false);
+            //ObjectiveManager.Instance.AddProgress(linkedHouseObjective.objectiveID, 1);
+            Debug.Log("Irene has reached the door.");
         }
     }
 
