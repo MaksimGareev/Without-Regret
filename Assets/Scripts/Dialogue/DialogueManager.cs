@@ -14,6 +14,7 @@ public class DialogueManager : MonoBehaviour
     public GameObject ChoiceButton;
     public GameObject ContinueArrow;
     public GameObject DirectionalImage;
+    public ScrollRect dialogueScrollRect;
 
     private List<GameObject> spawnedChoices = new List<GameObject>();
     private DialogueData currentDialogue;
@@ -239,6 +240,12 @@ public class DialogueManager : MonoBehaviour
     private void ShowCurrentLine()
     {
 
+        if (dialogueScrollRect != null)
+        {
+            Canvas.ForceUpdateCanvases();
+            dialogueScrollRect.verticalNormalizedPosition = 1f;
+        }
+
         if (currentIndex >= currentDialogue.dialogueLines.Count)
         {
             EndDialogue();
@@ -304,6 +311,14 @@ public class DialogueManager : MonoBehaviour
 
             DialogueText.text += c;
 
+            Canvas.ForceUpdateCanvases();
+            LayoutRebuilder.ForceRebuildLayoutImmediate(dialogueScrollRect.content);
+
+            if (dialogueScrollRect != null && IsTyping)
+            {
+                dialogueScrollRect.verticalNormalizedPosition = 1f;
+            }
+
             // Skip sounds for spaces
             if (!char.IsWhiteSpace(c))
             {
@@ -364,6 +379,13 @@ public class DialogueManager : MonoBehaviour
         else
         {
             StartCoroutine(WaitForNextLine());
+        }
+
+        Canvas.ForceUpdateCanvases();
+
+        if (dialogueScrollRect != null)
+        {
+            dialogueScrollRect.verticalNormalizedPosition = 1f;
         }
     }
 
