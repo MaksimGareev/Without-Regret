@@ -24,6 +24,7 @@ public class SpawnItemOnMove : MonoBehaviour
             return;
         }
 
+        // Subscribe to the object's OnInteracted event
         moveableObject.OnInteracted += SpawnItem;
     }
 
