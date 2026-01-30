@@ -94,7 +94,7 @@ public class PlayerInteracting : MonoBehaviour
     {
         Collider[] hits = Physics.OverlapSphere(transform.position, interactionRange);
 
-        currentTarget = hits.Select(h => h.GetComponent<IInteractable>()).Where(i => i != null).OrderByDescending(i => i.interactionPriority).FirstOrDefault();
+        currentTarget = hits.Select(h => h.GetComponent<IInteractable>()).Where(i => i != null && i.CanInteract(gameObject)).OrderByDescending(i => i.interactionPriority).FirstOrDefault();
 
         if (currentTarget != null)
         {

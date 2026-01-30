@@ -39,6 +39,18 @@ public class WorldItem : MonoBehaviour, IInteractable
         }
     }
 
+    public bool CanInteract(GameObject player)
+    {
+        if (!isCollectible || hasBeenCollected || player == null)
+            return false;
+
+        PlayerMantling mantling = player.GetComponent<PlayerMantling>();
+        if (mantling != null && mantling.isMantling)
+            return false;
+
+        return true;
+    }
+
     void Update()
     {
         /*

@@ -15,7 +15,7 @@ public class MoveableObject : MonoBehaviour, IInteractable
     private PlayerMovingObjects mover;
     public bool IsGrabbed { get; private set; } = false;
     public bool isGrabbable = true;
-    public float interactionPriority => 1f;
+    public float interactionPriority => 5f;
     public InteractType interactType => InteractType.Move;
 
     [SerializeField] private float iconDistance = 3f;
@@ -32,6 +32,9 @@ public class MoveableObject : MonoBehaviour, IInteractable
     // Ground Check Parameters
     private float groundCheckDistance = 0.1f; // extra ray distance below collider
     private float groundVelocityThreshold = 0.01f; // velocity threshold to consider 'stopped'
+
+    private bool isGrabbed;
+    [SerializeField] private float maxGrabDistance = 2.5f;
 
 
     private void Awake()
@@ -53,6 +56,28 @@ public class MoveableObject : MonoBehaviour, IInteractable
         {
             Debug.LogError("MoveableObject: Player not found! Make sure the Player has the 'Player' tag.", this);
         }
+    }
+
+    public bool CanInteract(GameObject player)
+    {
+        if (DialogueManager.DialogueIsActive)
+            return false;
+
+        if (isGrabbed)
+            return false;
+
+        if (rb == null || rb.isKinematic)
+            return false;
+
+        float dist = Vector3.Distance(player.transform.position, transform.position);
+        if (dist > maxGrabDistance)
+            return false;
+
+        Vector3 toObject = (transform.position - player.transform.position).normalized;
+        if (Vector3.Dot(player.transform.forward, toObject) < 0.4f)
+            return false;
+
+        return true;
     }
 
     private void Grab(Transform grabTransform)

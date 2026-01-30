@@ -17,7 +17,7 @@ public class PlayerMantling : MonoBehaviour
     private PlayerPossessing playerPossessing;
     private PlayerThrowing playerThrowing;
 
-    private bool isMantling = false;
+    public bool isMantling = false;
     private Vector3 mantleStartPos;
     private Vector3 mantleEndPos;
     private float mantleProgress = 0f;

@@ -118,6 +118,19 @@ public class LockedItem : MonoBehaviour, IInteractable
         }*/
     }
 
+    public bool CanInteract(GameObject player)
+    {
+        // Can interact only if player is in range, not lockpicked, and not mantling
+        if (hasBeenLockpicked || !isInRange || player == null)
+            return false;
+
+        PlayerMantling mantling = player.GetComponent<PlayerMantling>();
+        if (mantling != null && mantling.isMantling)
+            return false;
+
+        return true;
+    }
+
     public void OnPlayerInteraction(GameObject player)
     {
         // Only try interaction if player is in range

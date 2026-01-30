@@ -44,6 +44,15 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
     public GameObject enemy;
     public bool focusCameraOnTrigger = false;
 
+    public enum DialogueTriggerType
+    {
+        NPC,
+        Story
+    }
+
+    [SerializeField]
+    private DialogueTriggerType triggerType = DialogueTriggerType.NPC;
+
     private void Awake()
     {
         //controls = new PlayerControls();
@@ -65,7 +74,7 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
         // Dialogue Manager
         dialogueManager = FindObjectOfType<DialogueManager>();
 
-        if (NPCName == "Story")
+        if (triggerType == DialogueTriggerType.Story)
         {
             shouldShowIcon = false;
             DisablePopupIcon();
@@ -77,6 +86,21 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
         if (enemy != null)
             enemy.SetActive(false);
     }
+
+    public bool CanInteract(GameObject player)
+    {
+        if (DialogueManager.DialogueIsActive)
+            return false;
+
+        if (triggerType == DialogueTriggerType.Story)
+            return false;
+
+        if (TalkedAlready && TalkedJsonDialogueFile == null)
+            return false;
+
+        return true;
+    }
+
 
     public void OnPlayerInteraction(GameObject player)
     {
@@ -139,6 +163,11 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
         if (ButtonIcons.Instance != null)
         {
             ButtonIcons.Instance.Clear();
+
+            if (triggerType == DialogueTriggerType.NPC)
+            {
+                ButtonIcons.Instance.Highlight(interactType);
+            }
         }
 
         // stop wandering when dialogue starts
@@ -251,6 +280,8 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
 
     private void OnTriggerEnter(Collider other)
     {
+        if (triggerType != DialogueTriggerType.Story) return;
+
         if (other.CompareTag("Player") && TalkedAlready == false)
         {
             if (dialogueManager != null && jsonDialogueFile != null)
