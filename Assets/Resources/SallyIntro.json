@@ -2,28 +2,32 @@
     "npcName": "Sally",
     "dialogueLines": [
         {
-            "text": "What do you think of my hair Sarah",
+            "text": "Hey! What do you think of my new hair?",
             "requiredMorality": 0,
             "choices": [
                 {
-                    "text": "I think it looks great - Sarah",
+                  "npcName": "Sarah",
+                    "text": "Oh em gee, I love it!",
                     "nextIndex": 1,
                     "moralityChange": 1
                 },
                 {
-                    "text": "Honestly I don't know what you were thinking - Sarah",
+                  "npcName": "Sarah",
+                    "text": "Honestly, I don't think it suits you.",
                     "nextIndex": 1,
                     "moralityChange": -1
                 }
             ]
         },
         {
-            "text": "Thank you so much.",
+          "npcName": "Sally",
+            "text": "Yay! Thanks!",
             "requiredMorality": 1,
             "choices": []
         },
         {
-            "text": "ugh rude, I was trying something new.",
+          "npcName": "Sally",
+            "text": "Wow. I was trying something new...whatever.",
             "requiredMorality": -1,
             "choices": []
         }
