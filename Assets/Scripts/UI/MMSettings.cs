@@ -463,7 +463,7 @@ public class MMSettings : MonoBehaviour
         // Set temporary values before actually applying
         tempRightStickDeadZone = deadZone;
         rightStickDeadZoneTitleText.color = tempRightStickDeadZone == PlayerPrefs.GetFloat("rightStickDeadZone", 0.1f) ? defaultColor : pendingChangeColor;
-        rightStickDeadZoneValueText.color = tempRightStickDeadZone == PlayerPrefs.GetFloat("rightStickDeadZone", 0.1f) ? defaultColor : pendingChangeColor;
+        rightStickDeadZoneValueText.color = tempRightStickDeadZone == PlayerPrefs.GetFloat("rightStickDeadZone", 0.1f) ? pendingChangeColor : defaultColor;
         rightStickDeadZoneValueText.text = Mathf.RoundToInt(deadZone * 100).ToString("F0") + "%";
         hasUnappliedChanges = true;
     }

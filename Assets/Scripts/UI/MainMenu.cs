@@ -112,7 +112,7 @@ public class MainMenu : MonoBehaviour
     {
         if (cancelAction != null && cancelAction.triggered)
         {
-            if (creditsPanel.activeSelf || saveSlotsPanel.activeSelf)
+            if ((creditsPanel.activeSelf || saveSlotsPanel.activeSelf) && !confirmationPanel.activeSelf)
             {
                 OpenMainMenu();
             }
@@ -206,6 +206,10 @@ public class MainMenu : MonoBehaviour
                 else if (creditsPanel.activeSelf)
                 {
                     es.SetSelectedGameObject(backButton.gameObject);
+                }
+                else if (saveSlotsPanel.activeSelf)
+                {
+                    SelectSaveMenuButton();
                 }
             }
         }

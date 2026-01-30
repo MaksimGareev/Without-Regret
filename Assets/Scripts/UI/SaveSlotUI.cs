@@ -19,11 +19,13 @@ public class SaveSlotUI : MonoBehaviour
     [SerializeField] public Button[] newGameButtons = new Button[3];
 
     private string firstLevelName = "Echo'sHouse";
+    private MainMenu mainMenu;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         SetUpEvents();
+        mainMenu = FindAnyObjectByType<MainMenu>();
     }
 
     private void OnEnable()
@@ -54,7 +56,6 @@ public class SaveSlotUI : MonoBehaviour
             }
         }
 
-        MainMenu mainMenu = FindAnyObjectByType<MainMenu>();
         mainMenu.SelectSaveMenuButton();
     }
 
@@ -131,12 +132,14 @@ public class SaveSlotUI : MonoBehaviour
                 ClearSelectedSave(slot);
                 confirmationPanel.SetActive(false);
                 EnableAllButtons();
+                mainMenu.SelectSaveMenuButton();
             },
             () => 
             {
                 // Cancel action
                 confirmationPanel.SetActive(false);
                 EnableAllButtons();
+                mainMenu.SelectSaveMenuButton();
             });
     }
 
