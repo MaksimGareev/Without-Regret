@@ -9,6 +9,7 @@ public class MoveableObject : MonoBehaviour, IInteractable
 {
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private float moveSlowdownMultiplier = 3f;
+    [SerializeField] ItemData requiredItem;
     private PlayerMovingObjects playerMovingObjects; 
     private Transform grabPoint;
     private Rigidbody rb;
@@ -207,6 +208,17 @@ public class MoveableObject : MonoBehaviour, IInteractable
     {
         mover = player.GetComponent<PlayerMovingObjects>();
         if (mover == null) return;
+        
+        if (requiredItem != null && player.TryGetComponent<Inventory>(out var items))
+        {
+            if (!items.OtherItems.Contains(requiredItem))
+            {
+                // Required item is not in inventory
+                Debug.Log($"Player tried to move {gameObject.name}, but is missing required item {requiredItem.ItemName}");
+                return;
+            }
+        }
+
 
         if (!IsGrabbed && !mover.IsOccupied())
         {
