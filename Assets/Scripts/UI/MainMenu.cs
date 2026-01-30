@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using System.Collections;
+using UnityEngine.InputSystem.UI;
 
 public class MainMenu : MonoBehaviour
 {
@@ -37,6 +38,8 @@ public class MainMenu : MonoBehaviour
 
     private string gameVersion = "v.0.0.1";
     private SaveManager saveManager;
+    private bool usingController = false;
+    private Button lastSelectedButton;
     
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -45,11 +48,13 @@ public class MainMenu : MonoBehaviour
         saveManager = FindAnyObjectByType<SaveManager>();
 
         UpdatePlayButton();
+        lastSelectedButton = playButton;
         OpenMainMenu();
         StartCoroutine(WaitToStartMusic());
 
         versionNumberText.text = gameVersion;
         EventSystem.current.SetSelectedGameObject(playButton.gameObject);
+        
 
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
@@ -79,6 +84,15 @@ public class MainMenu : MonoBehaviour
         DeleteSavesDebug(); // Debug shortcut to delete all saves and reload main menu
         CheckMouseInput();
         CheckControllerInput();
+
+        if (confirmationPanel.activeSelf && backButton.gameObject.activeSelf)
+        {
+            backButton.gameObject.SetActive(false);
+        }
+        else if (!confirmationPanel.activeSelf && !mainMenuPanel.activeSelf && !backButton.gameObject.activeSelf)
+        {
+            backButton.gameObject.SetActive(true);
+        }
     }
 
     private void DeleteSavesDebug()
@@ -125,8 +139,9 @@ public class MainMenu : MonoBehaviour
 
         Vector2 mouseDelta = Mouse.current.delta.ReadValue();
 
-        if (mouseDelta.sqrMagnitude > 0.1f)
+        if (mouseDelta.sqrMagnitude > 0.1f && usingController)
         {
+            usingController = false;
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
             
@@ -144,25 +159,53 @@ public class MainMenu : MonoBehaviour
             return;
         }
 
+        // Check if the controller has moved either the left stick or dpad
         bool controllerMoved = Gamepad.current.leftStick.ReadValue().sqrMagnitude > 0.1f || Gamepad.current.dpad.ReadValue().sqrMagnitude > 0.1f;
+        
+        if (!controllerMoved) return;
 
-        if (controllerMoved)
+        if (!usingController)
         {
+            usingController = true;
             Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
 
-            if (EventSystem.current.currentSelectedGameObject == null)
+            var es = EventSystem.current;
+
+            // Clear selected GameObject if mouse was hovering over something
+            if (es.IsPointerOverGameObject())
+            {
+                var ped = new PointerEventData(es)
+                {
+                    position = new Vector2(-99999f, -99999f)
+                };
+
+                es.RaycastAll(ped, new System.Collections.Generic.List<RaycastResult>());
+
+                InputSystemUIInputModule inputModule = es.currentInputModule as InputSystemUIInputModule;
+                if (inputModule != null)
+                {
+                    inputModule.enabled = false;
+                    inputModule.enabled = true;
+                }
+
+                es.SetSelectedGameObject(null);
+            }
+
+            // If nothing is selected, set a default based on the active panel
+            if (es.currentSelectedGameObject == null)
             {
                 if (mainMenuPanel.activeSelf)
                 {
-                    EventSystem.current.SetSelectedGameObject(playButton.gameObject);
+                    es.SetSelectedGameObject(playButton.gameObject);
                 }
-                else if (settingsPanel.activeSelf)
+                else if (settingsPanel.activeSelf && settingsScript.videoSettingsOpen)
                 {
-                    EventSystem.current.SetSelectedGameObject(settingsScript.videoSettingsButton.gameObject);
+                    es.SetSelectedGameObject(settingsScript.resolutionDropdown.gameObject);
                 }
                 else if (creditsPanel.activeSelf)
                 {
-                    EventSystem.current.SetSelectedGameObject(backButton.gameObject);
+                    es.SetSelectedGameObject(backButton.gameObject);
                 }
             }
         }
@@ -213,7 +256,7 @@ public class MainMenu : MonoBehaviour
         
         backButton.gameObject.SetActive(false);
 
-        EventSystem.current.SetSelectedGameObject(playButton.gameObject);
+        EventSystem.current.SetSelectedGameObject(lastSelectedButton.gameObject);
     }
 
     private void OpenSettings()
@@ -225,7 +268,9 @@ public class MainMenu : MonoBehaviour
         
         backButton.gameObject.SetActive(true);
         
-        EventSystem.current.SetSelectedGameObject(settingsScript.videoSettingsButton.gameObject);
+        EventSystem.current.SetSelectedGameObject(settingsScript.resolutionDropdown.gameObject);
+
+        lastSelectedButton = settingsButton;
     }
 
     private void OpenCredits()
@@ -238,6 +283,8 @@ public class MainMenu : MonoBehaviour
         backButton.gameObject.SetActive(true);
 
         EventSystem.current.SetSelectedGameObject(backButton.gameObject);
+
+        lastSelectedButton = creditsButton;
     }
 
     private void OpenSaveSlotsScreen()
@@ -250,6 +297,8 @@ public class MainMenu : MonoBehaviour
         backButton.gameObject.SetActive(true);
 
         SelectSaveMenuButton();
+
+        lastSelectedButton = playButton;
     }
 
     public void SelectSaveMenuButton()
@@ -266,6 +315,8 @@ public class MainMenu : MonoBehaviour
 
         ConfirmationUI confirmationUI = confirmationPanel.GetComponent<ConfirmationUI>();
         confirmationUI.ConfirmTask(ConfirmationType.QuitToDesktop, QuitGame, OpenMainMenu);
+
+        lastSelectedButton = quitButton;
     }
 
     private void QuitGame()
