@@ -1,3 +1,4 @@
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -59,6 +60,7 @@ public class SaveSlotUI : MonoBehaviour
 
     private void SetUpEvents()
     {
+        // Set up button listeners for each slot, linked to proper numbers for save system
         playButtons[0].onClick.AddListener(() => PlaySelectedSave(1));
         deleteButtons[0].onClick.AddListener(() => ConfirmBeforeDelete(1));
         newGameButtons[0].onClick.AddListener(() => NewGame(1));
@@ -119,16 +121,22 @@ public class SaveSlotUI : MonoBehaviour
     {
         confirmationPanel.SetActive(true);
 
+        DisableAllButtons();
+
         ConfirmationUI confirmationUI = confirmationPanel.GetComponent<ConfirmationUI>();
         confirmationUI.ConfirmTask(ConfirmationType.DeleteSave, 
             () => 
             {
+                // Confirm action
                 ClearSelectedSave(slot);
                 confirmationPanel.SetActive(false);
+                EnableAllButtons();
             },
             () => 
             {
+                // Cancel action
                 confirmationPanel.SetActive(false);
+                EnableAllButtons();
             });
     }
 
@@ -166,6 +174,26 @@ public class SaveSlotUI : MonoBehaviour
         {
             Debug.LogWarning("No valid save data found. Starting New Game instead.");
             NewGame();
+        }
+    }
+
+    private void DisableAllButtons()
+    {
+        for (int i = 0; i < playButtons.Count(); i++)
+        {
+            playButtons[i].interactable = false;
+            deleteButtons[i].interactable = false;
+            newGameButtons[i].interactable = false;
+        }
+    }
+
+    private void EnableAllButtons()
+    {
+        for (int i = 0; i < playButtons.Count(); i++)
+        {
+            playButtons[i].interactable = true;
+            deleteButtons[i].interactable = true;
+            newGameButtons[i].interactable = true;
         }
     }
 }

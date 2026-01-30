@@ -296,7 +296,7 @@ public class CameraMovement : MonoBehaviour
         StartCoroutine(EndCameraZoom());
     }
 
-    public IEnumerator StartCameraZoom(Transform npc, bool dialogue = false)
+    public IEnumerator StartCameraZoom(Transform zoomTarget, bool dialogue = false)
     {
         isZooming = true;
 
@@ -305,7 +305,7 @@ public class CameraMovement : MonoBehaviour
         camRotCache = transform.rotation;
 
         // Direction the player is facing
-        Vector3 playerForward = npc.position - target.position;
+        Vector3 playerForward = zoomTarget.position - target.position;
         playerForward.y = 0f;
         playerForward.Normalize();
 
@@ -314,7 +314,7 @@ public class CameraMovement : MonoBehaviour
         if (dialogue)
         {
             // Offset behind player, up, and to the right
-            offset = -playerForward * 3f + target.right * 2f + Vector3.up * 2f;
+            offset = -playerForward * 3f + target.right * 3f + Vector3.up * 2f;
         }
         else
         {
@@ -325,9 +325,9 @@ public class CameraMovement : MonoBehaviour
         Vector3 targetPos = target.position + offset;
 
         // Target Rotation
-        Quaternion targetRot = Quaternion.LookRotation(npc.position - targetPos);
+        Quaternion targetRot = Quaternion.LookRotation(zoomTarget.position - targetPos);
 
-        lookAtCache = npc.position;
+        lookAtCache = zoomTarget.position;
 
         float t = 0f;
         while (t < zoomDuration)
