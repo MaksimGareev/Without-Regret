@@ -15,6 +15,7 @@ public class PlayerInteracting : MonoBehaviour
     
     private InputAction Interact;
     private InputAction Mantle;
+    private bool currentlyInteracting = false;
 
     [Header("Debugging")]
     [SerializeField] private bool showDebugLogs;

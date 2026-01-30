@@ -68,7 +68,8 @@ public class MoveableObject : MonoBehaviour, IInteractable
         rb.isKinematic = true;
 
         // remove Icon
-        ButtonIcons.Instance.Clear();
+        if (ButtonIcons.Instance != null)
+            ButtonIcons.Instance.Clear();
     }
 
     public void Release()
@@ -207,15 +208,20 @@ public class MoveableObject : MonoBehaviour, IInteractable
         mover = player.GetComponent<PlayerMovingObjects>();
         if (mover == null) return;
 
-        if (!IsGrabbed)
+        if (!IsGrabbed && !mover.IsOccupied())
         {
+            if (mover.grabPoint == null)
+            {
+                Debug.LogError("Player grab point is null!");
+                return;
+            }
             Grab(mover.grabPoint);
-            mover.OnMovingObject(moveSlowdownMultiplier);
+            mover.OnMovingObject(this);
         }
         else
         {
             Release();
-            mover.OnReleaseObject();
+            mover.OnReleaseObject(this);
         }
 
         // Notify any listeners
@@ -240,4 +246,6 @@ public class MoveableObject : MonoBehaviour, IInteractable
 
         return false;
     }*/
+
+    public float GetSlowdownMult() => moveSlowdownMultiplier;
 }
