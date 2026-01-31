@@ -378,4 +378,14 @@ public class MainMenu : MonoBehaviour
         yield return new WaitUntil(() => AudioManager.Instance != null);
         musicSource.SetActive(true);
     }
+
+    private void OnDisable()
+    {
+        playButton.onClick.RemoveListener(OpenSaveSlotsScreen);
+        settingsButton.onClick.RemoveListener(OpenSettings);
+        creditsButton.onClick.RemoveListener(OpenCredits);
+        quitButton.onClick.RemoveListener(ConfirmBeforeQuit);
+        backButton.onClick.RemoveListener(HandleUIBackButton);
+        feedbackSurveyButton.onClick.RemoveListener(ConfirmBeforeFeedbackSurvey);
+    }
 }

@@ -63,7 +63,7 @@ public class PauseManager : MonoBehaviour
         pauseMenuPanel.SetActive(false);
         settingsScript.DisableSettingsPanel();
         backButton.gameObject.SetActive(false);
-        SetUpEvents();
+        SetUpListeners();
     }
 
     // Update is called once per frame
@@ -208,6 +208,8 @@ public class PauseManager : MonoBehaviour
             SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
         }
 
+        SetUpListeners();
+
         // Logic to pause the game
         pauseMenuPanel.SetActive(true);
         Time.timeScale = 0f;
@@ -230,7 +232,7 @@ public class PauseManager : MonoBehaviour
         //Debug.Log("Game Paused");
     }
 
-    private void SetUpEvents()
+    private void SetUpListeners()
     {
         // Assign button listeners
         resumeButton.onClick.AddListener(ResumeGame);
@@ -238,6 +240,16 @@ public class PauseManager : MonoBehaviour
         settingsButton.onClick.AddListener(OpenSettings);
         quitButton.onClick.AddListener(ConfirmBeforeQuit);
         backButton.onClick.AddListener(HandleUIBackButton);
+    }
+
+    private void RemoveListeners()
+    {
+        // Remove button listeners
+        resumeButton.onClick.RemoveListener(ResumeGame);
+        reloadSaveButton.onClick.RemoveListener(ConfirmBeforeReload);
+        settingsButton.onClick.RemoveListener(OpenSettings);
+        quitButton.onClick.RemoveListener(ConfirmBeforeQuit);
+        backButton.onClick.RemoveListener(HandleUIBackButton);
     }
 
     private void HandleUIBackButton()
@@ -274,6 +286,8 @@ public class PauseManager : MonoBehaviour
 
     public void ResumeGame()
     {
+        RemoveListeners();
+
         // Logic to resume the game
         pauseMenuPanel.SetActive(false);
         settingsScript.DisableSettingsPanel();
@@ -406,5 +420,10 @@ public class PauseManager : MonoBehaviour
         reloadSaveButton.interactable = true;
         settingsButton.interactable = true;
         quitButton.interactable = true;
+    }
+
+    private void OnDisable()
+    {
+        RemoveListeners();
     }
 }
