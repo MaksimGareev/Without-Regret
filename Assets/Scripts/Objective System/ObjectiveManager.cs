@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
@@ -21,8 +22,12 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
 
     [Header("UI Reference")]
     [SerializeField] private GameObject objectiveUI;
+    [SerializeField] private TextMeshProUGUI objectiveTitleText;
+    [SerializeField] private TextMeshProUGUI objectiveDescriptionText;
+    [SerializeField] private TextMeshProUGUI objectiveProgressText;
 
     private Coroutine UIHideRoutine;
+    private bool UIreferenced = false;
 
     private void Awake()
     {
@@ -38,8 +43,18 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
             return;
         }
 
-        // Register self with SaveManager as a savable entity
-        StartCoroutine(RegisterWhenReady());
+        if (objectiveUI && objectiveTitleText && objectiveDescriptionText && objectiveProgressText)
+        {
+            UIreferenced = true;
+            objectiveUI.SetActive(false);
+        }
+        else
+        {
+            Debug.LogWarning("UI references are not all set in ObjectiveManager.");
+        }
+
+            // Register self with SaveManager as a savable entity
+            StartCoroutine(RegisterWhenReady());
     }
 
     private void Start()
@@ -141,8 +156,11 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
             return;
         }
 
-        if (objectiveUI != null)
+        if (UIreferenced)
         {
+            objectiveTitleText.text = "Objective: " + objective.title;
+            objectiveDescriptionText.text = objective.description;
+            objectiveProgressText.text = $"Progress: 0/{objective.requiredProgress}";
             objectiveUI.SetActive(true);
         }
 
@@ -194,6 +212,11 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
         objective.AddProgress(amount);
         Debug.Log($"Objective '{objective.data.title}' progress increased to {objective.currentProgress}/{objective.data.requiredProgress}");
 
+        if (UIreferenced)
+        {
+            objectiveProgressText.text = $"Progress: {objective.currentProgress}/{objective.data.requiredProgress}";
+        }
+
         if (objective.isCompleted)
         {
             CompleteObjective(objective);
@@ -207,8 +230,9 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
 
     private IEnumerator HideAfterDelay()
     {
-        if (objectiveUI != null)
+        if (UIreferenced)
         {
+            objectiveProgressText.text = "Objective Complete!";
             yield return new WaitForSeconds(2f);
             objectiveUI.SetActive(false);
         }
