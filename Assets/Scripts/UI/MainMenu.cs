@@ -28,6 +28,7 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private Button creditsButton;
     [SerializeField] private Button quitButton;
     [SerializeField] private Button backButton;
+    [SerializeField] private Button feedbackSurveyButton;
 
     [Header("Text References")]
     [SerializeField] private TextMeshProUGUI versionNumberText;
@@ -35,6 +36,9 @@ public class MainMenu : MonoBehaviour
 
     [Header("Music")]
     [SerializeField] private GameObject musicSource;
+
+    // Feedback Survey URL
+    private string feedbackSurveyURL = "https://docs.google.com/forms/d/e/1FAIpQLSe6KfbYdlWsa25Scm4URfYHRRS8lzQC3mZkm6tqyS_uxxHObA/viewform?usp=sharing&ouid=106294286738853521476";
 
     private string gameVersion = "v.0.0.1";
     private SaveManager saveManager;
@@ -226,6 +230,7 @@ public class MainMenu : MonoBehaviour
         creditsButton.onClick.AddListener(OpenCredits);
         quitButton.onClick.AddListener(ConfirmBeforeQuit);
         backButton.onClick.AddListener(UIBackButton);
+        feedbackSurveyButton.onClick.AddListener(ConfirmBeforeFeedbackSurvey);
     }
 
     private void UpdatePlayButton()
@@ -332,6 +337,30 @@ public class MainMenu : MonoBehaviour
         confirmationUI.ConfirmTask(ConfirmationType.QuitToDesktop, QuitGame, OpenMainMenu);
 
         lastSelectedButton = quitButton;
+    }
+
+    private void ConfirmBeforeFeedbackSurvey()
+    {
+        confirmationPanel.SetActive(true);
+        mainMenuPanel.SetActive(false);
+
+        ConfirmationUI confirmationUI = confirmationPanel.GetComponent<ConfirmationUI>();
+        confirmationUI.ConfirmTask(ConfirmationType.FeedbackSurvey, OpenFeedbackSurvey, OpenMainMenu);
+
+        lastSelectedButton = feedbackSurveyButton;
+    }
+
+    private void OpenFeedbackSurvey()
+    {
+        if (!string.IsNullOrEmpty(feedbackSurveyURL))
+        {
+            Application.OpenURL(feedbackSurveyURL);
+            Debug.Log("Opening Feedback Survey URL: " + feedbackSurveyURL);
+        }
+        else
+        {
+            Debug.LogWarning("Feedback survey URL is not set.");
+        }
     }
 
     private void QuitGame()

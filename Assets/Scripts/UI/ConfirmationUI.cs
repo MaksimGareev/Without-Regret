@@ -13,7 +13,8 @@ public enum ConfirmationType
     ApplySettings,
     ResetSettings,
     DiscardChanges,
-    LeaveBeforeApplyingSettings
+    LeaveBeforeApplyingSettings,
+    FeedbackSurvey,
 }
 
 public class ConfirmationUI : MonoBehaviour
@@ -89,6 +90,9 @@ public class ConfirmationUI : MonoBehaviour
                 break;
             case ConfirmationType.LeaveBeforeApplyingSettings:
                 taskText.text = "exit without applying changes?\n\nYour changes will be discarded.";
+                break;
+            case ConfirmationType.FeedbackSurvey:
+                taskText.text = "open the feedback survey in your web browser?\n\nThe game will remain open in the background.";
                 break;
             default:
                 taskText.text = "to proceed?";
