@@ -1343,6 +1343,24 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""RotateKeyboardLeft"",
+                    ""type"": ""Button"",
+                    ""id"": ""b7797226-e29d-4620-b777-3a903507e1c0"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""RotateKeyboardRight"",
+                    ""type"": ""Button"",
+                    ""id"": ""ebed3ba1-b36e-4389-92a6-87431802bfff"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -1398,6 +1416,28 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": "";Gamepad"",
                     ""action"": ""Rotate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d276c2a1-c971-4c9f-adea-1c057176c4bb"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""RotateKeyboardLeft"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""cd3717f2-c0e7-4550-b9e2-0feb2de5cc23"",
+                    ""path"": ""<Keyboard>/d"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""RotateKeyboardRight"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1911,6 +1951,8 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_LockPicking_Unlock = m_LockPicking.FindAction("Unlock", throwIfNotFound: true);
         m_LockPicking_Rotate = m_LockPicking.FindAction("Rotate", throwIfNotFound: true);
         m_LockPicking_Exit = m_LockPicking.FindAction("Exit", throwIfNotFound: true);
+        m_LockPicking_RotateKeyboardLeft = m_LockPicking.FindAction("RotateKeyboardLeft", throwIfNotFound: true);
+        m_LockPicking_RotateKeyboardRight = m_LockPicking.FindAction("RotateKeyboardRight", throwIfNotFound: true);
         // Dialogue
         m_Dialogue = asset.FindActionMap("Dialogue", throwIfNotFound: true);
         m_Dialogue_Move = m_Dialogue.FindAction("Move", throwIfNotFound: true);
@@ -2488,6 +2530,8 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_LockPicking_Unlock;
     private readonly InputAction m_LockPicking_Rotate;
     private readonly InputAction m_LockPicking_Exit;
+    private readonly InputAction m_LockPicking_RotateKeyboardLeft;
+    private readonly InputAction m_LockPicking_RotateKeyboardRight;
     /// <summary>
     /// Provides access to input actions defined in input action map "LockPicking".
     /// </summary>
@@ -2511,6 +2555,14 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "LockPicking/Exit".
         /// </summary>
         public InputAction @Exit => m_Wrapper.m_LockPicking_Exit;
+        /// <summary>
+        /// Provides access to the underlying input action "LockPicking/RotateKeyboardLeft".
+        /// </summary>
+        public InputAction @RotateKeyboardLeft => m_Wrapper.m_LockPicking_RotateKeyboardLeft;
+        /// <summary>
+        /// Provides access to the underlying input action "LockPicking/RotateKeyboardRight".
+        /// </summary>
+        public InputAction @RotateKeyboardRight => m_Wrapper.m_LockPicking_RotateKeyboardRight;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -2546,6 +2598,12 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Exit.started += instance.OnExit;
             @Exit.performed += instance.OnExit;
             @Exit.canceled += instance.OnExit;
+            @RotateKeyboardLeft.started += instance.OnRotateKeyboardLeft;
+            @RotateKeyboardLeft.performed += instance.OnRotateKeyboardLeft;
+            @RotateKeyboardLeft.canceled += instance.OnRotateKeyboardLeft;
+            @RotateKeyboardRight.started += instance.OnRotateKeyboardRight;
+            @RotateKeyboardRight.performed += instance.OnRotateKeyboardRight;
+            @RotateKeyboardRight.canceled += instance.OnRotateKeyboardRight;
         }
 
         /// <summary>
@@ -2566,6 +2624,12 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Exit.started -= instance.OnExit;
             @Exit.performed -= instance.OnExit;
             @Exit.canceled -= instance.OnExit;
+            @RotateKeyboardLeft.started -= instance.OnRotateKeyboardLeft;
+            @RotateKeyboardLeft.performed -= instance.OnRotateKeyboardLeft;
+            @RotateKeyboardLeft.canceled -= instance.OnRotateKeyboardLeft;
+            @RotateKeyboardRight.started -= instance.OnRotateKeyboardRight;
+            @RotateKeyboardRight.performed -= instance.OnRotateKeyboardRight;
+            @RotateKeyboardRight.canceled -= instance.OnRotateKeyboardRight;
         }
 
         /// <summary>
@@ -3162,6 +3226,20 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnExit(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "RotateKeyboardLeft" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnRotateKeyboardLeft(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "RotateKeyboardRight" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnRotateKeyboardRight(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Dialogue" which allows adding and removing callbacks.

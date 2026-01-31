@@ -1257,6 +1257,24 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "RotateKeyboardLeft",
+                    "type": "Button",
+                    "id": "b7797226-e29d-4620-b777-3a903507e1c0",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "RotateKeyboardRight",
+                    "type": "Button",
+                    "id": "ebed3ba1-b36e-4389-92a6-87431802bfff",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -1312,6 +1330,28 @@
                     "processors": "",
                     "groups": ";Gamepad",
                     "action": "Rotate",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d276c2a1-c971-4c9f-adea-1c057176c4bb",
+                    "path": "<Keyboard>/a",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "RotateKeyboardLeft",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "cd3717f2-c0e7-4550-b9e2-0feb2de5cc23",
+                    "path": "<Keyboard>/d",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "RotateKeyboardRight",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
