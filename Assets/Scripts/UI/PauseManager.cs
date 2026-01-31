@@ -252,6 +252,10 @@ public class PauseManager : MonoBehaviour
             {
                 settingsScript.CloseControlSchemeUI();
             }
+            else
+            {
+                BackToPauseMenu();
+            }
         }
         else
         {

@@ -202,6 +202,8 @@ public class MMSettings : MonoBehaviour
 
     public void DisableSettingsPanel()
     {
+        if (settingsPanel.activeSelf == false) return;
+
         settingsPanel.SetActive(false);
 
         if (tabLeftAction != null)
