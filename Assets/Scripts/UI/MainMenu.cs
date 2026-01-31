@@ -15,7 +15,7 @@ public class MainMenu : MonoBehaviour
     private InputAction cancelAction;
 
     [Header("UI Panels")]
-    [SerializeField] private GameObject mainMenuPanel;
+    [SerializeField] public GameObject mainMenuPanel;
     [SerializeField] private MMSettings settingsScript;
     [SerializeField] private GameObject settingsPanel;
     [SerializeField] private GameObject creditsPanel;
@@ -121,6 +121,10 @@ public class MainMenu : MonoBehaviour
                 if (settingsScript.controlSchemeOpen)
                 {
                     settingsScript.CloseControlSchemeUI();
+                }
+                else if (settingsScript.hasUnappliedChanges)
+                {
+                    settingsScript.ConfirmBeforeLeaveWithoutApplying();
                 }
                 else
                 {
@@ -238,9 +242,16 @@ public class MainMenu : MonoBehaviour
 
     private void UIBackButton()
     {
-        if (settingsPanel.activeSelf && settingsScript != null && settingsScript.controlSchemeOpen)
+        if (settingsPanel.activeSelf && settingsScript != null)
         {
-            settingsScript.CloseControlSchemeUI();
+            if (settingsScript.hasUnappliedChanges)
+            {
+                settingsScript.ConfirmBeforeLeaveWithoutApplying();
+            }
+            else if (settingsScript.controlSchemeOpen)
+            {
+                settingsScript.CloseControlSchemeUI();
+            }
         }
         else
         {
@@ -251,7 +262,7 @@ public class MainMenu : MonoBehaviour
     public void OpenMainMenu()
     {
         mainMenuPanel.SetActive(true);
-        settingsPanel.SetActive(false);
+        settingsScript.DisableSettingsPanel();
         creditsPanel.SetActive(false);
         saveSlotsPanel.SetActive(false);
         confirmationPanel.SetActive(false);
@@ -280,7 +291,7 @@ public class MainMenu : MonoBehaviour
     private void OpenCredits()
     {
         mainMenuPanel.SetActive(false);
-        settingsPanel.SetActive(false);
+        settingsScript.DisableSettingsPanel();
         saveSlotsPanel.SetActive(false);
         creditsPanel.SetActive(true);
         
@@ -294,7 +305,7 @@ public class MainMenu : MonoBehaviour
     private void OpenSaveSlotsScreen()
     {
         mainMenuPanel.SetActive(false);
-        settingsPanel.SetActive(false);
+        settingsScript.DisableSettingsPanel();
         creditsPanel.SetActive(false);
         saveSlotsPanel.SetActive(true);
 
