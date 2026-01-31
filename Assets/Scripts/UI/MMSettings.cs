@@ -111,7 +111,7 @@ public class MMSettings : MonoBehaviour
     {
         LoadResolutions();
         InitializeInputActions();
-        SetUpEvents();
+        SetUpListeners();
         LoadSettings();
         StartCoroutine(WaitToApplySettings());
 
@@ -198,6 +198,8 @@ public class MMSettings : MonoBehaviour
         {
             tabRightAction.Enable();
         }
+
+        SetUpListeners();
     }
 
     public void DisableSettingsPanel()
@@ -227,6 +229,8 @@ public class MMSettings : MonoBehaviour
                 parentMenu.GetComponent<PauseManager>().BackToPauseMenu();
             }
         }
+
+        DisableListeners();
     }
 
     public void LoadResolutions()
@@ -271,7 +275,7 @@ public class MMSettings : MonoBehaviour
         resolutionDropdown.RefreshShownValue();
     }
 
-    private void SetUpEvents()
+    private void SetUpListeners()
     {
         // Set up listeners for UI elements
         resolutionDropdown.onValueChanged.AddListener(SetResolution);
@@ -905,9 +909,38 @@ public class MMSettings : MonoBehaviour
         controlSchemeUIButton.interactable = controlsSettingsOpen;
     }
 
-    private void OnDisable()
+    private void DisableListeners()
     {
         tabLeftAction.Disable();
         tabRightAction.Disable();
+
+        resolutionDropdown.onValueChanged.RemoveListener(SetResolution);
+        fullscreenToggle.onValueChanged.RemoveListener(SetFullscreen);
+
+        masterVolumeSlider.onValueChanged.RemoveListener(SetMasterVolume);
+        SFXVolumeSlider.onValueChanged.RemoveListener(SetSFXVolume);
+        musicVolumeSlider.onValueChanged.RemoveListener(SetMusicVolume);
+        dialogueVolumeSlider.onValueChanged.RemoveListener(SetDialogueVolume);
+
+        mouseSensitivitySlider.onValueChanged.RemoveListener(SetMouseSensitivity);
+        leftStickSensitivitySlider.onValueChanged.RemoveListener(SetLeftStickSensitivity);
+        rightStickSensitivitySlider.onValueChanged.RemoveListener(SetRightStickSensitivity);
+        leftStickDeadZoneSlider.onValueChanged.RemoveListener(SetLeftStickDeadZone);
+        rightStickDeadZoneSlider.onValueChanged.RemoveListener(SetRightStickDeadZone);
+        
+        controlSchemeUIButton.onClick.RemoveListener(OpenControlSchemeUI);
+
+        videoSettingsButton.onClick.RemoveListener(OpenVideoSettings);
+        audioSettingsButton.onClick.RemoveListener(OpenAudioSettings);
+        controlsSettingsButton.onClick.RemoveListener(OpenControlsSettings);
+
+        resetButton.onClick.RemoveListener(ConfirmBeforeReset);
+        applyButton.onClick.RemoveListener(ConfirmBeforeApply);
+        discardChangesButton.onClick.RemoveListener(ConfirmBeforeDiscardChanges);
+    }
+
+    private void OnDisable()
+    {
+        DisableListeners();
     }
 }

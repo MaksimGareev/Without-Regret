@@ -24,18 +24,13 @@ public class SaveSlotUI : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        SetUpEvents();
+        SetUpListeners();
     }
 
     private void OnEnable()
     {
+        SetUpListeners();
         UpdateAllSlots();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
     private void UpdateAllSlots()
@@ -54,14 +49,14 @@ public class SaveSlotUI : MonoBehaviour
                 UpdateSlotInfo(slot, null);
             }
         }
-        
+
         if (mainMenu != null)
         {
             mainMenu.SelectSaveMenuButton();
         }
     }
 
-    private void SetUpEvents()
+    private void SetUpListeners()
     {
         // Set up button listeners for each slot, linked to proper numbers for save system
         playButtons[0].onClick.AddListener(() => PlaySelectedSave(1));
@@ -75,6 +70,16 @@ public class SaveSlotUI : MonoBehaviour
         playButtons[2].onClick.AddListener(() => PlaySelectedSave(3));
         deleteButtons[2].onClick.AddListener(() => ConfirmBeforeDelete(3));
         newGameButtons[2].onClick.AddListener(() => NewGame(3));
+    }
+
+    private void RemoveListeners()
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            playButtons[i].onClick.RemoveAllListeners();
+            deleteButtons[i].onClick.RemoveAllListeners();
+            newGameButtons[i].onClick.RemoveAllListeners();
+        }
     }
 
     public void UpdateSlotInfo(int slot, SaveData data)
@@ -200,5 +205,10 @@ public class SaveSlotUI : MonoBehaviour
             deleteButtons[i].interactable = true;
             newGameButtons[i].interactable = true;
         }
+    }
+    
+    private void OnDisable()
+    {
+        RemoveListeners();
     }
 }
