@@ -229,7 +229,7 @@ public class MainMenu : MonoBehaviour
         settingsButton.onClick.AddListener(OpenSettings);
         creditsButton.onClick.AddListener(OpenCredits);
         quitButton.onClick.AddListener(ConfirmBeforeQuit);
-        backButton.onClick.AddListener(UIBackButton);
+        backButton.onClick.AddListener(HandleUIBackButton);
         feedbackSurveyButton.onClick.AddListener(ConfirmBeforeFeedbackSurvey);
     }
 
@@ -245,7 +245,7 @@ public class MainMenu : MonoBehaviour
         }
     }
 
-    private void UIBackButton()
+    private void HandleUIBackButton()
     {
         if (settingsPanel.activeSelf && settingsScript != null)
         {
@@ -256,6 +256,10 @@ public class MainMenu : MonoBehaviour
             else if (settingsScript.controlSchemeOpen)
             {
                 settingsScript.CloseControlSchemeUI();
+            }
+            else
+            {
+                OpenMainMenu();
             }
         }
         else

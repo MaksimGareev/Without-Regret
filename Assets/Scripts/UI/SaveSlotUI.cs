@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class SaveSlotUI : MonoBehaviour
 {
     [SerializeField] private GameObject confirmationPanel;
+    [SerializeField] private MainMenu mainMenu;
 
     [Header("Text References")]
     [SerializeField] private TextMeshProUGUI[] slotTexts = new TextMeshProUGUI[3];
@@ -19,13 +20,11 @@ public class SaveSlotUI : MonoBehaviour
     [SerializeField] public Button[] newGameButtons = new Button[3];
 
     private string firstLevelName = "Echo'sHouse";
-    private MainMenu mainMenu;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         SetUpEvents();
-        mainMenu = FindAnyObjectByType<MainMenu>();
     }
 
     private void OnEnable()
@@ -55,8 +54,11 @@ public class SaveSlotUI : MonoBehaviour
                 UpdateSlotInfo(slot, null);
             }
         }
-
-        mainMenu.SelectSaveMenuButton();
+        
+        if (mainMenu != null)
+        {
+            mainMenu.SelectSaveMenuButton();
+        }
     }
 
     private void SetUpEvents()
