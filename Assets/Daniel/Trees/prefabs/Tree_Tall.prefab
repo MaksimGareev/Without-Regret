@@ -10,27 +10,27 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 5ef378e048fa8ce4f9ab452f6e4f4360, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 101.36826
+      value: 52.378284
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5ef378e048fa8ce4f9ab452f6e4f4360, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 100.01221
+      value: 98.99286
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5ef378e048fa8ce4f9ab452f6e4f4360, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 21.234465
+      value: 30.391865
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5ef378e048fa8ce4f9ab452f6e4f4360, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0.8337824
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5ef378e048fa8ce4f9ab452f6e4f4360, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5ef378e048fa8ce4f9ab452f6e4f4360, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0
+      value: 0.55209327
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5ef378e048fa8ce4f9ab452f6e4f4360, type: 3}
       propertyPath: m_LocalRotation.z
@@ -42,7 +42,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5ef378e048fa8ce4f9ab452f6e4f4360, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
+      value: 67.021
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5ef378e048fa8ce4f9ab452f6e4f4360, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
@@ -56,6 +56,9 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5ef378e048fa8ce4f9ab452f6e4f4360, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3639840123271018188}
     - targetCorrespondingSourceObject: {fileID: 169415590544845568, guid: 5ef378e048fa8ce4f9ab452f6e4f4360, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3443301590413079403}
@@ -88,3 +91,20 @@ CapsuleCollider:
   m_Height: 580.2905
   m_Direction: 1
   m_Center: {x: -1.7, y: 197.12, z: -9}
+--- !u!1 &2926807791191471889 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 5ef378e048fa8ce4f9ab452f6e4f4360, type: 3}
+  m_PrefabInstance: {fileID: 2620943234349468224}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &3639840123271018188
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2926807791191471889}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88311134e484ef5449f807aaba4711da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TreeRotater
