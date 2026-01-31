@@ -33,6 +33,7 @@ public class LockPicking : MonoBehaviour
     private Transform player;
     private PlayerControls controls;
     private Vector2 rotateInput;
+    private int KeyBoardInputValue;
     public ItemData RewardItem;
     private bool SecondStageActive = false;
     private Rigidbody rb;
@@ -53,9 +54,16 @@ public class LockPicking : MonoBehaviour
 
         controls = new PlayerControls();
 
-        // Rotation
+        // Rotation With GamePad
         controls.LockPicking.Rotate.performed += ctx => rotateInput = ctx.ReadValue<Vector2>();
         controls.LockPicking.Rotate.canceled += ctx => rotateInput = Vector2.zero;
+
+        // Rotation with KeyBoard
+        controls.LockPicking.RotateKeyboardLeft.performed += ctx => KeyBoardInputValue = -1;
+        controls.LockPicking.RotateKeyboardRight.performed += ctx => KeyBoardInputValue = 1;
+
+        controls.LockPicking.RotateKeyboardLeft.canceled += ctx => KeyBoardInputValue = 0;
+        controls.LockPicking.RotateKeyboardRight.canceled += ctx => KeyBoardInputValue = 0;
 
         // Attempt unlock
         controls.LockPicking.Unlock.performed += ctx => TryUnlock();
@@ -84,17 +92,27 @@ public class LockPicking : MonoBehaviour
         {
             if (MovePick == true)
             {
-                // Rotate pick cursor with horisontal input (A/D)
-                //RotationAmount = -rotateInput * CursorSpeed * Time.deltaTime;
-                CurrentAngle = Mathf.Atan2(rotateInput.y, rotateInput.x) * Mathf.Rad2Deg;
+                if (rotateInput.magnitude > 0)
+                {
+                    // Rotate pick cursor with horisontal input (A/D)
+                    //RotationAmount = -rotateInput * CursorSpeed * Time.deltaTime;
+                    CurrentAngle = Mathf.Atan2(rotateInput.y, rotateInput.x) * Mathf.Rad2Deg;
 
-                // Update and clamp rotation
-                //CurrentAngle += RotationAmount;
-                //CurrentAngle = Mathf.Clamp(CurrentAngle, -MaxAngle, MaxAngle);
+                    // Update and clamp rotation
+                    //CurrentAngle += RotationAmount;
+                    //CurrentAngle = Mathf.Clamp(CurrentAngle, -MaxAngle, MaxAngle);
 
-                // Apply rotation to pick cursor
-                PickCursor.localEulerAngles = new Vector3(0, 0, CurrentAngle - 90);
+                    // Apply rotation to pick cursor
+                    PickCursor.localEulerAngles = new Vector3(0, 0, CurrentAngle - 90);
+                }
+                else if (KeyBoardInputValue != 0)
+                {
+                    RotationAmount = -KeyBoardInputValue * CursorSpeed * Time.deltaTime;
+                    CurrentAngle += RotationAmount;
+                    PickCursor.localEulerAngles = new Vector3(0, 0, CurrentAngle - 90);
+                }
             }
+            
 
             KeyPressTime = Mathf.Clamp(KeyPressTime, 0, 1);
 
@@ -152,6 +170,10 @@ public class LockPicking : MonoBehaviour
 
     public void CancelUnlock()
     {
+        if (!SecondStageActive)
+        {
+            PickCursor.localEulerAngles = new Vector3(0, 0, CurrentAngle - 90);
+        }
         MovePick = true;
         KeyPressTime = 0;
     }
