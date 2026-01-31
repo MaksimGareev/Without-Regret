@@ -6,6 +6,8 @@ public class LockPicking : MonoBehaviour
     public RectTransform InnerLock;
     public RectTransform PickCursor;
     public GameObject LockPickUi;
+    public GameObject StageTwoUI;
+
     public float MaxAngle = 90;
     public float LockSpeed = 10;
     public float CursorSpeed = 100f;
@@ -31,6 +33,9 @@ public class LockPicking : MonoBehaviour
     private Transform player;
     private PlayerControls controls;
     private Vector2 rotateInput;
+    public ItemData RewardItem;
+    private bool SecondStageActive = false;
+    private Rigidbody rb;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Start()
@@ -40,6 +45,7 @@ public class LockPicking : MonoBehaviour
     void Awake()
     {
         player = GameObject.FindGameObjectWithTag("Player").transform;
+        rb = player.GetComponent<Rigidbody>();
         if (PickCursor != null)
         {
             originalPosition = PickCursor.localPosition;
@@ -57,6 +63,9 @@ public class LockPicking : MonoBehaviour
 
         // Cancel Lockpick
         controls.LockPicking.Exit.performed += ctx => DeactivateLockPick();
+
+        // Arrow Controlls
+
     }
 
     private void OnEnable()
@@ -71,87 +80,67 @@ public class LockPicking : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //Debug.Log(UnlockRange);
-        Rigidbody rb = player.GetComponent<Rigidbody>();
-
-        if (MovePick == true)
+        if (!SecondStageActive)
         {
-            // Rotate pick cursor with horisontal input (A/D)
-            //RotationAmount = -rotateInput * CursorSpeed * Time.deltaTime;
-            CurrentAngle = Mathf.Atan2(rotateInput.y, rotateInput.x) * Mathf.Rad2Deg;
-
-            // Update and clamp rotation
-            //CurrentAngle += RotationAmount;
-            //CurrentAngle = Mathf.Clamp(CurrentAngle, -MaxAngle, MaxAngle);
-
-            // Apply rotation to pick cursor
-            PickCursor.localEulerAngles = new Vector3(0, 0, CurrentAngle-90);
-        }
-
-        KeyPressTime = Mathf.Clamp(KeyPressTime, 0, 1);
-
-        float Percentage = Mathf.Round(100 - Mathf.Abs((CurrentAngle - UnlockAngle) / 100) * 100);
-
-        if (Percentage <= 0)
-        {
-            Percentage = 1;
-        }
-
-        float LockRotation = ((Percentage / 100) * MaxAngle) * KeyPressTime;
-        float MaxRotation = (Percentage / 100) * MaxAngle;
-
-        float LockLerp = Mathf.Lerp(InnerLock.eulerAngles.z, LockRotation, Time.deltaTime * LockSpeed);
-        InnerLock.eulerAngles = new Vector3(0, 0, LockLerp);
-
-        if (MovePick == false)
-        {
-            PickCursor.eulerAngles = new Vector3(0, 0, CurrentAngle-90 + LockLerp);
-        }
-
-        //Debug.Log(Percentage);
-        //PickCursor.eulerAngles = new Vector3(0, 0, LockLerp);
-
-        if (LockLerp >= MaxRotation - 1)
-        {
-            if(CurrentAngle < UnlockRange.y && CurrentAngle > UnlockRange.x)
+            if (MovePick == true)
             {
-                Debug.Log("Unlocked");
-                // NewLock();
-                Source.Stop();
-                if (!Source.isPlaying)
-                {
-                    Source.PlayOneShot(UnlockSound);
-                }
-                MovePick = true;
-                KeyPressTime = 0;
-                LockPickUi.SetActive(false);
+                // Rotate pick cursor with horisontal input (A/D)
+                //RotationAmount = -rotateInput * CursorSpeed * Time.deltaTime;
+                CurrentAngle = Mathf.Atan2(rotateInput.y, rotateInput.x) * Mathf.Rad2Deg;
 
+                // Update and clamp rotation
+                //CurrentAngle += RotationAmount;
+                //CurrentAngle = Mathf.Clamp(CurrentAngle, -MaxAngle, MaxAngle);
 
-                // Unlock player movement
-                PlayerController pc = player.GetComponent<PlayerController>();
-                if (pc != null)
-                {
-                    pc.MovementLocked = false;
-                    pc.enabled = true;
-                }
-
-                if (currentLockedItem != null)
-                {
-                    currentLockedItem.OnUnlocked();
-                    currentLockedItem = null;
-                }
-            }
-            else if (MovePick == false)
-            {
-                //PickCursor.eulerAngles = new Vector3(0, 0, LockLerp);
-                float RandomRotation = Random.insideUnitCircle.x;
-                PickCursor.eulerAngles += new Vector3(0, 0, Random.Range(-RandomRotation, RandomRotation));
-                if (!Source.isPlaying)
-                {
-                    Source.PlayOneShot(FailSound);
-                }
+                // Apply rotation to pick cursor
+                PickCursor.localEulerAngles = new Vector3(0, 0, CurrentAngle - 90);
             }
 
+            KeyPressTime = Mathf.Clamp(KeyPressTime, 0, 1);
+
+            float Percentage = Mathf.Round(100 - Mathf.Abs((CurrentAngle - UnlockAngle) / 100) * 100);
+
+            if (Percentage <= 0)
+            {
+                Percentage = 1;
+            }
+
+            float LockRotation = ((Percentage / 100) * MaxAngle) * KeyPressTime;
+            float MaxRotation = (Percentage / 100) * MaxAngle;
+
+            float LockLerp = Mathf.Lerp(InnerLock.eulerAngles.z, LockRotation, Time.deltaTime * LockSpeed);
+            InnerLock.eulerAngles = new Vector3(0, 0, LockLerp);
+
+            if (MovePick == false)
+            {
+                PickCursor.eulerAngles = new Vector3(0, 0, CurrentAngle - 90 + LockLerp);
+            }
+
+            //Debug.Log(Percentage);
+            //PickCursor.eulerAngles = new Vector3(0, 0, LockLerp);
+
+            if (LockLerp >= MaxRotation - 1)
+            {
+                if (CurrentAngle < UnlockRange.y && CurrentAngle > UnlockRange.x)
+                {
+                    Debug.Log("Unlocked");
+                    // NewLock();
+                    Source.Stop();
+                    SecondStageActive = true;
+                    StageTwoUI.SetActive(true);
+                }
+                else if (MovePick == false)
+                {
+                    //PickCursor.eulerAngles = new Vector3(0, 0, LockLerp);
+                    float RandomRotation = Random.insideUnitCircle.x;
+                    PickCursor.eulerAngles += new Vector3(0, 0, Random.Range(-RandomRotation, RandomRotation));
+                    if (!Source.isPlaying)
+                    {
+                        Source.PlayOneShot(FailSound);
+                    }
+                }
+
+            }
         }
     }
 
@@ -193,5 +182,37 @@ public class LockPicking : MonoBehaviour
         UnlockAngle = Random.Range(-MaxAngle + LockRange, MaxAngle - LockRange);
         UnlockRange = new Vector2(UnlockAngle - LockRange, UnlockAngle + LockRange);
         rb.constraints = RigidbodyConstraints.FreezeAll;
+    }
+
+    public void Unlock()
+    {
+        if (!Source.isPlaying)
+        {
+            Source.PlayOneShot(UnlockSound);
+        }
+        MovePick = true;
+        KeyPressTime = 0;
+        StageTwoUI.SetActive(false);
+        LockPickUi.SetActive(false);
+
+        if (RewardItem != null)//if thing being unlocked has a reward, put it in the player's inventory
+        {
+            player.GetComponent<Inventory>().AddItem(RewardItem);
+            RewardItem = null;
+        }
+
+        // Unlock player movement
+        PlayerController pc = player.GetComponent<PlayerController>();
+        if (pc != null)
+        {
+            pc.MovementLocked = false;
+            pc.enabled = true;
+        }
+
+        if (currentLockedItem != null)
+        {
+            currentLockedItem.OnUnlocked();
+            currentLockedItem = null;
+        }
     }
 }
