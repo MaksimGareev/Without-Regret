@@ -17,6 +17,9 @@ public class MMSettings : MonoBehaviour
     [SerializeField] private Color defaultColor = Color.white;
     [SerializeField] private Color TabEnabledColor = Color.aquamarine;
 
+    [Header("Parent Menu Reference")]
+    [SerializeField] private GameObject parentMenu;
+
     [Header("Settings References")]
     // Video Settings
     [SerializeField] public TMP_Dropdown resolutionDropdown;
@@ -99,7 +102,7 @@ public class MMSettings : MonoBehaviour
 
     private Resolution[] resolutions;
 
-    private bool hasUnappliedChanges = false;
+    public bool hasUnappliedChanges { get; private set; } = false;
     private bool hasChangedSettings = false;
     private ConfirmationUI confirmationUI;
     
@@ -135,7 +138,6 @@ public class MMSettings : MonoBehaviour
             Debug.LogError("TabLeft action not found in InputActionAsset.");
             return;
         }
-        tabLeftAction.Enable();
 
         tabRightAction = inputActions.FindActionMap("UI").FindAction("TabRight");
         if (tabRightAction == null)
@@ -143,7 +145,6 @@ public class MMSettings : MonoBehaviour
             Debug.LogError("TabRight action not found in InputActionAsset.");
             return;
         }
-        tabRightAction.Enable();
     }
 
     private void Update()
@@ -187,6 +188,43 @@ public class MMSettings : MonoBehaviour
     {
         settingsPanel.SetActive(true);
         OpenVideoSettings();
+
+        if (tabLeftAction != null)
+        {
+            tabLeftAction.Enable();
+        }
+
+        if (tabRightAction != null)
+        {
+            tabRightAction.Enable();
+        }
+    }
+
+    public void DisableSettingsPanel()
+    {
+        settingsPanel.SetActive(false);
+
+        if (tabLeftAction != null)
+        {
+            tabLeftAction.Disable();
+        }
+
+        if (tabRightAction != null)
+        {
+            tabRightAction.Disable();
+        }
+
+        if (parentMenu != null)
+        {
+            if (parentMenu.GetComponent<MainMenu>() != null && !parentMenu.GetComponent<MainMenu>().mainMenuPanel.activeSelf)
+            {
+                parentMenu.GetComponent<MainMenu>().OpenMainMenu();
+            }
+            else if (parentMenu.GetComponent<PauseManager>() != null && !parentMenu.GetComponent<PauseManager>().pauseMenuPanel.activeSelf)
+            {
+                parentMenu.GetComponent<PauseManager>().BackToPauseMenu();
+            }
+        }
     }
 
     public void LoadResolutions()
@@ -485,6 +523,8 @@ public class MMSettings : MonoBehaviour
         }
 
         DisableAllButtonsAndSliders();
+        tabLeftAction.Disable();
+        tabRightAction.Disable();
 
         confirmationPanel.SetActive(true);
 
@@ -494,11 +534,17 @@ public class MMSettings : MonoBehaviour
                 ApplySettings();
                 confirmationPanel.SetActive(false);
                 EnableAllButtonsAndSliders();
+                tabLeftAction.Enable();
+                tabRightAction.Enable();
+                EventSystem.current.SetSelectedGameObject(applyButton.gameObject);
             },
             () => 
             {
                 confirmationPanel.SetActive(false);
                 EnableAllButtonsAndSliders();
+                tabLeftAction.Enable();
+                tabRightAction.Enable();
+                EventSystem.current.SetSelectedGameObject(applyButton.gameObject);
             });        
     }
 
@@ -519,6 +565,8 @@ public class MMSettings : MonoBehaviour
         }
 
         DisableAllButtonsAndSliders();
+        tabLeftAction.Disable();
+        tabRightAction.Disable();
 
         confirmationPanel.SetActive(true);
 
@@ -528,11 +576,17 @@ public class MMSettings : MonoBehaviour
                 ResetSettings();
                 confirmationPanel.SetActive(false);
                 EnableAllButtonsAndSliders();
+                tabLeftAction.Enable();
+                tabRightAction.Enable();
+                EventSystem.current.SetSelectedGameObject(resetButton.gameObject);
             },
             () => 
             {
                 confirmationPanel.SetActive(false);
                 EnableAllButtonsAndSliders();
+                tabLeftAction.Enable();
+                tabRightAction.Enable();
+                EventSystem.current.SetSelectedGameObject(resetButton.gameObject);
             });
     }
 
@@ -553,6 +607,8 @@ public class MMSettings : MonoBehaviour
         }
 
         DisableAllButtonsAndSliders();
+        tabLeftAction.Disable();
+        tabRightAction.Disable();
 
         confirmationPanel.SetActive(true);
 
@@ -562,11 +618,58 @@ public class MMSettings : MonoBehaviour
                 DiscardChanges();
                 confirmationPanel.SetActive(false);
                 EnableAllButtonsAndSliders();
+                tabLeftAction.Enable();
+                tabRightAction.Enable();
+                EventSystem.current.SetSelectedGameObject(discardChangesButton.gameObject);
             },
             () => 
             {
                 confirmationPanel.SetActive(false);
                 EnableAllButtonsAndSliders();
+                tabLeftAction.Enable();
+                tabRightAction.Enable();
+                EventSystem.current.SetSelectedGameObject(discardChangesButton.gameObject);
+            });
+    }
+
+    public void ConfirmBeforeLeaveWithoutApplying()
+    {
+        confirmationUI = confirmationPanel.GetComponent<ConfirmationUI>();
+
+        if (confirmationPanel == null)
+        {
+            Debug.LogError("confirmationPanel reference is missing.");
+            return;
+        }
+
+        if (confirmationUI == null)
+        {
+            Debug.LogError("ConfirmationUI component not found on confirmationPanel.");
+            return;
+        }
+
+        DisableAllButtonsAndSliders();
+        tabLeftAction.Disable();
+        tabRightAction.Disable();
+
+        confirmationPanel.SetActive(true);
+
+        confirmationUI.ConfirmTask(ConfirmationType.LeaveBeforeApplyingSettings, 
+            () => 
+            {
+                // Logic to leave settings menu without applying changes
+                DiscardChanges();
+                confirmationPanel.SetActive(false);
+                EnableAllButtonsAndSliders();
+                DisableSettingsPanel();
+            },
+            () => 
+            {
+                confirmationPanel.SetActive(false);
+                EnableAllButtonsAndSliders();
+                tabLeftAction.Enable();
+                tabRightAction.Enable();
+                EventSystem.current.SetSelectedGameObject(applyButton.gameObject);
             });
     }
 

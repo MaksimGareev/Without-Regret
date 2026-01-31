@@ -12,7 +12,8 @@ public enum ConfirmationType
     DeleteSave,
     ApplySettings,
     ResetSettings,
-    DiscardChanges
+    DiscardChanges,
+    LeaveBeforeApplyingSettings
 }
 
 public class ConfirmationUI : MonoBehaviour
@@ -85,6 +86,9 @@ public class ConfirmationUI : MonoBehaviour
                 break;
             case ConfirmationType.DiscardChanges:
                 taskText.text = "discard all changes?";
+                break;
+            case ConfirmationType.LeaveBeforeApplyingSettings:
+                taskText.text = "exit without applying changes?\n\nYour changes will be discarded.";
                 break;
             default:
                 taskText.text = "to proceed?";

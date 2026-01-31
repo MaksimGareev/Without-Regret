@@ -24,7 +24,7 @@ public class PauseManager : MonoBehaviour
     [SerializeField] private Button backButton;
 
     [Header("UI Panels")]
-    [SerializeField] private GameObject pauseMenuPanel;
+    [SerializeField] public GameObject pauseMenuPanel;
     [SerializeField] private MMSettings settingsScript;
     [SerializeField] private GameObject settingsPanel;
     [SerializeField] private GameObject confirmationPanel;
@@ -61,7 +61,7 @@ public class PauseManager : MonoBehaviour
     void Start()
     {
         pauseMenuPanel.SetActive(false);
-        settingsPanel.SetActive(false);
+        settingsScript.DisableSettingsPanel();
         backButton.gameObject.SetActive(false);
         SetUpEvents();
     }
@@ -105,6 +105,10 @@ public class PauseManager : MonoBehaviour
                 if (settingsScript != null && settingsScript.controlSchemeOpen)
                 {
                     settingsScript.CloseControlSchemeUI();
+                }
+                else if (settingsScript != null && settingsScript.hasUnappliedChanges)
+                {
+                    settingsScript.ConfirmBeforeLeaveWithoutApplying();
                 }
                 else
                 {
@@ -233,14 +237,21 @@ public class PauseManager : MonoBehaviour
         reloadSaveButton.onClick.AddListener(ConfirmBeforeReload);
         settingsButton.onClick.AddListener(OpenSettings);
         quitButton.onClick.AddListener(ConfirmBeforeQuit);
-        backButton.onClick.AddListener(HandleBackButton);
+        backButton.onClick.AddListener(HandleUIBackButton);
     }
 
-    private void HandleBackButton()
+    private void HandleUIBackButton()
     {
-        if (settingsPanel.activeSelf && settingsScript != null && settingsScript.controlSchemeOpen)
+        if (settingsPanel.activeSelf && settingsScript != null)
         {
-            settingsScript.CloseControlSchemeUI();
+            if (settingsScript.hasUnappliedChanges)
+            {
+                settingsScript.ConfirmBeforeLeaveWithoutApplying();
+            }
+            else if (settingsScript.controlSchemeOpen)
+            {
+                settingsScript.CloseControlSchemeUI();
+            }
         }
         else
         {
@@ -248,9 +259,9 @@ public class PauseManager : MonoBehaviour
         }
     }
 
-    private void BackToPauseMenu()
+    public void BackToPauseMenu()
     {
-        settingsPanel.SetActive(false);
+        settingsScript.DisableSettingsPanel();
         pauseMenuPanel.SetActive(true);
         backButton.gameObject.SetActive(false);
 
@@ -261,7 +272,7 @@ public class PauseManager : MonoBehaviour
     {
         // Logic to resume the game
         pauseMenuPanel.SetActive(false);
-        settingsPanel.SetActive(false);
+        settingsScript.DisableSettingsPanel();
         backButton.gameObject.SetActive(false);
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
@@ -308,6 +319,7 @@ public class PauseManager : MonoBehaviour
             {
                 confirmationPanel.SetActive(false);
                 EnableAllButtons();
+                EventSystem.current.SetSelectedGameObject(quitButton.gameObject);
             });
     }
 
@@ -331,6 +343,7 @@ public class PauseManager : MonoBehaviour
                 // Do nothing if cancelled
                 confirmationPanel.SetActive(false);
                 EnableAllButtons();
+                EventSystem.current.SetSelectedGameObject(reloadSaveButton.gameObject);
             });
     }
 
