@@ -19,11 +19,6 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
     [HideInInspector] public UnityEvent<ObjectiveInstance> OnObjectiveActivated = new();
     [HideInInspector] public UnityEvent<ObjectiveInstance> OnObjectiveCompleted = new();
 
-    [Header("UI Reference")]
-    [SerializeField] private GameObject objectiveUI;
-
-    private Coroutine UIHideRoutine;
-
     private void Awake()
     {
         // Singleton pattern
@@ -141,17 +136,6 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
             return;
         }
 
-        if (objectiveUI != null)
-        {
-            objectiveUI.SetActive(true);
-        }
-
-        if (UIHideRoutine != null)
-        {
-            StopCoroutine(UIHideRoutine);
-            UIHideRoutine = null;
-        }
-
         ObjectiveInstance newObjective = new ObjectiveInstance(objective);
         activeObjectives.Add(newObjective);
         OnObjectiveActivated.Invoke(newObjective);
@@ -205,14 +189,8 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
         }
     }
 
-    private IEnumerator HideAfterDelay()
+    private IEnumerator ActivateNextObjective()
     {
-        if (objectiveUI != null)
-        {
-            yield return new WaitForSeconds(2f);
-            objectiveUI.SetActive(false);
-        }
-
         yield return new WaitForSeconds(0.5f);
 
         foreach (var next in allObjectives)
@@ -226,8 +204,6 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
 
         objectivesInSceneCompleted = true;
         Debug.Log("All objectives complete");
-
-        UIHideRoutine = null;
     }
 
     public void EnsureActiveObjective()
@@ -263,13 +239,9 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
         OnObjectiveCompleted.Invoke(objective);
 
         Debug.Log($"Objective '{objective.data.title}' completed!");
-
-        if (UIHideRoutine != null)
-        {
-            StopCoroutine(UIHideRoutine);
-        }
-
-        UIHideRoutine = StartCoroutine(HideAfterDelay());
+        
+        StartCoroutine(ActivateNextObjective());
+        
         currentObjectiveIndex++;
 
         if (SaveManager.Instance != null)
