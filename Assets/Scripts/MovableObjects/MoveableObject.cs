@@ -33,7 +33,6 @@ public class MoveableObject : MonoBehaviour, IInteractable
     private float groundCheckDistance = 0.1f; // extra ray distance below collider
     private float groundVelocityThreshold = 0.01f; // velocity threshold to consider 'stopped'
 
-    private bool isGrabbed;
     [SerializeField] private float maxGrabDistance = 2.5f;
 
 
@@ -63,11 +62,8 @@ public class MoveableObject : MonoBehaviour, IInteractable
         if (DialogueManager.DialogueIsActive)
             return false;
 
-        if (isGrabbed)
-            return false;
-
-        if (rb == null || rb.isKinematic)
-            return false;
+        /*if (rb == null || rb.isKinematic)
+            return false;*/
 
         float dist = Vector3.Distance(player.transform.position, transform.position);
         if (dist > maxGrabDistance)
@@ -211,7 +207,6 @@ public class MoveableObject : MonoBehaviour, IInteractable
             transform.position = grabPoint.position;
             transform.rotation = grabPoint.rotation;
         }
-
         /*
         float distance = Vector3.Distance(transform.position, player.position);
 
@@ -221,7 +216,7 @@ public class MoveableObject : MonoBehaviour, IInteractable
         {
             ButtonIcons.Instance.Highlight(interactType);
         }
-        else if (!shouldShowIcon && popupInstance != null)
+        else if (!shouldShowIcon && popupInstance != null )
         {
             ButtonIcons.Instance.Clear();
         }*/
@@ -232,15 +227,19 @@ public class MoveableObject : MonoBehaviour, IInteractable
         mover = player.GetComponent<PlayerMovingObjects>();
         if (mover == null) return;
 
+        PlayerInteracting interacting = player.GetComponent<PlayerInteracting>();
+
         if (!IsGrabbed)
         {
             Grab(mover.grabPoint);
             mover.OnMovingObject(moveSlowdownMultiplier);
+            interacting?.SetHeldObject(this);
         }
         else
         {
             Release();
             mover.OnReleaseObject();
+            interacting?.ClearHeldObjects();
         }
 
         // Notify any listeners

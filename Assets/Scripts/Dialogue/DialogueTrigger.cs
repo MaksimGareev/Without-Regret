@@ -47,6 +47,7 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
     public enum DialogueTriggerType
     {
         NPC,
+        Spawn,
         Story
     }
 
@@ -261,13 +262,6 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
             }
         }
 
-        // **Activate the enemy when dialogue is triggered**
-        if (enemy != null)
-        {
-            enemy.SetActive(true);
-            Debug.Log($"{enemy.name} activated by {NPCName}");
-        }
-
     }
 
     public void ResumeWandering()
@@ -280,19 +274,20 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
 
     private void OnTriggerEnter(Collider other)
     {
-        if (triggerType != DialogueTriggerType.Story) return;
+        if (triggerType == DialogueTriggerType.NPC) return;
 
-        if (other.CompareTag("Player") && TalkedAlready == false)
+        if (other.CompareTag("Player") && !TalkedAlready)
         {
+            if (this.CompareTag("Spawner"))
+            {
+                enemy.SetActive(true);
+            }
             if (dialogueManager != null && jsonDialogueFile != null)
             {
                 dialogueManager.StartDialogueFromJson(jsonDialogueFile, this);
             }
+
             TalkedAlready = true;
-           /* if (this.CompareTag("Spawner") && enemy != null)
-            {
-                enemy.SetActive(true);
-            }*/
         }
     }
 
