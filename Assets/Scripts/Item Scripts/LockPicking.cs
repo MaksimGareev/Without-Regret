@@ -1,4 +1,7 @@
 using UnityEngine;
+using UnityEngine.UI;
+using System.Collections.Generic;
+using System.Collections;
 
 public class LockPicking : MonoBehaviour
 {
@@ -13,6 +16,9 @@ public class LockPicking : MonoBehaviour
     public float CursorSpeed = 100f;
     private float CurrentAngle = 0f;
     public float RotationAmount;
+    public List<Sprite> ArrowImages;
+    public List<int> DirectionAssignments; //0 = up, 1 = left, 2 = down, 3 = right in terms of layout on the d-pad and arrow keys
+    public List<RawImage> Arrows;
 
     [Min(1)]
     [Range(1, 25)]
@@ -37,11 +43,34 @@ public class LockPicking : MonoBehaviour
     public ItemData RewardItem;
     private bool SecondStageActive = false;
     private Rigidbody rb;
+    private int ArrowIndex = 0;
+    private bool ControlsLocked;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Start()
     {
+        Source.volume = 300f;
         PickCursor.eulerAngles = new Vector3(0, 0, 0);
+        for (int i = 0; i < Arrows.Count; i++)//assigns sprites to the ui images based off directional inputs given
+        {
+            if (DirectionAssignments[i] == 0)
+            {
+                Arrows[i].texture = ArrowImages[0].texture;
+            }
+            if (DirectionAssignments[i] == 1)
+            {
+                Arrows[i].texture = ArrowImages[1].texture;
+            }
+            if (DirectionAssignments[i] == 2)
+            {
+                Arrows[i].texture = ArrowImages[2].texture;
+            }
+            if (DirectionAssignments[i] == 3)
+            {
+                Arrows[i].texture = ArrowImages[3].texture;
+            }
+        }
+        StageTwoUI.SetActive(false);
     }
     void Awake()
     {
@@ -72,8 +101,6 @@ public class LockPicking : MonoBehaviour
         // Cancel Lockpick
         controls.LockPicking.Exit.performed += ctx => DeactivateLockPick();
 
-        // Arrow Controlls
-
     }
 
     private void OnEnable()
@@ -88,11 +115,11 @@ public class LockPicking : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!SecondStageActive)
+        if (!SecondStageActive)// if second stage isn't active, recieves rotation inputs
         {
             if (MovePick == true)
             {
-                if (rotateInput.magnitude > 0)
+                if (rotateInput.magnitude > 0)//if receiving controller stick input, uses this method
                 {
                     // Rotate pick cursor with horisontal input (A/D)
                     //RotationAmount = -rotateInput * CursorSpeed * Time.deltaTime;
@@ -105,7 +132,7 @@ public class LockPicking : MonoBehaviour
                     // Apply rotation to pick cursor
                     PickCursor.localEulerAngles = new Vector3(0, 0, CurrentAngle - 90);
                 }
-                else if (KeyBoardInputValue != 0)
+                else if (KeyBoardInputValue != 0)// if detecting A and D input, uses this method
                 {
                     RotationAmount = -KeyBoardInputValue * CursorSpeed * Time.deltaTime;
                     CurrentAngle += RotationAmount;
@@ -141,11 +168,10 @@ public class LockPicking : MonoBehaviour
             {
                 if (CurrentAngle < UnlockRange.y && CurrentAngle > UnlockRange.x)
                 {
-                    Debug.Log("Unlocked");
                     // NewLock();
                     Source.Stop();
                     SecondStageActive = true;
-                    StageTwoUI.SetActive(true);
+                    StageTwoUI.SetActive(true);//switches controls to stage two, locks pick rotation
                 }
                 else if (MovePick == false)
                 {
@@ -158,6 +184,32 @@ public class LockPicking : MonoBehaviour
                     }
                 }
 
+            }
+        }
+        else if (SecondStageActive)
+        {
+            if (ArrowIndex < DirectionAssignments.Count && !ControlsLocked)
+            {
+                if (controls.LockPicking.ArrowUp.triggered)
+                {
+                    CheckDirection(0);
+                }
+                else if (controls.LockPicking.ArrowRight.triggered)
+                {
+                    CheckDirection(1);
+                }
+                else if (controls.LockPicking.ArrowDown.triggered)
+                {
+                    CheckDirection(2);
+                }
+                else if (controls.LockPicking.ArrowLeft.triggered)
+                {
+                    CheckDirection(3);   
+                }
+            }
+            else if (ArrowIndex >= DirectionAssignments.Count)
+            {
+                Unlock();
             }
         }
     }
@@ -206,7 +258,7 @@ public class LockPicking : MonoBehaviour
         rb.constraints = RigidbodyConstraints.FreezeAll;
     }
 
-    public void Unlock()
+    public void Unlock()//resets and deactivates Ui
     {
         if (!Source.isPlaying)
         {
@@ -214,6 +266,7 @@ public class LockPicking : MonoBehaviour
         }
         MovePick = true;
         KeyPressTime = 0;
+        ArrowIndex = 0;
         StageTwoUI.SetActive(false);
         LockPickUi.SetActive(false);
 
@@ -236,5 +289,38 @@ public class LockPicking : MonoBehaviour
             currentLockedItem.OnUnlocked();
             currentLockedItem = null;
         }
+    }
+
+    private void CheckDirection(int input)
+    {
+        if (input == DirectionAssignments[ArrowIndex])
+        {
+            Arrows[ArrowIndex].gameObject.SetActive(false);
+            ArrowIndex++;
+        }
+        else
+        {
+            ArrowIndex = 0;
+            ControlsLocked = true;
+            Source.PlayOneShot(FailSound);
+            StartCoroutine(WrongDirection());
+            
+        }
+    }
+
+    IEnumerator WrongDirection()
+    {
+        for (int i = 0; i < Arrows.Count; i++)
+        {
+            Arrows[i].color = Color.red;
+        }
+        yield return new WaitForSecondsRealtime(.25f);
+        for (int i = 0; i < Arrows.Count; i++)
+        {
+            Arrows[i].gameObject.SetActive(true);
+            Arrows[i].color = Color.white;
+        }
+        ControlsLocked = false;
+
     }
 }
