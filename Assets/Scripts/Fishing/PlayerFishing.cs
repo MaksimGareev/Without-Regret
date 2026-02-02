@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(LineRenderer))]
 public class PlayerFishing : MonoBehaviour
@@ -10,21 +11,28 @@ public class PlayerFishing : MonoBehaviour
     [SerializeField] private InputActionReference fishingAction;
 
     [Header("References")]
-    [SerializeField] private Transform castOrigin;          // origin of cast
-    [SerializeField] private GameObject hook;            // hook object. Should be in the scene
+    [SerializeField] private Transform castOrigin;
     [SerializeField] private PlayerEquipItem playerEquipItem;  // used to attach reeled object
+    [SerializeField] private Slider castChargeSlider;
+
+    private GameObject hook;            // hook object. Should be the only child of the Fishing Rod prefab
 
     [Header("Cast / Reel")]
-    [SerializeField] private float castForce = 20f;
+    [SerializeField] private float castForce = 10f;
     [SerializeField] private float maxCastDistance = 15f;
     [SerializeField] private float minCastDistance = 2f;
+    [SerializeField] private float upwardArcFactor = 3f; // upward component multiplier for the cast's launch arc
     [SerializeField] private float reelSpeed = 8f;
     [SerializeField] private float pickupDistance = 3.0f; // distance to auto-hold
     [SerializeField] private float castCooldown = 0.5f; // time after the hook is cleaned up until it can be cast again
+    [SerializeField] private bool disableMovementWhileFishing = true;
+
+    [Header("Charge")]
+    [SerializeField] private float maxChargeTime = 1.5f; // time to reach full charge (maxCastDistance)
 
     [Header("Reel Enabling")]
     [SerializeField] private float reelEnableDistance = 2.5f; // hook must travel this far before reeling is allowed
-    [SerializeField] private float reelEnableDelay = 0.15f;   // short delay before enabling reel
+    [SerializeField] private float reelEnableDelay = 0.75f;   // short delay before enabling reel
 
     [Header("Debugging")]
     [SerializeField] private bool showDebugLogs = false;
@@ -34,10 +42,12 @@ public class PlayerFishing : MonoBehaviour
     private HookController currentHookController;
     private bool canReel = false;
     private bool canCast = true;
-    private bool input = false;
-    private bool isCasting = false;
+    private bool input = false;         // whether the cast/reel button is currently held (for reeling)
+    private bool isCasting = false;     // whether the hook is currently cast/out
+    private bool isCharging = false;
 
     private float _castTime;
+    private float chargeStartTime;
 
     private void OnEnable()
     {
@@ -54,37 +64,133 @@ public class PlayerFishing : MonoBehaviour
         line.positionCount = 2;
         line.enabled = false;
 
-        if (hook == null)
+        if (playerEquipItem == null)
         {
-            Debug.LogError("PlayerFishing: Hook prefab reference is missing.");
+            playerEquipItem = GetComponent<PlayerEquipItem>();
+            if (playerEquipItem == null)
+            {
+                Debug.LogError("PlayerFishing: PlayerEquipItem reference is missing.");
+                enabled = false;
+            }
         }
-        else
+
+        if (hook != null)
         {
             hook.SetActive(false);
+        }
+
+        // prepare charge slider UI
+        if (castChargeSlider != null)
+        {
+            castChargeSlider.minValue = 0f;
+            castChargeSlider.maxValue = 1f;
+            castChargeSlider.value = 0f;
+            castChargeSlider.gameObject.SetActive(false);
         }
 
         // input action subscriptions
         if (fishingAction != null)
         {
-            fishingAction.action.performed += ctx => OnInput(ctx);
-            fishingAction.action.canceled += ctx => OnInput(ctx);
+            fishingAction.action.started += OnInputStarted;
+            fishingAction.action.canceled += OnInputCanceled;
         }
     }
 
-    private void OnInput(InputAction.CallbackContext ctx)
+    private void OnInputStarted(InputAction.CallbackContext ctx)
     {
+        if (!HasRod()) return;
+
+        if (hook == null)
+        {
+            if (HasRod())
+            {
+                hook = playerEquipItem.GetEquippedItemInstance().transform.GetChild(0).gameObject;
+            }
+            else
+            {
+                Debug.LogError("PlayerFishing: Couldn't find a hook");
+                return;
+            }
+        }
+
+        // If player is not currently casting and is allowed to cast, start charging
+        if (canCast && !canReel && !isCasting && HasRod() && !hook.activeSelf)
+        {
+            StartCharging();
+        }
+        else if (canReel)
+        {
+            // normal reel input
+            input = true;
+            if (showDebugLogs) Debug.Log("Reel input started.");
+        }
+        else
+        {
+            if (showDebugLogs) Debug.Log($"Cannot start cast or reel: CanCast={canCast} IsCasting={isCasting} HasRod={HasRod()}");
+        }
+    }
+
+    private void OnInputCanceled(InputAction.CallbackContext ctx)
+    {
+        if (!HasRod()) return;
         if (hook == null)
         {
             Debug.LogError("PlayerFishing: Hook prefab reference is missing.");
             return;
         }
-        
-        input = ctx.action.triggered;
 
-        if (showDebugLogs) Debug.Log($"Fishing Input triggered {input}");
+        // If we were charging, release to cast
+        if (isCharging)
+        {
+            ReleaseCharge();
+        }
+        else
+        {
+            // stop reel input
+            input = false;
+            if (showDebugLogs) Debug.Log("Reel input released.");
+        }
     }
 
-    private void StartCast()
+    private void StartCharging()
+    {
+        if (showDebugLogs) Debug.Log("Started charging cast.");
+
+        isCharging = true;
+        chargeStartTime = Time.time;
+
+        if (castChargeSlider != null)
+        {
+            castChargeSlider.value = 0f;
+            castChargeSlider.gameObject.SetActive(true);
+        }
+    }
+
+    private void ReleaseCharge()
+    {
+        if (!isCharging) return;
+
+        float chargeTime = Time.time - chargeStartTime;
+        float normalized = Mathf.Clamp01(maxChargeTime <= 0f ? 1f : chargeTime / maxChargeTime);
+
+        // Scale force by charge. Ensure a small minimum so very short taps still cast.
+        float forceFactor = Mathf.Lerp(0.2f, 1f, normalized);
+        float finalForce = castForce * forceFactor;
+
+        if (showDebugLogs) Debug.Log($"Released charge. Charge: {normalized:F2}, ForceFactor: {forceFactor:F2}, FinalForce: {finalForce:F2}");
+
+        isCharging = false;
+        if (castChargeSlider != null)
+        {
+            castChargeSlider.value = 0f;
+            castChargeSlider.gameObject.SetActive(false);
+        }
+
+        // perform the cast with computed force
+        StartCast(finalForce);
+    }
+
+    private void StartCast(float overrideForce = -1f)
     {
         // require no active hook and that line is not currently cast
         if (hook.activeSelf || isCasting || canReel)
@@ -101,14 +207,14 @@ public class PlayerFishing : MonoBehaviour
 
         // Enable the hook object
         if (showDebugLogs) Debug.Log("Enabling hook.");
-        hook.transform.position = castOrigin.position;
+        hook.transform.SetPositionAndRotation(castOrigin.position, Quaternion.identity);
         hook.SetActive(true);
         if (!hook.TryGetComponent<Rigidbody>(out var rb))
         {
             Debug.LogError("Fishing Hook has no Rigidbody component.");
             return;
         }
-        
+
         // ensure there is a HookController on the prefab
         if (showDebugLogs) Debug.Log("Initializing HookController.");
         if (!hook.TryGetComponent<HookController>(out currentHookController))
@@ -117,16 +223,25 @@ public class PlayerFishing : MonoBehaviour
             return;
         }
 
-        currentHookController.Initialize(OnHooked, OnHookStopped);
+        currentHookController.Initialize(OnHooked, OnHookStopped, gameObject);
 
-        // launch forward from camera / hand direction
+        // Ensure physics are reset before applying impulse
+        rb.isKinematic = false;
+        rb.linearVelocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
+        rb.useGravity = true;
+
+        // launch forward with computed force at an upward arc
         Vector3 dir = castOrigin.forward;
-        rb.AddForce(dir.normalized * castForce, ForceMode.Impulse);
+        float forceToUse = overrideForce > 0f ? overrideForce : castForce;
+        float upward = forceToUse * upwardArcFactor;
+        Vector3 totalImpulse = dir.normalized * forceToUse + castOrigin.up * upward;
+        rb.AddForce(totalImpulse, ForceMode.Impulse);
 
         // enable line
         if (showLineRenderer) line.enabled = true;
 
-        // don't allow immediate reeling � enable after distance or delay
+        // don't allow immediate reeling — enable after distance or delay
         canReel = false;
         input = false;
     }
@@ -136,19 +251,21 @@ public class PlayerFishing : MonoBehaviour
         if (hook == null)
         {
             line.enabled = false;
-            Debug.LogError("PlayerFishing: Hook prefab reference is missing."); 
             return;
         }
 
-        // Cast the line
-        if (canCast && !canReel && !isCasting && HasRod() && input)
+        if (disableMovementWhileFishing)
         {
-            StartCast();
-            isCasting = true;
+            // Disable movement while fishing
+            PlayerComponents.SetCertainComponents(!(isCharging || isCasting), source: gameObject, PlayerComponents.playerController);
         }
-        else if (!canReel && input)
+        
+
+        // update charge slider while charging
+        if (isCharging && castChargeSlider != null)
         {
-            Debug.Log($"Cannot cast: Can Cast: {canCast} Is Casting: {isCasting}, Has Rod: {HasRod()}");
+            float normalized = Mathf.Clamp01(maxChargeTime <= 0f ? 1f : (Time.time - chargeStartTime) / maxChargeTime);
+            castChargeSlider.value = normalized;
         }
 
         // update line renderer from origin to hook
@@ -173,7 +290,7 @@ public class PlayerFishing : MonoBehaviour
             }
         }
 
-        // Only consider "too close -> retract" after reeling has been enabled.
+        // Only consider if hook is too close after reeling has been enabled.
         if (canReel && !currentHookController.HasHit)
         {
             float distance = Vector3.Distance(castOrigin.position, hook.transform.position);
@@ -183,7 +300,7 @@ public class PlayerFishing : MonoBehaviour
                 Retract();
             }
         }
-        
+
         if (canReel && input)
         {
             ReelStep();
@@ -223,7 +340,7 @@ public class PlayerFishing : MonoBehaviour
 
     private void Retract()
     {
-        // retract hook to hand
+        // retract hook
         hook.transform.position = Vector3.MoveTowards(hook.transform.position, castOrigin.position, reelSpeed * Time.deltaTime);
         float dist = Vector3.Distance(castOrigin.position, hook.transform.position);
         if (dist <= 0.25f)
@@ -263,6 +380,7 @@ public class PlayerFishing : MonoBehaviour
         line.enabled = false;
         canReel = false;
         isCasting = false;
+        PlayerComponents.SetCertainComponents(true, source: gameObject, PlayerComponents.playerController);
         StartCoroutine(WaitForCastCooldown());
     }
 
