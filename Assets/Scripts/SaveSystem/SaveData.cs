@@ -7,6 +7,7 @@ public class SaveData
     public ObjectiveSaveData objectiveSaveData;
     public WorldSaveData worldSaveData;
     public InventorySaveData inventorySaveData;
+    public GateListSaveData gateListSaveData;
     public int slot = 1;
 
     public SaveData(int slot)
@@ -16,5 +17,6 @@ public class SaveData
         objectiveSaveData = new ObjectiveSaveData();
         worldSaveData = new WorldSaveData();
         inventorySaveData = new InventorySaveData();
+        gateListSaveData = new GateListSaveData();
     }
 }
