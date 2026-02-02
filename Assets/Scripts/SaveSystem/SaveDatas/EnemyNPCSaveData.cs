@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 [Serializable]
 public class EnemyNPCListSaveData
@@ -13,10 +14,7 @@ public class EnemyNPCSaveData
     public string id;
     public float[] position;
     public float[] rotation;
-    public bool isChasingNPC;
-    public bool reachedNPC;
-    public bool isChasingPlayer;
+    public Transform currentTarget;
     public bool isDistracted;
-    public bool isPossessed;
     public bool isActive;
 }
