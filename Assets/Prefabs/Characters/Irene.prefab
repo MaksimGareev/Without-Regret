@@ -127,6 +127,7 @@ GameObject:
   - component: {fileID: 8589541859818923028}
   - component: {fileID: 9169940238804770612}
   - component: {fileID: 1311592278050812008}
+  - component: {fileID: 1149229258929258946}
   m_Layer: 8
   m_Name: Irene
   m_TagString: Untagged
@@ -228,8 +229,10 @@ MonoBehaviour:
   dialogueTrigger: {fileID: 1311592278050812008}
   targetSpot: {fileID: 0}
   lookAtTarget: {fileID: 0}
+  agent: {fileID: 0}
   isTraveling: 0
   arrived: 0
+  CanFollowPlayer: 1
   stopDistance: 0.5
 --- !u!136 &9169940238804770612
 CapsuleCollider:
@@ -275,9 +278,26 @@ MonoBehaviour:
   ActiveJsonDialogueFile: {fileID: 0}
   objectiveIDYouCareAbout: []
   linkedObjective: {fileID: 11400000, guid: a027b5d7ae55ba341a809f88e56a62f2, type: 2}
+  IsMediation: 0
+  lookSpeed: 5
+  isLookingAtPlayer: 0
   TalkedAlready: 0
   iconPrefab: {fileID: 4114033263953508203, guid: 48024210bf4a4394fa37015b90b3b410, type: 3}
   shouldShowIcon: 1
+  enemy: {fileID: 0}
+  focusCameraOnTrigger: 0
+--- !u!114 &1149229258929258946
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9028717818022298950}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b93d8170e88d8e34684424c0750fb15a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SaveableFriendlyNPC
 --- !u!1001 &2605769388952795558
 PrefabInstance:
   m_ObjectHideFlags: 0
