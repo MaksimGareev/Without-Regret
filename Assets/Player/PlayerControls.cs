@@ -1361,6 +1361,42 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Arrow Up"",
+                    ""type"": ""Button"",
+                    ""id"": ""8304ff82-9103-4a0f-ac90-28481502b9e2"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Arrow Left"",
+                    ""type"": ""Button"",
+                    ""id"": ""974add90-3a1b-4d40-bdc1-b5b432e42095"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Arrow Down"",
+                    ""type"": ""Button"",
+                    ""id"": ""f5c48669-c306-4c73-8dc7-c45dc4a632a3"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Arrow Right"",
+                    ""type"": ""Button"",
+                    ""id"": ""b799761b-a586-4346-85fc-fc3b7056e8f0"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -1438,6 +1474,94 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""RotateKeyboardRight"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""914fd4a7-e336-4574-97eb-5fbd92029d43"",
+                    ""path"": ""<Keyboard>/upArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Arrow Up"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""fd27425d-66c7-43c0-9656-32ff79a02505"",
+                    ""path"": ""<Gamepad>/dpad/up"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Arrow Up"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b19f9573-91f8-47d3-9c4d-d13a62bd9108"",
+                    ""path"": ""<Keyboard>/leftArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Arrow Left"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""bf06409d-d7e7-4b93-b0d3-87a0cea4eb92"",
+                    ""path"": ""<Gamepad>/dpad/left"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Arrow Left"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4fcea984-241d-4f1a-b37e-70cb24cefef7"",
+                    ""path"": ""<Keyboard>/downArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Arrow Down"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""35e0396b-81dd-4a4c-97b4-6ffebd07f896"",
+                    ""path"": ""<Gamepad>/dpad/down"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Arrow Down"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""56b11315-9ca9-4f17-a9bc-df5776b126cd"",
+                    ""path"": ""<Keyboard>/rightArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Arrow Right"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8b6ffc5c-4b66-4295-935d-0c98efb718e7"",
+                    ""path"": ""<Gamepad>/dpad/right"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Arrow Right"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1953,6 +2077,10 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_LockPicking_Exit = m_LockPicking.FindAction("Exit", throwIfNotFound: true);
         m_LockPicking_RotateKeyboardLeft = m_LockPicking.FindAction("RotateKeyboardLeft", throwIfNotFound: true);
         m_LockPicking_RotateKeyboardRight = m_LockPicking.FindAction("RotateKeyboardRight", throwIfNotFound: true);
+        m_LockPicking_ArrowUp = m_LockPicking.FindAction("Arrow Up", throwIfNotFound: true);
+        m_LockPicking_ArrowLeft = m_LockPicking.FindAction("Arrow Left", throwIfNotFound: true);
+        m_LockPicking_ArrowDown = m_LockPicking.FindAction("Arrow Down", throwIfNotFound: true);
+        m_LockPicking_ArrowRight = m_LockPicking.FindAction("Arrow Right", throwIfNotFound: true);
         // Dialogue
         m_Dialogue = asset.FindActionMap("Dialogue", throwIfNotFound: true);
         m_Dialogue_Move = m_Dialogue.FindAction("Move", throwIfNotFound: true);
@@ -2532,6 +2660,10 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_LockPicking_Exit;
     private readonly InputAction m_LockPicking_RotateKeyboardLeft;
     private readonly InputAction m_LockPicking_RotateKeyboardRight;
+    private readonly InputAction m_LockPicking_ArrowUp;
+    private readonly InputAction m_LockPicking_ArrowLeft;
+    private readonly InputAction m_LockPicking_ArrowDown;
+    private readonly InputAction m_LockPicking_ArrowRight;
     /// <summary>
     /// Provides access to input actions defined in input action map "LockPicking".
     /// </summary>
@@ -2563,6 +2695,22 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "LockPicking/RotateKeyboardRight".
         /// </summary>
         public InputAction @RotateKeyboardRight => m_Wrapper.m_LockPicking_RotateKeyboardRight;
+        /// <summary>
+        /// Provides access to the underlying input action "LockPicking/ArrowUp".
+        /// </summary>
+        public InputAction @ArrowUp => m_Wrapper.m_LockPicking_ArrowUp;
+        /// <summary>
+        /// Provides access to the underlying input action "LockPicking/ArrowLeft".
+        /// </summary>
+        public InputAction @ArrowLeft => m_Wrapper.m_LockPicking_ArrowLeft;
+        /// <summary>
+        /// Provides access to the underlying input action "LockPicking/ArrowDown".
+        /// </summary>
+        public InputAction @ArrowDown => m_Wrapper.m_LockPicking_ArrowDown;
+        /// <summary>
+        /// Provides access to the underlying input action "LockPicking/ArrowRight".
+        /// </summary>
+        public InputAction @ArrowRight => m_Wrapper.m_LockPicking_ArrowRight;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -2604,6 +2752,18 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @RotateKeyboardRight.started += instance.OnRotateKeyboardRight;
             @RotateKeyboardRight.performed += instance.OnRotateKeyboardRight;
             @RotateKeyboardRight.canceled += instance.OnRotateKeyboardRight;
+            @ArrowUp.started += instance.OnArrowUp;
+            @ArrowUp.performed += instance.OnArrowUp;
+            @ArrowUp.canceled += instance.OnArrowUp;
+            @ArrowLeft.started += instance.OnArrowLeft;
+            @ArrowLeft.performed += instance.OnArrowLeft;
+            @ArrowLeft.canceled += instance.OnArrowLeft;
+            @ArrowDown.started += instance.OnArrowDown;
+            @ArrowDown.performed += instance.OnArrowDown;
+            @ArrowDown.canceled += instance.OnArrowDown;
+            @ArrowRight.started += instance.OnArrowRight;
+            @ArrowRight.performed += instance.OnArrowRight;
+            @ArrowRight.canceled += instance.OnArrowRight;
         }
 
         /// <summary>
@@ -2630,6 +2790,18 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @RotateKeyboardRight.started -= instance.OnRotateKeyboardRight;
             @RotateKeyboardRight.performed -= instance.OnRotateKeyboardRight;
             @RotateKeyboardRight.canceled -= instance.OnRotateKeyboardRight;
+            @ArrowUp.started -= instance.OnArrowUp;
+            @ArrowUp.performed -= instance.OnArrowUp;
+            @ArrowUp.canceled -= instance.OnArrowUp;
+            @ArrowLeft.started -= instance.OnArrowLeft;
+            @ArrowLeft.performed -= instance.OnArrowLeft;
+            @ArrowLeft.canceled -= instance.OnArrowLeft;
+            @ArrowDown.started -= instance.OnArrowDown;
+            @ArrowDown.performed -= instance.OnArrowDown;
+            @ArrowDown.canceled -= instance.OnArrowDown;
+            @ArrowRight.started -= instance.OnArrowRight;
+            @ArrowRight.performed -= instance.OnArrowRight;
+            @ArrowRight.canceled -= instance.OnArrowRight;
         }
 
         /// <summary>
@@ -3240,6 +3412,34 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnRotateKeyboardRight(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Arrow Up" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnArrowUp(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Arrow Left" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnArrowLeft(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Arrow Down" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnArrowDown(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Arrow Right" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnArrowRight(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Dialogue" which allows adding and removing callbacks.
