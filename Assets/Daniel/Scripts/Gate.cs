@@ -19,7 +19,7 @@ public class Gate : MonoBehaviour, ISaveable
         rightDoorAnimator = RotateRightDoor.GetComponent<Animator>();
         leftDoorAnimator = RotateLeftDoor.GetComponent<Animator>();
 
-        if (string.IsNullOrEmpty(uniqueID))
+        if (string.IsNullOrEmpty(uniqueID) && this.gameObject.activeSelf)
         {
             uniqueID = Guid.NewGuid().ToString();
             #if UNITY_EDITOR
@@ -65,6 +65,15 @@ public class Gate : MonoBehaviour, ISaveable
         state.id = uniqueID;
         state.locked = locked;
         state.opened = opened;
+
+        if (data.gateListSaveData.gates.Exists(g => g.id == uniqueID))
+        {
+            data.gateListSaveData.gates.RemoveAll(g => g.id == uniqueID);
+        }
+
+        data.gateListSaveData.gates.Add(state);
+
+        Debug.Log($"Saving Gate: locked={state.locked}, opened={state.opened}, ID: {uniqueID}");
     }
 
     public void LoadFrom(SaveData data)
@@ -85,5 +94,7 @@ public class Gate : MonoBehaviour, ISaveable
             rightDoorAnimator.SetBool("NearPlayer", true);
             leftDoorAnimator.SetBool("NearPlayer", true);
         }
+
+        Debug.Log($"Loading Gate: locked={state.locked}, opened={state.opened}, ID: {uniqueID}");
     }
 }

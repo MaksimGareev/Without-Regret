@@ -6,7 +6,7 @@ public class SaveableEnemyNPC : MonoBehaviour, ISaveable
 
     private void Awake()
     {
-        if (string.IsNullOrEmpty(uniqueID))
+        if (string.IsNullOrEmpty(uniqueID) && this.gameObject.activeSelf)
         {
             uniqueID = System.Guid.NewGuid().ToString();
             #if UNITY_EDITOR

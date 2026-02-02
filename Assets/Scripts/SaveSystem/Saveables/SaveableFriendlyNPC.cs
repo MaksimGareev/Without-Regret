@@ -6,7 +6,7 @@ public class SaveableFriendlyNPC : MonoBehaviour, ISaveable
 
     private void Awake()
     {
-        if (string.IsNullOrEmpty(uniqueID))
+        if (string.IsNullOrEmpty(uniqueID) && this.gameObject.activeSelf)
         {
             uniqueID = System.Guid.NewGuid().ToString();
             #if UNITY_EDITOR
@@ -33,6 +33,7 @@ public class SaveableFriendlyNPC : MonoBehaviour, ISaveable
             state.arrived = barry.arrived;
             // Barry does not have a canFollowPlayer property
             // Barry does not have an isFollowingPlayer property
+            Debug.Log($"Saving Barry: isTraveling={state.isTraveling}, arrived={state.arrived}, ID: {uniqueID}");
         }
         else if (GetComponent<Darry>() != null)
         {
@@ -41,6 +42,7 @@ public class SaveableFriendlyNPC : MonoBehaviour, ISaveable
             state.arrived = darry.arrived;
             // Darry does not have a canFollowPlayer property
             // Darry does not have an isFollowingPlayer property
+            Debug.Log($"Saving Darry: isTraveling={state.isTraveling}, arrived={state.arrived}, ID: {uniqueID}");
         }
         else if (GetComponent<DarryNeighborhood>() != null)
         {
@@ -49,6 +51,7 @@ public class SaveableFriendlyNPC : MonoBehaviour, ISaveable
             state.arrived = darry.arrived;
             // DarryNeighborhood does not have a canFollowPlayer property
             // DarryNeighborhood does not have an isFollowingPlayer property
+            Debug.Log($"Saving DarryNeighborhood: isTraveling={state.isTraveling}, arrived={state.arrived}, ID: {uniqueID}");
         }
         else if (GetComponent<Irene>() != null)
         {
@@ -57,6 +60,7 @@ public class SaveableFriendlyNPC : MonoBehaviour, ISaveable
             state.arrived = irene.arrived;
             state.canFollowPlayer = irene.CanFollowPlayer;
             state.isFollowingPlayer = irene.IsFollowing;
+            Debug.Log($"Saving Irene: canFollowPlayer={state.canFollowPlayer}, isFollowingPlayer={state.isFollowingPlayer}, ID: {uniqueID}");
         }
         else
         {
@@ -68,6 +72,7 @@ public class SaveableFriendlyNPC : MonoBehaviour, ISaveable
             DialogueTrigger dialogueTrigger = GetComponent<DialogueTrigger>();
             state.isLookingAtPlayer = dialogueTrigger.isLookingAtPlayer;
             state.talkedAlready = dialogueTrigger.TalkedAlready;
+            Debug.Log($"Saving DialogueTrigger: isLookingAtPlayer={state.isLookingAtPlayer}, talkedAlready={state.talkedAlready}, ID: {uniqueID}");
         }
 
         if (data.friendlyNPCListSaveData.friendlyNPCs.Exists(npc => npc.id == uniqueID))
@@ -84,7 +89,7 @@ public class SaveableFriendlyNPC : MonoBehaviour, ISaveable
 
         if (state == null)
         {
-            Debug.LogWarning("No saved state found for Friendly NPC with ID: " + uniqueID);
+            Debug.LogWarning($"No saved state found for Friendly NPC with ID: {uniqueID}");
             return;
         }
 
@@ -97,18 +102,21 @@ public class SaveableFriendlyNPC : MonoBehaviour, ISaveable
             Barry barry = GetComponent<Barry>();
             barry.isTraveling = state.isTraveling;
             barry.arrived = state.arrived;
+            Debug.Log($"Loading Barry: isTraveling={state.isTraveling}, arrived={state.arrived}, ID: {uniqueID}");
         }
         else if (GetComponent<Darry>() != null)
         {
             Darry darry = GetComponent<Darry>();
             darry.isTraveling = state.isTraveling;
             darry.arrived = state.arrived;
+            Debug.Log($"Loading Darry: isTraveling={state.isTraveling}, arrived={state.arrived}, ID: {uniqueID}");
         }
         else if (GetComponent<DarryNeighborhood>() != null)
         {
             DarryNeighborhood darry = GetComponent<DarryNeighborhood>();
             darry.isTraveling = state.isTraveling;
             darry.arrived = state.arrived;
+            Debug.Log($"Loading DarryNeighborhood: isTraveling={state.isTraveling}, arrived={state.arrived}, ID: {uniqueID}");
         }
         else if (GetComponent<Irene>() != null)
         {
@@ -117,6 +125,7 @@ public class SaveableFriendlyNPC : MonoBehaviour, ISaveable
             irene.arrived = state.arrived;
             irene.CanFollowPlayer = state.canFollowPlayer;
             irene.IsFollowing = state.isFollowingPlayer;
+            Debug.Log($"Loading Irene: canFollowPlayer={state.canFollowPlayer}, isFollowingPlayer={state.isFollowingPlayer}, ID: {uniqueID}");
         }
         else
         {
@@ -128,6 +137,7 @@ public class SaveableFriendlyNPC : MonoBehaviour, ISaveable
             DialogueTrigger dialogueTrigger = GetComponent<DialogueTrigger>();
             dialogueTrigger.isLookingAtPlayer = state.isLookingAtPlayer;
             dialogueTrigger.TalkedAlready = state.talkedAlready;
+            Debug.Log($"Loading DialogueTrigger: isLookingAtPlayer={state.isLookingAtPlayer}, talkedAlready={state.talkedAlready}, ID: {uniqueID}");
         }
     }
 }
