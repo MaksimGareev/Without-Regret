@@ -21,7 +21,7 @@ public class PlayerFishing : MonoBehaviour
     [SerializeField] private float castForce = 10f;
     [SerializeField] private float maxCastDistance = 15f;
     [SerializeField] private float minCastDistance = 2f;
-    [SerializeField] private float upwardArcFactor = 3f; // upward component multiplier for the cast's launch arc
+    [SerializeField] private float upwardArcFactor = 1.75f; // upward component multiplier for the cast's launch arc
     [SerializeField] private float reelSpeed = 8f;
     [SerializeField] private float pickupDistance = 3.0f; // distance to auto-hold
     [SerializeField] private float castCooldown = 0.5f; // time after the hook is cleaned up until it can be cast again
@@ -46,7 +46,10 @@ public class PlayerFishing : MonoBehaviour
     private bool isCasting = false;     // whether the hook is currently cast/out
     private bool isCharging = false;
 
-    private float _castTime;
+    private bool prevRbUseGravity;
+    private bool prevRbKinematic;
+
+    private float castTime;
     private float chargeStartTime;
 
     private void OnEnable()
@@ -94,6 +97,9 @@ public class PlayerFishing : MonoBehaviour
             fishingAction.action.started += OnInputStarted;
             fishingAction.action.canceled += OnInputCanceled;
         }
+
+        if (!PlayerComponents.initialized) PlayerComponents.InitializeComponents(gameObject);
+
     }
 
     private void OnInputStarted(InputAction.CallbackContext ctx)
@@ -200,10 +206,13 @@ public class PlayerFishing : MonoBehaviour
             return;
         }
 
+        prevRbUseGravity = PlayerComponents.rb.useGravity;
+        prevRbKinematic = PlayerComponents.rb.isKinematic;
+
         if (showDebugLogs) Debug.Log("Casting fishing hook.");
 
         isCasting = true;
-        _castTime = Time.time;
+        castTime = Time.time;
 
         // Enable the hook object
         if (showDebugLogs) Debug.Log("Enabling hook.");
@@ -257,6 +266,13 @@ public class PlayerFishing : MonoBehaviour
         if (disableMovementWhileFishing)
         {
             // Disable movement while fishing
+            PlayerComponents.characterController.Move(Vector3.zero); // Ensure no residual movement
+            PlayerComponents.rb.isKinematic = false;
+            PlayerComponents.rb.useGravity = false;
+            PlayerComponents.rb.angularVelocity = Vector3.zero;
+            PlayerComponents.rb.linearVelocity = Vector3.zero;
+            PlayerComponents.rb.constraints = RigidbodyConstraints.FreezeAll;
+
             PlayerComponents.SetCertainComponents(!(isCharging || isCasting), source: gameObject, PlayerComponents.playerController);
         }
         
@@ -283,7 +299,7 @@ public class PlayerFishing : MonoBehaviour
         if (!canReel && isCasting)
         {
             float distance = Vector3.Distance(castOrigin.position, hook.transform.position);
-            if (distance >= reelEnableDistance || Time.time >= _castTime + reelEnableDelay)
+            if (distance >= reelEnableDistance || Time.time >= castTime + reelEnableDelay)
             {
                 canReel = true;
                 if (showDebugLogs) Debug.Log("Reeling enabled (hook traveled sufficient distance or delay elapsed).");
@@ -380,7 +396,17 @@ public class PlayerFishing : MonoBehaviour
         line.enabled = false;
         canReel = false;
         isCasting = false;
-        PlayerComponents.SetCertainComponents(true, source: gameObject, PlayerComponents.playerController);
+        if (disableMovementWhileFishing)
+        {
+            // Reenable movement
+            PlayerComponents.rb.constraints = RigidbodyConstraints.None;
+            PlayerComponents.rb.linearVelocity = Vector3.zero;
+            PlayerComponents.rb.angularVelocity = Vector3.zero;
+            PlayerComponents.rb.isKinematic = prevRbKinematic;
+            PlayerComponents.rb.useGravity = prevRbUseGravity;
+
+            PlayerComponents.SetCertainComponents(!(isCharging || isCasting), source: gameObject, PlayerComponents.playerController);
+        }
         StartCoroutine(WaitForCastCooldown());
     }
 
