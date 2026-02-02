@@ -79,6 +79,7 @@ public class DialogueManager : MonoBehaviour
     public Transform barryDestinationTransform;
     public Transform darryDestinationTransform;
     public Transform ireneDestinationTransform;
+    public GameObject IntruderTrigger;
 
     public static bool DialogueIsActive = false;
 
@@ -125,7 +126,7 @@ public class DialogueManager : MonoBehaviour
         PlayerPrefs.SetInt("Morality", playerMorality);
         PlayerPrefs.Save();
         //playerMorality = PlayerPrefs.GetInt("Morality", 0);
-
+        IntruderTrigger.SetActive(false);
         // Build letter sound dictionary
         letterSounds = new Dictionary<char, AudioClip>();
         for (int i = 0; i < letterClips.Count && i < 26; i++)
@@ -411,6 +412,7 @@ public class DialogueManager : MonoBehaviour
                 ireneNPC.IsFollowing = false;
             }
 
+
             if (ireneNPC != null && activeDialogueTrigger.NPCName == "Irene" && activeDialogueTrigger.TalkedAlready)
             {
                 ireneNPC.targetSpot = ireneDestinationTransform;
@@ -418,7 +420,7 @@ public class DialogueManager : MonoBehaviour
             }
 
             // Move Barry if assigned
-                if (barryNPC != null && (activeDialogueTrigger.NPCName == "Barry" || activeDialogueTrigger.NPCName == "Darry") && activeDialogueTrigger.TalkedAlready)
+             if (barryNPC != null && (activeDialogueTrigger.NPCName == "Barry" || activeDialogueTrigger.NPCName == "Darry") && activeDialogueTrigger.TalkedAlready)
             {
                 barryNPC.StartTravel();
             }
@@ -427,23 +429,25 @@ public class DialogueManager : MonoBehaviour
                 Debug.LogWarning("Barry will not move");
             }
 
-            // Move DarryNeighborhood
-            if (darryNPC != null)
+            // Move Darry in Neighborhood and spawn enemy trigger
+            if (barryNPC != null && (activeDialogueTrigger.NPCName == "Barry" || activeDialogueTrigger.NPCName == "Darry"))
             {
-                if (darryDestinationTransform != null)
+                darryNPC.StartTravel();
+                // Intruder trigger spawn
+                if (IntruderTrigger != null)
                 {
-                    Debug.Log("Starting Darry travel...");
-                    darryNPC.StartTravel(darryDestinationTransform);
+                    IntruderTrigger.SetActive(true);
                 }
                 else
                 {
-                    Debug.LogWarning("darryDestinationTransform not assigned!");
+                    Debug.Log("Spawning is sitll inactive");
                 }
             }
             else
             {
                 Debug.LogWarning("Darry NPC not found in scene!");
             }
+
             EndDialogue();
             yield break;
         }

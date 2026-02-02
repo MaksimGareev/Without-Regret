@@ -22,6 +22,9 @@ public class PlayerInteracting : MonoBehaviour
     private MantleableObject mantleTarget;
     private MoveableObject moveTarget;
 
+    // Moveable object
+    private MoveableObject heldObject;
+
     private void Awake()
     {
         Mantle = InputActions.FindActionMap("Player").FindAction("Jump");
@@ -43,6 +46,15 @@ public class PlayerInteracting : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (heldObject != null)
+        {
+            if (Interact.triggered)
+            {
+                heldObject.OnPlayerInteraction(gameObject);
+            }
+            return;
+        }
+
         ScanForInteractable();
 
         if (currentTarget == null)
@@ -88,6 +100,16 @@ public class PlayerInteracting : MonoBehaviour
         {
             currentTarget.OnPlayerInteraction(gameObject);
         }*/
+    }
+
+    public void SetHeldObject(MoveableObject obj)
+    {
+        heldObject = obj;
+    }
+
+    public void ClearHeldObjects()
+    {
+        heldObject = null;
     }
 
     private void ScanForInteractable()
