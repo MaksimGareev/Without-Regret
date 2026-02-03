@@ -1332,6 +1332,7 @@ MonoBehaviour:
   shouldShowIcon: 1
   enemy: {fileID: 0}
   focusCameraOnTrigger: 0
+  triggerType: 2
 --- !u!65 &98534754
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -6050,6 +6051,7 @@ MonoBehaviour:
   iconDistance: 3
   iconPrefab: {fileID: 0}
   shouldShowIcon: 1
+  maxGrabDistance: 2.5
 --- !u!1 &404919749
 GameObject:
   m_ObjectHideFlags: 0
@@ -22565,6 +22567,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5256605505714893680, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5256605505714893680, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5256605505714893680, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5256605505714893680, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7723209263034436145, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
       propertyPath: m_Name
       value: DialogueManager
@@ -31822,6 +31840,7 @@ MonoBehaviour:
   iconDistance: 3
   iconPrefab: {fileID: 0}
   shouldShowIcon: 1
+  maxGrabDistance: 2.5
 --- !u!1001 &2015931958
 PrefabInstance:
   m_ObjectHideFlags: 0

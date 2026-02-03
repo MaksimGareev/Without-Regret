@@ -10,23 +10,23 @@ public class ObjectiveUI : MonoBehaviour
 
     private ObjectiveInstance currentObjective;
 
-    private void OnEnable()
-    {
-        if(ObjectiveManager.Instance != null)
-        {
-            ObjectiveManager.Instance.OnObjectiveActivated.AddListener(HandleObjectiveActivated);
-            ObjectiveManager.Instance.OnObjectiveCompleted.AddListener(HandleObjectiveCompleted);
-        }
-    }
+    //private void OnEnable()
+    //{
+    //    if(ObjectiveManager.Instance != null)
+    //    {
+    //        ObjectiveManager.Instance.OnObjectiveActivated.AddListener(HandleObjectiveActivated);
+    //        ObjectiveManager.Instance.OnObjectiveCompleted.AddListener(HandleObjectiveCompleted);
+    //    }
+    //}
 
-    private void OnDisable()
-    {
-        if (ObjectiveManager.Instance != null)
-        {
-            ObjectiveManager.Instance.OnObjectiveActivated.RemoveListener(HandleObjectiveActivated);
-            ObjectiveManager.Instance.OnObjectiveCompleted.RemoveListener(HandleObjectiveCompleted);
-        }
-    }
+    //private void OnDisable()
+    //{
+    //    if (ObjectiveManager.Instance != null)
+    //    {
+    //        ObjectiveManager.Instance.OnObjectiveActivated.RemoveListener(HandleObjectiveActivated);
+    //        ObjectiveManager.Instance.OnObjectiveCompleted.RemoveListener(HandleObjectiveCompleted);
+    //    }
+    //}
 
     private void HandleObjectiveActivated(ObjectiveInstance newObjective)
     {
