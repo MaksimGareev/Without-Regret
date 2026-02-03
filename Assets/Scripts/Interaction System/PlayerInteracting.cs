@@ -15,6 +15,7 @@ public class PlayerInteracting : MonoBehaviour
     
     private InputAction Interact;
     private InputAction Mantle;
+    private bool currentlyInteracting = false;
 
     [Header("Debugging")]
     [SerializeField] private bool showDebugLogs;
@@ -59,7 +60,7 @@ public class PlayerInteracting : MonoBehaviour
                 currentTarget.OnPlayerInteraction(gameObject);
             }
         }
-        else if (currentTarget.interactType == InteractType.Move || currentTarget.interactType == InteractType.Pickup || currentTarget.interactType == InteractType.Dialogue)
+        else if (currentTarget.interactType == InteractType.Move || currentTarget.interactType == InteractType.Pickup || currentTarget.interactType == InteractType.Dialogue || currentTarget.interactType == InteractType.Remove)
         {
             if (Interact != null && Interact.triggered)
             {
