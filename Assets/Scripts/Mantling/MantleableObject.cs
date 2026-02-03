@@ -36,14 +36,20 @@ public class MantleableObject : MonoBehaviour, IInteractable
         PlayerMantling pc = player.GetComponent<PlayerMantling>();
         if (pc == null || pc.isMantling) return false;
 
-        float dist = Vector3.Distance(player.transform.position, transform.position);
-        if (dist > maxMantleDistance) return false;
+        Vector3 playerPos = player.transform.position;
+        Vector3 mantlePos = GetMantlePosition();
 
-        float heightDiff = transform.position.y - player.transform.position.y;
+        float horizontalDist = Vector3.Distance(new Vector3(playerPos.x, 0, playerPos.z), new Vector3(mantlePos.x, 0, mantlePos.z));
+        if (horizontalDist > maxMantleDistance) return false;
+
+        /*float dist = Vector3.Distance(player.transform.position, transform.position);
+        if (dist > maxMantleDistance) return false;*/
+
+        float heightDiff = mantlePos.y - playerPos.y;
         if (heightDiff < minHeight || heightDiff > maxHeight) return false;
 
-        Vector3 toObject = (transform.position - player.transform.position).normalized;
-        if (Vector3.Dot(player.transform.forward, toObject) < 0.5f) return false;
+        Vector3 toObject = (mantlePos - playerPos).normalized;
+        if (Vector3.Dot(player.transform.forward, toObject) < 0.3f) return false;
 
         return true;
     }
