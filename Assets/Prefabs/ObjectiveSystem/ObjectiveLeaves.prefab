@@ -189,7 +189,7 @@ GameObject:
   - component: {fileID: 6392749321733453827}
   - component: {fileID: 1454991729624789680}
   - component: {fileID: 1145118258072333730}
-  - component: {fileID: 847045251922170833}
+  - component: {fileID: 2940017306057692744}
   - component: {fileID: 1857675662239280356}
   m_Layer: 11
   m_Name: ObjectiveLeaves
@@ -263,7 +263,7 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 112
   m_CollisionDetection: 2
---- !u!114 &847045251922170833
+--- !u!114 &2940017306057692744
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -272,16 +272,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 606298470149412685}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f1f1ab1a81f3ad7468ec1fe89381d319, type: 3}
+  m_Script: {fileID: 11500000, guid: feb0f9dd08bfdcd4db66fe35ba06fde6, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MoveableObject
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 513
-  moveSlowdownMultiplier: 1.5
-  isGrabbable: 1
-  iconPrefab: {fileID: 7228842916403451623, guid: 8c37cda576505cc45bd7511edf89a1b3, type: 3}
-  shouldShowIcon: 1
+  m_EditorClassIdentifier: Assembly-CSharp::RemoveableObject
+  requiredItem: {fileID: 11400000, guid: 3302c2daae4e8a54398e9865d1455df2, type: 2}
 --- !u!114 &1857675662239280356
 MonoBehaviour:
   m_ObjectHideFlags: 0
