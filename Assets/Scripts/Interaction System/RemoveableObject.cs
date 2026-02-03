@@ -1,0 +1,45 @@
+using System;
+using UnityEngine;
+
+public class RemoveableObject : MonoBehaviour, IInteractable
+{
+    [SerializeField] ItemData requiredItem;
+    public float interactionPriority => 1;
+    public InteractType interactType => InteractType.Remove;
+    public event Action OnInteracted;
+
+    private bool interactable = true;
+
+    void OnEnable()
+    {
+        interactable = true;
+    }
+    void OnDisable()
+    {
+        interactable = false;
+    }    
+
+    public void OnPlayerInteraction(GameObject player)
+    {
+        if (!interactable) return;
+
+        if (requiredItem != null && player.TryGetComponent<Inventory>(out var items))
+        {
+            if (!items.OtherItems.Contains(requiredItem))
+            {
+                // Required item is not in inventory
+                Debug.Log($"Player tried to remove {gameObject.name}, but is missing required item {requiredItem.ItemName}");
+                return;
+            }
+        }
+
+        // Object is removed; notify listeners and disable gameobject
+        OnInteracted?.Invoke();
+        gameObject.SetActive(false);
+    }
+
+    public void SetInteractable(bool state)
+    {
+        interactable = state;
+    }
+}

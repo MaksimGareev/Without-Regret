@@ -9,6 +9,7 @@ public class MoveableObject : MonoBehaviour, IInteractable
 {
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private float moveSlowdownMultiplier = 3f;
+    [SerializeField] ItemData requiredItem;
     private PlayerMovingObjects playerMovingObjects; 
     private Transform grabPoint;
     private Rigidbody rb;
@@ -68,7 +69,8 @@ public class MoveableObject : MonoBehaviour, IInteractable
         rb.isKinematic = true;
 
         // remove Icon
-        ButtonIcons.Instance.Clear();
+        if (ButtonIcons.Instance != null)
+            ButtonIcons.Instance.Clear();
     }
 
     public void Release()
@@ -206,16 +208,32 @@ public class MoveableObject : MonoBehaviour, IInteractable
     {
         mover = player.GetComponent<PlayerMovingObjects>();
         if (mover == null) return;
-
-        if (!IsGrabbed)
+        
+        if (requiredItem != null && player.TryGetComponent<Inventory>(out var items))
         {
+            if (!items.OtherItems.Contains(requiredItem))
+            {
+                // Required item is not in inventory
+                Debug.Log($"Player tried to move {gameObject.name}, but is missing required item {requiredItem.ItemName}");
+                return;
+            }
+        }
+
+
+        if (!IsGrabbed && !mover.IsOccupied())
+        {
+            if (mover.grabPoint == null)
+            {
+                Debug.LogError("Player grab point is null!");
+                return;
+            }
             Grab(mover.grabPoint);
-            mover.OnMovingObject(moveSlowdownMultiplier);
+            mover.OnMovingObject(this);
         }
         else
         {
             Release();
-            mover.OnReleaseObject();
+            mover.OnReleaseObject(this);
         }
 
         // Notify any listeners
@@ -240,4 +258,6 @@ public class MoveableObject : MonoBehaviour, IInteractable
 
         return false;
     }*/
+
+    public float GetSlowdownMult() => moveSlowdownMultiplier;
 }
