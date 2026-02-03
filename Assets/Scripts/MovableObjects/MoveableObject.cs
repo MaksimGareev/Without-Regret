@@ -16,7 +16,7 @@ public class MoveableObject : MonoBehaviour, IInteractable
     private PlayerMovingObjects mover;
     public bool IsGrabbed { get; private set; } = false;
     public bool isGrabbable = true;
-    public float interactionPriority => 1f;
+    public float interactionPriority => 5f;
     public InteractType interactType => InteractType.Move;
 
     [SerializeField] private float iconDistance = 3f;
@@ -33,6 +33,8 @@ public class MoveableObject : MonoBehaviour, IInteractable
     // Ground Check Parameters
     private float groundCheckDistance = 0.1f; // extra ray distance below collider
     private float groundVelocityThreshold = 0.01f; // velocity threshold to consider 'stopped'
+
+    [SerializeField] private float maxGrabDistance = 2.5f;
 
 
     private void Awake()
@@ -54,6 +56,25 @@ public class MoveableObject : MonoBehaviour, IInteractable
         {
             Debug.LogError("MoveableObject: Player not found! Make sure the Player has the 'Player' tag.", this);
         }
+    }
+
+    public bool CanInteract(GameObject player)
+    {
+        if (DialogueManager.DialogueIsActive)
+            return false;
+
+        /*if (rb == null || rb.isKinematic)
+            return false;*/
+
+        float dist = Vector3.Distance(player.transform.position, transform.position);
+        if (dist > maxGrabDistance)
+            return false;
+
+        Vector3 toObject = (transform.position - player.transform.position).normalized;
+        if (Vector3.Dot(player.transform.forward, toObject) < 0.4f)
+            return false;
+
+        return true;
     }
 
     private void Grab(Transform grabTransform)
@@ -188,7 +209,6 @@ public class MoveableObject : MonoBehaviour, IInteractable
             transform.position = grabPoint.position;
             transform.rotation = grabPoint.rotation;
         }
-
         /*
         float distance = Vector3.Distance(transform.position, player.position);
 
@@ -198,7 +218,7 @@ public class MoveableObject : MonoBehaviour, IInteractable
         {
             ButtonIcons.Instance.Highlight(interactType);
         }
-        else if (!shouldShowIcon && popupInstance != null)
+        else if (!shouldShowIcon && popupInstance != null )
         {
             ButtonIcons.Instance.Clear();
         }*/
@@ -209,6 +229,8 @@ public class MoveableObject : MonoBehaviour, IInteractable
         mover = player.GetComponent<PlayerMovingObjects>();
         if (mover == null) return;
         
+        PlayerInteracting interacting = player.GetComponent<PlayerInteracting>();
+
         if (requiredItem != null && player.TryGetComponent<Inventory>(out var items))
         {
             if (!items.OtherItems.Contains(requiredItem))
@@ -228,12 +250,14 @@ public class MoveableObject : MonoBehaviour, IInteractable
                 return;
             }
             Grab(mover.grabPoint);
-            mover.OnMovingObject(this);
+            mover.OnMovingObject(this); // merge conflict
+            interacting?.SetHeldObject(this);
         }
         else
         {
             Release();
             mover.OnReleaseObject(this);
+            interacting?.ClearHeldObjects();
         }
 
         // Notify any listeners

@@ -7,6 +7,7 @@ public class DarryNeighborhood : MonoBehaviour
     public float Speed = 3f;      // movement speed
     public float RotationSpeed = 3f;    // how fast the NPC rotates
 
+    public NavMeshAgent agent;
     public Transform targetSpot;
     public Transform lookAtTarget;
     public bool isTraveling;
@@ -32,27 +33,23 @@ public class DarryNeighborhood : MonoBehaviour
         {
             TravelToTarget();
         }
-    }
-
-    public void StartTravel(Transform destination)
-    {
-        if (destination == null)
+        /*else if (arrived && lookAtTarget != null)
         {
-            Debug.LogError($"{npcName} cannot travel — no target assigned!");
-            return;
-        }
-
-        targetSpot = destination;
+            LookAtObject();
+        }*/
+    }
+    public void StartTravel()
+    {
+        //IsFollowing = false;
         isTraveling = true;
-        arrived = false;
-
-        Debug.Log($"{npcName} is now traveling toward: {targetSpot.name}");
+        Debug.Log("Darry is now traveling to her destination");
     }
 
     public void TravelToTarget()
     {
         if (targetSpot == null)
         {
+            Debug.Log("There is no target for Darry to go to");
             return;
         }
 
@@ -60,7 +57,12 @@ public class DarryNeighborhood : MonoBehaviour
         direction.y = 0f;
 
         // Movement
-        transform.position = Vector3.MoveTowards(transform.position, targetSpot.position, Speed * Time.deltaTime);
+        //transform.position = Vector3.MoveTowards(transform.position, targetSpot.position, Speed * Time.deltaTime);
+
+        if (!agent.pathPending && agent.remainingDistance < 0.005f && agent != null)
+        {
+            agent.SetDestination(targetSpot.position);
+        }
 
         // Rotate towards target
         if (direction.sqrMagnitude > 0.001f)
@@ -74,15 +76,16 @@ public class DarryNeighborhood : MonoBehaviour
         {
             isTraveling = false;
             arrived = true;
-            Debug.Log("Irene reached the destination.");
+            Debug.Log("Darry reached the destination.");
         }
     }
 
-    private void OnTriggerEnter(Collider other)
+        private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("door"))
         {
             this.gameObject.SetActive(false);
+            arrived = true;
             //ObjectiveManager.Instance.AddProgress(linkedHouseObjective.objectiveID, 1);
             Debug.Log("Darry has reached the door.");
         }

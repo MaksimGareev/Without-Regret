@@ -48,6 +48,34 @@ public class PlaceRoses : MonoBehaviour, IInteractable
         }
     }
 
+    public bool CanInteract(GameObject player)
+    {
+        if (player == null || playerInventory == null) return false;
+
+        // Check if player has the required item
+        if (!playerInventory.KeyItems.Contains(roseItem)) return false;
+
+        // Check if objective is active
+        bool objectiveActive = false;
+        var activeObjectives = ObjectiveManager.Instance.GetActiveObjectives();
+        foreach (var obj in activeObjectives)
+        {
+            if (obj.data == roseObjective)
+            {
+                objectiveActive = true;
+                break;
+            }
+        }
+        if (!objectiveActive) return false;
+
+        // Check if player is mantling
+        PlayerMantling mantling = player.GetComponent<PlayerMantling>();
+        if (mantling != null && mantling.isMantling)
+            return false;
+
+        return true;
+    }
+
     private void ActivateRosesVisual()
     {
         if (rosesVisual != null)
