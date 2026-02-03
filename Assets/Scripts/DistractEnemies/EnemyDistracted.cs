@@ -14,7 +14,7 @@ public class EnemyDistracted : MonoBehaviour
     private NavMeshAgent enemyNavMeshAgent;
     private GameObject distraction;
 
-    private bool isDistracted = false;
+    [HideInInspector] public bool isDistracted = false;
     private Vector3 distractionPoint;
     private float distractionTimer;
     private float lingerTimer;

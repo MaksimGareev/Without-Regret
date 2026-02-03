@@ -7,6 +7,8 @@ public class LeavesTriggerVolume : MonoBehaviour
     [SerializeField] ObjectiveData linkedObjective;
     private List<GameObject> leavesInVolume = new List<GameObject>();
 
+    private bool leavesEnabled = false;
+
     private void OnEnable()
     {
         ObjectiveManager.Instance.OnObjectiveActivated.AddListener(SetObjectiveActive);
