@@ -23,6 +23,9 @@ public class PlayerInteracting : MonoBehaviour
     private MantleableObject mantleTarget;
     private MoveableObject moveTarget;
 
+    // Moveable object
+    private MoveableObject heldObject;
+
     private void Awake()
     {
         Mantle = InputActions.FindActionMap("Player").FindAction("Jump");
@@ -44,6 +47,15 @@ public class PlayerInteracting : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (heldObject != null)
+        {
+            if (Interact.triggered)
+            {
+                heldObject.OnPlayerInteraction(gameObject);
+            }
+            return;
+        }
+
         ScanForInteractable();
 
         if (currentTarget == null)
@@ -53,20 +65,28 @@ public class PlayerInteracting : MonoBehaviour
         if (targetMono == null)
             return;
 
-        if (currentTarget.interactType == InteractType.Mantle)
+        // Interact with mantleable Objects
+        if (mantleTarget != null && Mantle != null && Mantle.triggered)
         {
-            if (Mantle != null && Mantle.triggered)
-            {
-                currentTarget.OnPlayerInteraction(gameObject);
-            }
+            if (showDebugLogs) Debug.Log("Mantle input detected!");
+            mantleTarget.OnPlayerInteraction(gameObject);
+            return;
         }
+
+        // Interact with moveable objects or dialogue
+        if (currentTarget != null && Interact != null && Interact.triggered)
+        {
+            currentTarget.OnPlayerInteraction(gameObject);
+        }
+
+        /*
         else if (currentTarget.interactType == InteractType.Move || currentTarget.interactType == InteractType.Pickup || currentTarget.interactType == InteractType.Dialogue || currentTarget.interactType == InteractType.Remove)
         {
             if (Interact != null && Interact.triggered)
             {
                 currentTarget.OnPlayerInteraction(gameObject);
             }
-        }
+        }*/
 
         /*
         if (currentTarget != null && Interact.triggered)
@@ -91,12 +111,40 @@ public class PlayerInteracting : MonoBehaviour
         }*/
     }
 
+    public void SetHeldObject(MoveableObject obj)
+    {
+        heldObject = obj;
+    }
+
+    public void ClearHeldObjects()
+    {
+        heldObject = null;
+    }
+
     private void ScanForInteractable()
     {
         Collider[] hits = Physics.OverlapSphere(transform.position, interactionRange);
 
-        currentTarget = hits.Select(h => h.GetComponent<IInteractable>()).Where(i => i != null).OrderByDescending(i => i.interactionPriority).FirstOrDefault();
+        var interactables = hits.Select(h => h.GetComponent<IInteractable>()).Where(i => i != null && i.CanInteract(gameObject)).ToList();  //OrderByDescending(i => i.interactionPriority).FirstOrDefault();
 
+        if (interactables.Count == 0)
+        {
+            currentTarget = null;
+            mantleTarget = null;
+            moveTarget = null;
+            ButtonIcons.Instance?.Clear();
+            return;
+        }
+
+        currentTarget = interactables.OrderByDescending(i => i.interactionPriority).FirstOrDefault();
+
+        mantleTarget = currentTarget as MantleableObject;
+        moveTarget = currentTarget as MoveableObject;
+
+        // Highlight icon
+        ButtonIcons.Instance?.Highlight(currentTarget.interactType);
+
+        /*
         if (currentTarget != null)
         {
             ButtonIcons.Instance?.Highlight(currentTarget.interactType);
@@ -104,7 +152,7 @@ public class PlayerInteracting : MonoBehaviour
         else
         {
             ButtonIcons.Instance?.Clear();
-        }
+        }*/
 
         //List<IInteractable> interactableList = new List<IInteractable>();
         //List<IInteractable> found = new();
