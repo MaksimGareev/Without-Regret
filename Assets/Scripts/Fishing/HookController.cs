@@ -54,7 +54,6 @@ public class HookController : MonoBehaviour
         {
             rb.linearVelocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
-            rb.isKinematic = true;
         }
 
         // Only attach to MoveableObject if it's grabbable, otherwise we just freeze the hook in place.
