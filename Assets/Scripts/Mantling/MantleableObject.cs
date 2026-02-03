@@ -7,11 +7,15 @@ public class MantleableObject : MonoBehaviour, IInteractable
     [Header("Mantle Target Offset")]
     [SerializeField] private Vector3 mantleOffset = new Vector3(0f, 2.0f, 0.5f);
     [SerializeField] private bool showGizmos = true;
-    public float interactionPriority => 20f;
+    public float interactionPriority => 5f;
     //[SerializeField] private GameObject iconPrefab;
     //public bool shouldShowIcon = true;
     //private GameObject popupInstance;
     public InteractType interactType => InteractType.Mantle;
+
+    [SerializeField] private float maxMantleDistance = 2f;
+    [SerializeField] private float minHeight = 0.8f;
+    [SerializeField] private float maxHeight = 1.6f;
 
     private void Update()
     {/*
@@ -23,6 +27,31 @@ public class MantleableObject : MonoBehaviour, IInteractable
         {
             DisablePopupIcon();
         }*/
+    }
+
+    public bool CanInteract(GameObject player)
+    {
+        if (DialogueManager.DialogueIsActive) return false;
+
+        PlayerMantling pc = player.GetComponent<PlayerMantling>();
+        if (pc == null || pc.isMantling) return false;
+
+        Vector3 playerPos = player.transform.position;
+        Vector3 mantlePos = GetMantlePosition();
+
+        float horizontalDist = Vector3.Distance(new Vector3(playerPos.x, 0, playerPos.z), new Vector3(mantlePos.x, 0, mantlePos.z));
+        if (horizontalDist > maxMantleDistance) return false;
+
+        /*float dist = Vector3.Distance(player.transform.position, transform.position);
+        if (dist > maxMantleDistance) return false;*/
+
+        float heightDiff = mantlePos.y - playerPos.y;
+        if (heightDiff < minHeight || heightDiff > maxHeight) return false;
+
+        Vector3 toObject = (mantlePos - playerPos).normalized;
+        if (Vector3.Dot(player.transform.forward, toObject) < 0.3f) return false;
+
+        return true;
     }
 
     public void OnPlayerInteraction(GameObject player)

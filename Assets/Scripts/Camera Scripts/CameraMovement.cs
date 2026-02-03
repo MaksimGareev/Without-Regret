@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 
 public class CameraMovement : MonoBehaviour
@@ -48,6 +49,7 @@ public class CameraMovement : MonoBehaviour
     private Vector3 camPosCache = Vector3.zero;
     private Quaternion camRotCache = Quaternion.identity;
     private Vector3 lookAtCache = Vector3.zero;
+    public bool CameraLocked { get; private set; }
     //public Transform player;
 
     private Vector3 currentOffset;
@@ -111,7 +113,23 @@ public class CameraMovement : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
-    
+
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        CameraLocked = false;
+        isZooming = false;
+    }
+
     private Vector3 DirectionToVector(WorldDirection direction)
     {
         switch (direction)
@@ -132,6 +150,7 @@ public class CameraMovement : MonoBehaviour
     // Update is called once per frame
     void LateUpdate()
     {
+        if (CameraLocked) return;
         if (target == null) return;
 
         PlayerController pc = target.GetComponent<PlayerController>();
@@ -325,6 +344,7 @@ public class CameraMovement : MonoBehaviour
         }
 
         isZooming = false;
+        CameraLocked = false;
 
         camPosCache = Vector3.zero;
         camRotCache = Quaternion.identity;
@@ -348,6 +368,7 @@ public class CameraMovement : MonoBehaviour
 
     public IEnumerator StartCameraZoom(Transform zoomTarget, bool dialogue = false)
     {
+        CameraLocked = true;
         isZooming = true;
 
         // Cashe current camera transform
@@ -390,6 +411,11 @@ public class CameraMovement : MonoBehaviour
 
         transform.position = targetPos;
         transform.rotation = targetRot;
+    }
+
+    public void SetCameraLocked(bool locked)
+    {
+        CameraLocked = locked;
     }
 
 }

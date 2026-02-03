@@ -9,5 +9,6 @@ public enum InteractType
     Lockpick,
     Mantle,
     Collectable,
-    Float
+    Float,
+    Remove
 }
