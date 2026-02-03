@@ -694,11 +694,7 @@ public class MMSettings : MonoBehaviour
         AudioManager.Instance.SetDialogueVolume(tempDialogueVolume);
 
         // Apply control settings
-        // PlayerController.mouseSensitivity = tempMouseSensitivity;
-        // PlayerController.leftStickSensitivity = tempLeftStickSensitivity;
-        // PlayerController.rightStickSensitivity = tempRightStickSensitivity;
-        // PlayerController.leftStickDeadZone = tempLeftStickDeadZone;
-        // PlayerController.rightStickDeadZone = tempRightStickDeadZone;
+        GameSettings.ApplyControls(tempMouseSensitivity, tempLeftStickSensitivity, tempRightStickSensitivity, tempLeftStickDeadZone, tempRightStickDeadZone);
         
         // Save settings to PlayerPrefs
         PlayerPrefs.SetInt("resolution", tempResolutionIndex);
