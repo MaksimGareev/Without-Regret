@@ -38,6 +38,11 @@ public class RemoveableObject : MonoBehaviour, IInteractable
         gameObject.SetActive(false);
     }
 
+    public bool CanInteract(GameObject player)
+    {
+        return interactable;
+    }
+
     public void SetInteractable(bool state)
     {
         interactable = state;
