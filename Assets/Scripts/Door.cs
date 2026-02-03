@@ -4,6 +4,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+[RequireComponent(typeof(Collider))]
 public class Door : MonoBehaviour
 {
     [Header("Door Settings")]
