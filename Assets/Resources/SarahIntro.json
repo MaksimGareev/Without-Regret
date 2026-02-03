@@ -2,28 +2,32 @@
     "npcName": "Sarah",
     "dialogueLines": [
         {
-            "text": "What do you think of my new outfit",
+            "text": "Hey! Thoughts on my new outfit?",
             "requiredMorality": 0,
             "choices": [
                 {
-                    "text": "I think it looks great - Sally",
+                  "npcName": "Sally",
+                    "text": "(Gasps) You look so good!",
                     "nextIndex": 1,
                     "moralityChange": 1
                 },
                 {
-                    "text": "I wouldn't be caught dead wearing that - Sally",
+                  "npcName": "Sally",
+                    "text": "Sorry, but I wouldn't be caught dead wearing that.",
                     "nextIndex": 1,
                     "moralityChange": -1
                 }
             ]
         },
         {
-            "text": "Thank you so much.",
+          "npcName": "Sarah",
+            "text": "Thank you, sweetie!",
             "requiredMorality": 1,
             "choices": []
         },
         {
-            "text": "ugh rude, I was trying something new.",
+          "npcName": "Sarah",
+            "text": "Well what do you know about...whatever.",
             "requiredMorality": -1,
             "choices": []
         }
