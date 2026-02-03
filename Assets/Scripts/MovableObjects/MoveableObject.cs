@@ -250,7 +250,7 @@ public class MoveableObject : MonoBehaviour, IInteractable
                 return;
             }
             Grab(mover.grabPoint);
-            mover.OnMovingObject(this);
+            mover.OnMovingObject(this); // merge conflict
             interacting?.SetHeldObject(this);
         }
         else
