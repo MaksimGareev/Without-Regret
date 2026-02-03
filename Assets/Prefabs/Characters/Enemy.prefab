@@ -19,6 +19,7 @@ GameObject:
   - component: {fileID: 7884651440600371946}
   - component: {fileID: 9079497670333271321}
   - component: {fileID: 4739153725983210735}
+  - component: {fileID: 7504214182150986572}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Enemy
@@ -249,6 +250,7 @@ MonoBehaviour:
   moveSpeed: 5
   lingerTime: 2
   stoppingRadius: 2
+  isDistracted: 0
 --- !u!114 &9079497670333271321
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -287,6 +289,19 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &7504214182150986572
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3086140246574635878}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 396345a249ba36f4bb0a50a5a53a9ca1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SaveableEnemyNPC
+  uniqueID: 9e84c832-f155-4aac-a2a8-f733765b32c3
 --- !u!1 &6154207663095846759
 GameObject:
   m_ObjectHideFlags: 0

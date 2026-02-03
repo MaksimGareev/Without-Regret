@@ -835,6 +835,24 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""TabLeft"",
+                    ""type"": ""Button"",
+                    ""id"": ""81743022-7b1d-4f98-b777-6e6996077c10"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""TabRight"",
+                    ""type"": ""Button"",
+                    ""id"": ""cff49e37-2b29-417e-99fb-a5f6b3e20065"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -1101,6 +1119,28 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""action"": ""Navigate"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9d540f3b-3685-4bbc-8ea5-ba85bbffcf29"",
+                    ""path"": ""<Gamepad>/leftShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""TabLeft"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""7f101b0c-e3d1-489a-a3a3-8258f9fc8431"",
+                    ""path"": ""<Gamepad>/rightShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""TabRight"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 },
                 {
                     ""name"": """",
@@ -2070,6 +2110,8 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_UI_TrackedDeviceOrientation = m_UI.FindAction("TrackedDeviceOrientation", throwIfNotFound: true);
         m_UI_Pause = m_UI.FindAction("Pause", throwIfNotFound: true);
         m_UI_Journal = m_UI.FindAction("Journal", throwIfNotFound: true);
+        m_UI_TabLeft = m_UI.FindAction("TabLeft", throwIfNotFound: true);
+        m_UI_TabRight = m_UI.FindAction("TabRight", throwIfNotFound: true);
         // LockPicking
         m_LockPicking = asset.FindActionMap("LockPicking", throwIfNotFound: true);
         m_LockPicking_Unlock = m_LockPicking.FindAction("Unlock", throwIfNotFound: true);
@@ -2450,6 +2492,8 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_UI_TrackedDeviceOrientation;
     private readonly InputAction m_UI_Pause;
     private readonly InputAction m_UI_Journal;
+    private readonly InputAction m_UI_TabLeft;
+    private readonly InputAction m_UI_TabRight;
     /// <summary>
     /// Provides access to input actions defined in input action map "UI".
     /// </summary>
@@ -2509,6 +2553,14 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "UI/Journal".
         /// </summary>
         public InputAction @Journal => m_Wrapper.m_UI_Journal;
+        /// <summary>
+        /// Provides access to the underlying input action "UI/TabLeft".
+        /// </summary>
+        public InputAction @TabLeft => m_Wrapper.m_UI_TabLeft;
+        /// <summary>
+        /// Provides access to the underlying input action "UI/TabRight".
+        /// </summary>
+        public InputAction @TabRight => m_Wrapper.m_UI_TabRight;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -2571,6 +2623,12 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Journal.started += instance.OnJournal;
             @Journal.performed += instance.OnJournal;
             @Journal.canceled += instance.OnJournal;
+            @TabLeft.started += instance.OnTabLeft;
+            @TabLeft.performed += instance.OnTabLeft;
+            @TabLeft.canceled += instance.OnTabLeft;
+            @TabRight.started += instance.OnTabRight;
+            @TabRight.performed += instance.OnTabRight;
+            @TabRight.canceled += instance.OnTabRight;
         }
 
         /// <summary>
@@ -2618,6 +2676,12 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Journal.started -= instance.OnJournal;
             @Journal.performed -= instance.OnJournal;
             @Journal.canceled -= instance.OnJournal;
+            @TabLeft.started -= instance.OnTabLeft;
+            @TabLeft.performed -= instance.OnTabLeft;
+            @TabLeft.canceled -= instance.OnTabLeft;
+            @TabRight.started -= instance.OnTabRight;
+            @TabRight.performed -= instance.OnTabRight;
+            @TabRight.canceled -= instance.OnTabRight;
         }
 
         /// <summary>
@@ -3369,6 +3433,20 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnJournal(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "TabLeft" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnTabLeft(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "TabRight" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnTabRight(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "LockPicking" which allows adding and removing callbacks.

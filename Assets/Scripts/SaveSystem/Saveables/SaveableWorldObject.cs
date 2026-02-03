@@ -1,28 +1,13 @@
 using System;
 using UnityEngine;
 
-public class SaveableWorldObject : MonoBehaviour, ISaveable
+public class SaveableWorldObject : SaveableWithID
 {
-    [SerializeField] private string uniqueID;
-
-    private void Awake()
-    {
-        if (string.IsNullOrEmpty(uniqueID))
-        {
-            uniqueID = Guid.NewGuid().ToString();
-            #if UNITY_EDITOR
-            UnityEditor.EditorUtility.SetDirty(this);
-            #endif
-        }
-    }
-
-    public string GetUniqueID() => uniqueID;
-
-    public void SaveTo(SaveData data)
+    public override void SaveTo(SaveData data)
     {
         WorldObjectState state = new WorldObjectState();
 
-        state.id = uniqueID;
+        state.id = GetUniqueID();
         state.position = new float[] { transform.position.x, transform.position.y, transform.position.z };
         state.rotation = new float[] { transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z };
         state.isActive = gameObject.activeSelf;
@@ -59,21 +44,21 @@ public class SaveableWorldObject : MonoBehaviour, ISaveable
             state.rbConstraints = RigidbodyConstraints.None;
         }
 
-        if (data.worldSaveData.worldObjects.Exists(obj => obj.id == uniqueID))
+        if (data.worldSaveData.worldObjects.Exists(obj => obj.id == GetUniqueID()))
         {
-            data.worldSaveData.worldObjects.RemoveAll(obj => obj.id == uniqueID);
+            data.worldSaveData.worldObjects.RemoveAll(obj => obj.id == GetUniqueID());
         }
 
         data.worldSaveData.worldObjects.Add(state);
     }
 
-    public void LoadFrom(SaveData data)
+    public override void LoadFrom(SaveData data)
     {
-        var state = data.worldSaveData.worldObjects.Find(obj => obj.id == uniqueID);
+        var state = data.worldSaveData.worldObjects.Find(obj => obj.id == GetUniqueID());
 
         if (state == null)
         {
-            Debug.LogWarning("No saved state found for object with ID: " + uniqueID);
+            Debug.LogWarning("No saved state found for object with ID: " + GetUniqueID());
             return;
         }
 

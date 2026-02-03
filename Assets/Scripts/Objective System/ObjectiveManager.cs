@@ -330,8 +330,6 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
 
         objectivesInSceneCompleted = true;
         Debug.Log("All objectives complete");
-
-        UIHideRoutine = null;
     }
 
     public void EnsureActiveObjective()
