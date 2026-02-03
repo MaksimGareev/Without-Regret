@@ -128,6 +128,8 @@ GameObject:
   - component: {fileID: 9169940238804770612}
   - component: {fileID: 1311592278050812008}
   - component: {fileID: 1149229258929258946}
+  - component: {fileID: 4035302086000222004}
+  - component: {fileID: 2785358529065914657}
   m_Layer: 8
   m_Name: Irene
   m_TagString: Untagged
@@ -229,7 +231,7 @@ MonoBehaviour:
   dialogueTrigger: {fileID: 1311592278050812008}
   targetSpot: {fileID: 0}
   lookAtTarget: {fileID: 0}
-  agent: {fileID: 0}
+  agent: {fileID: 4035302086000222004}
   isTraveling: 0
   arrived: 0
   CanFollowPlayer: 1
@@ -273,10 +275,11 @@ MonoBehaviour:
   promptUI: {fileID: 0}
   chatRange: 3
   jsonDialogueFile: {fileID: 4900000, guid: 4784a40bd37475b458c97f350302f4f3, type: 3}
-  TalkedJsonDialogueFile: {fileID: 0}
-  CompleteJsonDialogueFile: {fileID: 0}
-  ActiveJsonDialogueFile: {fileID: 0}
-  objectiveIDYouCareAbout: []
+  TalkedJsonDialogueFile: {fileID: 4900000, guid: 9a4e3adf62e696a4d9f3dcc5d6f93c62, type: 3}
+  CompleteJsonDialogueFile: {fileID: 4900000, guid: d07bc5ceb4fd0e04fa015e04d927277d, type: 3}
+  ActiveJsonDialogueFile: {fileID: 4900000, guid: 9a4e3adf62e696a4d9f3dcc5d6f93c62, type: 3}
+  objectiveIDYouCareAbout:
+  - stackLeaves
   linkedObjective: {fileID: 11400000, guid: a027b5d7ae55ba341a809f88e56a62f2, type: 2}
   IsMediation: 0
   lookSpeed: 5
@@ -285,7 +288,8 @@ MonoBehaviour:
   iconPrefab: {fileID: 4114033263953508203, guid: 48024210bf4a4394fa37015b90b3b410, type: 3}
   shouldShowIcon: 1
   enemy: {fileID: 0}
-  focusCameraOnTrigger: 0
+  focusCameraOnTrigger: 1
+  triggerType: 0
 --- !u!114 &1149229258929258946
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -298,6 +302,56 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b93d8170e88d8e34684424c0750fb15a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SaveableFriendlyNPC
+  uniqueID: 3728c1ac-8888-47b0-827c-91e8406e1e43
+--- !u!195 &4035302086000222004
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9028717818022298950}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.5
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 1.2
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
+--- !u!54 &2785358529065914657
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9028717818022298950}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1001 &2605769388952795558
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -306,6 +360,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 7298141654338863716}
     m_Modifications:
+    - target: {fileID: -8708396805832778714, guid: 45a88adc597e936479e3050849a183af, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 45a88adc597e936479e3050849a183af, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.109
@@ -346,6 +404,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 45a88adc597e936479e3050849a183af, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: a84b7e69e65d2a649a37185845c8afb9, type: 2}
     - target: {fileID: 919132149155446097, guid: 45a88adc597e936479e3050849a183af, type: 3}
       propertyPath: m_Name
       value: IrenePaintedFBX
