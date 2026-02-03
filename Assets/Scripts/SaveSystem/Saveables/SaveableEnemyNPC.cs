@@ -1,26 +1,11 @@
 using UnityEngine;
 
-public class SaveableEnemyNPC : MonoBehaviour, ISaveable
+public class SaveableEnemyNPC : SaveableWithID
 {
-    private string uniqueID;
-
-    private void Awake()
-    {
-        if (string.IsNullOrEmpty(uniqueID) && this.gameObject.activeSelf)
-        {
-            uniqueID = System.Guid.NewGuid().ToString();
-            #if UNITY_EDITOR
-            UnityEditor.EditorUtility.SetDirty(this);
-            #endif
-        }
-    }
-
-    public string GetUniqueID() => uniqueID;
-
-    public void SaveTo(SaveData data)
+    public override void SaveTo(SaveData data)
     {
         EnemyNPCSaveData state = new EnemyNPCSaveData();
-        state.id = uniqueID;
+        state.id = GetUniqueID();
         state.position = new float[] { transform.position.x, transform.position.y, transform.position.z };
         state.rotation = new float[] { transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z };
         state.isActive = gameObject.activeSelf;
@@ -40,22 +25,26 @@ public class SaveableEnemyNPC : MonoBehaviour, ISaveable
             Debug.LogWarning("SaveableEnemyNPC attached to an unknown Enemy type.");
         }
 
-        if (data.enemyNPCListSaveData.enemyNPCs.Exists(enemy => enemy.id == uniqueID))
+        if (data.enemyNPCListSaveData.enemyNPCs.Exists(enemy => enemy.id == GetUniqueID()))
         {
-            data.enemyNPCListSaveData.enemyNPCs.RemoveAll(enemy => enemy.id == uniqueID);
+            data.enemyNPCListSaveData.enemyNPCs.RemoveAll(enemy => enemy.id == GetUniqueID());
         }
 
         data.enemyNPCListSaveData.enemyNPCs.Add(state);
     }
 
-    public void LoadFrom(SaveData data)
+    public override void LoadFrom(SaveData data)
     {
-        var state = data.enemyNPCListSaveData.enemyNPCs.Find(enemy => enemy.id == uniqueID);
+        var state = data.enemyNPCListSaveData.enemyNPCs.Find(enemy => enemy.id == GetUniqueID());
         
         if (state == null)
         {
-            Debug.LogWarning($"No save data found for Enemy NPC with ID: {uniqueID}");
+            Debug.LogWarning($"Loading Failed: No save data found for Enemy NPC with ID: {GetUniqueID()}");
             return;
+        }
+        else
+        {
+            Debug.Log($"Loading Enemy NPC with ID: {GetUniqueID()}");
         }
 
         transform.position = new Vector3(state.position[0], state.position[1], state.position[2]);

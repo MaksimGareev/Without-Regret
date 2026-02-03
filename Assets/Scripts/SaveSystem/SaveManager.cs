@@ -121,19 +121,19 @@ public class SaveManager : MonoBehaviour
                     // Ensure the saveable has a valid unique ID
                     if (saveable is SaveableFriendlyNPC fnpc)
                     {
-                        if (fnpc.GetUniqueID() == null) continue;
+                        if (string.IsNullOrEmpty(fnpc.GetUniqueID())) continue;
                     }
                     if (saveable is SaveableEnemyNPC enpc)
                     {
-                        if (enpc.GetUniqueID() == null) continue;
+                        if (string.IsNullOrEmpty(enpc.GetUniqueID())) continue;
                     }
                     if (saveable is SaveableWorldObject wo)
                     {
-                        if (wo.GetUniqueID() == null) continue;
+                        if (string.IsNullOrEmpty(wo.GetUniqueID())) continue;
                     }
                     if (saveable is Gate gate)
                     {
-                        if (gate.GetUniqueID() == null) continue;
+                        if (string.IsNullOrEmpty(gate.GetUniqueID())) continue;
                     }
 
                     saveables.Add(saveable);
@@ -261,43 +261,12 @@ public class SaveManager : MonoBehaviour
 
         foreach (ISaveable saveable in saveables)
         {
-            if (saveable is PlayerController || saveable is SaveableFriendlyNPC || saveable is SaveableEnemyNPC || saveable is Gate)
+            if (saveable is PlayerController)
             {
                 continue;
             }
-
             saveable.LoadFrom(data);
-            Debug.Log($"[SaveManager.LoadGame] Loaded {saveable.GetType().Name}");
-        }
-
-        foreach (ISaveable saveable in saveables)
-        {
-            if (saveable is SaveableFriendlyNPC friendlyNPC)
-            {
-                friendlyNPC.LoadFrom(data);
-                Debug.Log($"[SaveManager.LoadGame] Loaded Friendly NPC, ID: {friendlyNPC.GetUniqueID()}");
-                break;
-            }
-        }
-
-        foreach (ISaveable saveable in saveables)
-        {
-            if (saveable is SaveableEnemyNPC enemyNPC)
-            {
-                enemyNPC.LoadFrom(data);
-                Debug.Log($"[SaveManager.LoadGame] Loaded Enemy NPC, ID: {enemyNPC.GetUniqueID()}");
-                break;
-            }
-        }
-
-        foreach (ISaveable saveable in saveables)
-        {
-            if (saveable is Gate gate)
-            {
-                gate.LoadFrom(data);
-                Debug.Log($"[SaveManager.LoadGame] Loaded Gate, ID: {gate.GetUniqueID()}");
-                break;
-            }
+            Debug.Log($"[SaveManager.LoadGame] Loading {saveable.GetType().Name}");
         }
 
         foreach (ISaveable saveable in saveables)
@@ -305,7 +274,7 @@ public class SaveManager : MonoBehaviour
             if (saveable is PlayerController player)
             {
                 player.LoadFrom(data);
-                Debug.Log($"[SaveManager.LoadGame] Loaded PlayerController");
+                Debug.Log($"[SaveManager.LoadGame] Loading PlayerController");
                 break;
             }
         }
