@@ -22,7 +22,7 @@ public class InputSettingsApplier : MonoBehaviour
 
         ApplyDeadZones(inputActions, "Player", "Move", GameSettings.LeftStickDeadZone);
         ApplyDeadZones(inputActions, "Player", "Look", GameSettings.RightStickDeadZone);
-        
+
         ApplyDeadZones(inputActions, "UI", "Navigate", GameSettings.LeftStickDeadZone);
     }
 
@@ -31,7 +31,7 @@ public class InputSettingsApplier : MonoBehaviour
         var map = actions.FindActionMap(mapName, true);
         var action = map.FindAction(actionName, true);
 
-        string proc = $"stickDeadzone(min={deadZone},max=1)";
+        string proc = $"stickDeadzone(min={deadZone},max=0.9)";
 
         for (int i = 0; i < action.bindings.Count; i++)
         {
