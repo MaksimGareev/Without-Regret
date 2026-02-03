@@ -42,6 +42,11 @@ public class PlayerController : MonoBehaviour, ISaveable
 
     public static bool DialogueActive = false;
 
+    [Header("Special Idle Parameters")]
+    public float idleTimer = 0;
+    private bool specialIdle = false;
+
+
     // Input System
     private PlayerControls controls;
     private Rigidbody rb;
@@ -244,12 +249,25 @@ public class PlayerController : MonoBehaviour, ISaveable
         {
             resetAnimations();
             animator.SetBool("isWalking", true);
+            idleTimer = 0f; // reset idle timer
         }
         if (!isMoving)
         {
-            resetAnimations();
-            animator.SetBool("isIdle", true);
+            if (!specialIdle)
+            {
+                resetAnimations();
+                animator.SetBool("isIdle", true);
+            }
+
+            idleTimer += Time.deltaTime;
+
+            if (!specialIdle && idleTimer >= 15f)
+            {
+                idleTimer = 0f;
+                StartCoroutine(PlaySpecialIdle());
+            }
         }
+
 
 
         // Sprint logic
@@ -463,6 +481,18 @@ public class PlayerController : MonoBehaviour, ISaveable
     private void LoadMenuScene()
     {
         SceneManager.LoadScene("MenuTesting");
+    }
+
+    private IEnumerator PlaySpecialIdle()
+    {
+        specialIdle = true;
+
+        resetAnimations();
+        animator.SetTrigger("specialIdle");
+
+        yield return new WaitForSeconds(2f);
+
+        specialIdle = false;
     }
 
 
