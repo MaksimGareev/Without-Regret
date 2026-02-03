@@ -8457,6 +8457,8 @@ GameObject:
   - component: {fileID: 487435408}
   - component: {fileID: 487435407}
   - component: {fileID: 487435410}
+  - component: {fileID: 487435412}
+  - component: {fileID: 487435411}
   m_Layer: 0
   m_Name: Echo'sHouseTerrain
   m_TagString: Untagged
@@ -8571,6 +8573,111 @@ MonoBehaviour:
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: a0348afb83ab00e4fb5b2311e8790016, type: 2}
   m_BuildHeightMesh: 0
+--- !u!82 &487435411
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 487435406}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 8300000, guid: 39785fb05994319409e2193d7543b3d3, type: 3}
+  m_PlayOnAwake: 1
+  m_Volume: 0.435
+  m_Pitch: 1
+  Loop: 1
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!81 &487435412
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 487435406}
+  m_Enabled: 1
 --- !u!1 &525729197
 GameObject:
   m_ObjectHideFlags: 0
@@ -17713,8 +17820,8 @@ BoxCollider:
   m_ProvidesContacts: 1
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 300, y: 300, z: 400}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 300.00003, y: 300, z: 672.9123}
+  m_Center: {x: 0, y: -8.065031e-13, z: 136.45578}
 --- !u!1001 &1547879217
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -27119,8 +27226,8 @@ BoxCollider:
   m_ProvidesContacts: 1
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 600, y: 400, z: 500}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 691.2395, y: 443.30746, z: 810.6746}
+  m_Center: {x: 2.6982176, y: 1.5742929, z: 155.33865}
 --- !u!1001 &1901369674
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -28201,8 +28308,8 @@ BoxCollider:
   m_ProvidesContacts: 1
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 300, y: 300, z: 400}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 300.00003, y: 300, z: 650.2549}
+  m_Center: {x: 0, y: -9.55272e-13, z: 125.12726}
 --- !u!1 &2073345935
 GameObject:
   m_ObjectHideFlags: 0
@@ -28525,9 +28632,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92235a719bfa79946bf3a4f053fc4ae1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DistortionAberation
-  speed: 0.14
+  speed: 0.06
   minIntensity: 0.34
-  maxIntensity: 0.52
+  maxIntensity: 0.44
   volume: {fileID: 2073345936}
 --- !u!4 &2095064063
 Transform:
@@ -28556,9 +28663,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f469da92aa55f14eb6ccf848fe3bff5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Distortion_Lens
-  frequency: 5
-  rigidness: 1.12
-  maxValues: {x: 1.2, y: 0.62}
+  frequency: 4.32
+  rigidness: 0.91
+  maxValues: {x: 0.46, y: 0.5}
   volume: {fileID: 2073345936}
 --- !u!1 &2108817767
 GameObject:
