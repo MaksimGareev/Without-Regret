@@ -1,5 +1,7 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.InputSystem;
 
 public class CameraMovement : MonoBehaviour
 {
@@ -10,6 +12,11 @@ public class CameraMovement : MonoBehaviour
         East,
         West
     }
+    [Header("Input")]
+    [SerializeField] private InputActionAsset inputActions;
+    [SerializeField] private string actionMapName = "Player";
+    [SerializeField] private string lookActionName = "Look";
+    private InputAction lookAction;
 
     [Header("Follow Settings")]
     public Transform target; // Reference the player as the intended target of the camera
@@ -31,6 +38,8 @@ public class CameraMovement : MonoBehaviour
     [SerializeField] private float translateLimit = 4f;
     [SerializeField] private float returnSpeed = 4f;
     [SerializeField] private float mouseResetTime = 3f;
+    [SerializeField] private float mouseRotateScale = 0.08f;
+    [SerializeField] private float mouseTranslateScale = 0.01f;
 
     [Header("Focus Movement Settings")]
     public Vector3 pickupOffset = new Vector3(3f, 2f, -5f);
@@ -40,6 +49,7 @@ public class CameraMovement : MonoBehaviour
     private Vector3 camPosCache = Vector3.zero;
     private Quaternion camRotCache = Quaternion.identity;
     private Vector3 lookAtCache = Vector3.zero;
+    public bool CameraLocked { get; private set; }
     //public Transform player;
 
     private Vector3 currentOffset;
@@ -51,6 +61,30 @@ public class CameraMovement : MonoBehaviour
     private bool isThrowing;
     private ToggleInventoryUI toggleInventoryUI;
     private float mouseResetTimer;
+    private bool lastInputWasMouse = false;
+
+    private void Awake()
+    {
+        if (inputActions != null)
+        {
+            var map = inputActions.FindActionMap(actionMapName, true);
+            lookAction = map.FindAction(lookActionName, true);
+        }
+        else
+        {
+            Debug.LogWarning("InputActionAsset not assigned in CameraMovement.");
+        }
+    }
+
+    private void OnEnable()
+    {
+        lookAction?.Enable();
+    }
+
+    private void OnDisable()
+    {
+        lookAction?.Disable();
+    }
 
     private void Start()
     {
@@ -79,7 +113,23 @@ public class CameraMovement : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
-    
+
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        CameraLocked = false;
+        isZooming = false;
+    }
+
     private Vector3 DirectionToVector(WorldDirection direction)
     {
         switch (direction)
@@ -100,65 +150,63 @@ public class CameraMovement : MonoBehaviour
     // Update is called once per frame
     void LateUpdate()
     {
+        if (CameraLocked) return;
         if (target == null) return;
 
         PlayerController pc = target.GetComponent<PlayerController>();
-        if (pc != null)
+
+        if (pc != null && pc.MovementLocked && pc.enabled)
         {
-            if (pc.MovementLocked == true)
-            {
-                pc.enabled = false;
-            }
+            pc.enabled = false;
         }
 
-        float horizontalInput = Input.GetAxis("Xbox RightStick X");
-        float verticalInput = Input.GetAxis("Xbox RightStick Y");
+        Vector2 lookInput = lookAction != null ? lookAction.ReadValue<Vector2>() : Vector2.zero;
 
-        float mouseX = -Input.GetAxis("Mouse X");
-        float mouseY = -Input.GetAxis("Mouse Y");
+        if (lookInput.sqrMagnitude > 0.0001f && lookAction != null && lookAction.activeControl != null)
+        {
+            lastInputWasMouse = true;
+        }
 
-        bool hasControllerInput = Mathf.Abs(horizontalInput) > 0.01f || Mathf.Abs(verticalInput) > 0.01f;
-        bool hasMouseInput = Mathf.Abs(mouseX) > 0.01f || Mathf.Abs(mouseY) > 0.01f;
+        bool hasLookInput = lookInput.sqrMagnitude > 0.0001f;
 
         if (playerThrowing != null)
         {
             isThrowing = playerThrowing.GetIsCharging();
         }
 
-        if (!hasMouseInput && mouseResetTimer >= 0)
+        if (!hasLookInput && mouseResetTimer >= 0)
         {
             mouseResetTimer -= Time.deltaTime;
         }
 
+        bool blocked = isThrowing || (toggleInventoryUI != null && toggleInventoryUI.isEnabled) || (pc != null && pc.MovementLocked);
+
         if (!isZooming)
         {
-            if (rotateCamera)
+            if (!blocked && hasLookInput)
             {
-                if (hasControllerInput && !isThrowing && !toggleInventoryUI.isEnabled && !pc.MovementLocked)
+                float h = -lookInput.x;
+                float v = -lookInput.y;
+
+                if (rotateCamera)
                 {
-                    HandleRotation(horizontalInput, verticalInput);
-                }
-                else if (hasMouseInput && !isThrowing && !toggleInventoryUI.isEnabled && !pc.MovementLocked)
-                {
-                    HandleRotation(mouseX, mouseY);
-                    mouseResetTimer = mouseResetTime;
+                    HandleRotation(h, v, lastInputWasMouse);
                 }
                 else
                 {
-                    ReturnRotation();
+                    HandleTranslation(h, v, lastInputWasMouse);
                 }
-            
+
+                if (lastInputWasMouse)
+                {
+                    mouseResetTimer = mouseResetTime;
+                }
             }
             else
             {
-                if (hasControllerInput && !isThrowing && !toggleInventoryUI.isEnabled && !pc.MovementLocked)
+                if (rotateCamera)
                 {
-                    HandleTranslation(horizontalInput, verticalInput);
-                }
-                else if (hasMouseInput && !isThrowing && !toggleInventoryUI.isEnabled && !pc.MovementLocked)
-                {
-                    HandleTranslation(mouseX, mouseY);
-                    mouseResetTimer = mouseResetTime;
+                    ReturnRotation();
                 }
                 else
                 {
@@ -178,10 +226,20 @@ public class CameraMovement : MonoBehaviour
         } 
     }
 
-    private void HandleRotation(float horizontalInput, float verticalInput)
+    private void HandleRotation(float horizontalInput, float verticalInput, bool isMouse)
     {
-        yaw -= horizontalInput * rotateSpeed * Time.deltaTime;
-        pitch -= verticalInput * rotateSpeed * Time.deltaTime;
+        if (isMouse)
+        {
+            float mouseScale = mouseRotateScale * GameSettings.MouseSensitivity;
+            yaw -= horizontalInput * mouseScale;
+            pitch -= verticalInput * mouseScale;
+        }
+        else
+        {
+            float stickScale = rotateSpeed * GameSettings.RightStickSensitivity;
+            yaw -= horizontalInput * stickScale * Time.deltaTime;
+            pitch -= verticalInput * stickScale * Time.deltaTime;
+        }
 
         if (restrictYaw)
         {
@@ -221,10 +279,21 @@ public class CameraMovement : MonoBehaviour
         currentLookAtOffset = Vector3.Lerp(currentLookAtOffset, initialRotation * defaultLookAtOffset, returnSpeed * Time.deltaTime);
     }
 
-    private void HandleTranslation(float horizontalInput, float verticalInput)
+    private void HandleTranslation(float horizontalInput, float verticalInput, bool isMouse)
     {
         Vector3 inputDirection = new Vector3(horizontalInput, 0f, verticalInput);
-        Vector3 delta = initialRotation * inputDirection * translateSpeed * Time.deltaTime;
+
+        float scale;
+        if (isMouse)
+        {
+            scale = mouseTranslateScale * GameSettings.MouseSensitivity;
+        }
+        else
+        {
+            scale = translateSpeed * GameSettings.RightStickSensitivity * Time.deltaTime;
+        }
+
+        Vector3 delta = initialRotation * inputDirection * scale;
 
         currentOffset += delta;
         currentLookAtOffset += delta;
@@ -275,6 +344,7 @@ public class CameraMovement : MonoBehaviour
         }
 
         isZooming = false;
+        CameraLocked = false;
 
         camPosCache = Vector3.zero;
         camRotCache = Quaternion.identity;
@@ -296,8 +366,9 @@ public class CameraMovement : MonoBehaviour
         StartCoroutine(EndCameraZoom());
     }
 
-    public IEnumerator StartCameraZoom(Transform npc, bool dialogue = false)
+    public IEnumerator StartCameraZoom(Transform zoomTarget, bool dialogue = false)
     {
+        CameraLocked = true;
         isZooming = true;
 
         // Cashe current camera transform
@@ -305,7 +376,7 @@ public class CameraMovement : MonoBehaviour
         camRotCache = transform.rotation;
 
         // Direction the player is facing
-        Vector3 playerForward = npc.position - target.position;
+        Vector3 playerForward = zoomTarget.position - target.position;
         playerForward.y = 0f;
         playerForward.Normalize();
 
@@ -314,7 +385,7 @@ public class CameraMovement : MonoBehaviour
         if (dialogue)
         {
             // Offset behind player, up, and to the right
-            offset = -playerForward * 3f + target.right * 2f + Vector3.up * 2f;
+            offset = -playerForward * 3f + target.right * 3f + Vector3.up * 2f;
         }
         else
         {
@@ -325,9 +396,9 @@ public class CameraMovement : MonoBehaviour
         Vector3 targetPos = target.position + offset;
 
         // Target Rotation
-        Quaternion targetRot = Quaternion.LookRotation(npc.position - targetPos);
+        Quaternion targetRot = Quaternion.LookRotation(zoomTarget.position - targetPos);
 
-        lookAtCache = npc.position;
+        lookAtCache = zoomTarget.position;
 
         float t = 0f;
         while (t < zoomDuration)
@@ -340,6 +411,11 @@ public class CameraMovement : MonoBehaviour
 
         transform.position = targetPos;
         transform.rotation = targetRot;
+    }
+
+    public void SetCameraLocked(bool locked)
+    {
+        CameraLocked = locked;
     }
 
 }
