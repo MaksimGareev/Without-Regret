@@ -160,6 +160,7 @@ MonoBehaviour:
   linkedObjective: {fileID: 0}
   IsMediation: 0
   lookSpeed: 5
+  isLookingAtPlayer: 0
   TalkedAlready: 0
   iconPrefab: {fileID: 0}
   shouldShowIcon: 1
@@ -1346,6 +1347,7 @@ GameObject:
   - component: {fileID: 171583517}
   - component: {fileID: 171583516}
   - component: {fileID: 171583515}
+  - component: {fileID: 171583519}
   - component: {fileID: 171583518}
   m_Layer: 0
   m_Name: door (1)
@@ -1419,7 +1421,7 @@ Transform:
   m_GameObject: {fileID: 171583514}
   serializedVersion: 2
   m_LocalRotation: {x: -0.02616401, y: 0.9995361, z: 0.00040787228, w: 0.015581826}
-  m_LocalPosition: {x: 57.622, y: -0.179, z: 106.88}
+  m_LocalPosition: {x: 57.58, y: -0.18, z: 106.88}
   m_LocalScale: {x: 0.94598323, y: 0.96080846, z: 1.1687274}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1437,12 +1439,33 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc6995ddd5c98c7439fad9eded40dc8f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Door
-  sceneToLoad: GraveyardLevelBlockout
-  interactDistance: 3
+  sceneToLoad: {fileID: 102900000, guid: e4992507590898e45b28810610f79cea, type: 3}
+  interactDistance: 5
   player: {fileID: 1311844012}
   linkedObjective: {fileID: 11400000, guid: 29c3e418a1c36aa4a9f6ff833a3dd117, type: 2}
   needsObjective: 0
   interactSound: {fileID: 0}
+--- !u!65 &171583519
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 171583514}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.7268181, y: 2.7233403, z: 1.6314328}
+  m_Center: {x: -3.5784612, y: 1.3758157, z: 0.000007801797}
 --- !u!1 &183684463 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: f148b723247956048b4531af01de9adc, type: 3}
@@ -13970,6 +13993,10 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   objectiveUI: {fileID: 0}
+  objectiveTitleText: {fileID: 0}
+  objectiveDescriptionText: {fileID: 0}
+  objectiveProgressText: {fileID: 0}
+  fadeDuration: 0.5
 --- !u!43 &1107295230
 Mesh:
   m_ObjectHideFlags: 0
@@ -15220,19 +15247,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5256605505714893680, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5256605505714893680, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5256605505714893680, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 5256605505714893680, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -25
       objectReference: {fileID: 0}
     - target: {fileID: 6859165905719255502, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
       propertyPath: TimerText
@@ -21052,8 +21079,12 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1311844012}
     - target: {fileID: 3378418996727256961, guid: 558083b16e4ca884ea05b07a66ae7af2, type: 3}
+      propertyPath: sceneToLoad
+      value: 
+      objectReference: {fileID: 102900000, guid: e4992507590898e45b28810610f79cea, type: 3}
+    - target: {fileID: 3378418996727256961, guid: 558083b16e4ca884ea05b07a66ae7af2, type: 3}
       propertyPath: needsObjective
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3378418996727256961, guid: 558083b16e4ca884ea05b07a66ae7af2, type: 3}
       propertyPath: linkedObjective
@@ -21065,7 +21096,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6086966112654015895, guid: 558083b16e4ca884ea05b07a66ae7af2, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 61.03
+      value: 60.97
       objectReference: {fileID: 0}
     - target: {fileID: 6086966112654015895, guid: 558083b16e4ca884ea05b07a66ae7af2, type: 3}
       propertyPath: m_LocalPosition.y
@@ -21073,7 +21104,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6086966112654015895, guid: 558083b16e4ca884ea05b07a66ae7af2, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 107.1
+      value: 106.983
       objectReference: {fileID: 0}
     - target: {fileID: 6086966112654015895, guid: 558083b16e4ca884ea05b07a66ae7af2, type: 3}
       propertyPath: m_LocalRotation.w
@@ -21106,6 +21137,10 @@ PrefabInstance:
     - target: {fileID: 8718436043695358334, guid: 558083b16e4ca884ea05b07a66ae7af2, type: 3}
       propertyPath: m_Name
       value: door
+      objectReference: {fileID: 0}
+    - target: {fileID: 8718436043695358334, guid: 558083b16e4ca884ea05b07a66ae7af2, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -21193,6 +21228,7 @@ SceneRoots:
   - {fileID: 1755141015}
   - {fileID: 633894298}
   - {fileID: 6852170081860133053}
+  - {fileID: 171583517}
   - {fileID: 510147502}
   - {fileID: 726550855}
   - {fileID: 1020382495}
@@ -21207,7 +21243,6 @@ SceneRoots:
   - {fileID: 581775400}
   - {fileID: 306082176}
   - {fileID: 844860136}
-  - {fileID: 171583517}
   - {fileID: 555262951}
   - {fileID: 2052470331}
   - {fileID: 728969701}
