@@ -51,6 +51,13 @@ public class DialogueManager : MonoBehaviour
     private float directionHoldTimer = 0f;
     private ChoiceDirection? currentHeldDirection;
     private bool isHoldingDirection = false;
+    private bool waitingForHoldCompletion = false;
+    private bool suppressInputOneFrame = false;
+
+    // Player choice tendencies
+    private int positiveChoiceCount = 0;
+    private int negativeChoiceCount = 0;
+    private int neutralChoiceCount = 0;
 
     // Typing
     private Coroutine typeingRoutine;
@@ -126,7 +133,10 @@ public class DialogueManager : MonoBehaviour
         PlayerPrefs.SetInt("Morality", playerMorality);
         PlayerPrefs.Save();
         //playerMorality = PlayerPrefs.GetInt("Morality", 0);
-        IntruderTrigger.SetActive(false);
+        if (IntruderTrigger != null)
+        {
+            IntruderTrigger.SetActive(false);
+        }
         // Build letter sound dictionary
         letterSounds = new Dictionary<char, AudioClip>();
         for (int i = 0; i < letterClips.Count && i < 26; i++)
@@ -144,8 +154,11 @@ public class DialogueManager : MonoBehaviour
     // -------------------- JSON Dialogue --------------------
     public void StartDialogueFromJson(TextAsset jsonFile, DialogueTrigger trigger)
     {
+        cameraMovement = Camera.main.GetComponent<CameraMovement>();
 
         Debug.Log("DialogueManager: StartDialogueFromJson called");
+
+        cameraMovement.SetCameraLocked(true);
 
         if (!gameObject.activeInHierarchy)
         {
@@ -169,7 +182,6 @@ public class DialogueManager : MonoBehaviour
         playerFloating = player.GetComponent<PlayerFloating>();
         playerThrowing = player.GetComponent<PlayerThrowing>();
         playerController = player.GetComponent<PlayerController>();
-        cameraMovement = Camera.main.GetComponent<CameraMovement>();
         PopupText.gameObject.SetActive(false);
         Chime.isInDialogue = true;
 
@@ -432,7 +444,11 @@ public class DialogueManager : MonoBehaviour
             // Move Darry in Neighborhood and spawn enemy trigger
             if (barryNPC != null && (activeDialogueTrigger.NPCName == "Barry" || activeDialogueTrigger.NPCName == "Darry"))
             {
-                darryNPC.StartTravel();
+                if(darryNPC != null)
+                {
+                    darryNPC.StartTravel();
+                }
+
                 // Intruder trigger spawn
                 if (IntruderTrigger != null)
                 {
@@ -530,6 +546,10 @@ public class DialogueManager : MonoBehaviour
 
         CanChoose = true;
         SelectedChoiceIndex = 0;
+
+        // helps stop auto selection
+        suppressInputOneFrame = true;
+        StartCoroutine(ReleaseInputNextFrame());
         //UpdateChoiceHighlight();
 
         // activate slider
@@ -548,8 +568,16 @@ public class DialogueManager : MonoBehaviour
 
     }
 
+    private IEnumerator ReleaseInputNextFrame()
+    {
+        yield return null;
+        suppressInputOneFrame = false;
+    }
+
     private void HandleChoiceInput()
     {
+        if (suppressInputOneFrame) return;
+
         if ((!CanChoose || spawnedChoices.Count == 0) && holdCircleImage != null)
         {
             ResetHoldUI();
@@ -569,7 +597,17 @@ public class DialogueManager : MonoBehaviour
 
         if (!isHoldingDirection)
         {
-            currentHeldDirection = GetDirectionFromInput(input);
+            ChoiceDirection newDir = GetDirectionFromInput(input);
+
+            //if (currentHeldDirection.HasValue && currentHeldDirection.Value == newDir) return;
+
+            if (!directionalChoices.ContainsKey(newDir))
+            {
+                ResetHoldUI();
+                return;
+            }
+
+            currentHeldDirection = newDir;
             directionHoldTimer = 0f;
             isHoldingDirection = true;
         }
@@ -619,14 +657,24 @@ public class DialogueManager : MonoBehaviour
             Debug.LogWarning("Hold circle image not assigned!");
             return;
         }
+
+        bool releasedDuringGrace = waitingForHoldCompletion;
         
         directionHoldTimer = 0f;
         isHoldingDirection = false;
+        currentHeldDirection = null;
 
         if (holdCircleImage.gameObject.activeSelf)
         {
             holdCircleImage.fillAmount = 0f;
             holdCircleImage.gameObject.SetActive(false);
+        }
+
+        // Player released after timer expired
+        if (releasedDuringGrace && CanChoose)
+        {
+            waitingForHoldCompletion = false;
+            AutoSelectFallback(new List<DialogueChoice>(directionalChoices.Values));
         }
     }
 
@@ -707,6 +755,18 @@ public class DialogueManager : MonoBehaviour
 
     private void OnChoiceSelected(DialogueChoice chosen)
     {
+        // Hard reset
+        isHoldingDirection = false;
+        waitingForHoldCompletion = false;
+        currentHeldDirection = null;
+        directionHoldTimer = 0f;
+
+        if (holdCircleImage != null)
+        {
+            holdCircleImage.fillAmount = 0f;
+            holdCircleImage.gameObject.SetActive(false);
+        }
+
         // prevent confirm from instantly skipping the next line
         ConfirmPressed = false;
 
@@ -730,6 +790,20 @@ public class DialogueManager : MonoBehaviour
 
         Debug.Log($"Morality changed by {chosen.moralityChange}. New Morality: {playerMorality}");
  
+        // increase player choice tendencies
+        if (chosen.moralityChange > 0)
+        {
+            positiveChoiceCount++;
+        }
+        if (chosen.moralityChange < 0)
+        {
+            negativeChoiceCount++;
+        }
+        else
+        {
+            neutralChoiceCount++;
+        }
+
         // clear old choices
         foreach (var b in spawnedChoices) Destroy(b);
         spawnedChoices.Clear();
@@ -771,6 +845,46 @@ public class DialogueManager : MonoBehaviour
 
     }
 
+    private DialogueChoice GetBiasedChoice(List<DialogueChoice> choices)
+    {
+        if (choices == null || choices.Count == 0)
+            return null;
+
+        // Determine most frequent tendency
+        int dominant = Mathf.Max(positiveChoiceCount, negativeChoiceCount, neutralChoiceCount);
+
+        int preferredSign = dominant == positiveChoiceCount ? 1 : dominant == negativeChoiceCount ? -1 : 0;
+
+        DialogueChoice bestChoice = null;
+        float bestScore = float.MinValue;
+
+        foreach (var choice in choices)
+        {
+            float score = 0f;
+
+            // Match plaer tendency
+            if (Mathf.Sign(choice.moralityChange) == preferredSign)
+            {
+                score += 3f;
+            }
+
+            // soft bias toward previously similar magnitude
+            score -= Mathf.Abs(choice.moralityChange - playerMorality * 0.1f);
+
+            // small randomness
+            score += Random.Range(0f, 0.5f);
+
+            if (score > bestScore)
+            {
+                bestScore = score;
+                bestChoice = choice;
+            }
+
+        }
+
+        return bestChoice;
+    }
+
     private IEnumerator ChoiceTimerCountdown(List<DialogueChoice> choices)
     {
         choiceTimer = choiceTimeLimit;
@@ -802,15 +916,22 @@ public class DialogueManager : MonoBehaviour
         // Timer expired and player didn't choose
         if (CanChoose)
         {
-            DialogueChoice fallback = null;
-            
-            foreach (var c in choices)
+            DialogueChoice fallback = GetBiasedChoice(choices);
+
+            if (isHoldingDirection && currentHeldDirection.HasValue)
             {
-                if(c.moralityChange <= 0)
-                {
-                    fallback = c;
-                    break;
-                }
+                waitingForHoldCompletion = true;
+                Debug.Log("Timer expired, but player is holding - waiting for completion");
+                yield break;
+            }
+
+            // timer ran out and not holding a direction
+            OnChoiceSelected(fallback);
+
+           /* if (fallback != null)
+            {
+                Debug.Log("Timer expired, bias-selecting choice: " + fallback.text);
+                OnChoiceSelected(fallback);
             }
 
             if (fallback == null && choices.Count > 0)
@@ -822,10 +943,26 @@ public class DialogueManager : MonoBehaviour
             {
                 Debug.Log("Timer expired, auto-selecting choice: " + fallback.text);
                 OnChoiceSelected(fallback);
-            }
+            }*/
+        }
+    }
+
+    private void AutoSelectFallback(List<DialogueChoice> choices)
+    {
+        if (!CanChoose) return;
+
+        DialogueChoice fallback = GetBiasedChoice(choices);
+
+        if (fallback == null && choices.Count > 0)
+        {
+            fallback = choices[0];
         }
 
-    
+        if (fallback != null)
+        {
+            Debug.Log("Auto-selecting fallback choice: " + fallback.text);
+            OnChoiceSelected(fallback);
+        }
     }
 
     public void ShowPopUp(string message, float duration = 1f)
@@ -911,6 +1048,7 @@ public class DialogueManager : MonoBehaviour
             }
         }
 
+        cameraMovement.SetCameraLocked(false);
         Chime.isInDialogue = false;
         Debug.Log($"Dialogue ended. Final morality = {playerMorality}");
     }

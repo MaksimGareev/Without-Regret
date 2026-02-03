@@ -64,20 +64,28 @@ public class PlayerInteracting : MonoBehaviour
         if (targetMono == null)
             return;
 
-        if (currentTarget.interactType == InteractType.Mantle)
+        // Interact with mantleable Objects
+        if (mantleTarget != null && Mantle != null && Mantle.triggered)
         {
-            if (Mantle != null && Mantle.triggered)
-            {
-                currentTarget.OnPlayerInteraction(gameObject);
-            }
+            if (showDebugLogs) Debug.Log("Mantle input detected!");
+            mantleTarget.OnPlayerInteraction(gameObject);
+            return;
         }
+
+        // Interact with moveable objects or dialogue
+        if (currentTarget != null && Interact != null && Interact.triggered)
+        {
+            currentTarget.OnPlayerInteraction(gameObject);
+        }
+
+        /*
         else if (currentTarget.interactType == InteractType.Move || currentTarget.interactType == InteractType.Pickup || currentTarget.interactType == InteractType.Dialogue)
         {
             if (Interact != null && Interact.triggered)
             {
                 currentTarget.OnPlayerInteraction(gameObject);
             }
-        }
+        }*/
 
         /*
         if (currentTarget != null && Interact.triggered)
@@ -116,8 +124,26 @@ public class PlayerInteracting : MonoBehaviour
     {
         Collider[] hits = Physics.OverlapSphere(transform.position, interactionRange);
 
-        currentTarget = hits.Select(h => h.GetComponent<IInteractable>()).Where(i => i != null && i.CanInteract(gameObject)).OrderByDescending(i => i.interactionPriority).FirstOrDefault();
+        var interactables = hits.Select(h => h.GetComponent<IInteractable>()).Where(i => i != null && i.CanInteract(gameObject)).ToList();  //OrderByDescending(i => i.interactionPriority).FirstOrDefault();
 
+        if (interactables.Count == 0)
+        {
+            currentTarget = null;
+            mantleTarget = null;
+            moveTarget = null;
+            ButtonIcons.Instance?.Clear();
+            return;
+        }
+
+        currentTarget = interactables.OrderByDescending(i => i.interactionPriority).FirstOrDefault();
+
+        mantleTarget = currentTarget as MantleableObject;
+        moveTarget = currentTarget as MoveableObject;
+
+        // Highlight icon
+        ButtonIcons.Instance?.Highlight(currentTarget.interactType);
+
+        /*
         if (currentTarget != null)
         {
             ButtonIcons.Instance?.Highlight(currentTarget.interactType);
@@ -125,7 +151,7 @@ public class PlayerInteracting : MonoBehaviour
         else
         {
             ButtonIcons.Instance?.Clear();
-        }
+        }*/
 
         //List<IInteractable> interactableList = new List<IInteractable>();
         //List<IInteractable> found = new();
