@@ -8,6 +8,7 @@ public class PatrollingEnemy : MonoBehaviour
     public NavMeshAgent agent;
     public float range; // Area around the center point
     public Transform centrePoint; // Center Point of designated area
+    public Animator animator;
 
     public float waitTime = 2f;
     private bool isWaiting = false;
@@ -36,6 +37,21 @@ public class PatrollingEnemy : MonoBehaviour
         if (!isWaiting && !agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
         {
             StartCoroutine(WaitBeforeNextMove());
+        }
+
+        float currentSpeed = agent.velocity.magnitude; //gets the speed of the enemy to handle animation states
+
+        if (currentSpeed > 0.1f)
+        {
+            animator.SetBool("isWalking", true);
+            animator.SetBool("isIdle", false);
+            Debug.Log("Walking");
+        }
+        else
+        {
+            animator.SetBool("isIdle", true);
+            animator.SetBool("isWalking", false);
+            Debug.Log("Idling");
         }
     }
 
