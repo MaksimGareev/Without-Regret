@@ -2,6 +2,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
+using UnityEngine.EventSystems;
 
 public enum ConfirmationType
 {
@@ -11,7 +12,9 @@ public enum ConfirmationType
     DeleteSave,
     ApplySettings,
     ResetSettings,
-    DiscardChanges
+    DiscardChanges,
+    LeaveBeforeApplyingSettings,
+    FeedbackSurvey,
 }
 
 public class ConfirmationUI : MonoBehaviour
@@ -85,6 +88,12 @@ public class ConfirmationUI : MonoBehaviour
             case ConfirmationType.DiscardChanges:
                 taskText.text = "discard all changes?";
                 break;
+            case ConfirmationType.LeaveBeforeApplyingSettings:
+                taskText.text = "exit without applying changes?\n\nYour changes will be discarded.";
+                break;
+            case ConfirmationType.FeedbackSurvey:
+                taskText.text = "open the feedback survey in your web browser?\n\nThe game will remain open in the background.";
+                break;
             default:
                 taskText.text = "to proceed?";
                 break;
@@ -98,6 +107,8 @@ public class ConfirmationUI : MonoBehaviour
         
         confirmButton.onClick.AddListener(() => onConfirm.Invoke());
         cancelButton.onClick.AddListener(() => onCancel.Invoke());
+
+        EventSystem.current.SetSelectedGameObject(cancelButton.gameObject);
     }
 
     public void EndConfirmation()

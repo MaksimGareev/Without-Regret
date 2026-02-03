@@ -118,6 +118,24 @@ public class SaveManager : MonoBehaviour
             {
                 if (mb.gameObject.scene.isLoaded)
                 {
+                    // Ensure the saveable has a valid unique ID
+                    if (saveable is SaveableFriendlyNPC fnpc)
+                    {
+                        if (string.IsNullOrEmpty(fnpc.GetUniqueID())) continue;
+                    }
+                    if (saveable is SaveableEnemyNPC enpc)
+                    {
+                        if (string.IsNullOrEmpty(enpc.GetUniqueID())) continue;
+                    }
+                    if (saveable is SaveableWorldObject wo)
+                    {
+                        if (string.IsNullOrEmpty(wo.GetUniqueID())) continue;
+                    }
+                    if (saveable is Gate gate)
+                    {
+                        if (string.IsNullOrEmpty(gate.GetUniqueID())) continue;
+                    }
+
                     saveables.Add(saveable);
                 }
             }
@@ -129,6 +147,18 @@ public class SaveManager : MonoBehaviour
             if (saveable is SaveableWorldObject swo)
             {
                 Debug.Log($"SaveableWorldObject ID: {swo.GetUniqueID()}");
+            }
+            if (saveable is SaveableFriendlyNPC fnpc)
+            {
+                Debug.Log($"SaveableFriendlyNPC ID: {fnpc.GetUniqueID()}");
+            }
+            if (saveable is SaveableEnemyNPC enpc)
+            {
+                Debug.Log($"SaveableEnemyNPC ID: {enpc.GetUniqueID()}");
+            }
+            if (saveable is Gate gate)
+            {
+                Debug.Log($"Gate ID: {gate.GetUniqueID()}");
             }
         }
     }
@@ -235,8 +265,8 @@ public class SaveManager : MonoBehaviour
             {
                 continue;
             }
-
             saveable.LoadFrom(data);
+            Debug.Log($"[SaveManager.LoadGame] Loading {saveable.GetType().Name}");
         }
 
         foreach (ISaveable saveable in saveables)
@@ -244,6 +274,7 @@ public class SaveManager : MonoBehaviour
             if (saveable is PlayerController player)
             {
                 player.LoadFrom(data);
+                Debug.Log($"[SaveManager.LoadGame] Loading PlayerController");
                 break;
             }
         }

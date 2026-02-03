@@ -80,4 +80,9 @@ public class PlayerEquipItem : MonoBehaviour
             Debug.Log("Unequipped current item.");
         }
     }
+
+    public GameObject GetEquippedItemInstance()
+    {
+        return equippedItemInstance;
+    }
 }
