@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
@@ -19,6 +20,17 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
     [HideInInspector] public UnityEvent<ObjectiveInstance> OnObjectiveActivated = new();
     [HideInInspector] public UnityEvent<ObjectiveInstance> OnObjectiveCompleted = new();
 
+    [Header("UI Reference")]
+    [SerializeField] private GameObject objectiveUI;
+    [SerializeField] private TextMeshProUGUI objectiveTitleText;
+    [SerializeField] private TextMeshProUGUI objectiveDescriptionText;
+    [SerializeField] private TextMeshProUGUI objectiveProgressText;
+    [SerializeField] private float fadeDuration = 0.5f;
+
+    private Coroutine UIShowRoutine;
+    private Coroutine UIHideRoutine;
+    private bool UIreferenced = false;
+
     private void Awake()
     {
         // Singleton pattern
@@ -33,8 +45,18 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
             return;
         }
 
-        // Register self with SaveManager as a savable entity
-        StartCoroutine(RegisterWhenReady());
+        if (objectiveUI && objectiveTitleText && objectiveDescriptionText && objectiveProgressText)
+        {
+            UIreferenced = true;
+            objectiveUI.SetActive(false);
+        }
+        else
+        {
+            Debug.LogWarning("UI references are not all set in ObjectiveManager.");
+        }
+
+            // Register self with SaveManager as a savable entity
+            StartCoroutine(RegisterWhenReady());
     }
 
     private void Start()
@@ -136,6 +158,26 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
             return;
         }
 
+        if (UIHideRoutine != null)
+        {
+            StopCoroutine(UIHideRoutine);
+            UIHideRoutine = null;
+        }
+
+        if (UIreferenced)
+        {
+            objectiveTitleText.text = "New Objective Started!";
+            objectiveDescriptionText.text = objective.title + ": Check your journal for more information.";
+            objectiveProgressText.text = $"Progress: 0/{objective.requiredProgress}";
+
+            if (UIShowRoutine != null)
+            {
+                StopCoroutine(UIShowRoutine);
+                UIShowRoutine = null;
+            }
+            UIShowRoutine = StartCoroutine(FadeInUI());
+        }
+
         ObjectiveInstance newObjective = new ObjectiveInstance(objective);
         activeObjectives.Add(newObjective);
         OnObjectiveActivated.Invoke(newObjective);
@@ -144,6 +186,82 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
         {
             SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
         }
+    }
+
+    IEnumerator FadeInUI()
+    {
+        if (!objectiveUI.TryGetComponent<CanvasGroup>(out var canvasGroup))
+        {
+            // ensure UI is visible even if no CanvasGroup is present
+            objectiveUI.SetActive(true);
+            Debug.LogWarning("Objective UI can't fade in/out without a Canvas Group");
+            yield break;
+        }
+
+        float duration = Mathf.Max(0f, fadeDuration);
+        canvasGroup.alpha = 0f;
+        objectiveUI.SetActive(true);
+
+        if (duration <= Mathf.Epsilon)
+        {
+            canvasGroup.alpha = 1f;
+            yield break;
+        }
+
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            canvasGroup.alpha = Mathf.Clamp01(elapsed / duration);
+            yield return null;
+        }
+
+        // ensure full visibility
+        canvasGroup.alpha = 1f;
+
+        yield return new WaitForSeconds(2f);
+
+        UIShowRoutine = null;
+        UIHideRoutine = StartCoroutine(FadeOutUI());
+    }
+
+    IEnumerator FadeOutUI()
+    {
+        if (objectiveUI.activeSelf == false)
+        {
+            yield break;
+        }
+
+        if (!objectiveUI.TryGetComponent<CanvasGroup>(out var canvasGroup))
+        {
+            // ensure UI is not visible even if no CanvasGroup is present
+            objectiveUI.SetActive(false);
+            Debug.LogWarning("Objective UI can't fade in/out without a Canvas Group");
+            yield break;
+        }
+
+        float duration = Mathf.Max(0f, fadeDuration);
+        float startAlpha = canvasGroup.alpha;
+
+        if (duration <= Mathf.Epsilon)
+        {
+            canvasGroup.alpha = 0f;
+            objectiveUI.SetActive(false);
+            yield break;
+        }
+
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / duration);
+            canvasGroup.alpha = Mathf.Lerp(startAlpha, 0f, t);
+            yield return null;
+        }
+
+        // ensure full opacity
+        canvasGroup.alpha = 0f;
+        objectiveUI.SetActive(false);
     }
 
     public void ActivateObjectiveByID(string objectiveID)
@@ -178,6 +296,13 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
         objective.AddProgress(amount);
         Debug.Log($"Objective '{objective.data.title}' progress increased to {objective.currentProgress}/{objective.data.requiredProgress}");
 
+        /* Progress UI update disabled for now
+        if (UIreferenced)
+        {
+            objectiveProgressText.text = $"Progress: {objective.currentProgress}/{objective.data.requiredProgress}";
+        }
+        */
+        
         if (objective.isCompleted)
         {
             CompleteObjective(objective);
@@ -189,9 +314,10 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
         }
     }
 
-    private IEnumerator ActivateNextObjective()
+    private IEnumerator ActivateNextObjectiveAfterDelay()
     {
         yield return new WaitForSeconds(0.5f);
+        yield return new WaitUntil(() => objectiveUI.activeSelf == false);
 
         foreach (var next in allObjectives)
         {
@@ -239,9 +365,21 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
         OnObjectiveCompleted.Invoke(objective);
 
         Debug.Log($"Objective '{objective.data.title}' completed!");
-        
-        StartCoroutine(ActivateNextObjective());
-        
+
+        if (UIHideRoutine != null)
+        {
+            StopCoroutine(UIHideRoutine);
+        }
+
+        if (UIreferenced)
+        {
+            UIShowRoutine = StartCoroutine(FadeInUI());
+            objectiveTitleText.text = "Objective Complete!";
+            objectiveDescriptionText.text = "Finished: " + objective.data.title;
+            //objectiveProgressText.text = "";
+        }
+
+        UIHideRoutine = StartCoroutine(ActivateNextObjectiveAfterDelay());
         currentObjectiveIndex++;
 
         if (SaveManager.Instance != null)

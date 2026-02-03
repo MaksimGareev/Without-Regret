@@ -11,6 +11,9 @@ public class PlayerController : MonoBehaviour, ISaveable
     public Camera PlayerCamera;
     public Animator animator;
     public Slider staminaSlider;
+    public Image staminaFill;
+    public Color normalColor = new Color(0f, 147f/255f, 111f/255f);
+    public Color cooldownColor = Color.grey;
 
     [Header("Movement Settings")]
     public bool MovementLocked = false;
@@ -18,6 +21,8 @@ public class PlayerController : MonoBehaviour, ISaveable
     public float SprintSpeed = 2f;
     public float SprintDuration = 3f;
     public float sprintCooldown = 4f;
+    public float staminaLingerDuration = 1f;
+    private float staminaLingerTimer = 0f;
 
     public float SprintTimer = 3f;
     private bool canSprint = true;
@@ -36,6 +41,11 @@ public class PlayerController : MonoBehaviour, ISaveable
     private bool isGrounded;
 
     public static bool DialogueActive = false;
+
+    [Header("Special Idle Parameters")]
+    public float idleTimer = 0;
+    private bool specialIdle = false;
+
 
     // Input System
     private PlayerControls controls;
@@ -56,6 +66,11 @@ public class PlayerController : MonoBehaviour, ISaveable
         if (staminaSlider == null)
         {
             staminaSlider = GameObject.Find("StaminaSlider")?.GetComponent<Slider>();
+        }
+
+        if (staminaFill == null)
+        {
+            staminaFill = GameObject.Find("StaminaFill")?.GetComponent<Image>();
         }
 
         if (staminaSlider != null)
@@ -235,12 +250,25 @@ public class PlayerController : MonoBehaviour, ISaveable
         {
             resetAnimations();
             animator.SetBool("isWalking", true);
+            idleTimer = 0f; // reset idle timer
         }
         if (!isMoving)
         {
-            resetAnimations();
-            animator.SetBool("isIdle", true);
+            if (!specialIdle)
+            {
+                resetAnimations();
+                animator.SetBool("isIdle", true);
+            }
+
+            idleTimer += Time.deltaTime;
+
+            if (!specialIdle && idleTimer >= 15f)
+            {
+                idleTimer = 0f;
+                StartCoroutine(PlaySpecialIdle());
+            }
         }
+
 
 
         // Sprint logic
@@ -259,17 +287,43 @@ public class PlayerController : MonoBehaviour, ISaveable
                 canSprint = false;
                 isSprinting = false;
                 currentSpeed = Speed;
+
+                if (staminaFill != null)
+                    staminaFill.color = cooldownColor;
                 StartCoroutine(SprintCooldown());
             }
         }
         else if (!isSprinting && SprintTimer < SprintDuration)
         {
+            // Regenerating stamina
             SprintTimer += Time.deltaTime;
-            staminaSlider.value = SprintTimer; //sets slider to stamina when going ups
+            staminaSlider.gameObject.SetActive(true);
+            staminaSlider.value = SprintTimer;
+        }
+
+        else if (!isSprinting && SprintTimer >= SprintDuration)
+        {
+            // Stamina is full, start the linger timer
+            SprintTimer = SprintDuration;
+            staminaSlider.value = SprintTimer;
+
             if (staminaSlider.value >= staminaSlider.maxValue)
             {
                 staminaSlider.gameObject.SetActive(false);
             }
+
+            //if (staminaLingerTimer <= 0f)
+            //{
+            //    staminaLingerTimer = staminaLingerDuration; // reset the linger countdown
+            //}
+
+            //staminaLingerTimer -= Time.deltaTime;
+
+            //// When linger finishes, hide the slider
+            //if (staminaLingerTimer <= 0f)
+            //{
+            //    staminaSlider.gameObject.SetActive(false);
+            //}
         }
 
         if (gravityEnabled)
@@ -340,6 +394,11 @@ public class PlayerController : MonoBehaviour, ISaveable
         yield return new WaitForSeconds(sprintCooldown);
         SprintTimer = SprintDuration;
         canSprint = true;
+
+        if (staminaFill != null)
+        {
+            staminaFill.color = normalColor;
+        }
     }
 
     public void SetVerticalVelocity(float newVelocity) => yVelocity = newVelocity;
@@ -424,6 +483,19 @@ public class PlayerController : MonoBehaviour, ISaveable
     {
         SceneManager.LoadScene("MenuTesting");
     }
+
+    private IEnumerator PlaySpecialIdle()
+    {
+        specialIdle = true;
+
+        resetAnimations();
+        animator.SetTrigger("specialIdle");
+
+        yield return new WaitForSeconds(2f);
+
+        specialIdle = false;
+    }
+
 
     private void resetAnimations()
     {
