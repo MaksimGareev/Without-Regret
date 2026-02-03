@@ -18,6 +18,8 @@ GameObject:
   - component: {fileID: 1380278693743089735}
   - component: {fileID: 7884651440600371946}
   - component: {fileID: 9079497670333271321}
+  - component: {fileID: 4739153725983210735}
+  - component: {fileID: 7504214182150986572}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Enemy
@@ -184,6 +186,7 @@ MonoBehaviour:
   agent: {fileID: 7348955320931083906}
   range: 5
   centrePoint: {fileID: 0}
+  animator: {fileID: 4739153725983210735}
   waitTime: 2
   baseSpeed: 3.5
   minSpeed: 1.5
@@ -247,6 +250,7 @@ MonoBehaviour:
   moveSpeed: 5
   lingerTime: 2
   stoppingRadius: 2
+  isDistracted: 0
 --- !u!114 &9079497670333271321
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -263,6 +267,41 @@ MonoBehaviour:
   moveSpeed: 1
   struggleStrength: 10
   struggleFrequency: 0.1
+--- !u!95 &4739153725983210735
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3086140246574635878}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 7e599fe245c19994e89cef1753df6f5d, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &7504214182150986572
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3086140246574635878}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 396345a249ba36f4bb0a50a5a53a9ca1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SaveableEnemyNPC
+  uniqueID: 9e84c832-f155-4aac-a2a8-f733765b32c3
 --- !u!1 &6154207663095846759
 GameObject:
   m_ObjectHideFlags: 0
