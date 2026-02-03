@@ -23,6 +23,9 @@ public class EnemyFieldOfView : MonoBehaviour
     // player reference
     public Transform playerRef;
 
+    //animator reference
+    public Animator animator;
+
     // Smoothing
     public bool smoothFOV = true;
     public float fovSmoothSpeed = 2f;
@@ -47,6 +50,11 @@ public class EnemyFieldOfView : MonoBehaviour
 
     public float detectionRadius = 4f; //detects player/NPC if they get too close, regardless of whether they are in the FOV or not
 
+    //attack handlers
+    public float attackRadius = 2f;
+    public float attackCooldown = 1f;
+    private float lastAttackTime = 0f;
+
     private void Start()
     {
         StartCoroutine(FOVRoutine());
@@ -66,6 +74,7 @@ public class EnemyFieldOfView : MonoBehaviour
         UpdateFOVBasedOnMorality();
         ApplyFOV();
         DetectPlayer();
+        
     }
 
     private void UpdateFOVBasedOnMorality()
@@ -134,6 +143,8 @@ public class EnemyFieldOfView : MonoBehaviour
     // Function for enemy's field of view
     private void FieldOfViewCheck()
     {
+        if (AttackRangeCheck())
+            return;
         if (CloseDetectionCheck())
             return;
         Collider[] rangeChecks = Physics.OverlapSphere(transform.position, radius, targetMask);
@@ -272,6 +283,39 @@ public class EnemyFieldOfView : MonoBehaviour
             return true;
         }
         return false;
+    }
+
+    private bool AttackRangeCheck() //handles detection of target layer mask, when entity gets to close to an enemy, the enemy will aggro onto that enemy, regardless of it being in FOV or not
+    {
+        Collider[] closeTargets = Physics.OverlapSphere(transform.position, attackRadius, targetMask);
+
+        if (closeTargets.Length > 0)
+        {
+            if (Time.deltaTime >= lastAttackTime + attackCooldown)
+            {
+                lastAttackTime = Time.time;
+                animator.SetTrigger("Attack");
+                Debug.Log("Attacked");
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private void MovementAnimations()
+    {
+        bool isMoving = m_Agent.velocity.sqrMagnitude > 0.1f && m_Agent.remainingDistance > m_Agent.stoppingDistance;
+        
+        if (isMoving)
+        {
+            animator.SetBool("isWalking", true);
+            animator.SetBool("isIdle", false);
+        }
+        else if (!isMoving)
+        {
+            animator.SetBool("isIdle", true);
+            animator.SetBool("isWalking", false);
+        }
     }
 
     private enum FOVState
