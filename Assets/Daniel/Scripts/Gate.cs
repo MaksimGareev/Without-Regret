@@ -1,13 +1,12 @@
 using UnityEngine;
 using System;
 
-public class Gate : MonoBehaviour, ISaveable
+public class Gate : SaveableWithID
 {
     [SerializeField] private GameObject RotateRightDoor;
     [SerializeField] private GameObject RotateLeftDoor;
     [SerializeField] private ObjectiveData linkedObjective;
     public bool needsObjective = true;
-    private string uniqueID;
     private bool locked = true;
     private bool opened = false;
 
@@ -18,17 +17,7 @@ public class Gate : MonoBehaviour, ISaveable
     {
         rightDoorAnimator = RotateRightDoor.GetComponent<Animator>();
         leftDoorAnimator = RotateLeftDoor.GetComponent<Animator>();
-
-        if (string.IsNullOrEmpty(uniqueID) && this.gameObject.activeSelf)
-        {
-            uniqueID = Guid.NewGuid().ToString();
-            #if UNITY_EDITOR
-            UnityEditor.EditorUtility.SetDirty(this);
-            #endif
-        }
     }
-
-    public string GetUniqueID() => uniqueID;
 
     private void OnEnable()
     {
@@ -58,32 +47,36 @@ public class Gate : MonoBehaviour, ISaveable
         }
     }
 
-    public void SaveTo(SaveData data)
+    public override void SaveTo(SaveData data)
     {
         GateSaveData state = new GateSaveData();
 
-        state.id = uniqueID;
+        state.id = GetUniqueID();
         state.locked = locked;
         state.opened = opened;
 
-        if (data.gateListSaveData.gates.Exists(g => g.id == uniqueID))
+        if (data.gateListSaveData.gates.Exists(g => g.id == GetUniqueID()))
         {
-            data.gateListSaveData.gates.RemoveAll(g => g.id == uniqueID);
+            data.gateListSaveData.gates.RemoveAll(g => g.id == GetUniqueID());
         }
 
         data.gateListSaveData.gates.Add(state);
 
-        Debug.Log($"Saving Gate: locked={state.locked}, opened={state.opened}, ID: {uniqueID}");
+        Debug.Log($"Saving Gate: locked={state.locked}, opened={state.opened}, ID: {GetUniqueID()}");
     }
 
-    public void LoadFrom(SaveData data)
+    public override void LoadFrom(SaveData data)
     {
-        var state = data.gateListSaveData.gates.Find(g => g.id == uniqueID);
+        var state = data.gateListSaveData.gates.Find(g => g.id == GetUniqueID());
 
         if (state == null) 
         {
-            Debug.LogWarning("No save data found for Gate with ID: " + uniqueID);
+            Debug.LogWarning("Loading Failed: No save data found for Gate with ID: " + GetUniqueID());
             return;
+        }
+        else
+        {
+            Debug.Log($"Loading Gate: locked={state.locked}, opened={state.opened}, ID: {GetUniqueID()}");
         }
 
         locked = state.locked;
@@ -94,7 +87,5 @@ public class Gate : MonoBehaviour, ISaveable
             rightDoorAnimator.SetBool("NearPlayer", true);
             leftDoorAnimator.SetBool("NearPlayer", true);
         }
-
-        Debug.Log($"Loading Gate: locked={state.locked}, opened={state.opened}, ID: {uniqueID}");
     }
 }

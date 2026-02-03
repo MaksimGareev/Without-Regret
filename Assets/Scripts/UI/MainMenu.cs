@@ -58,7 +58,6 @@ public class MainMenu : MonoBehaviour
 
         versionNumberText.text = gameVersion;
         EventSystem.current.SetSelectedGameObject(playButton.gameObject);
-        
 
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
