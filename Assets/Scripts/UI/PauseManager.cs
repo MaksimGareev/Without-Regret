@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.UI;
 
 public class PauseManager : MonoBehaviour
 {
@@ -23,13 +24,14 @@ public class PauseManager : MonoBehaviour
     [SerializeField] private Button backButton;
 
     [Header("UI Panels")]
-    [SerializeField] private GameObject pauseMenuPanel;
+    [SerializeField] public GameObject pauseMenuPanel;
     [SerializeField] private MMSettings settingsScript;
     [SerializeField] private GameObject settingsPanel;
     [SerializeField] private GameObject confirmationPanel;
     [SerializeField] private Canvas[] otherCanvasesToDisable;
 
     [HideInInspector] public bool isGamePaused = false;
+    private bool usingController = false;
 
     private void Awake()
     {
@@ -59,9 +61,9 @@ public class PauseManager : MonoBehaviour
     void Start()
     {
         pauseMenuPanel.SetActive(false);
-        settingsPanel.SetActive(false);
+        settingsScript.DisableSettingsPanel();
         backButton.gameObject.SetActive(false);
-        SetUpEvents();
+        SetUpListeners();
     }
 
     // Update is called once per frame
@@ -104,6 +106,10 @@ public class PauseManager : MonoBehaviour
                 {
                     settingsScript.CloseControlSchemeUI();
                 }
+                else if (settingsScript != null && settingsScript.hasUnappliedChanges)
+                {
+                    settingsScript.ConfirmBeforeLeaveWithoutApplying();
+                }
                 else
                 {
                     BackToPauseMenu();
@@ -125,9 +131,11 @@ public class PauseManager : MonoBehaviour
 
         Vector2 mouseDelta = Mouse.current.delta.ReadValue();
         
-        if (mouseDelta.sqrMagnitude > 0.1f)
+        if (mouseDelta.sqrMagnitude > 0.1f && usingController)
         {
+            usingController = false;
             Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
 
             if (EventSystem.current.currentSelectedGameObject != null)
             {
@@ -144,20 +152,49 @@ public class PauseManager : MonoBehaviour
         }
 
         bool controllerMoved = Gamepad.current.leftStick.ReadValue().sqrMagnitude > 0.1f || Gamepad.current.dpad.ReadValue().sqrMagnitude > 0.1f;
-
-        if (controllerMoved)
+        
+        if (!controllerMoved)
         {
-            Cursor.visible = false;
+            return;
+        }
 
-            if (EventSystem.current.currentSelectedGameObject == null)
+        if (!usingController)
+        {
+            usingController = true;
+            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
+
+            var es = EventSystem.current;
+
+            // Clear selected GameObject if mouse was hovering over something
+            if (es.IsPointerOverGameObject())
+            {
+                var ped = new PointerEventData(es)
+                {
+                    position = new Vector2(-99999f, -99999f)
+                };
+
+                es.RaycastAll(ped, new System.Collections.Generic.List<RaycastResult>());
+                es.SetSelectedGameObject(null);
+
+                InputSystemUIInputModule inputModule = es.currentInputModule as InputSystemUIInputModule;
+                if (inputModule != null)
+                {
+                    inputModule.enabled = false;
+                    inputModule.enabled = true;
+                }
+            }
+
+            // If nothing is selected, set a default based on the active panel
+            if (es.currentSelectedGameObject == null)
             {
                 if (pauseMenuPanel.activeSelf)
                 {
-                    EventSystem.current.SetSelectedGameObject(resumeButton.gameObject);
+                    es.SetSelectedGameObject(resumeButton.gameObject);
                 }
-                else if (settingsPanel.activeSelf)
+                else if (settingsPanel.activeSelf && settingsScript.videoSettingsOpen)
                 {
-                    EventSystem.current.SetSelectedGameObject(settingsScript.videoSettingsButton.gameObject);
+                    es.SetSelectedGameObject(settingsScript.resolutionDropdown.gameObject);
                 }
             }
         } 
@@ -170,6 +207,8 @@ public class PauseManager : MonoBehaviour
         {
             SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
         }
+
+        SetUpListeners();
 
         // Logic to pause the game
         pauseMenuPanel.SetActive(true);
@@ -193,21 +232,42 @@ public class PauseManager : MonoBehaviour
         //Debug.Log("Game Paused");
     }
 
-    private void SetUpEvents()
+    private void SetUpListeners()
     {
         // Assign button listeners
         resumeButton.onClick.AddListener(ResumeGame);
         reloadSaveButton.onClick.AddListener(ConfirmBeforeReload);
         settingsButton.onClick.AddListener(OpenSettings);
         quitButton.onClick.AddListener(ConfirmBeforeQuit);
-        backButton.onClick.AddListener(HandleBackButton);
+        backButton.onClick.AddListener(HandleUIBackButton);
     }
 
-    private void HandleBackButton()
+    private void RemoveListeners()
     {
-        if (settingsPanel.activeSelf && settingsScript != null && settingsScript.controlSchemeOpen)
+        // Remove button listeners
+        resumeButton.onClick.RemoveListener(ResumeGame);
+        reloadSaveButton.onClick.RemoveListener(ConfirmBeforeReload);
+        settingsButton.onClick.RemoveListener(OpenSettings);
+        quitButton.onClick.RemoveListener(ConfirmBeforeQuit);
+        backButton.onClick.RemoveListener(HandleUIBackButton);
+    }
+
+    private void HandleUIBackButton()
+    {
+        if (settingsPanel.activeSelf && settingsScript != null)
         {
-            settingsScript.CloseControlSchemeUI();
+            if (settingsScript.hasUnappliedChanges)
+            {
+                settingsScript.ConfirmBeforeLeaveWithoutApplying();
+            }
+            else if (settingsScript.controlSchemeOpen)
+            {
+                settingsScript.CloseControlSchemeUI();
+            }
+            else
+            {
+                BackToPauseMenu();
+            }
         }
         else
         {
@@ -215,9 +275,9 @@ public class PauseManager : MonoBehaviour
         }
     }
 
-    private void BackToPauseMenu()
+    public void BackToPauseMenu()
     {
-        settingsPanel.SetActive(false);
+        settingsScript.DisableSettingsPanel();
         pauseMenuPanel.SetActive(true);
         backButton.gameObject.SetActive(false);
 
@@ -226,9 +286,11 @@ public class PauseManager : MonoBehaviour
 
     public void ResumeGame()
     {
+        RemoveListeners();
+
         // Logic to resume the game
         pauseMenuPanel.SetActive(false);
-        settingsPanel.SetActive(false);
+        settingsScript.DisableSettingsPanel();
         backButton.gameObject.SetActive(false);
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
@@ -261,16 +323,21 @@ public class PauseManager : MonoBehaviour
     {
         confirmationPanel.SetActive(true);
 
+        DisableAllButtons();
+
         ConfirmationUI confirmationUI = confirmationPanel.GetComponent<ConfirmationUI>();
         confirmationUI.ConfirmTask(ConfirmationType.QuitToMainMenu, 
             () => 
             {
                 QuitToMainMenu();
                 confirmationPanel.SetActive(false);
+                EnableAllButtons();
             },
             () => 
             {
                 confirmationPanel.SetActive(false);
+                EnableAllButtons();
+                EventSystem.current.SetSelectedGameObject(quitButton.gameObject);
             });
     }
 
@@ -278,16 +345,23 @@ public class PauseManager : MonoBehaviour
     {
         confirmationPanel.SetActive(true);
 
+        DisableAllButtons();
+
         ConfirmationUI confirmationUI = confirmationPanel.GetComponent<ConfirmationUI>();
         confirmationUI.ConfirmTask(ConfirmationType.ReloadSave, 
             () => 
             {
+                // Reload save if confirmed
                 ReloadSave();
                 confirmationPanel.SetActive(false);
+                EnableAllButtons();
             },
             () => 
             {
+                // Do nothing if cancelled
                 confirmationPanel.SetActive(false);
+                EnableAllButtons();
+                EventSystem.current.SetSelectedGameObject(reloadSaveButton.gameObject);
             });
     }
 
@@ -306,7 +380,7 @@ public class PauseManager : MonoBehaviour
         settingsScript.EnableSettingsPanel();
         backButton.gameObject.SetActive(true);
 
-        EventSystem.current.SetSelectedGameObject(settingsScript.videoSettingsButton.gameObject);
+        EventSystem.current.SetSelectedGameObject(settingsScript.resolutionDropdown.gameObject);
         
         //Debug.Log("Opening Settings...");
     }
@@ -330,5 +404,26 @@ public class PauseManager : MonoBehaviour
         inputActions.FindActionMap("Player").Enable();
         
         //Debug.Log("Quitting to Main Menu...");
+    }
+
+    private void DisableAllButtons()
+    {
+        resumeButton.interactable = false;
+        reloadSaveButton.interactable = false;
+        settingsButton.interactable = false;
+        quitButton.interactable = false;
+    }
+
+    private void EnableAllButtons()
+    {
+        resumeButton.interactable = true;
+        reloadSaveButton.interactable = true;
+        settingsButton.interactable = true;
+        quitButton.interactable = true;
+    }
+
+    private void OnDisable()
+    {
+        RemoveListeners();
     }
 }

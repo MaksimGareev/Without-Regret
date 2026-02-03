@@ -1,3 +1,4 @@
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -6,6 +7,7 @@ using UnityEngine.UI;
 public class SaveSlotUI : MonoBehaviour
 {
     [SerializeField] private GameObject confirmationPanel;
+    [SerializeField] private MainMenu mainMenu;
 
     [Header("Text References")]
     [SerializeField] private TextMeshProUGUI[] slotTexts = new TextMeshProUGUI[3];
@@ -22,18 +24,13 @@ public class SaveSlotUI : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        SetUpEvents();
+        SetUpListeners();
     }
 
     private void OnEnable()
     {
+        SetUpListeners();
         UpdateAllSlots();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
     private void UpdateAllSlots()
@@ -53,12 +50,15 @@ public class SaveSlotUI : MonoBehaviour
             }
         }
 
-        MainMenu mainMenu = FindAnyObjectByType<MainMenu>();
-        mainMenu.SelectSaveMenuButton();
+        if (mainMenu != null)
+        {
+            mainMenu.SelectSaveMenuButton();
+        }
     }
 
-    private void SetUpEvents()
+    private void SetUpListeners()
     {
+        // Set up button listeners for each slot, linked to proper numbers for save system
         playButtons[0].onClick.AddListener(() => PlaySelectedSave(1));
         deleteButtons[0].onClick.AddListener(() => ConfirmBeforeDelete(1));
         newGameButtons[0].onClick.AddListener(() => NewGame(1));
@@ -70,6 +70,16 @@ public class SaveSlotUI : MonoBehaviour
         playButtons[2].onClick.AddListener(() => PlaySelectedSave(3));
         deleteButtons[2].onClick.AddListener(() => ConfirmBeforeDelete(3));
         newGameButtons[2].onClick.AddListener(() => NewGame(3));
+    }
+
+    private void RemoveListeners()
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            playButtons[i].onClick.RemoveAllListeners();
+            deleteButtons[i].onClick.RemoveAllListeners();
+            newGameButtons[i].onClick.RemoveAllListeners();
+        }
     }
 
     public void UpdateSlotInfo(int slot, SaveData data)
@@ -119,16 +129,24 @@ public class SaveSlotUI : MonoBehaviour
     {
         confirmationPanel.SetActive(true);
 
+        DisableAllButtons();
+
         ConfirmationUI confirmationUI = confirmationPanel.GetComponent<ConfirmationUI>();
         confirmationUI.ConfirmTask(ConfirmationType.DeleteSave, 
             () => 
             {
+                // Confirm action
                 ClearSelectedSave(slot);
                 confirmationPanel.SetActive(false);
+                EnableAllButtons();
+                mainMenu.SelectSaveMenuButton();
             },
             () => 
             {
+                // Cancel action
                 confirmationPanel.SetActive(false);
+                EnableAllButtons();
+                mainMenu.SelectSaveMenuButton();
             });
     }
 
@@ -167,5 +185,30 @@ public class SaveSlotUI : MonoBehaviour
             Debug.LogWarning("No valid save data found. Starting New Game instead.");
             NewGame();
         }
+    }
+
+    private void DisableAllButtons()
+    {
+        for (int i = 0; i < playButtons.Count(); i++)
+        {
+            playButtons[i].interactable = false;
+            deleteButtons[i].interactable = false;
+            newGameButtons[i].interactable = false;
+        }
+    }
+
+    private void EnableAllButtons()
+    {
+        for (int i = 0; i < playButtons.Count(); i++)
+        {
+            playButtons[i].interactable = true;
+            deleteButtons[i].interactable = true;
+            newGameButtons[i].interactable = true;
+        }
+    }
+    
+    private void OnDisable()
+    {
+        RemoveListeners();
     }
 }

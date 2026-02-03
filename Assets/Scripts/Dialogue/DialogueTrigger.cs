@@ -27,7 +27,7 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
     // Look at player
     public bool IsMediation = false;
     public float lookSpeed = 5f;
-    private bool isLookingAtPlayer = false;
+    public bool isLookingAtPlayer = false;
 
     // wandering
     private NpcMovement npcWander;
@@ -43,6 +43,16 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
 
     public GameObject enemy;
     public bool focusCameraOnTrigger = false;
+
+    public enum DialogueTriggerType
+    {
+        NPC,
+        Spawn,
+        Story
+    }
+
+    [SerializeField]
+    private DialogueTriggerType triggerType = DialogueTriggerType.NPC;
 
     private void Awake()
     {
@@ -65,7 +75,7 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
         // Dialogue Manager
         dialogueManager = FindObjectOfType<DialogueManager>();
 
-        if (NPCName == "Story")
+        if (triggerType == DialogueTriggerType.Story)
         {
             shouldShowIcon = false;
             DisablePopupIcon();
@@ -77,6 +87,21 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
         if (enemy != null)
             enemy.SetActive(false);
     }
+
+    public bool CanInteract(GameObject player)
+    {
+        if (DialogueManager.DialogueIsActive)
+            return false;
+
+        if (triggerType == DialogueTriggerType.Story)
+            return false;
+
+        if (TalkedAlready && TalkedJsonDialogueFile == null)
+            return false;
+
+        return true;
+    }
+
 
     public void OnPlayerInteraction(GameObject player)
     {
@@ -139,6 +164,11 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
         if (ButtonIcons.Instance != null)
         {
             ButtonIcons.Instance.Clear();
+
+            if (triggerType == DialogueTriggerType.NPC)
+            {
+                ButtonIcons.Instance.Highlight(interactType);
+            }
         }
 
         // stop wandering when dialogue starts
@@ -232,13 +262,6 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
             }
         }
 
-        // **Activate the enemy when dialogue is triggered**
-        if (enemy != null)
-        {
-            enemy.SetActive(true);
-            Debug.Log($"{enemy.name} activated by {NPCName}");
-        }
-
     }
 
     public void ResumeWandering()
@@ -251,17 +274,20 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player") && TalkedAlready == false)
+        if (triggerType == DialogueTriggerType.NPC) return;
+
+        if (other.CompareTag("Player") && !TalkedAlready)
         {
+            if (this.CompareTag("Spawner"))
+            {
+                enemy.SetActive(true);
+            }
             if (dialogueManager != null && jsonDialogueFile != null)
             {
                 dialogueManager.StartDialogueFromJson(jsonDialogueFile, this);
             }
+
             TalkedAlready = true;
-           /* if (this.CompareTag("Spawner") && enemy != null)
-            {
-                enemy.SetActive(true);
-            }*/
         }
     }
 

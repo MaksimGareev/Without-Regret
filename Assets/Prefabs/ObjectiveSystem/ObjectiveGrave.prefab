@@ -26,7 +26,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ec564cfdb39babc4c93fb4eb8201a4fe, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.286
+      value: 1.69
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ec564cfdb39babc4c93fb4eb8201a4fe, type: 3}
       propertyPath: m_LocalPosition.z
@@ -89,6 +89,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: ec564cfdb39babc4c93fb4eb8201a4fe, type: 3}
       insertIndex: -1
       addedObject: {fileID: 440949033571452515}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: ec564cfdb39babc4c93fb4eb8201a4fe, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 9050450049671758505}
   m_SourcePrefab: {fileID: 100100000, guid: ec564cfdb39babc4c93fb4eb8201a4fe, type: 3}
 --- !u!1 &3590891345275627327 stripped
 GameObject:
@@ -155,7 +158,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1f1ab1a81f3ad7468ec1fe89381d319, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MoveableObject
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 0
   moveSlowdownMultiplier: 3
   isGrabbable: 1
+  iconDistance: 3
   iconPrefab: {fileID: 7228842916403451623, guid: 8c37cda576505cc45bd7511edf89a1b3, type: 3}
   shouldShowIcon: 1
+--- !u!114 &9050450049671758505
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3590891345275627327}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ced780c22dcf6ef4bb8e624b32e4787a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SaveableWorldObject
+  uniqueID: 15d89065-7261-4046-8a38-be657b13972f
