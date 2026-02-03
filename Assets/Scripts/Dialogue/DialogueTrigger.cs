@@ -27,7 +27,7 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
     // Look at player
     public bool IsMediation = false;
     public float lookSpeed = 5f;
-    private bool isLookingAtPlayer = false;
+    public bool isLookingAtPlayer = false;
 
     // wandering
     private NpcMovement npcWander;

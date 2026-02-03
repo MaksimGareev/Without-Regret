@@ -145,6 +145,7 @@ public class PlayerController : MonoBehaviour, ISaveable
         if (TimerRingUI.Instance != null && data.playerSaveData.currentRingState != TimerRingUI.RingState.Empty)
         {
             TimerRingUI.Instance.SetRingState(data.playerSaveData.currentRingState);
+            // GameOverManager.Instance.
         }
         else if (TimerRingUI.Instance != null)
         {
