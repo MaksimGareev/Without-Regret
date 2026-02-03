@@ -115,6 +115,7 @@ public class PlayerComponents : MonoBehaviour
 
     public static void SetCertainComponents(bool enable, GameObject source = null, params Component[] componentsToToggle)
     {
+        // Use to only toggle the specified components on/off
         if (!initialized)
         {
             InitializeComponents(source);
