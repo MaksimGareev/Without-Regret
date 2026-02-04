@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 5757002758716536703}
   - component: {fileID: 1261743198065681055}
   - component: {fileID: -4167403922123278760}
+  - component: {fileID: 4300360015223950064}
   m_Layer: 0
   m_Name: Barry
   m_TagString: Untagged
@@ -29,7 +30,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1239127344705375727}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 0.81328595, z: -0, w: 0.5818642}
+  m_LocalRotation: {x: 0, y: 0.81328356, z: 0, w: 0.5818675}
   m_LocalPosition: {x: -48.82, y: 1.38, z: 212.15}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -142,6 +143,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b93d8170e88d8e34684424c0750fb15a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SaveableFriendlyNPC
+  uniqueID: 0f68128a-d07c-4ae8-8754-033ecc87c08e
+--- !u!114 &4300360015223950064
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1239127344705375727}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a40ba9254f066ed499136723990e8a6f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DialogueTrigger
+  NPCName: Friendly NPC
+  promptUI: {fileID: 0}
+  chatRange: 3
+  jsonDialogueFile: {fileID: 4900000, guid: 53de4cd9b666c5f4797ff938a0c700e7, type: 3}
+  TalkedJsonDialogueFile: {fileID: 0}
+  CompleteJsonDialogueFile: {fileID: 0}
+  ActiveJsonDialogueFile: {fileID: 0}
+  objectiveIDYouCareAbout: []
+  linkedObjective: {fileID: 0}
+  IsMediation: 0
+  lookSpeed: 5
+  isLookingAtPlayer: 0
+  TalkedAlready: 0
+  iconPrefab: {fileID: 4114033263953508203, guid: 48024210bf4a4394fa37015b90b3b410, type: 3}
+  shouldShowIcon: 1
+  enemy: {fileID: 0}
+  focusCameraOnTrigger: 0
+  triggerType: 0
 --- !u!1001 &6112321618299479535
 PrefabInstance:
   m_ObjectHideFlags: 0
