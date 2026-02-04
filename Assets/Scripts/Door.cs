@@ -1,16 +1,13 @@
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-[RequireComponent(typeof(Collider))]
 public class Door : MonoBehaviour
 {
     [Header("Door Settings")]
     //scene to load
-    public SceneAsset sceneToLoad;
+    public string sceneToLoad;
     // distance to interact        
     public float interactDistance = 3f;
     // player
@@ -81,7 +78,7 @@ public class Door : MonoBehaviour
         }
         
         yield return new WaitForSeconds(0.1f);
-        SceneManager.LoadScene(sceneToLoad.name);
+        SceneManager.LoadScene(sceneToLoad);
     }
 }
 
