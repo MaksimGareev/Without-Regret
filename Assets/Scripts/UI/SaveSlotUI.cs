@@ -1,6 +1,5 @@
 using System.Linq;
 using TMPro;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -21,7 +20,7 @@ public class SaveSlotUI : MonoBehaviour
     [SerializeField] public Button[] newGameButtons = new Button[3];
 
     [Header("FirstLevelReference")]
-    [SerializeField] private SceneAsset firstScene;
+    [SerializeField] private string firstScene;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -168,7 +167,7 @@ public class SaveSlotUI : MonoBehaviour
     {
         SaveManager.Instance.SetActiveSaveSlot(slot);
         SaveManager.Instance.LoadGame(slot);
-        SceneManager.LoadScene(firstScene.name);
+        SceneManager.LoadScene(firstScene);
         Debug.Log("Starting New Game...");
     }
 
