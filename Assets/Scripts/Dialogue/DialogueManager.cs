@@ -406,6 +406,8 @@ public class DialogueManager : MonoBehaviour
         {
             dialogueScrollRect.verticalNormalizedPosition = 1f;
         }
+
+        ConfirmPressed = false;
     }
 
     private IEnumerator WaitForNextLine()
@@ -413,6 +415,11 @@ public class DialogueManager : MonoBehaviour
         if (IsTyping) yield break;
 
         // Wait for player confirm to advance
+        while (ConfirmPressed)
+        {
+            yield return null;
+        }
+        
         while (!ConfirmPressed)
         {
             yield return null;
@@ -492,6 +499,7 @@ public class DialogueManager : MonoBehaviour
         {
             EndDialogue();
         }
+
     }
 
     private Vector2 GetPositionForDirection(ChoiceDirection dir)
