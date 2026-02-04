@@ -92,7 +92,7 @@ public class Journal : MonoBehaviour
             return; // Do not allow pausing in the main menu
         }
 
-        if ((playerJournalAction.triggered || UIJournalAction.triggered) && !PauseManager.Instance.isGamePaused)
+        if ((playerJournalAction.triggered || UIJournalAction.triggered) && !PauseManager.Instance.isGamePaused && !DialogueManager.DialogueIsActive)
         {
             ToggleJournalUI();
         }
