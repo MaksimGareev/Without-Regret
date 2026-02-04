@@ -418,7 +418,7 @@ public class DialogueManager : MonoBehaviour
         // End dialogue if the line says to
         if (line.endDialogueAfterLine)
         {
-            if (ireneNPC.IsFollowing == false)
+            if (ireneNPC.IsFollowing == false && activeDialogueTrigger.NPCName == "Irene")
             {
                 //ireneNPC.StartTravel();
                 ireneNPC.IsFollowing = true;
@@ -426,6 +426,7 @@ public class DialogueManager : MonoBehaviour
             else if(ireneNPC != null && ireneNPC.IsFollowing == true)
             {
                 ireneNPC.StartTravel();
+                ireneNPC.dialogueTrigger.TalkedAlready = true;
             }
         
             if (ireneNPC != null && activeDialogueTrigger.NPCName == "Irene" && activeDialogueTrigger.TalkedAlready && ireneDestinationTransform != null)
