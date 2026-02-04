@@ -159,7 +159,7 @@ public class Inventory : MonoBehaviour, ISaveable
             }
         }
 
-        if (item.ItemType == ItemType.KeyItem || item.ItemType == ItemType.Backpack)
+        if ((item.ItemType == ItemType.KeyItem || item.ItemType == ItemType.Backpack) && itemToCollect != null)
         {
             string[] scenesWOPickupEffect = { "MainMenu", "Echo'sHouse", "Echo'sHouseAstral", "BarryAndDarry'sHouse" };
 
