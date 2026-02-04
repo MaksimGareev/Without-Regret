@@ -17,6 +17,8 @@ public class LockPicking : MonoBehaviour
     private float CurrentAngle = 0f;
     public float RotationAmount;
     public List<Sprite> ArrowImages;
+
+    // Change this to a list of enums so designers can assign directions more clearly / implement random direction generation
     public List<int> DirectionAssignments; //0 = up, 1 = left, 2 = down, 3 = right in terms of layout on the d-pad and arrow keys
     public List<RawImage> Arrows;
 
@@ -76,6 +78,12 @@ public class LockPicking : MonoBehaviour
     {
         player = GameObject.FindGameObjectWithTag("Player").transform;
         rb = player.GetComponent<Rigidbody>();
+        Source = FindAnyObjectByType<AudioSource>();
+        if (Source == null)
+        {
+            Debug.LogWarning("No AudioSource found in the scene!");
+        }
+
         if (PickCursor != null)
         {
             originalPosition = PickCursor.localPosition;
@@ -169,7 +177,7 @@ public class LockPicking : MonoBehaviour
                 if (CurrentAngle < UnlockRange.y && CurrentAngle > UnlockRange.x)
                 {
                     // NewLock();
-                    Source.Stop();
+                    Source?.Stop();
                     SecondStageActive = true;
                     StageTwoUI.SetActive(true);//switches controls to stage two, locks pick rotation
                 }
@@ -180,7 +188,7 @@ public class LockPicking : MonoBehaviour
                     PickCursor.eulerAngles += new Vector3(0, 0, Random.Range(-RandomRotation, RandomRotation));
                     if (!Source.isPlaying)
                     {
-                        Source.PlayOneShot(FailSound);
+                        Source?.PlayOneShot(FailSound);
                     }
                 }
 
@@ -262,7 +270,7 @@ public class LockPicking : MonoBehaviour
     {
         if (!Source.isPlaying)
         {
-            Source.PlayOneShot(UnlockSound);
+            Source?.PlayOneShot(UnlockSound);
         }
         MovePick = true;
         KeyPressTime = 0;
@@ -272,7 +280,7 @@ public class LockPicking : MonoBehaviour
 
         if (RewardItem != null)//if thing being unlocked has a reward, put it in the player's inventory
         {
-            player.GetComponent<Inventory>().AddItem(RewardItem);
+            //player.GetComponent<Inventory>().AddItem(RewardItem);
             RewardItem = null;
         }
 
@@ -302,9 +310,8 @@ public class LockPicking : MonoBehaviour
         {
             ArrowIndex = 0;
             ControlsLocked = true;
-            Source.PlayOneShot(FailSound);
+            Source?.PlayOneShot(FailSound);
             StartCoroutine(WrongDirection());
-            
         }
     }
 
