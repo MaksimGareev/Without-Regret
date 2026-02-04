@@ -149,6 +149,12 @@ public class DialogueManager : MonoBehaviour
     void Update()
     {
         HandleChoiceInput();
+
+        if (DialogueIsActive)
+        {
+            playerController.staminaSlider.gameObject.SetActive(false);
+        }
+
     }
 
     // -------------------- JSON Dialogue --------------------
