@@ -317,7 +317,11 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
     private IEnumerator ActivateNextObjectiveAfterDelay()
     {
         yield return new WaitForSeconds(0.5f);
-        yield return new WaitUntil(() => objectiveUI.activeSelf == false);
+
+        if (UIreferenced)
+        {
+            yield return new WaitUntil(() => objectiveUI.activeSelf == false);
+        }
 
         foreach (var next in allObjectives)
         {

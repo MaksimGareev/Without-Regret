@@ -21,7 +21,10 @@ public class Gate : SaveableWithID
 
     private void OnEnable()
     {
-        ObjectiveManager.Instance.OnObjectiveCompleted.AddListener(SetObjectiveComplete);
+        if (needsObjective)
+        {
+            ObjectiveManager.Instance?.OnObjectiveCompleted.AddListener(SetObjectiveComplete);
+        }
     }
 
     private void SetObjectiveComplete(ObjectiveInstance objective)
