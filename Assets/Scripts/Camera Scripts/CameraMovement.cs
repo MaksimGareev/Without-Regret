@@ -154,9 +154,13 @@ public class CameraMovement : MonoBehaviour
 
         Vector2 lookInput = lookAction != null ? lookAction.ReadValue<Vector2>() : Vector2.zero;
 
-        if (lookInput.sqrMagnitude > 0.0001f && lookAction != null && lookAction.activeControl != null)
+        if (lookInput.sqrMagnitude > 0.0001f && lookAction != null && lookAction.activeControl.device is Mouse)
         {
             lastInputWasMouse = true;
+        }
+        else
+        {
+            lastInputWasMouse = false;
         }
 
         bool hasLookInput = lookInput.sqrMagnitude > 0.0001f;
@@ -228,9 +232,9 @@ public class CameraMovement : MonoBehaviour
         }
         else
         {
-            float stickScale = rotateSpeed * GameSettings.RightStickSensitivity;
-            yaw -= horizontalInput * stickScale * Time.deltaTime;
-            pitch -= verticalInput * stickScale * Time.deltaTime;
+            float stickScale = GameSettings.RightStickSensitivity;
+            yaw -= horizontalInput * rotateSpeed * stickScale * Time.deltaTime;
+            pitch -= verticalInput * rotateSpeed * stickScale * Time.deltaTime;
         }
 
         if (restrictYaw)
