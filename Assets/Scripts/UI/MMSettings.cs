@@ -907,8 +907,8 @@ public class MMSettings : MonoBehaviour
 
     private void DisableListeners()
     {
-        tabLeftAction.Disable();
-        tabRightAction.Disable();
+        tabLeftAction?.Disable();
+        tabRightAction?.Disable();
 
         resolutionDropdown.onValueChanged.RemoveListener(SetResolution);
         fullscreenToggle.onValueChanged.RemoveListener(SetFullscreen);
