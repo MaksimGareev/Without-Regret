@@ -418,21 +418,24 @@ public class DialogueManager : MonoBehaviour
         // End dialogue if the line says to
         if (line.endDialogueAfterLine)
         {
-            if (ireneNPC != null)
+            if (ireneNPC.IsFollowing == false)
+            {
+                //ireneNPC.StartTravel();
+                ireneNPC.IsFollowing = true;
+            }
+            else if(ireneNPC != null && ireneNPC.IsFollowing == true)
             {
                 ireneNPC.StartTravel();
-                ireneNPC.IsFollowing = false;
             }
-
-
-            if (ireneNPC != null && activeDialogueTrigger.NPCName == "Irene" && activeDialogueTrigger.TalkedAlready)
+        
+            if (ireneNPC != null && activeDialogueTrigger.NPCName == "Irene" && activeDialogueTrigger.TalkedAlready && ireneDestinationTransform != null)
             {
                 ireneNPC.targetSpot = ireneDestinationTransform;
                 ireneNPC.StartTravel();
             }
 
             // Move Barry if assigned
-             if (barryNPC != null && (activeDialogueTrigger.NPCName == "Barry" || activeDialogueTrigger.NPCName == "Darry") && activeDialogueTrigger.TalkedAlready)
+             if (barryNPC != null && (activeDialogueTrigger.NPCName == "Reed" || activeDialogueTrigger.NPCName == "Darry") && activeDialogueTrigger.TalkedAlready)
             {
                 barryNPC.StartTravel();
             }
@@ -442,7 +445,7 @@ public class DialogueManager : MonoBehaviour
             }
 
             // Move Darry in Neighborhood and spawn enemy trigger
-            if (barryNPC != null && (activeDialogueTrigger.NPCName == "Barry" || activeDialogueTrigger.NPCName == "Darry"))
+            if (darryNPC != null && (activeDialogueTrigger.NPCName == "Reed" || activeDialogueTrigger.NPCName == "Darry"))
             {
                 if(darryNPC != null)
                 {

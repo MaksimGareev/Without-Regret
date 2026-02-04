@@ -127,7 +127,7 @@ GameObject:
   - component: {fileID: 8589541859818923028}
   - component: {fileID: 9169940238804770612}
   - component: {fileID: 1311592278050812008}
-  - component: {fileID: 1149229258929258946}
+  - component: {fileID: 7868950883997314987}
   - component: {fileID: 4035302086000222004}
   - component: {fileID: 2785358529065914657}
   m_Layer: 8
@@ -146,7 +146,7 @@ Transform:
   m_GameObject: {fileID: 9028717818022298950}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.02, y: 1, z: -7.05}
+  m_LocalPosition: {x: -28.69, y: 1.83, z: 7.79}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -234,7 +234,7 @@ MonoBehaviour:
   agent: {fileID: 4035302086000222004}
   isTraveling: 0
   arrived: 0
-  CanFollowPlayer: 1
+  CanFollowPlayer: 0
   stopDistance: 0.5
 --- !u!136 &9169940238804770612
 CapsuleCollider:
@@ -290,7 +290,7 @@ MonoBehaviour:
   enemy: {fileID: 0}
   focusCameraOnTrigger: 1
   triggerType: 0
---- !u!114 &1149229258929258946
+--- !u!114 &7868950883997314987
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -302,7 +302,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b93d8170e88d8e34684424c0750fb15a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SaveableFriendlyNPC
-  uniqueID: 3728c1ac-8888-47b0-827c-91e8406e1e43
+  uniqueID: fcd97072-a4bb-497d-a71d-955db08339dc
 --- !u!195 &4035302086000222004
 NavMeshAgent:
   m_ObjectHideFlags: 0
