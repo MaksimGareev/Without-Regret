@@ -175,7 +175,7 @@ public class CameraMovement : MonoBehaviour
             mouseResetTimer -= Time.deltaTime;
         }
 
-        bool blocked = isThrowing || (toggleInventoryUI != null && toggleInventoryUI.isEnabled) || (pc != null && pc.MovementLocked);
+        bool blocked = isThrowing || (toggleInventoryUI != null && toggleInventoryUI.isEnabled);// || (pc != null && pc.MovementLocked);
 
         if (!isZooming)
         {
