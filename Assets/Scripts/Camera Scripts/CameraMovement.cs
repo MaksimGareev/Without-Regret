@@ -118,8 +118,13 @@ public class CameraMovement : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        StopAllCoroutines();
         CameraLocked = false;
         isZooming = false;
+        yaw = 0f;
+        pitch = 0f;
+
+       // cameraPivot.localRotation = Quaternion.identity;
     }
 
     private Vector3 DirectionToVector(WorldDirection direction)
@@ -209,7 +214,7 @@ public class CameraMovement : MonoBehaviour
                     ReturnTranslation();
                 }
             }
-
+            
             // Position of the camera
             Vector3 desiredPosition = target.position + currentOffset;
 
@@ -219,11 +224,13 @@ public class CameraMovement : MonoBehaviour
 
             // Look at the Player
             transform.LookAt(lookAtPos);
+            
         } 
     }
 
     private void HandleRotation(float horizontalInput, float verticalInput, bool isMouse)
     {
+
         if (isMouse)
         {
             float mouseScale = mouseRotateScale * GameSettings.MouseSensitivity;
@@ -252,7 +259,7 @@ public class CameraMovement : MonoBehaviour
 
         currentOffset = rotation * defaultOffset;
 
-        currentLookAtOffset = defaultLookAtOffset;
+        currentLookAtOffset = rotation * defaultLookAtOffset;
     }
     
     private void ReturnRotation()
