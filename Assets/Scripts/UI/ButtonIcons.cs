@@ -45,7 +45,10 @@ public class ButtonIcons : MonoBehaviour
 
         if (iconMap.TryGetValue(type, out Image icon))
         {
-            icon.gameObject.SetActive(true);
+            if (icon != null)
+            {
+                icon.gameObject.SetActive(true);
+            }   
         }
     }
 
@@ -53,7 +56,10 @@ public class ButtonIcons : MonoBehaviour
     {
         foreach (var icon in iconMap.Values)
         {
-            icon.gameObject.SetActive(false);
+            if (icon != null)
+            {
+                icon.gameObject.SetActive(false);
+            }
         }
     }
 

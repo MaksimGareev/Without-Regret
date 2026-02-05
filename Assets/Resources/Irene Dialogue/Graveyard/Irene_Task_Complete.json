@@ -2,17 +2,17 @@
     "npcName": "Irene",
     "dialogueLines": [
         {
-            "text": "Hey Echo, did you give a flower to Chime?",
+            "text": "You give flowers to our friends yet?",
             "requiredMorality": 0,
             "choices": [
                 {
-                    "text": "Nods",
+                    "text": "(Nod)",
                     "nextIndex": 1,
                     "moralityChange": 1,
                     "directionString": "Up"
                 },
                 {
-                    "text": "Shakes head",
+                    "text": "(Shake head)",
                     "nextIndex": 2,
                     "moralityChange": -1,
                     "directionString": "Down"
@@ -20,63 +20,73 @@
             ]
         },
         {
-            "text": "Wow Echo you're shining brighter today than ever.",
+            "text": "Good. I know they appreciate them.",
             "requiredMorality": 1,
             "choices": []
         },
         {
-            "text": "Honestly Echo, I'm getting mixed signals about you right now..",
+            "text": "So you just got them for yourself? What's up with you?",
             "requiredMorality": -1,
             "choices": []
         },
         {
-            "text": "Oh! Echo I forgot to give this to you before I go. I found this in front of your door.",
+            "text": "Oh! I almost forgot. Here, I found this in front of your door.",
             "requiredMorality": 0,
             "choices": []
         },
         {
-            "text": "Echo, I still can’t believe Penelope is gone. I had warned her about the danger that was going around the neighborhood. I told her it wasn’t safe but I didn’t stay with her when she needed me. I let her go by herself and that was the last I saw of her..",
+            "text": "...I'm sorry, I was trying to not bring it up, but I still can't believe Penelope's gone.",
+            "requiredMorality": 0,
+            "choices": []
+        },
+        {
+            "text": "I tried warning her about going out that night. She didn't listen, but I still can't help but feel that it's my fault.",
             "requiredMorality": 0,
             "choices": [
                 {
-                    "text": "You can't blame yourself for what happened.",
-                    "nextIndex": 5,
+                    "text": "Irene, you can't blame yourself for what happened.",
+                    "nextIndex": 6,
                     "moralityChange": 1,
-                    "directionString": "Down"
+                    "directionString": "Up"
                 },
                 {
-                    "text": "Why didn't you go?",
-                    "nextIndex": 6,
+                    "text": "If you were so worried, why didn't you go?",
+                    "nextIndex": 7,
                     "moralityChange": -1,
-                    "directionString": "Up"
+                    "directionString": "Down"
                 }
             ]
         },
         {
-            "text": "I know I shouldn’t but the guilt eats at me everyday. Things would be different if I convinced her a little harder or went with her instead. I know what’s done can’t be reversed but I feel haunted by my choices.",
+            "text": "I know, I know. It's just hard...but thanks, Echo.",
             "requiredMorality": 1,
             "choices": []
         },
         {
-            "text": "That’s the same question I ask myself everyday… I definitelyyyyyy appreciate you bringing it up… Why didn’t you go, Echo? Why weren’t you there?",
+            "text": "I ask myself that every day, Echo. If you hate being here with me so much, why'd you even come?",
             "requiredMorality": -1,
             "choices": []
         },
         {
-            "text": "Sorry I am just really upset at myself.  I would do anything to change what happened...",
+            "text": "Sorry. It's just that...I would do anything to change what happened.",
             "requiredMorality": 0,
             "choices": []
         },
         {
-            "text": "Oh! I have to get home soon, I spent too much time out today.  I wantd to help adjust some of the graves that are tilting out of place, I'd appreciate it if you did it for me.  Also Stevey said he had to give you something vefore you left tonight, so go see him after.",
+            "text": "Oh man, it's getting late. I've gotta head back. I told Stevie I'd fix the gravestones that are tilting, would you be a doll and do it for me?.",
             "requiredMorality": 0,
             "choices": []
         },
         {
-            "text": "Thank you, Echo! I'll see you tomorrow.",
+            "text": "Also, Stevie said he has something to give you, so go see him after you're done here.",
+            "requiredMorality": 0,
+            "choices": []
+        },
+        {
+            "text": "Thanks for coming, Echo. See you tomorrow.",
             "requiredMorality": 0,
             "choices": [],
-            "objectiveToActivate": "pushGravestones",
+            "objectiveToActivate": "talkToStevey",
             "endDialogueAfterLine": true
         }
     ]

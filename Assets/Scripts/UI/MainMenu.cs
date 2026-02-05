@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using System.Collections;
+using UnityEngine.InputSystem.UI;
 
 public class MainMenu : MonoBehaviour
 {
@@ -14,7 +15,7 @@ public class MainMenu : MonoBehaviour
     private InputAction cancelAction;
 
     [Header("UI Panels")]
-    [SerializeField] private GameObject mainMenuPanel;
+    [SerializeField] public GameObject mainMenuPanel;
     [SerializeField] private MMSettings settingsScript;
     [SerializeField] private GameObject settingsPanel;
     [SerializeField] private GameObject creditsPanel;
@@ -27,6 +28,7 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private Button creditsButton;
     [SerializeField] private Button quitButton;
     [SerializeField] private Button backButton;
+    [SerializeField] private Button feedbackSurveyButton;
 
     [Header("Text References")]
     [SerializeField] private TextMeshProUGUI versionNumberText;
@@ -35,8 +37,13 @@ public class MainMenu : MonoBehaviour
     [Header("Music")]
     [SerializeField] private GameObject musicSource;
 
+    // Feedback Survey URL
+    private string feedbackSurveyURL = "https://docs.google.com/forms/d/e/1FAIpQLSe6KfbYdlWsa25Scm4URfYHRRS8lzQC3mZkm6tqyS_uxxHObA/viewform?usp=sharing&ouid=106294286738853521476";
+
     private string gameVersion = "v.0.0.1";
     private SaveManager saveManager;
+    private bool usingController = false;
+    private Button lastSelectedButton;
     
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -45,6 +52,7 @@ public class MainMenu : MonoBehaviour
         saveManager = FindAnyObjectByType<SaveManager>();
 
         UpdatePlayButton();
+        lastSelectedButton = playButton;
         OpenMainMenu();
         StartCoroutine(WaitToStartMusic());
 
@@ -79,6 +87,15 @@ public class MainMenu : MonoBehaviour
         DeleteSavesDebug(); // Debug shortcut to delete all saves and reload main menu
         CheckMouseInput();
         CheckControllerInput();
+
+        if (confirmationPanel.activeSelf && backButton.gameObject.activeSelf)
+        {
+            backButton.gameObject.SetActive(false);
+        }
+        else if (!confirmationPanel.activeSelf && !mainMenuPanel.activeSelf && !backButton.gameObject.activeSelf)
+        {
+            backButton.gameObject.SetActive(true);
+        }
     }
 
     private void DeleteSavesDebug()
@@ -98,7 +115,7 @@ public class MainMenu : MonoBehaviour
     {
         if (cancelAction != null && cancelAction.triggered)
         {
-            if (creditsPanel.activeSelf || saveSlotsPanel.activeSelf)
+            if ((creditsPanel.activeSelf || saveSlotsPanel.activeSelf) && !confirmationPanel.activeSelf)
             {
                 OpenMainMenu();
             }
@@ -107,6 +124,10 @@ public class MainMenu : MonoBehaviour
                 if (settingsScript.controlSchemeOpen)
                 {
                     settingsScript.CloseControlSchemeUI();
+                }
+                else if (settingsScript.hasUnappliedChanges)
+                {
+                    settingsScript.ConfirmBeforeLeaveWithoutApplying();
                 }
                 else
                 {
@@ -125,8 +146,9 @@ public class MainMenu : MonoBehaviour
 
         Vector2 mouseDelta = Mouse.current.delta.ReadValue();
 
-        if (mouseDelta.sqrMagnitude > 0.1f)
+        if (mouseDelta.sqrMagnitude > 0.1f && usingController)
         {
+            usingController = false;
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
             
@@ -144,25 +166,57 @@ public class MainMenu : MonoBehaviour
             return;
         }
 
+        // Check if the controller has moved either the left stick or dpad
         bool controllerMoved = Gamepad.current.leftStick.ReadValue().sqrMagnitude > 0.1f || Gamepad.current.dpad.ReadValue().sqrMagnitude > 0.1f;
+        
+        if (!controllerMoved) return;
 
-        if (controllerMoved)
+        if (!usingController)
         {
+            usingController = true;
             Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
 
-            if (EventSystem.current.currentSelectedGameObject == null)
+            var es = EventSystem.current;
+
+            // Clear selected GameObject if mouse was hovering over something
+            if (es.IsPointerOverGameObject())
+            {
+                var ped = new PointerEventData(es)
+                {
+                    position = new Vector2(-99999f, -99999f)
+                };
+
+                es.RaycastAll(ped, new System.Collections.Generic.List<RaycastResult>());
+
+                InputSystemUIInputModule inputModule = es.currentInputModule as InputSystemUIInputModule;
+                if (inputModule != null)
+                {
+                    inputModule.enabled = false;
+                    inputModule.enabled = true;
+                }
+
+                es.SetSelectedGameObject(null);
+            }
+
+            // If nothing is selected, set a default based on the active panel
+            if (es.currentSelectedGameObject == null)
             {
                 if (mainMenuPanel.activeSelf)
                 {
-                    EventSystem.current.SetSelectedGameObject(playButton.gameObject);
+                    es.SetSelectedGameObject(playButton.gameObject);
                 }
-                else if (settingsPanel.activeSelf)
+                else if (settingsPanel.activeSelf && settingsScript.videoSettingsOpen)
                 {
-                    EventSystem.current.SetSelectedGameObject(settingsScript.videoSettingsButton.gameObject);
+                    es.SetSelectedGameObject(settingsScript.resolutionDropdown.gameObject);
                 }
                 else if (creditsPanel.activeSelf)
                 {
-                    EventSystem.current.SetSelectedGameObject(backButton.gameObject);
+                    es.SetSelectedGameObject(backButton.gameObject);
+                }
+                else if (saveSlotsPanel.activeSelf)
+                {
+                    SelectSaveMenuButton();
                 }
             }
         }
@@ -174,7 +228,8 @@ public class MainMenu : MonoBehaviour
         settingsButton.onClick.AddListener(OpenSettings);
         creditsButton.onClick.AddListener(OpenCredits);
         quitButton.onClick.AddListener(ConfirmBeforeQuit);
-        backButton.onClick.AddListener(UIBackButton);
+        backButton.onClick.AddListener(HandleUIBackButton);
+        feedbackSurveyButton.onClick.AddListener(ConfirmBeforeFeedbackSurvey);
     }
 
     private void UpdatePlayButton()
@@ -189,11 +244,22 @@ public class MainMenu : MonoBehaviour
         }
     }
 
-    private void UIBackButton()
+    private void HandleUIBackButton()
     {
-        if (settingsPanel.activeSelf && settingsScript != null && settingsScript.controlSchemeOpen)
+        if (settingsPanel.activeSelf && settingsScript != null)
         {
-            settingsScript.CloseControlSchemeUI();
+            if (settingsScript.hasUnappliedChanges)
+            {
+                settingsScript.ConfirmBeforeLeaveWithoutApplying();
+            }
+            else if (settingsScript.controlSchemeOpen)
+            {
+                settingsScript.CloseControlSchemeUI();
+            }
+            else
+            {
+                OpenMainMenu();
+            }
         }
         else
         {
@@ -204,7 +270,7 @@ public class MainMenu : MonoBehaviour
     public void OpenMainMenu()
     {
         mainMenuPanel.SetActive(true);
-        settingsPanel.SetActive(false);
+        settingsScript.DisableSettingsPanel();
         creditsPanel.SetActive(false);
         saveSlotsPanel.SetActive(false);
         confirmationPanel.SetActive(false);
@@ -213,7 +279,7 @@ public class MainMenu : MonoBehaviour
         
         backButton.gameObject.SetActive(false);
 
-        EventSystem.current.SetSelectedGameObject(playButton.gameObject);
+        EventSystem.current.SetSelectedGameObject(lastSelectedButton.gameObject);
     }
 
     private void OpenSettings()
@@ -225,31 +291,37 @@ public class MainMenu : MonoBehaviour
         
         backButton.gameObject.SetActive(true);
         
-        EventSystem.current.SetSelectedGameObject(settingsScript.videoSettingsButton.gameObject);
+        EventSystem.current.SetSelectedGameObject(settingsScript.resolutionDropdown.gameObject);
+
+        lastSelectedButton = settingsButton;
     }
 
     private void OpenCredits()
     {
         mainMenuPanel.SetActive(false);
-        settingsPanel.SetActive(false);
+        settingsScript.DisableSettingsPanel();
         saveSlotsPanel.SetActive(false);
         creditsPanel.SetActive(true);
         
         backButton.gameObject.SetActive(true);
 
         EventSystem.current.SetSelectedGameObject(backButton.gameObject);
+
+        lastSelectedButton = creditsButton;
     }
 
     private void OpenSaveSlotsScreen()
     {
         mainMenuPanel.SetActive(false);
-        settingsPanel.SetActive(false);
+        settingsScript.DisableSettingsPanel();
         creditsPanel.SetActive(false);
         saveSlotsPanel.SetActive(true);
 
         backButton.gameObject.SetActive(true);
 
         SelectSaveMenuButton();
+
+        lastSelectedButton = playButton;
     }
 
     public void SelectSaveMenuButton()
@@ -266,6 +338,32 @@ public class MainMenu : MonoBehaviour
 
         ConfirmationUI confirmationUI = confirmationPanel.GetComponent<ConfirmationUI>();
         confirmationUI.ConfirmTask(ConfirmationType.QuitToDesktop, QuitGame, OpenMainMenu);
+
+        lastSelectedButton = quitButton;
+    }
+
+    private void ConfirmBeforeFeedbackSurvey()
+    {
+        confirmationPanel.SetActive(true);
+        mainMenuPanel.SetActive(false);
+
+        ConfirmationUI confirmationUI = confirmationPanel.GetComponent<ConfirmationUI>();
+        confirmationUI.ConfirmTask(ConfirmationType.FeedbackSurvey, OpenFeedbackSurvey, OpenMainMenu);
+
+        lastSelectedButton = feedbackSurveyButton;
+    }
+
+    private void OpenFeedbackSurvey()
+    {
+        if (!string.IsNullOrEmpty(feedbackSurveyURL))
+        {
+            Application.OpenURL(feedbackSurveyURL);
+            Debug.Log("Opening Feedback Survey URL: " + feedbackSurveyURL);
+        }
+        else
+        {
+            Debug.LogWarning("Feedback survey URL is not set.");
+        }
     }
 
     private void QuitGame()
@@ -278,5 +376,15 @@ public class MainMenu : MonoBehaviour
     {
         yield return new WaitUntil(() => AudioManager.Instance != null);
         musicSource.SetActive(true);
+    }
+
+    private void OnDisable()
+    {
+        playButton.onClick.RemoveListener(OpenSaveSlotsScreen);
+        settingsButton.onClick.RemoveListener(OpenSettings);
+        creditsButton.onClick.RemoveListener(OpenCredits);
+        quitButton.onClick.RemoveListener(ConfirmBeforeQuit);
+        backButton.onClick.RemoveListener(HandleUIBackButton);
+        feedbackSurveyButton.onClick.RemoveListener(ConfirmBeforeFeedbackSurvey);
     }
 }

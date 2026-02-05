@@ -2,22 +2,22 @@
     "npcName": "Chime",
     "dialogueLines": [
         {
-            "text": "Look, there is that guy you talked to earlier in the day, Barry.",
+            "text": "Look, there's Reed!",
             "requiredMorality": 0,
             "choices": []
         },
         {
-            "text": "It looks like he is arguing with someone, do you know who he is talking to?.",
+            "text": "...It looks like he's arguing with someone, do you know who that is?",
             "requiredMorality": 0,
             "choices": [
                 {
-                    "text": "Yeah thats Darry.",
+                    "text": "Yeah, thats Derry.",
                     "nextIndex": 2,
                     "moralityChange": 1,
                     "directionString": "Up"
                 },
                 {
-                    "text": "I can't remember I wasn't really paying attention durring his whole story.",
+                    "text": "Dunno. Didn't care much for his story. Still don't.",
                     "nextIndex": 3,
                     "moralityChange": -1,
                     "directionString": "Down"
@@ -25,18 +25,13 @@
             ]
         },
         {
-            "text": "So thats the guy he was talking about at the graveyard, you should see why they are arguing.",
+            "text": "So that's the friend he was mourning in The Graveyard, you should see why they're arguing...",
             "requiredMorality": 1,
             "choices": []
         },
         {
-            "text": "Thats the guy he was mourning at the graveyard, Darry.  Go figure out why they are arguing with each other..",
+            "text": "That's his friend he was mourning in The Graveyard, Derry. Go figure out why they're arguing with each other.",
             "requiredMorality": -1,
-            "choices": []
-        },
-        {
-            "text": "I think you should go see what they are arguing about over there.",
-            "requiredMorality": 0,
             "choices": []
         }
     ]

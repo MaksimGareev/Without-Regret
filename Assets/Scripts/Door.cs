@@ -1,6 +1,5 @@
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -31,7 +30,6 @@ public class Door : MonoBehaviour
 
     void Update()
     {
-       
         if (player != null && Vector3.Distance(player.position, transform.position) <= interactDistance)
         {
             isPlayerNear = true;

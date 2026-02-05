@@ -2,13 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public class Inventory : MonoBehaviour, ISaveable
 {
     private readonly List<ItemData> itemsList = new List<ItemData>();
 
-    private List<ItemData> keyItems = new();
-    private List<ItemData> otherItems = new();
+    public List<ItemData> keyItems = new();
+    public List<ItemData> otherItems = new();
 
     public List<ItemData> KeyItems => keyItems;
     public List<ItemData> OtherItems => otherItems;
@@ -16,6 +17,7 @@ public class Inventory : MonoBehaviour, ISaveable
     [Header("References")]
     [SerializeField] private GameObject interactingScript;
     [SerializeField] private GameObject backpack;
+    [SerializeField] private TextMeshProUGUI AddItemPopup;
 
     [Header("Debugging")]
     [SerializeField] private bool showDebugLogs = false;
@@ -38,6 +40,7 @@ public class Inventory : MonoBehaviour, ISaveable
         toggleInventoryUI = GetComponent<ToggleInventoryUI>();
         cameraMovement = Camera.main.GetComponent<CameraMovement>();
         itemToCollect = null;
+        AddItemPopup.gameObject.SetActive(false);
     }
 
     private void Start()
@@ -120,11 +123,13 @@ public class Inventory : MonoBehaviour, ISaveable
         backpack.SetActive(true);
     }
 
-    private void AddItem(ItemData item)
+    public void AddItem(ItemData item)
     {
         if (item == null) return;
 
         OnItemAdded?.Invoke(item);
+
+        StartCoroutine(ItemAddedPopUp(item));
 
         if (item.ItemType == ItemType.Backpack)
         {
@@ -154,7 +159,7 @@ public class Inventory : MonoBehaviour, ISaveable
             }
         }
 
-        if (item.ItemType == ItemType.KeyItem || item.ItemType == ItemType.Backpack)
+        if ((item.ItemType == ItemType.KeyItem || item.ItemType == ItemType.Backpack) && itemToCollect != null)
         {
             string[] scenesWOPickupEffect = { "MainMenu", "Echo'sHouse", "Echo'sHouseAstral", "BarryAndDarry'sHouse" };
 
@@ -168,7 +173,7 @@ public class Inventory : MonoBehaviour, ISaveable
             itemToCollect.hasBeenCollected = true;
             itemToCollect = null;
         }
-        else
+        else if (itemToCollect != null)
         {
             itemToCollect.gameObject.SetActive(false);
             itemToCollect.hasBeenCollected = true;
@@ -234,6 +239,14 @@ public class Inventory : MonoBehaviour, ISaveable
         }
         
         return null;
+    }
+
+    private IEnumerator ItemAddedPopUp(ItemData Item)
+    {
+        AddItemPopup.text = "Item Added to Inventory: " + Item.ItemName;
+        AddItemPopup.gameObject.SetActive(true);
+        yield return new WaitForSecondsRealtime(1.5f);
+        AddItemPopup.gameObject.SetActive(false);
     }
 }
 

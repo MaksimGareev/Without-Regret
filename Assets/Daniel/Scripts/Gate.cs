@@ -1,17 +1,19 @@
 using UnityEngine;
+using System;
 
-public class Gate : MonoBehaviour
+public class Gate : SaveableWithID
 {
     [SerializeField] private GameObject RotateRightDoor;
     [SerializeField] private GameObject RotateLeftDoor;
     [SerializeField] private ObjectiveData linkedObjective;
     public bool needsObjective = true;
-    private bool isObjectiveActive = false;
+    private bool locked = true;
+    private bool opened = false;
 
     private Animator rightDoorAnimator;
     private Animator leftDoorAnimator;
 
-    void Awake()
+    private void Awake()
     {
         rightDoorAnimator = RotateRightDoor.GetComponent<Animator>();
         leftDoorAnimator = RotateLeftDoor.GetComponent<Animator>();
@@ -19,33 +21,72 @@ public class Gate : MonoBehaviour
 
     private void OnEnable()
     {
-        ObjectiveManager.Instance.OnObjectiveCompleted.AddListener(SetObjectiveComplete);
-    }
-
-    private void Update()
-    {
-        if (ObjectiveManager.Instance == null || linkedObjective == null || isObjectiveActive) return;
-
-        //isObjectiveActive = ObjectiveManager.Instance.IsObjectiveCompleted(linkedObjective.objectiveID);
+        if (needsObjective)
+        {
+            ObjectiveManager.Instance?.OnObjectiveCompleted.AddListener(SetObjectiveComplete);
+        }
     }
 
     private void SetObjectiveComplete(ObjectiveInstance objective)
     {
         if (objective.data == linkedObjective)
         {
-            isObjectiveActive = true;
+            locked = false;
         }
     }
     
     
     void OnTriggerEnter(Collider other)
     {
-        if (!isObjectiveActive && needsObjective) return;
+        if ((locked && needsObjective) || opened) return;
 
         if (other.gameObject.CompareTag("Player"))
         {
             Debug.Log("Found Player");
 
+            rightDoorAnimator.SetBool("NearPlayer", true);
+            leftDoorAnimator.SetBool("NearPlayer", true);
+            opened = true;
+        }
+    }
+
+    public override void SaveTo(SaveData data)
+    {
+        GateSaveData state = new GateSaveData();
+
+        state.id = GetUniqueID();
+        state.locked = locked;
+        state.opened = opened;
+
+        if (data.gateListSaveData.gates.Exists(g => g.id == GetUniqueID()))
+        {
+            data.gateListSaveData.gates.RemoveAll(g => g.id == GetUniqueID());
+        }
+
+        data.gateListSaveData.gates.Add(state);
+
+        Debug.Log($"Saving Gate: locked={state.locked}, opened={state.opened}, ID: {GetUniqueID()}");
+    }
+
+    public override void LoadFrom(SaveData data)
+    {
+        var state = data.gateListSaveData.gates.Find(g => g.id == GetUniqueID());
+
+        if (state == null) 
+        {
+            Debug.LogWarning("Loading Failed: No save data found for Gate with ID: " + GetUniqueID());
+            return;
+        }
+        else
+        {
+            Debug.Log($"Loading Gate: locked={state.locked}, opened={state.opened}, ID: {GetUniqueID()}");
+        }
+
+        locked = state.locked;
+        opened = state.opened;
+
+        if (opened)
+        {
             rightDoorAnimator.SetBool("NearPlayer", true);
             leftDoorAnimator.SetBool("NearPlayer", true);
         }
