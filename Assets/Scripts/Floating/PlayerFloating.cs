@@ -117,7 +117,7 @@ public class PlayerFloating : MonoBehaviour
     private void Start()
     {
         SetupRhythmTargets();
-        rhythmSlider.gameObject.SetActive(false);
+        rhythmSlider?.gameObject.SetActive(false);
     }
 
     #if UNITY_EDITOR

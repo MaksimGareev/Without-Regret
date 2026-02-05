@@ -32,7 +32,7 @@ public class ChasingEnemy : MonoBehaviour
     // Check if enemy reached NPC
     public bool ReachedNPC = false;
 
-    private Transform currentTarget;
+    [HideInInspector] public Transform currentTarget;
 
     // Check if the enemy is possessed or distracted
     public bool Possessed = false;

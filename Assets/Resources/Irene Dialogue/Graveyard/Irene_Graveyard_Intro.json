@@ -2,27 +2,27 @@
     "npcName": "Irene",
     "dialogueLines": [
         {
-            "text": "Hey Echo!  You're late...",
+            "text": "Hey Echo! Slept well, huh? You didn't even fix your hair!",
             "requiredMorality": 0,
             "choices": []
         },
         {
-            "text": "You're still coming to the graveyard with me right?",
+            "text": "So, we still going to the Graveyard?",
             "requiredMorality": 0,
             "choices": []
         },
         {
-            "text": "It's okay to say yes or no, just remember your choices affect the people aroud you.",
+            "text": "You should respond with how you truly feel, just remember that your choices affect the world around you.",
             "requiredMorality": 0,
             "choices": [
                 {
-                    "text": "Sure",
+                    "text": "Of course.",
                     "nextIndex": 3,
                     "moralityChange": 1,
                     "directionString": "Up"
                 },
                 {
-                    "text": "...",
+                    "text": "Meh.",
                     "nextIndex": 4,
                     "moralityChange": -1,
                     "directionString": "Down"
@@ -30,14 +30,16 @@
             ]
         },
         {
-            "text": "Awesome! Let's go!",
+            "text": "Yay! Let's go.",
             "requiredMorality": 1,
-            "choices": []
+            "choices": [],
+            "endDialogueAfterLine": true
         },
         {
-            "text": "Ouch... Lets go anyways",
+            "text": "Ouch...well, I already walked over so we're going anyways.",
             "requiredMorality": -1,
-            "choices": []
+            "choices": [],
+            "endDialogueAfterLine": true
         }
     ]
 }

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Linq;
 
 public class LockedItem : MonoBehaviour, IInteractable
 {
@@ -29,6 +30,7 @@ public class LockedItem : MonoBehaviour, IInteractable
     private GameObject popupInstance;
     public ObjectiveData linkedObjective;
     public bool needsObjective = true;
+    public ItemData RewardItem;
 
     // Start is called before the first frame update
     void Awake()
@@ -73,7 +75,7 @@ public class LockedItem : MonoBehaviour, IInteractable
     // Update is called once per frame
     void Update()
     {
-        if (hasBeenLockpicked || player == null || ButtonIcons.Instance == null)
+        if (hasBeenLockpicked || player == null || ButtonIcons.Instance == null) // || !player.GetComponent<Inventory>().keyItems.Any(x => x.ItemName == "Lock Pick"))
         {
             return;
         }
@@ -118,6 +120,19 @@ public class LockedItem : MonoBehaviour, IInteractable
         }*/
     }
 
+    public bool CanInteract(GameObject player)
+    {
+        // Can interact only if player is in range, not lockpicked, and not mantling
+        if (hasBeenLockpicked || !isInRange || player == null)
+            return false;
+
+        PlayerMantling mantling = player.GetComponent<PlayerMantling>();
+        if (mantling != null && mantling.isMantling)
+            return false;
+
+        return true;
+    }
+
     public void OnPlayerInteraction(GameObject player)
     {
         // Only try interaction if player is in range
@@ -135,6 +150,7 @@ public class LockedItem : MonoBehaviour, IInteractable
         // Show LockPick UI
         LockPickUI.SetActive(true);
         LockPickUI.GetComponent<LockPicking>().NewLock(this);//(this.gameObject);
+        LockPickUI.GetComponent<LockPicking>().RewardItem = RewardItem;
 
         /*if (promptUI != null)
             promptUI.SetActive(false);

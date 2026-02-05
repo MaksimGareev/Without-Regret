@@ -1,18 +1,18 @@
 {
-    "npcName": "Barry",
+    "npcName": "Reed",
     "dialogueLines": [
         {
-            "text": "Hey Echo it's been a long time since the last time I saw you, thanks for coming by to chick in on Darry.  Everything is still very vivid in my head how that night went and I wish I could change it.  Do you have some time right now?",
+            "text": "Hey Echo! Long time no see. Just paying my usual visit to Derry. Everything's still vivid in my head, how that night went...do you have some time right now?",
             "requiredMorality": 0,
             "choices": [
                 {
-                    "text": "Yeah I don't have much going on.",
+                    "text": "Sure.",
                     "nextIndex": 1,
                     "moralityChange": 1,
                     "directionString": "Up"
                 },
                 {
-                    "text": "I'm in a rush but fine.",
+                    "text": "Not really, but go ahead.",
                     "nextIndex": 2,
                     "moralityChange": -1,
                     "directionString": "Down"
@@ -20,50 +20,60 @@
             ]
         },
         {
-            "text": "Thanks I really appreciate it.",
+            "text": "Thanks, I've been really needing to vent.",
             "requiredMorality": 1,
             "choices": []
         },
         {
-            "text": "Okay... I'll uhhh, make it quick then.",
+            "text": "Uhm, okay...I'll make it quick then.",
             "requiredMorality": -1,
             "choices": []
         },
         {
-            "text": "Darry and I were roommates and I had gotten a new TV for the house. The next day I woke up to the TV being broken on the floor and my car missing. I was so mad the whole day and I waited for him to return.",
+            "text": "As you know, Derry and I lived together. One day, I brought home a new TV only to find it broken on the floor the next day, with my car missing as well. I was furious. I waited all day for him to come back, so I could kick his ass.",
             "requiredMorality": 0,
             "choices": [
                 {
-                    "text": "Stay Focused",
+                    "text": "(Stay focused.)",
                     "nextIndex": 4,
                     "moralityChange": 1,
                     "directionString": "Up"
                 },
                 {
-                    "text": "Doze off",
-                    "nextIndex": 4,
+                    "text": "(Doze off.)",
+                    "nextIndex": 7,
                     "moralityChange": -1,
                     "directionString": "Down"
                 }
             ]
         },
         {
-            "text": "Darry arrived and we got into a bad argument..and I drove away. I was driving when I noticed a receipt for a TV earlier that day. I checked the trunk and I realized Darry got me a new TV. I returned to the house just to see it on fire, with firefighters spraying down the flames.  They took me away from the house and told me the news later…",
+            "text": "Later on, Derry came back and I got on his case... it got nasty, almost physical, then I drove away. While I was driving, I noticed a receipt for a TV from earlier that day. I checked the trunk and realized Derry went and got new TV.",
             "requiredMorality": 0,
             "choices": []
         },
         {
-            "text": "I appreciate you listening, it means more than you think.  I wish I never left over somting so simple",
+            "text": "I felt awful for being such an asshole when he was trying to make up for his accident. I worked up the courage to apologize on the drive home, and when I got back...",
             "requiredMorality": 0,
             "choices": []
         },
         {
-            "text": "Sorry for bothering you, I understand you don't want to hear nay of that.",
+            "text": "The house was up in flames. The fire fighters did everything they could, and when I asked about Derry...I still remember the look on the paramedic's face.",
+            "requiredMorality": 0,
+            "choices": []
+        },
+        {
+            "text": "I really appreciate you listening. It means more than you think.",
+            "requiredMorality": 0,
+            "choices": []
+        },
+        {
+            "text": "Sorry, my emotional baggage is the last thing you'd care about.",
             "requiredMorality": -1,
             "choices": []
         },
         {
-            "text": "I'm going to walk back home now, I lost my keys around here and can't find them.  If you want to help me find them they might be in one of those leaf piles over there.",
+            "text": "It's getting late. I lost my spare keys around here, but I honestly can't be bothered. I'm gonna head home. If you'd like to look for them, they might be somewhere in the leaves.",
             "requiredMorality": 0,
             "choices": [],
             "objectiveToActivate": ["stackLeaves"],
