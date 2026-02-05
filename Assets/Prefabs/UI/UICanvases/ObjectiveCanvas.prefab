@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 955934732299662537}
   - component: {fileID: 5586650038396570546}
   - component: {fileID: 3592186066843886766}
+  - component: {fileID: 7263983454126365908}
   m_Layer: 5
   m_Name: ObjectiveCanvas
   m_TagString: Untagged
@@ -115,6 +116,24 @@ CanvasGroup:
   m_Interactable: 0
   m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0
+--- !u!114 &7263983454126365908
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 595475326598494349}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3182a56b1c50c524fa6552b115f0ba52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ObjectiveUIController
+  objectiveUI: {fileID: 7145096534350053473}
+  titleText: {fileID: 4993681911746832826}
+  descriptionText: {fileID: 5241729095301588321}
+  progressText: {fileID: 207908272973326101}
+  fadeDuration: 0.5
+  visibleDuration: 2
 --- !u!1 &3204415229571332884
 GameObject:
   m_ObjectHideFlags: 0
@@ -534,7 +553,7 @@ GameObject:
   - component: {fileID: 8980114026330051418}
   - component: {fileID: 8445596634717180907}
   - component: {fileID: 153451263340004609}
-  - component: {fileID: 4223213969531453449}
+  - component: {fileID: 4355687582869964924}
   m_Layer: 5
   m_Name: ObjectivePanel
   m_TagString: Untagged
@@ -602,18 +621,15 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &4223213969531453449
-MonoBehaviour:
+--- !u!225 &4355687582869964924
+CanvasGroup:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7145096534350053473}
   m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3182a56b1c50c524fa6552b115f0ba52, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ObjectiveUI
-  titleText: {fileID: 4993681911746832826}
-  descriptionText: {fileID: 5241729095301588321}
-  progressText: {fileID: 207908272973326101}
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
