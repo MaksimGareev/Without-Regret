@@ -431,17 +431,29 @@ public class DialogueManager : MonoBehaviour
         // End dialogue if the line says to
         if (line.endDialogueAfterLine)
         {
-            if (ireneNPC.IsFollowing == false && activeDialogueTrigger.NPCName == "Irene")
+            if (activeDialogueTrigger.NPCName == "Irene"  && ireneNPC != null)
             {
-                //ireneNPC.StartTravel();
-                ireneNPC.IsFollowing = true;
+                if (!ireneNPC.IsFollowing)
+                {
+                    ireneNPC.IsFollowing = true;
+                }
             }
-            else if(ireneNPC != null && ireneNPC.IsFollowing == true)
+
+            if (activeDialogueTrigger.NPCName == "IreneStory")
             {
                 ireneNPC.StartTravel();
                 ireneNPC.dialogueTrigger.TalkedAlready = true;
             }
-        
+            /* {
+                 //ireneNPC.StartTravel();
+                 ireneNPC.IsFollowing = true;
+             }
+             else if(ireneNPC != null && ireneNPC.IsFollowing == true)
+             {
+                 ireneNPC.StartTravel();
+                 ireneNPC.dialogueTrigger.TalkedAlready = true;
+             }*/
+
             if (ireneNPC != null && activeDialogueTrigger.NPCName == "Irene" && activeDialogueTrigger.TalkedAlready && ireneDestinationTransform != null)
             {
                 ireneNPC.targetSpot = ireneDestinationTransform;
@@ -1058,17 +1070,33 @@ public class DialogueManager : MonoBehaviour
         if (TypingAudioSource != null) TypingAudioSource.Stop();
 
         // Only auto follow if Irene does not have a destination to travel to
-        if (ireneNPC != null && ireneNPC.NPCNameMatches(NPCNameText.text))
+        if (ireneNPC != null && ireneNPC.gameObject.activeInHierarchy)
         {
-            if (ireneNPC.CanFollowPlayer)
+            if (ireneNPC.NPCNameMatches(NPCNameText.text) && ireneNPC.CanFollowPlayer)
             {
                 ireneNPC.IsFollowing = true;
             }
         }
 
-        cameraMovement.SetCameraLocked(false);
-        Chime.isInDialogue = false;
+        StartCoroutine(EndDialogueSafe());
         Debug.Log($"Dialogue ended. Final morality = {playerMorality}");
+    }
+
+    private IEnumerator EndDialogueSafe()
+    {
+        // Wait one frame so UI Toolkit + jobs finish safely
+        yield return null;
+
+        if (cameraMovement != null)
+        {
+            // If EndCameraZoom is a coroutine
+            yield return cameraMovement.EndCameraZoom();
+            cameraMovement.SetCameraLocked(false);
+        }
+
+        Chime.isInDialogue = false;
+
+        Debug.Log("EndDialogueSafe: cleanup complete");
     }
 
     public int GetVariable(string morality)

@@ -15,7 +15,7 @@ public class MantleableObject : MonoBehaviour, IInteractable
 
     [SerializeField] private float maxMantleDistance = 2f;
     [SerializeField] private float minHeight = 0.8f;
-    [SerializeField] private float maxHeight = 1.6f;
+    [SerializeField] private float maxHeight = 3f;
 
     private void Update()
     {/*
@@ -45,9 +45,9 @@ public class MantleableObject : MonoBehaviour, IInteractable
         /*float dist = Vector3.Distance(player.transform.position, transform.position);
         if (dist > maxMantleDistance) return false;*/
 
-        float heightDiff = mantlePos.y - playerPos.y;
+       /* float heightDiff = mantlePos.y - playerPos.y;
         if (heightDiff < minHeight || heightDiff > maxHeight) return false;
-
+       */
         Vector3 toObject = (mantlePos - playerPos).normalized;
         if (Vector3.Dot(player.transform.forward, toObject) < 0.3f) return false;
 
