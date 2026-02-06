@@ -15,7 +15,7 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
     private List<ObjectiveInstance> completedObjectives = new();
     private bool objectivesInSceneCompleted = false;
 
-    private ObjectiveCanvas objectiveCanvas;
+    [SerializeField] private ObjectiveCanvas objectiveCanvas;
 
     [Header("Events")]
     [HideInInspector] public UnityEvent<ObjectiveInstance> OnObjectiveActivated = new();
@@ -239,9 +239,6 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
         }
 
         Debug.Log("All objectives completed");
-
-        // Clear this scene's objective canvas reference since it shouldn't be needed anymore
-        objectiveCanvas = null;
     }
 
     private void CompleteObjective(ObjectiveInstance objective)
