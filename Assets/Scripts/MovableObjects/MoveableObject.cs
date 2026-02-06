@@ -60,6 +60,9 @@ public class MoveableObject : MonoBehaviour, IInteractable
 
     public bool CanInteract(GameObject player)
     {
+        if (isGrabbable == false)
+            return false;
+
         if (DialogueManager.DialogueIsActive)
             return false;
 
