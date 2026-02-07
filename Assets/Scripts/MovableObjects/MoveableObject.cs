@@ -8,7 +8,11 @@ using System;
 public class MoveableObject : MonoBehaviour, IInteractable
 {
     [SerializeField] private LayerMask groundLayer;
-    [SerializeField] private float moveSlowdownMultiplier = 3f;
+    [SerializeField] private float moveSlowdownDivisor = 3f;
+    [SerializeField] private float sprintSlowdownDivisor = 3f;
+    [SerializeField, Tooltip("Modifies how quickly the player's sprint timer is reduced when this object is held while sprinting")] 
+    private float sprintDepletionFactor = 1.15f;
+    [SerializeField] private bool allowSprint = true;
     [SerializeField] ItemData requiredItem;
     private PlayerMovingObjects playerMovingObjects; 
     private Transform grabPoint;
@@ -253,7 +257,7 @@ public class MoveableObject : MonoBehaviour, IInteractable
                 return;
             }
             Grab(mover.grabPoint);
-            mover.OnMovingObject(this); // merge conflict
+            mover.OnMovingObject(this);
             interacting?.SetHeldObject(this);
         }
         else
@@ -286,5 +290,8 @@ public class MoveableObject : MonoBehaviour, IInteractable
         return false;
     }*/
 
-    public float GetSlowdownMult() => moveSlowdownMultiplier;
+    public float GetMoveSlowdown() => moveSlowdownDivisor;
+    public float GetSprintSlowdown() => sprintSlowdownDivisor;
+    public float GetSprintDepletion() => sprintDepletionFactor;
+    public bool GetAllowSprint() => allowSprint;
 }
