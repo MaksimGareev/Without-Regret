@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -44,9 +45,6 @@ public class PlayerFishing : MonoBehaviour
     private bool input = false;         // whether the cast/reel button is currently held (for reeling)
     private bool isCasting = false;     // whether the hook is currently cast/out
     private bool isCharging = false;
-
-    private float initialTetherLength;
-    private float currentTetherLength;
 
     private bool prevRbUseGravity;
     private bool prevRbKinematic;
@@ -101,6 +99,7 @@ public class PlayerFishing : MonoBehaviour
         }
 
         if (!PlayerComponents.initialized) PlayerComponents.InitializeComponents(gameObject);
+
     }
 
     private void OnInputStarted(InputAction.CallbackContext ctx)
@@ -184,11 +183,7 @@ public class PlayerFishing : MonoBehaviour
         float forceFactor = Mathf.Lerp(0.2f, 1f, normalized);
         float finalForce = castForce * forceFactor;
 
-        // Determine tether length based on charge (up to maxCastDistance)
-        initialTetherLength = Mathf.Lerp(minCastDistance, maxCastDistance, normalized);
-        currentTetherLength = initialTetherLength;
-
-        if (showDebugLogs) Debug.Log($"Released charge. Charge: {normalized:F2}, ForceFactor: {forceFactor:F2}, FinalForce: {finalForce:F2}, TetherLen: {initialTetherLength:F2}");
+        if (showDebugLogs) Debug.Log($"Released charge. Charge: {normalized:F2}, ForceFactor: {forceFactor:F2}, FinalForce: {finalForce:F2}");
 
         isCharging = false;
         if (castChargeSlider != null)
@@ -219,19 +214,10 @@ public class PlayerFishing : MonoBehaviour
         isCasting = true;
         castTime = Time.time;
 
-        // determine final impulse and ensure tether lengths exist
-        Vector3 dir = castOrigin.forward;
-        float forceToUse = overrideForce > 0f ? overrideForce : castForce;
-        if (initialTetherLength <= 0f)
-        {
-            initialTetherLength = maxCastDistance;
-            currentTetherLength = initialTetherLength;
-        }
-
-        // Place hook at the cast origin
+        // Enable the hook object
+        if (showDebugLogs) Debug.Log("Enabling hook.");
         hook.transform.SetPositionAndRotation(castOrigin.position, Quaternion.identity);
         hook.SetActive(true);
-
         if (!hook.TryGetComponent<Rigidbody>(out var rb))
         {
             Debug.LogError("Fishing Hook has no Rigidbody component.");
@@ -248,14 +234,15 @@ public class PlayerFishing : MonoBehaviour
 
         currentHookController.Initialize(OnHooked, OnHookStopped, gameObject);
 
-        // Reset physics before applying impulse and make sure Rigidbody position matches transform
+        // Ensure physics are reset before applying impulse
         rb.isKinematic = false;
-        rb.position = hook.transform.position;
         rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
         rb.useGravity = true;
 
-        // launch with upward arc — apply impulse so hook travels outward toward tether length
+        // launch forward with computed force at an upward arc
+        Vector3 dir = castOrigin.forward;
+        float forceToUse = overrideForce > 0f ? overrideForce : castForce;
         float upward = forceToUse * upwardArcFactor;
         Vector3 totalImpulse = dir.normalized * forceToUse + castOrigin.up * upward;
         rb.AddForce(totalImpulse, ForceMode.Impulse);
@@ -266,47 +253,6 @@ public class PlayerFishing : MonoBehaviour
         // don't allow immediate reeling — enable after distance or delay
         canReel = false;
         input = false;
-    }
-
-    private void FixedUpdate()
-    {
-        // physics-aware tether enforcement: pull the hook to the current tether length if it exceeds it.
-        if (hook == null || !hook.activeSelf) return;
-        if (!hook.TryGetComponent<Rigidbody>(out var rb)) return;
-        if (castOrigin == null) return;
-
-        Vector3 origin = castOrigin.position;
-        Vector3 toHook = hook.transform.position - origin;
-        float dist = toHook.magnitude;
-
-        // If the hook is farther than the current tether length, move it back along the tether.
-        if (dist > currentTetherLength && dist > 0.0001f)
-        {
-            Vector3 targetPos = origin + toHook.normalized * currentTetherLength;
-
-            // Use MovePosition to respect physics while enforcing the tether.
-            rb.MovePosition(targetPos);
-            // zero velocity after move so it doesn't keep "bouncing" away
-            rb.linearVelocity = Vector3.zero;
-            rb.angularVelocity = Vector3.zero;
-
-            // recalc distance after enforcing tether
-            float newDist = Vector3.Distance(origin, hook.transform.position);
-            if (newDist <= 0.25f)
-            {
-                // reached the player — clean up hook
-                CleanupHook();
-                return;
-            }
-        }
-
-        // If an object is hooked, ensure it follows the hook (the tether pulls the hook; hooked object follows)
-        if (currentHookController != null && currentHookController.HookedObject != null)
-        {
-            var hooked = currentHookController.HookedObject;
-            // Move the hooked object toward the hook position smoothly (reel / tether will control effective speed)
-            hooked.transform.position = Vector3.MoveTowards(hooked.transform.position, hook.transform.position, reelSpeed * Time.fixedDeltaTime);
-        }
     }
 
     private void Update()
@@ -338,32 +284,11 @@ public class PlayerFishing : MonoBehaviour
             castChargeSlider.value = normalized;
         }
 
-        // update line renderer from origin to hook, but cap the visual length to the current tether length
+        // update line renderer from origin to hook
         if (showLineRenderer && line.enabled)
         {
-            Vector3 origin = castOrigin.position;
-            Vector3 hookPos = hook.transform.position;
-            line.SetPosition(0, origin);
-
-            // If tether is defined, cap line length to currentTetherLength so it never appears longer than allowed.
-            if (currentTetherLength > 0f)
-            {
-                Vector3 toHook = hookPos - origin;
-                float actualDist = toHook.magnitude;
-                if (actualDist <= currentTetherLength || actualDist <= 0.0001f)
-                {
-                    line.SetPosition(1, hookPos);
-                }
-                else
-                {
-                    line.SetPosition(1, origin + toHook.normalized * currentTetherLength);
-                }
-            }
-            else
-            {
-                // fallback: show actual hook position
-                line.SetPosition(1, hookPos);
-            }
+            line.SetPosition(0, castOrigin.position);
+            line.SetPosition(1, hook.transform.position);
         }
 
         if (currentHookController == null) return;
@@ -431,11 +356,10 @@ public class PlayerFishing : MonoBehaviour
 
     private void Retract()
     {
-        // Shorten tether to pull hook back toward the rod
-        currentTetherLength = Mathf.Max(0.25f, currentTetherLength - reelSpeed * Time.deltaTime);
-
+        // retract hook
+        hook.transform.position = Vector3.MoveTowards(hook.transform.position, castOrigin.position, reelSpeed * Time.deltaTime);
         float dist = Vector3.Distance(castOrigin.position, hook.transform.position);
-        if (dist <= pickupDistance)
+        if (dist <= 0.25f)
         {
             // cleanup hook when it reaches the player
             CleanupHook();
@@ -447,9 +371,7 @@ public class PlayerFishing : MonoBehaviour
         // do something when something gets hooked
         if (hook.gameObject.TryGetComponent<Rigidbody>(out var rb))
         {
-            // stop relative physics motion (hooked object will be pulled by tether)
-            rb.linearVelocity = Vector3.zero;
-            rb.angularVelocity = Vector3.zero;
+            rb.isKinematic = true;
         }
     }
 
@@ -474,11 +396,6 @@ public class PlayerFishing : MonoBehaviour
         line.enabled = false;
         canReel = false;
         isCasting = false;
-
-        // reset tether lengths
-        initialTetherLength = 0f;
-        currentTetherLength = 0f;
-
         if (disableMovementWhileFishing)
         {
             // Reenable movement
