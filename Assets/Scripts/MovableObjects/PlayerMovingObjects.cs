@@ -51,7 +51,7 @@ public class PlayerMovingObjects : MonoBehaviour
         normalSprintSpeed = playerController.SprintSpeed;
         playerController.Speed = normalMoveSpeed / obj.GetMoveSlowdown();
         playerController.SprintSpeed = normalSprintSpeed / obj.GetSprintSlowdown();
-        playerController.MovingObject(true, obj.GetSprintDepletion(), obj.GetAllowSprint());
+        playerController.MovingObject(true, obj.GetSprintDepletion(), obj.GetSprintTimerDecay(), obj.GetAllowSprint());
 
         if (playerController.animator != null)
         {
@@ -73,7 +73,7 @@ public class PlayerMovingObjects : MonoBehaviour
             playerController.animator.SetBool("isGrabbing", false);
         playerController.Speed = normalMoveSpeed;
         playerController.SprintSpeed = normalSprintSpeed;
-        playerController.MovingObject(false, 1f);
+        playerController.MovingObject(false);
 
         if (playerController.animator != null)
         {

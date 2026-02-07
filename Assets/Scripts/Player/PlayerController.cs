@@ -2,7 +2,6 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour, ISaveable
 {
@@ -26,7 +25,10 @@ public class PlayerController : MonoBehaviour, ISaveable
 
     public float SprintTimer = 3f;
     private bool canSprint = true;
+    private bool sprintOnCooldown = false;
     private bool isSprinting = false;
+    private (bool movingObject, float sprintDepletionRate, float sprintDecay, bool allowSprint) moveableObjectMod = (false, 1f, 1f, true);
+    private Coroutine sprintCooldownRoutine;
 
     [Header("Gravity / Ground Settings")]
     private float yVelocity = 0f;
@@ -269,61 +271,129 @@ public class PlayerController : MonoBehaviour, ISaveable
             }
         }
 
-
-
-        // Sprint logic
-        if (isSprinting && canSprint)
+        if (!sprintOnCooldown)
         {
-            if (SprintTimer > 0f)
+            // Change canSprint if cooldown isn't active to avoid unintended re-enabling of sprint
+            canSprint = moveableObjectMod.allowSprint;
+        }
+
+        if (staminaFill != null && staminaSlider != null)
+        {
+            // Sprint logic
+            if (isSprinting && canSprint && !sprintOnCooldown)
             {
-                currentSpeed = SprintSpeed;
-                SprintTimer -= Time.deltaTime;
-                staminaSlider.gameObject.SetActive(true);
-                staminaSlider.value = SprintTimer; //sets slider to stamina when going down
-                animator.speed = 1.4f; // speeds up walk animation when sprinting
+                if (SprintTimer > 0f)
+                {
+                    currentSpeed = SprintSpeed;
+                    float depletionRate = moveableObjectMod.movingObject ? moveableObjectMod.sprintDepletionRate : 1f;
+                    SprintTimer -= Time.deltaTime * depletionRate; // Stamina depletes faster if moving an object
+                    staminaSlider.gameObject.SetActive(true);
+                    staminaSlider.value = SprintTimer; //sets slider to stamina when going down
+                    animator.speed = 1.4f; // speeds up walk animation when sprinting
+
+                    //Debug.Log("Sprinting. Current SprintTimer: " + SprintTimer);
+                }
+                else if (!moveableObjectMod.movingObject)
+                {
+                    canSprint = false;
+                    isSprinting = false;
+                    currentSpeed = Speed;
+
+                    if (staminaFill != null)
+                        staminaFill.color = cooldownColor;
+
+                    if (sprintCooldownRoutine != null)
+                    {
+                        StopCoroutine(sprintCooldownRoutine);
+                    }
+                    sprintOnCooldown = true;
+                    sprintCooldownRoutine = StartCoroutine(SprintCooldown());
+                }
             }
-            else
+            else if (moveableObjectMod.movingObject && !isSprinting && SprintTimer > 0f)
             {
+                // Decay sprint stamina when carrying an object
+                if (sprintCooldownRoutine != null)
+                {
+                    // Stop any existing cooldown routine if we start moving an object again to prevent premature reset of SprintTimer
+                    StopCoroutine(sprintCooldownRoutine);
+                    sprintCooldownRoutine = null;
+                }
+                SprintTimer -= Time.deltaTime * moveableObjectMod.sprintDecay;
+                staminaSlider.gameObject.SetActive(true);
+                staminaSlider.value = SprintTimer;
+                // Don't start cooldown to ensure SprintTimer doesn't reset prematurely
+
+                //Debug.Log("Depleting stamina while moving object. Current SprintTimer: " + SprintTimer);
+            }
+            else if (!moveableObjectMod.movingObject && !sprintOnCooldown && !isSprinting && SprintTimer < Mathf.Epsilon)
+            {
+                // If not moving an object, is not sprinting and stamina is fully depleted, start cooldown
                 canSprint = false;
                 isSprinting = false;
                 currentSpeed = Speed;
 
                 if (staminaFill != null)
                     staminaFill.color = cooldownColor;
-                StartCoroutine(SprintCooldown());
+
+                if (sprintCooldownRoutine != null)
+                {
+                    StopCoroutine(sprintCooldownRoutine);
+                }
+                sprintOnCooldown = true;
+                sprintCooldownRoutine = StartCoroutine(SprintCooldown());
             }
-        }
-        else if (!isSprinting && SprintTimer < SprintDuration)
-        {
-            // Regenerating stamina
-            SprintTimer += Time.deltaTime;
-            staminaSlider.gameObject.SetActive(true);
-            staminaSlider.value = SprintTimer;
-        }
-
-        else if (!isSprinting && SprintTimer >= SprintDuration)
-        {
-            // Stamina is full, start the linger timer
-            SprintTimer = SprintDuration;
-            staminaSlider.value = SprintTimer;
-
-            if (staminaSlider.value >= staminaSlider.maxValue)
+            else if (!moveableObjectMod.movingObject && !isSprinting && SprintTimer < SprintDuration)
             {
-                staminaSlider.gameObject.SetActive(false);
+                // Regenerating stamina
+                SprintTimer += Time.deltaTime;
+                staminaSlider.gameObject.SetActive(true);
+                staminaSlider.value = SprintTimer;
+
+                //Debug.Log("Regenerating stamina. Current SprintTimer: " + SprintTimer);
             }
+            else if (!isSprinting && SprintTimer >= SprintDuration)
+            {
+                // Stamina is full, reset values
+                SprintTimer = SprintDuration;
+                staminaSlider.value = SprintTimer;
+                canSprint = true;
+                sprintOnCooldown = false;
+                if (staminaFill != null)
+                {
+                    staminaFill.color = normalColor;
+                }
 
-            //if (staminaLingerTimer <= 0f)
-            //{
-            //    staminaLingerTimer = staminaLingerDuration; // reset the linger countdown
-            //}
+                if (staminaSlider.value >= staminaSlider.maxValue)
+                {
+                    //if (staminaSlider.gameObject.activeSelf) Debug.Log("Stamina full, deactivating stamina slider.");
 
-            //staminaLingerTimer -= Time.deltaTime;
+                    if (sprintCooldownRoutine != null)
+                    {
+                        StopCoroutine(sprintCooldownRoutine); // Ensure cooldown is stopped when stamina is full
+                        sprintCooldownRoutine = null;
+                    }
 
-            //// When linger finishes, hide the slider
-            //if (staminaLingerTimer <= 0f)
-            //{
-            //    staminaSlider.gameObject.SetActive(false);
-            //}
+                    staminaSlider.gameObject.SetActive(false);
+                }
+
+                //if (staminaLingerTimer <= 0f)
+                //{
+                //    staminaLingerTimer = staminaLingerDuration; // reset the linger countdown
+                //}
+
+                //staminaLingerTimer -= Time.deltaTime;
+
+                //// When linger finishes, hide the slider
+                //if (staminaLingerTimer <= 0f)
+                //{
+                //    staminaSlider.gameObject.SetActive(false);
+                //}
+            }
+        }
+        else if (showDebugLogs)
+        {
+            Debug.LogWarning("Stamina slider or fill not assigned in PlayerController.");
         }
 
         if (gravityEnabled)
@@ -391,7 +461,9 @@ public class PlayerController : MonoBehaviour, ISaveable
 
     IEnumerator SprintCooldown()
     {
+        //Debug.Log("Sprint cooldown started.");
         yield return new WaitForSeconds(sprintCooldown);
+        //Debug.Log("Sprint cooldown ended. Stamina reset.");
         SprintTimer = SprintDuration;
         canSprint = true;
 
@@ -399,6 +471,21 @@ public class PlayerController : MonoBehaviour, ISaveable
         {
             staminaFill.color = normalColor;
         }
+
+        sprintOnCooldown = false;
+        sprintCooldownRoutine = null;
+    }
+
+    public void MovingObject(bool isMovingObject, float sprintReduction = 1f, float sprintDecay = 1f, bool allowSprint = true)
+    {
+        moveableObjectMod = (isMovingObject, sprintReduction, sprintDecay, allowSprint);
+        if (!sprintOnCooldown && allowSprint == false)
+        {
+            // If not currently in cooldown and sprint is disallowed, change canSprint directly
+            canSprint = allowSprint;
+        }
+
+        //Debug.Log($"MovingObject called. isMovingObject: {isMovingObject}, sprintReduction: {sprintReduction}, sprintDecay: {sprintDecay}, allowSprint: {allowSprint}");
     }
 
     public void SetVerticalVelocity(float newVelocity) => yVelocity = newVelocity;
