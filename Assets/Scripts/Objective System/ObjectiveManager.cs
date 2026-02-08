@@ -19,6 +19,7 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
 
     [Header("Events")]
     [HideInInspector] public UnityEvent<ObjectiveInstance> OnObjectiveActivated = new();
+    [HideInInspector] public UnityEvent<ObjectiveInstance> OnObjectiveProgressUpdated = new();
     [HideInInspector] public UnityEvent<ObjectiveInstance> OnObjectiveCompleted = new();
 
     private void Awake()
@@ -176,6 +177,11 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
         if (objective.isCompleted)
         {
             CompleteObjective(objective);
+        }
+        else
+        {
+            // Only invoke progress update if not completed, otherwise completion event will handle it
+            OnObjectiveProgressUpdated.Invoke(objective);
         }
 
         if (SaveManager.Instance != null)
