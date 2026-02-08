@@ -27,7 +27,13 @@ public class PlayerEquipItem : MonoBehaviour
         {
             return;
         }
-        
+
+        // Do nothing if player has a moveableObject currently held
+        if (PlayerComponents.playerMovingObjects.IsOccupied())
+        {
+            return;
+        }
+
         // UnequipItem if clicked on the same slot as currently equipped item
         if (itemToEquip == currentEquippedItem)
         {

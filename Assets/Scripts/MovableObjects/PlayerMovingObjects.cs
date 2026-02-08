@@ -95,5 +95,4 @@ public class PlayerMovingObjects : MonoBehaviour
     }
 
     public bool IsOccupied() => movedObjects.Count > 0;
-
 }

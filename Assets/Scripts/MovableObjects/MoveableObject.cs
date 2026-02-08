@@ -284,6 +284,12 @@ public class MoveableObject : MonoBehaviour, IInteractable
                 Debug.LogError("Player grab point is null!");
                 return;
             }
+            // Can't grab if an item is equipped
+            if (PlayerComponents.playerEquipItem.currentEquippedItem != null)
+            {
+                //Debug.LogWarning("Player tried to grab an object while having an item equipped.");
+                return;
+            }
             Grab(mover.grabPoint);
             mover.OnMovingObject(this);
             interacting.SetHeldObject(this);

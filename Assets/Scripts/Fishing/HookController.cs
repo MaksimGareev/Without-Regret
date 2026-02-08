@@ -52,8 +52,7 @@ public class HookController : MonoBehaviour
         // Freeze the hook on first contact so it stays where it lands, preventing any rolling
         if (TryGetComponent<Rigidbody>(out var rb))
         {
-            rb.linearVelocity = Vector3.zero;
-            rb.angularVelocity = Vector3.zero;
+            rb.Sleep();
         }
 
         // Only attach to MoveableObject if it's grabbable, otherwise we just freeze the hook in place.

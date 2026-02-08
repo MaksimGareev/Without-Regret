@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -15,28 +14,26 @@ public class PlayerFishing : MonoBehaviour
     [SerializeField] private PlayerEquipItem playerEquipItem;  // used to attach reeled object
     [SerializeField] private Slider castChargeSlider;
 
-    private GameObject hook;            // hook object. Should be the only child of the Fishing Rod prefab
+    private GameObject hook; // hook object. Should be the only child of the Fishing Rod (Functional) prefab
 
     [Header("Cast / Reel")]
     [SerializeField] private float castForce = 10f;
-    [SerializeField] private float maxCastDistance = 15f;
+    [SerializeField] private float maxCastDistance = 10f;
     [SerializeField] private float minCastDistance = 2f;
-    [SerializeField] private float upwardArcFactor = 1.75f; // upward component multiplier for the cast's launch arc
     [SerializeField] private float reelSpeed = 8f;
-    [SerializeField] private float pickupDistance = 3.0f; // distance to auto-hold
+    [SerializeField] private float pickupDistance = 3.0f; // distance to auto-hold reeled object
     [SerializeField] private float castCooldown = 0.5f; // time after the hook is cleaned up until it can be cast again
+    [SerializeField] private float reelEnableDelay = 0.75f;   // short delay before enabling reel
     [SerializeField] private bool disableMovementWhileFishing = true;
 
     [Header("Charge")]
-    [SerializeField] private float maxChargeTime = 1.5f; // time to reach full charge (maxCastDistance)
-
-    [Header("Reel Enabling")]
-    [SerializeField] private float reelEnableDistance = 2.5f; // hook must travel this far before reeling is allowed
-    [SerializeField] private float reelEnableDelay = 0.75f;   // short delay before enabling reel
+    [SerializeField, Tooltip("Prefab used to show the moving cast target while charging. If null, a small primitive sphere will be used.")]
+    private GameObject castTargetPrefab;
+    [SerializeField, Tooltip("Speed at which the visible target sweeps between min and max range.")]
+    private float targetSweepSpeed = 1f;
 
     [Header("Debugging")]
     [SerializeField] private bool showDebugLogs = false;
-    [SerializeField] private bool showLineRenderer = true;
 
     private LineRenderer line;
     private HookController currentHookController;
@@ -51,6 +48,14 @@ public class PlayerFishing : MonoBehaviour
 
     private float castTime;
     private float chargeStartTime;
+    private float fishingStartTime;
+
+    // cast target state
+    private GameObject castTargetInstance;
+    private Coroutine castTargetRoutine;
+    private float currentTargetDistance;
+    private Vector3 pendingTargetPosition;
+    private bool hasPendingTarget = false;
 
     private void OnEnable()
     {
@@ -59,6 +64,7 @@ public class PlayerFishing : MonoBehaviour
     private void OnDisable()
     {
         fishingAction.action.Disable();
+        StopAllCoroutines();
     }
 
     private void Awake()
@@ -170,20 +176,33 @@ public class PlayerFishing : MonoBehaviour
             castChargeSlider.value = 0f;
             castChargeSlider.gameObject.SetActive(true);
         }
+
+        // spawn visible target and start sweeping between min/max
+        SpawnCastTarget();
+        castTargetRoutine = StartCoroutine(SweepCastTarget());
     }
 
     private void ReleaseCharge()
     {
         if (!isCharging) return;
 
-        float chargeTime = Time.time - chargeStartTime;
-        float normalized = Mathf.Clamp01(maxChargeTime <= 0f ? 1f : chargeTime / maxChargeTime);
+        // Use the same sweep phase for captured charge value
+        float phase = Mathf.PingPong((Time.time - chargeStartTime) * targetSweepSpeed, 1f);
+        float normalized = Mathf.Clamp01(phase);
 
-        // Scale force by charge. Ensure a small minimum so very short taps still cast.
-        float forceFactor = Mathf.Lerp(0.2f, 1f, normalized);
-        float finalForce = castForce * forceFactor;
+        // Stop target sweep and capture final target position
+        if (castTargetRoutine != null)
+        {
+            StopCoroutine(castTargetRoutine);
+            castTargetRoutine = null;
+        }
+        if (castTargetInstance != null)
+        {
+            pendingTargetPosition = castTargetInstance.transform.position;
+            hasPendingTarget = true;
+        }
 
-        if (showDebugLogs) Debug.Log($"Released charge. Charge: {normalized:F2}, ForceFactor: {forceFactor:F2}, FinalForce: {finalForce:F2}");
+        if (showDebugLogs) Debug.Log($"Released charge. ChargePhase: {normalized:F2} -> targetDistance={currentTargetDistance:F2}");
 
         isCharging = false;
         if (castChargeSlider != null)
@@ -192,8 +211,52 @@ public class PlayerFishing : MonoBehaviour
             castChargeSlider.gameObject.SetActive(false);
         }
 
-        // perform the cast with computed force
-        StartCast(finalForce);
+        // hide the visible target now (StartCast will use pendingTargetPosition)
+        DestroyCastTarget();
+
+        // perform the cast and send the hook to land on the pending target
+        StartCast(); // StartCast will check hasPendingTarget
+    }
+
+    private void SpawnCastTarget()
+    {
+        DestroyCastTarget();
+
+        if (castTargetPrefab != null)
+        {
+            castTargetInstance = Instantiate(castTargetPrefab, castOrigin.position + castOrigin.forward * minCastDistance, Quaternion.identity);
+        }
+        else
+        {
+            // fallback primitive indicator
+            castTargetInstance = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            if (castTargetInstance.TryGetComponent<Collider>(out var col)) Destroy(col);
+            castTargetInstance.transform.position = castOrigin.position + castOrigin.forward * minCastDistance;
+            castTargetInstance.hideFlags = HideFlags.DontSave;
+        }
+    }
+
+    private IEnumerator SweepCastTarget()
+    {
+        if (castTargetInstance == null) yield break;
+
+        while (isCharging && castTargetInstance != null)
+        {
+            // use global phase so slider and target remain synchronized
+            float phase = Mathf.PingPong((Time.time - chargeStartTime) * targetSweepSpeed, 1f); // 0..1..0
+            currentTargetDistance = Mathf.Lerp(minCastDistance, maxCastDistance, phase);
+            castTargetInstance.transform.position = castOrigin.position + castOrigin.forward * currentTargetDistance;
+            yield return null;
+        }
+    }
+
+    private void DestroyCastTarget()
+    {
+        if (castTargetInstance != null)
+        {
+            Destroy(castTargetInstance);
+            castTargetInstance = null;
+        }
     }
 
     private void StartCast(float overrideForce = -1f)
@@ -213,6 +276,9 @@ public class PlayerFishing : MonoBehaviour
 
         isCasting = true;
         castTime = Time.time;
+
+        // mark the moment the hook started its cast so failsafe timing is anchored to the cast
+        fishingStartTime = Time.time;
 
         // Enable the hook object
         if (showDebugLogs) Debug.Log("Enabling hook.");
@@ -240,15 +306,35 @@ public class PlayerFishing : MonoBehaviour
         rb.angularVelocity = Vector3.zero;
         rb.useGravity = true;
 
-        // launch forward with computed force at an upward arc
-        Vector3 dir = castOrigin.forward;
-        float forceToUse = overrideForce > 0f ? overrideForce : castForce;
-        float upward = forceToUse * upwardArcFactor;
-        Vector3 totalImpulse = dir.normalized * forceToUse + castOrigin.up * upward;
-        rb.AddForce(totalImpulse, ForceMode.Impulse);
+        // If a pending target position was captured, compute initial velocity to land on that position.
+        if (hasPendingTarget)
+        {
+            Vector3 origin = castOrigin.position;
+            Vector3 target = pendingTargetPosition;
+
+            Vector3 toTarget = target - origin;
+            // compute time-to-target based on horizontal distance and a speed factor (castForce used as speed baseline)
+            Vector3 toTargetXZ = new(toTarget.x, 0f, toTarget.z);
+            float horizontalDistance = toTargetXZ.magnitude;
+            float speedBaseline = (overrideForce > 0f ? overrideForce : castForce);
+            float time = Mathf.Clamp(horizontalDistance / Mathf.Max(0.1f, speedBaseline), 0.25f, 3f);
+
+            // required initial velocity:
+            Vector3 initialVelocity = toTarget / time - 0.5f * time * Physics.gravity;
+
+            // apply velocity directly so the hook follows physics and lands near target
+            rb.linearVelocity = initialVelocity;
+            rb.angularVelocity = Vector3.zero;
+
+            hasPendingTarget = false;
+        }
+        else
+        {
+            Debug.LogError("No pending target position found for cast.)");
+        }
 
         // enable line
-        if (showLineRenderer) line.enabled = true;
+        line.enabled = true;
 
         // don't allow immediate reeling — enable after distance or delay
         canReel = false;
@@ -276,16 +362,27 @@ public class PlayerFishing : MonoBehaviour
             PlayerComponents.SetCertainComponents(!(isCharging || isCasting), source: gameObject, PlayerComponents.playerController);
         }
 
+        // Failsafe Check
+        if (hook.activeSelf && fishingStartTime > 0f && Time.time > (fishingStartTime + 10f))
+        {
+            float dist = Vector3.Distance(castOrigin.position, hook.transform.position);
+            if (dist >= maxCastDistance * 2f) // if hook somehow got flung very far (e.g. into a void), clean it up
+            {
+                if (showDebugLogs) Debug.LogWarning($"Hook position {hook.transform.position} is out of bounds. Cleaning up hook.");
+                CleanupHook();
+            }
+        }
 
-        // update charge slider while charging
+
+        // update charge slider while charging (make it sweep in sync with target)
         if (isCharging && castChargeSlider != null)
         {
-            float normalized = Mathf.Clamp01(maxChargeTime <= 0f ? 1f : (Time.time - chargeStartTime) / maxChargeTime);
-            castChargeSlider.value = normalized;
+            float phase = Mathf.PingPong((Time.time - chargeStartTime) * targetSweepSpeed, 1f);
+            castChargeSlider.value = Mathf.Clamp01(phase);
         }
 
         // update line renderer from origin to hook
-        if (showLineRenderer && line.enabled)
+        if (line.enabled)
         {
             line.SetPosition(0, castOrigin.position);
             line.SetPosition(1, hook.transform.position);
@@ -299,7 +396,7 @@ public class PlayerFishing : MonoBehaviour
         if (!canReel && isCasting)
         {
             float distance = Vector3.Distance(castOrigin.position, hook.transform.position);
-            if (distance >= reelEnableDistance || Time.time >= castTime + reelEnableDelay)
+            if (distance >= minCastDistance || Time.time >= castTime + reelEnableDelay)
             {
                 canReel = true;
                 if (showDebugLogs) Debug.Log("Reeling enabled (hook traveled sufficient distance or delay elapsed).");
@@ -378,7 +475,8 @@ public class PlayerFishing : MonoBehaviour
     private void OnHookStopped(HookController hookController)
     {
         // if hook destroyed or released
-        CleanupHook();
+        if (hookController.gameObject.activeSelf)
+            CleanupHook();
     }
 
     private void PickupHookedObject(MoveableObject hooked)
@@ -396,6 +494,7 @@ public class PlayerFishing : MonoBehaviour
         line.enabled = false;
         canReel = false;
         isCasting = false;
+        fishingStartTime = -1f;
         if (disableMovementWhileFishing)
         {
             // Reenable movement
@@ -407,6 +506,11 @@ public class PlayerFishing : MonoBehaviour
 
             PlayerComponents.SetCertainComponents(!(isCharging || isCasting), source: gameObject, PlayerComponents.playerController);
         }
+
+        // ensure any target artifacts are removed
+        DestroyCastTarget();
+        hasPendingTarget = false;
+
         StartCoroutine(WaitForCastCooldown());
     }
 
