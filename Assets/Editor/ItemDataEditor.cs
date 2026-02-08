@@ -52,7 +52,14 @@ public class ItemDataEditor : Editor
 
         EditorGUILayout.Space();
         EditorGUILayout.LabelField("Description", EditorStyles.boldLabel);
-        descriptionProp.stringValue = EditorGUILayout.TextArea(descriptionProp.stringValue, GUILayout.MinHeight(60));
+
+        var textAreaStyle = new GUIStyle(EditorStyles.textArea)
+        {
+            wordWrap = true,
+            richText = true
+        };
+
+        descriptionProp.stringValue = EditorGUILayout.TextArea(descriptionProp.stringValue, textAreaStyle, GUILayout.MinHeight(60));
 
         serializedObject.ApplyModifiedProperties();
     }
