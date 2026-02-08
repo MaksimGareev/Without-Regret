@@ -273,7 +273,7 @@ public class LockPicking : MonoBehaviour
 
         if (RewardItem != null)//if thing being unlocked has a reward, put it in the player's inventory
         {
-            //player.GetComponent<Inventory>().AddItem(RewardItem);
+            player.GetComponent<Inventory>().AddItem(RewardItem);
             RewardItem = null;
         }
 
