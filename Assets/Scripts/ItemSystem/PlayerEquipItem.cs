@@ -50,8 +50,10 @@ public class PlayerEquipItem : MonoBehaviour
         if (itemToEquip.VisualPrefab != null)
         {
             equippedItemInstance = Instantiate(itemToEquip.VisualPrefab, equipTransform.transform);
-            equippedItemInstance.transform.localPosition = Vector3.zero;
-            equippedItemInstance.transform.localRotation = Quaternion.identity;
+            equippedItemInstance.transform.localScale = itemToEquip.equippedScaleTransform;
+            equippedItemInstance.transform
+                .SetPositionAndRotation(equipTransform.transform.TransformPoint(itemToEquip.equippedPositionOffset), 
+                equipTransform.transform.rotation * Quaternion.Euler(itemToEquip.equippedRotationOffset));
             currentEquippedItem = itemToEquip;
         }
         else

@@ -40,11 +40,12 @@ public class PlayerFishing : MonoBehaviour
     private bool canReel = false;
     private bool canCast = true;
     private bool input = false;         // whether the cast/reel button is currently held (for reeling)
-    private bool isCasting = false;     // whether the hook is currently cast/out
+    private bool isFishing = false;     // whether the hook is currently cast/out
     private bool isCharging = false;
 
     private bool prevRbUseGravity;
     private bool prevRbKinematic;
+    private RigidbodyConstraints prevRbConstraints;
 
     private float castTime;
     private float chargeStartTime;
@@ -126,7 +127,7 @@ public class PlayerFishing : MonoBehaviour
         }
 
         // If player is not currently casting and is allowed to cast, start charging
-        if (canCast && !canReel && !isCasting && HasRod() && !hook.activeSelf)
+        if (canCast && !canReel && !isFishing && HasRod() && !hook.activeSelf)
         {
             StartCharging();
         }
@@ -138,7 +139,7 @@ public class PlayerFishing : MonoBehaviour
         }
         else
         {
-            if (showDebugLogs) Debug.Log($"Cannot start cast or reel: CanCast={canCast} IsCasting={isCasting} HasRod={HasRod()}");
+            if (showDebugLogs) Debug.Log($"Cannot start cast or reel: CanCast={canCast} IsCasting={isFishing} HasRod={HasRod()}");
         }
     }
 
@@ -262,19 +263,20 @@ public class PlayerFishing : MonoBehaviour
     private void StartCast(float overrideForce = -1f)
     {
         // require no active hook and that line is not currently cast
-        if (hook.activeSelf || isCasting || canReel)
+        if (hook.activeSelf || isFishing || canReel)
         {
             if (showDebugLogs)
-                Debug.Log($"Cannot cast fishing hook: Already casting or hook active. Hook: {hook.activeSelf}, isCasting: {isCasting}, Can Reel: {canReel}");
+                Debug.Log($"Cannot cast fishing hook: Already casting or hook active. Hook: {hook.activeSelf}, isCasting: {isFishing}, Can Reel: {canReel}");
             return;
         }
 
         prevRbUseGravity = PlayerComponents.rb.useGravity;
         prevRbKinematic = PlayerComponents.rb.isKinematic;
+        prevRbConstraints = PlayerComponents.rb.constraints;
 
         if (showDebugLogs) Debug.Log("Casting fishing hook.");
 
-        isCasting = true;
+        isFishing = true;
         castTime = Time.time;
 
         // mark the moment the hook started its cast so failsafe timing is anchored to the cast
@@ -349,7 +351,7 @@ public class PlayerFishing : MonoBehaviour
             return;
         }
 
-        if (disableMovementWhileFishing)
+        if (disableMovementWhileFishing && isFishing)
         {
             // Disable movement while fishing
             PlayerComponents.characterController.Move(Vector3.zero); // Ensure no residual movement
@@ -359,7 +361,7 @@ public class PlayerFishing : MonoBehaviour
             PlayerComponents.rb.linearVelocity = Vector3.zero;
             PlayerComponents.rb.constraints = RigidbodyConstraints.FreezeAll;
 
-            PlayerComponents.SetCertainComponents(!(isCharging || isCasting), source: gameObject, PlayerComponents.playerController);
+            PlayerComponents.SetCertainComponents(!(isCharging || isFishing), source: gameObject, PlayerComponents.playerController);
         }
 
         // Failsafe Check
@@ -393,7 +395,7 @@ public class PlayerFishing : MonoBehaviour
         // enable reeling when either:
         //  - the hook has physically moved a sufficient distance from the origin, or
         //  - a short time delay passed after the cast (helps with slow-launch physics)
-        if (!canReel && isCasting)
+        if (!canReel && isFishing)
         {
             float distance = Vector3.Distance(castOrigin.position, hook.transform.position);
             if (distance >= minCastDistance || Time.time >= castTime + reelEnableDelay)
@@ -475,8 +477,7 @@ public class PlayerFishing : MonoBehaviour
     private void OnHookStopped(HookController hookController)
     {
         // if hook destroyed or released
-        if (hookController.gameObject.activeSelf)
-            CleanupHook();
+        CleanupHook();
     }
 
     private void PickupHookedObject(MoveableObject hooked)
@@ -489,22 +490,23 @@ public class PlayerFishing : MonoBehaviour
     private void CleanupHook()
     {
         if (showDebugLogs) Debug.Log("Cleaning up fishing hook.");
-        hook.SetActive(false);
+        if (hook != null)
+            hook.SetActive(false);
         currentHookController = null;
         line.enabled = false;
         canReel = false;
-        isCasting = false;
+        isFishing = false;
         fishingStartTime = -1f;
         if (disableMovementWhileFishing)
         {
             // Reenable movement
-            PlayerComponents.rb.constraints = RigidbodyConstraints.None;
+            PlayerComponents.rb.constraints = prevRbConstraints;
             PlayerComponents.rb.linearVelocity = Vector3.zero;
             PlayerComponents.rb.angularVelocity = Vector3.zero;
             PlayerComponents.rb.isKinematic = prevRbKinematic;
             PlayerComponents.rb.useGravity = prevRbUseGravity;
 
-            PlayerComponents.SetCertainComponents(!(isCharging || isCasting), source: gameObject, PlayerComponents.playerController);
+            PlayerComponents.SetCertainComponents(!(isCharging || isFishing), source: gameObject, PlayerComponents.playerController);
         }
 
         // ensure any target artifacts are removed

@@ -17,8 +17,11 @@ public class ItemData : ScriptableObject
     [SerializeField] private Sprite invIcon;
     [SerializeField] private GameObject worldPrefab;
     [SerializeField] private GameObject visualPrefab;
-    
-    [TextArea(2, 5)]
+
+    public Vector3 equippedScaleTransform = Vector3.one;
+    public Vector3 equippedPositionOffset;
+    public Vector3 equippedRotationOffset;
+
     [SerializeField] private string description;
 
     public string ItemName => itemName;
