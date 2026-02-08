@@ -5,10 +5,10 @@ using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour, ISaveable
-{
+{   
     [Header("Components")]
     public CharacterController Controller;
-    public Camera PlayerCamera;
+    private Camera PlayerCamera;
     public Animator animator;
     public Slider staminaSlider;
     public Image staminaFill;
@@ -154,8 +154,8 @@ public class PlayerController : MonoBehaviour, ISaveable
         
     }
 
-    private void OnEnable() => controls.Enable();
-    private void OnDisable() => controls.Disable();
+    private void OnEnable() => controls?.Enable();
+    private void OnDisable() => controls?.Disable();
 
     private void Update()
     {
@@ -236,6 +236,10 @@ public class PlayerController : MonoBehaviour, ISaveable
             camRight.y = 0f;
             camRight.Normalize();
             move = camForward * moveInput.y + camRight * moveInput.x;
+        }
+        else
+        {
+            PlayerCamera = Camera.main;
         }
 
         float currentSpeed = Speed;

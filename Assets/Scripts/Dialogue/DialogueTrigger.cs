@@ -74,6 +74,10 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
 
         // Dialogue Manager
         dialogueManager = FindObjectOfType<DialogueManager>();
+        if (dialogueManager == null)
+        {
+            Debug.LogError("DialogueManager not found in the scene. Please add one.");
+        }
 
         if (triggerType == DialogueTriggerType.Story)
         {
@@ -274,6 +278,20 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
 
     private void OnTriggerEnter(Collider other)
     {
+        StartCoroutine(WaitForGameManagerReady(other));
+    }
+
+    private IEnumerator WaitForGameManagerReady(Collider other)
+    {
+        while (!GameManager.Instance.instanceReady)
+        {
+            yield return null; // Wait for the next frame
+        }
+        StartDialogueFromTrigger(other);
+    }
+
+    private void StartDialogueFromTrigger(Collider other)
+    {
         if (triggerType == DialogueTriggerType.NPC) return;
 
         if (other.CompareTag("Player") && !TalkedAlready)
@@ -282,6 +300,12 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
             {
                 enemy.SetActive(true);
             }
+
+            if (dialogueManager == null)
+            {
+                dialogueManager = FindObjectOfType<DialogueManager>();
+            }
+
             if (dialogueManager != null && jsonDialogueFile != null)
             {
                 dialogueManager.StartDialogueFromJson(jsonDialogueFile, this);
