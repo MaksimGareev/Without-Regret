@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -287,6 +288,14 @@ public class SaveManager : MonoBehaviour
         if (PauseManager.Instance != null)
         {
             PauseManager.Instance.ResumeGame();
+        }
+    }
+
+    private IEnumerator WaitForGameManagerReady()
+    {
+        while (!GameManager.Instance.instanceReady)
+        {
+            yield return null; // Wait for the next frame
         }
     }
 
