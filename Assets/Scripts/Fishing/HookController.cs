@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 // helper component for the hook object; detects collisions with moveable objects
@@ -18,6 +19,34 @@ public class HookController : MonoBehaviour
     void Awake()
     {
         gameObject.SetActive(false);
+    }
+
+    private void OnEnable()
+    {
+        // Ensure that the hook's scale is not affected by any parent scaling
+        Vector3 parentScale = transform.parent != null ? transform.parent.localScale : Vector3.one;
+
+        float ix = Mathf.Approximately(parentScale.x, 0f) ? 1f : 1f / parentScale.x;
+        float iy = Mathf.Approximately(parentScale.y, 0f) ? 1f : 1f / parentScale.y;
+        float iz = Mathf.Approximately(parentScale.z, 0f) ? 1f : 1f / parentScale.z;
+
+        transform.localScale = new Vector3(ix, iy, iz);
+    }
+
+    private void OnDisable()
+    {
+        // restore any ignored collisions when the hook is disabled so future uses are clean
+        if (ignoredPairs.Count > 0)
+        {
+            foreach (var (hookCol, playerCol) in ignoredPairs)
+            {
+                if (hookCol != null && playerCol != null)
+                    Physics.IgnoreCollision(hookCol, playerCol, false);
+            }
+            ignoredPairs.Clear();
+        }
+
+        onStopped?.Invoke(this);
     }
 
     // Initialize the controller.
@@ -64,21 +93,5 @@ public class HookController : MonoBehaviour
             HookedObject = moveable;
             onHooked?.Invoke(collision.gameObject, this);
         }
-    }
-
-    private void OnDisable()
-    {
-        // restore any ignored collisions when the hook is disabled so future uses are clean
-        if (ignoredPairs.Count > 0)
-        {
-            foreach (var (hookCol, playerCol) in ignoredPairs)
-            {
-                if (hookCol != null && playerCol != null)
-                    Physics.IgnoreCollision(hookCol, playerCol, false);
-            }
-            ignoredPairs.Clear();
-        }
-
-        onStopped?.Invoke(this);
     }
 }
