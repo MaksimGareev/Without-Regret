@@ -10,6 +10,7 @@ public class PlayerFishing : MonoBehaviour
     [SerializeField] private InputActionReference fishingAction;
 
     [Header("References")]
+    [SerializeField] private ItemData fishingRod;
     [SerializeField] private Transform castOrigin;
     [SerializeField] private PlayerEquipItem playerEquipItem;  // used to attach reeled object
     [SerializeField] private Slider castChargeSlider;
@@ -524,5 +525,5 @@ public class PlayerFishing : MonoBehaviour
         canCast = true;
     }
 
-    bool HasRod() => !(playerEquipItem == null || playerEquipItem.currentEquippedItem == null || !playerEquipItem.currentEquippedItem.ItemName.Equals("Fishing Rod"));
+    bool HasRod() => playerEquipItem != null && playerEquipItem.currentEquippedItem != null && playerEquipItem.currentEquippedItem == fishingRod;
 }
