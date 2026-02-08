@@ -10,8 +10,7 @@ public class Door : MonoBehaviour
     public string sceneToLoad;
     // distance to interact        
     public float interactDistance = 3f;
-    // player
-    public Transform player;
+    private Transform player;
     public ObjectiveData linkedObjective;
     public bool needsObjective = true;
 
@@ -25,7 +24,7 @@ public class Door : MonoBehaviour
 
     private void Start()
     {
-
+        player = GameObject.FindGameObjectWithTag("Player").transform;
     }
 
     void Update()

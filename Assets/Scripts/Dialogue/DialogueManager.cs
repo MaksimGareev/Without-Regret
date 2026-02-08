@@ -150,7 +150,7 @@ public class DialogueManager : MonoBehaviour
     {
         HandleChoiceInput();
 
-        if (DialogueIsActive)
+        if (DialogueIsActive && playerController != null)
         {
             playerController.staminaSlider.gameObject.SetActive(false);
         }

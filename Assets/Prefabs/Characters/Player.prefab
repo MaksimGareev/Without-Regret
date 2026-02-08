@@ -541,20 +541,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Controller: {fileID: 8821119716541630626}
-  PlayerCamera: {fileID: 0}
   animator: {fileID: 1306356219283198842}
   staminaSlider: {fileID: 0}
+  staminaFill: {fileID: 0}
+  normalColor: {r: 0, g: 0.5764706, b: 0.43529412, a: 1}
+  cooldownColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   MovementLocked: 0
   Speed: 4
   SprintSpeed: 8
   SprintDuration: 3
   sprintCooldown: 4
+  staminaLingerDuration: 1
   SprintTimer: 3
   groundCheck: {fileID: 0}
   groundCheckRadius: 0.2
   groundMask:
     serializedVersion: 2
     m_Bits: 0
+  idleTimer: 0
   showDebugLogs: 0
 --- !u!114 &8123318097379088782
 MonoBehaviour:
@@ -652,8 +656,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60122aef9c0269d46893af1ce98c7737, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  keyItems: []
+  otherItems: []
   interactingScript: {fileID: 0}
   backpack: {fileID: 6428672626242342441}
+  AddItemPopup: {fileID: 0}
   showDebugLogs: 0
   hasBackpack: 1
   itemToCollect: {fileID: 0}
@@ -728,6 +735,7 @@ MonoBehaviour:
   mantleSpeed: 3
   showDebugLogs: 1
   showGizmos: 1
+  isMantling: 0
 --- !u!114 &8027853323051968566
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -742,14 +750,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerFishing
   fishingAction: {fileID: 0}
   castOrigin: {fileID: 0}
-  hook: {fileID: 0}
   playerEquipItem: {fileID: 0}
+  castChargeSlider: {fileID: 0}
   castForce: 20
   maxCastDistance: 15
   minCastDistance: 2
+  upwardArcFactor: 1.75
   reelSpeed: 8
   pickupDistance: 1
   castCooldown: 0.5
+  disableMovementWhileFishing: 1
+  maxChargeTime: 1.5
   reelEnableDistance: 2.5
   reelEnableDelay: 0.15
   showDebugLogs: 0
@@ -766,7 +777,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b453a18c1abc7b4fb4d5cd48886ce81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInteracting
-  promptUI: {fileID: 0}
   InputActions: {fileID: -944628639613478452, guid: f1f4dbfd8c64cd440924988ec4fb6f6a, type: 3}
   interactionRange: 1
   interactOffset: 1
