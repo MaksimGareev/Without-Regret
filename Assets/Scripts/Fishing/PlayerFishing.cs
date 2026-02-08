@@ -484,6 +484,7 @@ public class PlayerFishing : MonoBehaviour
     private void PickupHookedObject(MoveableObject hooked)
     {
         // Pick up the reeled-in object
+        PlayerComponents.playerEquipItem.UnequipItem(); // Unequip current item (the rod)
         hooked.OnPlayerInteraction(gameObject);
         CleanupHook();
     }
