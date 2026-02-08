@@ -11589,6 +11589,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 9002670321947954640, guid: 7662f2d8e81713448892b3aeef119273, type: 3}
+      propertyPath: sharedProfile
+      value: 
+      objectReference: {fileID: 11400000, guid: 806e28180935cd1438846ec01e488832, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -12393,6 +12397,7 @@ GameObject:
   - component: {fileID: 1767486106}
   - component: {fileID: 1767486105}
   - component: {fileID: 1767486104}
+  - component: {fileID: 1767486107}
   m_Layer: 0
   m_Name: door (4)
   m_TagString: Untagged
@@ -12471,6 +12476,24 @@ Transform:
   m_Children: []
   m_Father: {fileID: 231162774}
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
+--- !u!114 &1767486107
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1767486103}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc6995ddd5c98c7439fad9eded40dc8f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Door
+  sceneToLoad: AstralForest1-Daniel
+  interactDistance: 5
+  player: {fileID: 163633293}
+  linkedObjective: {fileID: 0}
+  needsObjective: 0
+  interactSound: {fileID: 0}
 --- !u!1001 &1790497129
 PrefabInstance:
   m_ObjectHideFlags: 0
