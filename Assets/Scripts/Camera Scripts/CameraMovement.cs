@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 using UnityEditor;
-using UnityEditor.EditorTools;
+//using UnityEditor.EditorTools;
 
 public class CameraMovement : MonoBehaviour
 {

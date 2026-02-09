@@ -7,7 +7,7 @@ public class Door : MonoBehaviour
 {
     [Header("Door Settings")]
     //scene to load
-    public string sceneToLoad;
+    public SceneReference sceneToLoad;
     // distance to interact        
     public float interactDistance = 3f;
     private Transform player;
@@ -77,7 +77,14 @@ public class Door : MonoBehaviour
         }
         
         yield return new WaitForSeconds(0.1f);
-        SceneManager.LoadScene(sceneToLoad);
+
+        if (sceneToLoad == null || string.IsNullOrEmpty(sceneToLoad.GetSceneName()))
+        {
+            Debug.LogError("Scene to load is not set on the door.");
+            yield break;
+        }
+
+        SceneManager.LoadScene(sceneToLoad.GetSceneName());
     }
 }
 
