@@ -5,13 +5,13 @@ using UnityEngine;
 [RequireComponent(typeof(CanvasGroup))]
 public class ObjectiveCanvas : MonoBehaviour
 {
-    [Header("UI References")]
     [SerializeField] private GameObject objectiveUI;
     [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private TextMeshProUGUI descriptionText;
     [SerializeField] private TextMeshProUGUI progressText;
     [SerializeField] private float fadeDuration = 0.5f;
     [SerializeField] private float visibleDuration = 2f;
+    [SerializeField] private bool showDebugLogs = false;
 
     private ObjectiveInstance currentObjective;
     private Coroutine showRoutine;
@@ -19,6 +19,17 @@ public class ObjectiveCanvas : MonoBehaviour
 
     private void Awake()
     {
+        // If this ObjectiveCanvas is not parented under an ObjectiveManager in the hierarchy,
+        // destroy it immediately to avoid multiple instances in one scene
+        if (GetComponentInParent<ObjectiveManager>() == null)
+        {
+            Debug.LogWarning($"ObjectiveCanvas '{name}' destroyed: not a child of an ObjectiveManager.");
+
+            Destroy(gameObject);
+
+            return;
+        }
+
         if (objectiveUI != null)
         {
             objectiveUI.SetActive(false);
@@ -100,6 +111,11 @@ public class ObjectiveCanvas : MonoBehaviour
             showRoutine = null;
         }
 
+        if (showDebugLogs)
+        {
+            Debug.Log($"Objective Completed: {completedObjective.data.title}");
+        }
+
         showRoutine = StartCoroutine(FadeInUI());
     }
 
@@ -124,6 +140,11 @@ public class ObjectiveCanvas : MonoBehaviour
             showRoutine = null;
         }
 
+        if (showDebugLogs)
+        {
+            Debug.Log($"Objective Progress Updated: {updatedObjective.data.title} - {updatedObjective.currentProgress}/{updatedObjective.data.requiredProgress}");
+        }
+
         showRoutine = StartCoroutine(FadeInUI());
     }
 
@@ -134,20 +155,11 @@ public class ObjectiveCanvas : MonoBehaviour
             titleText.text = "New Objective Started!";
             descriptionText.text = objective.data.title + ": Check your journal for more information.";
             progressText.text = $"Progress: 0/{objective.data.requiredProgress}";
-        }
-        else
-        {
-            titleText.text = "";
-            descriptionText.text = "";
-            progressText.text = "";
-        }
-    }
 
-    void Update()
-    {
-        if (currentObjective != null)
-        {
-            progressText.text = $"{currentObjective.currentProgress} / {currentObjective.data.requiredProgress}";
+            if (showDebugLogs)
+            {
+                Debug.Log($"Objective Activated: {objective.data.title} - {objective.data.description}");
+            }
         }
     }
 
@@ -155,6 +167,11 @@ public class ObjectiveCanvas : MonoBehaviour
     {
         if (objectiveUI == null)
             yield break;
+
+        if (showDebugLogs)
+        {
+            Debug.Log("Fading in Objective UI");
+        }
 
         if (!objectiveUI.TryGetComponent<CanvasGroup>(out var canvasGroup))
         {
@@ -224,6 +241,11 @@ public class ObjectiveCanvas : MonoBehaviour
     {
         if (objectiveUI == null)
             yield break;
+
+        if (showDebugLogs)
+        {
+            Debug.Log("Fading out Objective UI");
+        }
 
         if (!objectiveUI.TryGetComponent<CanvasGroup>(out var canvasGroup))
         {
