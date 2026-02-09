@@ -4,7 +4,7 @@ using UnityEngine.SceneManagement;
 
 public class TransitionToNewLevel : MonoBehaviour
 {
-    public string sceneToLoad;
+    public SceneReference sceneToLoad;
     public ObjectiveData linkedObjective;
     public bool needsObjective = true;
     private bool isObjectiveActive = false;
@@ -72,6 +72,13 @@ public class TransitionToNewLevel : MonoBehaviour
         }
         
         yield return new WaitForSeconds(0.1f);
-        SceneManager.LoadScene(sceneToLoad);
+
+        if (sceneToLoad == null || string.IsNullOrEmpty(sceneToLoad.GetSceneName()))
+        {
+            Debug.LogError("Scene to load is not set or has an invalid name.");
+            yield break;
+        }
+
+        SceneManager.LoadScene(sceneToLoad.GetSceneName());
     }
 }
