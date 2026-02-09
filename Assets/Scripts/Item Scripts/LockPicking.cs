@@ -50,6 +50,14 @@ public class LockPicking : MonoBehaviour
     private int ArrowAttempts = 3;
     private float PickDurability = 2f;
 
+    [Header("Tutorial Vars")]
+    [SerializeField] GameObject TutorialPopUp1;
+    [SerializeField] GameObject TutorialPopUp2;
+    [SerializeField] bool FirstTimeLock;
+    private bool Tut1Active = false;
+    private bool Tut2Active = false;
+
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Start()
     {
@@ -111,7 +119,7 @@ public class LockPicking : MonoBehaviour
             DeactivateLockPick();
         }
 
-        if (!SecondStageActive)// if second stage isn't active, recieves rotation inputs
+        if (!SecondStageActive && !ControlsLocked)// if second stage isn't active, recieves rotation inputs
         {
             if (MovePick == true)
             {
@@ -168,6 +176,12 @@ public class LockPicking : MonoBehaviour
                     Source?.Stop();
                     SecondStageActive = true;
                     StageTwoUI.SetActive(true);//switches controls to stage two, locks pick rotation
+                    if (FirstTimeLock)
+                    {
+                        TutorialPopUp2.SetActive(true);
+                        Tut2Active = true;
+                        ControlsLocked = true;
+                    }
                 }
                 else if (MovePick == false)
                 {
@@ -183,9 +197,9 @@ public class LockPicking : MonoBehaviour
 
             }
         }
-        else if (SecondStageActive)
+        else if (SecondStageActive && !ControlsLocked)
         {
-            if (ArrowIndex < DirectionAssignments.Count && !ControlsLocked)
+            if (ArrowIndex < DirectionAssignments.Count)
             {
                 if (controls.LockPicking.ArrowUp.triggered)
                 {
@@ -209,22 +223,46 @@ public class LockPicking : MonoBehaviour
                 Unlock();
             }
         }
+        else if (Tut1Active)
+        {
+            if (controls.LockPicking.Next.triggered)
+            {
+                TutorialPopUp1.SetActive(false);
+                ControlsLocked = false;
+                Tut1Active = false;
+            }
+        }
+        else if (Tut2Active)
+        {
+            if (controls.LockPicking.Next.triggered)
+            {
+                TutorialPopUp2.SetActive(false);
+                ControlsLocked = false;
+                Tut2Active = false;
+            }
+        }
     }
 
     public void TryUnlock()
     {
-        MovePick = false;
-        KeyPressTime = 1;
+        if (!ControlsLocked)
+        {
+            MovePick = false;
+            KeyPressTime = 1;
+        }
     }
 
     public void CancelUnlock()
     {
-        if (!SecondStageActive)
+        if (!ControlsLocked)
         {
-            PickCursor.localEulerAngles = new Vector3(0, 0, CurrentAngle - 90);
+            if (!SecondStageActive)
+            {
+                PickCursor.localEulerAngles = new Vector3(0, 0, CurrentAngle - 90);
+            }
+            MovePick = true;
+            KeyPressTime = 0;
         }
-        MovePick = true;
-        KeyPressTime = 0;
     }
 
     public void DeactivateLockPick()
@@ -247,6 +285,12 @@ public class LockPicking : MonoBehaviour
 
     public void NewLock(LockedItem lockedItem)
     {
+        if (FirstTimeLock)
+        {
+            TutorialPopUp1.SetActive(true);
+            Tut1Active = true;
+            ControlsLocked = true;
+        }
         currentLockedItem = lockedItem;
         SecondStageActive = false;
         StageTwoUI.SetActive(false);
@@ -270,6 +314,10 @@ public class LockPicking : MonoBehaviour
         ArrowIndex = 0;
         StageTwoUI.SetActive(false);
         LockPickUi.SetActive(false);
+        if(FirstTimeLock == true)
+        {
+            FirstTimeLock = false;
+        }
 
         if (RewardItem != null)//if thing being unlocked has a reward, put it in the player's inventory
         {
