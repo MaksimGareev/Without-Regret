@@ -10,5 +10,6 @@ public enum InteractType
     Mantle,
     Collectable,
     Float,
+    Door,
     Remove
 }
