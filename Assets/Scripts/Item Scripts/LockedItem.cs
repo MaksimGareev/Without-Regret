@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Linq;
 
-public class LockedItem : MonoBehaviour, IInteractable
+public class LockedItem : MonoBehaviour, IInteractable, ISaveable
 {
    public InteractType interactType => InteractType.Lockpick;
     public float interactionPriority => 5f;
@@ -285,5 +285,15 @@ public class LockedItem : MonoBehaviour, IInteractable
             popupInstance = null;
             shouldShowIcon = false;
         }
+    }
+
+    public void SaveTo(SaveData data)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void LoadFrom(SaveData data)
+    {
+        throw new System.NotImplementedException();
     }
 }

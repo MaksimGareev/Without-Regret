@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
@@ -6,7 +7,7 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
-    public bool instanceReady = false;
+    [HideInInspector] public bool instanceReady = false;
     public string currentSceneName;
     public int currentSceneIndex;
 
@@ -37,30 +38,44 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject); // Destroy duplicate GameManager if another instance already exists
         }
 
-        StartCoroutine(WaitForCopiesToDelete());
-
         UpdateChildReferences(); // Update references to child objects
     }
 
     private void OnEnable()
     {
         SceneManager.activeSceneChanged += OnSceneChanged;
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     private void OnDisable()
     {
         SceneManager.activeSceneChanged -= OnSceneChanged;
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        StartCoroutine(WaitForCopiesToDelete());
     }
 
     private IEnumerator WaitForCopiesToDelete()
     {
+        yield return null; // Wait for the next frame to ensure all objects are loaded
+        yield return new WaitForEndOfFrame();
+
         var otherGameManagers = FindObjectsByType<GameManager>(FindObjectsSortMode.None);
         while (otherGameManagers.Length > 1)
         {
-            yield return null; // Wait for the next frame
+            yield return null;
             otherGameManagers = FindObjectsByType<GameManager>(FindObjectsSortMode.None);
         }
-        instanceReady = true; // Set instanceReady to true once all duplicates are deleted
+
+        instanceReady = true;
+
+        if (SaveManager.Instance != null && SceneManager.GetActiveScene().name != "MainMenu")
+        {
+            SaveManager.Instance.LoadGame(SaveSystem.activeSaveSlot);
+        }
     }
 
     private void UpdateChildReferences()
@@ -145,20 +160,34 @@ public class GameManager : MonoBehaviour
                 dialogueManager.SetActive(true);
         }
 
-        var playerControllers = FindObjectsByType<PlayerController>(FindObjectsSortMode.None);
-        if (playerControllers.Length > 0)
+        var players = GameObject.FindGameObjectsWithTag("Player");
+        while (players.Length > 1)
         {
-            foreach (var players in playerControllers)
-            {
-                if (players.gameObject != this.player)
-                {
-                    players.gameObject.SetActive(false);
-                    // If another player instance is found, update the main player reference and destroy the duplicate
-                    player.transform.position = players.transform.position;
-                    player.transform.rotation = players.transform.rotation;
-                    player.transform.localScale = players.transform.localScale; 
+            //yield return null;
+            players = GameObject.FindGameObjectsWithTag("Player");
 
-                    Destroy(players.gameObject);
+            foreach (var otherPlayer in players)
+            {
+                if (otherPlayer.gameObject != this.player)
+                {
+                    // If another player instance is found, update the main player reference and destroy the duplicate
+                    otherPlayer.gameObject.SetActive(false);
+
+                    var data = SaveSystem.Load(SaveSystem.activeSaveSlot);
+
+                    bool hasTransform = 
+                    data != null && 
+                    data.playerSaveData != null &&
+                    data.playerSaveData.TryGetPlayerTransform(currentSceneName, out float[] pos, out float[] rot);
+
+                    if (!hasTransform)
+                    {
+                        this.player.transform.position = otherPlayer.transform.position;
+                        this.player.transform.rotation = otherPlayer.transform.rotation;
+                        this.player.transform.localScale = otherPlayer.transform.localScale; 
+                    }
+                    this.player.SetActive(true);
+                    Destroy(otherPlayer.gameObject);
                 }
             }
         }
