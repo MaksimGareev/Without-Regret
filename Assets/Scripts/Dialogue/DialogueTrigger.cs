@@ -292,7 +292,7 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
 
     private void StartDialogueFromTrigger(Collider other)
     {
-        if (triggerType == DialogueTriggerType.NPC) return;
+        if (triggerType == DialogueTriggerType.NPC || other == null) return;
 
         if (other.CompareTag("Player") && !TalkedAlready)
         {

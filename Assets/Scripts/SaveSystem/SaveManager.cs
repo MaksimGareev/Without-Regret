@@ -23,11 +23,10 @@ public class SaveManager : MonoBehaviour
 
     private void Awake()
     {
-        DontDestroyOnLoad(gameObject);
-
         if (Instance == null)
         {
             Instance = this;
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
@@ -65,15 +64,15 @@ public class SaveManager : MonoBehaviour
     {
         RefreshSaveables();
 
-        if (saveables.Count > 0)
-        {
-            LoadGame(SaveSystem.activeSaveSlot);
-        }
+        // if (saveables.Count > 0)
+        // {
+        //     LoadGame(SaveSystem.activeSaveSlot);
+        // }
 
-        else
-        {
-            Debug.Log("No saveables found; skipping load.");
-        }
+        // else
+        // {
+        //     Debug.Log("No saveables found; skipping load.");
+        // }
 
         inputActions.FindActionMap("Player").Enable();
     }
@@ -198,7 +197,7 @@ public class SaveManager : MonoBehaviour
 
     private void Update()
     {
-        if (shouldAutoSave)
+        if (shouldAutoSave && GameManager.Instance != null && GameManager.Instance.instanceReady)
         {
             autoSaveTimer += Time.deltaTime;
         }
@@ -272,7 +271,7 @@ public class SaveManager : MonoBehaviour
 
         foreach (ISaveable saveable in saveables)
         {
-            if (saveable is PlayerController player)
+            if (saveable is PlayerController player && player.gameObject.GetComponentInParent<GameManager>() != null)
             {
                 player.LoadFrom(data);
                 Debug.Log($"[SaveManager.LoadGame] Loading PlayerController");
@@ -288,14 +287,6 @@ public class SaveManager : MonoBehaviour
         if (PauseManager.Instance != null)
         {
             PauseManager.Instance.ResumeGame();
-        }
-    }
-
-    private IEnumerator WaitForGameManagerReady()
-    {
-        while (!GameManager.Instance.instanceReady)
-        {
-            yield return null; // Wait for the next frame
         }
     }
 

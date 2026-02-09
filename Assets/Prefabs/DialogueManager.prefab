@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1909011670422841878}
   - component: {fileID: 1940466084136260643}
   - component: {fileID: 6859165905719255502}
+  - component: {fileID: 7099347226757012777}
   m_Layer: 0
   m_Name: DialogueManager
   m_TagString: Untagged
@@ -191,6 +192,19 @@ MonoBehaviour:
   ireneDestinationTransform: {fileID: 0}
   IntruderTrigger: {fileID: 0}
   playerMorality: 0
+--- !u!114 &7099347226757012777
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7723209263034436145}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 757ed2ab9148ce049bdd296b48cacc5e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SingletonManager
+  singletonType: 5
 --- !u!1001 &8093223419389299315
 PrefabInstance:
   m_ObjectHideFlags: 0
