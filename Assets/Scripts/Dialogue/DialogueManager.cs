@@ -44,7 +44,8 @@ public class DialogueManager : MonoBehaviour
     private int SelectedChoiceIndex = 0;
     private bool CanChoose = false;
     public TextMeshProUGUI PopupText;
-    public Image holdCircleImage;
+    public List<HoldDirectionVisual> holdVisuals;
+    private Dictionary<ChoiceDirection, HoldDirectionVisual> holdVisualMap;
     public float choiceDistance = 250f;
     private Dictionary<ChoiceDirection, DialogueChoice> directionalChoices = new();
     public float holdTimeToSelect = 1.2f;
@@ -98,6 +99,7 @@ public class DialogueManager : MonoBehaviour
 
     private void Awake()
     {
+        holdVisualMap = new Dictionary<ChoiceDirection, HoldDirectionVisual>();
         controls = new PlayerControls();
         controls.Dialogue.Move.performed += ctx =>
         {
@@ -112,6 +114,15 @@ public class DialogueManager : MonoBehaviour
             MoveDownPressed = false;
         };
 
+        foreach (var visual in holdVisuals)
+        {
+            if (!holdVisualMap.ContainsKey(visual.direction))
+            {
+                holdVisualMap.Add(visual.direction, visual);
+                visual.image.gameObject.SetActive(false);
+            }
+        }
+
         controls.Dialogue.Confirm.performed += ctx => ConfirmPressed = true;
         controls.Dialogue.Confirm.canceled += ctx => ConfirmPressed = false;
     }
@@ -119,10 +130,7 @@ public class DialogueManager : MonoBehaviour
     private void OnEnable()
     {
         controls.Enable();
-        if (holdCircleImage != null)
-        {
-            ResetHoldUI();
-        }
+        ResetHoldUI();
     }
     private void OnDisable() => controls.Disable();
 
@@ -608,7 +616,7 @@ public class DialogueManager : MonoBehaviour
     {
         if (suppressInputOneFrame) return;
 
-        if ((!CanChoose || spawnedChoices.Count == 0) && holdCircleImage != null)
+        if ((!CanChoose || spawnedChoices.Count == 0))
         {
             ResetHoldUI();
             return;
@@ -653,12 +661,10 @@ public class DialogueManager : MonoBehaviour
         ChoiceDirection dir = currentHeldDirection.Value;
 
         HighlightDirection(dir);
-        if (holdCircleImage != null)
-        {
-            UpdateHoldUI(directionHoldTimer / holdTimeToSelect);
-        }
         
-        if (directionHoldTimer >= holdTimeToSelect && holdCircleImage != null)
+        UpdateHoldUI(directionHoldTimer / holdTimeToSelect);
+        
+        if (directionHoldTimer >= holdTimeToSelect)
         {
             CompleteHold(dir);
         }
@@ -666,38 +672,36 @@ public class DialogueManager : MonoBehaviour
 
     private void UpdateHoldUI(float progress)
     {
-        if (holdCircleImage == null) 
+        if (currentHeldDirection == null) 
         {
-            Debug.LogWarning("Hold circle image not assigned!");
+            return;
+        }
+        
+        if (!holdVisualMap.TryGetValue(currentHeldDirection.Value, out var visual))
+        {
             return;
         }
 
-        if (!holdCircleImage.gameObject.activeSelf)
+        if (!visual.image.gameObject.activeSelf)
         {
-            holdCircleImage.gameObject.SetActive(true);
+            visual.image.gameObject.SetActive(true);
         }
 
-        holdCircleImage.fillAmount = Mathf.Clamp01(progress);
+        visual.image.fillAmount = Mathf.Clamp01(progress);
     }
 
     private void ResetHoldUI()
     {
-        if (holdCircleImage == null) 
-        {
-            Debug.LogWarning("Hold circle image not assigned!");
-            return;
-        }
-
         bool releasedDuringGrace = waitingForHoldCompletion;
         
         directionHoldTimer = 0f;
         isHoldingDirection = false;
         currentHeldDirection = null;
 
-        if (holdCircleImage.gameObject.activeSelf)
+        foreach (var visual in holdVisualMap.Values)
         {
-            holdCircleImage.fillAmount = 0f;
-            holdCircleImage.gameObject.SetActive(false);
+            visual.image.fillAmount = 0f;
+            visual.image.gameObject.SetActive(false);
         }
 
         // Player released after timer expired
@@ -710,13 +714,9 @@ public class DialogueManager : MonoBehaviour
 
     private void CompleteHold(ChoiceDirection dir)
     {
-        if (holdCircleImage == null) 
-        {
-            Debug.LogWarning("Hold circle image not assigned!");
-            return;
-        }
+        if (!CanChoose) return;
 
-        holdCircleImage.fillAmount = 1f;
+        CanChoose = false;
         SelectDirectionalChoice(dir);
         ResetHoldUI();
     }
@@ -748,8 +748,7 @@ public class DialogueManager : MonoBehaviour
         // base color of text is white
         foreach (var obj in spawnedChoices)
         {
-            var txt = obj.GetComponentInChildren<TextMeshProUGUI>();
-            txt.color = Color.white;
+            obj.GetComponentInChildren<TextMeshProUGUI>().color = Color.white;
         }
 
         if (!directionalChoices.ContainsKey(dir)) return;
@@ -779,7 +778,11 @@ public class DialogueManager : MonoBehaviour
                 selectedText.color = Color.yellow;
             }
 
-            holdCircleImage.transform.position = spawnedChoices[selectedIndex].transform.position;
+            if (holdVisualMap.TryGetValue(dir, out var visual))
+            {
+                RectTransform choiceRT = spawnedChoices[selectedIndex].GetComponent<RectTransform>();
+                RectTransform visualRT = visual.image.GetComponent<RectTransform>();
+            }
         }
     }
 
@@ -791,11 +794,11 @@ public class DialogueManager : MonoBehaviour
         currentHeldDirection = null;
         directionHoldTimer = 0f;
 
-        if (holdCircleImage != null)
+        /*if (holdCircleImage != null)
         {
             holdCircleImage.fillAmount = 0f;
             holdCircleImage.gameObject.SetActive(false);
-        }
+        }*/
 
         // prevent confirm from instantly skipping the next line
         ConfirmPressed = false;
