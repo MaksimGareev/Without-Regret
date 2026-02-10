@@ -15,11 +15,22 @@ public class DialogueManager : MonoBehaviour
     public GameObject ContinueArrow;
     public GameObject DirectionalImage;
     public ScrollRect dialogueScrollRect;
-
     private List<GameObject> spawnedChoices = new List<GameObject>();
     private DialogueData currentDialogue;
     private int currentIndex = 0;
     private bool IsTyping;
+
+    // Player Portrait
+    public Image playerPortrait;
+    public Sprite defaultPortrait;
+    public Sprite positivePortrait;
+    public Sprite negativePortrait;
+    public Sprite neutralPortrait;
+    public float portraitFadeDuration = 0.25f;
+    public float portraitHoldTime = 0.75f;
+
+    private Coroutine portraitRoutine;
+    private CanvasGroup portraitCanvasGroup;
 
     // Letter sounds
     public AudioSource TypingAudioSource;
@@ -140,17 +151,29 @@ public class DialogueManager : MonoBehaviour
         playerMorality = 0;
         PlayerPrefs.SetInt("Morality", playerMorality);
         PlayerPrefs.Save();
+
         //playerMorality = PlayerPrefs.GetInt("Morality", 0);
         if (IntruderTrigger != null)
         {
             IntruderTrigger.SetActive(false);
         }
+
         // Build letter sound dictionary
         letterSounds = new Dictionary<char, AudioClip>();
         for (int i = 0; i < letterClips.Count && i < 26; i++)
         {
             char letter = (char)('A' + i);
             letterSounds[letter] = letterClips[i];
+        }
+
+        if (playerPortrait != null)
+        {
+            portraitCanvasGroup = playerPortrait.GetComponent<CanvasGroup>();
+
+            if (portraitCanvasGroup == null) portraitCanvasGroup = playerPortrait.gameObject.AddComponent<CanvasGroup>();
+
+            playerPortrait.sprite = defaultPortrait;
+            portraitCanvasGroup.alpha = 1f;
         }
     }
 
@@ -280,6 +303,7 @@ public class DialogueManager : MonoBehaviour
         }
 
         DialogueLine line = currentDialogue.dialogueLines[currentIndex];
+        NPCNameText.text = line.speaker;
 
         if (line.requiredMorality != 0)
         {
@@ -313,6 +337,21 @@ public class DialogueManager : MonoBehaviour
         }
 
     }
+
+    // apply updates to NPC face portraits
+   /* private void UpdateSpeakerVisuals(string speaker)
+    {
+        switch (speaker)
+        {
+            case "Reed":
+                NPCPortrait.sprite = defaultNPCPortrait;
+                break;
+
+            case "Darry":
+                // darry portrait
+                break;
+        }
+    }*/
 
     private IEnumerator TypeLine(string text)
     {
@@ -670,6 +709,55 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
+    // Change echo portrait based on answer selection
+    private IEnumerator SwapPortrait(Sprite newPortrait)
+    {
+        if (playerPortrait == null || portraitCanvasGroup == null) yield break;
+
+        // fade out
+        float t = 0f;
+        while (t < portraitFadeDuration)
+        {
+            t += Time.deltaTime;
+            portraitCanvasGroup.alpha = Mathf.Lerp(1f, 0f, t / portraitFadeDuration);
+            yield return null;
+        }
+
+        // swap image
+        playerPortrait.sprite = newPortrait;
+
+        // fade in
+        t = 0f;
+        while (t < portraitFadeDuration)
+        {
+            t += Time.deltaTime;
+            portraitCanvasGroup.alpha = Mathf.Lerp(0f, 1f, t / portraitFadeDuration);
+            yield return null;
+        }
+
+        // hold 
+        yield return new WaitForSeconds(portraitHoldTime);
+
+        // fade back to default
+        t = 0f;
+        while (t < portraitFadeDuration)
+        {
+            t += Time.deltaTime;
+            portraitCanvasGroup.alpha = Mathf.Lerp(1f, 0f, t / portraitFadeDuration);
+            yield return null;
+        }
+
+        playerPortrait.sprite = defaultPortrait;
+
+        t = 0f;
+        while (t < portraitFadeDuration)
+        {
+            t += Time.deltaTime;
+            portraitCanvasGroup.alpha = Mathf.Lerp(0f, 1f, t / portraitFadeDuration);
+            yield return null;
+        }
+    }
+
     private void UpdateHoldUI(float progress)
     {
         if (currentHeldDirection == null) 
@@ -836,6 +924,19 @@ public class DialogueManager : MonoBehaviour
         {
             neutralChoiceCount++;
         }
+
+        // change portrait based on morality
+        if (portraitRoutine != null)
+        {
+            StopCoroutine(portraitRoutine);
+        }
+
+        Sprite portraitToUse =
+                chosen.moralityChange > 0 ? positivePortrait :
+                chosen.moralityChange < 0 ? negativePortrait :
+                neutralPortrait;
+
+        portraitRoutine = StartCoroutine(SwapPortrait(portraitToUse));
 
         // clear old choices
         foreach (var b in spawnedChoices) Destroy(b);
