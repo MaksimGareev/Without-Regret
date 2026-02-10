@@ -259,6 +259,7 @@ public class PlayerPossessing : MonoBehaviour
 
     private void ClearTargetInfo()
     {
+        DisablePopupIcon();
         possessedEnemyMovement = null;
         normalEnemyMovement = null;
         enemyPOV = null;

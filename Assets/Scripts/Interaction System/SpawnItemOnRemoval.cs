@@ -1,8 +1,9 @@
 using UnityEngine;
 
+[RequireComponent(typeof(RemoveableObject))]
 public class SpawnItemOnRemoval : MonoBehaviour
 {
-    [SerializeField] RemoveableObject removeableObject;
+    private RemoveableObject removeableObject;
     [SerializeField] GameObject itemPrefabToSpawn;
     [SerializeField] Vector3 positionOffset = Vector3.zero;
     [SerializeField] Quaternion rotationOffset = Quaternion.identity;
