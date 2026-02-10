@@ -2,17 +2,24 @@ using System.Collections;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Linq;
 
-public class Door : MonoBehaviour
+public class Door : MonoBehaviour, IInteractable
 {
     [Header("Door Settings")]
     //scene to load
     public SceneReference sceneToLoad;
-    // distance to interact        
+
+    // Interaction      
     public float interactDistance = 3f;
+    public float interactionPriority => 5f;
+    public InteractType interactType => InteractType.Door;
+
+    // Player
     private Transform player;
     public ObjectiveData linkedObjective;
     public bool needsObjective = true;
+
 
     [Header("Audio Settings")]
 
@@ -29,7 +36,7 @@ public class Door : MonoBehaviour
 
     void Update()
     {
-        if (player != null && Vector3.Distance(player.position, transform.position) <= interactDistance)
+        /*if (player != null && Vector3.Distance(player.position, transform.position) <= interactDistance)
         {
             isPlayerNear = true;
 
@@ -42,12 +49,26 @@ public class Door : MonoBehaviour
         else
         {
             isPlayerNear = false;
-        }
+        }*/
+    }
+
+    public bool CanInteract(GameObject player)
+    {
+        if (!needsObjective) return true;
+        
+
+        var completed = ObjectiveManager.Instance.GetCompletedObjectives();
+        return completed.Any(o => o.data == linkedObjective);
+    }
+
+    public void OnPlayerInteraction(GameObject player)
+    {
+        StartCoroutine(WaitToLoadScene());
     }
 
     void LoadScene()
     {
-        if (needsObjective)
+        /*if (needsObjective)
         {
             var completeObjectives = ObjectiveManager.Instance.GetCompletedObjectives();
             foreach (var obj in completeObjectives)
@@ -66,7 +87,7 @@ public class Door : MonoBehaviour
         else
         {
             StartCoroutine(WaitToLoadScene());
-        }
+        }*/
     }
 
     private IEnumerator WaitToLoadScene()

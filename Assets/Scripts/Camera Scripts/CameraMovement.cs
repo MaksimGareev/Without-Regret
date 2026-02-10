@@ -73,8 +73,8 @@ public class CameraMovement : MonoBehaviour
     private float yaw;
     private float pitch;
     private Quaternion initialRotation;
-    private PlayerThrowing playerThrowing;
-    private bool isThrowing;
+    //private PlayerThrowing playerThrowing;
+    //private bool isThrowing;
     private ToggleInventoryUI toggleInventoryUI;
     private float mouseResetTimer;
     private bool lastInputWasMouse = false;
@@ -115,7 +115,7 @@ public class CameraMovement : MonoBehaviour
             return;
         }
 
-        playerThrowing = target.GetComponent<PlayerThrowing>();
+        //playerThrowing = target.GetComponent<PlayerThrowing>();
         toggleInventoryUI = target.GetComponent<ToggleInventoryUI>();
 
         Vector3 facingVector = DirectionToVector(defaultFacingDirection);
@@ -193,10 +193,10 @@ public class CameraMovement : MonoBehaviour
 
         bool hasLookInput = lookInput.sqrMagnitude > 0.0001f;
 
-        if (playerThrowing != null)
-        {
-            isThrowing = playerThrowing.GetIsCharging();
-        }
+        //if (playerThrowing != null)
+        //{
+        //    isThrowing = playerThrowing.GetIsCharging();
+        //}
 
         if (!hasLookInput && mouseResetTimer >= 0)
         {
@@ -312,19 +312,20 @@ public class CameraMovement : MonoBehaviour
             yield break;
         }
 
-        Vector3 currentPos = transform.position;
-        Quaternion currentRot = transform.rotation;
+        // TO FIX: With this implementation, the camera will snap back to the original position and rotation at the end of the coroutine
+        // Because LateUpdate will override the position and rotation once it finishes.
+        // Commenting this out for now so it's a little less jarring, but a smooth transition would be ideal later
 
-        float t = 0;
-        while (t < zoomDuration)
-        {
-            t += Time.deltaTime * transitionSpeed;
-            transform.position = Vector3.Lerp(currentPos, camPosCache, t);
-            transform.rotation = Quaternion.Slerp(currentRot, camRotCache, t);
-            Vector3 lookAtPos = Vector3.Lerp(lookAtCache, target.position + currentLookAtOffset, t);
-            transform.LookAt(lookAtPos);
-            yield return null;
-        }
+        //transform.GetPositionAndRotation(out Vector3 currentPos, out Quaternion currentRot);
+        //float t = 0;
+        //while (t < zoomDuration)
+        //{
+        //    t += Time.deltaTime * transitionSpeed;
+        //    transform.SetPositionAndRotation(Vector3.Lerp(currentPos, camPosCache, t), Quaternion.Slerp(currentRot, camRotCache, t));
+        //    Vector3 lookAtPos = Vector3.Lerp(lookAtCache, target.position + currentLookAtOffset, t);
+        //    transform.LookAt(lookAtPos);
+        //    yield return null;
+        //}
 
         isZooming = false;
         CameraLocked = false;
@@ -392,8 +393,7 @@ public class CameraMovement : MonoBehaviour
             yield return null;
         }
 
-        transform.position = targetPos;
-        transform.rotation = targetRot;
+        transform.SetPositionAndRotation(targetPos, targetRot);
     }
 
     public void SetCameraLocked(bool locked)

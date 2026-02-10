@@ -10,49 +10,54 @@ public class PlayerFishing : MonoBehaviour
     [SerializeField] private InputActionReference fishingAction;
 
     [Header("References")]
+    [SerializeField] private ItemData fishingRod;
     [SerializeField] private Transform castOrigin;
     [SerializeField] private PlayerEquipItem playerEquipItem;  // used to attach reeled object
     [SerializeField] private Slider castChargeSlider;
 
-    private GameObject hook;            // hook object. Should be the only child of the Fishing Rod prefab
+    private GameObject hook; // hook object. Should be the only child of the Fishing Rod (Functional) prefab
 
     [Header("Cast / Reel")]
     [SerializeField] private float castForce = 10f;
-    [SerializeField] private float maxCastDistance = 15f;
+    [SerializeField] private float maxCastDistance = 10f;
     [SerializeField] private float minCastDistance = 2f;
-    [SerializeField] private float upwardArcFactor = 1.75f; // upward component multiplier for the cast's launch arc
     [SerializeField] private float reelSpeed = 8f;
-    [SerializeField] private float pickupDistance = 3.0f; // distance to auto-hold
+    [SerializeField] private float pickupDistance = 3.0f; // distance to auto-hold reeled object
     [SerializeField] private float castCooldown = 0.5f; // time after the hook is cleaned up until it can be cast again
+    [SerializeField] private float reelEnableDelay = 0.75f;   // short delay before enabling reel
     [SerializeField] private bool disableMovementWhileFishing = true;
 
     [Header("Charge")]
-    [SerializeField] private float maxChargeTime = 1.5f; // time to reach full charge (maxCastDistance)
-
-    [Header("Reel Enabling")]
-    [SerializeField] private float reelEnableDistance = 2.5f; // hook must travel this far before reeling is allowed
-    [SerializeField] private float reelEnableDelay = 0.75f;   // short delay before enabling reel
+    [SerializeField, Tooltip("Prefab used to show the moving cast target while charging. If null, a small primitive sphere will be used.")]
+    private GameObject castTargetPrefab;
+    [SerializeField, Tooltip("Speed at which the visible target sweeps between min and max range.")]
+    private float targetSweepSpeed = 1f;
 
     [Header("Debugging")]
     [SerializeField] private bool showDebugLogs = false;
-    [SerializeField] private bool showLineRenderer = true;
 
     private LineRenderer line;
     private HookController currentHookController;
     private bool canReel = false;
     private bool canCast = true;
     private bool input = false;         // whether the cast/reel button is currently held (for reeling)
-    private bool isCasting = false;     // whether the hook is currently cast/out
+    private bool isFishing = false;     // whether the hook is currently cast/out
     private bool isCharging = false;
-
-    private float initialTetherLength;
-    private float currentTetherLength;
 
     private bool prevRbUseGravity;
     private bool prevRbKinematic;
+    private RigidbodyConstraints prevRbConstraints;
 
     private float castTime;
     private float chargeStartTime;
+    private float fishingStartTime;
+
+    // cast target state
+    private GameObject castTargetInstance;
+    private Coroutine castTargetRoutine;
+    private float currentTargetDistance;
+    private Vector3 pendingTargetPosition;
+    private bool hasPendingTarget = false;
 
     private void OnEnable()
     {
@@ -61,6 +66,7 @@ public class PlayerFishing : MonoBehaviour
     private void OnDisable()
     {
         fishingAction.action.Disable();
+        StopAllCoroutines();
     }
 
     private void Awake()
@@ -101,6 +107,7 @@ public class PlayerFishing : MonoBehaviour
         }
 
         if (!PlayerComponents.initialized) PlayerComponents.InitializeComponents(gameObject);
+
     }
 
     private void OnInputStarted(InputAction.CallbackContext ctx)
@@ -121,7 +128,7 @@ public class PlayerFishing : MonoBehaviour
         }
 
         // If player is not currently casting and is allowed to cast, start charging
-        if (canCast && !canReel && !isCasting && HasRod() && !hook.activeSelf)
+        if (canCast && !canReel && !isFishing && HasRod() && !hook.activeSelf)
         {
             StartCharging();
         }
@@ -133,7 +140,7 @@ public class PlayerFishing : MonoBehaviour
         }
         else
         {
-            if (showDebugLogs) Debug.Log($"Cannot start cast or reel: CanCast={canCast} IsCasting={isCasting} HasRod={HasRod()}");
+            if (showDebugLogs) Debug.Log($"Cannot start cast or reel: CanCast={canCast} IsCasting={isFishing} HasRod={HasRod()}");
         }
     }
 
@@ -171,24 +178,33 @@ public class PlayerFishing : MonoBehaviour
             castChargeSlider.value = 0f;
             castChargeSlider.gameObject.SetActive(true);
         }
+
+        // spawn visible target and start sweeping between min/max
+        SpawnCastTarget();
+        castTargetRoutine = StartCoroutine(SweepCastTarget());
     }
 
     private void ReleaseCharge()
     {
         if (!isCharging) return;
 
-        float chargeTime = Time.time - chargeStartTime;
-        float normalized = Mathf.Clamp01(maxChargeTime <= 0f ? 1f : chargeTime / maxChargeTime);
+        // Use the same sweep phase for captured charge value
+        float phase = Mathf.PingPong((Time.time - chargeStartTime) * targetSweepSpeed, 1f);
+        float normalized = Mathf.Clamp01(phase);
 
-        // Scale force by charge. Ensure a small minimum so very short taps still cast.
-        float forceFactor = Mathf.Lerp(0.2f, 1f, normalized);
-        float finalForce = castForce * forceFactor;
+        // Stop target sweep and capture final target position
+        if (castTargetRoutine != null)
+        {
+            StopCoroutine(castTargetRoutine);
+            castTargetRoutine = null;
+        }
+        if (castTargetInstance != null)
+        {
+            pendingTargetPosition = castTargetInstance.transform.position;
+            hasPendingTarget = true;
+        }
 
-        // Determine tether length based on charge (up to maxCastDistance)
-        initialTetherLength = Mathf.Lerp(minCastDistance, maxCastDistance, normalized);
-        currentTetherLength = initialTetherLength;
-
-        if (showDebugLogs) Debug.Log($"Released charge. Charge: {normalized:F2}, ForceFactor: {forceFactor:F2}, FinalForce: {finalForce:F2}, TetherLen: {initialTetherLength:F2}");
+        if (showDebugLogs) Debug.Log($"Released charge. ChargePhase: {normalized:F2} -> targetDistance={currentTargetDistance:F2}");
 
         isCharging = false;
         if (castChargeSlider != null)
@@ -197,41 +213,80 @@ public class PlayerFishing : MonoBehaviour
             castChargeSlider.gameObject.SetActive(false);
         }
 
-        // perform the cast with computed force
-        StartCast(finalForce);
+        // hide the visible target now (StartCast will use pendingTargetPosition)
+        DestroyCastTarget();
+
+        // perform the cast and send the hook to land on the pending target
+        StartCast(); // StartCast will check hasPendingTarget
+    }
+
+    private void SpawnCastTarget()
+    {
+        DestroyCastTarget();
+
+        if (castTargetPrefab != null)
+        {
+            castTargetInstance = Instantiate(castTargetPrefab, castOrigin.position + castOrigin.forward * minCastDistance, Quaternion.identity);
+        }
+        else
+        {
+            // fallback primitive indicator
+            castTargetInstance = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            if (castTargetInstance.TryGetComponent<Collider>(out var col)) Destroy(col);
+            castTargetInstance.transform.position = castOrigin.position + castOrigin.forward * minCastDistance;
+            castTargetInstance.hideFlags = HideFlags.DontSave;
+        }
+    }
+
+    private IEnumerator SweepCastTarget()
+    {
+        if (castTargetInstance == null) yield break;
+
+        while (isCharging && castTargetInstance != null)
+        {
+            // use global phase so slider and target remain synchronized
+            float phase = Mathf.PingPong((Time.time - chargeStartTime) * targetSweepSpeed, 1f); // 0..1..0
+            currentTargetDistance = Mathf.Lerp(minCastDistance, maxCastDistance, phase);
+            castTargetInstance.transform.position = castOrigin.position + castOrigin.forward * currentTargetDistance;
+            yield return null;
+        }
+    }
+
+    private void DestroyCastTarget()
+    {
+        if (castTargetInstance != null)
+        {
+            Destroy(castTargetInstance);
+            castTargetInstance = null;
+        }
     }
 
     private void StartCast(float overrideForce = -1f)
     {
         // require no active hook and that line is not currently cast
-        if (hook.activeSelf || isCasting || canReel)
+        if (hook.activeSelf || isFishing || canReel)
         {
             if (showDebugLogs)
-                Debug.Log($"Cannot cast fishing hook: Already casting or hook active. Hook: {hook.activeSelf}, isCasting: {isCasting}, Can Reel: {canReel}");
+                Debug.Log($"Cannot cast fishing hook: Already casting or hook active. Hook: {hook.activeSelf}, isCasting: {isFishing}, Can Reel: {canReel}");
             return;
         }
 
         prevRbUseGravity = PlayerComponents.rb.useGravity;
         prevRbKinematic = PlayerComponents.rb.isKinematic;
+        prevRbConstraints = PlayerComponents.rb.constraints;
 
         if (showDebugLogs) Debug.Log("Casting fishing hook.");
 
-        isCasting = true;
+        isFishing = true;
         castTime = Time.time;
 
-        // determine final impulse and ensure tether lengths exist
-        Vector3 dir = castOrigin.forward;
-        float forceToUse = overrideForce > 0f ? overrideForce : castForce;
-        if (initialTetherLength <= 0f)
-        {
-            initialTetherLength = maxCastDistance;
-            currentTetherLength = initialTetherLength;
-        }
+        // mark the moment the hook started its cast so failsafe timing is anchored to the cast
+        fishingStartTime = Time.time;
 
-        // Place hook at the cast origin
+        // Enable the hook object
+        if (showDebugLogs) Debug.Log("Enabling hook.");
         hook.transform.SetPositionAndRotation(castOrigin.position, Quaternion.identity);
         hook.SetActive(true);
-
         if (!hook.TryGetComponent<Rigidbody>(out var rb))
         {
             Debug.LogError("Fishing Hook has no Rigidbody component.");
@@ -248,65 +303,45 @@ public class PlayerFishing : MonoBehaviour
 
         currentHookController.Initialize(OnHooked, OnHookStopped, gameObject);
 
-        // Reset physics before applying impulse and make sure Rigidbody position matches transform
+        // Ensure physics are reset before applying impulse
         rb.isKinematic = false;
-        rb.position = hook.transform.position;
         rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
         rb.useGravity = true;
 
-        // launch with upward arc — apply impulse so hook travels outward toward tether length
-        float upward = forceToUse * upwardArcFactor;
-        Vector3 totalImpulse = dir.normalized * forceToUse + castOrigin.up * upward;
-        rb.AddForce(totalImpulse, ForceMode.Impulse);
+        // If a pending target position was captured, compute initial velocity to land on that position.
+        if (hasPendingTarget)
+        {
+            Vector3 origin = castOrigin.position;
+            Vector3 target = pendingTargetPosition;
+
+            Vector3 toTarget = target - origin;
+            // compute time-to-target based on horizontal distance and a speed factor (castForce used as speed baseline)
+            Vector3 toTargetXZ = new(toTarget.x, 0f, toTarget.z);
+            float horizontalDistance = toTargetXZ.magnitude;
+            float speedBaseline = (overrideForce > 0f ? overrideForce : castForce);
+            float time = Mathf.Clamp(horizontalDistance / Mathf.Max(0.1f, speedBaseline), 0.25f, 3f);
+
+            // required initial velocity:
+            Vector3 initialVelocity = toTarget / time - 0.5f * time * Physics.gravity;
+
+            // apply velocity directly so the hook follows physics and lands near target
+            rb.linearVelocity = initialVelocity;
+            rb.angularVelocity = Vector3.zero;
+
+            hasPendingTarget = false;
+        }
+        else
+        {
+            Debug.LogError("No pending target position found for cast.)");
+        }
 
         // enable line
-        if (showLineRenderer) line.enabled = true;
+        line.enabled = true;
 
         // don't allow immediate reeling — enable after distance or delay
         canReel = false;
         input = false;
-    }
-
-    private void FixedUpdate()
-    {
-        // physics-aware tether enforcement: pull the hook to the current tether length if it exceeds it.
-        if (hook == null || !hook.activeSelf) return;
-        if (!hook.TryGetComponent<Rigidbody>(out var rb)) return;
-        if (castOrigin == null) return;
-
-        Vector3 origin = castOrigin.position;
-        Vector3 toHook = hook.transform.position - origin;
-        float dist = toHook.magnitude;
-
-        // If the hook is farther than the current tether length, move it back along the tether.
-        if (dist > currentTetherLength && dist > 0.0001f)
-        {
-            Vector3 targetPos = origin + toHook.normalized * currentTetherLength;
-
-            // Use MovePosition to respect physics while enforcing the tether.
-            rb.MovePosition(targetPos);
-            // zero velocity after move so it doesn't keep "bouncing" away
-            rb.linearVelocity = Vector3.zero;
-            rb.angularVelocity = Vector3.zero;
-
-            // recalc distance after enforcing tether
-            float newDist = Vector3.Distance(origin, hook.transform.position);
-            if (newDist <= 0.25f)
-            {
-                // reached the player — clean up hook
-                CleanupHook();
-                return;
-            }
-        }
-
-        // If an object is hooked, ensure it follows the hook (the tether pulls the hook; hooked object follows)
-        if (currentHookController != null && currentHookController.HookedObject != null)
-        {
-            var hooked = currentHookController.HookedObject;
-            // Move the hooked object toward the hook position smoothly (reel / tether will control effective speed)
-            hooked.transform.position = Vector3.MoveTowards(hooked.transform.position, hook.transform.position, reelSpeed * Time.fixedDeltaTime);
-        }
     }
 
     private void Update()
@@ -317,7 +352,7 @@ public class PlayerFishing : MonoBehaviour
             return;
         }
 
-        if (disableMovementWhileFishing)
+        if (disableMovementWhileFishing && isFishing)
         {
             // Disable movement while fishing
             PlayerComponents.characterController.Move(Vector3.zero); // Ensure no residual movement
@@ -327,43 +362,33 @@ public class PlayerFishing : MonoBehaviour
             PlayerComponents.rb.linearVelocity = Vector3.zero;
             PlayerComponents.rb.constraints = RigidbodyConstraints.FreezeAll;
 
-            PlayerComponents.SetCertainComponents(!(isCharging || isCasting), source: gameObject, PlayerComponents.playerController);
+            PlayerComponents.SetCertainComponents(!(isCharging || isFishing), source: gameObject, PlayerComponents.playerController);
+        }
+
+        // Failsafe Check
+        if (hook.activeSelf && fishingStartTime > 0f && Time.time > (fishingStartTime + 10f))
+        {
+            float dist = Vector3.Distance(castOrigin.position, hook.transform.position);
+            if (dist >= maxCastDistance * 2f) // if hook somehow got flung very far (e.g. into a void), clean it up
+            {
+                if (showDebugLogs) Debug.LogWarning($"Hook position {hook.transform.position} is out of bounds. Cleaning up hook.");
+                CleanupHook();
+            }
         }
 
 
-        // update charge slider while charging
+        // update charge slider while charging (make it sweep in sync with target)
         if (isCharging && castChargeSlider != null)
         {
-            float normalized = Mathf.Clamp01(maxChargeTime <= 0f ? 1f : (Time.time - chargeStartTime) / maxChargeTime);
-            castChargeSlider.value = normalized;
+            float phase = Mathf.PingPong((Time.time - chargeStartTime) * targetSweepSpeed, 1f);
+            castChargeSlider.value = Mathf.Clamp01(phase);
         }
 
-        // update line renderer from origin to hook, but cap the visual length to the current tether length
-        if (showLineRenderer && line.enabled)
+        // update line renderer from origin to hook
+        if (line.enabled)
         {
-            Vector3 origin = castOrigin.position;
-            Vector3 hookPos = hook.transform.position;
-            line.SetPosition(0, origin);
-
-            // If tether is defined, cap line length to currentTetherLength so it never appears longer than allowed.
-            if (currentTetherLength > 0f)
-            {
-                Vector3 toHook = hookPos - origin;
-                float actualDist = toHook.magnitude;
-                if (actualDist <= currentTetherLength || actualDist <= 0.0001f)
-                {
-                    line.SetPosition(1, hookPos);
-                }
-                else
-                {
-                    line.SetPosition(1, origin + toHook.normalized * currentTetherLength);
-                }
-            }
-            else
-            {
-                // fallback: show actual hook position
-                line.SetPosition(1, hookPos);
-            }
+            line.SetPosition(0, castOrigin.position);
+            line.SetPosition(1, hook.transform.position);
         }
 
         if (currentHookController == null) return;
@@ -371,10 +396,10 @@ public class PlayerFishing : MonoBehaviour
         // enable reeling when either:
         //  - the hook has physically moved a sufficient distance from the origin, or
         //  - a short time delay passed after the cast (helps with slow-launch physics)
-        if (!canReel && isCasting)
+        if (!canReel && isFishing)
         {
             float distance = Vector3.Distance(castOrigin.position, hook.transform.position);
-            if (distance >= reelEnableDistance || Time.time >= castTime + reelEnableDelay)
+            if (distance >= minCastDistance || Time.time >= castTime + reelEnableDelay)
             {
                 canReel = true;
                 if (showDebugLogs) Debug.Log("Reeling enabled (hook traveled sufficient distance or delay elapsed).");
@@ -431,11 +456,10 @@ public class PlayerFishing : MonoBehaviour
 
     private void Retract()
     {
-        // Shorten tether to pull hook back toward the rod
-        currentTetherLength = Mathf.Max(0.25f, currentTetherLength - reelSpeed * Time.deltaTime);
-
+        // retract hook
+        hook.transform.position = Vector3.MoveTowards(hook.transform.position, castOrigin.position, reelSpeed * Time.deltaTime);
         float dist = Vector3.Distance(castOrigin.position, hook.transform.position);
-        if (dist <= pickupDistance)
+        if (dist <= 0.25f)
         {
             // cleanup hook when it reaches the player
             CleanupHook();
@@ -447,9 +471,7 @@ public class PlayerFishing : MonoBehaviour
         // do something when something gets hooked
         if (hook.gameObject.TryGetComponent<Rigidbody>(out var rb))
         {
-            // stop relative physics motion (hooked object will be pulled by tether)
-            rb.linearVelocity = Vector3.zero;
-            rb.angularVelocity = Vector3.zero;
+            rb.isKinematic = true;
         }
     }
 
@@ -462,6 +484,7 @@ public class PlayerFishing : MonoBehaviour
     private void PickupHookedObject(MoveableObject hooked)
     {
         // Pick up the reeled-in object
+        PlayerComponents.playerEquipItem.UnequipItem(); // Unequip current item (the rod)
         hooked.OnPlayerInteraction(gameObject);
         CleanupHook();
     }
@@ -469,27 +492,29 @@ public class PlayerFishing : MonoBehaviour
     private void CleanupHook()
     {
         if (showDebugLogs) Debug.Log("Cleaning up fishing hook.");
-        hook.SetActive(false);
+        if (hook != null)
+            hook.SetActive(false);
         currentHookController = null;
         line.enabled = false;
         canReel = false;
-        isCasting = false;
-
-        // reset tether lengths
-        initialTetherLength = 0f;
-        currentTetherLength = 0f;
-
+        isFishing = false;
+        fishingStartTime = -1f;
         if (disableMovementWhileFishing)
         {
             // Reenable movement
-            PlayerComponents.rb.constraints = RigidbodyConstraints.None;
+            PlayerComponents.rb.constraints = prevRbConstraints;
             PlayerComponents.rb.linearVelocity = Vector3.zero;
             PlayerComponents.rb.angularVelocity = Vector3.zero;
             PlayerComponents.rb.isKinematic = prevRbKinematic;
             PlayerComponents.rb.useGravity = prevRbUseGravity;
 
-            PlayerComponents.SetCertainComponents(!(isCharging || isCasting), source: gameObject, PlayerComponents.playerController);
+            PlayerComponents.SetCertainComponents(!(isCharging || isFishing), source: gameObject, PlayerComponents.playerController);
         }
+
+        // ensure any target artifacts are removed
+        DestroyCastTarget();
+        hasPendingTarget = false;
+
         StartCoroutine(WaitForCastCooldown());
     }
 
@@ -501,5 +526,5 @@ public class PlayerFishing : MonoBehaviour
         canCast = true;
     }
 
-    bool HasRod() => !(playerEquipItem == null || playerEquipItem.currentEquippedItem == null || !playerEquipItem.currentEquippedItem.ItemName.Equals("Fishing Rod"));
+    bool HasRod() => playerEquipItem != null && playerEquipItem.currentEquippedItem != null && playerEquipItem.currentEquippedItem == fishingRod;
 }

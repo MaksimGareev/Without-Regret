@@ -145,7 +145,7 @@ public class LockedItem : MonoBehaviour, IInteractable
 
     private void TryInteract()
     {
-        if (!isInRange || LockPickUI == null || hasBeenLockpicked) return;
+        if (!isInRange || LockPickUI == null || hasBeenLockpicked || !player.gameObject.GetComponent<Inventory>().keyItems.Any(x=> x.ItemName == "Lock Pick")) return;
 
         // Show LockPick UI
         LockPickUI.SetActive(true);

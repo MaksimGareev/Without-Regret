@@ -5,6 +5,7 @@ using UnityEngine;
 [RequireComponent(typeof(PlayerController), typeof(PlayerFloating), typeof(PlayerMovingObjects))]
 [RequireComponent(typeof(PlayerPossessing), typeof(PlayerThrowing), typeof(ToggleInventoryUI))]
 [RequireComponent(typeof(Rigidbody), typeof(CharacterController), typeof(PlayerFishing))]
+[RequireComponent(typeof(PlayerEquipItem))]
 public class PlayerComponents : MonoBehaviour
 {
     public static bool initialized = false;
@@ -14,6 +15,7 @@ public class PlayerComponents : MonoBehaviour
     public static PlayerPossessing playerPossessing;
     public static PlayerThrowing playerThrowing;
     public static PlayerFishing playerFishing;
+    public static PlayerEquipItem playerEquipItem;
     public static Camera playerCamera;
     public static Rigidbody rb;
     public static CharacterController characterController;
@@ -27,6 +29,7 @@ public class PlayerComponents : MonoBehaviour
         playerPossessing = GetComponent<PlayerPossessing>();
         playerThrowing = GetComponent<PlayerThrowing>();
         playerFishing = GetComponent<PlayerFishing>();
+        playerEquipItem = GetComponent<PlayerEquipItem>();
         playerCamera = Camera.main;
         rb = GetComponent<Rigidbody>();
         characterController = GetComponent<CharacterController>();
@@ -52,6 +55,7 @@ public class PlayerComponents : MonoBehaviour
         playerPossessing = player.GetComponent<PlayerPossessing>();
         playerThrowing = player.GetComponent<PlayerThrowing>();
         playerFishing = player.GetComponent<PlayerFishing>();
+        playerEquipItem = player.GetComponent<PlayerEquipItem>();
         playerCamera = Camera.main;
         rb = player.GetComponent<Rigidbody>();
         characterController = player.GetComponent<CharacterController>();
@@ -74,6 +78,7 @@ public class PlayerComponents : MonoBehaviour
         playerFishing.enabled = enable;
         inventoryToggle.enabled = enable;
         characterController.enabled = enable;
+        playerEquipItem.enabled = enable;
     }
 
     public static void SetComponentsExcept(bool enable, GameObject source = null, params Component[] excludeList)
@@ -111,6 +116,7 @@ public class PlayerComponents : MonoBehaviour
         ToggleComponent(inventoryToggle);
         ToggleComponent(characterController);
         ToggleComponent(playerFishing);
+        ToggleComponent(playerEquipItem);
     }
 
     public static void SetCertainComponents(bool enable, GameObject source = null, params Component[] componentsToToggle)
