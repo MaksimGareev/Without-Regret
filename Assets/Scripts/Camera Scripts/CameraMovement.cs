@@ -74,7 +74,7 @@ public class CameraMovement : MonoBehaviour
     private float pitch;
     private Quaternion initialRotation;
     //private PlayerThrowing playerThrowing;
-    //private bool isThrowing;
+    private bool isThrowing;
     private ToggleInventoryUI toggleInventoryUI;
     private float mouseResetTimer;
     private bool lastInputWasMouse = false;
