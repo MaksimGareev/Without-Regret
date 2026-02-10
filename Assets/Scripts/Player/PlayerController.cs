@@ -274,7 +274,8 @@ public class PlayerController : MonoBehaviour, ISaveable
         // Sprint logic
         if (isSprinting && canSprint)
         {
-            if (SprintTimer > 0f)
+
+            if (isMoving&& SprintTimer > 0f)
             {
                 currentSpeed = SprintSpeed;
                 SprintTimer -= Time.deltaTime;
@@ -284,18 +285,26 @@ public class PlayerController : MonoBehaviour, ISaveable
             }
             else
             {
-                canSprint = false;
                 isSprinting = false;
-                currentSpeed = Speed;
+                animator.SetBool("isSprinting", false);
+            }
 
+            //Out of Stamina
+            if (SprintTimer <= 0f)
+            {
+                isSprinting = false;
+                animator.SetBool("isSprinting", false);
+
+                canSprint = false;
                 if (staminaFill != null)
                     staminaFill.color = cooldownColor;
                 StartCoroutine(SprintCooldown());
             }
         }
-        else if (!isSprinting && SprintTimer < SprintDuration)
+        else if (!isSprinting && SprintTimer < SprintDuration )
         {
             // Regenerating stamina
+            animator.SetBool("isSprinting", false);
             SprintTimer += Time.deltaTime;
             staminaSlider.gameObject.SetActive(true);
             staminaSlider.value = SprintTimer;
@@ -378,15 +387,28 @@ public class PlayerController : MonoBehaviour, ISaveable
         }
     }
 
-    private void StartSprinting()
+    private void StartSprinting() //also handles animations
     {
-        if (canSprint)
+        bool isMoving = moveInput.sqrMagnitude >= 0.01f;
+        if (!isSprinting)
+        {
+            resetAnimations();
+        }
+        if (canSprint && isMoving)
+        {
             isSprinting = true;
+            animator.SetBool("isSprinting", true);
+        }
     }
 
     private void StopSprinting()
     {
+        if (isSprinting)
+        {
+            resetAnimations();
+        }
         isSprinting = false;
+        animator.SetBool("isSprinting", false);
     }
 
     IEnumerator SprintCooldown()
@@ -501,9 +523,7 @@ public class PlayerController : MonoBehaviour, ISaveable
     {
         animator.SetBool("isIdle", false);
         animator.SetBool("isWalking", false);
-        animator.SetBool("isGrabbing", false);
+        //animator.SetBool("isGrabbing", false);
         animator.SetBool("isFloating", false);
-        animator.SetBool("isPulling", false);
-        animator.SetBool("isPushing", false);
     }
 }
