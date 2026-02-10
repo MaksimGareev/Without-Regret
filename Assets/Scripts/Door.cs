@@ -8,7 +8,7 @@ public class Door : MonoBehaviour, IInteractable
 {
     [Header("Door Settings")]
     //scene to load
-    public string sceneToLoad;
+    public SceneReference sceneToLoad;
 
     // Interaction      
     public float interactDistance = 3f;
@@ -16,7 +16,7 @@ public class Door : MonoBehaviour, IInteractable
     public InteractType interactType => InteractType.Door;
 
     // Player
-    public Transform player;
+    private Transform player;
     public ObjectiveData linkedObjective;
     public bool needsObjective = true;
 
@@ -31,7 +31,7 @@ public class Door : MonoBehaviour, IInteractable
 
     private void Start()
     {
-
+        player = GameObject.FindGameObjectWithTag("Player").transform;
     }
 
     void Update()
@@ -98,7 +98,14 @@ public class Door : MonoBehaviour, IInteractable
         }
         
         yield return new WaitForSeconds(0.1f);
-        SceneManager.LoadScene(sceneToLoad);
+
+        if (sceneToLoad == null || string.IsNullOrEmpty(sceneToLoad.GetSceneName()))
+        {
+            Debug.LogError("Scene to load is not set on the door.");
+            yield break;
+        }
+
+        SceneManager.LoadScene(sceneToLoad.GetSceneName());
     }
 }
 

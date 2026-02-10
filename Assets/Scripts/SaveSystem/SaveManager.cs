@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -23,11 +24,10 @@ public class SaveManager : MonoBehaviour
 
     private void Awake()
     {
-        DontDestroyOnLoad(gameObject);
-
         if (Instance == null)
         {
             Instance = this;
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
@@ -36,20 +36,20 @@ public class SaveManager : MonoBehaviour
         }
     }
 
-    public bool IsUnlocked(string itemName)
-    {
-        if (unlockedItems.ContainsKey(itemName))
-            return unlockedItems[itemName];
-        return false;
-    }
+    // public bool IsUnlocked(string itemName)
+    // {
+    //     if (unlockedItems.ContainsKey(itemName))
+    //         return unlockedItems[itemName];
+    //     return false;
+    // }
 
-    public void SetUnlocked(string itemName, bool unlocked)
-    {
-        if (unlockedItems.ContainsKey(itemName))
-            unlockedItems[itemName] = unlocked;
-        else
-            unlockedItems.Add(itemName, unlocked);
-    }
+    // public void SetUnlocked(string itemName, bool unlocked)
+    // {
+    //     if (unlockedItems.ContainsKey(itemName))
+    //         unlockedItems[itemName] = unlocked;
+    //     else
+    //         unlockedItems.Add(itemName, unlocked);
+    // }
 
     private void OnEnable()
     {
@@ -65,15 +65,15 @@ public class SaveManager : MonoBehaviour
     {
         RefreshSaveables();
 
-        if (saveables.Count > 0)
-        {
-            LoadGame(SaveSystem.activeSaveSlot);
-        }
+        // if (saveables.Count > 0)
+        // {
+        //     LoadGame(SaveSystem.activeSaveSlot);
+        // }
 
-        else if (showDebugLogs)
-        {
-            Debug.Log("No saveables found; skipping load.");
-        }
+        // else
+        // {
+        //     Debug.Log("No saveables found; skipping load.");
+        // }
 
         inputActions.FindActionMap("Player").Enable();
     }
@@ -201,7 +201,7 @@ public class SaveManager : MonoBehaviour
 
     private void Update()
     {
-        if (shouldAutoSave)
+        if (shouldAutoSave && GameManager.Instance != null && GameManager.Instance.instanceReady)
         {
             autoSaveTimer += Time.deltaTime;
         }
@@ -275,7 +275,7 @@ public class SaveManager : MonoBehaviour
 
         foreach (ISaveable saveable in saveables)
         {
-            if (saveable is PlayerController player)
+            if (saveable is PlayerController player && player.gameObject.GetComponentInParent<GameManager>() != null)
             {
                 player.LoadFrom(data);
                 if (showDebugLogs) Debug.Log($"[SaveManager.LoadGame] Loading PlayerController");
