@@ -35,20 +35,20 @@ public class SaveManager : MonoBehaviour
         }
     }
 
-    public bool IsUnlocked(string itemName)
-    {
-        if (unlockedItems.ContainsKey(itemName))
-            return unlockedItems[itemName];
-        return false;
-    }
+    // public bool IsUnlocked(string itemName)
+    // {
+    //     if (unlockedItems.ContainsKey(itemName))
+    //         return unlockedItems[itemName];
+    //     return false;
+    // }
 
-    public void SetUnlocked(string itemName, bool unlocked)
-    {
-        if (unlockedItems.ContainsKey(itemName))
-            unlockedItems[itemName] = unlocked;
-        else
-            unlockedItems.Add(itemName, unlocked);
-    }
+    // public void SetUnlocked(string itemName, bool unlocked)
+    // {
+    //     if (unlockedItems.ContainsKey(itemName))
+    //         unlockedItems[itemName] = unlocked;
+    //     else
+    //         unlockedItems.Add(itemName, unlocked);
+    // }
 
     private void OnEnable()
     {

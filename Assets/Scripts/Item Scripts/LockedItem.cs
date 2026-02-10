@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Linq;
 
-public class LockedItem : MonoBehaviour, IInteractable, ISaveable
+public class LockedItem : MonoBehaviour, IInteractable
 {
    public InteractType interactType => InteractType.Lockpick;
     public float interactionPriority => 5f;
@@ -20,7 +20,7 @@ public class LockedItem : MonoBehaviour, IInteractable, ISaveable
     public GameObject UnlockTop;
     public bool isChest = false;
     private AudioSource audioSource;
-    public bool hasBeenLockpicked = false;
+    public bool hasBeenLockpicked = false; // Saving and loading this value is already handled by the SaveableWorldObject component
     public bool isInRange = false;
 
     private PlayerControls controls;
@@ -54,10 +54,10 @@ public class LockedItem : MonoBehaviour, IInteractable, ISaveable
         controls.Player.Interact.performed += ctx => TryInteract();
 
         // Load unlock state from SaveManager
-        if (SaveManager.Instance != null)
-        {
-            hasBeenLockpicked = SaveManager.Instance.IsUnlocked(gameObject.name);
-        }
+        // if (SaveManager.Instance != null)
+        // {
+        //     hasBeenLockpicked = SaveManager.Instance.IsUnlocked(gameObject.name);
+        // }
 
         // Disable interaction if already unlocked
         if (hasBeenLockpicked)
@@ -201,7 +201,7 @@ public class LockedItem : MonoBehaviour, IInteractable, ISaveable
 
         if (SaveManager.Instance != null)
         {
-            SaveManager.Instance.SetUnlocked(gameObject.name, true);
+            //SaveManager.Instance.SetUnlocked(gameObject.name, true);
             SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
         }
 
@@ -221,7 +221,7 @@ public class LockedItem : MonoBehaviour, IInteractable, ISaveable
         // Save unlock state
         if (SaveManager.Instance != null)
         {
-            SaveManager.Instance.SetUnlocked(gameObject.name, true);
+            //SaveManager.Instance.SetUnlocked(gameObject.name, true);
             SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
         }
 
@@ -285,15 +285,5 @@ public class LockedItem : MonoBehaviour, IInteractable, ISaveable
             popupInstance = null;
             shouldShowIcon = false;
         }
-    }
-
-    public void SaveTo(SaveData data)
-    {
-        throw new System.NotImplementedException();
-    }
-
-    public void LoadFrom(SaveData data)
-    {
-        throw new System.NotImplementedException();
     }
 }
