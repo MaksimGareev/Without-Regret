@@ -17,6 +17,7 @@ public class PlayerMovingObjects : MonoBehaviour
 
     private PlayerController playerController;
     private float normalMoveSpeed;
+    private float normalSprintSpeed;
     private HashSet<MoveableObject> movedObjects = new HashSet<MoveableObject>();
 
     private void Awake()
@@ -24,6 +25,7 @@ public class PlayerMovingObjects : MonoBehaviour
         animator = GetComponentInChildren<Animator>();
         playerController = gameObject.GetComponent<PlayerController>();
         normalMoveSpeed = playerController.Speed;
+        normalSprintSpeed = playerController.SprintSpeed;
     }
 
     public void OnMovingObject(MoveableObject obj)
@@ -51,8 +53,10 @@ public class PlayerMovingObjects : MonoBehaviour
         }
         
         normalMoveSpeed = playerController.Speed;
-        playerController.Speed = normalMoveSpeed / obj.GetSlowdownMult();
-        playerController.SetCanSprint(false);
+        normalSprintSpeed = playerController.SprintSpeed;
+        playerController.Speed = normalMoveSpeed / obj.GetMoveSlowdown();
+        playerController.SprintSpeed = normalSprintSpeed / obj.GetSprintSlowdown();
+        playerController.MovingObject(true, obj.GetSprintDepletion(), obj.GetSprintTimerDecay(), obj.GetAllowSprint());
 
         if (playerController.animator != null)
         {
@@ -74,7 +78,8 @@ public class PlayerMovingObjects : MonoBehaviour
         //if (playerController.animator != null)
         //    playerController.animator.SetBool("isGrabbing", false);
         playerController.Speed = normalMoveSpeed;
-        playerController.SetCanSprint(true);
+        playerController.SprintSpeed = normalSprintSpeed;
+        playerController.MovingObject(false);
 
         //if (playerController.animator != null)
         //{
@@ -122,5 +127,4 @@ public class PlayerMovingObjects : MonoBehaviour
     }
 
     public bool IsOccupied() => movedObjects.Count > 0;
-
 }
