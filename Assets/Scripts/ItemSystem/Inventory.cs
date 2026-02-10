@@ -45,7 +45,8 @@ public class Inventory : MonoBehaviour, ISaveable
         toggleInventoryUI = GetComponent<ToggleInventoryUI>();
         cameraMovement = Camera.main.GetComponent<CameraMovement>();
         itemToCollect = null;
-        AddItemPopup.gameObject.SetActive(false);
+        if(AddItemPopup != null)
+            AddItemPopup.gameObject.SetActive(false);
     }
 
     private void Start()

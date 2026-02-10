@@ -746,28 +746,28 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5675321481151379428}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f78a7fb4d2306884f91c728f43a6e04d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerFishing
-  fishingAction: {fileID: 0}
-  castOrigin: {fileID: 0}
-  playerEquipItem: {fileID: 0}
+  fishingAction: {fileID: -5528296139197480759, guid: f1f4dbfd8c64cd440924988ec4fb6f6a, type: 3}
+  fishingRod: {fileID: 11400000, guid: 045ead20566c4ae48b6fc950da2d9472, type: 2}
+  castOrigin: {fileID: 878993099091267819}
+  playerEquipItem: {fileID: 771315798553256207}
   castChargeSlider: {fileID: 0}
-  castForce: 20
-  maxCastDistance: 15
+  castForce: 10
+  maxCastDistance: 30
   minCastDistance: 2
   upwardArcFactor: 1.75
   reelSpeed: 8
-  pickupDistance: 1
+  pickupDistance: 3
   castCooldown: 0.5
+  reelEnableDelay: 0.75
   disableMovementWhileFishing: 1
-  maxChargeTime: 1.5
-  reelEnableDistance: 2.5
-  reelEnableDelay: 0.15
+  castTargetPrefab: {fileID: 0}
+  targetSweepSpeed: 1
   showDebugLogs: 0
-  showLineRenderer: 1
 --- !u!114 &3930968705077024376
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -868,7 +868,7 @@ LineRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 0}
+  - {fileID: -7791486788655378091, guid: ba3230996a592334881d23591019ca31, type: 3}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -901,7 +901,7 @@ LineRenderer:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 1
+        value: 0.88529396
         inSlope: 0
         outSlope: 0
         tangentMode: 0
