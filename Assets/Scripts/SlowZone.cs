@@ -11,6 +11,7 @@ public class SlowZone : MonoBehaviour
         {
             PlayerController playerController = other.GetComponent<PlayerController>();
             playerController.Speed *= slowMultiplier;
+            playerController.SprintSpeed *= slowMultiplier;
         }
         if (other.CompareTag("Enemy"))
         {
@@ -33,6 +34,7 @@ public class SlowZone : MonoBehaviour
         {
             PlayerController playerController = other.GetComponent<PlayerController>();
             playerController.Speed /= slowMultiplier;
+            playerController.SprintSpeed /= slowMultiplier;
         }
         if (other.CompareTag("Enemy"))
         {
