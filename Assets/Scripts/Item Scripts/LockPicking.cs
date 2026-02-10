@@ -19,19 +19,24 @@ public class LockPicking : MonoBehaviour
     public List<Sprite> ArrowImages;
 
     // Change this to a list of enums so designers can assign directions more clearly / implement random direction generation
-    public List<int> DirectionAssignments; //0 = up, 1 = left, 2 = down, 3 = right in terms of layout on the d-pad and arrow keys
+    private List<int> DirectionAssignments = new List<int>{ 0, 0, 0, 0 }; //0 = up, 1 = left, 2 = down, 3 = right in terms of layout on the d-pad and arrow keys
     public List<RawImage> Arrows;
 
     [Min(1)]
     [Range(1, 25)]
-    public float LockRange = 10;
 
+    [Header("Sound Vars")]
     public AudioSource Source;
     public AudioClip UnlockSound;
     public AudioClip FailSound;
 
+    [Header("Image Refs")]
+    [SerializeField] List<Image> LockPickImages;
+    [SerializeField] GameObject VictoryText;
+
     private float EulerAngle;
-    private float UnlockAngle;
+    [SerializeField]  private float UnlockAngle;
+    private int LockRange = 10;
     private Vector2 UnlockRange;
     private LockedItem currentLockedItem;
 
@@ -47,31 +52,23 @@ public class LockPicking : MonoBehaviour
     private Rigidbody rb;
     private int ArrowIndex = 0;
     private bool ControlsLocked;
+    private int ArrowAttempts = 3;
+    private float PickDurability = 2f;
+    
+
+    [Header("Tutorial Vars")]
+    [SerializeField] GameObject TutorialPopUp1;
+    [SerializeField] GameObject TutorialPopUp2;
+    [SerializeField] bool FirstTimeLock;
+    private bool Tut1Active = false;
+    private bool Tut2Active = false;
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Start()
     {
         Source.volume = 300f;
         PickCursor.eulerAngles = new Vector3(0, 0, 0);
-        for (int i = 0; i < Arrows.Count; i++)//assigns sprites to the ui images based off directional inputs given
-        {
-            if (DirectionAssignments[i] == 0)
-            {
-                Arrows[i].texture = ArrowImages[0].texture;
-            }
-            if (DirectionAssignments[i] == 1)
-            {
-                Arrows[i].texture = ArrowImages[1].texture;
-            }
-            if (DirectionAssignments[i] == 2)
-            {
-                Arrows[i].texture = ArrowImages[2].texture;
-            }
-            if (DirectionAssignments[i] == 3)
-            {
-                Arrows[i].texture = ArrowImages[3].texture;
-            }
-        }
         StageTwoUI.SetActive(false);
     }
     void Awake()
@@ -123,7 +120,12 @@ public class LockPicking : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!SecondStageActive)// if second stage isn't active, recieves rotation inputs
+        if (PickDurability <= 0)
+        {
+            DeactivateLockPick();
+        }
+
+        if (!SecondStageActive && !ControlsLocked)// if second stage isn't active, recieves rotation inputs
         {
             if (MovePick == true)
             {
@@ -178,8 +180,20 @@ public class LockPicking : MonoBehaviour
                 {
                     // NewLock();
                     Source?.Stop();
+                    for (int i = 0; i < LockPickImages.Count; i++)
+                    {
+                        Color tempColor = LockPickImages[i].color;
+                        tempColor.a = 0.75f;
+                        LockPickImages[i].color = tempColor;
+                    }
                     SecondStageActive = true;
                     StageTwoUI.SetActive(true);//switches controls to stage two, locks pick rotation
+                    if (FirstTimeLock)
+                    {
+                        TutorialPopUp2.SetActive(true);
+                        Tut2Active = true;
+                        ControlsLocked = true;
+                    }
                 }
                 else if (MovePick == false)
                 {
@@ -190,13 +204,14 @@ public class LockPicking : MonoBehaviour
                     {
                         Source?.PlayOneShot(FailSound);
                     }
+                    PickDurability -= Time.deltaTime;
                 }
 
             }
         }
-        else if (SecondStageActive)
+        else if (SecondStageActive && !ControlsLocked)
         {
-            if (ArrowIndex < DirectionAssignments.Count && !ControlsLocked)
+            if (ArrowIndex < DirectionAssignments.Count)
             {
                 if (controls.LockPicking.ArrowUp.triggered)
                 {
@@ -220,26 +235,51 @@ public class LockPicking : MonoBehaviour
                 Unlock();
             }
         }
+        else if (Tut1Active)
+        {
+            if (controls.LockPicking.Next.triggered)
+            {
+                TutorialPopUp1.SetActive(false);
+                ControlsLocked = false;
+                Tut1Active = false;
+            }
+        }
+        else if (Tut2Active)
+        {
+            if (controls.LockPicking.Next.triggered)
+            {
+                TutorialPopUp2.SetActive(false);
+                ControlsLocked = false;
+                Tut2Active = false;
+            }
+        }
     }
 
     public void TryUnlock()
     {
-        MovePick = false;
-        KeyPressTime = 1;
+        if (!ControlsLocked)
+        {
+            MovePick = false;
+            KeyPressTime = 1;
+        }
     }
 
     public void CancelUnlock()
     {
-        if (!SecondStageActive)
+        if (!ControlsLocked)
         {
-            PickCursor.localEulerAngles = new Vector3(0, 0, CurrentAngle - 90);
+            if (!SecondStageActive)
+            {
+                PickCursor.localEulerAngles = new Vector3(0, 0, CurrentAngle - 90);
+            }
+            MovePick = true;
+            KeyPressTime = 0;
         }
-        MovePick = true;
-        KeyPressTime = 0;
     }
 
     public void DeactivateLockPick()
     {
+        
         LockPickUi.SetActive(false);
         Rigidbody rb = player.GetComponent<Rigidbody>();
 
@@ -257,13 +297,35 @@ public class LockPicking : MonoBehaviour
 
     public void NewLock(LockedItem lockedItem)
     {
+        if (FirstTimeLock)
+        {
+            TutorialPopUp1.SetActive(true);
+            Tut1Active = true;
+            ControlsLocked = true;
+        }
+        for (int i = 0; i < LockPickImages.Count; i++)
+        {
+            Color tempColor = LockPickImages[i].color;
+            tempColor.a = 1;
+            LockPickImages[i].color = tempColor;
+        }
+        for (int i = 0; i < Arrows.Count; i++)
+        {
+            Color tempColor = Arrows[i].color;
+            tempColor = Color.white;
+            tempColor.a = 1;
+            Arrows[i].color = tempColor;
+        }
         currentLockedItem = lockedItem;
+        SecondStageActive = false;
+        StageTwoUI.SetActive(false);
         LockPickUi.SetActive(true);
         Rigidbody rb = player.GetComponent<Rigidbody>();
         PickCursor.eulerAngles = new Vector3(0, 0, 0);
-        UnlockAngle = Random.Range(-MaxAngle + LockRange, MaxAngle - LockRange);
-        UnlockRange = new Vector2(UnlockAngle - LockRange, UnlockAngle + LockRange);
+        GenerateSolutions();
         rb.constraints = RigidbodyConstraints.FreezeAll;
+        PickDurability = 2;
+        ArrowAttempts = 3;
     }
 
     public void Unlock()//resets and deactivates Ui
@@ -275,14 +337,102 @@ public class LockPicking : MonoBehaviour
         MovePick = true;
         KeyPressTime = 0;
         ArrowIndex = 0;
-        StageTwoUI.SetActive(false);
-        LockPickUi.SetActive(false);
+        StartCoroutine(VictoryEffect());
+        if(FirstTimeLock == true)
+        {
+            FirstTimeLock = false;
+        }
 
         if (RewardItem != null)//if thing being unlocked has a reward, put it in the player's inventory
         {
-            //player.GetComponent<Inventory>().AddItem(RewardItem);
+            player.GetComponent<Inventory>().AddItem(RewardItem);
             RewardItem = null;
         }
+
+    }
+
+    private void CheckDirection(int input)
+    {
+        if (input == DirectionAssignments[ArrowIndex])
+        {
+            Color tempColor = Arrows[ArrowIndex].color;
+            tempColor = Color.green;
+            tempColor.a = 0.75f;
+            Arrows[ArrowIndex].color = tempColor;
+            ArrowIndex++;
+        }
+        else
+        {
+            ArrowIndex = 0;
+            ControlsLocked = true;
+            if (!Source.isPlaying)
+            {
+                Source?.PlayOneShot(FailSound);
+            }
+            StartCoroutine(WrongDirection());
+        }
+    }
+
+    IEnumerator WrongDirection()
+    {
+        for (int i = 0; i < Arrows.Count; i++)
+        {
+            Color tempColor = Arrows[i].color;
+            tempColor = Color.red;
+            tempColor.a = 1;
+            Arrows[i].color = tempColor;
+        }
+        ArrowAttempts--;
+        yield return new WaitForSecondsRealtime(.25f);
+        for (int i = 0; i < Arrows.Count; i++)
+        {
+            Arrows[i].color = Color.white;
+        }
+        ControlsLocked = false;
+        if(ArrowAttempts <= 0)
+        {
+            DeactivateLockPick();
+        }
+
+    }
+
+    private void GenerateSolutions()
+    {
+        for (int i = 0; i < Arrows.Count; i++)
+        {
+            DirectionAssignments[i] = Random.Range(0, 4);
+        }
+        UnlockAngle = Random.Range(0, 181);
+        UnlockRange = new Vector2(UnlockAngle - LockRange, UnlockAngle + LockRange);
+        for (int i = 0; i < Arrows.Count; i++)//assigns sprites to the ui images based off directional inputs given
+        {
+            if (DirectionAssignments[i] == 0)
+            {
+                Arrows[i].texture = ArrowImages[0].texture;
+            }
+            if (DirectionAssignments[i] == 1)
+            {
+                Arrows[i].texture = ArrowImages[1].texture;
+            }
+            if (DirectionAssignments[i] == 2)
+            {
+                Arrows[i].texture = ArrowImages[2].texture;
+            }
+            if (DirectionAssignments[i] == 3)
+            {
+                Arrows[i].texture = ArrowImages[3].texture;
+            }
+        }
+    }
+
+    IEnumerator VictoryEffect()
+    {
+        //play particle effect here once we have one
+        VictoryText.SetActive(true);
+        yield return new WaitForSecondsRealtime(1f);
+        VictoryText.SetActive(false);
+        StageTwoUI.SetActive(false);
+        LockPickUi.SetActive(false);
 
         // Unlock player movement
         PlayerController pc = player.GetComponent<PlayerController>();
@@ -297,37 +447,5 @@ public class LockPicking : MonoBehaviour
             currentLockedItem.OnUnlocked();
             currentLockedItem = null;
         }
-    }
-
-    private void CheckDirection(int input)
-    {
-        if (input == DirectionAssignments[ArrowIndex])
-        {
-            Arrows[ArrowIndex].gameObject.SetActive(false);
-            ArrowIndex++;
-        }
-        else
-        {
-            ArrowIndex = 0;
-            ControlsLocked = true;
-            Source?.PlayOneShot(FailSound);
-            StartCoroutine(WrongDirection());
-        }
-    }
-
-    IEnumerator WrongDirection()
-    {
-        for (int i = 0; i < Arrows.Count; i++)
-        {
-            Arrows[i].color = Color.red;
-        }
-        yield return new WaitForSecondsRealtime(.25f);
-        for (int i = 0; i < Arrows.Count; i++)
-        {
-            Arrows[i].gameObject.SetActive(true);
-            Arrows[i].color = Color.white;
-        }
-        ControlsLocked = false;
-
     }
 }

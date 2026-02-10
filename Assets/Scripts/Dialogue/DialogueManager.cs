@@ -212,9 +212,9 @@ public class DialogueManager : MonoBehaviour
         activeDialogueTrigger = trigger;
         DialogueIsActive = true;
         GameObject player = GameObject.FindGameObjectWithTag("Player");
-        ireneNPC = FindObjectOfType<Irene>();
-        barryNPC = FindObjectOfType<Barry>();
-        darryNPC = FindObjectOfType<DarryNeighborhood>();
+        ireneNPC = FindAnyObjectByType<Irene>();
+        barryNPC = FindAnyObjectByType<Barry>();
+        darryNPC = FindAnyObjectByType<DarryNeighborhood>();
         playerTransform = player.transform;
         playerFloating = player.GetComponent<PlayerFloating>();
         playerThrowing = player.GetComponent<PlayerThrowing>();
@@ -1165,7 +1165,6 @@ public class DialogueManager : MonoBehaviour
         DialogueIsActive = false;
         ContinueArrow.SetActive(false);
         
-        PlayerController.DialogueActive = false;
         playerController.SetDialogueActive(false);
         StartCoroutine(cameraMovement.EndCameraZoom());
 
@@ -1195,7 +1194,6 @@ public class DialogueManager : MonoBehaviour
         {
             // If EndCameraZoom is a coroutine
             yield return cameraMovement.EndCameraZoom();
-            cameraMovement.SetCameraLocked(false);
         }
 
         Chime.isInDialogue = false;

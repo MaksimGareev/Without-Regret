@@ -235,6 +235,15 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Throwing"",
+                    ""type"": ""Button"",
+                    ""id"": ""73e3050b-48e6-4c2a-b47f-7e957d00b2ab"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -719,6 +728,28 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""ChimeHint"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b2fd7edf-0385-4aa6-bf6f-060a130e65a7"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Throwing"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""2b512c30-72b9-4cdd-b995-87cc86eedf81"",
+                    ""path"": ""<Gamepad>/rightStickPress"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Throwing"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1437,6 +1468,15 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Next"",
+                    ""type"": ""Button"",
+                    ""id"": ""256b3b9b-27ac-48fd-afc2-67d343f6f597"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -1602,6 +1642,28 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Arrow Right"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""fdf5b6e8-0fdd-48d5-a391-aa8ba9ca1356"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Next"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8bb5d9ed-fdfe-4941-9833-3f5555e0b4b3"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Next"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -2096,6 +2158,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_Player_Journal = m_Player.FindAction("Journal", throwIfNotFound: true);
         m_Player_Inventory = m_Player.FindAction("Inventory", throwIfNotFound: true);
         m_Player_ChimeHint = m_Player.FindAction("ChimeHint", throwIfNotFound: true);
+        m_Player_Throwing = m_Player.FindAction("Throwing", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -2123,6 +2186,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_LockPicking_ArrowLeft = m_LockPicking.FindAction("Arrow Left", throwIfNotFound: true);
         m_LockPicking_ArrowDown = m_LockPicking.FindAction("Arrow Down", throwIfNotFound: true);
         m_LockPicking_ArrowRight = m_LockPicking.FindAction("Arrow Right", throwIfNotFound: true);
+        m_LockPicking_Next = m_LockPicking.FindAction("Next", throwIfNotFound: true);
         // Dialogue
         m_Dialogue = asset.FindActionMap("Dialogue", throwIfNotFound: true);
         m_Dialogue_Move = m_Dialogue.FindAction("Move", throwIfNotFound: true);
@@ -2235,6 +2299,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Journal;
     private readonly InputAction m_Player_Inventory;
     private readonly InputAction m_Player_ChimeHint;
+    private readonly InputAction m_Player_Throwing;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -2311,6 +2376,10 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @ChimeHint => m_Wrapper.m_Player_ChimeHint;
         /// <summary>
+        /// Provides access to the underlying input action "Player/Throwing".
+        /// </summary>
+        public InputAction @Throwing => m_Wrapper.m_Player_Throwing;
+        /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
         public InputActionMap Get() { return m_Wrapper.m_Player; }
@@ -2384,6 +2453,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @ChimeHint.started += instance.OnChimeHint;
             @ChimeHint.performed += instance.OnChimeHint;
             @ChimeHint.canceled += instance.OnChimeHint;
+            @Throwing.started += instance.OnThrowing;
+            @Throwing.performed += instance.OnThrowing;
+            @Throwing.canceled += instance.OnThrowing;
         }
 
         /// <summary>
@@ -2443,6 +2515,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @ChimeHint.started -= instance.OnChimeHint;
             @ChimeHint.performed -= instance.OnChimeHint;
             @ChimeHint.canceled -= instance.OnChimeHint;
+            @Throwing.started -= instance.OnThrowing;
+            @Throwing.performed -= instance.OnThrowing;
+            @Throwing.canceled -= instance.OnThrowing;
         }
 
         /// <summary>
@@ -2728,6 +2803,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_LockPicking_ArrowLeft;
     private readonly InputAction m_LockPicking_ArrowDown;
     private readonly InputAction m_LockPicking_ArrowRight;
+    private readonly InputAction m_LockPicking_Next;
     /// <summary>
     /// Provides access to input actions defined in input action map "LockPicking".
     /// </summary>
@@ -2775,6 +2851,10 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "LockPicking/ArrowRight".
         /// </summary>
         public InputAction @ArrowRight => m_Wrapper.m_LockPicking_ArrowRight;
+        /// <summary>
+        /// Provides access to the underlying input action "LockPicking/Next".
+        /// </summary>
+        public InputAction @Next => m_Wrapper.m_LockPicking_Next;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -2828,6 +2908,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @ArrowRight.started += instance.OnArrowRight;
             @ArrowRight.performed += instance.OnArrowRight;
             @ArrowRight.canceled += instance.OnArrowRight;
+            @Next.started += instance.OnNext;
+            @Next.performed += instance.OnNext;
+            @Next.canceled += instance.OnNext;
         }
 
         /// <summary>
@@ -2866,6 +2949,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @ArrowRight.started -= instance.OnArrowRight;
             @ArrowRight.performed -= instance.OnArrowRight;
             @ArrowRight.canceled -= instance.OnArrowRight;
+            @Next.started -= instance.OnNext;
+            @Next.performed -= instance.OnNext;
+            @Next.canceled -= instance.OnNext;
         }
 
         /// <summary>
@@ -3341,6 +3427,13 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnChimeHint(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Throwing" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnThrowing(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI" which allows adding and removing callbacks.
@@ -3518,6 +3611,13 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnArrowRight(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Next" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnNext(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Dialogue" which allows adding and removing callbacks.
