@@ -116,7 +116,7 @@ public class SaveableFriendlyNPC : SaveableWithID
             irene.IsFollowing = state.isFollowingPlayer;
             Debug.Log($"Loading Irene: canFollowPlayer={state.canFollowPlayer}, isFollowingPlayer={state.isFollowingPlayer}, ID: {GetUniqueID()}");
         }
-        else
+        else if (GetComponent<DialogueTrigger>() == null)
         {
             Debug.LogWarning("SaveableFriendlyNPC attached to an unknown NPC type.");
         }
