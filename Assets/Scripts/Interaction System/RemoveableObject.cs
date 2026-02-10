@@ -36,6 +36,7 @@ public class RemoveableObject : MonoBehaviour, IInteractable
         // Object is removed; notify listeners and disable gameobject
         OnInteracted?.Invoke();
         gameObject.SetActive(false);
+        player.GetComponent<Inventory>().AddLeaves();
     }
 
     public bool CanInteract(GameObject player)

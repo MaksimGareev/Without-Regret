@@ -57,8 +57,8 @@ public class CameraMovement : MonoBehaviour
     private float yaw;
     private float pitch;
     private Quaternion initialRotation;
-    private PlayerThrowing playerThrowing;
-    private bool isThrowing;
+    //private PlayerThrowing playerThrowing;
+    //private bool isThrowing;
     private ToggleInventoryUI toggleInventoryUI;
     private float mouseResetTimer;
     private bool lastInputWasMouse = false;
@@ -97,7 +97,7 @@ public class CameraMovement : MonoBehaviour
             return;
         }
 
-        playerThrowing = target.GetComponent<PlayerThrowing>();
+        //playerThrowing = target.GetComponent<PlayerThrowing>();
         toggleInventoryUI = target.GetComponent<ToggleInventoryUI>();
 
         Vector3 facingVector = DirectionToVector(defaultFacingDirection);
@@ -170,17 +170,17 @@ public class CameraMovement : MonoBehaviour
 
         bool hasLookInput = lookInput.sqrMagnitude > 0.0001f;
 
-        if (playerThrowing != null)
-        {
-            isThrowing = playerThrowing.GetIsCharging();
-        }
+        //if (playerThrowing != null)
+        //{
+        //    isThrowing = playerThrowing.GetIsCharging();
+        //}
 
         if (!hasLookInput && mouseResetTimer >= 0)
         {
             mouseResetTimer -= Time.deltaTime;
         }
 
-        bool blocked = isThrowing || (toggleInventoryUI != null && toggleInventoryUI.isEnabled);// || (pc != null && pc.MovementLocked);
+        bool blocked = (toggleInventoryUI != null && toggleInventoryUI.isEnabled);// || (pc != null && pc.MovementLocked);
 
         if (!isZooming)
         {

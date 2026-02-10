@@ -29,6 +29,11 @@ public class Inventory : MonoBehaviour, ISaveable
     private CameraMovement cameraMovement;
     public WorldItem itemToCollect;
 
+    [Header("Leaf Objective")]
+    private int NumLeavesCollected;
+    [SerializeField] private ItemData LeavesReward;
+    [SerializeField] private ItemData TrashbagRefForRemoval;
+
     public static event System.Action<ItemData> OnItemAdded;
 
 
@@ -247,6 +252,17 @@ public class Inventory : MonoBehaviour, ISaveable
         AddItemPopup.gameObject.SetActive(true);
         yield return new WaitForSecondsRealtime(1.5f);
         AddItemPopup.gameObject.SetActive(false);
+    }
+
+    public void AddLeaves()
+    {
+        NumLeavesCollected++;
+
+        if(NumLeavesCollected >= 5)
+        {
+            AddItem(LeavesReward);
+            RemoveItem(TrashbagRefForRemoval);
+        }
     }
 }
 
