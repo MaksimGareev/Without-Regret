@@ -6048,16 +6048,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1f1ab1a81f3ad7468ec1fe89381d319, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MoveableObject
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 0
-  moveSlowdownMultiplier: 3
+  moveSlowdownDivisor: 3
+  sprintSlowdownDivisor: 3
+  sprintDepletionFactor: 1.15
+  sprintTimerDecay: 1
+  allowSprint: 1
   requiredItem: {fileID: 0}
+  maxGrabDistance: 2.5
+  disableColliderWhileHeld: 0
+  heldPositionOffset: {x: 0, y: 0, z: 0}
+  heldRotationOffset: {x: 0, y: 0, z: 0}
   isGrabbable: 1
   iconDistance: 3
   iconPrefab: {fileID: 0}
   shouldShowIcon: 1
-  maxGrabDistance: 2.5
 --- !u!1 &404919749
 GameObject:
   m_ObjectHideFlags: 0
@@ -7028,11 +7032,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 84.84642, y: 51.03128, z: 32.436016}
   m_Center: {x: 0.0000031110965, y: 8.565887, z: -0.77793616}
---- !u!1 &485921705 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7145096534350053473, guid: 40edbfae2e8ad844c8d54ff8c5e8a3fd, type: 3}
-  m_PrefabInstance: {fileID: 640433883}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &487435406
 GameObject:
   m_ObjectHideFlags: 0
@@ -7155,7 +7154,7 @@ MonoBehaviour:
   m_OverrideTileSize: 0
   m_TileSize: 256
   m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.13333334
+  m_VoxelSize: 0.14999999
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: f75056739f283b043819b27c0c4c2781, type: 2}
   m_BuildHeightMesh: 0
@@ -9835,7 +9834,7 @@ Transform:
   m_GameObject: {fileID: 729311797}
   serializedVersion: 2
   m_LocalRotation: {x: -0.02616401, y: 0.9995361, z: 0.00040787228, w: 0.015581826}
-  m_LocalPosition: {x: 44.68, y: -0.16, z: 108.64}
+  m_LocalPosition: {x: 44.59, y: -0.16, z: 108.893}
   m_LocalScale: {x: 0.94598323, y: 0.96080846, z: 1.1687274}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -17771,6 +17770,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82cb94a344842b64c9e1f1c3f5822713, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
+  instanceReady: 0
   currentSceneName: 
   currentSceneIndex: 0
 --- !u!114 &1089963679
@@ -17789,6 +17789,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 2538c85277e38ff4a9135fc1efbb57bb, type: 2}
   - {fileID: 11400000, guid: 29c3e418a1c36aa4a9f6ff833a3dd117, type: 2}
   activeObjectives: []
+  completedObjectives: []
+  objectiveCanvas: {fileID: 0}
   OnObjectiveActivated:
     m_PersistentCalls:
       m_Calls:
@@ -17804,6 +17806,9 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  OnObjectiveProgressUpdated:
+    m_PersistentCalls:
+      m_Calls: []
   OnObjectiveCompleted:
     m_PersistentCalls:
       m_Calls:
@@ -17819,11 +17824,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  objectiveUI: {fileID: 485921705}
-  objectiveTitleText: {fileID: 0}
-  objectiveDescriptionText: {fileID: 0}
-  objectiveProgressText: {fileID: 0}
-  fadeDuration: 0.5
 --- !u!43 &1107295230
 Mesh:
   m_ObjectHideFlags: 0
@@ -24666,7 +24666,7 @@ MonoBehaviour:
   m_OverrideTileSize: 0
   m_TileSize: 256
   m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.13333334
+  m_VoxelSize: 0.14999999
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: 193f783beedb47441bad049b7780c162, type: 2}
   m_BuildHeightMesh: 0
@@ -27373,101 +27373,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc6995ddd5c98c7439fad9eded40dc8f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Door
-  sceneToLoad: NeighborhoodAstralLevelPostDarry
+  sceneToLoad:
+    sceneAsset: {fileID: 102900000, guid: f777cb0d6adc39a448c8f4ff1ce7b44e, type: 3}
+    scenePath: Assets/Scenes/NeighborhoodAstralLevelPostDarry.unity
   interactDistance: 5
-  player: {fileID: 1311844012}
   linkedObjective: {fileID: 11400000, guid: ef4ea093afae3c74d909378f3952fc50, type: 2}
   needsObjective: 1
   interactSound: {fileID: 0}
---- !u!1001 &1700515865
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 3211594190067148390, guid: 558083b16e4ca884ea05b07a66ae7af2, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3378418996727256961, guid: 558083b16e4ca884ea05b07a66ae7af2, type: 3}
-      propertyPath: player
-      value: 
-      objectReference: {fileID: 1311844012}
-    - target: {fileID: 3378418996727256961, guid: 558083b16e4ca884ea05b07a66ae7af2, type: 3}
-      propertyPath: sceneToLoad
-      value: NeighborhoodAstralLevelPostDarry
-      objectReference: {fileID: 0}
-    - target: {fileID: 3378418996727256961, guid: 558083b16e4ca884ea05b07a66ae7af2, type: 3}
-      propertyPath: needsObjective
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3378418996727256961, guid: 558083b16e4ca884ea05b07a66ae7af2, type: 3}
-      propertyPath: interactDistance
-      value: 1.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 6086966112654015895, guid: 558083b16e4ca884ea05b07a66ae7af2, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 0.33675477
-      objectReference: {fileID: 0}
-    - target: {fileID: 6086966112654015895, guid: 558083b16e4ca884ea05b07a66ae7af2, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 2.2081091
-      objectReference: {fileID: 0}
-    - target: {fileID: 6086966112654015895, guid: 558083b16e4ca884ea05b07a66ae7af2, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 3.1043038
-      objectReference: {fileID: 0}
-    - target: {fileID: 6086966112654015895, guid: 558083b16e4ca884ea05b07a66ae7af2, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 71.012
-      objectReference: {fileID: 0}
-    - target: {fileID: 6086966112654015895, guid: 558083b16e4ca884ea05b07a66ae7af2, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 1.08
-      objectReference: {fileID: 0}
-    - target: {fileID: 6086966112654015895, guid: 558083b16e4ca884ea05b07a66ae7af2, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 85.42
-      objectReference: {fileID: 0}
-    - target: {fileID: 6086966112654015895, guid: 558083b16e4ca884ea05b07a66ae7af2, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.71254176
-      objectReference: {fileID: 0}
-    - target: {fileID: 6086966112654015895, guid: 558083b16e4ca884ea05b07a66ae7af2, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6086966112654015895, guid: 558083b16e4ca884ea05b07a66ae7af2, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0.70162976
-      objectReference: {fileID: 0}
-    - target: {fileID: 6086966112654015895, guid: 558083b16e4ca884ea05b07a66ae7af2, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6086966112654015895, guid: 558083b16e4ca884ea05b07a66ae7af2, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6086966112654015895, guid: 558083b16e4ca884ea05b07a66ae7af2, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: -89.116
-      objectReference: {fileID: 0}
-    - target: {fileID: 6086966112654015895, guid: 558083b16e4ca884ea05b07a66ae7af2, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8718436043695358334, guid: 558083b16e4ca884ea05b07a66ae7af2, type: 3}
-      propertyPath: m_Name
-      value: door (1)
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 558083b16e4ca884ea05b07a66ae7af2, type: 3}
 --- !u!224 &1701274736 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 2306002789561766859, guid: d9bbb212694cb404498f826041308e9e, type: 3}
@@ -31866,16 +31778,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1f1ab1a81f3ad7468ec1fe89381d319, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MoveableObject
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 0
-  moveSlowdownMultiplier: 3
+  moveSlowdownDivisor: 3
+  sprintSlowdownDivisor: 3
+  sprintDepletionFactor: 1.15
+  sprintTimerDecay: 1
+  allowSprint: 1
   requiredItem: {fileID: 0}
+  maxGrabDistance: 2.5
+  disableColliderWhileHeld: 0
+  heldPositionOffset: {x: 0, y: 0, z: 0}
+  heldRotationOffset: {x: 0, y: 0, z: 0}
   isGrabbable: 1
   iconDistance: 3
   iconPrefab: {fileID: 0}
   shouldShowIcon: 1
-  maxGrabDistance: 2.5
 --- !u!1001 &2015931958
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -34277,7 +34193,6 @@ SceneRoots:
   - {fileID: 702324391}
   - {fileID: 1755141015}
   - {fileID: 633894298}
-  - {fileID: 1700515865}
   - {fileID: 1350230398}
   - {fileID: 501071490}
   - {fileID: 1448682673}

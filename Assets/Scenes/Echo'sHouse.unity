@@ -9170,7 +9170,7 @@ MonoBehaviour:
   m_OverrideTileSize: 0
   m_TileSize: 256
   m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.13333334
+  m_VoxelSize: 0.14999999
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: a0348afb83ab00e4fb5b2311e8790016, type: 2}
   m_BuildHeightMesh: 0
@@ -13800,6 +13800,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82cb94a344842b64c9e1f1c3f5822713, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
+  instanceReady: 0
   currentSceneName: 
   currentSceneIndex: 0
 --- !u!114 &1089963679
@@ -13818,6 +13819,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 2538c85277e38ff4a9135fc1efbb57bb, type: 2}
   - {fileID: 11400000, guid: 29c3e418a1c36aa4a9f6ff833a3dd117, type: 2}
   activeObjectives: []
+  completedObjectives: []
+  objectiveCanvas: {fileID: 0}
   OnObjectiveActivated:
     m_PersistentCalls:
       m_Calls:
@@ -13833,6 +13836,9 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  OnObjectiveProgressUpdated:
+    m_PersistentCalls:
+      m_Calls: []
   OnObjectiveCompleted:
     m_PersistentCalls:
       m_Calls:
@@ -13848,11 +13854,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  objectiveUI: {fileID: 0}
-  objectiveTitleText: {fileID: 0}
-  objectiveDescriptionText: {fileID: 0}
-  objectiveProgressText: {fileID: 0}
-  fadeDuration: 0.5
 --- !u!43 &1107295230
 Mesh:
   m_ObjectHideFlags: 0
@@ -14992,19 +14993,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5256605505714893680, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5256605505714893680, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5256605505714893680, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 100
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5256605505714893680, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -25
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6859165905719255502, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
       propertyPath: TimerText
@@ -20152,6 +20153,14 @@ PrefabInstance:
       propertyPath: sceneToLoad
       value: JonathanNeighborhood
       objectReference: {fileID: 0}
+    - target: {fileID: 8430188261884346717, guid: 558083b16e4ca884ea05b07a66ae7af2, type: 3}
+      propertyPath: sceneToLoad.scenePath
+      value: Assets/Scenes/JonathanNeighborhood.unity
+      objectReference: {fileID: 0}
+    - target: {fileID: 8430188261884346717, guid: 558083b16e4ca884ea05b07a66ae7af2, type: 3}
+      propertyPath: sceneToLoad.sceneAsset
+      value: 
+      objectReference: {fileID: 102900000, guid: e4992507590898e45b28810610f79cea, type: 3}
     - target: {fileID: 8718436043695358334, guid: 558083b16e4ca884ea05b07a66ae7af2, type: 3}
       propertyPath: m_Name
       value: door
