@@ -58,6 +58,8 @@ public class PlayerController : MonoBehaviour, ISaveable
     private Vector3 lockedPosition;
     public bool showDebugLogs = false;
     private bool resetLocked = false;
+    private PlayerThrowing playerThrowing;
+    private bool isThrowing;
 
     private void Awake()
     {
@@ -90,7 +92,9 @@ public class PlayerController : MonoBehaviour, ISaveable
             staminaSlider.value = SprintTimer;
             staminaSlider.gameObject.SetActive(false);
         }
-        
+
+        playerThrowing = gameObject.GetComponent<PlayerThrowing>();
+
         // Create ground check if missing
         if (groundCheck == null)
         {
@@ -179,6 +183,11 @@ public class PlayerController : MonoBehaviour, ISaveable
         {
             Debug.Log("MOVE INPUT: " + moveInput);
         }
+
+        if (playerThrowing != null)
+        {
+            isThrowing = playerThrowing.GetIsCharging();
+        }
     }
 
     private void Movement()
@@ -238,6 +247,7 @@ public class PlayerController : MonoBehaviour, ISaveable
             camRight.y = 0f;
             camRight.Normalize();
             move = camForward * moveInput.y + camRight * moveInput.x;
+            
         }
 
         float currentSpeed = Speed;
@@ -282,7 +292,8 @@ public class PlayerController : MonoBehaviour, ISaveable
             // Sprint logic
             if (isSprinting && canSprint && !sprintOnCooldown)
             {
-                if (SprintTimer > 0f)
+    
+            if (isMoving&& SprintTimer > 0f)
                 {
                     currentSpeed = SprintSpeed;
                     float depletionRate = moveableObjectMod.movingObject ? moveableObjectMod.sprintDepletionRate : 1f;
@@ -329,10 +340,17 @@ public class PlayerController : MonoBehaviour, ISaveable
             else if (!moveableObjectMod.movingObject && !sprintOnCooldown && !isSprinting && SprintTimer < Mathf.Epsilon)
             {
                 // If not moving an object, is not sprinting and stamina is fully depleted, start cooldown
-                canSprint = false;
                 isSprinting = false;
-                currentSpeed = Speed;
+                animator.SetBool("isSprinting", false);
+            }
 
+            //Out of Stamina
+            if (SprintTimer <= 0f)
+            {
+                isSprinting = false;
+                animator.SetBool("isSprinting", false);
+
+                canSprint = false;
                 if (staminaFill != null)
                     staminaFill.color = cooldownColor;
 
@@ -343,10 +361,11 @@ public class PlayerController : MonoBehaviour, ISaveable
                 sprintOnCooldown = true;
                 sprintCooldownRoutine = StartCoroutine(SprintCooldown());
             }
-            else if (!moveableObjectMod.movingObject && !isSprinting && SprintTimer < SprintDuration)
+            else if (!moveableObjectMod.movingObject && !isSprinting && SprintTimer < SprintDuration )
             {
                 // Regenerating stamina
-                SprintTimer += Time.deltaTime;
+                animator.SetBool("isSprinting", false);
+            SprintTimer += Time.deltaTime;
                 staminaSlider.gameObject.SetActive(true);
                 staminaSlider.value = SprintTimer;
 
@@ -402,9 +421,17 @@ public class PlayerController : MonoBehaviour, ISaveable
         Vector3 combined = (move.normalized * currentSpeed) + new Vector3(0f, yVelocity, 0f);
         Controller.Move(combined * Time.deltaTime);
 
-        if (move.sqrMagnitude > 0.01f)
+        if (move.sqrMagnitude > 0.01f && !isThrowing)
         {
             float angle = Mathf.Atan2(move.x, move.z) * Mathf.Rad2Deg;
+            transform.rotation = Quaternion.Euler(0f, angle, 0f);
+        }
+        else if(isThrowing)
+        {
+            Vector3 camForward = PlayerCamera.transform.forward;
+            camForward.y = 0f;
+            camForward.Normalize();
+            float angle = Mathf.Atan2(camForward.x, camForward.z) * Mathf.Rad2Deg;
             transform.rotation = Quaternion.Euler(0f, angle, 0f);
         }
     }
@@ -448,15 +475,28 @@ public class PlayerController : MonoBehaviour, ISaveable
         }
     }
 
-    private void StartSprinting()
+    private void StartSprinting() //also handles animations
     {
-        if (canSprint)
+        bool isMoving = moveInput.sqrMagnitude >= 0.01f;
+        if (!isSprinting)
+        {
+            resetAnimations();
+        }
+        if (canSprint && isMoving)
+        {
             isSprinting = true;
+            animator.SetBool("isSprinting", true);
+        }
     }
 
     private void StopSprinting()
     {
+        if (isSprinting)
+        {
+            resetAnimations();
+        }
         isSprinting = false;
+        animator.SetBool("isSprinting", false);
     }
 
     IEnumerator SprintCooldown()
@@ -588,9 +628,7 @@ public class PlayerController : MonoBehaviour, ISaveable
     {
         animator.SetBool("isIdle", false);
         animator.SetBool("isWalking", false);
-        animator.SetBool("isGrabbing", false);
+        //animator.SetBool("isGrabbing", false);
         animator.SetBool("isFloating", false);
-        animator.SetBool("isPulling", false);
-        animator.SetBool("isPushing", false);
     }
 }

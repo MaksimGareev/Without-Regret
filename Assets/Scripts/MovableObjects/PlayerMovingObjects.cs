@@ -1,5 +1,7 @@
-using System.Collections.Generic;
 using UnityEngine;
+using System;
+using System.Collections;
+using System.Collections.Generic;
 
 public class PlayerMovingObjects : MonoBehaviour
 {
@@ -9,7 +11,10 @@ public class PlayerMovingObjects : MonoBehaviour
 
     [Header("Debugging")]
     [SerializeField] private bool showDebugLogs = false;
-    
+
+    [Header("Animator Settings")]
+    public bool isGrabbing;
+
     private PlayerController playerController;
     private float normalMoveSpeed;
     private float normalSprintSpeed;
@@ -43,8 +48,8 @@ public class PlayerMovingObjects : MonoBehaviour
 
         if (animator != null)
         {
-            resetAnimations();
-            animator.SetBool("isGrabbing", true); //enter grabbing anim state
+            GrabbingAnimationHandler();
+            Debug.Log("Grabbed");
         }
         
         normalMoveSpeed = playerController.Speed;
@@ -69,29 +74,56 @@ public class PlayerMovingObjects : MonoBehaviour
 
     public void OnReleaseObject(MoveableObject obj)
     {
-        if (playerController.animator != null)
-            playerController.animator.SetBool("isGrabbing", false);
+        StartCoroutine(placeDown());
+        //if (playerController.animator != null)
+        //    playerController.animator.SetBool("isGrabbing", false);
         playerController.Speed = normalMoveSpeed;
         playerController.SprintSpeed = normalSprintSpeed;
         playerController.MovingObject(false);
 
-        if (playerController.animator != null)
-        {
-            playerController.animator.SetBool("isGrabbing", false);
-            //resetAnimations(); //exit animation state
-        }
+        //if (playerController.animator != null)
+        //{
+        //    playerController.animator.SetBool("isGrabbing", false);
+        //    //resetAnimations(); //exit animation state
+        //}
 
         movedObjects.Remove(obj);
     }
 
+    public void GrabbingAnimationHandler()
+    {
+        if (!isGrabbing)
+        {
+            resetAnimations();
+        }
+        isGrabbing = true;
+        StartCoroutine(pickup());
+        animator.SetBool("isGrabbing", true);
+        Debug.Log("Grabbing");
+    }
+
+    IEnumerator pickup()
+    {
+        animator.SetTrigger("pickup");
+        yield return new WaitForSeconds(1.5f);
+    }
+
+    IEnumerator placeDown()
+    {
+        animator.SetTrigger("placing");
+        yield return new WaitForSeconds(1.5f);
+        resetAnimations();
+    }
+
+
+
     private void resetAnimations()
     {
+        Debug.Log("Reset animations");
         animator.SetBool("isIdle", false);
         animator.SetBool("isWalking", false);
         animator.SetBool("isGrabbing", false);
         animator.SetBool("isFloating", false);
-        animator.SetBool("isPulling", false);
-        animator.SetBool("isPushing", false);
     }
 
     public bool IsOccupied() => movedObjects.Count > 0;

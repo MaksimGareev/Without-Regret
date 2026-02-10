@@ -577,15 +577,15 @@ MonoBehaviour:
   possessionRange: 50
   searchConeAngle: 30
   possessKey: 114
-  possessButton: 0
+  possessButton: 335
   posessionBar: {fileID: 0}
-  iconPrefab: {fileID: 0}
+  iconPrefab: {fileID: 7228842916403451623, guid: 8c37cda576505cc45bd7511edf89a1b3, type: 3}
   iconOffset: {x: 0, y: 2, z: 0}
   normalEnemyMovement: {fileID: 0}
   target: {fileID: 0}
   mask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 1
   shouldShowIcon: 1
 --- !u!114 &1566633728491210951
 MonoBehaviour:
@@ -662,9 +662,11 @@ MonoBehaviour:
   interactingScript: {fileID: 0}
   backpack: {fileID: 6428672626242342441}
   AddItemPopup: {fileID: 0}
-  showDebugLogs: 1
+  showDebugLogs: 0
   hasBackpack: 1
   itemToCollect: {fileID: 0}
+  LeavesReward: {fileID: 0}
+  TrashbagRefForRemoval: {fileID: 0}
 --- !u!114 &771315798553256207
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -757,6 +759,7 @@ MonoBehaviour:
   castForce: 10
   maxCastDistance: 30
   minCastDistance: 2
+  upwardArcFactor: 1.75
   reelSpeed: 8
   pickupDistance: 3
   castCooldown: 0.5
@@ -1006,7 +1009,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 8135666d6946df443bf487c5ff01e2c3, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.991
+      value: -1.177
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 8135666d6946df443bf487c5ff01e2c3, type: 3}
       propertyPath: m_LocalPosition.z
