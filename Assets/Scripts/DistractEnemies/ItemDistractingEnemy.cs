@@ -6,7 +6,7 @@ using UnityEngine;
 public class ItemDistractingEnemy : MonoBehaviour
 {
     [Header("Distraction Settings")]
-    [SerializeField] private float distractionRadius = 5f;
+    [SerializeField] private float distractionRadius = 15f;
     [SerializeField] private float distractionDuration = 3f;
 
     private bool hasLanded = false;

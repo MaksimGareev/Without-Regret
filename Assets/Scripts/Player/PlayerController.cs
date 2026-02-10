@@ -56,6 +56,8 @@ public class PlayerController : MonoBehaviour, ISaveable
     private Vector3 lockedPosition;
     public bool showDebugLogs = false;
     private bool resetLocked = false;
+    private PlayerThrowing playerThrowing;
+    private bool isThrowing;
 
     private void Awake()
     {
@@ -88,7 +90,9 @@ public class PlayerController : MonoBehaviour, ISaveable
             staminaSlider.value = SprintTimer;
             staminaSlider.gameObject.SetActive(false);
         }
-        
+
+        playerThrowing = gameObject.GetComponent<PlayerThrowing>();
+
         // Create ground check if missing
         if (groundCheck == null)
         {
@@ -177,6 +181,11 @@ public class PlayerController : MonoBehaviour, ISaveable
         {
             Debug.Log("MOVE INPUT: " + moveInput);
         }
+
+        if (playerThrowing != null)
+        {
+            isThrowing = playerThrowing.GetIsCharging();
+        }
     }
 
     private void Movement()
@@ -236,6 +245,7 @@ public class PlayerController : MonoBehaviour, ISaveable
             camRight.y = 0f;
             camRight.Normalize();
             move = camForward * moveInput.y + camRight * moveInput.x;
+            
         }
 
         float currentSpeed = Speed;
@@ -341,9 +351,17 @@ public class PlayerController : MonoBehaviour, ISaveable
         Vector3 combined = (move.normalized * currentSpeed) + new Vector3(0f, yVelocity, 0f);
         Controller.Move(combined * Time.deltaTime);
 
-        if (move.sqrMagnitude > 0.01f)
+        if (move.sqrMagnitude > 0.01f && !isThrowing)
         {
             float angle = Mathf.Atan2(move.x, move.z) * Mathf.Rad2Deg;
+            transform.rotation = Quaternion.Euler(0f, angle, 0f);
+        }
+        else if(isThrowing)
+        {
+            Vector3 camForward = PlayerCamera.transform.forward;
+            camForward.y = 0f;
+            camForward.Normalize();
+            float angle = Mathf.Atan2(camForward.x, camForward.z) * Mathf.Rad2Deg;
             transform.rotation = Quaternion.Euler(0f, angle, 0f);
         }
     }
