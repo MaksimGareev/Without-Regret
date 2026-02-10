@@ -10,15 +10,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 636ccf3b79f7de14aabc8f2e664d2cad, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 50.470047
+      value: -28.422758
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 636ccf3b79f7de14aabc8f2e664d2cad, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.020002365
+      value: 0.32490635
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 636ccf3b79f7de14aabc8f2e664d2cad, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 91.04292
+      value: 108.7345
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 636ccf3b79f7de14aabc8f2e664d2cad, type: 3}
       propertyPath: m_LocalRotation.w
@@ -56,6 +56,9 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 636ccf3b79f7de14aabc8f2e664d2cad, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1561806798105241516}
     - targetCorrespondingSourceObject: {fileID: 375517915199365746, guid: 636ccf3b79f7de14aabc8f2e664d2cad, type: 3}
       insertIndex: -1
       addedObject: {fileID: 774707513379138979}
@@ -88,3 +91,20 @@ CapsuleCollider:
   m_Height: 239.96906
   m_Direction: 1
   m_Center: {x: -2.2, y: 82.8, z: -1.0025862}
+--- !u!1 &4161195179429296189 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 636ccf3b79f7de14aabc8f2e664d2cad, type: 3}
+  m_PrefabInstance: {fileID: 3854765884853601644}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1561806798105241516
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4161195179429296189}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88311134e484ef5449f807aaba4711da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TreeRotater
