@@ -25,9 +25,14 @@ public class LockPicking : MonoBehaviour
     [Min(1)]
     [Range(1, 25)]
 
+    [Header("Sound Vars")]
     public AudioSource Source;
     public AudioClip UnlockSound;
     public AudioClip FailSound;
+
+    [Header("Image Refs")]
+    [SerializeField] List<Image> LockPickImages;
+    [SerializeField] GameObject VictoryText;
 
     private float EulerAngle;
     [SerializeField]  private float UnlockAngle;
@@ -49,6 +54,7 @@ public class LockPicking : MonoBehaviour
     private bool ControlsLocked;
     private int ArrowAttempts = 3;
     private float PickDurability = 2f;
+    
 
     [Header("Tutorial Vars")]
     [SerializeField] GameObject TutorialPopUp1;
@@ -174,6 +180,12 @@ public class LockPicking : MonoBehaviour
                 {
                     // NewLock();
                     Source?.Stop();
+                    for (int i = 0; i < LockPickImages.Count; i++)
+                    {
+                        Color tempColor = LockPickImages[i].color;
+                        tempColor.a = 0.75f;
+                        LockPickImages[i].color = tempColor;
+                    }
                     SecondStageActive = true;
                     StageTwoUI.SetActive(true);//switches controls to stage two, locks pick rotation
                     if (FirstTimeLock)
@@ -291,6 +303,19 @@ public class LockPicking : MonoBehaviour
             Tut1Active = true;
             ControlsLocked = true;
         }
+        for (int i = 0; i < LockPickImages.Count; i++)
+        {
+            Color tempColor = LockPickImages[i].color;
+            tempColor.a = 1;
+            LockPickImages[i].color = tempColor;
+        }
+        for (int i = 0; i < Arrows.Count; i++)
+        {
+            Color tempColor = Arrows[i].color;
+            tempColor = Color.white;
+            tempColor.a = 1;
+            Arrows[i].color = tempColor;
+        }
         currentLockedItem = lockedItem;
         SecondStageActive = false;
         StageTwoUI.SetActive(false);
@@ -312,8 +337,7 @@ public class LockPicking : MonoBehaviour
         MovePick = true;
         KeyPressTime = 0;
         ArrowIndex = 0;
-        StageTwoUI.SetActive(false);
-        LockPickUi.SetActive(false);
+        StartCoroutine(VictoryEffect());
         if(FirstTimeLock == true)
         {
             FirstTimeLock = false;
@@ -325,26 +349,16 @@ public class LockPicking : MonoBehaviour
             RewardItem = null;
         }
 
-        // Unlock player movement
-        PlayerController pc = player.GetComponent<PlayerController>();
-        if (pc != null)
-        {
-            pc.MovementLocked = false;
-            pc.enabled = true;
-        }
-
-        if (currentLockedItem != null)
-        {
-            currentLockedItem.OnUnlocked();
-            currentLockedItem = null;
-        }
     }
 
     private void CheckDirection(int input)
     {
         if (input == DirectionAssignments[ArrowIndex])
         {
-            Arrows[ArrowIndex].gameObject.SetActive(false);
+            Color tempColor = Arrows[ArrowIndex].color;
+            tempColor = Color.green;
+            tempColor.a = 0.75f;
+            Arrows[ArrowIndex].color = tempColor;
             ArrowIndex++;
         }
         else
@@ -363,13 +377,15 @@ public class LockPicking : MonoBehaviour
     {
         for (int i = 0; i < Arrows.Count; i++)
         {
-            Arrows[i].color = Color.red;
+            Color tempColor = Arrows[i].color;
+            tempColor = Color.red;
+            tempColor.a = 1;
+            Arrows[i].color = tempColor;
         }
         ArrowAttempts--;
         yield return new WaitForSecondsRealtime(.25f);
         for (int i = 0; i < Arrows.Count; i++)
         {
-            Arrows[i].gameObject.SetActive(true);
             Arrows[i].color = Color.white;
         }
         ControlsLocked = false;
@@ -406,6 +422,30 @@ public class LockPicking : MonoBehaviour
             {
                 Arrows[i].texture = ArrowImages[3].texture;
             }
+        }
+    }
+
+    IEnumerator VictoryEffect()
+    {
+        //play particle effect here once we have one
+        VictoryText.SetActive(true);
+        yield return new WaitForSecondsRealtime(1f);
+        VictoryText.SetActive(false);
+        StageTwoUI.SetActive(false);
+        LockPickUi.SetActive(false);
+
+        // Unlock player movement
+        PlayerController pc = player.GetComponent<PlayerController>();
+        if (pc != null)
+        {
+            pc.MovementLocked = false;
+            pc.enabled = true;
+        }
+
+        if (currentLockedItem != null)
+        {
+            currentLockedItem.OnUnlocked();
+            currentLockedItem = null;
         }
     }
 }
