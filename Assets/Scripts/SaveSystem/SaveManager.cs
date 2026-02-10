@@ -19,6 +19,7 @@ public class SaveManager : MonoBehaviour
     private Dictionary<string, bool> unlockedItems = new Dictionary<string, bool>();
 
     public InputActionAsset inputActions;
+    public bool showDebugLogs = true;
 
     private void Awake()
     {
@@ -69,7 +70,7 @@ public class SaveManager : MonoBehaviour
             LoadGame(SaveSystem.activeSaveSlot);
         }
 
-        else
+        else if (showDebugLogs)
         {
             Debug.Log("No saveables found; skipping load.");
         }
@@ -84,7 +85,7 @@ public class SaveManager : MonoBehaviour
         {
             ObjectiveManager.Instance.ClearObjectivesOnDelete();
         }
-        Debug.Log("All save data cleared.");
+        if (showDebugLogs) Debug.Log("All save data cleared.");
     }
 
     private void RefreshSaveables()
@@ -141,24 +142,27 @@ public class SaveManager : MonoBehaviour
             }
         }
 
-        foreach (var saveable in saveables)
+        if (showDebugLogs)
         {
-            Debug.Log($"Found ISaveable: {saveable.GetType().Name} in scene: {activeScene.name}");
-            if (saveable is SaveableWorldObject swo)
+            foreach (var saveable in saveables)
             {
-                Debug.Log($"SaveableWorldObject ID: {swo.GetUniqueID()}");
-            }
-            if (saveable is SaveableFriendlyNPC fnpc)
-            {
-                Debug.Log($"SaveableFriendlyNPC ID: {fnpc.GetUniqueID()}");
-            }
-            if (saveable is SaveableEnemyNPC enpc)
-            {
-                Debug.Log($"SaveableEnemyNPC ID: {enpc.GetUniqueID()}");
-            }
-            if (saveable is Gate gate)
-            {
-                Debug.Log($"Gate ID: {gate.GetUniqueID()}");
+                Debug.Log($"Found ISaveable: {saveable.GetType().Name} in scene: {activeScene.name}");
+                if (saveable is SaveableWorldObject swo)
+                {
+                    Debug.Log($"SaveableWorldObject ID: {swo.GetUniqueID()}");
+                }
+                if (saveable is SaveableFriendlyNPC fnpc)
+                {
+                    Debug.Log($"SaveableFriendlyNPC ID: {fnpc.GetUniqueID()}");
+                }
+                if (saveable is SaveableEnemyNPC enpc)
+                {
+                    Debug.Log($"SaveableEnemyNPC ID: {enpc.GetUniqueID()}");
+                }
+                if (saveable is Gate gate)
+                {
+                    Debug.Log($"Gate ID: {gate.GetUniqueID()}");
+                }
             }
         }
     }
@@ -168,17 +172,17 @@ public class SaveManager : MonoBehaviour
         if (!persistentSaveables.Contains(saveable))
         {
             persistentSaveables.Add(saveable);
-            Debug.Log("saveable object added to persistentSaveables");
+            if (showDebugLogs) Debug.Log("saveable object added to persistentSaveables");
         }
 
         if (!saveables.Contains(saveable))
         {
             saveables.Add(saveable);
-            Debug.Log("saveable object added to saveables");
+            if (showDebugLogs) Debug.Log("saveable object added to saveables");
         }
         else
         {
-            Debug.Log("object is not saveable!");
+            if (showDebugLogs) Debug.Log("object is not saveable!");
         }
     }
 
@@ -209,7 +213,7 @@ public class SaveManager : MonoBehaviour
         if (autoSaveTimer >= autoSaveInterval && SceneManager.GetActiveScene().name != "MainMenu")
         {
             SaveGame(SaveSystem.activeSaveSlot);
-            Debug.Log("Game auto-saved.");
+            if (showDebugLogs) Debug.Log("Game auto-saved.");
             autoSaveTimer = 0f;
         }
 
@@ -232,16 +236,16 @@ public class SaveManager : MonoBehaviour
 
         RefreshSaveables();
 
-        Debug.Log($"[SaveManager.SaveGame] Saveables count = {saveables.Count}");
+        if (showDebugLogs) Debug.Log($"[SaveManager.SaveGame] Saveables count = {saveables.Count}");
 
         foreach (ISaveable saveable in saveables)
         {
-            Debug.Log($"[SaveManager.SaveGame] calling SaveTo on {saveable.GetType().Name}");
+            if (showDebugLogs) Debug.Log($"[SaveManager.SaveGame] calling SaveTo on {saveable.GetType().Name}");
             saveable.SaveTo(data);
         }
 
         int objCount = data.objectiveSaveData?.objectives?.Count ?? -1;
-        Debug.Log($"[SaveManager.SaveGame] objectiveSaveData.objectives.Count = {objCount}");
+        if (showDebugLogs) Debug.Log($"[SaveManager.SaveGame] objectiveSaveData.objectives.Count = {objCount}");
 
         SaveSystem.Save(data, slot);
         isSaving = false;
@@ -253,7 +257,7 @@ public class SaveManager : MonoBehaviour
 
         if (data == null)
         {
-            Debug.LogWarning("No save data found to load.");
+            if (showDebugLogs) Debug.LogWarning("No save data found to load.");
             return;
         }
 
@@ -266,7 +270,7 @@ public class SaveManager : MonoBehaviour
                 continue;
             }
             saveable.LoadFrom(data);
-            Debug.Log($"[SaveManager.LoadGame] Loading {saveable.GetType().Name}");
+            if (showDebugLogs) Debug.Log($"[SaveManager.LoadGame] Loading {saveable.GetType().Name}");
         }
 
         foreach (ISaveable saveable in saveables)
@@ -274,7 +278,7 @@ public class SaveManager : MonoBehaviour
             if (saveable is PlayerController player)
             {
                 player.LoadFrom(data);
-                Debug.Log($"[SaveManager.LoadGame] Loading PlayerController");
+                if (showDebugLogs) Debug.Log($"[SaveManager.LoadGame] Loading PlayerController");
                 break;
             }
         }
