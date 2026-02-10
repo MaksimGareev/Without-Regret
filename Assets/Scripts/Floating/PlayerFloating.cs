@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using System.Collections;
 
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerFloating : MonoBehaviour
@@ -216,8 +217,10 @@ public class PlayerFloating : MonoBehaviour
 
     private void StartFloating()
     {
-        resetAnimations();
-        animator.SetBool("isFloating", true);
+        animator.ResetTrigger("isLanding");
+        animator.SetBool("isFloating", false);
+        animator.SetTrigger("floatStart");
+        StartCoroutine(FloatAnimationHandler());
         rhythmSlider.gameObject.SetActive(true);
         IsFloating = true;
         floatTimer = 0f;
@@ -226,10 +229,6 @@ public class PlayerFloating : MonoBehaviour
         prevRbUseGravity = rb.useGravity;
         prevRbDrag = rb.linearDamping;
         prevRbKinematic = rb.isKinematic;
-
-        // disable controller systems
-        if (playerController != null) playerController.enabled = false;
-        if (charController != null) charController.enabled = false;
 
         // enable rigidbody physics for floating
         rb.isKinematic = false;
@@ -244,6 +243,10 @@ public class PlayerFloating : MonoBehaviour
         // pick target hover height (from current world position)
         hoverTargetY = transform.position.y + floatHeightOffset;
 
+        // disable controller systems
+        if (playerController != null) playerController.enabled = false;
+        if (charController != null) charController.enabled = false;
+
         // reset movement smoothing state
         currentMove = Vector3.zero;
         targetMove = Vector3.zero;
@@ -251,6 +254,9 @@ public class PlayerFloating : MonoBehaviour
 
     private void StopFloating()
     {
+        animator.SetTrigger("isLanding");
+        animator.SetBool("isFloating", false);
+
         rhythmSlider.gameObject.SetActive(false);
         IsFloating = false;
         rhythmTimer = 0f;
@@ -293,7 +299,6 @@ public class PlayerFloating : MonoBehaviour
         if (floatInput && !toggleInventoryUI.isEnabled)
         {
             floatInput = false; // consume input
-            animator.SetTrigger("Flap"); //flap animation when input is taken
             float errorMargin = Mathf.Min(rhythmTimer, rhythmInterval - rhythmTimer);
             if (errorMargin <= rhythmWindow)
             {
@@ -424,13 +429,24 @@ public class PlayerFloating : MonoBehaviour
         canFloat = newCanfloat;
     }
 
+    IEnumerator FloatAnimationHandler()
+    {
+        if (!IsFloating)
+        {
+            resetAnimations();
+        }
+        IsFloating = true;
+        yield return new WaitForSeconds(0.5f);
+        animator.SetBool("isFloating", true);
+    }
+
+
+
     private void resetAnimations()
     {
         animator.SetBool("isIdle", false);
         animator.SetBool("isWalking", false);
         animator.SetBool("isGrabbing", false);
         animator.SetBool("isFloating", false);
-        animator.SetBool("isPulling", false);
-        animator.SetBool("isPushing", false);
     }
 }

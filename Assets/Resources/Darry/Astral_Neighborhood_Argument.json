@@ -1,8 +1,46 @@
 {
-    "npcName": "Darry",
     "dialogueLines": [
         {
+            "speaker": "Darry",
             "text": "Reed, I understand that you're pissed, but I need you to listen to me right now.",
+            "requiredMorality": 0,
+            "choices": [
+                {
+                    "text": "Ask for the truth",
+                    "nextIndex": 1,
+                    "moralityChange": 1,
+                    "directionString": "Up"
+                },
+                {
+                    "text": "Freak out on him",
+                    "nextIndex": 2,
+                    "moralityChange": -1,
+                    "directionString": "Down"
+                }
+            ]
+        },
+        {
+            "speaker": "Reed",
+            "text": "Darry. Stop trying to run away and make excuses. Tell me what really happened.",
+            "requiredMorality": 0,
+            "choices": [
+                {
+                    "text": "Derry. Stop trying to run away and make excuses. Tell me what really happened.",
+                    "nextIndex": 3,
+                    "moralityChange": 1,
+                    "directionString": "Up"
+                },
+                {
+                    "text": "Pissed doesn't even begin to cover it Derry. Cut the crap.'",
+                    "nextIndex": 4,
+                    "moralityChange": -1,
+                    "directionString": "Down"
+                }
+            ]
+        },
+        {
+            "speaker": "Reed",
+            "text": "Pissed doesn't even begin to cover it Derry. Cut the crap.",
             "requiredMorality": 0,
             "choices": [
                 {
@@ -12,7 +50,7 @@
                     "directionString": "Up"
                 },
                 {
-                    "text": "Pissed doesn't even begin to cover it Derry. Cut the crap.'",
+                    "text": "Pissed doesn't even begin to cover it Derry. Cut the crap.",
                     "nextIndex": 2,
                     "moralityChange": -1,
                     "directionString": "Down"
