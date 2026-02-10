@@ -12,7 +12,7 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
     [SerializeField] private List<ObjectiveData> allObjectives;
     private int currentObjectiveIndex = 0;
     [SerializeField] private List<ObjectiveInstance> activeObjectives = new();
-    private List<ObjectiveInstance> completedObjectives = new();
+    [SerializeField] private List<ObjectiveInstance> completedObjectives = new();
     private bool objectivesInSceneCompleted = false;
 
     [SerializeField] private ObjectiveCanvas objectiveCanvas;
