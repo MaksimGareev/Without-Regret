@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.EditorTools;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -43,6 +44,9 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
 
     public GameObject enemy;
     public bool focusCameraOnTrigger = false;
+    [Header("Reward ItemData")]
+    [Tooltip("Optional item to give the player upon completing the dialogue. Will only be given once.")]
+    public ItemData RewardItem;
 
     public enum DialogueTriggerType
     {
