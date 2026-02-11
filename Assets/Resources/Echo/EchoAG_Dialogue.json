@@ -1,39 +1,39 @@
 {
-"npcName": "Echo",
 "dialogueLines": [
 
-{
-	"text": "Chime...Is that you?",
-	"requiredMorality": 0,
-	"choices": [
 	{
-		"text": "Echo we have to leave now. The Astral Realm is falling apart!",
-		"nextIndex": 1,
-		"moralityChange": 0, 
-		"directionString": "Up"
+		"Speaker": "Echo",
+		"text": "Chime...Is that you?",
+		"requiredMorality": 0,
+		"choices": [
+			{
+				"text": "Echo we have to leave now. The Astral Realm is falling apart!",
+				"nextIndex": 1,
+				"moralityChange": 0,
+				"directionString": "Up"
+			},
+			{
+				"text": "No I'm not real.",
+				"nextIndex": 2,
+				"moralityChange": -1,
+				"directionString": "Down"
+			}
+
+		]
 	},
 	{
-		"text": "No I'm not real.",
-		"nextIndex": 2,
-		"moralityChange": -1,
-		"directionString": "Down"
+		"Speaker": "Echo",
+		"text": "I can't leave...This is what I deserve...For what happened to you",
+		"requiredMorality": 0,
+		"choices": []
+	},
+	{
+		"Speaker": "Echo",
+		"text": "If you're not real, then am I also not real!",
+		"requiredMorality": -1,
+		"choices": []
 	}
 
 	]
-},
-{
-	"npcName": "Echo",
-	"text": "I can't leave...This is what I deserve...For what happened to you",
-	"requiredMorality": 0,
-	"choices": []
-},
-{
-	"npcName": "Echo",
-	"text": "If you're not real, then am I also not real!",
-	"requiredMorality": -1,
-	"choices": []
-}
-
-]
 
 }
