@@ -5,15 +5,15 @@ using System.Collections.Generic;
 
 public class PlayerMovingObjects : MonoBehaviour
 {
-    public Animator animator;
+    private Animator animator;
     [Header("General Settings")]
     [SerializeField] public Transform grabPoint;
 
     [Header("Debugging")]
     [SerializeField] private bool showDebugLogs = false;
 
-    [Header("Animator Settings")]
-    public bool isGrabbing;
+    //[Header("Animator Settings")]
+    private bool isGrabbing;
 
     private PlayerController playerController;
     private float normalMoveSpeed;

@@ -12,18 +12,18 @@ public class GameManager : MonoBehaviour
     public int currentSceneIndex;
 
     // References to child objects
-    private GameObject player;
-    private GameObject saveManager;
-    private GameObject audioManager;
-    private GameObject gameOverManager;
-    private GameObject mainCanvas;
-    private GameObject interactionIconsCanvas;
-    private GameObject journalUICanvas;
-    private GameObject playerUICanvas;
-    private GameObject pauseManager;
-    private GameObject dialogueManager;
-    private GameObject objectiveManager;
-    private GameObject eventSystem;
+    //[HideInInspector] public GameObject player;
+    [HideInInspector] public GameObject saveManager;
+    [HideInInspector] public GameObject audioManager;
+    [HideInInspector] public GameObject gameOverManager;
+    [HideInInspector] public GameObject mainCanvas;
+    [HideInInspector] public GameObject interactionIconsCanvas;
+    [HideInInspector] public GameObject journalUICanvas;
+    [HideInInspector] public GameObject playerUICanvas;
+    [HideInInspector] public GameObject pauseManager;
+    [HideInInspector] public GameObject dialogueManager;
+    [HideInInspector] public GameObject objectiveManager;
+    [HideInInspector] public GameObject eventSystem;
 
     private void Awake()
     {
@@ -81,7 +81,7 @@ public class GameManager : MonoBehaviour
     private void UpdateChildReferences()
     {
         // Find child objects and store references to them
-        player = GetComponentInChildren<PlayerController>()?.gameObject;
+        //player = GetComponentInChildren<PlayerController>()?.gameObject;
         saveManager = GetComponentInChildren<SaveManager>()?.gameObject;
         audioManager = GetComponentInChildren<AudioManager>()?.gameObject;
         gameOverManager = GetComponentInChildren<GameOverManager>()?.gameObject;
@@ -109,8 +109,8 @@ public class GameManager : MonoBehaviour
 
         if (currentSceneName == "MainMenu")
         {
-            if (player.activeSelf)
-                player.SetActive(false);
+            // if (player.activeSelf)
+            //     player.SetActive(false);
 
             if (gameOverManager.activeSelf)
                 gameOverManager.SetActive(false);
@@ -135,8 +135,8 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            if (!player.activeSelf)
-                player.SetActive(true);
+            // if (!player.activeSelf)
+            //     player.SetActive(true);
 
             if (!gameOverManager.activeSelf)
                 gameOverManager.SetActive(true);
@@ -160,36 +160,36 @@ public class GameManager : MonoBehaviour
                 dialogueManager.SetActive(true);
         }
 
-        var players = GameObject.FindGameObjectsWithTag("Player");
-        while (players.Length > 1)
-        {
-            //yield return null;
-            players = GameObject.FindGameObjectsWithTag("Player");
+        // var players = GameObject.FindGameObjectsWithTag("Player");
+        // while (players.Length > 1)
+        // {
+        //     //yield return null;
+        //     players = GameObject.FindGameObjectsWithTag("Player");
 
-            foreach (var otherPlayer in players)
-            {
-                if (otherPlayer.gameObject != this.player)
-                {
-                    // If another player instance is found, update the main player reference and destroy the duplicate
-                    otherPlayer.gameObject.SetActive(false);
+        //     foreach (var otherPlayer in players)
+        //     {
+        //         if (otherPlayer.gameObject != this.player)
+        //         {
+        //             // If another player instance is found, update the main player reference and destroy the duplicate
+        //             otherPlayer.gameObject.SetActive(false);
 
-                    var data = SaveSystem.Load(SaveSystem.activeSaveSlot);
+        //             var data = SaveSystem.Load(SaveSystem.activeSaveSlot);
 
-                    bool hasTransform = 
-                    data != null && 
-                    data.playerSaveData != null &&
-                    data.playerSaveData.TryGetPlayerTransform(currentSceneName, out float[] pos, out float[] rot);
+        //             bool hasTransform = 
+        //             data != null && 
+        //             data.playerSaveData != null &&
+        //             data.playerSaveData.TryGetPlayerTransform(currentSceneName, out float[] pos, out float[] rot);
 
-                    if (!hasTransform)
-                    {
-                        this.player.transform.position = otherPlayer.transform.position;
-                        this.player.transform.rotation = otherPlayer.transform.rotation;
-                        this.player.transform.localScale = otherPlayer.transform.localScale; 
-                    }
-                    this.player.SetActive(true);
-                    Destroy(otherPlayer.gameObject);
-                }
-            }
-        }
+        //             if (!hasTransform)
+        //             {
+        //                 this.player.transform.position = otherPlayer.transform.position;
+        //                 this.player.transform.rotation = otherPlayer.transform.rotation;
+        //                 this.player.transform.localScale = otherPlayer.transform.localScale; 
+        //             }
+        //             this.player.SetActive(true);
+        //             Destroy(otherPlayer.gameObject);
+        //         }
+        //     }
+        // }
     }
 }

@@ -5,12 +5,13 @@ using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour, ISaveable
 {   
-    [Header("Components")]
-    public CharacterController Controller;
+    [HideInInspector] public CharacterController Controller;
     private Camera PlayerCamera;
-    public Animator animator;
-    public Slider staminaSlider;
-    public Image staminaFill;
+    [HideInInspector] public Animator animator;
+    [HideInInspector] public Slider staminaSlider;
+    [HideInInspector] public Image staminaFill;
+
+    [Header("Sprint UI Colors")]
     public Color normalColor = new Color(0f, 147f/255f, 111f/255f);
     public Color cooldownColor = Color.grey;
 
