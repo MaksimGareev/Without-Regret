@@ -6,6 +6,7 @@ public enum ItemType
     ThrowableItem,
     GrabbableItem,
     Backpack,
+    Collectable,
     MiscItem
 }
 
