@@ -1194,6 +1194,7 @@ public class DialogueManager : MonoBehaviour
         {
             // If EndCameraZoom is a coroutine
             yield return cameraMovement.EndCameraZoom();
+            cameraMovement.SetCameraLocked(false);
         }
 
         Chime.isInDialogue = false;
