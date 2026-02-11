@@ -303,7 +303,7 @@ public class DialogueManager : MonoBehaviour
         }
 
         DialogueLine line = currentDialogue.dialogueLines[currentIndex];
-        NPCNameText.text = line.speaker;
+        NPCNameText.text = line.Speaker;
 
         if (line.requiredMorality != 0)
         {

@@ -11,7 +11,7 @@ public class DialogueData
 [System.Serializable]
 public class DialogueLine
 {
-    public string speaker;
+    public string Speaker;
     public string text;
     public int requiredMorality;
     public List<DialogueChoice> choices;

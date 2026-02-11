@@ -505,9 +505,9 @@ public class PlayerController : MonoBehaviour, ISaveable
 
     IEnumerator SprintCooldown()
     {
-        Debug.Log("Sprint cooldown started.");
+        //Debug.Log("Sprint cooldown started.");
         yield return new WaitForSeconds(sprintCooldown);
-        Debug.Log("Sprint cooldown ended. Stamina reset.");
+        //Debug.Log("Sprint cooldown ended. Stamina reset.");
         SprintTimer = SprintDuration;
         canSprint = true;
         sprintOnCooldown = false;
