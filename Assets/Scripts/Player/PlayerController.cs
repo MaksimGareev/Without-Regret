@@ -297,7 +297,7 @@ public class PlayerController : MonoBehaviour, ISaveable
             if (isSprinting && canSprint && !sprintOnCooldown)
             {
     
-            if (isMoving&& SprintTimer > 0f)
+            if (isMoving && SprintTimer > 0f)
                 {
                     currentSpeed = SprintSpeed;
                     float depletionRate = moveableObjectMod.movingObject ? moveableObjectMod.sprintDepletionRate : 1f;
@@ -349,7 +349,7 @@ public class PlayerController : MonoBehaviour, ISaveable
             }
 
             //Out of Stamina
-            if (SprintTimer <= 0f)
+            if (SprintTimer <= 0f && !sprintOnCooldown)
             {
                 isSprinting = false;
                 animator.SetBool("isSprinting", false);
@@ -369,7 +369,7 @@ public class PlayerController : MonoBehaviour, ISaveable
             {
                 // Regenerating stamina
                 animator.SetBool("isSprinting", false);
-            SprintTimer += Time.deltaTime;
+                SprintTimer += Time.deltaTime;
                 staminaSlider.gameObject.SetActive(true);
                 staminaSlider.value = SprintTimer;
 
@@ -505,18 +505,18 @@ public class PlayerController : MonoBehaviour, ISaveable
 
     IEnumerator SprintCooldown()
     {
-        //Debug.Log("Sprint cooldown started.");
+        Debug.Log("Sprint cooldown started.");
         yield return new WaitForSeconds(sprintCooldown);
-        //Debug.Log("Sprint cooldown ended. Stamina reset.");
+        Debug.Log("Sprint cooldown ended. Stamina reset.");
         SprintTimer = SprintDuration;
         canSprint = true;
+        sprintOnCooldown = false;
 
         if (staminaFill != null)
         {
             staminaFill.color = normalColor;
         }
 
-        sprintOnCooldown = false;
         sprintCooldownRoutine = null;
     }
 
