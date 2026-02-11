@@ -1,6 +1,7 @@
 using UnityEngine;
-//using Unity.AI.Navigation;
+using Unity.AI.Navigation;
 using System;
+using System.Collections;
 
 [RequireComponent(typeof(Rigidbody))]
 public class MoveableObject : MonoBehaviour, IInteractable
@@ -41,7 +42,7 @@ public class MoveableObject : MonoBehaviour, IInteractable
     private Collider coll;
     private Transform player;
 
-    // [SerializeField] private NavMeshSurface navMeshSurface;
+    [SerializeField] private NavMeshSurface navMeshSurface;
     // Ground Check Parameters
     private float groundCheckDistance = 0.1f; // extra ray distance below collider
     private float groundVelocityThreshold = 0.01f; // velocity threshold to consider 'stopped'
@@ -154,25 +155,7 @@ public class MoveableObject : MonoBehaviour, IInteractable
         }
 
         EnablePopupIcon();*/
-
-       /* // Rebuild NavMesh after the object is moved
-        if (navMeshSurface != null)
-        {
-            //navMeshSurface.BuildNavMesh();
-            StartCoroutine(RebuildNavMeshWhenStill());
-        }*/
     }
-
-   /* private IEnumerator RebuildNavMeshWhenStill()
-    {
-        // wait for object to stop moving
-        while (rb.linearVelocity.magnitude > 0.05f || rb.angularVelocity.magnitude > 0.05f)
-        {
-            yield return null;
-        }
-
-       // navMeshSurface.BuildNavMesh();
-    }*/
 
     public void EnablePopupIcon()
     {
