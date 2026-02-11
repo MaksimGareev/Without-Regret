@@ -1,8 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.EditorTools;
+//using UnityEditor.EditorTools;
 using UnityEngine;
-using UnityEngine.AI;
+//using UnityEngine.AI;
 
 public class DialogueTrigger : MonoBehaviour, IInteractable
 {
