@@ -283,10 +283,14 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
 
     private IEnumerator WaitForGameManagerReady(Collider other)
     {
-        while (!GameManager.Instance.instanceReady)
+        if (GameManager.Instance != null)
         {
-            yield return null; // Wait for the next frame
+            while (!GameManager.Instance.instanceReady)
+            {
+                yield return null; // Wait for the next frame
+            }
         }
+        
         StartDialogueFromTrigger(other);
     }
 
@@ -309,6 +313,15 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
             if (dialogueManager != null && jsonDialogueFile != null)
             {
                 dialogueManager.StartDialogueFromJson(jsonDialogueFile, this);
+
+                // Add Progress to objective if there is one to add to, (Talking to irene completes the "talk to irene" objective)
+                if (ObjectiveManager.Instance != null && linkedObjective != null)
+                {
+                    if (ObjectiveManager.Instance.IsObjectiveActive(linkedObjective.objectiveID))
+                    {
+                        ObjectiveManager.Instance.AddProgress(linkedObjective.objectiveID, 1);
+                    }
+                }
             }
 
             TalkedAlready = true;
