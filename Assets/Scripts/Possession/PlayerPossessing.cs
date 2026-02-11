@@ -12,7 +12,7 @@ public class PlayerPossessing : MonoBehaviour
     [SerializeField] private float searchConeAngle = 30f;
     [SerializeField] private KeyCode possessKey = KeyCode.R;
     [SerializeField] private KeyCode possessButton = KeyCode.JoystickButton9;
-    [SerializeField] private Slider posessionBar;
+    private Slider possessionBar;
     [SerializeField] private GameObject iconPrefab;
     [SerializeField] private Vector3 iconOffset = new Vector3(0f, 2f, 0f);
 
@@ -20,12 +20,12 @@ public class PlayerPossessing : MonoBehaviour
     private PlayerController playerController;
     private Rigidbody playerRigidbody;
     private PossessedEnemyResisting possessedEnemyMovement;
-    [SerializeField] private PatrollingEnemy normalEnemyMovement;
+    private PatrollingEnemy normalEnemyMovement;
     private EnemyFieldOfView enemyPOV;
     private NavMeshAgent enemyNavMeshAgent;
     private Rigidbody enemyRigidbody;
     private float possessionTimer;
-    public PossessedEnemyResisting target = null;
+    private PossessedEnemyResisting target = null;
     public LayerMask mask;
     RaycastHit hit;
     private bool posessing = false;
@@ -36,10 +36,15 @@ public class PlayerPossessing : MonoBehaviour
         playerController = GetComponent<PlayerController>();
         playerRigidbody = GetComponent<Rigidbody>();
 
-        if (posessionBar != null)
+        if (possessionBar == null)
         {
-            posessionBar.value = 1;
-            posessionBar.gameObject.SetActive(false);
+           possessionBar = GameObject.Find("PossessionBar")?.GetComponent<Slider>();
+        }
+
+        if (possessionBar != null)
+        {
+            possessionBar.value = 1;
+            possessionBar.gameObject.SetActive(false);
         }
     }
 
@@ -75,7 +80,7 @@ public class PlayerPossessing : MonoBehaviour
         if (possessedEnemyMovement != null)
         {
             possessionTimer -= Time.deltaTime;
-            posessionBar.value = Mathf.InverseLerp(0, possessionDuration, possessionTimer);
+            possessionBar.value = Mathf.InverseLerp(0, possessionDuration, possessionTimer);
 
                 Vector3 input = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
                 possessedEnemyMovement.UpdatePossession(input);
@@ -171,7 +176,7 @@ public class PlayerPossessing : MonoBehaviour
         }
 
         posessing = true;
-        posessionBar.gameObject.SetActive(true);
+        possessionBar.gameObject.SetActive(true);
         normalEnemyMovement = target.GetComponent<PatrollingEnemy>();
         enemyRigidbody = target.GetComponent<Rigidbody>();
         enemyPOV = target.GetComponent<EnemyFieldOfView>();
@@ -234,8 +239,8 @@ public class PlayerPossessing : MonoBehaviour
             }
         }
 
-        posessionBar.gameObject.SetActive(false);
-        posessionBar.value = 1;
+        possessionBar.gameObject.SetActive(false);
+        possessionBar.value = 1;
 
         if (enemyPOV != null)
         {

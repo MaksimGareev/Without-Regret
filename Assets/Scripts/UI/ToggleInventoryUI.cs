@@ -4,8 +4,7 @@ using UnityEngine.InputSystem;
 
 public class ToggleInventoryUI : MonoBehaviour
 {
-    [Header("References")]
-    [SerializeField] private GameObject inventoryGameObject;
+    private GameObject inventoryGameObject;
 
     [Header("Input Settings")]
     [SerializeField] private InputActionAsset inputActions;
@@ -28,6 +27,15 @@ public class ToggleInventoryUI : MonoBehaviour
 
     void Awake()
     {
+        if (inventoryGameObject == null)
+        {
+            inventoryGameObject = GameObject.Find("Inventory");
+            if (inventoryGameObject == null)
+            {
+                Debug.LogError("Inventory GameObject not found in the scene. Please ensure a GameObject named 'Inventory' exists in the scene as a child of the MainCanvas.");
+            }
+        }
+
         rectTransform = inventoryGameObject.GetComponent<RectTransform>();
 
         rectTransform.anchoredPosition = disabledPosition;
