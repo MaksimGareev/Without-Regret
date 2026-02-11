@@ -88,6 +88,7 @@ public class DialogueManager : MonoBehaviour
     private PlayerFloating playerFloating;
     private PlayerController playerController;
     private CameraMovement cameraMovement;
+    private Inventory playerInventory;
 
     // NPC references
     private DialogueTrigger activeDialogueTrigger;
@@ -222,6 +223,7 @@ public class DialogueManager : MonoBehaviour
         playerFloating = player.GetComponent<PlayerFloating>();
         playerThrowing = player.GetComponent<PlayerThrowing>();
         playerController = player.GetComponent<PlayerController>();
+        playerInventory = player.GetComponent<Inventory>();
         PopupText.gameObject.SetActive(false);
         Chime.isInDialogue = true;
 
@@ -1146,6 +1148,13 @@ public class DialogueManager : MonoBehaviour
 
     public void EndDialogue()
     {
+        if (activeDialogueTrigger.RewardItem != null && playerInventory != null)
+        {
+            playerInventory.AddItem(activeDialogueTrigger.RewardItem);
+            Debug.Log($"Player received item: {activeDialogueTrigger.RewardItem.name}");
+            activeDialogueTrigger.RewardItem = null; // Prevent multiple rewards
+        }
+
         if (activeDialogueTrigger != null)
         {
             activeDialogueTrigger.StopLookingAtPlayer();
