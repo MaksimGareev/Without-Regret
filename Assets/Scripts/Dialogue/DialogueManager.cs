@@ -148,6 +148,7 @@ public class DialogueManager : MonoBehaviour
     void Start()
     {
         DialoguePanel.SetActive(false);
+        playerPortrait.gameObject.SetActive(false);
         playerMorality = 0;
         PlayerPrefs.SetInt("Morality", playerMorality);
         PlayerPrefs.Save();
@@ -192,6 +193,8 @@ public class DialogueManager : MonoBehaviour
     public void StartDialogueFromJson(TextAsset jsonFile, DialogueTrigger trigger)
     {
         cameraMovement = Camera.main.GetComponent<CameraMovement>();
+
+        playerPortrait.gameObject.SetActive(true);
 
         Debug.Log("DialogueManager: StartDialogueFromJson called");
 
@@ -1157,6 +1160,7 @@ public class DialogueManager : MonoBehaviour
         }
 
         DialoguePanel.SetActive(false);
+        playerPortrait.gameObject.SetActive(false);
         currentDialogue = null;
         currentIndex = 0;
         spawnedChoices.Clear();
