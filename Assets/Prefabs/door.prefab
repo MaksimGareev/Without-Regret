@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 5747663503326644975}
   - component: {fileID: 8430188261884346717}
   m_Layer: 0
-  m_Name: Door
+  m_Name: door
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -124,9 +124,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc6995ddd5c98c7439fad9eded40dc8f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Door
-  sceneToLoad: {fileID: 0}
+  sceneToLoad:
+    sceneAsset: {fileID: 0}
+    scenePath: 
   interactDistance: 5
-  player: {fileID: 0}
   linkedObjective: {fileID: 11400000, guid: 29c3e418a1c36aa4a9f6ff833a3dd117, type: 2}
   needsObjective: 1
-  interactSound: {fileID: 0}
+  interactSound: {fileID: 8300000, guid: 9da3d0d8794e75c4dab093a12efe4543, type: 3}
