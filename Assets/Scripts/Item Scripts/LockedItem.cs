@@ -20,7 +20,7 @@ public class LockedItem : MonoBehaviour, IInteractable
     public GameObject UnlockTop;
     public bool isChest = false;
     private AudioSource audioSource;
-    public bool hasBeenLockpicked = false;
+    public bool hasBeenLockpicked = false; // Saving and loading this value is already handled by the SaveableWorldObject component
     public bool isInRange = false;
 
     private PlayerControls controls;
@@ -54,10 +54,10 @@ public class LockedItem : MonoBehaviour, IInteractable
         controls.Player.Interact.performed += ctx => TryInteract();
 
         // Load unlock state from SaveManager
-        if (SaveManager.Instance != null)
-        {
-            hasBeenLockpicked = SaveManager.Instance.IsUnlocked(gameObject.name);
-        }
+        // if (SaveManager.Instance != null)
+        // {
+        //     hasBeenLockpicked = SaveManager.Instance.IsUnlocked(gameObject.name);
+        // }
 
         // Disable interaction if already unlocked
         if (hasBeenLockpicked)
@@ -75,7 +75,7 @@ public class LockedItem : MonoBehaviour, IInteractable
     // Update is called once per frame
     void Update()
     {
-        if (hasBeenLockpicked || player == null || ButtonIcons.Instance == null) // || !player.GetComponent<Inventory>().keyItems.Any(x => x.ItemName == "Lock Pick"))
+        if (hasBeenLockpicked || player == null || ButtonIcons.Instance == null || !player.GetComponent<Inventory>().keyItems.Any(x => x.ItemName == "Lock Pick"))
         {
             return;
         }
@@ -145,7 +145,7 @@ public class LockedItem : MonoBehaviour, IInteractable
 
     private void TryInteract()
     {
-        if (!isInRange || LockPickUI == null || hasBeenLockpicked) return;
+        if (!isInRange || LockPickUI == null || hasBeenLockpicked || !player.gameObject.GetComponent<Inventory>().keyItems.Any(x=> x.ItemName == "Lock Pick")) return;
 
         // Show LockPick UI
         LockPickUI.SetActive(true);
@@ -201,7 +201,7 @@ public class LockedItem : MonoBehaviour, IInteractable
 
         if (SaveManager.Instance != null)
         {
-            SaveManager.Instance.SetUnlocked(gameObject.name, true);
+            //SaveManager.Instance.SetUnlocked(gameObject.name, true);
             SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
         }
 
@@ -221,7 +221,7 @@ public class LockedItem : MonoBehaviour, IInteractable
         // Save unlock state
         if (SaveManager.Instance != null)
         {
-            SaveManager.Instance.SetUnlocked(gameObject.name, true);
+            //SaveManager.Instance.SetUnlocked(gameObject.name, true);
             SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
         }
 

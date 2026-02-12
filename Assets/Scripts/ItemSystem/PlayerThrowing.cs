@@ -4,14 +4,16 @@ using UnityEngine.UI;
 
 public class PlayerThrowing : MonoBehaviour
 {
-    [Header("References")]
-    [SerializeField] private Inventory inventory;
-    [SerializeField] private Transform throwOrigin;
-    [SerializeField] private Camera playerCamera;
-    [SerializeField] private Slider powerSlider;
-    [SerializeField] private PlayerEquipItem playerEquipItem;
-    [SerializeField] private GameObject interactingScript;
-    [SerializeField] private GameObject WorldThrowPointer;
+    
+    private Inventory inventory;
+    private Transform throwOrigin;
+    private Camera playerCamera;
+    private Slider powerSlider;
+    private PlayerEquipItem playerEquipItem;
+    private GameObject interactingScript;
+    private GameObject WorldThrowPointer;
+
+    [Header("Throwing Pointer Settings")]
     [SerializeField] private float MaxPointerLength = 10;
     [SerializeField] private float MinPointerLength = 1;
     private InventoryUIController inventoryUI;
@@ -33,7 +35,7 @@ public class PlayerThrowing : MonoBehaviour
     private bool usingController;
     private Vector3 PointerScale;
 
-    public Animator animator;
+    private Animator animator;
 
     private void Start()
     {
@@ -51,30 +53,95 @@ public class PlayerThrowing : MonoBehaviour
     }
     private void Awake()
     {
-        animator = GetComponent<Animator>();
+        if (animator == null)
+        {
+            animator = GetComponentInChildren<Animator>();
+            if (animator == null)
+            {
+                Debug.LogError("Animator component not found on the player or its children. Please ensure an Animator component is added to the player's 'Echo' mesh.");
+            }
+        }
+
         if (inventory == null)
         {
             inventory = GetComponent<Inventory>();
+            if (inventory == null)
+            {
+                Debug.LogError("Inventory component not found on the player. Please ensure an Inventory component is added to the player.");
+            }
         }
 
         if (playerCamera == null)
         {
             playerCamera = Camera.main;
+            if (playerCamera == null)
+            {
+                Debug.LogError("Main Camera not found. Please ensure there is a Camera in the scene tagged as 'MainCamera'.");
+            }
         }
 
         if (playerEquipItem == null)
         {
             playerEquipItem = GetComponent<PlayerEquipItem>();
+            if (playerEquipItem == null)
+            {
+                Debug.LogError("PlayerEquipItem component not found on the player. Please ensure a PlayerEquipItem component is added to the player.");
+            }
+        }
+
+        if (throwOrigin == null)
+        {
+            throwOrigin = GameObject.Find("Throwing Origin")?.transform;
+            if (throwOrigin == null)
+            {
+                Debug.LogError("Throwing Origin GameObject with Transform component not found in the scene. Please ensure a GameObject named 'Throwing Origin' exists as a child of the player.");
+            }
+        }
+        
+        if (powerSlider == null)
+        {
+            powerSlider = GameObject.Find("ThrowingSlider")?.GetComponent<Slider>();
+            if (powerSlider == null)
+            {
+                Debug.LogError("ThrowingSlider GameObject with Slider component not found in the scene. Please ensure a GameObject named 'ThrowingSlider' exists in the MainCanvas prefab with a Slider component attached.");
+            }
+        }
+
+        if (WorldThrowPointer == null)
+        {
+            WorldThrowPointer = GameObject.Find("WorldThrowIndicator");
+            if (WorldThrowPointer == null)
+            {
+                Debug.LogError("WorldThrowIndicator GameObject not found in the scene. Please ensure a GameObject named 'WorldThrowIndicator' exists in the scene as a child of the player.");
+            }
+        }
+
+        if (interactingScript == null)
+        {
+            var foundObjects = FindObjectsByType<InventoryUIController>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            interactingScript = foundObjects.Length > 0 ? foundObjects[0].gameObject : null;
+            if (interactingScript == null)
+            {
+                Debug.LogError("InteractingScript GameObject not found in the scene. Please ensure a GameObject named 'InteractingScript' exists in the scene as a child of the Inventory UI in the MainCanvas.");
+            }
         }
 
         if (interactingScript != null && inventoryUI == null)
         {
             inventoryUI = interactingScript.GetComponent<InventoryUIController>();
+            if (inventoryUI == null)
+            {
+                Debug.LogError("InventoryUIController component not found on the interactingScript GameObject. Please ensure an InventoryUIController component is added to the interactingScript GameObject.");
+            }
         }
 
         if (inventoryToggle == null)
         {
             inventoryToggle = GetComponent<ToggleInventoryUI>();
+            if (inventoryToggle == null)
+            {
+                Debug.LogError("ToggleInventoryUI component not found on the player. Please ensure a ToggleInventoryUI component is added to the player.");
+            }
         }
     }
 

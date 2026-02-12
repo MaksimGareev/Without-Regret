@@ -1,9 +1,10 @@
 using System.Collections.Generic;
+//using UnityEditor.SearchService;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
-
+using UnityEngine.SceneManagement;
 public class InventoryUIController : MonoBehaviour//, IPointerEnterHandler, IPointerExitHandler
 {
     [Header("Grid Settings")]
@@ -51,7 +52,7 @@ public class InventoryUIController : MonoBehaviour//, IPointerEnterHandler, IPoi
         playerEquipItem = player?.GetComponent<PlayerEquipItem>();
         inventory = player?.GetComponent<Inventory>();
 
-        RefreshInventoryUI();
+        //RefreshInventoryUI();
 
         // Initialize input actions
         navigateAction = inputActions.FindAction("Inventory/Navigate", true);
@@ -60,7 +61,21 @@ public class InventoryUIController : MonoBehaviour//, IPointerEnterHandler, IPoi
         confirmButton = inputActions.FindAction("Inventory/Confirm", true);
     }
 
+
+
+    private void OnSceneLoaded(UnityEngine.SceneManagement.Scene scene, LoadSceneMode mode)
+    {
+        Setup();
+    }
+
     private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+
+        Setup();
+    }
+
+    private void Setup()
     {
         InitializeSlots();
         RefreshInventoryUI();
@@ -150,7 +165,7 @@ public class InventoryUIController : MonoBehaviour//, IPointerEnterHandler, IPoi
         
         if (inventory == null)
         {
-            inventory = GameObject.FindGameObjectWithTag("Player").GetComponent<Inventory>();
+            inventory = GameObject.FindGameObjectWithTag("Player")?.GetComponent<Inventory>();
             if (inventory == null)
             {
                 Debug.LogWarning("InventoryUIController.RefreshInventoryUI: No inventory found!");
@@ -389,6 +404,8 @@ public class InventoryUIController : MonoBehaviour//, IPointerEnterHandler, IPoi
 
     private void OnDisable()
     {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+
         DisableInventoryInput();
     }
 

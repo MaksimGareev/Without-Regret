@@ -47,10 +47,17 @@ public class PlayerInteracting : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (InteractionTutorialUI.Instance != null &&
+            InteractionTutorialUI.Instance.IsShowing)
+        {
+            return;
+        }
+
         if (heldObject != null)
         {
             if (Interact.triggered)
             {
+                //TryShowTutorial(heldObject.interactType);
                 heldObject.OnPlayerInteraction(gameObject);
             }
             return;
@@ -69,6 +76,7 @@ public class PlayerInteracting : MonoBehaviour
         if (mantleTarget != null && Mantle != null && Mantle.triggered)
         {
             if (showDebugLogs) Debug.Log("Mantle input detected!");
+            //TryShowTutorial(mantleTarget.interactType);
             mantleTarget.OnPlayerInteraction(gameObject);
             return;
         }
@@ -76,39 +84,24 @@ public class PlayerInteracting : MonoBehaviour
         // Interact with moveable objects or dialogue
         if (currentTarget != null && Interact != null && Interact.triggered)
         {
-            currentTarget.OnPlayerInteraction(gameObject);
+            //TryShowTutorial(currentTarget.interactType);
+            //currentTarget.OnPlayerInteraction(gameObject);
+            HandleInteracton(currentTarget);
         }
 
-        /*
-        else if (currentTarget.interactType == InteractType.Move || currentTarget.interactType == InteractType.Pickup || currentTarget.interactType == InteractType.Dialogue || currentTarget.interactType == InteractType.Remove)
-        {
-            if (Interact != null && Interact.triggered)
-            {
-                currentTarget.OnPlayerInteraction(gameObject);
-            }
-        }*/
+    }
 
-        /*
-        if (currentTarget != null && Interact.triggered)
-        {
-            currentTarget.OnPlayerInteraction(gameObject);
+    public void HandleInteracton(IInteractable target)
+    {
+        if (target == null)
+            return;
 
-            ButtonIcons.Instance?.Clear();
-            currentTarget = null;
-        }        
-        
-        if (mantleTarget != null && Mantle.triggered)
-        {
-            mantleTarget.OnPlayerInteraction(gameObject);
-        }
-        if (moveTarget != null && Interact.triggered)
-        {
-            moveTarget.OnPlayerInteraction(gameObject);
-        }
-        else if (currentTarget != null && mantleTarget == null && Interact.triggered)
-        {
-            currentTarget.OnPlayerInteraction(gameObject);
-        }*/
+        bool tutorialShown = TryShowTutorial(target.interactType, () => target.OnPlayerInteraction(gameObject));
+
+        if (tutorialShown)
+            return;
+
+        target.OnPlayerInteraction(gameObject);
     }
 
     public void SetHeldObject(MoveableObject obj)
@@ -144,91 +137,38 @@ public class PlayerInteracting : MonoBehaviour
         // Highlight icon
         ButtonIcons.Instance?.Highlight(currentTarget.interactType);
 
-        /*
-        if (currentTarget != null)
-        {
-            ButtonIcons.Instance?.Highlight(currentTarget.interactType);
-        }
-        else
-        {
-            ButtonIcons.Instance?.Clear();
-        }*/
-
-        //List<IInteractable> interactableList = new List<IInteractable>();
-        //List<IInteractable> found = new();
-        /*
-        foreach (Collider hit in hits)
-        {
-            IInteractable interactable = hit.GetComponent<IInteractable>();
-            if (interactable != null)
-            {
-                found.Add(interactable);
-            }
-        }
-
-        if (found.Count == 0)
-        {
-            currentTarget = null;
-            ButtonIcons.Instance?.Clear();
-            mantleTarget = null;
-            moveTarget = null;
-
-            if (showDebugLogs)
-            {
-                Debug.Log("PlayerInteracting: No interactables found.");
-            }
-
-            if (promptUI != null)
-            {
-                promptUI.SetActive(false);
-            }
-
-            if (ButtonIcons.Instance != null)
-            {
-                ButtonIcons.Instance.Clear();
-            }
-
-            return;
-        }
-
-        currentTarget = found
-            .OrderByDescending(i => i.interactionPriority)
-            .ThenBy(i => Vector3.Distance(transform.position, ((MonoBehaviour)i).transform.position))
-            .FirstOrDefault();
-
-        if(currentTarget != null)
-        {
-            if (ButtonIcons.Instance != null)
-            {
-                ButtonIcons.Instance?.Highlight(currentTarget.interactType);
-            }
-
-            var targetMono = (currentTarget as MonoBehaviour);
-
-            mantleTarget = targetMono.GetComponent<MantleableObject>();
-            moveTarget = targetMono.GetComponent<MoveableObject>();
-
-            if (showDebugLogs)
-            {
-                Debug.Log("PlayerInteracting: Interactable object found!");
-            }
-
-            if (promptUI != null)
-            {
-                promptUI.SetActive(true);
-            }
-        }
-        else
-        {
-            if (ButtonIcons.Instance != null)
-            {
-                ButtonIcons.Instance.Clear();
-            }
-            mantleTarget = null;
-            moveTarget = null;
-        }*/
+       
     }
     
+    private bool TryShowTutorial(InteractType type, System.Action onComplete)
+    {
+        if (InteractionTutorialManager.Instance == null)
+            return false;
+
+        if (InteractionTutorialManager.Instance.HasSeenTutorial(type))
+            return false;
+
+        if (InteractionTutorialUI.Instance == null)
+        {
+            Debug.LogError("TutorialUI missing");
+            return false;
+        }
+
+        string tutorialText = InteractionTutorialText.GetText(type);
+
+        if (string.IsNullOrEmpty(tutorialText))
+            return false;
+
+        InteractionTutorialUI.Instance.ShowTutorial(tutorialText, () =>
+        {
+            InteractionTutorialManager.Instance.MarkTutorialSeen(type);
+            onComplete?.Invoke();
+        }
+        );
+
+        return true;
+    }
+
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.yellow;

@@ -21,9 +21,19 @@ public class Gate : SaveableWithID
 
     private void OnEnable()
     {
-        if (needsObjective)
+        if (needsObjective && linkedObjective != null)
         {
-            ObjectiveManager.Instance?.OnObjectiveCompleted.AddListener(SetObjectiveComplete);
+            if (ObjectiveManager.Instance != null)
+            {
+                if (ObjectiveManager.Instance.IsObjectiveCompleted(linkedObjective.objectiveID))
+                {
+                    locked = false;
+                }
+                else
+                {
+                    ObjectiveManager.Instance.OnObjectiveCompleted.AddListener(SetObjectiveComplete);
+                }
+            }
         }
     }
 
