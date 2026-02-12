@@ -57,7 +57,7 @@ Transform:
   m_GameObject: {fileID: 524415181430402353}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 1.5}
+  m_LocalPosition: {x: -0, y: 0, z: 1.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -541,20 +541,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Controller: {fileID: 8821119716541630626}
-  PlayerCamera: {fileID: 0}
   animator: {fileID: 1306356219283198842}
   staminaSlider: {fileID: 0}
+  staminaFill: {fileID: 0}
+  normalColor: {r: 0, g: 0.5764706, b: 0.43529412, a: 1}
+  cooldownColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   MovementLocked: 0
   Speed: 4
   SprintSpeed: 8
   SprintDuration: 3
   sprintCooldown: 4
+  staminaLingerDuration: 1
   SprintTimer: 3
   groundCheck: {fileID: 0}
   groundCheckRadius: 0.2
   groundMask:
     serializedVersion: 2
     m_Bits: 0
+  idleTimer: 0
   showDebugLogs: 0
 --- !u!114 &8123318097379088782
 MonoBehaviour:
@@ -572,15 +576,12 @@ MonoBehaviour:
   possessionRange: 50
   searchConeAngle: 30
   possessKey: 114
-  possessButton: 0
-  posessionBar: {fileID: 0}
-  iconPrefab: {fileID: 0}
+  possessButton: 335
+  iconPrefab: {fileID: 7228842916403451623, guid: 8c37cda576505cc45bd7511edf89a1b3, type: 3}
   iconOffset: {x: 0, y: 2, z: 0}
-  normalEnemyMovement: {fileID: 0}
-  target: {fileID: 0}
   mask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 1
   shouldShowIcon: 1
 --- !u!114 &1566633728491210951
 MonoBehaviour:
@@ -604,14 +605,9 @@ MonoBehaviour:
   floatAction: {fileID: -5528296139197480759, guid: f1f4dbfd8c64cd440924988ec4fb6f6a, type: 3}
   floatDuration: 5
   floatCooldown: 3
-  rhythmSlider: {fileID: 0}
   rhythmWindow: 0.3
   rhythmInterval: 1
-  rhythmTargetLeft: {fileID: 0}
-  rhythmTargetRight: {fileID: 0}
-  cooldownObject: {fileID: 0}
   showDebugLogs: 0
-  animator: {fileID: 1306356219283198842}
 --- !u!114 &7147037502482933178
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -624,13 +620,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a834ff12c0d3554c99f66ae906f3d50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inventory: {fileID: 6369621648110085496}
-  throwOrigin: {fileID: 7354983856930337315}
-  playerCamera: {fileID: 0}
-  powerSlider: {fileID: 0}
-  playerEquipItem: {fileID: 771315798553256207}
-  interactingScript: {fileID: 0}
-  WorldThrowPointer: {fileID: 27729135280693070}
   MaxPointerLength: 10
   MinPointerLength: 1
   minThrowForce: 1
@@ -639,7 +628,6 @@ MonoBehaviour:
   chargeSpeed: 1.5
   chargeKey: 1
   chargeButton: Xbox RightStick Click
-  animator: {fileID: 1306356219283198842}
 --- !u!114 &6369621648110085496
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -652,8 +640,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60122aef9c0269d46893af1ce98c7737, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interactingScript: {fileID: 0}
-  backpack: {fileID: 6428672626242342441}
+  keyItems: []
+  otherItems: []
+  LeavesReward: {fileID: 0}
+  TrashbagRefForRemoval: {fileID: 0}
   showDebugLogs: 0
   hasBackpack: 1
   itemToCollect: {fileID: 0}
@@ -683,7 +673,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80d9e08308c65754b95fe5708dd4534d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ToggleInventoryUI
-  inventoryGameObject: {fileID: 0}
   inputActions: {fileID: -944628639613478452, guid: f1f4dbfd8c64cd440924988ec4fb6f6a, type: 3}
   slideDuration: 0.4
   disabledPosition: {x: -220, y: -350}
@@ -728,6 +717,7 @@ MonoBehaviour:
   mantleSpeed: 3
   showDebugLogs: 1
   showGizmos: 1
+  isMantling: 0
 --- !u!114 &8027853323051968566
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -735,25 +725,27 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5675321481151379428}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f78a7fb4d2306884f91c728f43a6e04d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerFishing
-  fishingAction: {fileID: 0}
-  castOrigin: {fileID: 0}
-  hook: {fileID: 0}
-  playerEquipItem: {fileID: 0}
-  castForce: 20
-  maxCastDistance: 15
+  fishingAction: {fileID: -5528296139197480759, guid: f1f4dbfd8c64cd440924988ec4fb6f6a, type: 3}
+  fishingRod: {fileID: 11400000, guid: 045ead20566c4ae48b6fc950da2d9472, type: 2}
+  castOrigin: {fileID: 878993099091267819}
+  playerEquipItem: {fileID: 771315798553256207}
+  castChargeSlider: {fileID: 0}
+  castForce: 10
+  maxCastDistance: 30
   minCastDistance: 2
   reelSpeed: 8
-  pickupDistance: 1
+  pickupDistance: 3
   castCooldown: 0.5
-  reelEnableDistance: 2.5
-  reelEnableDelay: 0.15
+  reelEnableDelay: 0.75
+  disableMovementWhileFishing: 1
+  castTargetPrefab: {fileID: 0}
+  targetSweepSpeed: 1
   showDebugLogs: 0
-  showLineRenderer: 1
 --- !u!114 &3930968705077024376
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -766,7 +758,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b453a18c1abc7b4fb4d5cd48886ce81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInteracting
-  promptUI: {fileID: 0}
   InputActions: {fileID: -944628639613478452, guid: f1f4dbfd8c64cd440924988ec4fb6f6a, type: 3}
   interactionRange: 1
   interactOffset: 1
@@ -783,7 +774,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76b75d8ced4576d41856019886fcdd33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovingObjects
-  animator: {fileID: 1306356219283198842}
   grabPoint: {fileID: 1136661512570076457}
   showDebugLogs: 0
 --- !u!114 &6640155716822935536
@@ -855,7 +845,7 @@ LineRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 0}
+  - {fileID: -7791486788655378091, guid: ba3230996a592334881d23591019ca31, type: 3}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -888,7 +878,7 @@ LineRenderer:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 1
+        value: 0.88529396
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -996,7 +986,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 8135666d6946df443bf487c5ff01e2c3, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.991
+      value: -1.177
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 8135666d6946df443bf487c5ff01e2c3, type: 3}
       propertyPath: m_LocalPosition.z
@@ -1155,7 +1145,7 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: d4f0f436475a0674183e0f20a1edd3fd, type: 2}
     - target: {fileID: 919132149155446097, guid: 807525ce563cb0348a23818dc46836c1, type: 3}
       propertyPath: m_Name
-      value: Backpack
+      value: PlayerBackpack
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 807525ce563cb0348a23818dc46836c1, type: 3}
       propertyPath: m_IsActive
@@ -1169,10 +1159,5 @@ PrefabInstance:
 --- !u!4 &5943884122081694867 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 807525ce563cb0348a23818dc46836c1, type: 3}
-  m_PrefabInstance: {fileID: 6194228912122164088}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &6428672626242342441 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 807525ce563cb0348a23818dc46836c1, type: 3}
   m_PrefabInstance: {fileID: 6194228912122164088}
   m_PrefabAsset: {fileID: 0}

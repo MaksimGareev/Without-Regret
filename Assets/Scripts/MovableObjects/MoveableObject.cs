@@ -1,40 +1,51 @@
 using UnityEngine;
-using System.Collections;
-//using Unity.AI.Navigation;
-using System.Reflection;
+using Unity.AI.Navigation;
 using System;
+using System.Collections;
 
 [RequireComponent(typeof(Rigidbody))]
 public class MoveableObject : MonoBehaviour, IInteractable
 {
-    [SerializeField] private LayerMask groundLayer;
-    [SerializeField] private float moveSlowdownMultiplier = 3f;
+    // [SerializeField] private LayerMask groundLayer;
+    [SerializeField] private float moveSlowdownDivisor = 3f;
+    [SerializeField] private float sprintSlowdownDivisor = 3f;
+    [SerializeField, Tooltip("Modifies how quickly the player's sprint timer is reduced when this object is held while sprinting")] 
+    private float sprintDepletionFactor = 1.15f;
+    [SerializeField, Tooltip("Modifies how quickly the player's sprint timer is naturally reduced when this object is held while not sprinting. i.e 0 means there's no decay")]
+    private float sprintTimerDecay = 1f;
+    [SerializeField] private bool allowSprint = true;
     [SerializeField] ItemData requiredItem;
-    private PlayerMovingObjects playerMovingObjects; 
+    [SerializeField] private float maxGrabDistance = 2.5f;
+
+    [Header("Transform Settings")]
+    [SerializeField, Tooltip("Certain transform offsets can cause overlapping colliders and lead to weird player movement, so this option is here as a failsafe")] 
+    private bool disableColliderWhileHeld = false;
+    [SerializeField] private Vector3 heldPositionOffset = Vector3.zero;
+    [SerializeField] private Vector3 heldRotationOffset = Vector3.zero;
+
     private Transform grabPoint;
     private Rigidbody rb;
     private PlayerMovingObjects mover;
+
     public bool IsGrabbed { get; private set; } = false;
     public bool isGrabbable = true;
     public float interactionPriority => 5f;
     public InteractType interactType => InteractType.Move;
 
+    [Header("Popup Settings")]
     [SerializeField] private float iconDistance = 3f;
-
     [SerializeField] private GameObject iconPrefab;
     public bool shouldShowIcon = true;
+
     public event Action OnInteracted;
     private GameObject popupInstance;
     private Collider coll;
+    private Transform player;
 
-     private Transform player;
-
-   // [SerializeField] private NavMeshSurface navMeshSurface;
+    [SerializeField] private NavMeshSurface navMeshSurface;
     // Ground Check Parameters
     private float groundCheckDistance = 0.1f; // extra ray distance below collider
     private float groundVelocityThreshold = 0.01f; // velocity threshold to consider 'stopped'
-
-    [SerializeField] private float maxGrabDistance = 2.5f;
 
 
     private void Awake()
@@ -60,6 +71,9 @@ public class MoveableObject : MonoBehaviour, IInteractable
 
     public bool CanInteract(GameObject player)
     {
+        if (isGrabbable == false)
+            return false;
+
         if (DialogueManager.DialogueIsActive)
             return false;
 
@@ -89,15 +103,34 @@ public class MoveableObject : MonoBehaviour, IInteractable
 
         rb.isKinematic = true;
 
+        if (disableColliderWhileHeld)
+            coll.enabled = false;
+
+        // Apply offsets so object snaps into the intended held pose
+        ApplyHeldOffsets();
+
         // remove Icon
         if (ButtonIcons.Instance != null)
             ButtonIcons.Instance.Clear();
+    }
+
+    private void ApplyHeldOffsets()
+    {
+        if (grabPoint == null) return;
+
+        // Position: interpret heldPositionOffset in grabPoint local space
+        // Rotation: apply rotation offset relative to grabPoint rotation
+        transform.SetPositionAndRotation(grabPoint.TransformPoint(heldPositionOffset), grabPoint.rotation * Quaternion.Euler(heldRotationOffset));
     }
 
     public void Release()
     {
         IsGrabbed = false;
         grabPoint = null;
+
+        if (disableColliderWhileHeld)
+            coll.enabled = true;
+
 
         rb.isKinematic = false;
         rb.WakeUp();
@@ -122,25 +155,7 @@ public class MoveableObject : MonoBehaviour, IInteractable
         }
 
         EnablePopupIcon();*/
-
-       /* // Rebuild NavMesh after the object is moved
-        if (navMeshSurface != null)
-        {
-            //navMeshSurface.BuildNavMesh();
-            StartCoroutine(RebuildNavMeshWhenStill());
-        }*/
     }
-
-   /* private IEnumerator RebuildNavMeshWhenStill()
-    {
-        // wait for object to stop moving
-        while (rb.linearVelocity.magnitude > 0.05f || rb.angularVelocity.magnitude > 0.05f)
-        {
-            yield return null;
-        }
-
-       // navMeshSurface.BuildNavMesh();
-    }*/
 
     public void EnablePopupIcon()
     {
@@ -206,8 +221,11 @@ public class MoveableObject : MonoBehaviour, IInteractable
     {
         if (IsGrabbed && grabPoint != null)
         {
-            transform.position = grabPoint.position;
-            transform.rotation = grabPoint.rotation;
+            // Apply the configured offsets so the held object position/rotation can be tuned.
+            // Position offset is interpreted in the grabPoint's local space (TransformPoint).
+            
+            // Rotation offset is applied relative to grabPoint rotation.
+            transform.SetPositionAndRotation(grabPoint.TransformPoint(heldPositionOffset), grabPoint.rotation * Quaternion.Euler(heldRotationOffset));
         }
         /*
         float distance = Vector3.Distance(transform.position, player.position);
@@ -249,15 +267,21 @@ public class MoveableObject : MonoBehaviour, IInteractable
                 Debug.LogError("Player grab point is null!");
                 return;
             }
+            // Can't grab if an item is equipped
+            if (PlayerComponents.playerEquipItem.currentEquippedItem != null)
+            {
+                //Debug.LogWarning("Player tried to grab an object while having an item equipped.");
+                return;
+            }
             Grab(mover.grabPoint);
-            mover.OnMovingObject(this); // merge conflict
-            interacting?.SetHeldObject(this);
+            mover.OnMovingObject(this);
+            interacting.SetHeldObject(this);
         }
         else
         {
             Release();
             mover.OnReleaseObject(this);
-            interacting?.ClearHeldObjects();
+            interacting.ClearHeldObjects();
         }
 
         // Notify any listeners
@@ -283,5 +307,9 @@ public class MoveableObject : MonoBehaviour, IInteractable
         return false;
     }*/
 
-    public float GetSlowdownMult() => moveSlowdownMultiplier;
+    public float GetMoveSlowdown() => moveSlowdownDivisor;
+    public float GetSprintSlowdown() => sprintSlowdownDivisor;
+    public float GetSprintDepletion() => sprintDepletionFactor;
+    public float GetSprintTimerDecay() => sprintTimerDecay;
+    public bool GetAllowSprint() => allowSprint;
 }

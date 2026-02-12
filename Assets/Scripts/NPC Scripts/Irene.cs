@@ -5,7 +5,7 @@ using UnityEngine.AI;
 
 public class Irene : MonoBehaviour
 {
-    public Transform player;            // the player to follow
+    [HideInInspector] public Transform player;            // the player to follow
     public string npcName = "Irene";    // string data of npc name
     public float FollowDistance = 2f;   // how far behind the player
     public float FollowSpeed = 3f;      // movement speed
@@ -16,7 +16,7 @@ public class Irene : MonoBehaviour
 
     public Transform targetSpot;
     public Transform lookAtTarget;
-    public NavMeshAgent agent;
+    private NavMeshAgent agent;
     public bool isTraveling;
     public bool arrived = false;
     public bool CanFollowPlayer = true;
@@ -26,7 +26,8 @@ public class Irene : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+        player = GameObject.FindGameObjectWithTag("Player").transform;
+        agent = GetComponent<NavMeshAgent>();
     }
 
     // Update is called once per frame

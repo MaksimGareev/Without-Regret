@@ -11,7 +11,7 @@ public class PatrollingEnemy : MonoBehaviour
     public Animator animator;
 
     public float waitTime = 2f;
-    private bool isWaiting = false;
+    [SerializeField] private bool isWaiting = false;
 
     // Player morality effects
     public float baseSpeed = 3.5f;
