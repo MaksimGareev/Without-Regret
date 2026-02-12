@@ -15,11 +15,22 @@ public class DialogueManager : MonoBehaviour
     public GameObject ContinueArrow;
     public GameObject DirectionalImage;
     public ScrollRect dialogueScrollRect;
-
     private List<GameObject> spawnedChoices = new List<GameObject>();
     private DialogueData currentDialogue;
     private int currentIndex = 0;
     private bool IsTyping;
+
+    // Player Portrait
+    public Image playerPortrait;
+    public Sprite defaultPortrait;
+    public Sprite positivePortrait;
+    public Sprite negativePortrait;
+    public Sprite neutralPortrait;
+    public float portraitFadeDuration = 0.25f;
+    public float portraitHoldTime = 0.75f;
+
+    private Coroutine portraitRoutine;
+    private CanvasGroup portraitCanvasGroup;
 
     // Letter sounds
     public AudioSource TypingAudioSource;
@@ -44,7 +55,8 @@ public class DialogueManager : MonoBehaviour
     private int SelectedChoiceIndex = 0;
     private bool CanChoose = false;
     public TextMeshProUGUI PopupText;
-    public Image holdCircleImage;
+    public List<HoldDirectionVisual> holdVisuals;
+    private Dictionary<ChoiceDirection, HoldDirectionVisual> holdVisualMap;
     public float choiceDistance = 250f;
     private Dictionary<ChoiceDirection, DialogueChoice> directionalChoices = new();
     public float holdTimeToSelect = 1.2f;
@@ -76,6 +88,7 @@ public class DialogueManager : MonoBehaviour
     private PlayerFloating playerFloating;
     private PlayerController playerController;
     private CameraMovement cameraMovement;
+    private Inventory playerInventory;
 
     // NPC references
     private DialogueTrigger activeDialogueTrigger;
@@ -98,6 +111,7 @@ public class DialogueManager : MonoBehaviour
 
     private void Awake()
     {
+        holdVisualMap = new Dictionary<ChoiceDirection, HoldDirectionVisual>();
         controls = new PlayerControls();
         controls.Dialogue.Move.performed += ctx =>
         {
@@ -112,6 +126,15 @@ public class DialogueManager : MonoBehaviour
             MoveDownPressed = false;
         };
 
+        foreach (var visual in holdVisuals)
+        {
+            if (!holdVisualMap.ContainsKey(visual.direction))
+            {
+                holdVisualMap.Add(visual.direction, visual);
+                visual.image.gameObject.SetActive(false);
+            }
+        }
+
         controls.Dialogue.Confirm.performed += ctx => ConfirmPressed = true;
         controls.Dialogue.Confirm.canceled += ctx => ConfirmPressed = false;
     }
@@ -119,24 +142,24 @@ public class DialogueManager : MonoBehaviour
     private void OnEnable()
     {
         controls.Enable();
-        if (holdCircleImage != null)
-        {
-            ResetHoldUI();
-        }
+        ResetHoldUI();
     }
     private void OnDisable() => controls.Disable();
 
     void Start()
     {
         DialoguePanel.SetActive(false);
+        playerPortrait.gameObject.SetActive(false);
         playerMorality = 0;
         PlayerPrefs.SetInt("Morality", playerMorality);
         PlayerPrefs.Save();
+
         //playerMorality = PlayerPrefs.GetInt("Morality", 0);
         if (IntruderTrigger != null)
         {
             IntruderTrigger.SetActive(false);
         }
+
         // Build letter sound dictionary
         letterSounds = new Dictionary<char, AudioClip>();
         for (int i = 0; i < letterClips.Count && i < 26; i++)
@@ -144,13 +167,23 @@ public class DialogueManager : MonoBehaviour
             char letter = (char)('A' + i);
             letterSounds[letter] = letterClips[i];
         }
+
+        if (playerPortrait != null)
+        {
+            portraitCanvasGroup = playerPortrait.GetComponent<CanvasGroup>();
+
+            if (portraitCanvasGroup == null) portraitCanvasGroup = playerPortrait.gameObject.AddComponent<CanvasGroup>();
+
+            playerPortrait.sprite = defaultPortrait;
+            portraitCanvasGroup.alpha = 1f;
+        }
     }
 
     void Update()
     {
         HandleChoiceInput();
 
-        if (DialogueIsActive)
+        if (DialogueIsActive && playerController != null)
         {
             playerController.staminaSlider.gameObject.SetActive(false);
         }
@@ -161,6 +194,8 @@ public class DialogueManager : MonoBehaviour
     public void StartDialogueFromJson(TextAsset jsonFile, DialogueTrigger trigger)
     {
         cameraMovement = Camera.main.GetComponent<CameraMovement>();
+
+        playerPortrait.gameObject.SetActive(true);
 
         Debug.Log("DialogueManager: StartDialogueFromJson called");
 
@@ -181,13 +216,14 @@ public class DialogueManager : MonoBehaviour
         activeDialogueTrigger = trigger;
         DialogueIsActive = true;
         GameObject player = GameObject.FindGameObjectWithTag("Player");
-        ireneNPC = FindObjectOfType<Irene>();
-        barryNPC = FindObjectOfType<Barry>();
-        darryNPC = FindObjectOfType<DarryNeighborhood>();
+        ireneNPC = FindAnyObjectByType<Irene>();
+        barryNPC = FindAnyObjectByType<Barry>();
+        darryNPC = FindAnyObjectByType<DarryNeighborhood>();
         playerTransform = player.transform;
         playerFloating = player.GetComponent<PlayerFloating>();
         playerThrowing = player.GetComponent<PlayerThrowing>();
         playerController = player.GetComponent<PlayerController>();
+        playerInventory = player.GetComponent<Inventory>();
         PopupText.gameObject.SetActive(false);
         Chime.isInDialogue = true;
 
@@ -272,6 +308,7 @@ public class DialogueManager : MonoBehaviour
         }
 
         DialogueLine line = currentDialogue.dialogueLines[currentIndex];
+        NPCNameText.text = line.Speaker;
 
         if (line.requiredMorality != 0)
         {
@@ -305,6 +342,21 @@ public class DialogueManager : MonoBehaviour
         }
 
     }
+
+    // apply updates to NPC face portraits
+   /* private void UpdateSpeakerVisuals(string speaker)
+    {
+        switch (speaker)
+        {
+            case "Reed":
+                NPCPortrait.sprite = defaultNPCPortrait;
+                break;
+
+            case "Darry":
+                // darry portrait
+                break;
+        }
+    }*/
 
     private IEnumerator TypeLine(string text)
     {
@@ -608,7 +660,7 @@ public class DialogueManager : MonoBehaviour
     {
         if (suppressInputOneFrame) return;
 
-        if ((!CanChoose || spawnedChoices.Count == 0) && holdCircleImage != null)
+        if ((!CanChoose || spawnedChoices.Count == 0))
         {
             ResetHoldUI();
             return;
@@ -653,51 +705,96 @@ public class DialogueManager : MonoBehaviour
         ChoiceDirection dir = currentHeldDirection.Value;
 
         HighlightDirection(dir);
-        if (holdCircleImage != null)
-        {
-            UpdateHoldUI(directionHoldTimer / holdTimeToSelect);
-        }
         
-        if (directionHoldTimer >= holdTimeToSelect && holdCircleImage != null)
+        UpdateHoldUI(directionHoldTimer / holdTimeToSelect);
+        
+        if (directionHoldTimer >= holdTimeToSelect)
         {
             CompleteHold(dir);
         }
     }
 
+    // Change echo portrait based on answer selection
+    private IEnumerator SwapPortrait(Sprite newPortrait)
+    {
+        if (playerPortrait == null || portraitCanvasGroup == null) yield break;
+
+        // fade out
+        float t = 0f;
+        while (t < portraitFadeDuration)
+        {
+            t += Time.deltaTime;
+            portraitCanvasGroup.alpha = Mathf.Lerp(1f, 0f, t / portraitFadeDuration);
+            yield return null;
+        }
+
+        // swap image
+        playerPortrait.sprite = newPortrait;
+
+        // fade in
+        t = 0f;
+        while (t < portraitFadeDuration)
+        {
+            t += Time.deltaTime;
+            portraitCanvasGroup.alpha = Mathf.Lerp(0f, 1f, t / portraitFadeDuration);
+            yield return null;
+        }
+
+        // hold 
+        yield return new WaitForSeconds(portraitHoldTime);
+
+        // fade back to default
+        t = 0f;
+        while (t < portraitFadeDuration)
+        {
+            t += Time.deltaTime;
+            portraitCanvasGroup.alpha = Mathf.Lerp(1f, 0f, t / portraitFadeDuration);
+            yield return null;
+        }
+
+        playerPortrait.sprite = defaultPortrait;
+
+        t = 0f;
+        while (t < portraitFadeDuration)
+        {
+            t += Time.deltaTime;
+            portraitCanvasGroup.alpha = Mathf.Lerp(0f, 1f, t / portraitFadeDuration);
+            yield return null;
+        }
+    }
+
     private void UpdateHoldUI(float progress)
     {
-        if (holdCircleImage == null) 
+        if (currentHeldDirection == null) 
         {
-            Debug.LogWarning("Hold circle image not assigned!");
+            return;
+        }
+        
+        if (!holdVisualMap.TryGetValue(currentHeldDirection.Value, out var visual))
+        {
             return;
         }
 
-        if (!holdCircleImage.gameObject.activeSelf)
+        if (!visual.image.gameObject.activeSelf)
         {
-            holdCircleImage.gameObject.SetActive(true);
+            visual.image.gameObject.SetActive(true);
         }
 
-        holdCircleImage.fillAmount = Mathf.Clamp01(progress);
+        visual.image.fillAmount = Mathf.Clamp01(progress);
     }
 
     private void ResetHoldUI()
     {
-        if (holdCircleImage == null) 
-        {
-            Debug.LogWarning("Hold circle image not assigned!");
-            return;
-        }
-
         bool releasedDuringGrace = waitingForHoldCompletion;
         
         directionHoldTimer = 0f;
         isHoldingDirection = false;
         currentHeldDirection = null;
 
-        if (holdCircleImage.gameObject.activeSelf)
+        foreach (var visual in holdVisualMap.Values)
         {
-            holdCircleImage.fillAmount = 0f;
-            holdCircleImage.gameObject.SetActive(false);
+            visual.image.fillAmount = 0f;
+            visual.image.gameObject.SetActive(false);
         }
 
         // Player released after timer expired
@@ -710,13 +807,9 @@ public class DialogueManager : MonoBehaviour
 
     private void CompleteHold(ChoiceDirection dir)
     {
-        if (holdCircleImage == null) 
-        {
-            Debug.LogWarning("Hold circle image not assigned!");
-            return;
-        }
+        if (!CanChoose) return;
 
-        holdCircleImage.fillAmount = 1f;
+        CanChoose = false;
         SelectDirectionalChoice(dir);
         ResetHoldUI();
     }
@@ -748,8 +841,7 @@ public class DialogueManager : MonoBehaviour
         // base color of text is white
         foreach (var obj in spawnedChoices)
         {
-            var txt = obj.GetComponentInChildren<TextMeshProUGUI>();
-            txt.color = Color.white;
+            obj.GetComponentInChildren<TextMeshProUGUI>().color = Color.white;
         }
 
         if (!directionalChoices.ContainsKey(dir)) return;
@@ -779,7 +871,11 @@ public class DialogueManager : MonoBehaviour
                 selectedText.color = Color.yellow;
             }
 
-            holdCircleImage.transform.position = spawnedChoices[selectedIndex].transform.position;
+            if (holdVisualMap.TryGetValue(dir, out var visual))
+            {
+                RectTransform choiceRT = spawnedChoices[selectedIndex].GetComponent<RectTransform>();
+                RectTransform visualRT = visual.image.GetComponent<RectTransform>();
+            }
         }
     }
 
@@ -791,11 +887,11 @@ public class DialogueManager : MonoBehaviour
         currentHeldDirection = null;
         directionHoldTimer = 0f;
 
-        if (holdCircleImage != null)
+        /*if (holdCircleImage != null)
         {
             holdCircleImage.fillAmount = 0f;
             holdCircleImage.gameObject.SetActive(false);
-        }
+        }*/
 
         // prevent confirm from instantly skipping the next line
         ConfirmPressed = false;
@@ -833,6 +929,19 @@ public class DialogueManager : MonoBehaviour
         {
             neutralChoiceCount++;
         }
+
+        // change portrait based on morality
+        if (portraitRoutine != null)
+        {
+            StopCoroutine(portraitRoutine);
+        }
+
+        Sprite portraitToUse =
+                chosen.moralityChange > 0 ? positivePortrait :
+                chosen.moralityChange < 0 ? negativePortrait :
+                neutralPortrait;
+
+        portraitRoutine = StartCoroutine(SwapPortrait(portraitToUse));
 
         // clear old choices
         foreach (var b in spawnedChoices) Destroy(b);
@@ -1039,6 +1148,13 @@ public class DialogueManager : MonoBehaviour
 
     public void EndDialogue()
     {
+        if (activeDialogueTrigger.RewardItem != null && playerInventory != null)
+        {
+            playerInventory.AddItem(activeDialogueTrigger.RewardItem);
+            Debug.Log($"Player received item: {activeDialogueTrigger.RewardItem.name}");
+            activeDialogueTrigger.RewardItem = null; // Prevent multiple rewards
+        }
+
         if (activeDialogueTrigger != null)
         {
             activeDialogueTrigger.StopLookingAtPlayer();
@@ -1053,6 +1169,7 @@ public class DialogueManager : MonoBehaviour
         }
 
         DialoguePanel.SetActive(false);
+        playerPortrait.gameObject.SetActive(false);
         currentDialogue = null;
         currentIndex = 0;
         spawnedChoices.Clear();
@@ -1061,7 +1178,6 @@ public class DialogueManager : MonoBehaviour
         DialogueIsActive = false;
         ContinueArrow.SetActive(false);
         
-        PlayerController.DialogueActive = false;
         playerController.SetDialogueActive(false);
         StartCoroutine(cameraMovement.EndCameraZoom());
 

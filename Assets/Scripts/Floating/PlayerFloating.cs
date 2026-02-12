@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using System.Collections;
 
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerFloating : MonoBehaviour
@@ -18,17 +19,15 @@ public class PlayerFloating : MonoBehaviour
     [SerializeField] private InputActionReference floatAction;
     [SerializeField] private float floatDuration = 5f;
     [SerializeField] private float floatCooldown = 3f;
-    [SerializeField] private Slider rhythmSlider;
+    private Slider rhythmSlider;
     [SerializeField] private float rhythmWindow = 0.3f;
     [SerializeField] private float rhythmInterval = 1f;
-    [SerializeField] private RectTransform rhythmTargetLeft;  // visual region near the start (0)
-    [SerializeField] private RectTransform rhythmTargetRight; // visual region near the end (1)
+    private RectTransform rhythmTargetLeft;  // visual region near the start (0)
+    private RectTransform rhythmTargetRight; // visual region near the end (1)
     private PlayerControls controls;
     private Vector2 moveInput;
     private bool floatInput;
-
-    [Header("Cooldown UI")]
-    [SerializeField] private GameObject cooldownObject;
+    private GameObject cooldownObject;
     private Slider cooldownSlider;
 
     [Header("Debugging")]
@@ -39,7 +38,7 @@ public class PlayerFloating : MonoBehaviour
     private CharacterController charController;
     private Camera playerCamera;
     private ToggleInventoryUI toggleInventoryUI;
-    public Animator animator;
+    private Animator animator;
 
     public bool IsFloating { get; private set; } = false;
     private bool canFloat = false;
@@ -75,6 +74,52 @@ public class PlayerFloating : MonoBehaviour
         toggleInventoryUI = GetComponent<ToggleInventoryUI>();
         playerCamera = Camera.main;
         controls = new PlayerControls();
+
+        // Auto-assign references to clean up inspector for designers, with error logging if they can't be found.
+        if (rhythmSlider == null)
+        {
+            rhythmSlider = GameObject.Find("FloatingSlider")?.GetComponent<Slider>();
+            if (rhythmSlider == null)
+            {
+                Debug.LogError("PlayerFloating: Rhythm Slider could not be found in scene. Please ensure there is a GameObject named 'FloatingSlider' with a Slider component inside of the MainCanvas prefab.");
+            }
+        }
+
+        if (rhythmTargetLeft == null)
+        {
+            rhythmTargetLeft = GameObject.Find("LeftFloatingSuccessArea")?.GetComponent<RectTransform>();
+            if (rhythmTargetLeft == null)
+            {
+                Debug.LogError("PlayerFloating: Rhythm Target Left could not be found in scene. Please ensure there is a GameObject named 'LeftFloatingSuccessArea' with a RectTransform component inside of the MainCanvas prefab, as a child of the FloatingSlider.");
+            }
+        }
+
+        if (rhythmTargetRight == null)
+        {
+            rhythmTargetRight = GameObject.Find("RightFloatingSuccessArea")?.GetComponent<RectTransform>();
+            if (rhythmTargetRight == null)
+            {
+                Debug.LogError("PlayerFloating: Rhythm Target Right could not be found in scene. Please ensure there is a GameObject named 'RightFloatingSuccessArea' with a RectTransform component inside of the MainCanvas prefab, as a child of the FloatingSlider.");
+            }
+        }
+
+        if (cooldownObject == null)
+        {
+            cooldownObject = GameObject.Find("Floating Cooldown");
+            if (cooldownObject == null)
+            {
+                Debug.LogError("PlayerFloating: Cooldown Object could not be found in scene. Please ensure there is a GameObject named 'Floating Cooldown' with a Slider component inside of the MainCanvas prefab.");
+            }
+        }
+
+        if (animator == null)
+        {
+            animator = GetComponentInChildren<Animator>();
+            if (animator == null)
+            {
+                Debug.LogError("PlayerFloating: Animator component could not be found. Please ensure there is an Animator component on a child object for handling floating animations.");
+            }
+        }
 
         if (cooldownObject != null)
         {
@@ -216,8 +261,10 @@ public class PlayerFloating : MonoBehaviour
 
     private void StartFloating()
     {
-        resetAnimations();
-        animator.SetBool("isFloating", true);
+        animator.ResetTrigger("isLanding");
+        animator.SetBool("isFloating", false);
+        animator.SetTrigger("floatStart");
+        StartCoroutine(FloatAnimationHandler());
         rhythmSlider.gameObject.SetActive(true);
         IsFloating = true;
         floatTimer = 0f;
@@ -226,10 +273,6 @@ public class PlayerFloating : MonoBehaviour
         prevRbUseGravity = rb.useGravity;
         prevRbDrag = rb.linearDamping;
         prevRbKinematic = rb.isKinematic;
-
-        // disable controller systems
-        if (playerController != null) playerController.enabled = false;
-        if (charController != null) charController.enabled = false;
 
         // enable rigidbody physics for floating
         rb.isKinematic = false;
@@ -244,6 +287,10 @@ public class PlayerFloating : MonoBehaviour
         // pick target hover height (from current world position)
         hoverTargetY = transform.position.y + floatHeightOffset;
 
+        // disable controller systems
+        if (playerController != null) playerController.enabled = false;
+        if (charController != null) charController.enabled = false;
+
         // reset movement smoothing state
         currentMove = Vector3.zero;
         targetMove = Vector3.zero;
@@ -251,6 +298,9 @@ public class PlayerFloating : MonoBehaviour
 
     private void StopFloating()
     {
+        animator.SetTrigger("isLanding");
+        animator.SetBool("isFloating", false);
+
         rhythmSlider.gameObject.SetActive(false);
         IsFloating = false;
         rhythmTimer = 0f;
@@ -293,7 +343,6 @@ public class PlayerFloating : MonoBehaviour
         if (floatInput && !toggleInventoryUI.isEnabled)
         {
             floatInput = false; // consume input
-            animator.SetTrigger("Flap"); //flap animation when input is taken
             float errorMargin = Mathf.Min(rhythmTimer, rhythmInterval - rhythmTimer);
             if (errorMargin <= rhythmWindow)
             {
@@ -424,13 +473,24 @@ public class PlayerFloating : MonoBehaviour
         canFloat = newCanfloat;
     }
 
+    IEnumerator FloatAnimationHandler()
+    {
+        if (!IsFloating)
+        {
+            resetAnimations();
+        }
+        IsFloating = true;
+        yield return new WaitForSeconds(0.5f);
+        animator.SetBool("isFloating", true);
+    }
+
+
+
     private void resetAnimations()
     {
         animator.SetBool("isIdle", false);
         animator.SetBool("isWalking", false);
         animator.SetBool("isGrabbing", false);
         animator.SetBool("isFloating", false);
-        animator.SetBool("isPulling", false);
-        animator.SetBool("isPushing", false);
     }
 }

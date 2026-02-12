@@ -1,7 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+//using UnityEditor.EditorTools;
 using UnityEngine;
-using UnityEngine.AI;
+//using UnityEngine.AI;
 
 public class DialogueTrigger : MonoBehaviour, IInteractable
 {
@@ -43,6 +44,9 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
 
     public GameObject enemy;
     public bool focusCameraOnTrigger = false;
+    [Header("Reward ItemData")]
+    [Tooltip("Optional item to give the player upon completing the dialogue. Will only be given once.")]
+    public ItemData RewardItem;
 
     public enum DialogueTriggerType
     {
@@ -74,6 +78,10 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
 
         // Dialogue Manager
         dialogueManager = FindObjectOfType<DialogueManager>();
+        if (dialogueManager == null)
+        {
+            Debug.LogError("DialogueManager not found in the scene. Please add one.");
+        }
 
         if (triggerType == DialogueTriggerType.Story)
         {
@@ -274,7 +282,25 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
 
     private void OnTriggerEnter(Collider other)
     {
-        if (triggerType == DialogueTriggerType.NPC) return;
+        StartCoroutine(WaitForGameManagerReady(other));
+    }
+
+    private IEnumerator WaitForGameManagerReady(Collider other)
+    {
+        if (GameManager.Instance != null)
+        {
+            while (!GameManager.Instance.instanceReady)
+            {
+                yield return null; // Wait for the next frame
+            }
+        }
+        
+        StartDialogueFromTrigger(other);
+    }
+
+    private void StartDialogueFromTrigger(Collider other)
+    {
+        if (triggerType == DialogueTriggerType.NPC || other == null) return;
 
         if (other.CompareTag("Player") && !TalkedAlready)
         {
@@ -282,9 +308,24 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
             {
                 enemy.SetActive(true);
             }
+
+            if (dialogueManager == null)
+            {
+                dialogueManager = FindObjectOfType<DialogueManager>();
+            }
+
             if (dialogueManager != null && jsonDialogueFile != null)
             {
                 dialogueManager.StartDialogueFromJson(jsonDialogueFile, this);
+
+                // Add Progress to objective if there is one to add to, (Talking to irene completes the "talk to irene" objective)
+                if (ObjectiveManager.Instance != null && linkedObjective != null)
+                {
+                    if (ObjectiveManager.Instance.IsObjectiveActive(linkedObjective.objectiveID))
+                    {
+                        ObjectiveManager.Instance.AddProgress(linkedObjective.objectiveID, 1);
+                    }
+                }
             }
 
             TalkedAlready = true;

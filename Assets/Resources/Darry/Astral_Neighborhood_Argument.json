@@ -1,174 +1,209 @@
 {
-    "npcName": "Darry",
-    "dialogueLines": [
+  "dialogueLines": [
+    {
+      "Speaker": "Derry",
+      "text": "Reed, I understand that you're pissed, but I need you to listen to me right now.",
+      "requiredMorality": 0,
+      "choices": [
         {
-            "text": "Reed, I understand that you're pissed, but I need you to listen to me right now.",
-            "requiredMorality": 0,
-            "choices": [
-                {
-                    "text": "Derry. Stop trying to run away and make excuses. Tell me what really happened.",
-                    "nextIndex": 1,
-                    "moralityChange": 1,
-                    "directionString": "Up"
-                },
-                {
-                    "text": "Pissed doesn't even begin to cover it Derry. Cut the crap.'",
-                    "nextIndex": 2,
-                    "moralityChange": -1,
-                    "directionString": "Down"
-                }
-            ]
+          "Speaker": "Reed",
+          "text": "Derry. Stop trying to run away and make excuses. Tell me what really happened.",
+          "nextIndex": 1,
+          "moralityChange": 1,
+          "directionString": "Up"
         },
         {
-            "text": "I'm being honest with you, but you're not letting me talk.",
-            "requiredMorality": 0,
-            "choices": [
-                {
-                    "text": "I'm really trying to hear you out. How much more do you need to say?",
-                    "nextIndex": 3,
-                    "moralityChange": 1,
-                    "directionString": "Up"
-                },
-                {
-                    "text": "It's hard to listen when you keep trying to come up with something. Just admit it, you broke the TV I bought and stole my car!",
-                    "nextIndex": 4,
-                    "moralityChange": -1,
-                    "directionString": "Down"
-                }
-            ]
-        },
-        {
-            "text": "Can you just give me a chance to talk?!",
-            "requiredMorality": 0,
-            "choices": [
-                {
-                    "text": "I'm really trying to hear you out. How much more do you need to say?",
-                    "nextIndex": 3,
-                    "moralityChange": 1,
-                    "directionString": "Up"
-                },
-                {
-                    "text": "It's hard to listen when you keep trying to come up with something. Just admit it, you broke the TV I bought and stole my car!",
-                    "nextIndex": 4,
-                    "moralityChange": -1,
-                    "directionString": "Down"
-                }
-            ]
-        },
-        {
-            "text": "You've never gotten this mad about anything before, Reed! Can we even talk at this point?",
-            "requiredMorality": 0,
-            "choices": [
-                {
-                    "text": "Are you trying to say that I really shouldn't be as upset as I am?",
-                    "nextIndex": 5,
-                    "moralityChange": 1,
-                    "directionString": "Up"
-                },
-                {
-                    "text": "Can you even take responsibility at this point?!",
-                    "nextIndex": 6,
-                    "moralityChange": -1,
-                    "directionString": "Down"
-                }
-            ]
-        },
-        {
-            "text": "Your car isn't even stolen, it's right there!",
-            "requiredMorality": 0,
-            "choices": [
-                {
-                    "text": "Sure, but I woke up to a broken TV and my car missing, and no word from you. I'm allowed to be upset.",
-                    "nextIndex": 5,
-                    "moralityChange": 1,
-                    "directionString": "Up"
-                },
-                {
-                    "text": "Just because you brought it back doesn't mean you didn't steal it. You'll say or do anything except take responsibility!",
-                    "nextIndex": 6,
-                    "moralityChange": -1,
-                    "directionString": "Down"
-                }
-            ]
-        },
-        {
-            "text": "Of course, you're allowed to be upset. I broke the TV by accident, and wanted to make it up to you, but I think you're going too far now.",
-            "requiredMorality": 0,
-            "choices": [
-                {
-                    "text": "Yeah, maybe I grilled you a bit too harshly...",
-                    "nextIndex": 7,
-                    "moralityChange": 1,
-                    "directionString": "Up"
-                },
-                {
-                    "text": "I'm going too far?! You broke the TV and took my car without telling me anything, but I'm the one going too far?!",
-                    "nextIndex": 8,
-                    "moralityChange": -1,
-                    "directionString": "Down"
-                }
-            ]
-        },
-        {
-            "text": "Take responsibility? Okay sure, I could own up to it more, but I still can't understand why you're so upset. This whole thing was blown way out of proportion.",
-            "requiredMorality": 0,
-            "choices": [
-                {
-                    "text": "Maybe I am a little over the top now...",
-                    "nextIndex": 7,
-                    "moralityChange": 1,
-                    "directionString": "Up"
-                },
-                {
-                    "text": "I don't think I've chewed you out enough yet, to be honest.",
-                    "nextIndex": 8,
-                    "moralityChange": -1,
-                    "directionString": "Down"
-                }
-            ]
-        },
-        {
-            "text": "Honestly, I could have been a lot better myself. I wanted to sweep the broken TV under the rug, so I went behind your back and took your car, but I promise I only had good intentions.",
-            "requiredMorality": 0,
-            "choices": [
-                {
-                    "text": "Okay. I believe you, and I'm sorry for overreacting.",
-                    "nextIndex": 9,
-                    "moralityChange": 1,
-                    "directionString": "Up"
-                },
-                {
-                    "text": "You always do dumb stuff like this Derry! You can't ever be straightforward. I don't think I can forgive you this time.",
-                    "nextIndex": 9,
-                    "moralityChange": -1,
-                    "directionString": "Down"
-                }
-            ]
-        },
-        {
-            "text": "Reed. You're actually freaking me out now. Are you hearing yourself? Are you really willing to blow things up between us because of this?",
-            "requiredMorality": 0,
-            "choices": [
-                {
-                    "text": "Okay. I believe you, and I'm sorry for overreacting.",
-                    "nextIndex": 9,
-                    "moralityChange": 1,
-                    "directionString": "Up"
-                },
-                {
-                    "text": "You always do dumb stuff like this Derry! You can't ever be straightforward. I don't think I can forgive you this time.",
-                    "nextIndex": 9,
-                    "moralityChange": -1,
-                    "directionString": "Down"
-                }
-            ]
-        },
-        {
-            "text": "Then I guess this can't be fixed. Not right now, anyways.",
-            "requiredMorality": 0,
-            "choices": [],
-            "objectivesToActivate": [ "talkToTownfolk" ],
-            "endDialogueAfterLine": true
+          "Speaker": "Reed",
+          "text": "Pissed doesn't even begin to cover it Derry. Cut the crap.'",
+          "nextIndex": 2,
+          "moralityChange": -1,
+          "directionString": "Down"
         }
-    ]
+      ]
+    },
+    {
+      "Speaker": "Derry",
+      "text": "I'm being honest with you, but you're not letting me talk.",
+      "requiredMorality": 0,
+      "choices": [
+        {
+          "Speaker": "Reed",
+          "text": "I'm really trying to hear you out. How much more do you need to say?",
+          "nextIndex": 3,
+          "moralityChange": 1,
+          "directionString": "Up"
+        },
+        {
+          "Speaker": "Reed",
+          "text": "It's hard to listen when you keep trying to come up with something. Just admit it, you broke the TV I bought and stole my car!",
+          "nextIndex": 4,
+          "moralityChange": -1,
+          "directionString": "Down"
+        }
+      ]
+    },
+    {
+      "Speaker": "Derry",
+      "text": "Can you just give me a chance to talk?!",
+      "requiredMorality": 0,
+      "choices": [
+        {
+          "Speaker": "Reed",
+          "text": "I'm really trying to hear you out. How much more do you need to say?",
+          "nextIndex": 3,
+          "moralityChange": 1,
+          "directionString": "Up"
+        },
+        {
+          "Speaker": "Reed",
+          "text": "It's hard to listen when you keep trying to come up with something. Just admit it, you broke the TV I bought and stole my car!",
+          "nextIndex": 4,
+          "moralityChange": -1,
+          "directionString": "Down"
+        }
+      ]
+    },
+    {
+      "Speaker": "Derry",
+      "text": "You've never gotten this mad about anything before, Reed! Can we even talk at this point?",
+      "requiredMorality": 0,
+      "choices": [
+        {
+          "Speaker": "Reed",
+          "text": "Are you trying to say that I really shouldn't be as upset as I am?",
+          "nextIndex": 5,
+          "moralityChange": 1,
+          "directionString": "Up"
+        },
+        {
+          "Speaker": "Reed",
+          "text": "Can you even take responsibility at this point?!",
+          "nextIndex": 6,
+          "moralityChange": -1,
+          "directionString": "Down"
+        }
+      ]
+    },
+    {
+      "Speaker": "Derry",
+      "text": "Your car isn't even stolen, it's right there!",
+      "requiredMorality": 0,
+      "choices": [
+        {
+          "Speaker": "Reed",
+          "text": "Sure, but I woke up to a broken TV and my car missing, and no word from you. I'm allowed to be upset.",
+          "nextIndex": 5,
+          "moralityChange": 1,
+          "directionString": "Up"
+        },
+        {
+          "Speaker": "Reed",
+          "text": "Just because you brought it back doesn't mean you didn't steal it. You'll say or do anything except take responsibility!",
+          "nextIndex": 6,
+          "moralityChange": -1,
+          "directionString": "Down"
+        }
+      ]
+    },
+    {
+      "Speaker": "Derry",
+      "text": "Of course, you're allowed to be upset. I broke the TV by accident, and wanted to make it up to you, but I think you're going too far now.",
+      "requiredMorality": 0,
+      "choices": [
+        {
+          "Speaker": "Reed",
+          "text": "Yeah, maybe I grilled you a bit too harshly...",
+          "nextIndex": 7,
+          "moralityChange": 1,
+          "directionString": "Up"
+        },
+        {
+          "Speaker": "Reed",
+          "text": "I'm going too far?! You broke the TV and took my car without telling me anything, but I'm the one going too far?!",
+          "nextIndex": 8,
+          "moralityChange": -1,
+          "directionString": "Down"
+        }
+      ]
+    },
+    {
+      "Speaker": "Derry",
+      "text": "Take responsibility? Okay sure, I could own up to it more, but I still can't understand why you're so upset. This whole thing was blown way out of proportion.",
+      "requiredMorality": 0,
+      "choices": [
+        {
+          "Speaker": "Reed",
+          "text": "Maybe I am a little over the top now...",
+          "nextIndex": 7,
+          "moralityChange": 1,
+          "directionString": "Up"
+        },
+        {
+          "Speaker": "Reed",
+          "text": "I don't think I've chewed you out enough yet, to be honest.",
+          "nextIndex": 8,
+          "moralityChange": -1,
+          "directionString": "Down"
+        }
+      ]
+    },
+    {
+      "Speaker": "Derry",
+      "text": "Honestly, I could have been a lot better myself. I wanted to sweep the broken TV under the rug, so I went behind your back and took your car, but I promise I only had good intentions.",
+      "requiredMorality": 0,
+      "choices": [
+        {
+          "Speaker": "Reed",
+          "text": "Okay. I believe you, and I'm sorry for overreacting.",
+          "nextIndex": 9,
+          "moralityChange": 1,
+          "directionString": "Up"
+        },
+        {
+          "Speaker": "Reed",
+          "text": "You always do dumb stuff like this Derry! You can't ever be straightforward. I don't think I can forgive you this time.",
+          "nextIndex": 9,
+          "moralityChange": -1,
+          "directionString": "Down"
+        }
+      ]
+    },
+    {
+      "Speaker": "Derry",
+      "text": "Reed. You're actually freaking me out now. Are you hearing yourself? Are you really willing to blow things up between us because of this?",
+      "requiredMorality": 0,
+      "choices": [
+        {
+          "Speaker": "Reed",
+          "text": "Okay. I believe you, and I'm sorry for overreacting.",
+          "nextIndex": 9,
+          "moralityChange": 1,
+          "directionString": "Up"
+        },
+        {
+          "Speaker": "Reed",
+          "text": "You always do dumb stuff like this Derry! You can't ever be straightforward. I don't think I can forgive you this time.",
+          "nextIndex": 10,
+          "moralityChange": -1,
+          "directionString": "Down"
+        }
+      ]
+    },
+    {
+      "Speaker": "Derry",
+      "text": "Okay. Let's take some time to cool off, then maybe watch the game later.",
+      "requiredMorality": 0,
+      "choices": [],
+      "objectivesToActivate": [ "talkToTownfolk" ],
+      "endDialogueAfterLine": true
+    },
+    {
+      "Speaker": "Derry",
+      "text": "Then I guess this can't be fixed. Not right now, anyways.",
+      "requiredMorality": 0,
+      "choices": [],
+      "objectivesToActivate": [ "talkToTownfolk" ],
+      "endDialogueAfterLine": true
+    }
+  ]
 }

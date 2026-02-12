@@ -10,12 +10,12 @@ public class ButtonIcons : MonoBehaviour
     public class InteractionIcon
     {
         public InteractType type;
-        public Image icon;
+        public RawImage icon;
     }
 
     [SerializeField] private List<InteractionIcon> icons;
 
-    private Dictionary<InteractType, Image> iconMap;
+    private Dictionary<InteractType, RawImage> iconMap;
 
     private void Awake()
     {
@@ -27,7 +27,7 @@ public class ButtonIcons : MonoBehaviour
 
         Instance = this;
 
-        iconMap = new Dictionary<InteractType, Image>();
+        iconMap = new Dictionary<InteractType, RawImage>();
 
         foreach (var entry in icons)
         {
@@ -43,7 +43,7 @@ public class ButtonIcons : MonoBehaviour
     {
         //Clear();
 
-        if (iconMap.TryGetValue(type, out Image icon))
+        if (iconMap.TryGetValue(type, out RawImage icon))
         {
             if (icon != null)
             {

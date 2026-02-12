@@ -2,6 +2,8 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
+using UnityEditor;
+//using UnityEditor.EditorTools;
 
 public class CameraMovement : MonoBehaviour
 {
@@ -12,14 +14,23 @@ public class CameraMovement : MonoBehaviour
         East,
         West
     }
+
+    [Header("General Settings")]
+    [Tooltip("Set to true if this camera is used in the astral plane for special effects.")]
+    public bool isAstral = false;
+
+    [Tooltip("Set to true if this camera is used indoors.")]
+    public bool isIndoors = false;
+
     [Header("Input")]
+    [Tooltip("Insert a reference to the PlayerControls Input Action Asset")]
     [SerializeField] private InputActionAsset inputActions;
-    [SerializeField] private string actionMapName = "Player";
-    [SerializeField] private string lookActionName = "Look";
+    private string actionMapName = "Player";
+    private string lookActionName = "Look";
     private InputAction lookAction;
 
     [Header("Follow Settings")]
-    public Transform target; // Reference the player as the intended target of the camera
+    private Transform target; // Reference the player as the intended target of the camera
     public Vector3 defaultOffset = new Vector3(0, 8, 8); // Height and distance away from the player
     public Vector3 defaultLookAtOffset = Vector3.zero;
     public float smoothSpeed = 5f; // Speed the camera moves to follow the player
@@ -29,21 +40,26 @@ public class CameraMovement : MonoBehaviour
     [SerializeField] WorldDirection defaultFacingDirection = WorldDirection.North;
 
     [Header("Camera Control Settings")]
-    [SerializeField] private bool rotateCamera = false;
-    [SerializeField] private bool restrictYaw = false;
+    private bool rotateCamera = true;
+    private bool restrictYaw = false;
+    [Tooltip("Speed at which the camera rotates.")]
     [SerializeField] private float rotateSpeed = 120f;
+    [Tooltip("Maximum pitch angle of the camera.")]
     [SerializeField] private float maxPitch = 45f;
-    [SerializeField] private float maxYaw = 120f;
-    [SerializeField] private float translateSpeed = 5f;
-    [SerializeField] private float translateLimit = 4f;
+    private float maxYaw = 120f;
+    [Tooltip("Speed at which the camera returns to its default position.")]
     [SerializeField] private float returnSpeed = 4f;
+    [Tooltip("Time in seconds after last mouse input before the camera starts returning to default.")]
     [SerializeField] private float mouseResetTime = 3f;
+    [Tooltip("Scale factor for mouse rotation sensitivity.")]
     [SerializeField] private float mouseRotateScale = 0.08f;
-    [SerializeField] private float mouseTranslateScale = 0.01f;
 
     [Header("Focus Movement Settings")]
+    [Tooltip("Offset applied to the camera when focusing on a pickup object.")]
     public Vector3 pickupOffset = new Vector3(3f, 2f, -5f);
+    [Tooltip("Duration of the zoom effect when focusing on a pickup.")]
     public float zoomDuration = 2f;
+    [Tooltip("Speed at which the camera transitions during focus movement.")]
     public float transitionSpeed = 2f;
     private bool isZooming = false;
     private Vector3 camPosCache = Vector3.zero;
@@ -57,7 +73,7 @@ public class CameraMovement : MonoBehaviour
     private float yaw;
     private float pitch;
     private Quaternion initialRotation;
-    private PlayerThrowing playerThrowing;
+    //private PlayerThrowing playerThrowing;
     private bool isThrowing;
     private ToggleInventoryUI toggleInventoryUI;
     private float mouseResetTimer;
@@ -90,14 +106,16 @@ public class CameraMovement : MonoBehaviour
 
     private void Start()
     {
+        target = GameObject.FindGameObjectWithTag("Player")?.transform;
+
         if (target == null)
         {
-            Debug.LogWarning("Camera target not assigned!");
+            Debug.LogWarning("Camera target not assigned, and no GameObject with tag 'Player' found. Disabling CameraMovement.");
             enabled = false;
             return;
         }
 
-        playerThrowing = target.GetComponent<PlayerThrowing>();
+        //playerThrowing = target.GetComponent<PlayerThrowing>();
         toggleInventoryUI = target.GetComponent<ToggleInventoryUI>();
 
         Vector3 facingVector = DirectionToVector(defaultFacingDirection);
@@ -114,6 +132,11 @@ public class CameraMovement : MonoBehaviour
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+
+        if (SceneManager.GetActiveScene().name == "MainMenu")
+        {
+            Destroy(this);
+        }
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -170,17 +193,17 @@ public class CameraMovement : MonoBehaviour
 
         bool hasLookInput = lookInput.sqrMagnitude > 0.0001f;
 
-        if (playerThrowing != null)
-        {
-            isThrowing = playerThrowing.GetIsCharging();
-        }
+        //if (playerThrowing != null)
+        //{
+        //    isThrowing = playerThrowing.GetIsCharging();
+        //}
 
         if (!hasLookInput && mouseResetTimer >= 0)
         {
             mouseResetTimer -= Time.deltaTime;
         }
 
-        bool blocked = isThrowing || (toggleInventoryUI != null && toggleInventoryUI.isEnabled);// || (pc != null && pc.MovementLocked);
+        bool blocked = isThrowing || (toggleInventoryUI != null && toggleInventoryUI.isEnabled) || (pc != null && pc.MovementLocked);
 
         if (!isZooming)
         {
@@ -193,10 +216,6 @@ public class CameraMovement : MonoBehaviour
                 {
                     HandleRotation(h, v, lastInputWasMouse);
                 }
-                else
-                {
-                    HandleTranslation(h, v, lastInputWasMouse);
-                }
 
                 if (lastInputWasMouse)
                 {
@@ -208,10 +227,6 @@ public class CameraMovement : MonoBehaviour
                 if (rotateCamera)
                 {
                     ReturnRotation();
-                }
-                else
-                {
-                    ReturnTranslation();
                 }
             }
             
@@ -282,41 +297,6 @@ public class CameraMovement : MonoBehaviour
         currentLookAtOffset = Vector3.Lerp(currentLookAtOffset, initialRotation * defaultLookAtOffset, returnSpeed * Time.deltaTime);
     }
 
-    private void HandleTranslation(float horizontalInput, float verticalInput, bool isMouse)
-    {
-        Vector3 inputDirection = new Vector3(horizontalInput, 0f, verticalInput);
-
-        float scale;
-        if (isMouse)
-        {
-            scale = mouseTranslateScale * GameSettings.MouseSensitivity;
-        }
-        else
-        {
-            scale = translateSpeed * GameSettings.RightStickSensitivity * Time.deltaTime;
-        }
-
-        Vector3 delta = initialRotation * inputDirection * scale;
-
-        currentOffset += delta;
-        currentLookAtOffset += delta;
-
-        Vector3 offsetFromDefault = currentOffset - (initialRotation * defaultOffset);
-
-        if (offsetFromDefault.magnitude > translateLimit)
-        {
-            offsetFromDefault = offsetFromDefault.normalized * translateLimit;
-            currentOffset = initialRotation * defaultOffset + offsetFromDefault;
-            currentLookAtOffset = initialRotation * defaultLookAtOffset + offsetFromDefault;
-        }
-    }
-    
-    private void ReturnTranslation()
-    {
-        currentOffset = Vector3.Lerp(currentOffset, initialRotation * defaultOffset, returnSpeed * Time.deltaTime);
-        currentLookAtOffset = Vector3.Lerp(currentLookAtOffset, initialRotation * defaultLookAtOffset, returnSpeed * Time.deltaTime);
-    }
-
     public void TriggerDialogueCamera(Transform dialogueTrigger)
     {
         if (!isZooming)
@@ -332,19 +312,20 @@ public class CameraMovement : MonoBehaviour
             yield break;
         }
 
-        Vector3 currentPos = transform.position;
-        Quaternion currentRot = transform.rotation;
+        // TO FIX: With this implementation, the camera will snap back to the original position and rotation at the end of the coroutine
+        // Because LateUpdate will override the position and rotation once it finishes.
+        // Commenting this out for now so it's a little less jarring, but a smooth transition would be ideal later
 
-        float t = 0;
-        while (t < zoomDuration)
-        {
-            t += Time.deltaTime * transitionSpeed;
-            transform.position = Vector3.Lerp(currentPos, camPosCache, t);
-            transform.rotation = Quaternion.Slerp(currentRot, camRotCache, t);
-            Vector3 lookAtPos = Vector3.Lerp(lookAtCache, target.position + currentLookAtOffset, t);
-            transform.LookAt(lookAtPos);
-            yield return null;
-        }
+        // transform.GetPositionAndRotation(out Vector3 currentPos, out Quaternion currentRot);
+        // float t = 0;
+        // while (t < zoomDuration)
+        // {
+        //    t += Time.deltaTime * transitionSpeed;
+        //    transform.SetPositionAndRotation(Vector3.Lerp(currentPos, camPosCache, t), Quaternion.Slerp(currentRot, camRotCache, t));
+        //    Vector3 lookAtPos = Vector3.Lerp(lookAtCache, target.position + currentLookAtOffset, t);
+        //    transform.LookAt(lookAtPos);
+        //    yield return null;
+        // }
 
         isZooming = false;
         CameraLocked = false;
@@ -412,8 +393,7 @@ public class CameraMovement : MonoBehaviour
             yield return null;
         }
 
-        transform.position = targetPos;
-        transform.rotation = targetRot;
+        transform.SetPositionAndRotation(targetPos, targetRot);
     }
 
     public void SetCameraLocked(bool locked)

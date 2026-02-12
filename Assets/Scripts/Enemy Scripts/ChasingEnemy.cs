@@ -97,7 +97,7 @@ public class ChasingEnemy : MonoBehaviour
         }
 
 
-        // Correct "reached target" detection
+        // Go to next target after reaching current target
         if (!agent.pathPending)
         {
             if (agent.remainingDistance != Mathf.Infinity &&
@@ -107,24 +107,6 @@ public class ChasingEnemy : MonoBehaviour
                 GoToNextTarget();
             }
         }
-        /*
-        // If close enough to the target, switch to next
-        float distanceToTarget = Vector3.Distance(transform.position, targets[currentIndex].position);
-        if (!agent.pathPending && distanceToTarget <= agent.stoppingDistance + 0.1f)
-        {
-            GoToNextTarget();
-        }*/
-
-        /* PursuitTimer -= Time.deltaTime;
-        PursuitCooldown();
-        if (Possessed == false && Distracted == false)
-        {
-            if (PursuitTimer < 0)
-            {
-                agent.SetDestination(target.position);
-                Pursuiting = true;
-            }
-        }*/
 
         //agent.SetDestination(target.position);
     }
@@ -173,6 +155,11 @@ public class ChasingEnemy : MonoBehaviour
         {
             CleaverTrig.SetActive(false);
             CleaverProp.SetActive(true);
+        }
+
+        if (other.name == ("EnemyEndPoint"))
+        {
+            this.gameObject.SetActive(false);
         }
     }
 
