@@ -51,9 +51,10 @@ public class EnemyFieldOfView : MonoBehaviour
     public float detectionRadius = 4f; //detects player/NPC if they get too close, regardless of whether they are in the FOV or not
 
     //attack handlers
-    public float attackRadius = 2f;
+    public float attackRadius = 3f;
     public float attackCooldown = 1f;
     private float lastAttackTime = 0f;
+    public bool isAttacking;
 
     private void Start()
     {
@@ -291,31 +292,52 @@ public class EnemyFieldOfView : MonoBehaviour
 
         if (closeTargets.Length > 0)
         {
-            if (Time.deltaTime >= lastAttackTime + attackCooldown)
+            if (Time.time >= lastAttackTime + attackCooldown)
             {
                 lastAttackTime = Time.time;
-                animator.SetTrigger("Attack");
-                Debug.Log("Attacked");
+                StartCoroutine(attackAnimation());
             }
             return true;
         }
         return false;
     }
 
-    private void MovementAnimations()
+    private void EnemyAnimations()
     {
         bool isMoving = m_Agent.velocity.sqrMagnitude > 0.1f && m_Agent.remainingDistance > m_Agent.stoppingDistance;
-        
-        if (isMoving)
+        if (!isAttacking)
         {
-            animator.SetBool("isWalking", true);
-            animator.SetBool("isIdle", false);
+            if (isMoving)
+            {
+                animator.SetBool("isWalking", true);
+                animator.SetBool("isIdle", false);
+            }
+            else if (!isMoving)
+            {
+                animator.SetBool("isIdle", true);
+                animator.SetBool("isWalking", false);
+            }
         }
-        else if (!isMoving)
+    }
+
+    IEnumerator attackAnimation()
+    {
+        if (!isAttacking)
         {
-            animator.SetBool("isIdle", true);
-            animator.SetBool("isWalking", false);
+            resetanimations();
         }
+        isAttacking = true;
+        animator.SetTrigger("Attack");
+        Debug.Log("Attacked");
+        yield return new WaitForSeconds(2f);
+        isAttacking = false;
+    }
+
+    private void resetanimations()
+    {
+        animator.SetBool("isIdle", false);
+        animator.SetBool("isWalking", false);
+
     }
 
     private enum FOVState

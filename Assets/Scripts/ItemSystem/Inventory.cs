@@ -8,16 +8,20 @@ public class Inventory : MonoBehaviour, ISaveable
 {
     private readonly List<ItemData> itemsList = new List<ItemData>();
 
-    public List<ItemData> keyItems = new();
-    public List<ItemData> otherItems = new();
+    [HideInInspector] public List<ItemData> keyItems = new();
+    [HideInInspector] public List<ItemData> otherItems = new();
 
     public List<ItemData> KeyItems => keyItems;
     public List<ItemData> OtherItems => otherItems;
+    
+    private GameObject interactingScript;
+    private GameObject backpack;
+    private TextMeshProUGUI AddItemPopup;
 
-    [Header("References")]
-    [SerializeField] private GameObject interactingScript;
-    [SerializeField] private GameObject backpack;
-    [SerializeField] private TextMeshProUGUI AddItemPopup;
+    [Header("Leaf Objective")]
+    [SerializeField] private ItemData LeavesReward;
+    [SerializeField] private ItemData TrashbagRefForRemoval;
+    private int NumLeavesCollected;
 
     [Header("Debugging")]
     [SerializeField] private bool showDebugLogs = false;
@@ -27,7 +31,7 @@ public class Inventory : MonoBehaviour, ISaveable
     private InventoryUIController inventoryUI;
     private ToggleInventoryUI toggleInventoryUI;
     private CameraMovement cameraMovement;
-    public WorldItem itemToCollect;
+    [HideInInspector] public WorldItem itemToCollect;
 
     public static event System.Action<ItemData> OnItemAdded;
 
@@ -36,11 +40,46 @@ public class Inventory : MonoBehaviour, ISaveable
     {
         playerController = GetComponent<PlayerController>();
         playerEquipItem = GetComponent<PlayerEquipItem>();
-        inventoryUI = interactingScript.GetComponent<InventoryUIController>();
+        
         toggleInventoryUI = GetComponent<ToggleInventoryUI>();
         cameraMovement = Camera.main.GetComponent<CameraMovement>();
         itemToCollect = null;
-        AddItemPopup.gameObject.SetActive(false);
+
+        if (interactingScript == null)
+        {
+            var foundObjects = FindObjectsByType<GameObject>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            interactingScript = System.Array.Find(foundObjects, obj => obj.name == "InteractingScript");
+            if (interactingScript == null)
+            {
+                Debug.LogError("InteractingScript GameObject not found in the scene. Please ensure a GameObject named 'InteractingScript' exists in the scene as a child of the Inventory UI in the MainCanvas.");
+            }
+        }
+
+        inventoryUI = interactingScript.GetComponent<InventoryUIController>();
+
+        if (backpack == null)
+        {
+            backpack = GameObject.Find("PlayerBackpack");
+            if (backpack == null)
+            {
+                Debug.LogError("Backpack GameObject not found in the scene. Please ensure a GameObject named 'PlayerBackpack' exists in the scene as a child of the player.");
+            }
+        }
+
+        if (AddItemPopup == null)
+        {
+            //var foundObjects = FindObjectsByType<TextMeshProUGUI>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            AddItemPopup = GameObject.Find("Inventory Add popup")?.GetComponent<TextMeshProUGUI>();
+            if (AddItemPopup == null)
+            {
+                Debug.LogError("AddItemPopup TextMeshProUGUI not found in the scene. Please ensure a TextMeshProUGUI named 'Inventory Add popup' exists in the scene as a child of the PlayerUICanvas.");
+            }
+        }
+
+
+
+        if(AddItemPopup != null)
+            AddItemPopup.gameObject.SetActive(false);
     }
 
     private void Start()
@@ -247,6 +286,17 @@ public class Inventory : MonoBehaviour, ISaveable
         AddItemPopup.gameObject.SetActive(true);
         yield return new WaitForSecondsRealtime(1.5f);
         AddItemPopup.gameObject.SetActive(false);
+    }
+
+    public void AddLeaves()
+    {
+        NumLeavesCollected++;
+
+        if(NumLeavesCollected >= 5)
+        {
+            AddItem(LeavesReward);
+            RemoveItem(TrashbagRefForRemoval);
+        }
     }
 }
 
