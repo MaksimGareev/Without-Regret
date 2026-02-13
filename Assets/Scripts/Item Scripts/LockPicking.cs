@@ -14,12 +14,11 @@ public class LockPicking : MonoBehaviour
     public float MaxAngle = 90;
     public float LockSpeed = 10;
     public float CursorSpeed = 100f;
-    private float CurrentAngle = 0f;
-    public float RotationAmount;
+    [HideInInspector] private float CurrentAngle = 0f;
+    [HideInInspector] public float RotationAmount;
     public List<Sprite> ArrowImages;
 
-    // Change this to a list of enums so designers can assign directions more clearly / implement random direction generation
-    private List<int> DirectionAssignments = new List<int>{ 0, 0, 0, 0 }; //0 = up, 1 = left, 2 = down, 3 = right in terms of layout on the d-pad and arrow keys
+    private List<int> DirectionAssignments = new List<int>{ 0, 0, 0, 0 }; //0 = up, 1 = left, 2 = down, 3 = right in terms of layout on the d-pad and arrow keys. Randomly generated on lockpicking start
     public List<RawImage> Arrows;
 
     [Min(1)]
@@ -35,7 +34,7 @@ public class LockPicking : MonoBehaviour
     [SerializeField] GameObject VictoryText;
 
     private float EulerAngle;
-    [SerializeField]  private float UnlockAngle;
+    private float UnlockAngle;
     private int LockRange = 10;
     private Vector2 UnlockRange;
     private LockedItem currentLockedItem;
@@ -47,7 +46,7 @@ public class LockPicking : MonoBehaviour
     private PlayerControls controls;
     private Vector2 rotateInput;
     private int KeyBoardInputValue;
-    public ItemData RewardItem;
+    [HideInInspector] public ItemData RewardItem;
     private bool SecondStageActive = false;
     private Rigidbody rb;
     private int ArrowIndex = 0;

@@ -8,14 +8,14 @@ public class PlayerThrowing : MonoBehaviour
     private Inventory inventory;
     private Transform throwOrigin;
     private Camera playerCamera;
-    private Slider powerSlider;
     private PlayerEquipItem playerEquipItem;
     private GameObject interactingScript;
     private GameObject WorldThrowPointer;
 
-    [Header("Throwing Pointer Settings")]
+    [Header("Throwing Pointer and UI Settings")]
     [SerializeField] private float MaxPointerLength = 10;
     [SerializeField] private float MinPointerLength = 1;
+    [SerializeField] private Slider powerSlider;
     private InventoryUIController inventoryUI;
     private ToggleInventoryUI inventoryToggle;
     

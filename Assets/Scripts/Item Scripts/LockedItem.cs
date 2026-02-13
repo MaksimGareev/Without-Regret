@@ -6,28 +6,35 @@ using System.Linq;
 
 public class LockedItem : MonoBehaviour, IInteractable
 {
-   public InteractType interactType => InteractType.Lockpick;
-    public float interactionPriority => 5f;
+    [HideInInspector] public InteractType interactType => InteractType.Lockpick;
+    [HideInInspector] public float interactionPriority => 5f;
 
     public float LockpickRange = 1.5f;
     private Transform player;
 
+    [Header("UI Object Assginemtns")]
     public GameObject promptUI;
     public GameObject LockPickUI;
-    public bool isDoor = false;
 
+    [Header("Type of Locked Item?")]
+    public bool isDoor = false;
+    public bool isChest = false;
+
+    [Header("Unlock VFX and SFX")]
     public AudioClip UnlockSound;
     public GameObject UnlockTop;
-    public bool isChest = false;
     private AudioSource audioSource;
-    public bool hasBeenLockpicked = false; // Saving and loading this value is already handled by the SaveableWorldObject component
-    public bool isInRange = false;
 
+    [HideInInspector] public bool hasBeenLockpicked = false; // Saving and loading this value is already handled by the SaveableWorldObject component
+    [HideInInspector] public bool isInRange = false;
     private PlayerControls controls;
 
+    [Header ("IconSettings")]
     public GameObject iconPrefab;
     public bool shouldShowIcon = true;
     private GameObject popupInstance;
+
+    [Header("Objective and Reward Settings")]
     public ObjectiveData linkedObjective;
     public bool needsObjective = true;
     public ItemData RewardItem;
