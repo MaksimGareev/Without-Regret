@@ -12,10 +12,11 @@ public class PlayerPossessing : MonoBehaviour
     [SerializeField] private float searchConeAngle = 30f;
     [SerializeField] private KeyCode possessKey = KeyCode.R;
     [SerializeField] private KeyCode possessButton = KeyCode.JoystickButton9;
-    private Slider possessionBar;
     [SerializeField] private GameObject iconPrefab;
     [SerializeField] private Vector3 iconOffset = new Vector3(0f, 2f, 0f);
+    [SerializeField] private LayerMask mask;
 
+    private Slider possessionBar;
     private GameObject popupInstance;
     private PlayerController playerController;
     private Rigidbody playerRigidbody;
@@ -26,7 +27,7 @@ public class PlayerPossessing : MonoBehaviour
     private Rigidbody enemyRigidbody;
     private float possessionTimer;
     private PossessedEnemyResisting target = null;
-    public LayerMask mask;
+    
     RaycastHit hit;
     private bool posessing = false;
     public bool shouldShowIcon = true;
