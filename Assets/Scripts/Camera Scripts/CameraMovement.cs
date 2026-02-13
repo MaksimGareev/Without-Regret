@@ -37,7 +37,7 @@ public class CameraMovement : MonoBehaviour
 
     [Header("Default Facing Direction")]
     [Tooltip("Defines the world-space direction that the camera should face by default.")]
-    [SerializeField] WorldDirection defaultFacingDirection = WorldDirection.North;
+    [SerializeField] private WorldDirection defaultFacingDirection = WorldDirection.North;
 
     [Header("Camera Control Settings")]
     private bool rotateCamera = true;
