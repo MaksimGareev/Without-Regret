@@ -98,12 +98,20 @@ public class PlayerFishing : MonoBehaviour
             castChargeSlider.value = 0f;
             castChargeSlider.gameObject.SetActive(false);
         }
+        else if (showDebugLogs)
+        {
+            Debug.LogWarning("PlayerFishing: Cast charge slider reference is missing. Charge UI will not be shown.");
+        }
 
         // input action subscriptions
         if (fishingAction != null)
         {
             fishingAction.action.started += OnInputStarted;
             fishingAction.action.canceled += OnInputCanceled;
+        }
+        else if (showDebugLogs)
+        {
+            Debug.LogWarning("PlayerFishing: Fishing input action reference is missing. Fishing controls will not work.");
         }
 
         if (!PlayerComponents.initialized) PlayerComponents.InitializeComponents(gameObject);
