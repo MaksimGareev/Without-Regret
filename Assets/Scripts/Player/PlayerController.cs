@@ -17,6 +17,7 @@ public class PlayerController : MonoBehaviour, ISaveable
 
     [Header("Movement Settings")]
     public bool MovementLocked = false;
+    private bool wasMovementLocked = false; //for animator purposes to not cause performance issues
     public float Speed = 1f;
     public float SprintSpeed = 2f;
     public float SprintDuration = 3f;
@@ -225,8 +226,33 @@ public class PlayerController : MonoBehaviour, ISaveable
             return;
         }
 
+        //if (MovementLocked)
+        //{
+        //    if (!wasMovementLocked)
+        //    {
+        //        resetAnimations();
+        //        animator.SetBool("isIdle", true);
+        //    }
+
+        //    wasMovementLocked = true;
+
+        //    moveInput = Vector2.zero;
+
+        //    if (gravityEnabled)
+        //        yVelocity += gravity * Time.deltaTime;
+
+        //    Controller.Move(new Vector3(0, yVelocity, 0) * Time.deltaTime);
+        //    return;
+        //}
+        //else
+        //{
+        //    wasMovementLocked = false;
+        //}
+
         if (MovementLocked)
         {
+            resetAnimations();
+            animator.SetBool("isIdle", true);
             moveInput = Vector2.zero;
             if (gravityEnabled)
             {
@@ -261,6 +287,7 @@ public class PlayerController : MonoBehaviour, ISaveable
 
         //animator.SetBool("isWalking", isMoving);
         //animator.SetBool("isIdle", !isMoving);
+
 
         //gets isMoving state to change animator state to idle or walking
         if (isMoving)
