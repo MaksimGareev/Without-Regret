@@ -49,7 +49,7 @@ public class PlayerMovingObjects : MonoBehaviour
         if (animator != null)
         {
             GrabbingAnimationHandler();
-            Debug.Log("Grabbed");
+            if (showDebugLogs) Debug.Log("Grabbed");
         }
         
         normalMoveSpeed = playerController.Speed;
@@ -99,7 +99,7 @@ public class PlayerMovingObjects : MonoBehaviour
         isGrabbing = true;
         StartCoroutine(pickup());
         animator.SetBool("isGrabbing", true);
-        Debug.Log("Grabbing");
+        if (showDebugLogs) Debug.Log("Grabbing");
     }
 
     IEnumerator pickup()
@@ -119,7 +119,7 @@ public class PlayerMovingObjects : MonoBehaviour
 
     private void resetAnimations()
     {
-        Debug.Log("Reset animations");
+        if (showDebugLogs) Debug.Log("Reset animations");
         animator.SetBool("isIdle", false);
         animator.SetBool("isWalking", false);
         animator.SetBool("isGrabbing", false);
