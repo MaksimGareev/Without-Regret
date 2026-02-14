@@ -1,6 +1,7 @@
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
 
 public class PlayerThrowing : MonoBehaviour
 {
@@ -35,7 +36,7 @@ public class PlayerThrowing : MonoBehaviour
     private bool usingController;
     private Vector3 PointerScale;
 
-    private Animator animator;
+    public Animator animator;
 
     private void Start()
     {
@@ -55,7 +56,7 @@ public class PlayerThrowing : MonoBehaviour
     {
         if (animator == null)
         {
-            animator = GetComponentInChildren<Animator>();
+            //animator = GetComponentInChildren<Animator>();
             if (animator == null)
             {
                 Debug.LogError("Animator component not found on the player or its children. Please ensure an Animator component is added to the player's 'Echo' mesh.");
@@ -175,6 +176,11 @@ public class PlayerThrowing : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(chargeKeyInt) && !isCharging)
         {
+            if (!isCharging)
+            {
+                animator.SetBool("isChargingThrow", true);
+                animator.SetBool("canThrow", true);
+            }
             isCharging = true;
             currentCharge = 0f;
             usingController = false;
@@ -224,7 +230,7 @@ public class PlayerThrowing : MonoBehaviour
                         WorldThrowPointer.transform.localScale = PointerScale;
                         WorldThrowPointer.SetActive(false);
                     }
-                    animator.SetTrigger("Throw"); //play throw animation when button is released
+                    StartCoroutine(ThrowAnimHandler());
                 }
             }
             else
@@ -242,7 +248,7 @@ public class PlayerThrowing : MonoBehaviour
                         WorldThrowPointer.transform.localScale = PointerScale;
                         WorldThrowPointer.SetActive(false);
                     }
-                    animator.SetTrigger("Throw"); //play throw animation when button is released
+                    StartCoroutine(ThrowAnimHandler());
                 }
             }
         }
@@ -323,4 +329,21 @@ public class PlayerThrowing : MonoBehaviour
     }
 
     public bool GetIsCharging() => isCharging;
+
+    IEnumerator ThrowAnimHandler()
+    {
+        animator.SetBool("isChargingThrow", false);
+        animator.SetTrigger("Throw");
+        yield return new WaitForSeconds(2);
+        animator.SetBool("canThrow", false);
+    }
+    public void resetAnimations()
+    {
+        animator.SetBool("isIdle", false);
+        animator.SetBool("isWalking", false);
+        animator.SetBool("isFloating", false);
+        animator.SetBool("isSprinting", false);
+        animator.SetBool("isGrabbing", false);
+
+    }
 }
