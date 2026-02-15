@@ -984,6 +984,15 @@ public class MMSettings : MonoBehaviour
         applyButton.interactable = hasUnappliedChanges;
         discardChangesButton.interactable = hasUnappliedChanges;
 
+        resetButtonImage.color = hasChangedSettings ? legendsEnabledColor : legendsDisabledColor;
+        resetKeyImage.color = hasChangedSettings ? legendsEnabledColor : legendsDisabledColor;
+
+        applyButtonImage.color = hasUnappliedChanges ? legendsEnabledColor : legendsDisabledColor;
+        applyKeyImage.color = hasUnappliedChanges ? legendsEnabledColor : legendsDisabledColor;
+
+        discardButtonImage.color = hasUnappliedChanges ? legendsEnabledColor : legendsDisabledColor;
+        discardKeyImage.color = hasUnappliedChanges ? legendsEnabledColor : legendsDisabledColor;
+
         resolutionDropdown.interactable = videoSettingsOpen;
         fullscreenToggle.interactable = videoSettingsOpen;
 
