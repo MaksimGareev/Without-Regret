@@ -480,6 +480,8 @@ public class PlayerController : MonoBehaviour, ISaveable
             }
         }
 
+        resetAnimations();
+        animator.SetBool("isIdle", true);
         DialogueActive = active;
         if (active == true)
         {
@@ -573,6 +575,8 @@ public class PlayerController : MonoBehaviour, ISaveable
 
     public void SetCutsceneLocked(bool locked)
     {
+        resetAnimations(); //resets animation to idle during a cutscene
+        animator.SetBool("isIdle", true);
         cutsceneLocked = locked;
 
         if (locked)
