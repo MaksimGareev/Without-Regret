@@ -8,8 +8,8 @@ public class PlayerController : MonoBehaviour, ISaveable
     [HideInInspector] public CharacterController Controller;
     private Camera PlayerCamera;
     [HideInInspector] public Animator animator;
-    [HideInInspector] public Slider staminaSlider;
-    [HideInInspector] public Image staminaFill;
+    //public Slider staminaSlider;
+    //public Image staminaFill;
 
     [Header("Sprint UI Colors")]
     public Color normalColor = new Color(0f, 147f/255f, 111f/255f);
@@ -68,19 +68,19 @@ public class PlayerController : MonoBehaviour, ISaveable
         animator = GetComponentInChildren<Animator>();
 
 
-        if (staminaSlider == null)
-        {
-            staminaSlider = GameObject.Find("StaminaSlider")?.GetComponent<Slider>();
-        }
+        // if (staminaSlider == null && GameManager.Instance != null)
+        // {
+        //     staminaSlider = GameManager.Instance.staminaSlider;
+        // }
 
-        if (staminaFill == null)
-        {
-            staminaFill = GameObject.Find("StaminaFill")?.GetComponent<Image>();
-        }
+        // if (staminaFill == null && GameManager.Instance != null)
+        // {
+        //     staminaFill = GameManager.Instance.staminaFill;
+        // }
 
-        if (staminaSlider != null)
+        if (GameManager.Instance.staminaSlider != null)
         {
-            staminaSlider.maxValue = SprintDuration;
+            GameManager.Instance.staminaSlider.maxValue = SprintDuration;
         }
 
         if (PlayerCamera == null)
@@ -88,10 +88,10 @@ public class PlayerController : MonoBehaviour, ISaveable
 
         SprintTimer = SprintDuration;
 
-        if (staminaSlider != null)
+        if (GameManager.Instance.staminaSlider != null)
         {
-            staminaSlider.value = SprintTimer;
-            staminaSlider.gameObject.SetActive(false);
+            GameManager.Instance.staminaSlider.value = SprintTimer;
+            GameManager.Instance.staminaSlider.gameObject.SetActive(false);
         }
 
         playerThrowing = gameObject.GetComponent<PlayerThrowing>();
@@ -292,7 +292,7 @@ public class PlayerController : MonoBehaviour, ISaveable
             canSprint = moveableObjectMod.allowSprint;
         }
 
-        if (staminaFill != null && staminaSlider != null)
+        if (GameManager.Instance.staminaFill != null && GameManager.Instance.staminaSlider != null)
         {
             // Sprint logic
             if (isSprinting && canSprint && !sprintOnCooldown)
@@ -303,8 +303,8 @@ public class PlayerController : MonoBehaviour, ISaveable
                     currentSpeed = SprintSpeed;
                     float depletionRate = moveableObjectMod.movingObject ? moveableObjectMod.sprintDepletionRate : 1f;
                     SprintTimer -= Time.deltaTime * depletionRate; // Stamina depletes faster if moving an object
-                    staminaSlider.gameObject.SetActive(true);
-                    staminaSlider.value = SprintTimer; //sets slider to stamina when going down
+                    GameManager.Instance.staminaSlider.gameObject.SetActive(true);
+                    GameManager.Instance.staminaSlider.value = SprintTimer; //sets slider to stamina when going down
                     animator.speed = 1.4f; // speeds up walk animation when sprinting
 
                     //Debug.Log("Sprinting. Current SprintTimer: " + SprintTimer);
@@ -315,8 +315,8 @@ public class PlayerController : MonoBehaviour, ISaveable
                     isSprinting = false;
                     currentSpeed = Speed;
 
-                    if (staminaFill != null)
-                        staminaFill.color = cooldownColor;
+                    if (GameManager.Instance.staminaFill != null)
+                        GameManager.Instance.staminaFill.color = cooldownColor;
 
                     if (sprintCooldownRoutine != null)
                     {
@@ -336,8 +336,8 @@ public class PlayerController : MonoBehaviour, ISaveable
                     sprintCooldownRoutine = null;
                 }
                 SprintTimer -= Time.deltaTime * moveableObjectMod.sprintDecay;
-                staminaSlider.gameObject.SetActive(true);
-                staminaSlider.value = SprintTimer;
+                GameManager.Instance.staminaSlider.gameObject.SetActive(true);
+                GameManager.Instance.staminaSlider.value = SprintTimer;
                 // Don't start cooldown to ensure SprintTimer doesn't reset prematurely
 
                 //Debug.Log("Depleting stamina while moving object. Current SprintTimer: " + SprintTimer);
@@ -356,8 +356,8 @@ public class PlayerController : MonoBehaviour, ISaveable
                 animator.SetBool("isSprinting", false);
 
                 canSprint = false;
-                if (staminaFill != null)
-                    staminaFill.color = cooldownColor;
+                if (GameManager.Instance.staminaFill != null)
+                    GameManager.Instance.staminaFill.color = cooldownColor;
 
                 if (sprintCooldownRoutine != null)
                 {
@@ -371,8 +371,8 @@ public class PlayerController : MonoBehaviour, ISaveable
                 // Regenerating stamina
                 animator.SetBool("isSprinting", false);
                 SprintTimer += Time.deltaTime;
-                staminaSlider.gameObject.SetActive(true);
-                staminaSlider.value = SprintTimer;
+                GameManager.Instance.staminaSlider.gameObject.SetActive(true);
+                GameManager.Instance.staminaSlider.value = SprintTimer;
 
                 //Debug.Log("Regenerating stamina. Current SprintTimer: " + SprintTimer);
             }
@@ -380,15 +380,15 @@ public class PlayerController : MonoBehaviour, ISaveable
             {
                 // Stamina is full, reset values
                 SprintTimer = SprintDuration;
-                staminaSlider.value = SprintTimer;
+                GameManager.Instance.staminaSlider.value = SprintTimer;
                 canSprint = true;
                 sprintOnCooldown = false;
-                if (staminaFill != null)
+                if (GameManager.Instance.staminaFill != null)
                 {
-                    staminaFill.color = normalColor;
+                    GameManager.Instance.staminaFill.color = normalColor;
                 }
 
-                if (staminaSlider.value >= staminaSlider.maxValue)
+                if (GameManager.Instance.staminaSlider.value >= GameManager.Instance.staminaSlider.maxValue)
                 {
                     //if (staminaSlider.gameObject.activeSelf) Debug.Log("Stamina full, deactivating stamina slider.");
 
@@ -398,7 +398,7 @@ public class PlayerController : MonoBehaviour, ISaveable
                         sprintCooldownRoutine = null;
                     }
 
-                    staminaSlider.gameObject.SetActive(false);
+                    GameManager.Instance.staminaSlider.gameObject.SetActive(false);
                 }
 
                 //if (staminaLingerTimer <= 0f)
@@ -513,9 +513,9 @@ public class PlayerController : MonoBehaviour, ISaveable
         canSprint = true;
         sprintOnCooldown = false;
 
-        if (staminaFill != null)
+        if (GameManager.Instance.staminaFill != null)
         {
-            staminaFill.color = normalColor;
+            GameManager.Instance.staminaFill.color = normalColor;
         }
 
         sprintCooldownRoutine = null;

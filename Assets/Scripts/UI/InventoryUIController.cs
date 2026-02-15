@@ -16,6 +16,7 @@ public class InventoryUIController : MonoBehaviour//, IPointerEnterHandler, IPoi
     [SerializeField] private Button keyItemsTabButton;
     [SerializeField] private Button otherItemsTabButton;
     [SerializeField] private Color highlightColor = new Color(0.70f, 0.70f, 0.70f, 0.70f);
+    [SerializeField] private Color hoverColor = new Color(0.80f, 0.80f, 0.80f, 0.80f);
     public enum InventoryTab { KeyItems, OtherItems }
     private InventoryTab currentTab = InventoryTab.OtherItems;
 
@@ -189,15 +190,23 @@ public class InventoryUIController : MonoBehaviour//, IPointerEnterHandler, IPoi
                 else
                 {
                     slotItems[row, col] = null;
-                    slotIcons[row, col].sprite = emptySlotSprite;
-                    slotIcons[row, col].color = new Color(1, 1, 1, 0.2f);
+
+                    if (emptySlotSprite != null)
+                    {
+                        slotIcons[row, col].sprite = emptySlotSprite;
+                        slotIcons[row, col].color = Color.white;
+                    }
+                    else
+                    {
+                        slotIcons[row, col].color = new Color(1, 1, 1, 0f);
+                    }
                 }
 
                 index++;
             }
         }
 
-        HighlightSelectedSlot();
+        //HighlightSelectedSlot();
     }
 
     private void HandleControllerInput()
@@ -393,11 +402,11 @@ public class InventoryUIController : MonoBehaviour//, IPointerEnterHandler, IPoi
         if (currentTab == InventoryTab.KeyItems)
         {
             keyItemsTabButton.image.color = Color.white;
-            otherItemsTabButton.image.color = highlightColor;
+            otherItemsTabButton.image.color = hoverColor;
         }
         else
         {
-            keyItemsTabButton.image.color = highlightColor;
+            keyItemsTabButton.image.color = hoverColor;
             otherItemsTabButton.image.color = Color.white;
         }
     }

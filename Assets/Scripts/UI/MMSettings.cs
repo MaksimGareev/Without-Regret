@@ -118,16 +118,9 @@ public class MMSettings : MonoBehaviour
     public bool hasUnappliedChanges { get; private set; } = false;
     private bool hasChangedSettings = false;
     private ConfirmationUI confirmationUI;
-    
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        LoadResolutions();
-        InitializeInputActions();
-        SetUpListeners();
-        LoadSettings();
-        StartCoroutine(WaitToApplySettings());
 
+    private void Awake()
+    {
         if (confirmationPanel == null)
         {
             Debug.LogError("confirmationPanel reference is missing.");
@@ -140,6 +133,16 @@ public class MMSettings : MonoBehaviour
         {
             Debug.LogError("ConfirmationUI component not found on confirmationPanel.");
         }
+    }
+    
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Start()
+    {
+        LoadResolutions();
+        InitializeInputActions();
+        SetUpListeners();
+        LoadSettings();
+        StartCoroutine(WaitToApplySettings());
     }
 
     private void InitializeInputActions()
@@ -183,6 +186,31 @@ public class MMSettings : MonoBehaviour
 
     private void Update()
     {
+        if (tabLeftAction.triggered)
+        {
+            OnTabLeft();
+        }
+
+        if (tabRightAction.triggered)
+        {
+            OnTabRight();
+        }
+
+        if (resetSettingsAction.triggered)
+        {
+            OnResetSettings();
+        }
+
+        if (applySettingsAction.triggered)
+        {
+            OnApplySettings();
+        }
+
+        if (discardSettingsAction.triggered)
+        {
+            OnDiscardSettings();
+        }
+
         if (hasChangedSettings && !resetButton.interactable)
         {
             resetButton.interactable = true;
@@ -346,69 +374,68 @@ public class MMSettings : MonoBehaviour
         resetButton.onClick.AddListener(ConfirmBeforeReset);
         applyButton.onClick.AddListener(ConfirmBeforeApply);
         discardChangesButton.onClick.AddListener(ConfirmBeforeDiscardChanges);
+    }
 
-        tabLeftAction.performed += ctx => 
+    private void OnTabRight()
+    {
+        if (!controlSchemeOpen && !confirmationPanel.activeSelf)
         {
-            if (!controlSchemeOpen && !confirmationPanel.activeSelf)
+            if (videoSettingsOpen)
             {
-                if (videoSettingsOpen)
-                {
-                    OpenControlsSettings();
-                }
-                else if (audioSettingsOpen)
-                {
-                    OpenVideoSettings();
-                }
-                else if (controlsSettingsOpen)
-                {
-                    OpenAudioSettings();
-                }
+                OpenAudioSettings();
             }
-            
-        };
+            else if (audioSettingsOpen)
+            {
+                OpenControlsSettings();
+            }
+            else if (controlsSettingsOpen)
+            {
+                OpenVideoSettings();
+            }
+        }
+    }
 
-        tabRightAction.performed += ctx => 
+    private void OnTabLeft()
+    {
+        if (!controlSchemeOpen && !confirmationPanel.activeSelf)
         {
-            if (!controlSchemeOpen && !confirmationPanel.activeSelf)
+            if (videoSettingsOpen)
             {
-                if (videoSettingsOpen)
-                {
-                    OpenAudioSettings();
-                }
-                else if (audioSettingsOpen)
-                {
-                    OpenControlsSettings();
-                }
-                else if (controlsSettingsOpen)
-                {
-                    OpenVideoSettings();
-                }
+                OpenControlsSettings();
             }
-        };
+            else if (audioSettingsOpen)
+            {
+                OpenVideoSettings();
+            }
+            else if (controlsSettingsOpen)
+            {
+                OpenAudioSettings();
+            }
+        }
+    }
 
-        resetSettingsAction.performed += ctx => 
+    private void OnResetSettings()
+    {
+        if (!confirmationPanel.activeSelf && !controlSchemeOpen && hasChangedSettings)
         {
-            if (!confirmationPanel.activeSelf && !controlSchemeOpen && hasChangedSettings)
-            {
-                ConfirmBeforeReset();
-            }
-        };
+            ConfirmBeforeReset();
+        }
+    }
 
-        applySettingsAction.performed += ctx => 
+    private void OnApplySettings()
+    {
+        if (!confirmationPanel.activeSelf && !controlSchemeOpen && hasUnappliedChanges)
         {
-            if (!confirmationPanel.activeSelf && !controlSchemeOpen && hasUnappliedChanges)
-            {
-                ConfirmBeforeApply();
-            }
-        };
+            ConfirmBeforeApply();
+        }
+    }
 
-        discardSettingsAction.performed += ctx => 
+    private void OnDiscardSettings()
+    {
+        if (!confirmationPanel.activeSelf && !controlSchemeOpen && hasUnappliedChanges)
         {
-            if (!confirmationPanel.activeSelf && !controlSchemeOpen && hasUnappliedChanges)
-            {
-                ConfirmBeforeDiscardChanges();
-            }
-        };
+            ConfirmBeforeDiscardChanges();
+        }
     }
 
     private void OpenVideoSettings()
@@ -1014,6 +1041,15 @@ public class MMSettings : MonoBehaviour
     {
         tabLeftAction?.Disable();
         tabRightAction?.Disable();
+        resetSettingsAction?.Disable();
+        applySettingsAction?.Disable();
+        discardSettingsAction?.Disable();
+
+        // tabLeftAction.performed -= ctx => OnTabLeft();
+        // tabRightAction.performed -= ctx => OnTabRight();
+        // resetSettingsAction.performed -= ctx => OnResetSettings();
+        // applySettingsAction.performed -= ctx => OnApplySettings();
+        // discardSettingsAction.performed -= ctx => OnDiscardSettings();
 
         resolutionDropdown.onValueChanged.RemoveListener(SetResolution);
         fullscreenToggle.onValueChanged.RemoveListener(SetFullscreen);
@@ -1041,6 +1077,11 @@ public class MMSettings : MonoBehaviour
     }
 
     private void OnDisable()
+    {
+        DisableListeners();
+    }
+
+    private void OnDestroy()
     {
         DisableListeners();
     }

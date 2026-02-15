@@ -14,7 +14,7 @@ public class Inventory : MonoBehaviour, ISaveable
     public List<ItemData> KeyItems => keyItems;
     public List<ItemData> OtherItems => otherItems;
     
-    private GameObject interactingScript;
+    //private GameObject interactingScript;
     private GameObject backpack;
     private TextMeshProUGUI AddItemPopup;
 
@@ -28,7 +28,7 @@ public class Inventory : MonoBehaviour, ISaveable
     [SerializeField] private bool hasBackpack = false;
     private PlayerController playerController;
     private PlayerEquipItem playerEquipItem;
-    private InventoryUIController inventoryUI;
+    //private InventoryUIController inventoryUI;
     private ToggleInventoryUI toggleInventoryUI;
     private CameraMovement cameraMovement;
     [HideInInspector] public WorldItem itemToCollect;
@@ -45,17 +45,17 @@ public class Inventory : MonoBehaviour, ISaveable
         cameraMovement = Camera.main.GetComponent<CameraMovement>();
         itemToCollect = null;
 
-        if (interactingScript == null)
-        {
-            var foundObjects = FindObjectsByType<GameObject>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-            interactingScript = System.Array.Find(foundObjects, obj => obj.name == "InteractingScript");
-            if (interactingScript == null)
-            {
-                Debug.LogError("InteractingScript GameObject not found in the scene. Please ensure a GameObject named 'InteractingScript' exists in the scene as a child of the Inventory UI in the MainCanvas.");
-            }
-        }
+        // if (interactingScript == null)
+        // {
+        //     var foundObjects = FindObjectsByType<GameObject>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        //     interactingScript = System.Array.Find(foundObjects, obj => obj.name == "InteractingScript");
+        //     if (interactingScript == null)
+        //     {
+        //         Debug.LogError("InteractingScript GameObject not found in the scene. Please ensure a GameObject named 'InteractingScript' exists in the scene as a child of the Inventory UI in the MainCanvas.");
+        //     }
+        // }
 
-        inventoryUI = interactingScript.GetComponent<InventoryUIController>();
+        // inventoryUI = interactingScript.GetComponent<InventoryUIController>();
 
         if (backpack == null)
         {
@@ -154,7 +154,7 @@ public class Inventory : MonoBehaviour, ISaveable
             toggleInventoryUI.hasBackpack = true;
         }
 
-        inventoryUI.RefreshInventoryUI();
+        GameManager.Instance.inventoryInteractingScript.RefreshInventoryUI();
     }
     
     private void SetBackpackActive()
@@ -219,7 +219,7 @@ public class Inventory : MonoBehaviour, ISaveable
             itemToCollect = null;
         }        
 
-        inventoryUI.RefreshInventoryUI();
+        GameManager.Instance.inventoryInteractingScript.RefreshInventoryUI();
 
         if (SaveManager.Instance != null)
         {
@@ -252,7 +252,7 @@ public class Inventory : MonoBehaviour, ISaveable
         
         itemsList.Remove(item);
 
-        inventoryUI.RefreshInventoryUI();
+        GameManager.Instance.inventoryInteractingScript.RefreshInventoryUI();
 
         if (SaveManager.Instance != null)
         {

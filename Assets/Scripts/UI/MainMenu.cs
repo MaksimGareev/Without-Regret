@@ -442,5 +442,25 @@ public class MainMenu : MonoBehaviour
         quitButton.onClick.RemoveListener(ConfirmBeforeQuit);
         backButton.onClick.RemoveListener(HandleUIBackButton);
         feedbackSurveyButton.onClick.RemoveListener(ConfirmBeforeFeedbackSurvey);
+
+        TabLeftAction.Disable();
+        TabRightAction.Disable();
+        confirmAction.Disable();
+        cancelAction.Disable();
+    }
+
+    private void OnDestroy()
+    {
+        playButton.onClick.RemoveListener(OpenSaveSlotsScreen);
+        settingsButton.onClick.RemoveListener(OpenSettings);
+        creditsButton.onClick.RemoveListener(OpenCredits);
+        quitButton.onClick.RemoveListener(ConfirmBeforeQuit);
+        backButton.onClick.RemoveListener(HandleUIBackButton);
+        feedbackSurveyButton.onClick.RemoveListener(ConfirmBeforeFeedbackSurvey);
+
+        TabLeftAction.Disable();
+        TabRightAction.Disable();
+        confirmAction.Disable();
+        cancelAction.Disable();
     }
 }
