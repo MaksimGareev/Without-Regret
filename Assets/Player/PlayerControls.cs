@@ -884,6 +884,33 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ResetSettings"",
+                    ""type"": ""Button"",
+                    ""id"": ""9a9911c8-8be0-405b-bcca-0fdec8f54cdb"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""DiscardSettings"",
+                    ""type"": ""Button"",
+                    ""id"": ""d7139157-f8fb-4890-a9c6-5f90912cca5b"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ApplySettings"",
+                    ""type"": ""Button"",
+                    ""id"": ""c439285d-b48a-4986-a8a3-6c16a9b5c6ad"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -1164,8 +1191,30 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
+                    ""id"": ""998ee2ab-3e74-4ece-8b53-8af823951469"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""TabLeft"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
                     ""id"": ""7f101b0c-e3d1-489a-a3a3-8258f9fc8431"",
                     ""path"": ""<Gamepad>/rightShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""TabRight"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""cf951f5d-47eb-4505-947a-e64e60a4b773"",
+                    ""path"": ""<Keyboard>/e"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -1379,6 +1428,61 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": ""XR"",
                     ""action"": ""TrackedDeviceOrientation"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d1844a88-1392-461a-9d4d-b3f17aa51c2a"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ResetSettings"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""03901080-8dac-4811-b056-45ef566f2a9a"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ResetSettings"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9ddb80bb-ba7a-47b0-8804-f85a1ce91f7a"",
+                    ""path"": ""<Keyboard>/x"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""DiscardSettings"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""7c9efa0a-1320-47f3-ba43-c90408592347"",
+                    ""path"": ""<Keyboard>/enter"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ApplySettings"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ea94ae45-be35-4a3a-866b-4eb5c32dd24c"",
+                    ""path"": ""<Gamepad>/buttonWest"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ApplySettings"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -2175,6 +2279,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_UI_Journal = m_UI.FindAction("Journal", throwIfNotFound: true);
         m_UI_TabLeft = m_UI.FindAction("TabLeft", throwIfNotFound: true);
         m_UI_TabRight = m_UI.FindAction("TabRight", throwIfNotFound: true);
+        m_UI_ResetSettings = m_UI.FindAction("ResetSettings", throwIfNotFound: true);
+        m_UI_DiscardSettings = m_UI.FindAction("DiscardSettings", throwIfNotFound: true);
+        m_UI_ApplySettings = m_UI.FindAction("ApplySettings", throwIfNotFound: true);
         // LockPicking
         m_LockPicking = asset.FindActionMap("LockPicking", throwIfNotFound: true);
         m_LockPicking_Unlock = m_LockPicking.FindAction("Unlock", throwIfNotFound: true);
@@ -2569,6 +2676,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_UI_Journal;
     private readonly InputAction m_UI_TabLeft;
     private readonly InputAction m_UI_TabRight;
+    private readonly InputAction m_UI_ResetSettings;
+    private readonly InputAction m_UI_DiscardSettings;
+    private readonly InputAction m_UI_ApplySettings;
     /// <summary>
     /// Provides access to input actions defined in input action map "UI".
     /// </summary>
@@ -2637,6 +2747,18 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @TabRight => m_Wrapper.m_UI_TabRight;
         /// <summary>
+        /// Provides access to the underlying input action "UI/ResetSettings".
+        /// </summary>
+        public InputAction @ResetSettings => m_Wrapper.m_UI_ResetSettings;
+        /// <summary>
+        /// Provides access to the underlying input action "UI/DiscardSettings".
+        /// </summary>
+        public InputAction @DiscardSettings => m_Wrapper.m_UI_DiscardSettings;
+        /// <summary>
+        /// Provides access to the underlying input action "UI/ApplySettings".
+        /// </summary>
+        public InputAction @ApplySettings => m_Wrapper.m_UI_ApplySettings;
+        /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
         public InputActionMap Get() { return m_Wrapper.m_UI; }
@@ -2704,6 +2826,15 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @TabRight.started += instance.OnTabRight;
             @TabRight.performed += instance.OnTabRight;
             @TabRight.canceled += instance.OnTabRight;
+            @ResetSettings.started += instance.OnResetSettings;
+            @ResetSettings.performed += instance.OnResetSettings;
+            @ResetSettings.canceled += instance.OnResetSettings;
+            @DiscardSettings.started += instance.OnDiscardSettings;
+            @DiscardSettings.performed += instance.OnDiscardSettings;
+            @DiscardSettings.canceled += instance.OnDiscardSettings;
+            @ApplySettings.started += instance.OnApplySettings;
+            @ApplySettings.performed += instance.OnApplySettings;
+            @ApplySettings.canceled += instance.OnApplySettings;
         }
 
         /// <summary>
@@ -2757,6 +2888,15 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @TabRight.started -= instance.OnTabRight;
             @TabRight.performed -= instance.OnTabRight;
             @TabRight.canceled -= instance.OnTabRight;
+            @ResetSettings.started -= instance.OnResetSettings;
+            @ResetSettings.performed -= instance.OnResetSettings;
+            @ResetSettings.canceled -= instance.OnResetSettings;
+            @DiscardSettings.started -= instance.OnDiscardSettings;
+            @DiscardSettings.performed -= instance.OnDiscardSettings;
+            @DiscardSettings.canceled -= instance.OnDiscardSettings;
+            @ApplySettings.started -= instance.OnApplySettings;
+            @ApplySettings.performed -= instance.OnApplySettings;
+            @ApplySettings.canceled -= instance.OnApplySettings;
         }
 
         /// <summary>
@@ -3540,6 +3680,27 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnTabRight(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "ResetSettings" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnResetSettings(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "DiscardSettings" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnDiscardSettings(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "ApplySettings" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnApplySettings(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "LockPicking" which allows adding and removing callbacks.

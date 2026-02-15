@@ -11,11 +11,16 @@ public class MMSettings : MonoBehaviour
     [SerializeField] private InputActionAsset inputActions;
     private InputAction tabLeftAction;
     private InputAction tabRightAction;
+    private InputAction resetSettingsAction;
+    private InputAction applySettingsAction;
+    private InputAction discardSettingsAction;
 
     [Header("Design Settings")]
     [SerializeField] private Color pendingChangeColor = Color.yellow;
     [SerializeField] private Color defaultColor = Color.white;
     [SerializeField] private Color TabEnabledColor = Color.aquamarine;
+    [SerializeField] private Color legendsEnabledColor = Color.white;
+    [SerializeField] private Color legendsDisabledColor = Color.gray;
 
     [Header("Parent Menu Reference")]
     [SerializeField] private GameObject parentMenu;
@@ -66,7 +71,14 @@ public class MMSettings : MonoBehaviour
     [SerializeField] private TextMeshProUGUI rightStickDeadZoneValueText;
 
     [Header("Buttons and UI Panels")]
-    [SerializeField] public GameObject BumperImages;
+    [SerializeField] public GameObject controllerLegends;
+    [SerializeField] public GameObject keyboardLegends;
+    [SerializeField] private Image resetButtonImage;
+    [SerializeField] private Image applyButtonImage;
+    [SerializeField] private Image discardButtonImage;
+    [SerializeField] private Image resetKeyImage;
+    [SerializeField] private Image applyKeyImage;
+    [SerializeField] private Image discardKeyImage;
     [SerializeField] private GameObject settingsPanel;
     [SerializeField] private GameObject settingsUI;
     [SerializeField] public GameObject controlSchemeUI;
@@ -146,29 +158,59 @@ public class MMSettings : MonoBehaviour
             Debug.LogError("TabRight action not found in InputActionAsset.");
             return;
         }
+
+        resetSettingsAction = inputActions.FindActionMap("UI").FindAction("ResetSettings");
+        if (resetSettingsAction == null)
+        {
+            Debug.LogError("ResetSettings action not found in InputActionAsset.");
+            return;
+        }
+
+        applySettingsAction = inputActions.FindActionMap("UI").FindAction("ApplySettings");
+        if (applySettingsAction == null)
+        {
+            Debug.LogError("ApplySettings action not found in InputActionAsset.");
+            return;
+        }
+
+        discardSettingsAction = inputActions.FindActionMap("UI").FindAction("DiscardSettings");
+        if (discardSettingsAction == null)
+        {
+            Debug.LogError("DiscardSettings action not found in InputActionAsset.");
+            return;
+        }
     }
 
     private void Update()
     {
-        if (hasChangedSettings && !resetButton.interactable && !confirmationPanel.activeSelf)
+        if (hasChangedSettings && !resetButton.interactable)
         {
             resetButton.interactable = true;
+            resetButtonImage.color = legendsEnabledColor;
+            resetKeyImage.color = legendsEnabledColor;
+
         }
         else if (!hasChangedSettings && resetButton.interactable && !confirmationPanel.activeSelf)
         {
             resetButton.interactable = false;
+            resetButtonImage.color = legendsDisabledColor;
+            resetKeyImage.color = legendsDisabledColor;
         }
 
-        if (hasUnappliedChanges && !confirmationPanel.activeSelf)
+        if (hasUnappliedChanges)
         {
             if (!applyButton.interactable)
             {
                 applyButton.interactable = true;
+                applyButtonImage.color = legendsEnabledColor;
+                applyKeyImage.color = legendsEnabledColor;
             }
 
             if (!discardChangesButton.interactable)
             {
                 discardChangesButton.interactable = true;
+                discardButtonImage.color = legendsEnabledColor;
+                discardKeyImage.color = legendsEnabledColor;
             }
         }
         else if (!hasUnappliedChanges && !confirmationPanel.activeSelf)
@@ -176,11 +218,15 @@ public class MMSettings : MonoBehaviour
             if (applyButton.interactable)
             {
                 applyButton.interactable = false;
+                applyButtonImage.color = legendsDisabledColor;
+                applyKeyImage.color = legendsDisabledColor;
             }
             
             if (discardChangesButton.interactable)
             {
                 discardChangesButton.interactable = false;
+                discardButtonImage.color = legendsDisabledColor;
+                discardKeyImage.color = legendsDisabledColor;
             }
         }
     }
@@ -303,7 +349,7 @@ public class MMSettings : MonoBehaviour
 
         tabLeftAction.performed += ctx => 
         {
-            if (!controlSchemeOpen)
+            if (!controlSchemeOpen && !confirmationPanel.activeSelf)
             {
                 if (videoSettingsOpen)
                 {
@@ -323,7 +369,7 @@ public class MMSettings : MonoBehaviour
 
         tabRightAction.performed += ctx => 
         {
-            if (!controlSchemeOpen)
+            if (!controlSchemeOpen && !confirmationPanel.activeSelf)
             {
                 if (videoSettingsOpen)
                 {
@@ -337,6 +383,30 @@ public class MMSettings : MonoBehaviour
                 {
                     OpenVideoSettings();
                 }
+            }
+        };
+
+        resetSettingsAction.performed += ctx => 
+        {
+            if (!confirmationPanel.activeSelf && !controlSchemeOpen && hasChangedSettings)
+            {
+                ConfirmBeforeReset();
+            }
+        };
+
+        applySettingsAction.performed += ctx => 
+        {
+            if (!confirmationPanel.activeSelf && !controlSchemeOpen && hasUnappliedChanges)
+            {
+                ConfirmBeforeApply();
+            }
+        };
+
+        discardSettingsAction.performed += ctx => 
+        {
+            if (!confirmationPanel.activeSelf && !controlSchemeOpen && hasUnappliedChanges)
+            {
+                ConfirmBeforeDiscardChanges();
             }
         };
     }
