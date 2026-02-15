@@ -13,6 +13,8 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private InputActionAsset inputActions;
     private InputAction confirmAction;
     private InputAction cancelAction;
+    private InputAction TabRightAction;
+    private InputAction TabLeftAction;
 
     [Header("UI Panels")]
     [SerializeField] public GameObject mainMenuPanel;
@@ -78,6 +80,22 @@ public class MainMenu : MonoBehaviour
             return;
         }
         cancelAction.Enable();
+
+        TabRightAction = inputActions.FindActionMap("UI").FindAction("TabRight");
+        if (TabRightAction == null)
+        {
+            Debug.LogError("Tab Right action not found in InputActionAsset.");
+            return;
+        }
+        TabRightAction.Enable();
+
+        TabLeftAction = inputActions.FindActionMap("UI").FindAction("TabLeft");
+        if (TabLeftAction == null)
+        {
+            Debug.LogError("Tab Left action not found in InputActionAsset.");
+            return;
+        }
+        TabLeftAction.Enable();
     }
 
     // Update is called once per frame
@@ -156,6 +174,11 @@ public class MainMenu : MonoBehaviour
             {
                 EventSystem.current.SetSelectedGameObject(null);
             }
+
+            if (settingsPanel.activeSelf && settingsScript != null && settingsScript.BumperImages.activeSelf)
+            {
+                settingsScript.BumperImages.SetActive(false);
+            }
         }
     }
 
@@ -167,7 +190,10 @@ public class MainMenu : MonoBehaviour
         }
 
         // Check if the controller has moved either the left stick or dpad
-        bool controllerMoved = Gamepad.current.leftStick.ReadValue().sqrMagnitude > 0.1f || Gamepad.current.dpad.ReadValue().sqrMagnitude > 0.1f;
+        bool controllerMoved = 
+            Gamepad.current.leftStick.ReadValue().sqrMagnitude > 0.1f 
+            || Gamepad.current.dpad.ReadValue().sqrMagnitude > 0.1f 
+            || ((TabRightAction.triggered || TabLeftAction.triggered) && settingsPanel.activeSelf);
         
         if (!controllerMoved) return;
 
@@ -202,13 +228,32 @@ public class MainMenu : MonoBehaviour
             // If nothing is selected, set a default based on the active panel
             if (es.currentSelectedGameObject == null)
             {
-                if (mainMenuPanel.activeSelf)
+                if (confirmationPanel.activeSelf)
+                {
+                    es.SetSelectedGameObject(confirmationPanel.GetComponent<ConfirmationUI>().cancelButton.gameObject);
+                }
+                else if (mainMenuPanel.activeSelf)
                 {
                     es.SetSelectedGameObject(playButton.gameObject);
                 }
-                else if (settingsPanel.activeSelf && settingsScript.videoSettingsOpen)
+                else if (settingsPanel.activeSelf && !settingsScript.controlSchemeOpen)
                 {
-                    es.SetSelectedGameObject(settingsScript.resolutionDropdown.gameObject);
+                    if (settingsScript.videoSettingsOpen)
+                    {
+                        es.SetSelectedGameObject(settingsScript.resolutionDropdown.gameObject);
+                    }
+                    else if (settingsScript.audioSettingsOpen)
+                    {
+                        es.SetSelectedGameObject(settingsScript.masterVolumeSlider.gameObject);
+                    }
+                    else if (settingsScript.controlsSettingsOpen)
+                    {
+                        es.SetSelectedGameObject(settingsScript.mouseSensitivitySlider.gameObject);
+                    }
+                }
+                else if (settingsPanel.activeSelf && settingsScript.controlSchemeOpen)
+                {
+                    es.SetSelectedGameObject(settingsScript.controlSchemeUI.GetComponent<ControlSchemeUI>().ControllerButton.gameObject);
                 }
                 else if (creditsPanel.activeSelf)
                 {
@@ -217,6 +262,11 @@ public class MainMenu : MonoBehaviour
                 else if (saveSlotsPanel.activeSelf)
                 {
                     SelectSaveMenuButton();
+                }
+
+                if (settingsPanel.activeSelf && !settingsScript.BumperImages.activeSelf)
+                {
+                    settingsScript.BumperImages.SetActive(true);
                 }
             }
         }
