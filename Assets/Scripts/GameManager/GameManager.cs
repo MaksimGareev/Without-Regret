@@ -56,6 +56,7 @@ public class GameManager : MonoBehaviour
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         StartCoroutine(WaitForCopiesToDelete());
+        UpdateChildReferences();
     }
 
     private IEnumerator WaitForCopiesToDelete()

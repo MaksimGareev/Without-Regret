@@ -92,7 +92,7 @@ public class PauseManager : MonoBehaviour
             return; // Do not allow pausing in the main menu
         }
         
-        if ((playerPauseAction.triggered || UIPauseAction.triggered) && !Journal.Instance.isJournalOpen && !DialogueManager.DialogueIsActive)
+        if ((playerPauseAction.triggered || UIPauseAction.triggered) && !Journal.Instance.isJournalOpen && !DialogueManager.DialogueIsActive && !confirmationPanel.activeSelf)
         {
             if (!pauseMenuPanel.activeSelf && !settingsPanel.activeSelf)
             {

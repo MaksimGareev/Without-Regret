@@ -113,7 +113,7 @@ public class ConfirmationUI : MonoBehaviour
 
     private IEnumerator WaitBeforeInput(System.Action onConfirm = null, System.Action onCancel = null)
     {
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSecondsRealtime(0.2f);
 
         if (onConfirm != null)
         {
