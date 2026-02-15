@@ -6,7 +6,7 @@ using UnityEngine.AI;
 
 public class EnemyFieldOfView : MonoBehaviour
 {
-    // FOV settings
+    [Header("Enemy FOV settings")]// FOV settings
     public float minRadius = 4f;
     public float maxRadius = 8f;
     public float minAngle = 50f;
@@ -16,7 +16,7 @@ public class EnemyFieldOfView : MonoBehaviour
     private float baseRadius;
     private float baseAngle;
 
-    // Detection Settings
+    [Header("Detection Settings")]// Detection Settings
     public LayerMask obstacleMask;
     public LayerMask playerMask;
 
@@ -48,10 +48,13 @@ public class EnemyFieldOfView : MonoBehaviour
     public float chaseDuration = 1; 
     public float maxChaseDuration = 1;
 
+    [Tooltip("Range in which the Enemy will detect an entity, regardless of being in the enemy FOV or not")]
     public float detectionRadius = 4f; //detects player/NPC if they get too close, regardless of whether they are in the FOV or not
 
-    //attack handlers
+    [Header("Attack Handlers")]//attack handlers
+    [Tooltip("Range in which the enemy will attack a target")]
     public float attackRadius = 3f;
+    [Tooltip("Number of seconds between the enemy attacks")]
     public float attackCooldown = 1f;
     private float lastAttackTime = 0f;
     public bool isAttacking;
