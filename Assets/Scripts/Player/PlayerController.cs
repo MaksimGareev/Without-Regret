@@ -30,7 +30,7 @@ public class PlayerController : MonoBehaviour, ISaveable
     private bool canSprint = true;
     private bool sprintOnCooldown = false;
     private bool isSprinting = false;
-    private (bool movingObject, float sprintDepletionRate, float sprintDecay, bool allowSprint) moveableObjectMod = (false, 1f, 1f, true);
+    private (bool movingObject, float sprintDepletionRate, float staminaDecay, bool allowSprint) moveableObjectMod = (false, 1f, 1f, true);
     private Coroutine sprintCooldownRoutine;
 
     [Header("Gravity / Ground Settings")]
@@ -75,12 +75,12 @@ public class PlayerController : MonoBehaviour, ISaveable
 
         if (staminaSlider == null)
         {
-            staminaSlider = GameObject.Find("StaminaSlider")?.GetComponent<Slider>();
+            staminaSlider = GameObject.Find("StaminaSlider").GetComponent<Slider>();
         }
 
         if (staminaFill == null)
         {
-            staminaFill = GameObject.Find("StaminaFill")?.GetComponent<Image>();
+            staminaFill = GameObject.Find("StaminaFill").GetComponent<Image>();
         }
 
         if (staminaSlider != null)
@@ -328,7 +328,8 @@ public class PlayerController : MonoBehaviour, ISaveable
                     staminaSlider.value = SprintTimer; //sets slider to stamina when going down
                     animator.speed = 1.4f; // speeds up walk animation when sprinting
 
-                    //Debug.Log("Sprinting. Current SprintTimer: " + SprintTimer);
+                    if (showDebugLogs)
+                        Debug.Log("Sprinting. Current SprintTimer: " + SprintTimer);
                 }
                 else if (!moveableObjectMod.movingObject)
                 {
@@ -356,11 +357,12 @@ public class PlayerController : MonoBehaviour, ISaveable
                     StopCoroutine(sprintCooldownRoutine);
                     sprintCooldownRoutine = null;
                 }
-                SprintTimer -= Time.deltaTime * moveableObjectMod.sprintDecay;
+                SprintTimer -= Time.deltaTime * moveableObjectMod.staminaDecay;
                 staminaSlider.gameObject.SetActive(true);
                 staminaSlider.value = SprintTimer;
 
-                //Debug.Log("Depleting stamina while moving object. Current SprintTimer: " + SprintTimer);
+                if (showDebugLogs)
+                    Debug.Log("Depleting stamina while moving object. Current SprintTimer: " + SprintTimer);
             }
             else if (!moveableObjectMod.movingObject && !sprintOnCooldown && !isSprinting && SprintTimer <= 0f)
             {
@@ -402,7 +404,8 @@ public class PlayerController : MonoBehaviour, ISaveable
                 staminaSlider.gameObject.SetActive(true);
                 staminaSlider.value = SprintTimer;
 
-                //Debug.Log("Regenerating stamina. Current SprintTimer: " + SprintTimer);
+                if (showDebugLogs)
+                    Debug.Log("Regenerating stamina. Current SprintTimer: " + SprintTimer);
             }
             else if (!isSprinting && SprintTimer >= SprintDuration)
             {
@@ -534,9 +537,11 @@ public class PlayerController : MonoBehaviour, ISaveable
 
     IEnumerator SprintCooldown()
     {
-        //Debug.Log("Sprint cooldown started.");
+        if (showDebugLogs)
+            Debug.Log("Sprint cooldown started.");
         yield return new WaitForSeconds(sprintCooldown);
-        //Debug.Log("Sprint cooldown ended. Stamina reset.");
+        if (showDebugLogs)
+            Debug.Log("Sprint cooldown ended. Stamina reset.");
         SprintTimer = SprintDuration;
         canSprint = true;
         sprintOnCooldown = false;
@@ -549,16 +554,17 @@ public class PlayerController : MonoBehaviour, ISaveable
         sprintCooldownRoutine = null;
     }
 
-    public void MovingObject(bool isMovingObject, float sprintReduction = 1f, float sprintDecay = 1f, bool allowSprint = true)
+    public void MovingObject(bool isMovingObject, float sprintReduction = 1f, float staminaDecay = 1f, bool allowSprint = true)
     {
-        moveableObjectMod = (isMovingObject, sprintReduction, sprintDecay, allowSprint);
+        moveableObjectMod = (isMovingObject, sprintReduction, staminaDecay, allowSprint);
         if (!sprintOnCooldown && allowSprint == false)
         {
             // If not currently in cooldown and sprint is disallowed, change canSprint directly
             canSprint = allowSprint;
         }
 
-        //Debug.Log($"MovingObject called. isMovingObject: {isMovingObject}, sprintReduction: {sprintReduction}, sprintDecay: {sprintDecay}, allowSprint: {allowSprint}");
+        if (showDebugLogs)
+            Debug.Log($"MovingObject called. isMovingObject: {isMovingObject}, sprintReduction: {sprintReduction}, staminaDecay: {staminaDecay}, allowSprint: {allowSprint}");
     }
 
     public void SetVerticalVelocity(float newVelocity) => yVelocity = newVelocity;

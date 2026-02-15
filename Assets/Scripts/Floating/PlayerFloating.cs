@@ -7,20 +7,30 @@ using System.Collections;
 public class PlayerFloating : MonoBehaviour
 {
     [Header("Float Settings")]
-    [SerializeField] private float floatLift = 3f; // instantaneous upward boost on start
-    [SerializeField] private float floatHeightOffset = 3f; // height above start position to hover at
-    [SerializeField] private float horizontalSpeed = 6f; // max horizontal speed while floating
-    [SerializeField] private float verticalSmooth = 5f; // how quickly Y approaches target
-    [SerializeField] private float moveSmoothing = 8f; // how quickly horizontal motion interpolates
-    [SerializeField] private float hoverDrag = 3f; // extra drag while hovering
-    [SerializeField] private float stickDeadzone = 0.2f; // deadzone for controllers
+    [SerializeField, Tooltip("How powerful the instant upward boost on floating start is")] 
+    private float floatLift = 3f;
+    [SerializeField, Tooltip("Height above start position to hover at")] 
+    private float floatHeightOffset = 3f;
+    [SerializeField, Tooltip("Movement speed while floating")] 
+    private float horizontalSpeed = 6f;
+    [SerializeField, Tooltip("Affects how quickly changes in Y occur")] 
+    private float verticalSmooth = 5f;
+    [SerializeField, Tooltip("Affects how quickly horizontal movement interpolates")] 
+    private float moveSmoothing = 8f;
+    [SerializeField, Tooltip("Air drag while hovering")] 
+    private float hoverDrag = 3f;
+    [SerializeField, Tooltip("Deadzone for controllers")] 
+    private float stickDeadzone = 0.2f;
 
     [Header("Rhythm / Input")]
-    [SerializeField] private InputActionReference floatAction;
+    [SerializeField, Tooltip("Control input for floating")] 
+    private InputActionReference floatAction;
     [SerializeField] private float floatDuration = 5f;
     [SerializeField] private float floatCooldown = 3f;
-    [SerializeField] private float rhythmWindow = 0.3f;
-    [SerializeField] private float rhythmInterval = 1f;
+    [SerializeField, Tooltip("Determines the size of the success window")]
+    private float rhythmWindow = 0.3f;
+    [SerializeField, Tooltip("Determines the size of the rhythm bar")] 
+    private float rhythmInterval = 1f;
     private PlayerControls controls;
     private Vector2 moveInput;
     private bool floatInput;
@@ -68,13 +78,17 @@ public class PlayerFloating : MonoBehaviour
 
     void OnEnable()
     {
-        controls.Enable();
-        floatAction.action.Enable();
+        floatAction.action.performed += ctx => ReadSubmit(ctx);
+        floatAction.action.canceled += ctx => ReadSubmit(ctx);
+        controls.Player.Move.performed += ctx => ReadMove(ctx);
+        controls.Player.Move.canceled += ctx => ReadMove(ctx);
     }
     void OnDisable()
     {
-        controls.Disable();
-        floatAction.action.Disable();
+        floatAction.action.performed -= ctx => ReadSubmit(ctx);
+        floatAction.action.canceled -= ctx => ReadSubmit(ctx);
+        controls.Player.Move.performed -= ctx => ReadMove(ctx);
+        controls.Player.Move.canceled -= ctx => ReadMove(ctx);
     }
 
     private void Awake()

@@ -7,7 +7,7 @@ public class PlayerMovingObjects : MonoBehaviour
 {
     private Animator animator;
     [Header("General Settings")]
-    [SerializeField] public Transform grabPoint;
+    [Tooltip("Where moveable objects will snap to (should already be set)")] public Transform grabPoint;
 
     [Header("Debugging")]
     [SerializeField] private bool showDebugLogs = false;
@@ -31,8 +31,7 @@ public class PlayerMovingObjects : MonoBehaviour
     public void OnMovingObject(MoveableObject obj)
     {
         // Return early if already occupied or object is already being moved
-        if (IsOccupied()) return;
-        if (!movedObjects.Add(obj)) return;
+        if (IsOccupied() || !movedObjects.Add(obj)) return;
 
         if (movedObjects.Count > 1 && showDebugLogs)
         {
