@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public class SaveManager : MonoBehaviour
 {
     public static SaveManager Instance { get; private set; }
+
+    [SerializeField] private TextMeshProUGUI savingText;
 
     private List<ISaveable> saveables = new List<ISaveable>();
     private List<ISaveable> persistentSaveables = new List<ISaveable>();
@@ -229,6 +232,7 @@ public class SaveManager : MonoBehaviour
     {
         if (isSaving) return;
         isSaving = true;
+        StartCoroutine(ShowSavingText());
 
         SaveData data = SaveSystem.Load(slot) ?? new SaveData(slot);
 
@@ -249,6 +253,21 @@ public class SaveManager : MonoBehaviour
 
         SaveSystem.Save(data, slot);
         isSaving = false;
+    }
+
+    private IEnumerator ShowSavingText()
+    {
+        if (savingText != null)
+        {
+            savingText.gameObject.SetActive(true);
+
+            while (isSaving)
+            {
+                yield return null;
+            }
+            
+            savingText.gameObject.SetActive(false);
+        }
     }
 
     public void LoadGame(int slot)

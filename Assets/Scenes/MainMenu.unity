@@ -211,6 +211,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1254604639 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5432244671434552757, guid: e3b9262b76b69d34b87124d143240539, type: 3}
+  m_PrefabInstance: {fileID: 1365188771}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a6ea5dfa89642b46aa8f19be2464897, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InventoryUIController
+--- !u!224 &1348539256 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 8717904449825277034, guid: e3b9262b76b69d34b87124d143240539, type: 3}
+  m_PrefabInstance: {fileID: 1365188771}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1365188771
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -263,6 +279,14 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3511942004292408439, guid: e3b9262b76b69d34b87124d143240539, type: 3}
+      propertyPath: inventoryRectTransform
+      value: 
+      objectReference: {fileID: 1348539256}
+    - target: {fileID: 3511942004292408439, guid: e3b9262b76b69d34b87124d143240539, type: 3}
+      propertyPath: inventoryInteractingScript
+      value: 
+      objectReference: {fileID: 1254604639}
     - target: {fileID: 3748850570100526541, guid: e3b9262b76b69d34b87124d143240539, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0

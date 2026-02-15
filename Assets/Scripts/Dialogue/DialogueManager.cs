@@ -182,12 +182,6 @@ public class DialogueManager : MonoBehaviour
     void Update()
     {
         HandleChoiceInput();
-
-        if (DialogueIsActive && playerController != null)
-        {
-            playerController.staminaSlider.gameObject.SetActive(false);
-        }
-
     }
 
     // -------------------- JSON Dialogue --------------------
@@ -226,6 +220,11 @@ public class DialogueManager : MonoBehaviour
         playerInventory = player.GetComponent<Inventory>();
         PopupText.gameObject.SetActive(false);
         Chime.isInDialogue = true;
+
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.staminaSlider.gameObject.SetActive(false);
+        }
 
         if (darryNPC == null)
         {
