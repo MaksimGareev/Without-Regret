@@ -164,7 +164,11 @@ public class MainMenu : MonoBehaviour
 
         Vector2 mouseDelta = Mouse.current.delta.ReadValue();
 
-        if (mouseDelta.sqrMagnitude > 0.1f && usingController)
+        bool mouseKeysMoved = mouseDelta.sqrMagnitude > 0.1f || Keyboard.current.anyKey.isPressed;
+
+        if (!mouseKeysMoved) return;
+
+        if (usingController)
         {
             usingController = false;
             Cursor.visible = true;
@@ -175,9 +179,10 @@ public class MainMenu : MonoBehaviour
                 EventSystem.current.SetSelectedGameObject(null);
             }
 
-            if (settingsPanel.activeSelf && settingsScript != null && settingsScript.BumperImages.activeSelf)
+            if (settingsPanel.activeSelf && settingsScript != null && settingsScript.controllerLegends.activeSelf && !settingsScript.keyboardLegends.activeSelf)
             {
-                settingsScript.BumperImages.SetActive(false);
+                settingsScript.controllerLegends.SetActive(false);
+                settingsScript.keyboardLegends.SetActive(true);
             }
         }
     }
@@ -193,7 +198,7 @@ public class MainMenu : MonoBehaviour
         bool controllerMoved = 
             Gamepad.current.leftStick.ReadValue().sqrMagnitude > 0.1f 
             || Gamepad.current.dpad.ReadValue().sqrMagnitude > 0.1f 
-            || ((TabRightAction.triggered || TabLeftAction.triggered) && settingsPanel.activeSelf);
+            || ((Gamepad.current.leftShoulder.IsPressed() || Gamepad.current.rightShoulder.IsPressed()) && settingsPanel.activeSelf);
         
         if (!controllerMoved) return;
 
@@ -264,9 +269,10 @@ public class MainMenu : MonoBehaviour
                     SelectSaveMenuButton();
                 }
 
-                if (settingsPanel.activeSelf && !settingsScript.BumperImages.activeSelf)
+                if (settingsPanel.activeSelf && !settingsScript.controllerLegends.activeSelf && settingsScript.keyboardLegends.activeSelf)
                 {
-                    settingsScript.BumperImages.SetActive(true);
+                    settingsScript.controllerLegends.SetActive(true);
+                    settingsScript.keyboardLegends.SetActive(false);
                 }
             }
         }
