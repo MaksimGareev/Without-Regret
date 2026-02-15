@@ -15,6 +15,8 @@ public class PauseManager : MonoBehaviour
     private InputAction playerPauseAction;
     private InputAction UIPauseAction;
     private InputAction cancelAction;
+    private InputAction TabRightAction;
+    private InputAction TabLeftAction;
 
     [Header("UI Button References")]
     [SerializeField] private Button resumeButton;
@@ -55,6 +57,22 @@ public class PauseManager : MonoBehaviour
 
         cancelAction = inputActions.FindAction("UI/Cancel");
         cancelAction.Enable();
+
+        TabRightAction = inputActions.FindActionMap("UI").FindAction("TabRight");
+        if (TabRightAction == null)
+        {
+            Debug.LogError("Tab Right action not found in InputActionAsset.");
+            return;
+        }
+        TabRightAction.Enable();
+
+        TabLeftAction = inputActions.FindActionMap("UI").FindAction("TabLeft");
+        if (TabLeftAction == null)
+        {
+            Debug.LogError("Tab Left action not found in InputActionAsset.");
+            return;
+        }
+        TabLeftAction.Enable();
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -141,6 +159,11 @@ public class PauseManager : MonoBehaviour
             {
                 EventSystem.current.SetSelectedGameObject(null);
             }
+
+            if (settingsPanel.activeSelf && settingsScript != null && settingsScript.BumperImages.activeSelf)
+            {
+                settingsScript.BumperImages.SetActive(false);
+            }
         }
     }
 
@@ -151,7 +174,10 @@ public class PauseManager : MonoBehaviour
             return;
         }
 
-        bool controllerMoved = Gamepad.current.leftStick.ReadValue().sqrMagnitude > 0.1f || Gamepad.current.dpad.ReadValue().sqrMagnitude > 0.1f;
+        bool controllerMoved = 
+            Gamepad.current.leftStick.ReadValue().sqrMagnitude > 0.1f 
+            || Gamepad.current.dpad.ReadValue().sqrMagnitude > 0.1f
+            || ((TabRightAction.triggered || TabLeftAction.triggered) && settingsPanel.activeSelf);
         
         if (!controllerMoved)
         {
@@ -188,13 +214,37 @@ public class PauseManager : MonoBehaviour
             // If nothing is selected, set a default based on the active panel
             if (es.currentSelectedGameObject == null)
             {
-                if (pauseMenuPanel.activeSelf)
+                if (confirmationPanel.activeSelf)
+                {
+                    es.SetSelectedGameObject(confirmationPanel.GetComponent<ConfirmationUI>().cancelButton.gameObject);
+                }
+                else if (pauseMenuPanel.activeSelf)
                 {
                     es.SetSelectedGameObject(resumeButton.gameObject);
                 }
-                else if (settingsPanel.activeSelf && settingsScript.videoSettingsOpen)
+                else if (settingsPanel.activeSelf && !settingsScript.controlSchemeOpen)
                 {
-                    es.SetSelectedGameObject(settingsScript.resolutionDropdown.gameObject);
+                    if (settingsScript.videoSettingsOpen)
+                    {
+                        es.SetSelectedGameObject(settingsScript.resolutionDropdown.gameObject);
+                    }
+                    else if (settingsScript.audioSettingsOpen)
+                    {
+                        es.SetSelectedGameObject(settingsScript.masterVolumeSlider.gameObject);
+                    }
+                    else if (settingsScript.controlsSettingsOpen)
+                    {
+                        es.SetSelectedGameObject(settingsScript.mouseSensitivitySlider.gameObject);
+                    }
+                }
+                else if (settingsPanel.activeSelf && settingsScript.controlSchemeOpen)
+                {
+                    es.SetSelectedGameObject(settingsScript.controlSchemeUI.GetComponent<ControlSchemeUI>().ControllerButton.gameObject);
+                }
+
+                if (settingsPanel.activeSelf && !settingsScript.BumperImages.activeSelf)
+                {
+                    settingsScript.BumperImages.SetActive(true);
                 }
             }
         } 

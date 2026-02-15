@@ -25,12 +25,12 @@ public class MMSettings : MonoBehaviour
     [SerializeField] public TMP_Dropdown resolutionDropdown;
     [SerializeField] private Toggle fullscreenToggle;
     // Audio Settings
-    [SerializeField] private Slider masterVolumeSlider;
+    [SerializeField] public Slider masterVolumeSlider;
     [SerializeField] private Slider SFXVolumeSlider;
     [SerializeField] private Slider musicVolumeSlider;
     [SerializeField] private Slider dialogueVolumeSlider;
     // Controls Settings
-    [SerializeField] private Slider mouseSensitivitySlider;
+    [SerializeField] public Slider mouseSensitivitySlider;
     [SerializeField] private Slider leftStickSensitivitySlider;
     [SerializeField] private Slider leftStickDeadZoneSlider;
     [SerializeField] private Slider rightStickSensitivitySlider;
@@ -66,9 +66,10 @@ public class MMSettings : MonoBehaviour
     [SerializeField] private TextMeshProUGUI rightStickDeadZoneValueText;
 
     [Header("Buttons and UI Panels")]
+    [SerializeField] public GameObject BumperImages;
     [SerializeField] private GameObject settingsPanel;
     [SerializeField] private GameObject settingsUI;
-    [SerializeField] private GameObject controlSchemeUI;
+    [SerializeField] public GameObject controlSchemeUI;
     [SerializeField] private GameObject videoSettingsUI;
     [SerializeField] private GameObject audioSettingsUI;
     [SerializeField] private GameObject controlsSettingsUI;
@@ -302,33 +303,40 @@ public class MMSettings : MonoBehaviour
 
         tabLeftAction.performed += ctx => 
         {
-            if (videoSettingsOpen)
+            if (!controlSchemeOpen)
             {
-                OpenControlsSettings();
+                if (videoSettingsOpen)
+                {
+                    OpenControlsSettings();
+                }
+                else if (audioSettingsOpen)
+                {
+                    OpenVideoSettings();
+                }
+                else if (controlsSettingsOpen)
+                {
+                    OpenAudioSettings();
+                }
             }
-            else if (audioSettingsOpen)
-            {
-                OpenVideoSettings();
-            }
-            else if (controlsSettingsOpen)
-            {
-                OpenAudioSettings();
-            }
+            
         };
 
         tabRightAction.performed += ctx => 
         {
-            if (videoSettingsOpen)
+            if (!controlSchemeOpen)
             {
-                OpenAudioSettings();
-            }
-            else if (audioSettingsOpen)
-            {
-                OpenControlsSettings();
-            }
-            else if (controlsSettingsOpen)
-            {
-                OpenVideoSettings();
+                if (videoSettingsOpen)
+                {
+                    OpenAudioSettings();
+                }
+                else if (audioSettingsOpen)
+                {
+                    OpenControlsSettings();
+                }
+                else if (controlsSettingsOpen)
+                {
+                    OpenVideoSettings();
+                }
             }
         };
     }
@@ -542,7 +550,13 @@ public class MMSettings : MonoBehaviour
                 EnableAllButtonsAndSliders();
                 tabLeftAction.Enable();
                 tabRightAction.Enable();
-                EventSystem.current.SetSelectedGameObject(applyButton.gameObject);
+                EventSystem.current.SetSelectedGameObject
+                (
+                    videoSettingsOpen? resolutionDropdown.gameObject :
+                    audioSettingsOpen ? masterVolumeSlider.gameObject :
+                    controlsSettingsOpen ? mouseSensitivitySlider.gameObject :
+                    applyButton.gameObject
+                );
             },
             () => 
             {
@@ -584,7 +598,13 @@ public class MMSettings : MonoBehaviour
                 EnableAllButtonsAndSliders();
                 tabLeftAction.Enable();
                 tabRightAction.Enable();
-                EventSystem.current.SetSelectedGameObject(resetButton.gameObject);
+                EventSystem.current.SetSelectedGameObject
+                (
+                    videoSettingsOpen? resolutionDropdown.gameObject :
+                    audioSettingsOpen ? masterVolumeSlider.gameObject :
+                    controlsSettingsOpen ? mouseSensitivitySlider.gameObject :
+                    applyButton.gameObject
+                );
             },
             () => 
             {
@@ -626,7 +646,13 @@ public class MMSettings : MonoBehaviour
                 EnableAllButtonsAndSliders();
                 tabLeftAction.Enable();
                 tabRightAction.Enable();
-                EventSystem.current.SetSelectedGameObject(discardChangesButton.gameObject);
+                EventSystem.current.SetSelectedGameObject
+                (
+                    videoSettingsOpen? resolutionDropdown.gameObject :
+                    audioSettingsOpen ? masterVolumeSlider.gameObject :
+                    controlsSettingsOpen ? mouseSensitivitySlider.gameObject :
+                    applyButton.gameObject
+                );
             },
             () => 
             {

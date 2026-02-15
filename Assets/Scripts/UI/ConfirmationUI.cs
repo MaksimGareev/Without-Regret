@@ -3,6 +3,7 @@ using TMPro;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
+using System.Collections;
 
 public enum ConfirmationType
 {
@@ -27,7 +28,7 @@ public class ConfirmationUI : MonoBehaviour
     [Header("References")]
     [SerializeField] private TextMeshProUGUI taskText;
     [SerializeField] private Button confirmButton;
-    [SerializeField] private Button cancelButton;
+    [SerializeField] public Button cancelButton;
 
     private bool isConfirming = false;
 
@@ -53,11 +54,11 @@ public class ConfirmationUI : MonoBehaviour
 
     private void Update()
     {
-        if (confirmAction.triggered && isConfirming)
+        if (confirmAction.triggered && isConfirming && confirmButton.interactable)
         {
             confirmButton.onClick.Invoke();
         }
-        else if (cancelAction.triggered && isConfirming)
+        else if (cancelAction.triggered && isConfirming && cancelButton.interactable)
         {
             cancelButton.onClick.Invoke();
         }
@@ -104,11 +105,26 @@ public class ConfirmationUI : MonoBehaviour
     {
         isConfirming = true;
         UpdateTaskText(type);
-        
-        confirmButton.onClick.AddListener(() => onConfirm.Invoke());
-        cancelButton.onClick.AddListener(() => onCancel.Invoke());
+
+        StartCoroutine(WaitBeforeInput(onConfirm, onCancel));
 
         EventSystem.current.SetSelectedGameObject(cancelButton.gameObject);
+    }
+
+    private IEnumerator WaitBeforeInput(System.Action onConfirm = null, System.Action onCancel = null)
+    {
+        yield return new WaitForSeconds(0.2f);
+
+        if (onConfirm != null)
+        {
+            confirmButton.onClick.AddListener(() => onConfirm.Invoke());
+            confirmButton.interactable = true;
+        }
+        if (onCancel != null)
+        {
+            cancelButton.onClick.AddListener(() => onCancel.Invoke());
+            cancelButton.interactable = true;
+        }
     }
 
     public void EndConfirmation()
@@ -117,6 +133,10 @@ public class ConfirmationUI : MonoBehaviour
 
         confirmButton.onClick.RemoveAllListeners();
         cancelButton.onClick.RemoveAllListeners();
+        confirmButton.interactable = false;
+        cancelButton.interactable = false;
+
+        StopAllCoroutines();
     }
 
     private void OnDisable()
