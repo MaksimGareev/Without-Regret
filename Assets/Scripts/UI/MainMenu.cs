@@ -44,7 +44,7 @@ public class MainMenu : MonoBehaviour
 
     private string gameVersion = "v.0.0.1";
     private SaveManager saveManager;
-    private bool usingController = false;
+    [HideInInspector] public bool usingController { get; private set; } = false;
     private Button lastSelectedButton;
     
 

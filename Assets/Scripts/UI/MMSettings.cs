@@ -274,6 +274,25 @@ public class MMSettings : MonoBehaviour
             tabRightAction.Enable();
         }
 
+        if (parentMenu != null)
+        {
+            if (parentMenu.GetComponent<MainMenu>() != null && parentMenu.GetComponent<MainMenu>().usingController)
+            {
+                controllerLegends.SetActive(true);
+                keyboardLegends.SetActive(false);
+            }
+            else if (parentMenu.GetComponent<PauseManager>() != null && parentMenu.GetComponent<PauseManager>().usingController)
+            {
+                controllerLegends.SetActive(true);
+                keyboardLegends.SetActive(false);
+            }
+            else
+            {
+                controllerLegends.SetActive(false);
+                keyboardLegends.SetActive(true);
+            }
+        }
+
         SetUpListeners();
     }
 
