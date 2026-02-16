@@ -33,7 +33,7 @@ public class PauseManager : MonoBehaviour
     [SerializeField] private Canvas[] otherCanvasesToDisable;
 
     [HideInInspector] public bool isGamePaused = false;
-    private bool usingController = false;
+    [HideInInspector] public bool usingController { get; private set; } = false;
 
     private void Awake()
     {
@@ -98,11 +98,22 @@ public class PauseManager : MonoBehaviour
             {
                 PauseGame();
             }
-            else if (settingsPanel.activeSelf)
+            else if (!pauseMenuPanel.activeSelf && settingsPanel.activeSelf)
             {
-                BackToPauseMenu();
+                if (settingsScript != null && settingsScript.controlSchemeOpen)
+                {
+                    settingsScript.CloseControlSchemeUI();
+                }
+                else if (settingsScript != null && settingsScript.hasUnappliedChanges)
+                {
+                    settingsScript.ConfirmBeforeLeaveWithoutApplying();
+                }
+                else
+                {
+                    BackToPauseMenu();
+                }
             }
-            else if (pauseMenuPanel.activeSelf)
+            else if (pauseMenuPanel.activeSelf && !settingsPanel.activeSelf)
             {
                 ResumeGame();
             }

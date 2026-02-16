@@ -39,6 +39,15 @@ public class GraveObjectiveSlot : MonoBehaviour
         {
             Debug.LogWarning("No objective linked in inspector!");
         }
+        
+        // Check if the linked objective is already active at the start (i.e. on reloading save), reenable gravestones.
+        if (linkedObjective != null && ObjectiveManager.Instance != null)
+        {
+            if (ObjectiveManager.Instance.IsObjectiveActive(linkedObjective.objectiveID))
+            {
+                SetObjectiveActive(new ObjectiveInstance(linkedObjective));
+            }
+        }
 
         if (!isObjectiveActive)
         {

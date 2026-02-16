@@ -27,6 +27,7 @@ public class GameManager : MonoBehaviour
     public Slider floatCooldown;
     public Image staminaFill;
     public GameObject InventoryUI;
+    public GameObject LockPickUI;
     public RectTransform inventoryRectTransform;
     public InventoryUIController inventoryInteractingScript;
     [HideInInspector] public GameObject interactionIconsCanvas;

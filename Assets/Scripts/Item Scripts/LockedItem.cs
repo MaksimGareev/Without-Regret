@@ -13,7 +13,7 @@ public class LockedItem : MonoBehaviour, IInteractable
     private Transform player;
 
     public GameObject promptUI;
-    public GameObject LockPickUI;
+    //public GameObject LockPickUI;
     public bool isDoor = false;
 
     public AudioClip UnlockSound;
@@ -45,9 +45,9 @@ public class LockedItem : MonoBehaviour, IInteractable
         {
             promptUI.SetActive(false);
         }
-        if (LockPickUI != null)
+        if (GameManager.Instance != null && GameManager.Instance.LockPickUI != null)
         {
-            LockPickUI.SetActive(false);
+            GameManager.Instance.LockPickUI.SetActive(false);
         }
 
         controls = new PlayerControls();
@@ -145,12 +145,12 @@ public class LockedItem : MonoBehaviour, IInteractable
 
     private void TryInteract()
     {
-        if (!isInRange || LockPickUI == null || hasBeenLockpicked || !player.gameObject.GetComponent<Inventory>().keyItems.Any(x=> x.ItemName == "Lock Pick")) return;
+        if (!isInRange || GameManager.Instance.LockPickUI == null || hasBeenLockpicked || !player.gameObject.GetComponent<Inventory>().keyItems.Any(x=> x.ItemName == "Lock Pick")) return;
 
         // Show LockPick UI
-        LockPickUI.SetActive(true);
-        LockPickUI.GetComponent<LockPicking>().NewLock(this);//(this.gameObject);
-        LockPickUI.GetComponent<LockPicking>().RewardItem = RewardItem;
+        GameManager.Instance.LockPickUI.SetActive(true);
+        GameManager.Instance.LockPickUI.GetComponent<LockPicking>().NewLock(this);//(this.gameObject);
+        GameManager.Instance.LockPickUI.GetComponent<LockPicking>().RewardItem = RewardItem;
 
         /*if (promptUI != null)
             promptUI.SetActive(false);
