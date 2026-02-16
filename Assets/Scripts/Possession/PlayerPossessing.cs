@@ -26,6 +26,9 @@ public class PlayerPossessing : MonoBehaviour
     private NavMeshAgent enemyNavMeshAgent;
     private Rigidbody enemyRigidbody;
     private float possessionTimer;
+    private float TimeSincePossession;
+    private float rechargeDelay = 1.5f;
+    private float rechargeSpeed = .5f;
     private PossessedEnemyResisting target = null;
     
     RaycastHit hit;
@@ -36,6 +39,7 @@ public class PlayerPossessing : MonoBehaviour
     {
         playerController = GetComponent<PlayerController>();
         playerRigidbody = GetComponent<Rigidbody>();
+        possessionTimer = possessionDuration;
 
         if (possessionBar == null)
         {
@@ -90,6 +94,23 @@ public class PlayerPossessing : MonoBehaviour
                 {
                     EndPossession();
                 }
+        }
+        if(!posessing && possessionTimer < possessionDuration)
+        {
+            possessionBar.gameObject.SetActive(true);
+            if (TimeSincePossession >= rechargeDelay)
+            {
+                possessionTimer += Time.deltaTime * rechargeSpeed;
+                possessionBar.value = Mathf.InverseLerp(0, possessionDuration, possessionTimer);
+            }
+            else
+            {
+                TimeSincePossession += Time.deltaTime;
+            }
+        }
+        else if (possessionTimer >= possessionDuration)
+        {
+            possessionBar.gameObject.SetActive(false);
         }
     }
 
@@ -182,9 +203,6 @@ public class PlayerPossessing : MonoBehaviour
         enemyRigidbody = target.GetComponent<Rigidbody>();
         enemyPOV = target.GetComponent<EnemyFieldOfView>();
         possessedEnemyMovement = target;
-        
-
-        possessionTimer = possessionDuration;
 
         if (playerController != null)
         {
@@ -241,7 +259,6 @@ public class PlayerPossessing : MonoBehaviour
         }
 
         possessionBar.gameObject.SetActive(false);
-        possessionBar.value = 1;
 
         if (enemyPOV != null)
         {
@@ -260,6 +277,7 @@ public class PlayerPossessing : MonoBehaviour
             GetComponent<CharacterController>().enabled = true;
         }
         posessing = false;
+        TimeSincePossession = 0;
         ClearTargetInfo();
     }
 
