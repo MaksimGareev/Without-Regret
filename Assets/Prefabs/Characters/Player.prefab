@@ -435,7 +435,7 @@ LineRenderer:
     shadowBias: 0.5
     generateLightingData: 0
   m_MaskInteraction: 0
-  m_UseWorldSpace: 0
+  m_UseWorldSpace: 1
   m_Loop: 0
   m_ApplyActiveColorSpace: 1
 --- !u!1 &5675321481151379428
@@ -695,6 +695,7 @@ MonoBehaviour:
   SprintDuration: 3
   sprintCooldown: 4
   staminaLingerDuration: 1
+  StationaryCamera: 0
   SprintTimer: 3
   groundCheck: {fileID: 0}
   groundCheckRadius: 0.2
@@ -776,10 +777,11 @@ MonoBehaviour:
   maxThrowForce: 10
   upwardForceMax: 10
   upwardForceMin: 2
-  chargeSpeed: 1.5
+  chargeSpeed: 0.25
   holdTime: 5
   chargeKey: 1
   chargeButton: Xbox RightStick Click
+  Indoors: 0
 --- !u!114 &6369621648110085496
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -940,7 +942,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.PlayerInput
-  m_Actions: {fileID: -944628639613478452, guid: f1f4dbfd8c64cd440924988ec4fb6f6a, type: 3}
+  m_Actions: {fileID: 0}
   m_NotificationBehavior: 0
   m_UIInputModule: {fileID: 0}
   m_DeviceLostEvent:
