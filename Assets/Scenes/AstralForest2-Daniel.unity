@@ -49821,16 +49821,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1f1ab1a81f3ad7468ec1fe89381d319, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MoveableObject
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 0
-  moveSlowdownMultiplier: 3
+  moveSlowdownDivisor: 3
+  sprintSlowdownDivisor: 3
+  sprintDepletionFactor: 1.15
+  sprintTimerDecay: 1
+  allowSprint: 1
   requiredItem: {fileID: 0}
+  maxGrabDistance: 2.5
+  disableColliderWhileHeld: 0
+  heldPositionOffset: {x: 0, y: 0, z: 0}
+  heldRotationOffset: {x: 0, y: 0, z: 0}
   isGrabbable: 1
   iconDistance: 3
   iconPrefab: {fileID: 7228842916403451623, guid: 8c37cda576505cc45bd7511edf89a1b3, type: 3}
   shouldShowIcon: 1
-  maxGrabDistance: 2.5
+  navMeshSurface: {fileID: 0}
 --- !u!54 &1123922411
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -62806,7 +62811,7 @@ Terrain:
   m_StaticShadowCaster: 0
   m_IgnoreQualitySettings: 0
   m_ReflectionProbeUsage: 1
-  m_MaterialTemplate: {fileID: 10652, guid: 0000000000000000f000000000000000, type: 0}
+  m_MaterialTemplate: {fileID: 2100000, guid: 594ea882c5a793440b60ff72d896021e, type: 2}
   m_BakeLightProbesForTrees: 1
   m_PreserveTreePrototypeLayers: 0
   m_DeringLightProbesForTrees: 1
@@ -63609,16 +63614,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1f1ab1a81f3ad7468ec1fe89381d319, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MoveableObject
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 0
-  moveSlowdownMultiplier: 3
+  moveSlowdownDivisor: 3
+  sprintSlowdownDivisor: 3
+  sprintDepletionFactor: 1.15
+  sprintTimerDecay: 1
+  allowSprint: 1
   requiredItem: {fileID: 0}
+  maxGrabDistance: 2.5
+  disableColliderWhileHeld: 0
+  heldPositionOffset: {x: 0, y: 0, z: 0}
+  heldRotationOffset: {x: 0, y: 0, z: 0}
   isGrabbable: 1
   iconDistance: 3
   iconPrefab: {fileID: 7228842916403451623, guid: 8c37cda576505cc45bd7511edf89a1b3, type: 3}
   shouldShowIcon: 1
-  maxGrabDistance: 2.5
+  navMeshSurface: {fileID: 0}
 --- !u!54 &1334046542
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -78107,16 +78117,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1f1ab1a81f3ad7468ec1fe89381d319, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MoveableObject
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 0
-  moveSlowdownMultiplier: 3
+  moveSlowdownDivisor: 3
+  sprintSlowdownDivisor: 3
+  sprintDepletionFactor: 1.15
+  sprintTimerDecay: 1
+  allowSprint: 1
   requiredItem: {fileID: 0}
+  maxGrabDistance: 2.5
+  disableColliderWhileHeld: 0
+  heldPositionOffset: {x: 0, y: 0, z: 0}
+  heldRotationOffset: {x: 0, y: 0, z: 0}
   isGrabbable: 1
   iconDistance: 3
   iconPrefab: {fileID: 7228842916403451623, guid: 8c37cda576505cc45bd7511edf89a1b3, type: 3}
   shouldShowIcon: 1
-  maxGrabDistance: 2.5
+  navMeshSurface: {fileID: 0}
 --- !u!54 &1682469923
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -93707,19 +93722,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5256605505714893680, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5256605505714893680, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5256605505714893680, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 100
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5256605505714893680, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -25
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7723209263034436145, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
       propertyPath: m_Name
@@ -97605,7 +97620,7 @@ Terrain:
   m_StaticShadowCaster: 0
   m_IgnoreQualitySettings: 0
   m_ReflectionProbeUsage: 1
-  m_MaterialTemplate: {fileID: 10652, guid: 0000000000000000f000000000000000, type: 0}
+  m_MaterialTemplate: {fileID: 2100000, guid: 594ea882c5a793440b60ff72d896021e, type: 2}
   m_BakeLightProbesForTrees: 1
   m_PreserveTreePrototypeLayers: 0
   m_DeringLightProbesForTrees: 1
