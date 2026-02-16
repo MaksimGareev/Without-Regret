@@ -373,6 +373,8 @@ public class PlayerFishing : MonoBehaviour
             return;
         }
 
+        float distance = Vector3.Distance(castOrigin.position, hook.transform.position);
+
         if (disableMovementWhileFishing && isFishing)
         {
             // Disable movement while fishing
@@ -389,8 +391,8 @@ public class PlayerFishing : MonoBehaviour
         // Failsafe Check
         if (hook.activeSelf && fishingStartTime > 0f && Time.time > (fishingStartTime + 3f))
         {
-            float dist = Vector3.Distance(castOrigin.position, hook.transform.position);
-            if (dist >= maxCastDistance * 1.5f) // if hook somehow got flung very far (e.g. into a void), clean it up
+            
+            if (distance >= maxCastDistance * 1.5f) // if hook somehow got flung very far (e.g. into a void), clean it up
             {
                 if (showDebugLogs) Debug.LogWarning($"Hook position {hook.transform.position} is out of bounds. Cleaning up hook.");
                 CleanupHook();
@@ -419,7 +421,6 @@ public class PlayerFishing : MonoBehaviour
         //  - a short time delay passed after the cast
         if (!canReel && isFishing)
         {
-            float distance = Vector3.Distance(castOrigin.position, hook.transform.position);
             if (distance >= minCastDistance || Time.time >= castTime + reelEnableDelay)
             {
                 canReel = true;

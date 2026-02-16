@@ -6,8 +6,8 @@ using UnityEngine;
 public class ObjectiveCanvas : MonoBehaviour
 {
     [Header("Settings")]
-    [SerializeField] private float fadeDuration = 0.5f;
-    [SerializeField] private float visibleDuration = 2f;
+    [SerializeField, Tooltip("How long fading the UI in/out takes until it's at 100 or 0 opacity")] private float fadeDuration = 0.5f;
+    [SerializeField, Tooltip("How long the UI is visible for (time starts as soon as it's fully visible)")] private float visibleDuration = 2f;
 
     [Header("UI References (should already be assigned)")]
     [SerializeField] private GameObject objectiveUI;
