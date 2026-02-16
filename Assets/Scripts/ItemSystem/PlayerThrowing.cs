@@ -1,6 +1,7 @@
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 
 public class PlayerThrowing : MonoBehaviour
 {
@@ -152,6 +153,7 @@ public class PlayerThrowing : MonoBehaviour
             }
         }
     }
+    
 
     // Update is called once per frame
     private void LateUpdate()
@@ -164,6 +166,7 @@ public class PlayerThrowing : MonoBehaviour
         {
             DropItem();
         }
+
     }
 
     private void DropItem()
@@ -279,13 +282,13 @@ public class PlayerThrowing : MonoBehaviour
         {
             Vector3 direction;
 
-                Vector3 aimDirection = CalculateInputFromPOV();
+                //Vector3 aimDirection = CalculateInputFromPOV();
 
-                if (aimDirection.magnitude < 0.01f)
-                {
+                //if (aimDirection.magnitude < 0.01f)
+                //{
                     Debug.Log("Stick at neutral");
-                    aimDirection = transform.forward;
-                }
+                    Vector3 aimDirection = transform.forward;
+                //}
 
                 direction = aimDirection.normalized;
 
@@ -331,13 +334,13 @@ public class PlayerThrowing : MonoBehaviour
         currentUpwardForce = Mathf.Lerp(upwardForceMax, upwardForceMin, currentCharge);
         Vector3 direction;
 
-        Vector3 aimDirection = CalculateInputFromPOV();
+        //Vector3 aimDirection = CalculateInputFromPOV();
 
-        if (aimDirection.magnitude < 0.01f)
-        {
+        //if (aimDirection.magnitude < 0.01f)
+        //{
             Debug.Log("Stick at neutral");
-            aimDirection = transform.forward;
-        }
+            Vector3 aimDirection = transform.forward;
+        //}
         direction = aimDirection.normalized;
         Vector3 startVelocity = direction * currentThrowForce + Vector3.up * currentUpwardForce / 1;
         int i = 0;

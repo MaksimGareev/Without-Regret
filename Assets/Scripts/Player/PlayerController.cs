@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour, ISaveable
 {   
@@ -23,6 +24,7 @@ public class PlayerController : MonoBehaviour, ISaveable
     public float sprintCooldown = 4f;
     public float staminaLingerDuration = 1f;
     private float staminaLingerTimer = 0f;
+    [SerializeField] private bool StationaryCamera;
 
     public float SprintTimer = 3f;
     private bool canSprint = true;
@@ -54,6 +56,7 @@ public class PlayerController : MonoBehaviour, ISaveable
     private PlayerControls controls;
     private Rigidbody rb;
     private Vector2 moveInput;
+    private Vector3 lookInput;
     private float deadzone = 0.15f;
     private bool cutsceneLocked = false;
     private Vector3 lockedPosition;
@@ -66,7 +69,6 @@ public class PlayerController : MonoBehaviour, ISaveable
     {
         Controller = GetComponent<CharacterController>();
         animator = GetComponentInChildren<Animator>();
-
 
         if (staminaSlider == null)
         {
@@ -113,6 +115,8 @@ public class PlayerController : MonoBehaviour, ISaveable
 
         controls.Player.Sprint.performed += ctx => StartSprinting();
         controls.Player.Sprint.canceled += ctx => StopSprinting();
+
+        controls.Player.Look.performed += ctx => lookInput = ctx.ReadValue<Vector2>();
 
         rb = GetComponent<Rigidbody>();
 
@@ -431,13 +435,21 @@ public class PlayerController : MonoBehaviour, ISaveable
             float angle = Mathf.Atan2(move.x, move.z) * Mathf.Rad2Deg;
             transform.rotation = Quaternion.Euler(0f, angle, 0f);
         }
-        else if(isThrowing)
+        else if(isThrowing && !StationaryCamera)
         {
             Vector3 camForward = PlayerCamera.transform.forward;
             camForward.y = 0f;
             camForward.Normalize();
             float angle = Mathf.Atan2(camForward.x, camForward.z) * Mathf.Rad2Deg;
             transform.rotation = Quaternion.Euler(0f, angle, 0f);
+        }
+        else if(isThrowing && StationaryCamera)
+        {
+            if(lookInput.magnitude > 0)
+            {
+                float angle = Mathf.Atan2(lookInput.x, -lookInput.y) * Mathf.Rad2Deg;
+                transform.rotation = Quaternion.Euler(0f, -angle, 0f);
+            }
         }
     }
 
