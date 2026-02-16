@@ -6,6 +6,10 @@ using UnityEngine;
 
 public class DialogueTrigger : MonoBehaviour, IInteractable
 {
+    [Header("Animation")]
+    public Animator animator;
+    public bool isTalking;
+    private Coroutine talkRoutine;
     public float interactionPriority => 10f;
     public InteractType interactType => InteractType.Dialogue;
 
@@ -145,6 +149,13 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
     {
         if (player == null) return;
 
+        isTalking = true;
+        animator.SetBool("isTalking", isTalking);
+        if (talkRoutine == null)
+        {
+            talkRoutine = StartCoroutine(TalkAnimationCycle());
+        }
+
         Vector3 Direction = player.position - transform.position;
         Direction.y = 0f; // Prevent tilting
 
@@ -156,6 +167,17 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
 
     public void StopLookingAtPlayer()
     {
+        isTalking = false;
+        animator.SetBool("isTalking", isTalking);
+        animator.SetBool("Talk1", isTalking);
+        animator.SetBool("Talk2", isTalking);
+
+        if(talkRoutine != null)
+        {
+            StopCoroutine(talkRoutine);
+            talkRoutine = null;
+        }
+
         isLookingAtPlayer = false;
     }
 
@@ -350,6 +372,19 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
             Destroy(popupInstance);
             popupInstance = null;
             shouldShowIcon = false;
+        }
+    }
+
+    IEnumerator TalkAnimationCycle()
+    {
+        while(isTalking)
+        {
+            animator.SetBool("Talk2", false);
+            animator.SetBool("Talk1", true);
+            yield return new WaitForSeconds(5);
+            animator.SetBool("Talk1", false);
+            animator.SetBool("Talk2", true);
+            yield return new WaitForSeconds(5);
         }
     }
 }
