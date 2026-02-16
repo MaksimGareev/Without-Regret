@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using System.Collections;
+using TMPro;
 
 public class LockPicking : MonoBehaviour
 {
@@ -51,9 +52,16 @@ public class LockPicking : MonoBehaviour
     private Rigidbody rb;
     private int ArrowIndex = 0;
     private bool ControlsLocked;
-    private int ArrowAttempts = 3;
-    private float PickDurability = 2f;
-    
+
+    [Header("DifficultySettings")]
+    [SerializeField] private int ArrowAttempts = 3;
+    [SerializeField] private float PickDurability = 2f;
+    private float CurrentPickDurability;
+    private int CurrentArrowAttempts;
+
+    [Header("Tries Remaining/Durability meter")]
+    [SerializeField] private TextMeshProUGUI TriesRemainingText;
+    [SerializeField] private Slider DurabilityMeter;
 
     [Header("Tutorial Vars")]
     [SerializeField] GameObject TutorialPopUp1;
@@ -119,7 +127,7 @@ public class LockPicking : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (PickDurability <= 0)
+        if (CurrentPickDurability <= 0)
         {
             DeactivateLockPick();
         }
@@ -185,10 +193,13 @@ public class LockPicking : MonoBehaviour
                         tempColor.a = 0.75f;
                         LockPickImages[i].color = tempColor;
                     }
+                    DurabilityMeter.gameObject.SetActive(false);
                     SecondStageActive = true;
                     StageTwoUI.SetActive(true);//switches controls to stage two, locks pick rotation
+                    TriesRemainingText.gameObject.SetActive(true);
+                    TriesRemainingText.text = ArrowAttempts + " attempts Remaining.";
                     if (FirstTimeLock)
-                    {
+                    { 
                         TutorialPopUp2.SetActive(true);
                         Tut2Active = true;
                         ControlsLocked = true;
@@ -203,7 +214,8 @@ public class LockPicking : MonoBehaviour
                     {
                         Source?.PlayOneShot(FailSound);
                     }
-                    PickDurability -= Time.deltaTime;
+                    CurrentPickDurability -= Time.deltaTime;
+                    DurabilityMeter.value = Mathf.InverseLerp(0, PickDurability, CurrentPickDurability);
                 }
 
             }
@@ -315,7 +327,12 @@ public class LockPicking : MonoBehaviour
             tempColor.a = 1;
             Arrows[i].color = tempColor;
         }
+
+        CurrentArrowAttempts = ArrowAttempts;
+        DurabilityMeter.value = 1;
         currentLockedItem = lockedItem;
+        CurrentPickDurability = PickDurability;
+        TriesRemainingText.gameObject.SetActive(false);
         SecondStageActive = false;
         StageTwoUI.SetActive(false);
         LockPickUi.SetActive(true);
@@ -323,8 +340,6 @@ public class LockPicking : MonoBehaviour
         PickCursor.eulerAngles = new Vector3(0, 0, 0);
         GenerateSolutions();
         rb.constraints = RigidbodyConstraints.FreezeAll;
-        PickDurability = 2;
-        ArrowAttempts = 3;
     }
 
     public void Unlock()//resets and deactivates Ui
@@ -381,14 +396,15 @@ public class LockPicking : MonoBehaviour
             tempColor.a = 1;
             Arrows[i].color = tempColor;
         }
-        ArrowAttempts--;
+        CurrentArrowAttempts--;
+        TriesRemainingText.text = CurrentArrowAttempts + " attempts Remaining.";
         yield return new WaitForSecondsRealtime(.25f);
         for (int i = 0; i < Arrows.Count; i++)
         {
             Arrows[i].color = Color.white;
         }
         ControlsLocked = false;
-        if(ArrowAttempts <= 0)
+        if(CurrentArrowAttempts <= 0)
         {
             DeactivateLockPick();
         }
@@ -429,9 +445,14 @@ public class LockPicking : MonoBehaviour
         //play particle effect here once we have one
         VictoryText.SetActive(true);
         yield return new WaitForSecondsRealtime(1f);
+        DurabilityMeter.gameObject.SetActive(true);
+        DurabilityMeter.value = 1;
+        TriesRemainingText.gameObject.SetActive(false);
         VictoryText.SetActive(false);
         StageTwoUI.SetActive(false);
         LockPickUi.SetActive(false);
+        
+
 
         // Unlock player movement
         PlayerController pc = player.GetComponent<PlayerController>();
