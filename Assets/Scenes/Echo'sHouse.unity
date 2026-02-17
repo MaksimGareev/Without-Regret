@@ -8427,11 +8427,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 9091907123189174325, guid: 3efd7678575bb2541bf756e1e4a7d085, type: 3}
   m_PrefabInstance: {fileID: 402334453}
   m_PrefabAsset: {fileID: 0}
---- !u!224 &402334460 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 1293074870984374081, guid: 3efd7678575bb2541bf756e1e4a7d085, type: 3}
-  m_PrefabInstance: {fileID: 402334453}
-  m_PrefabAsset: {fileID: 0}
 --- !u!224 &402334461 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7128907498651470073, guid: 3efd7678575bb2541bf756e1e4a7d085, type: 3}
@@ -13924,6 +13919,17 @@ MonoBehaviour:
   audioManager: {fileID: 0}
   gameOverManager: {fileID: 0}
   mainCanvas: {fileID: 0}
+  staminaSlider: {fileID: 0}
+  throwingSlider: {fileID: 0}
+  possessionSlider: {fileID: 0}
+  floatingSlider: {fileID: 0}
+  floatTargetArea: {fileID: 0}
+  floatCooldown: {fileID: 0}
+  staminaFill: {fileID: 0}
+  InventoryUI: {fileID: 0}
+  LockPickUI: {fileID: 0}
+  inventoryRectTransform: {fileID: 0}
+  inventoryInteractingScript: {fileID: 0}
   interactionIconsCanvas: {fileID: 0}
   journalUICanvas: {fileID: 0}
   playerUICanvas: {fileID: 0}
@@ -14303,63 +14309,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 32a45064f175255439cd9d980c327112, type: 3}
---- !u!1001 &1237537048
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 674867072477469486, guid: 8012a6fb752d12c408bf4d6db4b361a3, type: 3}
-      propertyPath: m_Name
-      value: Test Throwable Item
-      objectReference: {fileID: 0}
-    - target: {fileID: 6322807526584299951, guid: 8012a6fb752d12c408bf4d6db4b361a3, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 66.660774
-      objectReference: {fileID: 0}
-    - target: {fileID: 6322807526584299951, guid: 8012a6fb752d12c408bf4d6db4b361a3, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.263
-      objectReference: {fileID: 0}
-    - target: {fileID: 6322807526584299951, guid: 8012a6fb752d12c408bf4d6db4b361a3, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 107.30563
-      objectReference: {fileID: 0}
-    - target: {fileID: 6322807526584299951, guid: 8012a6fb752d12c408bf4d6db4b361a3, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6322807526584299951, guid: 8012a6fb752d12c408bf4d6db4b361a3, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6322807526584299951, guid: 8012a6fb752d12c408bf4d6db4b361a3, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6322807526584299951, guid: 8012a6fb752d12c408bf4d6db4b361a3, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6322807526584299951, guid: 8012a6fb752d12c408bf4d6db4b361a3, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6322807526584299951, guid: 8012a6fb752d12c408bf4d6db4b361a3, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6322807526584299951, guid: 8012a6fb752d12c408bf4d6db4b361a3, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 8012a6fb752d12c408bf4d6db4b361a3, type: 3}
 --- !u!1001 &1262885335
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -19009,7 +18958,7 @@ PrefabInstance:
     - target: {fileID: 1566633728491210951, guid: dc60125b78695de43a450852f8101d10, type: 3}
       propertyPath: rhythmTargetRight
       value: 
-      objectReference: {fileID: 402334460}
+      objectReference: {fileID: 0}
     - target: {fileID: 3930968705077024376, guid: dc60125b78695de43a450852f8101d10, type: 3}
       propertyPath: showDebugLogs
       value: 0
@@ -20481,4 +20430,3 @@ SceneRoots:
   - {fileID: 728969701}
   - {fileID: 1434574203}
   - {fileID: 505087688}
-  - {fileID: 1237537048}
