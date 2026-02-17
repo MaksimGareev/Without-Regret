@@ -6,27 +6,41 @@ using UnityEngine;
 
 public class DialogueTrigger : MonoBehaviour, IInteractable
 {
+    [Header("Animation")]
+    public Animator animator;
+    public bool isTalking;
+    private Coroutine talkRoutine;
     public float interactionPriority => 10f;
     public InteractType interactType => InteractType.Dialogue;
 
+    [Header("Name and chat Range")]
+    [Tooltip("The name of the trigger (in the dialogue manager this is changed to the Speaker variable within the JSON, this can be used to trigger specific events)")]
     public string NPCName = "Friendly NPC";
-    public GameObject promptUI;
+    [Tooltip("How far away the player must be to interact with the NPC")]
     public float chatRange = 3f;
 
-    // Dialogue files
+    [Header("Json dialogue files")]
+    [Tooltip("Json file that will be loaded on the players first interaction with a NPC or used for the story dialogue trigger")]
     public TextAsset jsonDialogueFile;
+    [Tooltip("Json file that will be loaded if the player interacts with the NPC and they do not have a objective they care about")]
     public TextAsset TalkedJsonDialogueFile;
+    [Tooltip("Json file that will be loaded when the player interacts with the NPC after completing the objective they care about")]
     public TextAsset CompleteJsonDialogueFile;
+    [Tooltip("Json file that will be loaded when the player interacts with the NPC with the objective they care about being active")]
     public TextAsset ActiveJsonDialogueFile;
     
     private DialogueManager dialogueManager;
 
-    // objectives the npc is responisble for
+    [Header("Objective data the NPC is responsible for")]
+    [Tooltip("This is a list of objective IDs that the NPC cares about and must be completed to trigger the complete Json file and progress the story")]
     public List<string> objectiveIDYouCareAbout = new List<string>();
+    [Tooltip("Objective data that will be progressed when talking to the NPC such as talking to Irene to complete the meet irene objective")]
     public ObjectiveData linkedObjective;
 
-    // Look at player
+    [Header("Looking at player variables")]
+    [Tooltip("A bool that is used to identify if a dialogue interaction is a mediation making the NPC not look at the player")]
     public bool IsMediation = false;
+    [Tooltip("How fast the NPC will look towards the player after engaging in dialogue")]
     public float lookSpeed = 5f;
     public bool isLookingAtPlayer = false;
 
@@ -36,6 +50,7 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
     private bool playerInRange = false;
     private Transform player;
     //private PlayerControls controls;
+    [Tooltip("A bool identifying if the player has talked to this NPC already")]
     public bool TalkedAlready = false;
 
     [SerializeField] private GameObject iconPrefab;
@@ -43,6 +58,7 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
     private GameObject popupInstance;
 
     public GameObject enemy;
+    [Tooltip("A bool checking if the camera will zoom in on the NPC (should be false for mediation or can be included if design request differently")]
     public bool focusCameraOnTrigger = false;
     [Header("Reward ItemData")]
     [Tooltip("Optional item to give the player upon completing the dialogue. Will only be given once.")]
@@ -88,9 +104,6 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
             shouldShowIcon = false;
             DisablePopupIcon();
         }
-
-        if (promptUI != null)
-            promptUI.SetActive(false);
 
         if (enemy != null)
             enemy.SetActive(false);
@@ -145,6 +158,13 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
     {
         if (player == null) return;
 
+        isTalking = true;
+        SafeSetBool("isTalking", isTalking);
+        if (talkRoutine == null)
+        {
+            talkRoutine = StartCoroutine(TalkAnimationCycle());
+        }
+
         Vector3 Direction = player.position - transform.position;
         Direction.y = 0f; // Prevent tilting
 
@@ -156,6 +176,17 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
 
     public void StopLookingAtPlayer()
     {
+        isTalking = false;
+        SafeSetBool("isTalking", isTalking);
+        SafeSetBool("Talk1", isTalking);
+        SafeSetBool("Talk2", isTalking);
+
+        if(talkRoutine != null)
+        {
+            StopCoroutine(talkRoutine);
+            talkRoutine = null;
+        }
+
         isLookingAtPlayer = false;
     }
 
@@ -187,9 +218,6 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
 
         // PlayerController.DialogueActive = true;
         DisablePopupIcon();
-
-        if (promptUI != null)
-            promptUI.SetActive(false);
 
         isLookingAtPlayer = true;
 
@@ -351,5 +379,26 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
             popupInstance = null;
             shouldShowIcon = false;
         }
+    }
+
+    IEnumerator TalkAnimationCycle() //currently cycles back and forth between both talk animations while speaking
+    {
+        if (animator == null)
+            yield break;
+        while (isTalking)
+        {
+            SafeSetBool("Talk2", false);
+            SafeSetBool("Talk1", true);
+            yield return new WaitForSeconds(5);
+            SafeSetBool("Talk1", false);
+            SafeSetBool("Talk2", true);
+            yield return new WaitForSeconds(5);
+        }
+    }
+
+    private void SafeSetBool(string parameter, bool value) //this is used in place of animator.setbool so that it can function correctly on non-character objects
+    {
+        if (animator != null)
+            animator.SetBool(parameter, value);
     }
 }

@@ -14,8 +14,7 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
     [SerializeField] private List<ObjectiveInstance> activeObjectives = new();
     [SerializeField] private List<ObjectiveInstance> completedObjectives = new();
     private bool objectivesInSceneCompleted = false;
-
-    [SerializeField] private ObjectiveCanvas objectiveCanvas;
+    private ObjectiveCanvas objectiveCanvas;
 
     [Header("Events")]
     [HideInInspector] public UnityEvent<ObjectiveInstance> OnObjectiveActivated = new();
@@ -34,6 +33,12 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
         {
             Destroy(gameObject);
             return;
+        }
+
+        objectiveCanvas = GetComponentInChildren<ObjectiveCanvas>();
+        if (objectiveCanvas == null)
+        {
+            Debug.LogError("ObjectiveManager's ObjectiveCanvas reference is null. ObjectiveCanvas must be a child of this gameobject");
         }
 
         // Register self with SaveManager as a savable entity
