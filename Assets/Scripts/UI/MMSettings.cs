@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine.EventSystems;
 using System.Collections;
 using UnityEngine.InputSystem;
+using UnityEditor.EditorTools;
 
 public class MMSettings : MonoBehaviour
 {
@@ -16,13 +17,23 @@ public class MMSettings : MonoBehaviour
     private InputAction discardSettingsAction;
 
     [Header("Design Settings")]
+    [Tooltip("Color for text when the setting has been changed but not yet applied.")]
     [SerializeField] private Color pendingChangeColor = Color.yellow;
+
+    [Tooltip("Default color for all text in the settings menu.")]
     [SerializeField] private Color defaultColor = Color.white;
+
+    [Tooltip("Color for the text of the currently selected tab.")]
     [SerializeField] private Color TabEnabledColor = Color.aquamarine;
+
+    [Tooltip("Color for the text of the control legends when they are enabled.")]
     [SerializeField] private Color legendsEnabledColor = Color.white;
+
+    [Tooltip("Color for the text of the control legends when they are disabled.")]
     [SerializeField] private Color legendsDisabledColor = Color.gray;
 
     [Header("Parent Menu Reference")]
+    [Tooltip("Reference to the parent menu (Main Menu or Pause Menu) to determine where to return after closing settings.")]
     [SerializeField] private GameObject parentMenu;
 
     [Header("Settings References")]

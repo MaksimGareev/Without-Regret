@@ -34,8 +34,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 271, y: 114}
-  m_SizeDelta: {x: 400, y: 100}
+  m_AnchoredPosition: {x: 460, y: 114}
+  m_SizeDelta: {x: 800, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8538071062184952488
 CanvasRenderer:
@@ -65,7 +65,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Saving ...
+  m_text: Progress Saved!
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -183,9 +183,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be00f4a496f669342b28b1aa2c019f4e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SaveManager
+  savingText: {fileID: 5700943915330334108}
   shouldAutoSave: 1
   inputActions: {fileID: -944628639613478452, guid: f1f4dbfd8c64cd440924988ec4fb6f6a, type: 3}
-  showDebugLogs: 1
+  showDebugLogs: 0
 --- !u!114 &8708342993628212758
 MonoBehaviour:
   m_ObjectHideFlags: 0
