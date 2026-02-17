@@ -80,10 +80,12 @@ public class DarrysHouseObjective : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        /*
         if (!isObjectiveActive && needsObjective)
         {
             return;
         }
+        */
 
         if (other.CompareTag("Crates"))
         {
