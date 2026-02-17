@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1909011670422841878}
   - component: {fileID: 1940466084136260643}
   - component: {fileID: 6859165905719255502}
+  - component: {fileID: 5574770712420840591}
   m_Layer: 0
   m_Name: DialogueManager
   m_TagString: Untagged
@@ -207,6 +208,19 @@ MonoBehaviour:
   ireneDestinationTransform: {fileID: 0}
   IntruderTrigger: {fileID: 0}
   playerMorality: 0
+--- !u!114 &5574770712420840591
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7723209263034436145}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 757ed2ab9148ce049bdd296b48cacc5e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SingletonManager
+  singletonType: 4
 --- !u!1001 &8093223419389299315
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -229,19 +243,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4081335531108956419, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4081335531108956419, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4081335531108956419, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 4081335531108956419, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -25
       objectReference: {fileID: 0}
     - target: {fileID: 5273993982251385165, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
       propertyPath: m_Pivot.x

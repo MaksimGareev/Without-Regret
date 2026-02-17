@@ -4,13 +4,16 @@ using UnityEngine;
 
 public class GraveObjectiveSlot : MonoBehaviour
 {
+    [Header("References")]
+    [Tooltip("Objective data for the objective this slot is linked to. This is used to check if the objective is ACTIVE and to add progress when a gravestone is placed.")]
     [SerializeField] private ObjectiveData linkedObjective;
+    [Tooltip("Ghost prefab to show the player where to put the gravestone. Will be made transparent automatically.")]
+    [SerializeField] private GameObject ghostPrefab;
     private Transform lockingPosition;
     private GameObject player;
     private bool isObjectiveActive = false;
     private Rigidbody rb;
     private bool didOnce = false;
-    [SerializeField] private GameObject ghostPrefab;
     private GameObject ghostInstance;
     private float ghostAlpha = 0.7f;
 
@@ -38,6 +41,15 @@ public class GraveObjectiveSlot : MonoBehaviour
         if (linkedObjective == null)
         {
             Debug.LogWarning("No objective linked in inspector!");
+        }
+        
+        // Check if the linked objective is already active at the start (i.e. on reloading save), reenable gravestones.
+        if (linkedObjective != null && ObjectiveManager.Instance != null)
+        {
+            if (ObjectiveManager.Instance.IsObjectiveActive(linkedObjective.objectiveID))
+            {
+                SetObjectiveActive(new ObjectiveInstance(linkedObjective));
+            }
         }
 
         if (!isObjectiveActive)
