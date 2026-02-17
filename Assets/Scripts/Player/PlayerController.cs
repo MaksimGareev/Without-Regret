@@ -14,9 +14,11 @@ public class PlayerController : MonoBehaviour, ISaveable
     [Header("Sprint UI Colors")]
     public Color normalColor = new Color(0f, 147f/255f, 111f/255f);
     public Color cooldownColor = Color.grey;
+    public ParticleSystem SprintDust;
 
     [Header("Movement Settings")]
     public bool MovementLocked = false;
+    private bool wasMovementLocked = false; //for animator purposes to not cause performance issues
     public float Speed = 1f;
     public float SprintSpeed = 2f;
     public float SprintDuration = 3f;
@@ -230,8 +232,33 @@ public class PlayerController : MonoBehaviour, ISaveable
             return;
         }
 
+        //if (MovementLocked)
+        //{
+        //    if (!wasMovementLocked)
+        //    {
+        //        resetAnimations();
+        //        animator.SetBool("isIdle", true);
+        //    }
+
+        //    wasMovementLocked = true;
+
+        //    moveInput = Vector2.zero;
+
+        //    if (gravityEnabled)
+        //        yVelocity += gravity * Time.deltaTime;
+
+        //    Controller.Move(new Vector3(0, yVelocity, 0) * Time.deltaTime);
+        //    return;
+        //}
+        //else
+        //{
+        //    wasMovementLocked = false;
+        //}
+
         if (MovementLocked)
         {
+            resetAnimations();
+            animator.SetBool("isIdle", true);
             moveInput = Vector2.zero;
             if (gravityEnabled)
             {
@@ -282,6 +309,7 @@ public class PlayerController : MonoBehaviour, ISaveable
 
         //animator.SetBool("isWalking", isMoving);
         //animator.SetBool("isIdle", !isMoving);
+
 
         //gets isMoving state to change animator state to idle or walking
         if (isMoving)
@@ -484,6 +512,8 @@ public class PlayerController : MonoBehaviour, ISaveable
             }
         }
 
+        resetAnimations();
+        animator.SetBool("isIdle", true);
         DialogueActive = active;
         if (active == true)
         {
@@ -522,7 +552,15 @@ public class PlayerController : MonoBehaviour, ISaveable
         {
             isSprinting = true;
             animator.SetBool("isSprinting", true);
+
+            if (SprintDust != null && !SprintDust.isPlaying)
+            {
+                Debug.Log("Started Dust");
+                SprintDust.Play();
+            }
         }
+        
+
     }
 
     private void StopSprinting()
@@ -533,6 +571,12 @@ public class PlayerController : MonoBehaviour, ISaveable
         }
         isSprinting = false;
         animator.SetBool("isSprinting", false);
+
+        if (SprintDust != null && SprintDust.isPlaying)
+        {
+            Debug.Log("Stopped Dust");
+            SprintDust.Stop();
+        }
     }
 
     IEnumerator SprintCooldown()
@@ -580,6 +624,8 @@ public class PlayerController : MonoBehaviour, ISaveable
 
     public void SetCutsceneLocked(bool locked)
     {
+        resetAnimations(); //resets animation to idle during a cutscene
+        animator.SetBool("isIdle", true);
         cutsceneLocked = locked;
 
         if (locked)

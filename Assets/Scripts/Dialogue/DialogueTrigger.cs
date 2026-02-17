@@ -6,6 +6,10 @@ using UnityEngine;
 
 public class DialogueTrigger : MonoBehaviour, IInteractable
 {
+    [Header("Animation")]
+    public Animator animator;
+    public bool isTalking;
+    private Coroutine talkRoutine;
     public float interactionPriority => 10f;
     public InteractType interactType => InteractType.Dialogue;
 
@@ -145,6 +149,13 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
     {
         if (player == null) return;
 
+        isTalking = true;
+        SafeSetBool("isTalking", isTalking);
+        if (talkRoutine == null)
+        {
+            talkRoutine = StartCoroutine(TalkAnimationCycle());
+        }
+
         Vector3 Direction = player.position - transform.position;
         Direction.y = 0f; // Prevent tilting
 
@@ -156,6 +167,17 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
 
     public void StopLookingAtPlayer()
     {
+        isTalking = false;
+        SafeSetBool("isTalking", isTalking);
+        SafeSetBool("Talk1", isTalking);
+        SafeSetBool("Talk2", isTalking);
+
+        if(talkRoutine != null)
+        {
+            StopCoroutine(talkRoutine);
+            talkRoutine = null;
+        }
+
         isLookingAtPlayer = false;
     }
 
@@ -351,5 +373,26 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
             popupInstance = null;
             shouldShowIcon = false;
         }
+    }
+
+    IEnumerator TalkAnimationCycle() //currently cycles back and forth between both talk animations while speaking
+    {
+        if (animator == null)
+            yield break;
+        while (isTalking)
+        {
+            SafeSetBool("Talk2", false);
+            SafeSetBool("Talk1", true);
+            yield return new WaitForSeconds(5);
+            SafeSetBool("Talk1", false);
+            SafeSetBool("Talk2", true);
+            yield return new WaitForSeconds(5);
+        }
+    }
+
+    private void SafeSetBool(string parameter, bool value) //this is used in place of animator.setbool so that it can function correctly on non-character objects
+    {
+        if (animator != null)
+            animator.SetBool(parameter, value);
     }
 }
