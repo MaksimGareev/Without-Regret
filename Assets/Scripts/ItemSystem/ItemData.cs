@@ -8,7 +8,8 @@ public enum ItemType
     GrabbableItem,
     Backpack,
     Collectable,
-    MiscItem
+    MiscItem,
+    EquippableItem
 }
 
 [CreateAssetMenu(menuName = "ScriptableObjects/Item", order = 1)]
