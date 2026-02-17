@@ -3,6 +3,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -17,11 +18,23 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public GameObject audioManager;
     [HideInInspector] public GameObject gameOverManager;
     [HideInInspector] public GameObject mainCanvas;
+    public Slider staminaSlider;
+    public Slider throwingSlider;
+    public Slider possessionSlider;
+    public Slider floatingSlider;
+    public Slider floatLeftArea;
+    public Slider floatRightArea;
+    public Slider floatCooldown;
+    public Image staminaFill;
+    public GameObject InventoryUI;
+    public GameObject LockPickUI;
+    public RectTransform inventoryRectTransform;
+    public InventoryUIController inventoryInteractingScript;
     [HideInInspector] public GameObject interactionIconsCanvas;
     [HideInInspector] public GameObject journalUICanvas;
     [HideInInspector] public GameObject playerUICanvas;
     [HideInInspector] public GameObject pauseManager;
-    [HideInInspector] public GameObject dialogueManager;
+    [HideInInspector] public DialogueManager dialogueManager;
     [HideInInspector] public GameObject objectiveManager;
     [HideInInspector] public GameObject eventSystem;
 
@@ -56,6 +69,7 @@ public class GameManager : MonoBehaviour
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         StartCoroutine(WaitForCopiesToDelete());
+        //UpdateChildReferences();
     }
 
     private IEnumerator WaitForCopiesToDelete()
@@ -90,7 +104,7 @@ public class GameManager : MonoBehaviour
         journalUICanvas = GetComponentInChildren<Journal>()?.gameObject;
         playerUICanvas = GetComponentInChildren<TimerRingUI>()?.gameObject;
         pauseManager = GetComponentInChildren<PauseManager>()?.gameObject;
-        dialogueManager = GetComponentInChildren<DialogueManager>()?.gameObject;
+        dialogueManager = GetComponentInChildren<DialogueManager>();
         objectiveManager = GetComponentInChildren<ObjectiveManager>()?.gameObject;
         eventSystem = GetComponentInChildren<EventSystem>()?.gameObject;
     }
@@ -130,8 +144,8 @@ public class GameManager : MonoBehaviour
             if (pauseManager.activeSelf)
                 pauseManager.SetActive(false);
 
-            if (dialogueManager.activeSelf)
-                dialogueManager.SetActive(false);
+            if (dialogueManager.gameObject.activeSelf)
+                dialogueManager.gameObject.SetActive(false);
         }
         else
         {
@@ -156,8 +170,8 @@ public class GameManager : MonoBehaviour
             if (!pauseManager.activeSelf)
                 pauseManager.SetActive(true);
 
-            if (!dialogueManager.activeSelf)
-                dialogueManager.SetActive(true);
+            if (!dialogueManager.gameObject.activeSelf)
+                dialogueManager.gameObject.SetActive(true);
         }
 
         // var players = GameObject.FindGameObjectsWithTag("Player");

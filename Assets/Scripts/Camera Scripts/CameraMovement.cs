@@ -30,18 +30,21 @@ public class CameraMovement : MonoBehaviour
     private InputAction lookAction;
 
     [Header("Follow Settings")]
-    private Transform target; // Reference the player as the intended target of the camera
+    [Tooltip("Default offset of the camera from the player (Setting this to (0,0,0) will equal the Player's exact transform). This will be rotated based on the default facing direction below.")]
     public Vector3 defaultOffset = new Vector3(0, 8, 8); // Height and distance away from the player
+
+    [Tooltip("The offset of the position that the camera will aim at relative to the player (should be set to slightly above the player (y = 3)).")]
     public Vector3 defaultLookAtOffset = Vector3.zero;
+
+    [Tooltip("Speed at which the camera moves to follow the player. Lower numbers are slower and smoother, higher numbers are faster and more rigid.")]
     public float smoothSpeed = 5f; // Speed the camera moves to follow the player
+    private Transform target; // Reference the player as the intended target of the camera
 
     [Header("Default Facing Direction")]
     [Tooltip("Defines the world-space direction that the camera should face by default.")]
-    [SerializeField] WorldDirection defaultFacingDirection = WorldDirection.North;
+    [SerializeField] private WorldDirection defaultFacingDirection = WorldDirection.North;
 
     [Header("Camera Control Settings")]
-    private bool rotateCamera = true;
-    private bool restrictYaw = false;
     [Tooltip("Speed at which the camera rotates.")]
     [SerializeField] private float rotateSpeed = 120f;
     [Tooltip("Maximum pitch angle of the camera.")]
@@ -53,6 +56,8 @@ public class CameraMovement : MonoBehaviour
     [SerializeField] private float mouseResetTime = 3f;
     [Tooltip("Scale factor for mouse rotation sensitivity.")]
     [SerializeField] private float mouseRotateScale = 0.08f;
+    private bool rotateCamera = true;
+    private bool restrictYaw = false;
 
     [Header("Focus Movement Settings")]
     [Tooltip("Offset applied to the camera when focusing on a pickup object.")]

@@ -6,8 +6,6 @@ public class FloatingTriggerVolume : MonoBehaviour
     [Header("References")]
     [SerializeField] private GameObject player;
 
-    public float interactionPriority => 1f;
-    [SerializeField] private InteractType interactType => InteractType.Float;
     //[SerializeField] private GameObject iconPrefab;
     //[SerializeField] private Vector3 iconOffset = new Vector3(0f, 2f, 0f);
     //[SerializeField] private bool shouldShowIcon = true;
@@ -96,7 +94,7 @@ public class FloatingTriggerVolume : MonoBehaviour
 
             if (!playerFloating.IsFloating && !playerFloating.IsCoolingDown)
             {
-                ButtonIcons.Instance?.Highlight(InteractType.Float);
+                ButtonIcons.Instance.Highlight(InteractType.Float);
             }
         }
     }
@@ -106,11 +104,9 @@ public class FloatingTriggerVolume : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             playerFloating.SetCanFloat(false);
-            player = null;
-            playerFloating = null;
             playerInRange = false;
 
-            ButtonIcons.Instance?.Clear();
+            ButtonIcons.Instance.Clear();
         }
     }
 

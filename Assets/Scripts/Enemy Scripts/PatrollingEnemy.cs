@@ -20,8 +20,7 @@ public class PatrollingEnemy : MonoBehaviour
     public float moralitySpeedMultiplier = 0.15f;
     public DialogueManager playerMorality;
 
-    [Header("Debugging")]
-    [SerializeField] private bool showDebugLogs = false;
+    public bool chasing;
 
     void Start()
     {
@@ -34,7 +33,7 @@ public class PatrollingEnemy : MonoBehaviour
         UpdateSpeedFromMorality();//this check will keep happening every frame. perhaps we could change it to happen only once upon seeing the player? It might not affect to much in terms of performance now, but could be an issue if we have a lot of enemies in a level.
 
         // If close to destination and not already waiting, start waiting
-        if (!isWaiting && !agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
+        if (!isWaiting && !agent.pathPending && !chasing && agent.remainingDistance <= agent.stoppingDistance)
         {
             StartCoroutine(WaitBeforeNextMove());
         }
@@ -45,13 +44,11 @@ public class PatrollingEnemy : MonoBehaviour
         {
             animator.SetBool("isWalking", true);
             animator.SetBool("isIdle", false);
-            Debug.Log("Walking");
         }
         else
         {
             animator.SetBool("isIdle", true);
             animator.SetBool("isWalking", false);
-            Debug.Log("Idling");
         }
     }
 
@@ -94,11 +91,6 @@ public class PatrollingEnemy : MonoBehaviour
         if (NavMesh.SamplePosition(randomPoint, out hit, 1.0f, NavMesh.AllAreas))
         {
             result = hit.position;
-            
-            if (showDebugLogs)
-            {
-                Debug.Log("Random Point: " + result);
-            }
 
             return true;
         }

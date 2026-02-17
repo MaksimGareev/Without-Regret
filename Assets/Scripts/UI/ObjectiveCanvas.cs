@@ -2,18 +2,24 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 
-[RequireComponent(typeof(CanvasGroup))]
+[RequireComponent(typeof(CanvasGroup), typeof(AudioSource))]
 public class ObjectiveCanvas : MonoBehaviour
 {
+    [Header("Settings")]
+    [SerializeField, Tooltip("How long fading the UI in/out takes until it's at 100 or 0 opacity")] private float fadeDuration = 0.5f;
+    [SerializeField, Tooltip("How long the UI is visible for (time starts as soon as it's fully visible)")] private float visibleDuration = 2f;
+
+    [Header("UI References (should already be assigned)")]
     [SerializeField] private GameObject objectiveUI;
     [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private TextMeshProUGUI descriptionText;
     [SerializeField] private TextMeshProUGUI progressText;
-    [SerializeField] private float fadeDuration = 0.5f;
-    [SerializeField] private float visibleDuration = 2f;
+
+    [Header("Debug")]
     [SerializeField] private bool showDebugLogs = false;
 
     private ObjectiveInstance currentObjective;
+    private AudioSource audioSource;
     private Coroutine showRoutine;
     private Coroutine hideRoutine;
 
@@ -34,13 +40,15 @@ public class ObjectiveCanvas : MonoBehaviour
         {
             objectiveUI.SetActive(false);
         }
+
+        audioSource = GetComponent<AudioSource>();
     }
 
     private void OnEnable()
     {
         if (titleText == null || descriptionText == null || progressText == null || objectiveUI == null)
         {
-            Debug.LogError("ObjectiveUI: One or more UI references are not assigned.");
+            Debug.LogError("ObjectiveCanvas: One or more UI references are not assigned.");
             enabled = false;
             return;
         }
@@ -69,8 +77,21 @@ public class ObjectiveCanvas : MonoBehaviour
 
     private void HandleObjectiveActivated(ObjectiveInstance newObjective)
     {
+        if (newObjective == null)
+        {
+            Debug.LogError("ObjectiveCanvas: Received null ObjectiveInstance in HandleObjectiveActivated.");
+            return;
+        }
         currentObjective = newObjective;
-        RefreshUI(currentObjective);
+        audioSource.Play(); // play scribble sfx
+        titleText.text = "New Objective Started!";
+        descriptionText.text = newObjective.data.title + ": Check your journal for more information.";
+        progressText.text = $"Progress: 0/{newObjective.data.requiredProgress}";
+
+        if (showDebugLogs)
+        {
+            Debug.Log($"Objective Activated: {newObjective.data.title} - {newObjective.data.description}");
+        }
 
         // Cancel any pending hide
         if (hideRoutine != null)
@@ -146,21 +167,6 @@ public class ObjectiveCanvas : MonoBehaviour
         }
 
         showRoutine = StartCoroutine(FadeInUI());
-    }
-
-    private void RefreshUI(ObjectiveInstance objective)
-    {
-        if (objective != null)
-        {
-            titleText.text = "New Objective Started!";
-            descriptionText.text = objective.data.title + ": Check your journal for more information.";
-            progressText.text = $"Progress: 0/{objective.data.requiredProgress}";
-
-            if (showDebugLogs)
-            {
-                Debug.Log($"Objective Activated: {objective.data.title} - {objective.data.description}");
-            }
-        }
     }
 
     private IEnumerator FadeInUI()

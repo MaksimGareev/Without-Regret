@@ -13,6 +13,8 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private InputActionAsset inputActions;
     private InputAction confirmAction;
     private InputAction cancelAction;
+    private InputAction TabRightAction;
+    private InputAction TabLeftAction;
 
     [Header("UI Panels")]
     [SerializeField] public GameObject mainMenuPanel;
@@ -35,14 +37,16 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private TextMeshProUGUI playButtonText;
 
     [Header("Music")]
+    [Tooltip("Audio source for main menu music. Will start playing when the game manager instance is ready.")]
     [SerializeField] private GameObject musicSource;
 
     // Feedback Survey URL
     private string feedbackSurveyURL = "https://docs.google.com/forms/d/e/1FAIpQLSe6KfbYdlWsa25Scm4URfYHRRS8lzQC3mZkm6tqyS_uxxHObA/viewform?usp=sharing&ouid=106294286738853521476";
-
+    
+    // String to update the version number text in main menu
     private string gameVersion = "v.0.0.1";
     private SaveManager saveManager;
-    private bool usingController = false;
+    [HideInInspector] public bool usingController { get; private set; } = false;
     private Button lastSelectedButton;
     
 
@@ -78,6 +82,22 @@ public class MainMenu : MonoBehaviour
             return;
         }
         cancelAction.Enable();
+
+        TabRightAction = inputActions.FindActionMap("UI").FindAction("TabRight");
+        if (TabRightAction == null)
+        {
+            Debug.LogError("Tab Right action not found in InputActionAsset.");
+            return;
+        }
+        TabRightAction.Enable();
+
+        TabLeftAction = inputActions.FindActionMap("UI").FindAction("TabLeft");
+        if (TabLeftAction == null)
+        {
+            Debug.LogError("Tab Left action not found in InputActionAsset.");
+            return;
+        }
+        TabLeftAction.Enable();
     }
 
     // Update is called once per frame
@@ -146,7 +166,11 @@ public class MainMenu : MonoBehaviour
 
         Vector2 mouseDelta = Mouse.current.delta.ReadValue();
 
-        if (mouseDelta.sqrMagnitude > 0.1f && usingController)
+        bool mouseKeysMoved = mouseDelta.sqrMagnitude > 0.1f || Keyboard.current.anyKey.isPressed;
+
+        if (!mouseKeysMoved) return;
+
+        if (usingController)
         {
             usingController = false;
             Cursor.visible = true;
@@ -155,6 +179,12 @@ public class MainMenu : MonoBehaviour
             if (EventSystem.current.currentSelectedGameObject != null)
             {
                 EventSystem.current.SetSelectedGameObject(null);
+            }
+
+            if (settingsPanel.activeSelf && settingsScript != null && settingsScript.controllerLegends.activeSelf && !settingsScript.keyboardLegends.activeSelf)
+            {
+                settingsScript.controllerLegends.SetActive(false);
+                settingsScript.keyboardLegends.SetActive(true);
             }
         }
     }
@@ -167,7 +197,10 @@ public class MainMenu : MonoBehaviour
         }
 
         // Check if the controller has moved either the left stick or dpad
-        bool controllerMoved = Gamepad.current.leftStick.ReadValue().sqrMagnitude > 0.1f || Gamepad.current.dpad.ReadValue().sqrMagnitude > 0.1f;
+        bool controllerMoved = 
+            Gamepad.current.leftStick.ReadValue().sqrMagnitude > 0.1f 
+            || Gamepad.current.dpad.ReadValue().sqrMagnitude > 0.1f 
+            || ((Gamepad.current.leftShoulder.IsPressed() || Gamepad.current.rightShoulder.IsPressed()) && settingsPanel.activeSelf);
         
         if (!controllerMoved) return;
 
@@ -202,13 +235,32 @@ public class MainMenu : MonoBehaviour
             // If nothing is selected, set a default based on the active panel
             if (es.currentSelectedGameObject == null)
             {
-                if (mainMenuPanel.activeSelf)
+                if (confirmationPanel.activeSelf)
+                {
+                    es.SetSelectedGameObject(confirmationPanel.GetComponent<ConfirmationUI>().cancelButton.gameObject);
+                }
+                else if (mainMenuPanel.activeSelf)
                 {
                     es.SetSelectedGameObject(playButton.gameObject);
                 }
-                else if (settingsPanel.activeSelf && settingsScript.videoSettingsOpen)
+                else if (settingsPanel.activeSelf && !settingsScript.controlSchemeOpen)
                 {
-                    es.SetSelectedGameObject(settingsScript.resolutionDropdown.gameObject);
+                    if (settingsScript.videoSettingsOpen)
+                    {
+                        es.SetSelectedGameObject(settingsScript.resolutionDropdown.gameObject);
+                    }
+                    else if (settingsScript.audioSettingsOpen)
+                    {
+                        es.SetSelectedGameObject(settingsScript.masterVolumeSlider.gameObject);
+                    }
+                    else if (settingsScript.controlsSettingsOpen)
+                    {
+                        es.SetSelectedGameObject(settingsScript.mouseSensitivitySlider.gameObject);
+                    }
+                }
+                else if (settingsPanel.activeSelf && settingsScript.controlSchemeOpen)
+                {
+                    es.SetSelectedGameObject(settingsScript.controlSchemeUI.GetComponent<ControlSchemeUI>().ControllerButton.gameObject);
                 }
                 else if (creditsPanel.activeSelf)
                 {
@@ -217,6 +269,12 @@ public class MainMenu : MonoBehaviour
                 else if (saveSlotsPanel.activeSelf)
                 {
                     SelectSaveMenuButton();
+                }
+
+                if (settingsPanel.activeSelf && !settingsScript.controllerLegends.activeSelf && settingsScript.keyboardLegends.activeSelf)
+                {
+                    settingsScript.controllerLegends.SetActive(true);
+                    settingsScript.keyboardLegends.SetActive(false);
                 }
             }
         }
@@ -386,5 +444,25 @@ public class MainMenu : MonoBehaviour
         quitButton.onClick.RemoveListener(ConfirmBeforeQuit);
         backButton.onClick.RemoveListener(HandleUIBackButton);
         feedbackSurveyButton.onClick.RemoveListener(ConfirmBeforeFeedbackSurvey);
+
+        TabLeftAction.Disable();
+        TabRightAction.Disable();
+        confirmAction.Disable();
+        cancelAction.Disable();
+    }
+
+    private void OnDestroy()
+    {
+        playButton.onClick.RemoveListener(OpenSaveSlotsScreen);
+        settingsButton.onClick.RemoveListener(OpenSettings);
+        creditsButton.onClick.RemoveListener(OpenCredits);
+        quitButton.onClick.RemoveListener(ConfirmBeforeQuit);
+        backButton.onClick.RemoveListener(HandleUIBackButton);
+        feedbackSurveyButton.onClick.RemoveListener(ConfirmBeforeFeedbackSurvey);
+
+        TabLeftAction.Disable();
+        TabRightAction.Disable();
+        confirmAction.Disable();
+        cancelAction.Disable();
     }
 }

@@ -5,12 +5,21 @@ using UnityEngine;
 [RequireComponent(typeof(Collider))]
 public class WorldItem : MonoBehaviour, IInteractable
 {
+    [Header("General Settings")]
+    [Tooltip("ItemData that should be associated with this prefab. This is used to determine the name, description, and other properties of the item when collected.")]
     [SerializeField] private ItemData itemData;
-    public ItemData ItemData => itemData;
+
+    [Tooltip("Priority of this item's interaction. Lower priority items will be interacted with first if multiple items are in range.")]
     public float interactionPriority => 5f;
+
+    [Tooltip("Type of interaction this item will have. This is used to determine the interaction prompt and icon that will show up when the player is in range.")]
     public InteractType interactType => InteractType.Pickup;
 
-    [HideInInspector] public bool hasBeenCollected = false;
+    [Tooltip("Distance at which the interaction icon will show up for this item.")]
+    [SerializeField] private float icondDistance = 3f;
+
+    [Tooltip("Whether this item can be collected by the player. Setting this to false will make the item non-interactable and it will not show an interaction prompt.")]
+    public bool isCollectible = true;
 
     //[SerializeField] private GameObject iconPrefab;
     //[SerializeField] private Vector3 iconOffset = new Vector3(0f, 2f, 0f);
@@ -18,10 +27,8 @@ public class WorldItem : MonoBehaviour, IInteractable
     //public bool shouldShowIcon = true;
     //private GameObject popupInstance;
 
-    [SerializeField] private float icondDistance = 3f;
-
-    public bool isCollectible = true;
-
+    [HideInInspector] public bool hasBeenCollected = false;
+    public ItemData ItemData => itemData;
     private Transform player;
     public void Start()
     {

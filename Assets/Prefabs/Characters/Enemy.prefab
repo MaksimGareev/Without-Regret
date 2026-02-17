@@ -189,11 +189,13 @@ MonoBehaviour:
   centrePoint: {fileID: 0}
   animator: {fileID: 9082247397448081514}
   waitTime: 2
+  isWaiting: 0
   baseSpeed: 3.5
   minSpeed: 1.5
   maxSpeed: 6.5
   moralitySpeedMultiplier: 0.15
   playerMorality: {fileID: 0}
+  chasing: 0
   showDebugLogs: 0
 --- !u!114 &1380278693743089735
 MonoBehaviour:
@@ -240,6 +242,7 @@ MonoBehaviour:
   attackRadius: 2
   attackCooldown: 1
   isAttacking: 0
+  normalMovement: {fileID: 922016468910080217}
 --- !u!114 &7884651440600371946
 MonoBehaviour:
   m_ObjectHideFlags: 0

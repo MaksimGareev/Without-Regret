@@ -6,725 +6,586 @@ using UnityEngine.UI;
 
 public class DialogueManager : MonoBehaviour
 {
-    // UI
-    public GameObject DialoguePanel;
-    public TextMeshProUGUI NPCNameText;
-    public TextMeshProUGUI DialogueText;
-    public Transform ChoicesContainer;
-    public GameObject ChoiceButton;
-    public GameObject ContinueArrow;
-    public GameObject DirectionalImage;
-    public ScrollRect dialogueScrollRect;
-    private List<GameObject> spawnedChoices = new List<GameObject>();
-    private DialogueData currentDialogue;
-    private int currentIndex = 0;
-    private bool IsTyping;
+    public static bool DialogueIsActive;
 
-    // Player Portrait
-    public Image playerPortrait;
-    public Sprite defaultPortrait;
-    public Sprite positivePortrait;
-    public Sprite negativePortrait;
-    public Sprite neutralPortrait;
-    public float portraitFadeDuration = 0.25f;
-    public float portraitHoldTime = 0.75f;
+    [Header("UI")]
+    [Tooltip("Main dialogue panel shown during dialogue interaction")]
+    [SerializeField] GameObject DialoguePanel;
+    [Tooltip("Name display of the speaker")]
+    [SerializeField] TextMeshProUGUI npcNameText;
+    [Tooltip("The display text of the current dialogue line")]
+    [SerializeField] TextMeshProUGUI dialogueText;
+    [Tooltip("The transform containing the dialogue choices")]
+    [SerializeField] Transform choicesContainer;
+    [Tooltip("The arrow image showing the player which direction to press to select an answer")]
+    [SerializeField] GameObject DirectionalImage;
+    [Tooltip("Button prefab made for answer choices")]
+    [SerializeField] GameObject choicePrefab;
+    [Tooltip("Blinking continue arrow indicating the player can continue to the next line")]
+    [SerializeField] GameObject continueArrow;
+    [Tooltip("A scroll rect used to scroll through longer instances of dialogue")]
+    [SerializeField] ScrollRect scrollRect;
+    [Tooltip("Slider indicating the time the player has to make a dialogue choice")]
+    [SerializeField] Slider choiceTimerSlider;
+    [Tooltip("Pop up text showing the players change in morality and current total morality")]
+    [SerializeField] TextMeshProUGUI popupText;
+    [Tooltip("The visual feedback of the players dialogue choice input")]
+    [SerializeField] List<HoldDirectionVisual> holdVisuals;
 
-    private Coroutine portraitRoutine;
-    private CanvasGroup portraitCanvasGroup;
+    [Header("Player Portrait")]
+    [Tooltip("Copy image of the players UI")]
+    [SerializeField] Image playerPortrait;
+    [Tooltip("Sprites that appear in response to different answer choices")]
+    [SerializeField] Sprite defaultPortrait, positivePortrait, negativePortrait, neutralPortrait;
+    [Tooltip("How long the transition takes between portraits")]
+    [SerializeField] float portraitFadeTime = .25f;
+    [Tooltip("How long the new portrait stays before reverting back to the default")]
+    [SerializeField] float portraitHoldTime = .75f;
 
-    // Letter sounds
-    public AudioSource TypingAudioSource;
-    public List<AudioClip> letterClips;
-    private Dictionary<char, AudioClip> letterSounds;
+    [Header("Audio")]
+    [SerializeField] AudioSource typingSource;
+    [Tooltip("Audio clips of each letter A-Z")]
+    [SerializeField] List<AudioClip> letterClips;
 
-    // Navigation sounds
-    public AudioSource uiAudioSource;
-    // public AudioClip moveClip;
-    // public AudioClip confirmClip;
+    [Header("Choice Selection")]
+    [Tooltip("How long the player needs to hold to confirm a selection")]
+    [SerializeField] float holdTimeToSelect = 1.2f;
+    [Tooltip("How much time the player has to make a choice")]
+    [SerializeField] float choiceTimeLimit = 15f;
+    [Tooltip("How far the answer choices are spaced out from the center of the choice container")]
+    [SerializeField] float choiceDistance = 250f;
+    Dictionary<ChoiceDirection, HoldDirectionVisual> holdMap = new();
 
-    // Input
-    private PlayerControls controls;
-    private float MoveInput;
-    private bool MoveUpPressed;
-    private bool MoveDownPressed;
-    private bool ConfirmPressed;
-    private float inputCooldown = 0.2f;
-    private float lastInputTime = 0f;
-
-    // Selection
-    private int SelectedChoiceIndex = 0;
-    private bool CanChoose = false;
-    public TextMeshProUGUI PopupText;
-    public List<HoldDirectionVisual> holdVisuals;
-    private Dictionary<ChoiceDirection, HoldDirectionVisual> holdVisualMap;
-    public float choiceDistance = 250f;
-    private Dictionary<ChoiceDirection, DialogueChoice> directionalChoices = new();
-    public float holdTimeToSelect = 1.2f;
-    private float directionHoldTimer = 0f;
-    private ChoiceDirection? currentHeldDirection;
-    private bool isHoldingDirection = false;
-    private bool waitingForHoldCompletion = false;
-    private bool suppressInputOneFrame = false;
-
-    // Player choice tendencies
-    private int positiveChoiceCount = 0;
-    private int negativeChoiceCount = 0;
-    private int neutralChoiceCount = 0;
-
-    // Typing
-    private Coroutine typeingRoutine;
-    private string currentFullLine = "";
-
-    // Random choice timer
-    public float choiceTimeLimit = 15f;
-    public Slider ChoiceTimeSlider;
-    private float choiceTimer;
-    private Coroutine choiceTimerRoutine;
-    //public TextMeshProUGUI TimerText;
-
-    // Player references
-    private Transform playerTransform;
-    private PlayerThrowing playerThrowing;
-    private PlayerFloating playerFloating;
-    private PlayerController playerController;
-    private CameraMovement cameraMovement;
-    private Inventory playerInventory;
-
-    // NPC references
+    [Header("NPC movement (trying to remove")]
     private DialogueTrigger activeDialogueTrigger;
     private Irene ireneNPC;
     private Barry barryNPC;
     private DarryNeighborhood darryNPC;
-
-    public Transform barryDestinationTransform;
-    public Transform darryDestinationTransform;
     public Transform ireneDestinationTransform;
     public GameObject IntruderTrigger;
 
-    public static bool DialogueIsActive = false;
+    DialogueData dialogue;
+    int index;
+    bool typing;
+    bool CanChoose;
+    bool waitingForHoldCompletion = false;
 
-    // Player morality
-    public int playerMorality = 0;
+    Dictionary<char, AudioClip> letterSounds = new();
+    Dictionary<ChoiceDirection, DialogueChoice> directionalChoices = new();
 
-    private string NPCName;
-    private Dictionary<string, int> dialogueVariables = new Dictionary<string, int>();
+    List<GameObject> spawnedChoices = new();
+
+    float holdTimer = 0f;
+    ChoiceDirection? currentDir = null;
+
+    bool confirmPressed;
+
+    Coroutine typingRoutine;
+    Coroutine timerRoutine;
+    Coroutine portraitRoutine;
+    CanvasGroup portraitGroup;
+
+    public int playerMorality;
+    int posCount, negCount, neutralCount;
+
+    PlayerController playerController;
+    CameraMovement cam;
+
+    PlayerControls controls;
 
     private void Awake()
     {
-        holdVisualMap = new Dictionary<ChoiceDirection, HoldDirectionVisual>();
         controls = new PlayerControls();
-        controls.Dialogue.Move.performed += ctx =>
+        portraitGroup = playerPortrait.GetComponent<CanvasGroup>();
+        if (!portraitGroup)
         {
-            Vector2 move = ctx.ReadValue<Vector2>();
-            MoveUpPressed = move.y > 0;
-            MoveDownPressed = move.y < 0;
-        };
-        controls.Dialogue.Move.canceled += ctx =>
-        {
-            //MoveInput = 0f;
-            MoveUpPressed = false;
-            MoveDownPressed = false;
-        };
+            portraitGroup = playerPortrait.gameObject.AddComponent<CanvasGroup>();
+        }
 
-        foreach (var visual in holdVisuals)
+        foreach (var v in holdVisuals)
         {
-            if (!holdVisualMap.ContainsKey(visual.direction))
+            holdMap[v.direction] = v;
+            v.image.fillAmount = 0;
+            v.image.gameObject.SetActive(false);
+        }
+
+        BuildLetterSounds();
+        SetupInput();
+    }
+
+    void SetupInput()
+    {
+        controls.Dialogue.Move.performed += _ => { };
+        controls.Dialogue.Confirm.performed += _ => OnConfirmPressed();
+    }
+
+    void BuildLetterSounds()
+    {
+        for (int i = 0; i < letterClips.Count; i++)
+        {
+            letterSounds[(char)('A' + i)] = letterClips[i];
+        }
+    }
+
+    void OnEnable() => controls.Enable();
+    void OnDisable() => controls.Disable();
+
+    public void StartDialogueFromJson(TextAsset json, DialogueTrigger trigger)
+    {
+        dialogue = JsonUtility.FromJson<DialogueData>(json.text);
+
+        foreach (var line in dialogue.dialogueLines)
+        {
+            if (line.choices == null) continue;
+
+            foreach (var choice in line.choices)
             {
-                holdVisualMap.Add(visual.direction, visual);
-                visual.image.gameObject.SetActive(false);
+                choice.ParseDirection();
             }
         }
 
-        controls.Dialogue.Confirm.performed += ctx => ConfirmPressed = true;
-        controls.Dialogue.Confirm.canceled += ctx => ConfirmPressed = false;
-    }
+        index = 0;
 
-    private void OnEnable()
-    {
-        controls.Enable();
-        ResetHoldUI();
-    }
-    private void OnDisable() => controls.Disable();
-
-    void Start()
-    {
-        DialoguePanel.SetActive(false);
-        playerPortrait.gameObject.SetActive(false);
-        playerMorality = 0;
-        PlayerPrefs.SetInt("Morality", playerMorality);
-        PlayerPrefs.Save();
-
-        //playerMorality = PlayerPrefs.GetInt("Morality", 0);
-        if (IntruderTrigger != null)
-        {
-            IntruderTrigger.SetActive(false);
-        }
-
-        // Build letter sound dictionary
-        letterSounds = new Dictionary<char, AudioClip>();
-        for (int i = 0; i < letterClips.Count && i < 26; i++)
-        {
-            char letter = (char)('A' + i);
-            letterSounds[letter] = letterClips[i];
-        }
-
-        if (playerPortrait != null)
-        {
-            portraitCanvasGroup = playerPortrait.GetComponent<CanvasGroup>();
-
-            if (portraitCanvasGroup == null) portraitCanvasGroup = playerPortrait.gameObject.AddComponent<CanvasGroup>();
-
-            playerPortrait.sprite = defaultPortrait;
-            portraitCanvasGroup.alpha = 1f;
-        }
-    }
-
-    void Update()
-    {
-        HandleChoiceInput();
-
-        if (DialogueIsActive && playerController != null)
-        {
-            playerController.staminaSlider.gameObject.SetActive(false);
-        }
-
-    }
-
-    // -------------------- JSON Dialogue --------------------
-    public void StartDialogueFromJson(TextAsset jsonFile, DialogueTrigger trigger)
-    {
-        cameraMovement = Camera.main.GetComponent<CameraMovement>();
-
-        playerPortrait.gameObject.SetActive(true);
-
-        Debug.Log("DialogueManager: StartDialogueFromJson called");
-
-        cameraMovement.SetCameraLocked(true);
-
-        if (!gameObject.activeInHierarchy)
-        {
-            Debug.LogError("DialogueManager GameObject is DISABLED!");
-            return;
-        }
-
-        if (DialoguePanel == null)
-        {
-            Debug.LogError("DialogueManager: DialoguePanel is NULL!");
-            return;
-        }
+        playerController = FindObjectOfType<PlayerController>();
+        cam = Camera.main.GetComponent<CameraMovement>();
 
         activeDialogueTrigger = trigger;
-        DialogueIsActive = true;
-        GameObject player = GameObject.FindGameObjectWithTag("Player");
         ireneNPC = FindAnyObjectByType<Irene>();
         barryNPC = FindAnyObjectByType<Barry>();
         darryNPC = FindAnyObjectByType<DarryNeighborhood>();
-        playerTransform = player.transform;
-        playerFloating = player.GetComponent<PlayerFloating>();
-        playerThrowing = player.GetComponent<PlayerThrowing>();
-        playerController = player.GetComponent<PlayerController>();
-        playerInventory = player.GetComponent<Inventory>();
-        PopupText.gameObject.SetActive(false);
-        Chime.isInDialogue = true;
-
-        if (darryNPC == null)
-        {
-            Debug.LogWarning("DarryNeighborhood NPC not found in the scene!");
-        }
-
-        if (jsonFile == null)
-        {
-            Debug.LogWarning("no json dialogue file assigned");
-            return;
-        }
-
-        currentDialogue = JsonUtility.FromJson<DialogueData>(jsonFile.text);
-        currentIndex = 0;
-
-        if (currentDialogue == null)
-        {
-            Debug.LogError("DialogueData is NULL!");
-        }
-        else if (currentDialogue.dialogueLines == null)
-        {
-            Debug.LogError("Dialogue lines are NULL! Check JSON field names");
-        }
-        else
-        {
-            Debug.Log($"Dialogue parsed successfully. Lines: {currentDialogue.dialogueLines.Count}");
-        }
-
-        if (currentDialogue != null && currentDialogue.dialogueLines != null)
-        {
-            foreach ( var line in currentDialogue.dialogueLines)
-            {
-                if (line.choices != null)
-                {
-                    if (line.choices != null)
-                    {
-                        foreach (var choice in line.choices)
-                        {
-                            choice.ParseDirection();
-                        }
-                    }
-                }
-            }
-        }
-
-        if (currentDialogue == null || currentDialogue.dialogueLines.Count == 0)
-        {
-            Debug.LogWarning("Dialogue JSON invalid or empty");
-            return;
-        }
 
         DialoguePanel.SetActive(true);
-        NPCNameText.text = currentDialogue.npcName;
+        playerPortrait.gameObject.SetActive(true);
+        npcNameText.text = dialogue.npcName;
+
+        DialogueIsActive = true;
         playerController.SetDialogueActive(true);
-        if (trigger.focusCameraOnTrigger)
+        cam.SetCameraLocked(true);
+
+        if (trigger != null && trigger.focusCameraOnTrigger)
         {
-            cameraMovement.TriggerDialogueCamera(trigger.transform);
+            cam.TriggerDialogueCamera(trigger.transform);
         }
 
-        if (playerFloating != null) playerFloating.enabled = false;
-        if (playerThrowing != null) playerThrowing.enabled = false;
-
-        ShowCurrentLine();
-
+        ShowLine();
     }
 
-    private void ShowCurrentLine()
+    public void EndDialogue()
     {
+        StopAllCoroutines();
 
-        if (dialogueScrollRect != null)
-        {
-            Canvas.ForceUpdateCanvases();
-            dialogueScrollRect.verticalNormalizedPosition = 1f;
-        }
+        DialoguePanel.SetActive(false);
+        playerPortrait.gameObject.SetActive(false);
+        continueArrow.SetActive(false);
+        ClearChoices();
 
-        if (currentIndex >= currentDialogue.dialogueLines.Count)
+        DialogueIsActive = false;
+        playerController.SetDialogueActive(false);
+
+        StartCoroutine(cam.EndCameraZoom());
+        cam.SetCameraLocked(false);
+    }
+
+    void ShowLine()
+    {
+        if (index >= dialogue.dialogueLines.Count)
         {
             EndDialogue();
             return;
         }
 
-        DialogueLine line = currentDialogue.dialogueLines[currentIndex];
-        NPCNameText.text = line.Speaker;
+        DirectionalImage.SetActive(false);
 
-        if (line.requiredMorality != 0)
-        {
-            if((line.requiredMorality > 0 && playerMorality < line.requiredMorality)|| (line.requiredMorality < 0 && playerMorality > line.requiredMorality))
-            {
-                currentIndex++;
-                ShowCurrentLine();
-                return;
-            }
-        }
+        DialogueLine line = dialogue.dialogueLines[index];
 
-        if (typeingRoutine != null)
-        {
-            StopCoroutine(typeingRoutine);
-        }
+        npcNameText.text = line.Speaker;
+        continueArrow.SetActive(false);
+        ClearChoices();
 
-        typeingRoutine = StartCoroutine(TypeLine(line.text));
-
-        foreach (var b in spawnedChoices)
-        {
-            Destroy(b);
-        }
-        spawnedChoices.Clear();
-
-        ContinueArrow.SetActive(false);
-
-        // hide slider durring NPC talking
-        if (ChoiceTimeSlider != null)
-        {
-            ChoiceTimeSlider.gameObject.SetActive(false);
-        }
+        typingRoutine = StartCoroutine(TypeLine(line));
 
     }
 
-    // apply updates to NPC face portraits
-   /* private void UpdateSpeakerVisuals(string speaker)
+    IEnumerator TypeLine(DialogueLine line)
     {
-        switch (speaker)
+        typing = true;
+        dialogueText.text = "";
+
+        foreach (char c in line.text)
         {
-            case "Reed":
-                NPCPortrait.sprite = defaultNPCPortrait;
-                break;
+            dialogueText.text += c;
+            PlayTypingSound(c);
 
-            case "Darry":
-                // darry portrait
-                break;
-        }
-    }*/
+            float delay = .035f;
 
-    private IEnumerator TypeLine(string text)
-    {
-        IsTyping = true;
-        DialogueText.text = "";
-        currentFullLine = text;
-
-        int soundCounter = 0;
-        int soundInterval = 2;
-
-        string[] words = text.Split(' ');
-
-        foreach (char c in text)
-        {
-            // Finish line instantly if confirm pressed
-            if (ConfirmPressed && IsTyping)
-            {
-                DialogueText.text = currentFullLine;
-                ConfirmPressed = false;
-                IsTyping = false;
-                break;
-            }
-
-            DialogueText.text += c;
-
-            Canvas.ForceUpdateCanvases();
-            LayoutRebuilder.ForceRebuildLayoutImmediate(dialogueScrollRect.content);
-
-            if (dialogueScrollRect != null && IsTyping)
-            {
-                dialogueScrollRect.verticalNormalizedPosition = 1f;
-            }
-
-            // Skip sounds for spaces
-            if (!char.IsWhiteSpace(c))
-            {
-                soundCounter++;
-
-                char lookupChar = char.ToUpper(c);
-
-                if (soundCounter % soundInterval == 0 && letterSounds.ContainsKey(lookupChar))
-                {
-                    TypingAudioSource.PlayOneShot(letterSounds[lookupChar], 0.7f);
-                }
-            }
-
-            float baseDelay = 0.035f;
-            float randomOffset = Random.Range(-0.02f, 0.02f);
-            yield return new WaitForSeconds(baseDelay + randomOffset);
-
-            float punctuationPause = GetPauseForCharacter(c);
-            if (punctuationPause > 0f)
-            {
-                yield return new WaitForSeconds(punctuationPause);
-            }
-        }
-
-        float GetPauseForCharacter(char c)
-        {
             switch (c)
             {
                 case '.':
                 case '!':
                 case '?':
-                    return 0.25f;
+                    delay += 0.25f;
+                    break;
 
                 case ',':
                 case ';':
                 case ':':
-                    return 0.12f;
-
-                default:
-                    return 0f;
+                    delay += 0.12f;
+                    break;
             }
+            yield return new WaitForSeconds(delay);
         }
 
-        IsTyping = false;
+        typing = false;
 
-        // show continue arrow after the line is typed and there are no choices to be selected
-        var choices = currentDialogue.dialogueLines[currentIndex].choices;
-        if (choices == null || choices.Count == 0)
+        if (line.choices == null || line.choices.Count == 0)
         {
-            ContinueArrow.SetActive(true);
-        }
-
-        // Show choices if any
-        if (choices != null && choices.Count > 0)
-        {
-            SpawnChoices(choices);
+            continueArrow.SetActive(true);
         }
         else
         {
-            StartCoroutine(WaitForNextLine());
+            SpawnChoices(line.choices);
         }
-
-        Canvas.ForceUpdateCanvases();
-
-        if (dialogueScrollRect != null)
-        {
-            dialogueScrollRect.verticalNormalizedPosition = 1f;
-        }
-
-        ConfirmPressed = false;
     }
 
-    private IEnumerator WaitForNextLine()
+    void OnConfirmPressed()
     {
-        if (IsTyping) yield break;
-
-        // Wait for player confirm to advance
-        while (ConfirmPressed)
+        // if dialogue is still being built and confirm is press build out full line
+        if (typing)
         {
-            yield return null;
+            SkipTyping();
+            return;
         }
-        
-        while (!ConfirmPressed)
+
+        // ignore confirm if chioces are present
+        if (CanChoose) return;
+
+        // if typing is finished and there are no choices go to the next line
+        if (dialogue != null && index < dialogue.dialogueLines.Count)
         {
-            yield return null;
-        }
-        ConfirmPressed = false;
-
-        DialogueLine line = currentDialogue.dialogueLines[currentIndex];
-
-        // End dialogue if the line says to
-        if (line.endDialogueAfterLine)
-        {
-            if (activeDialogueTrigger.NPCName == "Irene"  && ireneNPC != null)
+            DialogueLine line = dialogue.dialogueLines[index];
+            if (line.endDialogueAfterLine)
             {
-                if (!ireneNPC.IsFollowing)
-                {
-                    ireneNPC.IsFollowing = true;
-                }
-            }
-
-            if (activeDialogueTrigger.NPCName == "IreneStory")
-            {
-                ireneNPC.StartTravel();
-                ireneNPC.dialogueTrigger.TalkedAlready = true;
-            }
-            /* {
-                 //ireneNPC.StartTravel();
-                 ireneNPC.IsFollowing = true;
-             }
-             else if(ireneNPC != null && ireneNPC.IsFollowing == true)
-             {
-                 ireneNPC.StartTravel();
-                 ireneNPC.dialogueTrigger.TalkedAlready = true;
-             }*/
-
-            if (ireneNPC != null && activeDialogueTrigger.NPCName == "Irene" && activeDialogueTrigger.TalkedAlready && ireneDestinationTransform != null)
-            {
-                ireneNPC.targetSpot = ireneDestinationTransform;
-                ireneNPC.StartTravel();
-            }
-
-            // Move Barry if assigned
-             if (barryNPC != null && (activeDialogueTrigger.NPCName == "Reed" || activeDialogueTrigger.NPCName == "Darry") && activeDialogueTrigger.TalkedAlready)
-            {
-                barryNPC.StartTravel();
+                EndDialogue();
+                HandleNPCMovementsAfterLine();
             }
             else
             {
-                Debug.LogWarning("Barry will not move");
+                continueArrow.SetActive(false);
+                index++;
+                ShowLine();
             }
+        }
+    }
 
-            // Move Darry in Neighborhood and spawn enemy trigger
-            if (darryNPC != null && (activeDialogueTrigger.NPCName == "Reed" || activeDialogueTrigger.NPCName == "Darry"))
-            {
-                if(darryNPC != null)
-                {
-                    darryNPC.StartTravel();
-                }
+    void HandleNPCMovementsAfterLine()
+    {
+        if (activeDialogueTrigger == null) return;
 
-                // Intruder trigger spawn
-                if (IntruderTrigger != null)
-                {
-                    IntruderTrigger.SetActive(true);
-                }
-                else
-                {
-                    Debug.Log("Spawning is sitll inactive");
-                }
-            }
-            else
-            {
-                Debug.LogWarning("Darry NPC not found in scene!");
-            }
+        string npc = activeDialogueTrigger.NPCName;
 
-            EndDialogue();
-            yield break;
+        // irene follow
+        if (npc == "Irene" && ireneNPC != null)
+        {
+            if (!ireneNPC.IsFollowing)
+                ireneNPC.IsFollowing = true;
         }
 
-        // move to next line (if any)
-        if (currentIndex + 1 < currentDialogue.dialogueLines.Count)
+        // Irene story travel
+        if (npc == "IreneStory" && ireneNPC != null)
         {
-            currentIndex++;
-            ShowCurrentLine();
+            ireneNPC.StartTravel();
+            ireneNPC.dialogueTrigger.TalkedAlready = true;
         }
-        else if (currentIndex < 0)
+
+        // Irene move after talked
+        if (npc == "Irene" && ireneNPC != null & activeDialogueTrigger.TalkedAlready && ireneDestinationTransform != null)
         {
-            EndDialogue();
+            ireneNPC.targetSpot = ireneDestinationTransform;
+            ireneNPC.StartTravel();
+        }
+
+        // Reed movement
+        if (barryNPC != null && (npc == "Reed" || npc == "Darry") && activeDialogueTrigger.TalkedAlready)
+        {
+            barryNPC.StartTravel();
         }
         else
         {
-            EndDialogue();
+            Debug.LogWarning("Barry will not move");
         }
 
-    }
-
-    private Vector2 GetPositionForDirection(ChoiceDirection dir)
-    {
-        float distance = choiceDistance;
-        switch(dir)
+        // Darry movement
+        if (darryNPC != null && (npc == "Reed" || npc == "Darry"))
         {
-            case ChoiceDirection.Up: return new Vector2(0, distance);
-            case ChoiceDirection.Down: return new Vector2(0, -distance);
-            case ChoiceDirection.Left: return new Vector2(-distance, 0);
-            case ChoiceDirection.Right: return new Vector2(distance, 0);
-            default: return Vector2.zero;
-        };
+            darryNPC.StartTravel();
+
+            if (IntruderTrigger != null)
+            {
+                IntruderTrigger.SetActive(true);
+            }
+            else
+            {
+                Debug.Log("Intruder trigger is still inactive");
+            }
+        }
+        else if (darryNPC == null)
+        {
+            Debug.LogWarning("Darry npc not found in scene");
+        }
     }
 
-    private void PositionDirectionalCross()
+    void SkipTyping()
     {
-        if (DirectionalImage == null) return;
+       if (!typing) return;
+          StopCoroutine(typingRoutine);
+          dialogueText.text = dialogue.dialogueLines[index].text;
+          typing = false;
 
-        RectTransform rt = DirectionalImage.GetComponent<RectTransform>();
-        rt.SetParent(ChoicesContainer, false);
-        rt.anchoredPosition = Vector2.zero;
-        rt.localScale = Vector3.one;
+      DialogueLine line = dialogue.dialogueLines[index];
 
+       // After skiping show arrow or choices immediately
+       if (line.choices == null || line.choices.Count == 0)
+       {
+            continueArrow.SetActive(true);
+       }
+       else
+       {
+            SpawnChoices(line.choices);
+       }
     }
 
-    private void SpawnChoices(List<DialogueChoice> choices)
+    void SpawnChoices(List<DialogueChoice> choices)
     {
-        // Clear old
-        foreach (var b in spawnedChoices) Destroy(b);
-        spawnedChoices.Clear();
+        CanChoose = true;
         directionalChoices.Clear();
-        ChoicesContainer.gameObject.SetActive(true);
+        choiceTimerSlider.gameObject.SetActive(true);
 
-        // Spawn direction cross
         if (DirectionalImage != null)
         {
             DirectionalImage.SetActive(true);
-            PositionDirectionalCross();
+            RectTransform rt = DirectionalImage.GetComponent<RectTransform>();
+            rt.SetParent(choicesContainer, false);
+            rt.anchoredPosition = Vector2.zero;
         }
 
-        foreach (DialogueChoice choice in choices)
-        {
-            GameObject buttonObj = Instantiate(ChoiceButton, ChoicesContainer);
-            buttonObj.SetActive(true);
-            TextMeshProUGUI buttonText = buttonObj.GetComponentInChildren<TextMeshProUGUI>();
-            buttonText.text = choice.text;
+       foreach (var c in choices)
+       {
+            GameObject obj = Instantiate(choicePrefab, choicesContainer);
+            obj.GetComponentInChildren<TextMeshProUGUI>().text = c.text;
+            obj.GetComponent<RectTransform>().anchoredPosition = GetDirPos(c.direction);
 
-            RectTransform rt = buttonObj.GetComponent<RectTransform>();
-            rt.localScale = Vector3.one * 3f;
-            rt.anchoredPosition = GetPositionForDirection(choice.direction);
+            spawnedChoices.Add(obj);
+            directionalChoices[c.direction] = c;
+       }
 
-
-           // Button btn = buttonObj.GetComponent<Button>();
-           // int next = choice.nextIndex;
-           // btn.onClick.AddListener(() => OnChoiceSelected(choice));
-            spawnedChoices.Add(buttonObj);
-            directionalChoices[choice.direction] = choice;
-
-            Debug.Log($"Choice '{choice.text}' spawned at {rt.anchoredPosition} for direction {choice.direction}");
-        }
-
-        CanChoose = true;
-        SelectedChoiceIndex = 0;
-
-        // helps stop auto selection
-        suppressInputOneFrame = true;
-        StartCoroutine(ReleaseInputNextFrame());
-        //UpdateChoiceHighlight();
-
-        // activate slider
-        if (ChoiceTimeSlider != null)
-        {
-            ChoiceTimeSlider.gameObject.SetActive(true);
-            ChoiceTimeSlider.value = 1f;
-        }
-
-        // Start timer countdown for auto-select
-        if (choiceTimerRoutine != null)
-        {
-            StopCoroutine(choiceTimerRoutine);
-        }
-        choiceTimerRoutine = StartCoroutine(ChoiceTimerCountdown(choices));
-
+       timerRoutine = StartCoroutine(ChoiceTimer(choices));
     }
 
-    private IEnumerator ReleaseInputNextFrame()
+    private void Update()
     {
-        yield return null;
-        suppressInputOneFrame = false;
+        if (!CanChoose) return;
+        HandleDirectionalSelection();
     }
 
-    private void HandleChoiceInput()
+    void HandleDirectionalSelection()
     {
-        if (suppressInputOneFrame) return;
-
-        if ((!CanChoose || spawnedChoices.Count == 0))
-        {
-            ResetHoldUI();
-            return;
-        }
-
         Vector2 input = controls.Dialogue.Move.ReadValue<Vector2>();
-
-        const float deadzone = 0.4f;
-
-        // if released cancel circle
-        if (input.sqrMagnitude < deadzone * deadzone)
+        if (input.magnitude < .5f)
         {
-            ResetHoldUI();
+            ResetHold();
             return;
         }
 
-        if (!isHoldingDirection)
+        ChoiceDirection dir = Mathf.Abs(input.x) > Mathf.Abs(input.y)
+        ? (input.x > 0 ? ChoiceDirection.Right : ChoiceDirection.Left)
+        : (input.y > 0 ? ChoiceDirection.Up : ChoiceDirection.Down);
+
+        if (!directionalChoices.ContainsKey(dir))
         {
-            ChoiceDirection newDir = GetDirectionFromInput(input);
+             ResetHold();
+             return;
+        }
 
-            //if (currentHeldDirection.HasValue && currentHeldDirection.Value == newDir) return;
+        if (currentDir != dir)
+        {
+            ResetHold();
+            currentDir = dir;
+        }
 
-            if (!directionalChoices.ContainsKey(newDir))
+        HighlightChoice(dir);
+
+        holdTimer += Time.deltaTime;
+        UpdateHoldUI(dir, holdTimer / holdTimeToSelect);
+
+        if (holdTimer >= holdTimeToSelect)
+        {
+            waitingForHoldCompletion = false;
+            SelectChoice(directionalChoices[dir]);
+            ResetHold();
+        }
+    }
+
+    void HighlightChoice(ChoiceDirection dir)
+    {
+        foreach (var obj in spawnedChoices)
+        {
+            obj.GetComponentInChildren<TextMeshProUGUI>().color = Color.white;
+        }
+
+        DialogueChoice choice = directionalChoices[dir];
+
+        GameObject target = spawnedChoices.Find(o =>
+            o.GetComponentInChildren<TextMeshProUGUI>().text == choice.text);
+
+        if (!target) return;
+
+        TextMeshProUGUI txt = target.GetComponentInChildren<TextMeshProUGUI>();
+
+        txt.color =
+            choice.moralityChange > 0 ? Color.green :
+            choice.moralityChange < 0 ? Color.red :
+            Color.yellow;
+    }
+
+    void UpdateHoldUI(ChoiceDirection dir, float progress)
+    {
+        if (!holdMap.ContainsKey(dir)) return;
+
+        var visual = holdMap[dir];
+
+        visual.image.gameObject.SetActive(true);
+        visual.image.fillAmount = Mathf.Clamp01(progress);
+    }
+
+    void ResetHold()
+    {
+        holdTimer = 0;
+        currentDir = null;
+
+        foreach (var v in holdMap.Values)
+        {
+            v.image.fillAmount = 0;
+            v.image.gameObject.SetActive(false);
+        }
+
+        // player released after timer expired
+        if (waitingForHoldCompletion && CanChoose)
+        {
+            waitingForHoldCompletion = false;
+            SelectChoice(GetBiasedChoice(new List<DialogueChoice>(directionalChoices.Values)));
+        }
+    }
+
+    void SelectChoice(DialogueChoice c)
+    {
+        choiceTimerSlider.gameObject.SetActive(false);
+        DirectionalImage.SetActive(false);
+        CanChoose = false;
+        StopCoroutine(timerRoutine);
+
+        ClearChoices();
+        StartCoroutine(ResolveChoiceRoutine(c));
+
+    }
+
+    IEnumerator ResolveChoiceRoutine(DialogueChoice c)
+    {
+        ApplyMorality(c.moralityChange);
+
+    ShowPopup($"Morality changed by {c.moralityChange}. New Morality: {playerMorality}");
+
+    yield return new WaitForSeconds(portraitFadeTime * 2 + portraitHoldTime);
+
+        if (c.nextIndex >= 0)
+        {
+            index = c.nextIndex;
+            ShowLine();
+        }
+        else
+        {
+            EndDialogue();
+        }
+    }
+
+    IEnumerator ChoiceTimer(List<DialogueChoice> choices)
+    {
+        float t = choiceTimeLimit;
+
+        while (t > 0 && CanChoose)
+        {
+            t -= Time.deltaTime;
+            choiceTimerSlider.value = t / choiceTimeLimit;
+            yield return null;
+        }
+
+        if (!CanChoose) yield break;
+
+        if (currentDir != null)
+        {
+            waitingForHoldCompletion = true;
+            yield break;
+        }
+
+        SelectChoice(GetBiasedChoice(choices));
+    }
+
+    DialogueChoice GetBiasedChoice(List<DialogueChoice> choices)
+    {
+        int dominant = Mathf.Max(posCount, negCount, neutralCount);
+        int sign = dominant == posCount ? 1 : dominant == negCount ? -1 : 0;
+
+        DialogueChoice best = choices[0];
+        float bestScore = float.MinValue;
+
+        foreach (var c in choices)
+        {
+            float score = Random.value;
+            if (Mathf.Sign(c.moralityChange) == sign)
             {
-                ResetHoldUI();
-                return;
+                score += 3f;
             }
 
-            currentHeldDirection = newDir;
-            directionHoldTimer = 0f;
-            isHoldingDirection = true;
+            if (score > bestScore)
+            {
+                bestScore = score;
+                best = c;
+            }
         }
-
-        // check
-        if (currentHeldDirection == null)
-        {
-            return;
-        }
-
-        directionHoldTimer += Time.deltaTime;
-
-        ChoiceDirection dir = currentHeldDirection.Value;
-
-        HighlightDirection(dir);
-        
-        UpdateHoldUI(directionHoldTimer / holdTimeToSelect);
-        
-        if (directionHoldTimer >= holdTimeToSelect)
-        {
-            CompleteHold(dir);
-        }
+        return best;
     }
 
-    // Change echo portrait based on answer selection
+    void ApplyMorality(int change)
+    {
+        playerMorality += change;
+        PlayerPrefs.SetInt("Morality", playerMorality);
+
+        if (change > 0) posCount++;
+        else if (change < 0) negCount++;
+        else neutralCount++;
+
+    Sprite newPortrait = change > 0 ? positivePortrait :
+        change < 0 ? negativePortrait :
+        neutralPortrait;
+
+        if (portraitRoutine != null)
+        {
+            StopCoroutine(portraitRoutine);
+        }
+
+        portraitRoutine = StartCoroutine(SwapPortrait(newPortrait));
+    }
+
     private IEnumerator SwapPortrait(Sprite newPortrait)
     {
-        if (playerPortrait == null || portraitCanvasGroup == null) yield break;
+        if (playerPortrait == null || portraitGroup == null) yield break;
+        Debug.Log("swaping portrait");
 
         // fade out
         float t = 0f;
-        while (t < portraitFadeDuration)
+        while (t < portraitFadeTime)
         {
             t += Time.deltaTime;
-            portraitCanvasGroup.alpha = Mathf.Lerp(1f, 0f, t / portraitFadeDuration);
+            portraitGroup.alpha = Mathf.Lerp(1f, 0f, t / portraitFadeTime);
             yield return null;
         }
 
@@ -733,499 +594,87 @@ public class DialogueManager : MonoBehaviour
 
         // fade in
         t = 0f;
-        while (t < portraitFadeDuration)
+        while (t < portraitFadeTime)
         {
             t += Time.deltaTime;
-            portraitCanvasGroup.alpha = Mathf.Lerp(0f, 1f, t / portraitFadeDuration);
+            portraitGroup.alpha = Mathf.Lerp(0f, 1f, t / portraitFadeTime);
             yield return null;
         }
 
-        // hold 
+        // hold
         yield return new WaitForSeconds(portraitHoldTime);
 
         // fade back to default
         t = 0f;
-        while (t < portraitFadeDuration)
+        while (t < portraitFadeTime)
         {
             t += Time.deltaTime;
-            portraitCanvasGroup.alpha = Mathf.Lerp(1f, 0f, t / portraitFadeDuration);
+            portraitGroup.alpha = Mathf.Lerp(1f, 0f, t / portraitFadeTime);
             yield return null;
         }
 
         playerPortrait.sprite = defaultPortrait;
 
         t = 0f;
-        while (t < portraitFadeDuration)
+        while (t < portraitFadeTime)
         {
             t += Time.deltaTime;
-            portraitCanvasGroup.alpha = Mathf.Lerp(0f, 1f, t / portraitFadeDuration);
+            portraitGroup.alpha = Mathf.Lerp(0f, 1f, t / portraitFadeTime);
             yield return null;
         }
     }
 
-    private void UpdateHoldUI(float progress)
+    void PlayTypingSound(char c)
     {
-        if (currentHeldDirection == null) 
-        {
-            return;
-        }
-        
-        if (!holdVisualMap.TryGetValue(currentHeldDirection.Value, out var visual))
-        {
-            return;
-        }
+        if (char.IsWhiteSpace(c)) return;
 
-        if (!visual.image.gameObject.activeSelf)
+        char up = char.ToUpper(c);
+        if (letterSounds.ContainsKey(up))
         {
-            visual.image.gameObject.SetActive(true);
-        }
-
-        visual.image.fillAmount = Mathf.Clamp01(progress);
-    }
-
-    private void ResetHoldUI()
-    {
-        bool releasedDuringGrace = waitingForHoldCompletion;
-        
-        directionHoldTimer = 0f;
-        isHoldingDirection = false;
-        currentHeldDirection = null;
-
-        foreach (var visual in holdVisualMap.Values)
-        {
-            visual.image.fillAmount = 0f;
-            visual.image.gameObject.SetActive(false);
-        }
-
-        // Player released after timer expired
-        if (releasedDuringGrace && CanChoose)
-        {
-            waitingForHoldCompletion = false;
-            AutoSelectFallback(new List<DialogueChoice>(directionalChoices.Values));
+            typingSource.PlayOneShot(letterSounds[up], .7f);
         }
     }
 
-    private void CompleteHold(ChoiceDirection dir)
+    Vector2 GetDirPos(ChoiceDirection dir)
     {
-        if (!CanChoose) return;
-
-        CanChoose = false;
-        SelectDirectionalChoice(dir);
-        ResetHoldUI();
+        return dir switch
+        {
+            ChoiceDirection.Up => new Vector2(0, choiceDistance),
+            ChoiceDirection.Down => new Vector2(0, -choiceDistance),
+            ChoiceDirection.Left => new Vector2(-choiceDistance * 2.2f, 0),
+            ChoiceDirection.Right => new Vector2(choiceDistance * 2.2f, 0),
+            _ => Vector2.zero
+        };
     }
 
-    private ChoiceDirection GetDirectionFromInput(Vector2 input)
+    void ClearChoices()
     {
-        if(Mathf.Abs(input.x) > Mathf.Abs(input.y))
-        {
-            return input.x > 0 ? ChoiceDirection.Right : ChoiceDirection.Left;
-        }
-        else
-        {
-            return input.y > 0 ? ChoiceDirection.Up : ChoiceDirection.Down;
-        }
-    }
-
-    private void SelectDirectionalChoice(ChoiceDirection dir)
-    {
-        if (!directionalChoices.ContainsKey(dir))
-        {
-            return;
-        }
-
-        OnChoiceSelected(directionalChoices[dir]);
-    }
-
-    private void HighlightDirection(ChoiceDirection dir)
-    {
-        // base color of text is white
-        foreach (var obj in spawnedChoices)
-        {
-            obj.GetComponentInChildren<TextMeshProUGUI>().color = Color.white;
-        }
-
-        if (!directionalChoices.ContainsKey(dir)) return;
-
-        DialogueChoice selectedChoice = directionalChoices[dir];
-
-        int selectedIndex = spawnedChoices.FindIndex(o =>
-            o.GetComponentInChildren<TextMeshProUGUI>().text == selectedChoice.text);
-
-        if (selectedIndex >= 0)
-        {
-            var selectedText = spawnedChoices[selectedIndex].GetComponentInChildren<TextMeshProUGUI>();
-
-            // highlight good choice to green
-            if (selectedChoice.moralityChange > 0)
-            {
-                selectedText.color = Color.green;
-            }
-            // highlight bad choice to red
-            else if (selectedChoice.moralityChange < 0)
-            {
-                selectedText.color = Color.red;
-            }
-            // highlight nuetral choice to yellow
-            else
-            {
-                selectedText.color = Color.yellow;
-            }
-
-            if (holdVisualMap.TryGetValue(dir, out var visual))
-            {
-                RectTransform choiceRT = spawnedChoices[selectedIndex].GetComponent<RectTransform>();
-                RectTransform visualRT = visual.image.GetComponent<RectTransform>();
-            }
-        }
-    }
-
-    private void OnChoiceSelected(DialogueChoice chosen)
-    {
-        // Hard reset
-        isHoldingDirection = false;
-        waitingForHoldCompletion = false;
-        currentHeldDirection = null;
-        directionHoldTimer = 0f;
-
-        /*if (holdCircleImage != null)
-        {
-            holdCircleImage.fillAmount = 0f;
-            holdCircleImage.gameObject.SetActive(false);
-        }*/
-
-        // prevent confirm from instantly skipping the next line
-        ConfirmPressed = false;
-
-        if (choiceTimerRoutine != null)
-        {
-            StopCoroutine(choiceTimerRoutine);
-            choiceTimerRoutine = null;
-        }
-
-        if (DirectionalImage != null)
-        {
-            DirectionalImage.SetActive(false);
-        }
-
-        CanChoose = false;
-
-        // Apply variable change if any
-        playerMorality += chosen.moralityChange;
-        PlayerPrefs.SetInt("Morality", playerMorality);
-        PlayerPrefs.Save();
-
-        Debug.Log($"Morality changed by {chosen.moralityChange}. New Morality: {playerMorality}");
- 
-        // increase player choice tendencies
-        if (chosen.moralityChange > 0)
-        {
-            positiveChoiceCount++;
-        }
-        if (chosen.moralityChange < 0)
-        {
-            negativeChoiceCount++;
-        }
-        else
-        {
-            neutralChoiceCount++;
-        }
-
-        // change portrait based on morality
-        if (portraitRoutine != null)
-        {
-            StopCoroutine(portraitRoutine);
-        }
-
-        Sprite portraitToUse =
-                chosen.moralityChange > 0 ? positivePortrait :
-                chosen.moralityChange < 0 ? negativePortrait :
-                neutralPortrait;
-
-        portraitRoutine = StartCoroutine(SwapPortrait(portraitToUse));
-
-        // clear old choices
-        foreach (var b in spawnedChoices) Destroy(b);
+        foreach (var c in spawnedChoices)
+            c.SetActive(false);
         spawnedChoices.Clear();
-        ChoicesContainer.gameObject.SetActive(false);
-
-        // show pop up of morality change
-        if (chosen.moralityChange != 0)
-        {
-            ShowPopUp($"Morality changed by {chosen.moralityChange}. New Morality: {playerMorality}", 2f);
-        }
-
-        // Trigger an objective if this choice has one
-        if (!string.IsNullOrEmpty(chosen.objectiveToActivate))
-        {
-            ObjectiveManager.Instance.ActivateObjectiveByID(chosen.objectiveToActivate);
-        }
-
-        // Continue dialogue
-        if (chosen.nextIndex >= 0 && chosen.nextIndex < currentDialogue.dialogueLines.Count)
-        {
-            currentIndex = chosen.nextIndex;
-            ShowCurrentLine();
-        }
-        else
-        {
-            EndDialogue();
-        }
-
-        /*if (TimerText != null)
-        {
-            TimerText.text = "";
-        }*/
-
-        // hide slider agian when choice is selected
-        if (ChoiceTimeSlider != null)
-        {
-            ChoiceTimeSlider.gameObject.SetActive(false);
-        }
-
     }
 
-    private DialogueChoice GetBiasedChoice(List<DialogueChoice> choices)
+    void ShowPopup(string msg)
     {
-        if (choices == null || choices.Count == 0)
-            return null;
-
-        // Determine most frequent tendency
-        int dominant = Mathf.Max(positiveChoiceCount, negativeChoiceCount, neutralChoiceCount);
-
-        int preferredSign = dominant == positiveChoiceCount ? 1 : dominant == negativeChoiceCount ? -1 : 0;
-
-        DialogueChoice bestChoice = null;
-        float bestScore = float.MinValue;
-
-        foreach (var choice in choices)
-        {
-            float score = 0f;
-
-            // Match plaer tendency
-            if (Mathf.Sign(choice.moralityChange) == preferredSign)
-            {
-                score += 3f;
-            }
-
-            // soft bias toward previously similar magnitude
-            score -= Mathf.Abs(choice.moralityChange - playerMorality * 0.1f);
-
-            // small randomness
-            score += Random.Range(0f, 0.5f);
-
-            if (score > bestScore)
-            {
-                bestScore = score;
-                bestChoice = choice;
-            }
-
-        }
-
-        return bestChoice;
+        popupText.text = msg;
+        popupText.alpha = 1f;
+        popupText.gameObject.SetActive(true);
+        StartCoroutine(FadePopup());
     }
 
-    private IEnumerator ChoiceTimerCountdown(List<DialogueChoice> choices)
+    IEnumerator FadePopup()
     {
-        choiceTimer = choiceTimeLimit;
+        yield return new WaitForSeconds(1f);
 
-        if (ChoiceTimeSlider != null)
+        float t = 0;
+        while (t < 1f)
         {
-            ChoiceTimeSlider.gameObject.SetActive(true);
-            ChoiceTimeSlider.value = 1f;
-        }
-
-        while (choiceTimer > 0f && CanChoose)
-        {
-            choiceTimer -= Time.deltaTime;
-
-            if (ChoiceTimeSlider != null)
-            {
-                // Normalize time (1 to 0)
-                ChoiceTimeSlider.value = choiceTimer / choiceTimeLimit;
-            }
-
+            t += Time.deltaTime;
+            popupText.alpha = 1 - t;
             yield return null;
         }
 
-        if (ChoiceTimeSlider != null)
-        {
-            ChoiceTimeSlider.gameObject.SetActive(false);
-        }
-
-        // Timer expired and player didn't choose
-        if (CanChoose)
-        {
-            DialogueChoice fallback = GetBiasedChoice(choices);
-
-            if (isHoldingDirection && currentHeldDirection.HasValue)
-            {
-                waitingForHoldCompletion = true;
-                Debug.Log("Timer expired, but player is holding - waiting for completion");
-                yield break;
-            }
-
-            // timer ran out and not holding a direction
-            OnChoiceSelected(fallback);
-
-           /* if (fallback != null)
-            {
-                Debug.Log("Timer expired, bias-selecting choice: " + fallback.text);
-                OnChoiceSelected(fallback);
-            }
-
-            if (fallback == null && choices.Count > 0)
-            {
-                fallback = choices[0];
-            }
-
-            if (fallback != null)
-            {
-                Debug.Log("Timer expired, auto-selecting choice: " + fallback.text);
-                OnChoiceSelected(fallback);
-            }*/
-        }
+        popupText.gameObject.SetActive(false);
     }
+} 
 
-    private void AutoSelectFallback(List<DialogueChoice> choices)
-    {
-        if (!CanChoose) return;
-
-        DialogueChoice fallback = GetBiasedChoice(choices);
-
-        if (fallback == null && choices.Count > 0)
-        {
-            fallback = choices[0];
-        }
-
-        if (fallback != null)
-        {
-            Debug.Log("Auto-selecting fallback choice: " + fallback.text);
-            OnChoiceSelected(fallback);
-        }
-    }
-
-    public void ShowPopUp(string message, float duration = 1f)
-    {
-        PopupText.gameObject.SetActive(true);
-        PopupText.alpha = 1f;
-       // PopupText.transform.localPosition = Vector3.zero;
-
-        StopCoroutine(nameof(ShowPopupRoutine));
-        StartCoroutine(ShowPopupRoutine(message, duration));
-    }
-
-    private IEnumerator ShowPopupRoutine(string message, float duration)
-    {
-        //PopupText.gameObject.SetActive(true);
-        PopupText.text = message;
-
-        // Capture starting position
-       // Vector3 startPos = PopupText.transform.localPosition;
-       // Vector3 endPos = startPos + Vector3.up * 20f;
-
-        // Fade out over time
-        yield return new WaitForSeconds(duration);
-
-        float fadeDuration = 1f;
-        float elapsed = 0f;
-        while (elapsed < fadeDuration)
-        {
-            elapsed += Time.deltaTime;
-            float t = elapsed / fadeDuration;
-
-            PopupText.alpha = Mathf.Lerp(1f, 0f, t);
-            //PopupText.transform.localPosition = Vector3.Lerp(startPos, endPos, t);
-
-            //PopupText.alpha -= Time.deltaTime * fadeSpeed;
-            yield return null;
-        }
-
-        PopupText.text = "";
-        PopupText.alpha = 0f;
-        //PopupText.transform.localPosition = startPos;
-        PopupText.gameObject.SetActive(false);
-    }
-
-    public void EndDialogue()
-    {
-        if (activeDialogueTrigger.RewardItem != null && playerInventory != null)
-        {
-            playerInventory.AddItem(activeDialogueTrigger.RewardItem);
-            Debug.Log($"Player received item: {activeDialogueTrigger.RewardItem.name}");
-            activeDialogueTrigger.RewardItem = null; // Prevent multiple rewards
-        }
-
-        if (activeDialogueTrigger != null)
-        {
-            activeDialogueTrigger.StopLookingAtPlayer();
-            activeDialogueTrigger.ResumeWandering();
-
-            if (ButtonIcons.Instance != null)
-            {
-                ButtonIcons.Instance.Highlight(activeDialogueTrigger.interactType);
-            }
-
-            activeDialogueTrigger = null;
-        }
-
-        DialoguePanel.SetActive(false);
-        playerPortrait.gameObject.SetActive(false);
-        currentDialogue = null;
-        currentIndex = 0;
-        spawnedChoices.Clear();
-        ConfirmPressed = false;
-        CanChoose = false;
-        DialogueIsActive = false;
-        ContinueArrow.SetActive(false);
-        
-        playerController.SetDialogueActive(false);
-        StartCoroutine(cameraMovement.EndCameraZoom());
-
-        if (playerFloating != null) playerFloating.enabled = true;
-        if (playerThrowing != null) playerThrowing.enabled = true;
-        if (TypingAudioSource != null) TypingAudioSource.Stop();
-
-        // Only auto follow if Irene does not have a destination to travel to
-        if (ireneNPC != null && ireneNPC.gameObject.activeInHierarchy)
-        {
-            if (ireneNPC.NPCNameMatches(NPCNameText.text) && ireneNPC.CanFollowPlayer)
-            {
-                ireneNPC.IsFollowing = true;
-            }
-        }
-
-        StartCoroutine(EndDialogueSafe());
-        Debug.Log($"Dialogue ended. Final morality = {playerMorality}");
-    }
-
-    private IEnumerator EndDialogueSafe()
-    {
-        // Wait one frame so UI Toolkit + jobs finish safely
-        yield return null;
-
-        if (cameraMovement != null)
-        {
-            // If EndCameraZoom is a coroutine
-            yield return cameraMovement.EndCameraZoom();
-            cameraMovement.SetCameraLocked(false);
-        }
-
-        Chime.isInDialogue = false;
-
-        Debug.Log("EndDialogueSafe: cleanup complete");
-    }
-
-    public int GetVariable(string morality)
-    {
-        if (dialogueVariables.TryGetValue(morality, out int value))
-        {
-            return value;
-        }
-        return 0;
-    }
-
-    public void SetVariable(string morality, int value)
-    {
-        dialogueVariables[morality] = value;
-    }
-}
