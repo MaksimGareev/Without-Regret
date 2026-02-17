@@ -160,6 +160,7 @@ GameObject:
   - component: {fileID: 6384103439953344238}
   - component: {fileID: 4953376983093548185}
   - component: {fileID: 6699416454780374162}
+  - component: {fileID: 5728538408542387315}
   m_Layer: 5
   m_Name: PlayerUICanvas
   m_TagString: Untagged
@@ -314,6 +315,24 @@ MonoBehaviour:
     icon: {fileID: 4173708917941232945}
   - type: 6
     icon: {fileID: 4173708917941232945}
+--- !u!114 &5728538408542387315
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 565190579125525281}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87272819e4731944cb2fb0fc83b133bc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InputDeviceManager
+  actionImage1: {fileID: 3506163710459874713}
+  actionImage2: {fileID: 8082224538621394674}
+  controllerXButton: {fileID: 2800000, guid: 2a113283f587f754b813535ef30e9486, type: 3}
+  controllerAButton: {fileID: 2800000, guid: 87f3924e1c8d803499add52931600cea, type: 3}
+  keyboardEKey: {fileID: 2800000, guid: ca97c7887e8fab14dae367734cf1049a, type: 3}
+  keyboardSpacebar: {fileID: 2800000, guid: 27910f79dec9a2049ab768004a2b721a, type: 3}
 --- !u!1 &626333383474887898
 GameObject:
   m_ObjectHideFlags: 0
@@ -885,7 +904,7 @@ GameObject:
   - component: {fileID: 8595342489898231891}
   - component: {fileID: 8082224538621394674}
   m_Layer: 5
-  m_Name: AButton
+  m_Name: AButton/SpaceBar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1647,7 +1666,7 @@ GameObject:
   - component: {fileID: 67226507615702428}
   - component: {fileID: 3506163710459874713}
   m_Layer: 5
-  m_Name: XButton
+  m_Name: XButton/EKey
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -5,7 +5,7 @@ using UnityEngine;
 [RequireComponent(typeof(PlayerController), typeof(PlayerFloating), typeof(PlayerMovingObjects))]
 [RequireComponent(typeof(PlayerPossessing), typeof(PlayerThrowing), typeof(ToggleInventoryUI))]
 [RequireComponent(typeof(Rigidbody), typeof(CharacterController), typeof(PlayerFishing))]
-[RequireComponent(typeof(PlayerEquipItem))]
+[RequireComponent(typeof(PlayerEquipItem), typeof(PlayerMantling))]
 public class PlayerComponents : MonoBehaviour
 {
     public static bool initialized = false;
@@ -20,6 +20,7 @@ public class PlayerComponents : MonoBehaviour
     public static Rigidbody rb;
     public static CharacterController characterController;
     public static ToggleInventoryUI inventoryToggle;
+    public static PlayerMantling playerMantling;
 
     private void Awake()
     {
@@ -34,6 +35,7 @@ public class PlayerComponents : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         characterController = GetComponent<CharacterController>();
         inventoryToggle = GetComponent<ToggleInventoryUI>();
+        playerMantling = GetComponent<PlayerMantling>();
     }
 
     public static void InitializeComponents(GameObject player)
@@ -60,6 +62,7 @@ public class PlayerComponents : MonoBehaviour
         rb = player.GetComponent<Rigidbody>();
         characterController = player.GetComponent<CharacterController>();
         inventoryToggle = player.GetComponent<ToggleInventoryUI>();
+        playerMantling = player.GetComponent<PlayerMantling>();
 
         initialized = true;
     }
@@ -79,6 +82,7 @@ public class PlayerComponents : MonoBehaviour
         inventoryToggle.enabled = enable;
         characterController.enabled = enable;
         playerEquipItem.enabled = enable;
+        playerMantling.enabled = enable;
     }
 
     public static void SetComponentsExcept(bool enable, GameObject source = null, params Component[] excludeList)
@@ -117,6 +121,7 @@ public class PlayerComponents : MonoBehaviour
         ToggleComponent(characterController);
         ToggleComponent(playerFishing);
         ToggleComponent(playerEquipItem);
+        ToggleComponent(playerMantling);
     }
 
     public static void SetCertainComponents(bool enable, GameObject source = null, params Component[] componentsToToggle)
