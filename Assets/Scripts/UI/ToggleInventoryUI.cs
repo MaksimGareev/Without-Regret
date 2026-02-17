@@ -74,7 +74,7 @@ public class ToggleInventoryUI : MonoBehaviour
 
         if (isEnabled)
         {
-            Cursor.lockState = CursorLockMode.Confined;
+            Cursor.lockState = CursorLockMode.None;
         }
         else
         {

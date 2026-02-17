@@ -11,8 +11,8 @@ public class Inventory : MonoBehaviour, ISaveable
     [HideInInspector] public List<ItemData> keyItems = new();
     [HideInInspector] public List<ItemData> otherItems = new();
 
-    public List<ItemData> KeyItems => keyItems;
-    public List<ItemData> OtherItems => otherItems;
+    [HideInInspector] public List<ItemData> KeyItems => keyItems;
+    [HideInInspector] public List<ItemData> OtherItems => otherItems;
     
     //private GameObject interactingScript;
     private GameObject backpack;
