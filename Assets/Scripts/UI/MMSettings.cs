@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine.EventSystems;
 using System.Collections;
 using UnityEngine.InputSystem;
+using UnityEditor.EditorTools;
 
 public class MMSettings : MonoBehaviour
 {
@@ -11,13 +12,28 @@ public class MMSettings : MonoBehaviour
     [SerializeField] private InputActionAsset inputActions;
     private InputAction tabLeftAction;
     private InputAction tabRightAction;
+    private InputAction resetSettingsAction;
+    private InputAction applySettingsAction;
+    private InputAction discardSettingsAction;
 
     [Header("Design Settings")]
+    [Tooltip("Color for text when the setting has been changed but not yet applied.")]
     [SerializeField] private Color pendingChangeColor = Color.yellow;
+
+    [Tooltip("Default color for all text in the settings menu.")]
     [SerializeField] private Color defaultColor = Color.white;
+
+    [Tooltip("Color for the text of the currently selected tab.")]
     [SerializeField] private Color TabEnabledColor = Color.aquamarine;
 
+    [Tooltip("Color for the text of the control legends when they are enabled.")]
+    [SerializeField] private Color legendsEnabledColor = Color.white;
+
+    [Tooltip("Color for the text of the control legends when they are disabled.")]
+    [SerializeField] private Color legendsDisabledColor = Color.gray;
+
     [Header("Parent Menu Reference")]
+    [Tooltip("Reference to the parent menu (Main Menu or Pause Menu) to determine where to return after closing settings.")]
     [SerializeField] private GameObject parentMenu;
 
     [Header("Settings References")]
@@ -25,12 +41,12 @@ public class MMSettings : MonoBehaviour
     [SerializeField] public TMP_Dropdown resolutionDropdown;
     [SerializeField] private Toggle fullscreenToggle;
     // Audio Settings
-    [SerializeField] private Slider masterVolumeSlider;
+    [SerializeField] public Slider masterVolumeSlider;
     [SerializeField] private Slider SFXVolumeSlider;
     [SerializeField] private Slider musicVolumeSlider;
     [SerializeField] private Slider dialogueVolumeSlider;
     // Controls Settings
-    [SerializeField] private Slider mouseSensitivitySlider;
+    [SerializeField] public Slider mouseSensitivitySlider;
     [SerializeField] private Slider leftStickSensitivitySlider;
     [SerializeField] private Slider leftStickDeadZoneSlider;
     [SerializeField] private Slider rightStickSensitivitySlider;
@@ -66,9 +82,17 @@ public class MMSettings : MonoBehaviour
     [SerializeField] private TextMeshProUGUI rightStickDeadZoneValueText;
 
     [Header("Buttons and UI Panels")]
+    [SerializeField] public GameObject controllerLegends;
+    [SerializeField] public GameObject keyboardLegends;
+    [SerializeField] private Image resetButtonImage;
+    [SerializeField] private Image applyButtonImage;
+    [SerializeField] private Image discardButtonImage;
+    [SerializeField] private Image resetKeyImage;
+    [SerializeField] private Image applyKeyImage;
+    [SerializeField] private Image discardKeyImage;
     [SerializeField] private GameObject settingsPanel;
     [SerializeField] private GameObject settingsUI;
-    [SerializeField] private GameObject controlSchemeUI;
+    [SerializeField] public GameObject controlSchemeUI;
     [SerializeField] private GameObject videoSettingsUI;
     [SerializeField] private GameObject audioSettingsUI;
     [SerializeField] private GameObject controlsSettingsUI;
@@ -105,16 +129,9 @@ public class MMSettings : MonoBehaviour
     public bool hasUnappliedChanges { get; private set; } = false;
     private bool hasChangedSettings = false;
     private ConfirmationUI confirmationUI;
-    
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        LoadResolutions();
-        InitializeInputActions();
-        SetUpListeners();
-        LoadSettings();
-        StartCoroutine(WaitToApplySettings());
 
+    private void Awake()
+    {
         if (confirmationPanel == null)
         {
             Debug.LogError("confirmationPanel reference is missing.");
@@ -127,6 +144,16 @@ public class MMSettings : MonoBehaviour
         {
             Debug.LogError("ConfirmationUI component not found on confirmationPanel.");
         }
+    }
+    
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Start()
+    {
+        LoadResolutions();
+        InitializeInputActions();
+        SetUpListeners();
+        LoadSettings();
+        StartCoroutine(WaitToApplySettings());
     }
 
     private void InitializeInputActions()
@@ -145,29 +172,84 @@ public class MMSettings : MonoBehaviour
             Debug.LogError("TabRight action not found in InputActionAsset.");
             return;
         }
+
+        resetSettingsAction = inputActions.FindActionMap("UI").FindAction("ResetSettings");
+        if (resetSettingsAction == null)
+        {
+            Debug.LogError("ResetSettings action not found in InputActionAsset.");
+            return;
+        }
+
+        applySettingsAction = inputActions.FindActionMap("UI").FindAction("ApplySettings");
+        if (applySettingsAction == null)
+        {
+            Debug.LogError("ApplySettings action not found in InputActionAsset.");
+            return;
+        }
+
+        discardSettingsAction = inputActions.FindActionMap("UI").FindAction("DiscardSettings");
+        if (discardSettingsAction == null)
+        {
+            Debug.LogError("DiscardSettings action not found in InputActionAsset.");
+            return;
+        }
     }
 
     private void Update()
     {
-        if (hasChangedSettings && !resetButton.interactable && !confirmationPanel.activeSelf)
+        if (tabLeftAction.triggered)
+        {
+            OnTabLeft();
+        }
+
+        if (tabRightAction.triggered)
+        {
+            OnTabRight();
+        }
+
+        if (resetSettingsAction.triggered)
+        {
+            OnResetSettings();
+        }
+
+        if (applySettingsAction.triggered)
+        {
+            OnApplySettings();
+        }
+
+        if (discardSettingsAction.triggered)
+        {
+            OnDiscardSettings();
+        }
+
+        if (hasChangedSettings && !resetButton.interactable)
         {
             resetButton.interactable = true;
+            resetButtonImage.color = legendsEnabledColor;
+            resetKeyImage.color = legendsEnabledColor;
+
         }
         else if (!hasChangedSettings && resetButton.interactable && !confirmationPanel.activeSelf)
         {
             resetButton.interactable = false;
+            resetButtonImage.color = legendsDisabledColor;
+            resetKeyImage.color = legendsDisabledColor;
         }
 
-        if (hasUnappliedChanges && !confirmationPanel.activeSelf)
+        if (hasUnappliedChanges)
         {
             if (!applyButton.interactable)
             {
                 applyButton.interactable = true;
+                applyButtonImage.color = legendsEnabledColor;
+                applyKeyImage.color = legendsEnabledColor;
             }
 
             if (!discardChangesButton.interactable)
             {
                 discardChangesButton.interactable = true;
+                discardButtonImage.color = legendsEnabledColor;
+                discardKeyImage.color = legendsEnabledColor;
             }
         }
         else if (!hasUnappliedChanges && !confirmationPanel.activeSelf)
@@ -175,11 +257,15 @@ public class MMSettings : MonoBehaviour
             if (applyButton.interactable)
             {
                 applyButton.interactable = false;
+                applyButtonImage.color = legendsDisabledColor;
+                applyKeyImage.color = legendsDisabledColor;
             }
             
             if (discardChangesButton.interactable)
             {
                 discardChangesButton.interactable = false;
+                discardButtonImage.color = legendsDisabledColor;
+                discardKeyImage.color = legendsDisabledColor;
             }
         }
     }
@@ -197,6 +283,25 @@ public class MMSettings : MonoBehaviour
         if (tabRightAction != null)
         {
             tabRightAction.Enable();
+        }
+
+        if (parentMenu != null)
+        {
+            if (parentMenu.GetComponent<MainMenu>() != null && parentMenu.GetComponent<MainMenu>().usingController)
+            {
+                controllerLegends.SetActive(true);
+                keyboardLegends.SetActive(false);
+            }
+            else if (parentMenu.GetComponent<PauseManager>() != null && parentMenu.GetComponent<PauseManager>().usingController)
+            {
+                controllerLegends.SetActive(true);
+                keyboardLegends.SetActive(false);
+            }
+            else
+            {
+                controllerLegends.SetActive(false);
+                keyboardLegends.SetActive(true);
+            }
         }
 
         SetUpListeners();
@@ -299,24 +404,11 @@ public class MMSettings : MonoBehaviour
         resetButton.onClick.AddListener(ConfirmBeforeReset);
         applyButton.onClick.AddListener(ConfirmBeforeApply);
         discardChangesButton.onClick.AddListener(ConfirmBeforeDiscardChanges);
+    }
 
-        tabLeftAction.performed += ctx => 
-        {
-            if (videoSettingsOpen)
-            {
-                OpenControlsSettings();
-            }
-            else if (audioSettingsOpen)
-            {
-                OpenVideoSettings();
-            }
-            else if (controlsSettingsOpen)
-            {
-                OpenAudioSettings();
-            }
-        };
-
-        tabRightAction.performed += ctx => 
+    private void OnTabRight()
+    {
+        if (!controlSchemeOpen && !confirmationPanel.activeSelf)
         {
             if (videoSettingsOpen)
             {
@@ -330,7 +422,50 @@ public class MMSettings : MonoBehaviour
             {
                 OpenVideoSettings();
             }
-        };
+        }
+    }
+
+    private void OnTabLeft()
+    {
+        if (!controlSchemeOpen && !confirmationPanel.activeSelf)
+        {
+            if (videoSettingsOpen)
+            {
+                OpenControlsSettings();
+            }
+            else if (audioSettingsOpen)
+            {
+                OpenVideoSettings();
+            }
+            else if (controlsSettingsOpen)
+            {
+                OpenAudioSettings();
+            }
+        }
+    }
+
+    private void OnResetSettings()
+    {
+        if (!confirmationPanel.activeSelf && !controlSchemeOpen && hasChangedSettings)
+        {
+            ConfirmBeforeReset();
+        }
+    }
+
+    private void OnApplySettings()
+    {
+        if (!confirmationPanel.activeSelf && !controlSchemeOpen && hasUnappliedChanges)
+        {
+            ConfirmBeforeApply();
+        }
+    }
+
+    private void OnDiscardSettings()
+    {
+        if (!confirmationPanel.activeSelf && !controlSchemeOpen && hasUnappliedChanges)
+        {
+            ConfirmBeforeDiscardChanges();
+        }
     }
 
     private void OpenVideoSettings()
@@ -542,7 +677,13 @@ public class MMSettings : MonoBehaviour
                 EnableAllButtonsAndSliders();
                 tabLeftAction.Enable();
                 tabRightAction.Enable();
-                EventSystem.current.SetSelectedGameObject(applyButton.gameObject);
+                EventSystem.current.SetSelectedGameObject
+                (
+                    videoSettingsOpen? resolutionDropdown.gameObject :
+                    audioSettingsOpen ? masterVolumeSlider.gameObject :
+                    controlsSettingsOpen ? mouseSensitivitySlider.gameObject :
+                    applyButton.gameObject
+                );
             },
             () => 
             {
@@ -584,7 +725,13 @@ public class MMSettings : MonoBehaviour
                 EnableAllButtonsAndSliders();
                 tabLeftAction.Enable();
                 tabRightAction.Enable();
-                EventSystem.current.SetSelectedGameObject(resetButton.gameObject);
+                EventSystem.current.SetSelectedGameObject
+                (
+                    videoSettingsOpen? resolutionDropdown.gameObject :
+                    audioSettingsOpen ? masterVolumeSlider.gameObject :
+                    controlsSettingsOpen ? mouseSensitivitySlider.gameObject :
+                    applyButton.gameObject
+                );
             },
             () => 
             {
@@ -626,7 +773,13 @@ public class MMSettings : MonoBehaviour
                 EnableAllButtonsAndSliders();
                 tabLeftAction.Enable();
                 tabRightAction.Enable();
-                EventSystem.current.SetSelectedGameObject(discardChangesButton.gameObject);
+                EventSystem.current.SetSelectedGameObject
+                (
+                    videoSettingsOpen? resolutionDropdown.gameObject :
+                    audioSettingsOpen ? masterVolumeSlider.gameObject :
+                    controlsSettingsOpen ? mouseSensitivitySlider.gameObject :
+                    applyButton.gameObject
+                );
             },
             () => 
             {
@@ -888,6 +1041,15 @@ public class MMSettings : MonoBehaviour
         applyButton.interactable = hasUnappliedChanges;
         discardChangesButton.interactable = hasUnappliedChanges;
 
+        resetButtonImage.color = hasChangedSettings ? legendsEnabledColor : legendsDisabledColor;
+        resetKeyImage.color = hasChangedSettings ? legendsEnabledColor : legendsDisabledColor;
+
+        applyButtonImage.color = hasUnappliedChanges ? legendsEnabledColor : legendsDisabledColor;
+        applyKeyImage.color = hasUnappliedChanges ? legendsEnabledColor : legendsDisabledColor;
+
+        discardButtonImage.color = hasUnappliedChanges ? legendsEnabledColor : legendsDisabledColor;
+        discardKeyImage.color = hasUnappliedChanges ? legendsEnabledColor : legendsDisabledColor;
+
         resolutionDropdown.interactable = videoSettingsOpen;
         fullscreenToggle.interactable = videoSettingsOpen;
 
@@ -909,6 +1071,15 @@ public class MMSettings : MonoBehaviour
     {
         tabLeftAction?.Disable();
         tabRightAction?.Disable();
+        resetSettingsAction?.Disable();
+        applySettingsAction?.Disable();
+        discardSettingsAction?.Disable();
+
+        // tabLeftAction.performed -= ctx => OnTabLeft();
+        // tabRightAction.performed -= ctx => OnTabRight();
+        // resetSettingsAction.performed -= ctx => OnResetSettings();
+        // applySettingsAction.performed -= ctx => OnApplySettings();
+        // discardSettingsAction.performed -= ctx => OnDiscardSettings();
 
         resolutionDropdown.onValueChanged.RemoveListener(SetResolution);
         fullscreenToggle.onValueChanged.RemoveListener(SetFullscreen);
@@ -936,6 +1107,11 @@ public class MMSettings : MonoBehaviour
     }
 
     private void OnDisable()
+    {
+        DisableListeners();
+    }
+
+    private void OnDestroy()
     {
         DisableListeners();
     }

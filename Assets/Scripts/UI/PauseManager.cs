@@ -15,6 +15,8 @@ public class PauseManager : MonoBehaviour
     private InputAction playerPauseAction;
     private InputAction UIPauseAction;
     private InputAction cancelAction;
+    private InputAction TabRightAction;
+    private InputAction TabLeftAction;
 
     [Header("UI Button References")]
     [SerializeField] private Button resumeButton;
@@ -31,7 +33,7 @@ public class PauseManager : MonoBehaviour
     [SerializeField] private Canvas[] otherCanvasesToDisable;
 
     [HideInInspector] public bool isGamePaused = false;
-    private bool usingController = false;
+    [HideInInspector] public bool usingController { get; private set; } = false;
 
     private void Awake()
     {
@@ -55,6 +57,22 @@ public class PauseManager : MonoBehaviour
 
         cancelAction = inputActions.FindAction("UI/Cancel");
         cancelAction.Enable();
+
+        TabRightAction = inputActions.FindActionMap("UI").FindAction("TabRight");
+        if (TabRightAction == null)
+        {
+            Debug.LogError("Tab Right action not found in InputActionAsset.");
+            return;
+        }
+        TabRightAction.Enable();
+
+        TabLeftAction = inputActions.FindActionMap("UI").FindAction("TabLeft");
+        if (TabLeftAction == null)
+        {
+            Debug.LogError("Tab Left action not found in InputActionAsset.");
+            return;
+        }
+        TabLeftAction.Enable();
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -74,17 +92,28 @@ public class PauseManager : MonoBehaviour
             return; // Do not allow pausing in the main menu
         }
         
-        if ((playerPauseAction.triggered || UIPauseAction.triggered) && !Journal.Instance.isJournalOpen && !DialogueManager.DialogueIsActive)
+        if ((playerPauseAction.triggered || UIPauseAction.triggered) && !Journal.Instance.isJournalOpen && !DialogueManager.DialogueIsActive && !confirmationPanel.activeSelf)
         {
             if (!pauseMenuPanel.activeSelf && !settingsPanel.activeSelf)
             {
                 PauseGame();
             }
-            else if (settingsPanel.activeSelf)
+            else if (!pauseMenuPanel.activeSelf && settingsPanel.activeSelf)
             {
-                BackToPauseMenu();
+                if (settingsScript != null && settingsScript.controlSchemeOpen)
+                {
+                    settingsScript.CloseControlSchemeUI();
+                }
+                else if (settingsScript != null && settingsScript.hasUnappliedChanges)
+                {
+                    settingsScript.ConfirmBeforeLeaveWithoutApplying();
+                }
+                else
+                {
+                    BackToPauseMenu();
+                }
             }
-            else if (pauseMenuPanel.activeSelf)
+            else if (pauseMenuPanel.activeSelf && !settingsPanel.activeSelf)
             {
                 ResumeGame();
             }
@@ -130,8 +159,12 @@ public class PauseManager : MonoBehaviour
         }
 
         Vector2 mouseDelta = Mouse.current.delta.ReadValue();
+
+        bool mouseKeysMoved = mouseDelta.sqrMagnitude > 0.1f || Keyboard.current.anyKey.isPressed;
+
+        if (!mouseKeysMoved) return;
         
-        if (mouseDelta.sqrMagnitude > 0.1f && usingController)
+        if (usingController)
         {
             usingController = false;
             Cursor.visible = true;
@@ -140,6 +173,12 @@ public class PauseManager : MonoBehaviour
             if (EventSystem.current.currentSelectedGameObject != null)
             {
                 EventSystem.current.SetSelectedGameObject(null);
+            }
+
+            if (settingsPanel.activeSelf && settingsScript != null && settingsScript.controllerLegends.activeSelf && !settingsScript.keyboardLegends.activeSelf)
+            {
+                settingsScript.controllerLegends.SetActive(false);
+                settingsScript.keyboardLegends.SetActive(true);
             }
         }
     }
@@ -151,7 +190,10 @@ public class PauseManager : MonoBehaviour
             return;
         }
 
-        bool controllerMoved = Gamepad.current.leftStick.ReadValue().sqrMagnitude > 0.1f || Gamepad.current.dpad.ReadValue().sqrMagnitude > 0.1f;
+        bool controllerMoved = 
+            Gamepad.current.leftStick.ReadValue().sqrMagnitude > 0.1f 
+            || Gamepad.current.dpad.ReadValue().sqrMagnitude > 0.1f
+            || ((Gamepad.current.leftShoulder.IsPressed() || Gamepad.current.rightShoulder.IsPressed()) && settingsPanel.activeSelf);
         
         if (!controllerMoved)
         {
@@ -188,13 +230,38 @@ public class PauseManager : MonoBehaviour
             // If nothing is selected, set a default based on the active panel
             if (es.currentSelectedGameObject == null)
             {
-                if (pauseMenuPanel.activeSelf)
+                if (confirmationPanel.activeSelf)
+                {
+                    es.SetSelectedGameObject(confirmationPanel.GetComponent<ConfirmationUI>().cancelButton.gameObject);
+                }
+                else if (pauseMenuPanel.activeSelf)
                 {
                     es.SetSelectedGameObject(resumeButton.gameObject);
                 }
-                else if (settingsPanel.activeSelf && settingsScript.videoSettingsOpen)
+                else if (settingsPanel.activeSelf && !settingsScript.controlSchemeOpen)
                 {
-                    es.SetSelectedGameObject(settingsScript.resolutionDropdown.gameObject);
+                    if (settingsScript.videoSettingsOpen)
+                    {
+                        es.SetSelectedGameObject(settingsScript.resolutionDropdown.gameObject);
+                    }
+                    else if (settingsScript.audioSettingsOpen)
+                    {
+                        es.SetSelectedGameObject(settingsScript.masterVolumeSlider.gameObject);
+                    }
+                    else if (settingsScript.controlsSettingsOpen)
+                    {
+                        es.SetSelectedGameObject(settingsScript.mouseSensitivitySlider.gameObject);
+                    }
+                }
+                else if (settingsPanel.activeSelf && settingsScript.controlSchemeOpen)
+                {
+                    es.SetSelectedGameObject(settingsScript.controlSchemeUI.GetComponent<ControlSchemeUI>().ControllerButton.gameObject);
+                }
+
+                if (settingsPanel.activeSelf && !settingsScript.controllerLegends.activeSelf && settingsScript.keyboardLegends.activeSelf)
+                {
+                    settingsScript.controllerLegends.SetActive(true);
+                    settingsScript.keyboardLegends.SetActive(false);
                 }
             }
         } 
