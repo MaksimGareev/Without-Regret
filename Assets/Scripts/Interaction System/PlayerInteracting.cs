@@ -81,6 +81,16 @@ public class PlayerInteracting : MonoBehaviour
             return;
         }
 
+        // // needs another early return here for if moveableTarget != null, otherwise the call to handle 
+        // // interaction below will call mantle's interaction when interact button is pressed.
+        // if (moveTarget != null && Interact != null && Interact.triggered)
+        // {
+        //     if (showDebugLogs) Debug.Log("Move input detected!");
+        //     //TryShowTutorial(moveTarget.interactType);
+        //     moveTarget.OnPlayerInteraction(gameObject);
+        //     return;
+        // }
+
         // Interact with moveable objects or dialogue
         if (currentTarget != null && Interact != null && Interact.triggered)
         {
@@ -136,8 +146,6 @@ public class PlayerInteracting : MonoBehaviour
 
         // Highlight icon
         ButtonIcons.Instance?.Highlight(currentTarget.interactType);
-
-       
     }
     
     private bool TryShowTutorial(InteractType type, System.Action onComplete)

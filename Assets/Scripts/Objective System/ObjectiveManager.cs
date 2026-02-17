@@ -9,14 +9,21 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
     public static ObjectiveManager Instance { get; private set; }
 
     [Header("Objectives")]
+    [Tooltip("List of all objectives in the game. Objectives will be automatically activated in the order they are listed here. Next objective will only be activated once the previous one is completed.")]
     [SerializeField] private List<ObjectiveData> allObjectives;
     private int currentObjectiveIndex = 0;
+    
+    [Tooltip("List of currently active objectives. You should not modify this directly, as objectives will be added and removed from this list automatically as they are activated and completed. This should only be used for debugging purposes and for other scripts to access.")]
     [SerializeField] private List<ObjectiveInstance> activeObjectives = new();
+
+    [Tooltip("List of completed objectives. You should not modify this directly, as objectives will be added to this list automatically when they are completed. This should only be used for debugging purposes and for other scripts to access.")]
     [SerializeField] private List<ObjectiveInstance> completedObjectives = new();
     private bool objectivesInSceneCompleted = false;
-    private ObjectiveCanvas objectiveCanvas;
+    
+    [Tooltip("Reference to the ObjectiveCanvas that exists as a child of this Objective Manager Prefab.")]
+    [SerializeField] private ObjectiveCanvas objectiveCanvas;
 
-    [Header("Events")]
+    //[Header("Events")]
     [HideInInspector] public UnityEvent<ObjectiveInstance> OnObjectiveActivated = new();
     [HideInInspector] public UnityEvent<ObjectiveInstance> OnObjectiveProgressUpdated = new();
     [HideInInspector] public UnityEvent<ObjectiveInstance> OnObjectiveCompleted = new();
