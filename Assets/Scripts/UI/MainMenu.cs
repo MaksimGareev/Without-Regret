@@ -37,11 +37,13 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private TextMeshProUGUI playButtonText;
 
     [Header("Music")]
+    [Tooltip("Audio source for main menu music. Will start playing when the game manager instance is ready.")]
     [SerializeField] private GameObject musicSource;
 
     // Feedback Survey URL
     private string feedbackSurveyURL = "https://docs.google.com/forms/d/e/1FAIpQLSe6KfbYdlWsa25Scm4URfYHRRS8lzQC3mZkm6tqyS_uxxHObA/viewform?usp=sharing&ouid=106294286738853521476";
-
+    
+    // String to update the version number text in main menu
     private string gameVersion = "v.0.0.1";
     private SaveManager saveManager;
     [HideInInspector] public bool usingController { get; private set; } = false;

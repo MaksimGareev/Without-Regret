@@ -7,22 +7,24 @@ using System.Linq;
 public class Door : MonoBehaviour, IInteractable
 {
     [Header("Door Settings")]
-    //scene to load
+    [Tooltip("The scene that this door will load when the player interacts with it. Drag and drop the scene asset from the project window into this field.")]
     public SceneReference sceneToLoad;
-
-    // Interaction      
-    public float interactDistance = 3f;
+    [Tooltip("Distance at which the player can interact with the door.")]
+    public float interactDistance = 5f;
     public float interactionPriority => 5f;
     public InteractType interactType => InteractType.Door;
 
     // Player
     private Transform player;
+    [Header("Objective Settings")]
+    [Tooltip("Objective that must be COMPLETED to allow the player to interact with this door. If the player has not COMPLETED the linked objective, they will not be able to interact with the door.")]
     public ObjectiveData linkedObjective;
+    [Tooltip("If false, the player will be able to interact with this door without needing to complete the linked objective, and the Linked Objective will be ignored. If true, the player must complete the linked objective before they can interact with this door, and the Linked Objective will need to be assigned.")]
     public bool needsObjective = true;
 
 
     [Header("Audio Settings")]
-
+    [Tooltip("Sound that will play when the player interacts with the door.")]
     public AudioClip interactSound;
     private AudioSource audioSource; //not sure if needed ,but will keep for now
 
