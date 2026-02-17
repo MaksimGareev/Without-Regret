@@ -390,7 +390,7 @@ public class PlayerController : MonoBehaviour, ISaveable
                     StopCoroutine(sprintCooldownRoutine);
                     sprintCooldownRoutine = null;
                 }
-                SprintTimer -= Time.deltaTime * moveableObjectMod.sprintDecay; //staminaDecay
+                SprintTimer -= Time.deltaTime * moveableObjectMod.staminaDecay;
                 GameManager.Instance.staminaSlider.gameObject.SetActive(true);
                 GameManager.Instance.staminaSlider.value = SprintTimer;
                 // Don't start cooldown to ensure SprintTimer doesn't reset prematurely
