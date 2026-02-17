@@ -57,6 +57,7 @@ public class EnemyFieldOfView : MonoBehaviour
     [Tooltip("Layer that the enemy cannot see through, untick objects that should be see through (like windows)")]
     public LayerMask obstructionMask; // layer of objects that block the enmey's view
 
+    [Header("Chase Settings")]
     [Tooltip("Shows if the enemy can see the player")]
     public bool canSeePlayer; // if the player is in the enemy's field of view
     [Tooltip("The current duration of the chase, this value goes down when ever the enemy can't see the player, once this reaches 0 chasing will end, if the player is seen while this value is going down, it will reset back up to the Max Chase Duration")]
