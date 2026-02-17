@@ -77,6 +77,12 @@ public class EnemyFieldOfView : MonoBehaviour
     [Tooltip("Shows when the enemy is attacking")]
     public bool isAttacking;
 
+    private bool isStunned = false;
+    private float stunDuration = 2f;
+    private float timeSinceStunned = 0f;
+
+    [SerializeField] private PatrollingEnemy normalMovement;
+
     private void Start()
     {
         StartCoroutine(FOVRoutine());
@@ -89,6 +95,16 @@ public class EnemyFieldOfView : MonoBehaviour
         if (playerRef == null && playerObj != null)
         {
             playerRef = playerObj.transform;
+        }
+
+        if (isStunned)
+        {
+            if(timeSinceStunned >= stunDuration)
+            {
+                isStunned = false;
+                timeSinceStunned = 0;
+            }
+            timeSinceStunned += Time.deltaTime;
         }
         
         m_Agent = GetComponent<NavMeshAgent>();
@@ -185,7 +201,11 @@ public class EnemyFieldOfView : MonoBehaviour
                 {
                     chaseDuration = 1;
                     canSeePlayer = true;
-                    m_Agent.destination = target.position; // if seen move towards the player
+                    normalMovement.chasing = true;
+                    if (!isStunned)
+                    {
+                        m_Agent.destination = target.position; // if seen move towards the player
+                    }
                     //angle = Mathf.Max(baseAngle,230); // enemy FOV widens while chasing the player
                     //radius = aggroRadius;
                     currentState = FOVState.Chasing;
@@ -201,6 +221,7 @@ public class EnemyFieldOfView : MonoBehaviour
                 {
                     canSeePlayer = false;
                     currentState = FOVState.Idle;
+                    normalMovement.chasing = false;
                     //angle = 90;
                     //radius = 5;
                     //Debug.Log("Player lost");
@@ -276,6 +297,18 @@ public class EnemyFieldOfView : MonoBehaviour
                 TimerRingUI.Instance.SubtractRingSection(3);
             }
             //if enemy attacks NPC, trigger game over screen
+        }
+
+        if (other.gameObject.CompareTag("Throwable"))
+        {
+            if (other.gameObject.GetComponent<Rigidbody>().linearVelocity.sqrMagnitude > 0.001f)
+            {
+                other.gameObject.GetComponent<Rigidbody>().linearVelocity = Vector3.zero;
+                m_Agent.Stop();
+                normalMovement.animator.SetBool("isIdle", true);
+                isStunned = true;
+                Debug.Log("Hit with throwable");
+            }
         }
     }
 
