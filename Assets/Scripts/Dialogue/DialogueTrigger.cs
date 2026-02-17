@@ -150,7 +150,7 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
         if (player == null) return;
 
         isTalking = true;
-        animator.SetBool("isTalking", isTalking);
+        SafeSetBool("isTalking", isTalking);
         if (talkRoutine == null)
         {
             talkRoutine = StartCoroutine(TalkAnimationCycle());
@@ -168,9 +168,9 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
     public void StopLookingAtPlayer()
     {
         isTalking = false;
-        animator.SetBool("isTalking", isTalking);
-        animator.SetBool("Talk1", isTalking);
-        animator.SetBool("Talk2", isTalking);
+        SafeSetBool("isTalking", isTalking);
+        SafeSetBool("Talk1", isTalking);
+        SafeSetBool("Talk2", isTalking);
 
         if(talkRoutine != null)
         {
@@ -375,16 +375,24 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
         }
     }
 
-    IEnumerator TalkAnimationCycle()
+    IEnumerator TalkAnimationCycle() //currently cycles back and forth between both talk animations while speaking
     {
-        while(isTalking)
+        if (animator == null)
+            yield break;
+        while (isTalking)
         {
-            animator.SetBool("Talk2", false);
-            animator.SetBool("Talk1", true);
+            SafeSetBool("Talk2", false);
+            SafeSetBool("Talk1", true);
             yield return new WaitForSeconds(5);
-            animator.SetBool("Talk1", false);
-            animator.SetBool("Talk2", true);
+            SafeSetBool("Talk1", false);
+            SafeSetBool("Talk2", true);
             yield return new WaitForSeconds(5);
         }
+    }
+
+    private void SafeSetBool(string parameter, bool value) //this is used in place of animator.setbool so that it can function correctly on non-character objects
+    {
+        if (animator != null)
+            animator.SetBool(parameter, value);
     }
 }
