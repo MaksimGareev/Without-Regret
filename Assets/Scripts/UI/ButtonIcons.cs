@@ -48,7 +48,15 @@ public class ButtonIcons : MonoBehaviour
             if (icon != null)
             {
                 icon.gameObject.SetActive(true);
-            }   
+            }
+            else
+            {
+                Debug.LogWarning($"Icon for InteractType {type} is not assigned in the inspector.");
+            } 
+        }
+        else
+        {
+            Debug.LogWarning($"No icon found for InteractType {type}");
         }
     }
 
