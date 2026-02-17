@@ -14,6 +14,7 @@ public class PlayerController : MonoBehaviour, ISaveable
     [Header("Sprint UI Colors")]
     public Color normalColor = new Color(0f, 147f/255f, 111f/255f);
     public Color cooldownColor = Color.grey;
+    public ParticleSystem SprintDust;
 
     [Header("Movement Settings")]
     public bool MovementLocked = false;
@@ -520,7 +521,15 @@ public class PlayerController : MonoBehaviour, ISaveable
         {
             isSprinting = true;
             animator.SetBool("isSprinting", true);
+
+            if (SprintDust != null && !SprintDust.isPlaying)
+            {
+                Debug.Log("Started Dust");
+                SprintDust.Play();
+            }
         }
+        
+
     }
 
     private void StopSprinting()
@@ -531,6 +540,12 @@ public class PlayerController : MonoBehaviour, ISaveable
         }
         isSprinting = false;
         animator.SetBool("isSprinting", false);
+
+        if (SprintDust != null && SprintDust.isPlaying)
+        {
+            Debug.Log("Stopped Dust");
+            SprintDust.Stop();
+        }
     }
 
     IEnumerator SprintCooldown()
