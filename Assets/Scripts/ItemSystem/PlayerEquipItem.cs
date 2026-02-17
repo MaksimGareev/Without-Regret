@@ -12,6 +12,7 @@ public class PlayerEquipItem : MonoBehaviour
 
     public bool throwableEquipped { get; private set; } = false;
     public bool grabbableEquipped { get; private set; } = false;
+    public bool EquippableItemEquipped { get; private set; } = false;
 
     public void EquipItem(ItemData itemToEquip)
     {
@@ -22,14 +23,8 @@ public class PlayerEquipItem : MonoBehaviour
             return;
         }
 
-        // Do nothing if player has grabbable item currently equipped
-        if (grabbableEquipped)
-        {
-            return;
-        }
-
-        // Do nothing if player has a moveableObject currently held
-        if (PlayerComponents.playerMovingObjects.IsOccupied())
+        // Do nothing if player has their hands full
+        if (throwableEquipped || grabbableEquipped || EquippableItemEquipped || PlayerComponents.playerMovingObjects.IsOccupied())
         {
             return;
         }
@@ -61,9 +56,9 @@ public class PlayerEquipItem : MonoBehaviour
             equippedItemInstance = null;
         }
 
-        // Check if the item is throwable
         throwableEquipped = itemToEquip != null && itemToEquip.ItemType == ItemType.ThrowableItem;
         grabbableEquipped = itemToEquip != null && itemToEquip.ItemType == ItemType.GrabbableItem;
+        EquippableItemEquipped = itemToEquip != null && itemToEquip.ItemType == ItemType.EquippableItem;
 
         if (showDebugLogs)
         {
@@ -82,6 +77,7 @@ public class PlayerEquipItem : MonoBehaviour
         currentEquippedItem = null;
         throwableEquipped = false;
         grabbableEquipped = false;
+        EquippableItemEquipped = false;
 
         if (showDebugLogs)
         {
