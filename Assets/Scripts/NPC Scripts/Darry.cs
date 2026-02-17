@@ -5,7 +5,9 @@ public class Darry : MonoBehaviour
 {
     // Movement
     public NavMeshAgent agent;
-    public Transform target;
+    public Transform[] targets;
+    private int currentIndex = 0;
+    [HideInInspector] public Transform currentTarget;
 
     // movemnet after dialogue
     public float Speed = 3f;      // movement speed
@@ -17,6 +19,9 @@ public class Darry : MonoBehaviour
     public bool arrived = false;
     public float stopDistance = 0.5f;
 
+    private float updateTimer = 0f;
+    public float updateRate = 0.2f;
+
     // objectives
     [SerializeField] ObjectiveData linkedHouseObjective;
     [SerializeField] ObjectiveData linkedNeighborhoodObjective;
@@ -24,7 +29,17 @@ public class Darry : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        if (targets.Length > 0)
+        {
+            currentIndex = 0;
+            currentTarget = targets[currentIndex];
+            agent.SetDestination(targets[currentIndex].position);
+        }
+        else
+        {
+            currentTarget = null;
+            Debug.LogWarning("No targets assigned to ChasingEnemy!");
+        }
     }
 
     // Update is called once per frame
@@ -41,14 +56,38 @@ public class Darry : MonoBehaviour
             agent.isStopped = false;
         }
 
+        updateTimer -= Time.deltaTime;
+        if (updateTimer <= 0f)
+        {
+            if (targets[currentIndex] != null)
+            {
+                agent.SetDestination(targets[currentIndex].position);
+            }
+            updateTimer = updateRate;
+        }
+
+
+        // Go to next target after reaching current target
+        if (!agent.pathPending)
+        {
+            if (agent.remainingDistance != Mathf.Infinity &&
+                agent.remainingDistance <= agent.stoppingDistance &&
+                agent.velocity.sqrMagnitude < 0.1f)
+            {
+                GoToNextTarget();
+            }
+        }
+
+        /*
         if (!agent.pathPending && agent.remainingDistance < 0.5f && agent != null)
         {
-            agent.SetDestination(target.position);
+            agent.SetDestination(targets.position);
         }
         if (isTraveling)
         {
             TravelToTarget();
         }
+        */
     }
 
     public void StartTravel()
@@ -84,6 +123,35 @@ public class Darry : MonoBehaviour
             isTraveling = false;
             arrived = true;
             Debug.Log("Irene reached the destination.");
+        }
+    }
+
+    void GoToNextTarget()
+    {
+        // ReachedNPC = false;
+
+        /*  // Destroy NPCs or objects if needed
+          if (targets[currentIndex] != null && targets[currentIndex].CompareTag("protectedNPC") || targets[currentIndex].CompareTag("Darry"))
+          {
+              Debug.Log("Enemy reached NPC!");
+              Destroy(targets[currentIndex].gameObject, 0.1f);
+          }*/
+
+        // Move to next waypoint
+        currentIndex++;
+
+        if (currentIndex >= targets.Length)
+        {
+            Debug.Log("Enemy reached final target!");
+            currentTarget = null;       // <--- set to null when no more targets
+            agent.isStopped = true;     // stop the NavMeshAgent
+            return; // Stop here, no more targets
+        }
+
+        currentTarget = targets[currentIndex];
+        if (currentTarget != null)
+        {
+            agent.SetDestination(currentTarget.position);
         }
     }
 
