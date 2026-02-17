@@ -16,7 +16,7 @@ public class PlayerPossessing : MonoBehaviour
     [SerializeField] private Vector3 iconOffset = new Vector3(0f, 2f, 0f);
     [SerializeField] private LayerMask mask;
 
-    private Slider possessionBar;
+    //private Slider possessionBar;
     private GameObject popupInstance;
     private PlayerController playerController;
     private Rigidbody playerRigidbody;
@@ -41,15 +41,15 @@ public class PlayerPossessing : MonoBehaviour
         playerRigidbody = GetComponent<Rigidbody>();
         possessionTimer = possessionDuration;
 
-        if (possessionBar == null)
-        {
-           possessionBar = GameObject.Find("PossessionBar")?.GetComponent<Slider>();
-        }
+        // if (possessionBar == null)
+        // {
+        //    possessionBar = GameObject.Find("PossessionBar")?.GetComponent<Slider>();
+        // }
 
-        if (possessionBar != null)
+        if (GameManager.Instance.possessionSlider != null)
         {
-            possessionBar.value = 1;
-            possessionBar.gameObject.SetActive(false);
+            GameManager.Instance.possessionSlider.value = 1;
+            GameManager.Instance.possessionSlider.gameObject.SetActive(false);
         }
     }
 
@@ -85,7 +85,7 @@ public class PlayerPossessing : MonoBehaviour
         if (possessedEnemyMovement != null)
         {
             possessionTimer -= Time.deltaTime;
-            possessionBar.value = Mathf.InverseLerp(0, possessionDuration, possessionTimer);
+            GameManager.Instance.possessionSlider.value = Mathf.InverseLerp(0, possessionDuration, possessionTimer);
 
                 Vector3 input = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
                 possessedEnemyMovement.UpdatePossession(input);
@@ -97,11 +97,11 @@ public class PlayerPossessing : MonoBehaviour
         }
         if(!posessing && possessionTimer < possessionDuration)
         {
-            possessionBar.gameObject.SetActive(true);
+            GameManager.Instance.possessionSlider.gameObject.SetActive(true);
             if (TimeSincePossession >= rechargeDelay)
             {
                 possessionTimer += Time.deltaTime * rechargeSpeed;
-                possessionBar.value = Mathf.InverseLerp(0, possessionDuration, possessionTimer);
+                GameManager.Instance.possessionSlider.value = Mathf.InverseLerp(0, possessionDuration, possessionTimer);
             }
             else
             {
@@ -110,7 +110,7 @@ public class PlayerPossessing : MonoBehaviour
         }
         else if (possessionTimer >= possessionDuration)
         {
-            possessionBar.gameObject.SetActive(false);
+            GameManager.Instance.possessionSlider.gameObject.SetActive(false);
         }
     }
 
@@ -198,7 +198,7 @@ public class PlayerPossessing : MonoBehaviour
         }
 
         posessing = true;
-        possessionBar.gameObject.SetActive(true);
+        GameManager.Instance.possessionSlider.gameObject.SetActive(true);
         normalEnemyMovement = target.GetComponent<PatrollingEnemy>();
         enemyRigidbody = target.GetComponent<Rigidbody>();
         enemyPOV = target.GetComponent<EnemyFieldOfView>();
@@ -258,7 +258,7 @@ public class PlayerPossessing : MonoBehaviour
             }
         }
 
-        possessionBar.gameObject.SetActive(false);
+        GameManager.Instance.possessionSlider.gameObject.SetActive(false);
 
         if (enemyPOV != null)
         {

@@ -42,7 +42,6 @@ Transform:
   - {fileID: 2137318707251030191}
   - {fileID: 7085567522544542160}
   - {fileID: 618859906433929431}
-  - {fileID: 1796815244453075111}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3511942004292408439
@@ -68,8 +67,7 @@ MonoBehaviour:
   throwingSlider: {fileID: 2565303304831035471}
   possessionSlider: {fileID: 6908533894573884054}
   floatingSlider: {fileID: 122864520917474810}
-  floatLeftArea: {fileID: 6836272265634005855}
-  floatRightArea: {fileID: 0}
+  floatTargetArea: {fileID: 3935373791905821840}
   floatCooldown: {fileID: 2761333799864966524}
   staminaFill: {fileID: 682601056385945867}
   InventoryUI: {fileID: 3053237541463927900}
@@ -148,128 +146,6 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 7355459551578340797, guid: 6ed92287928ce3d4f8c3f2385cba499e, type: 3}
   m_PrefabInstance: {fileID: 308260605462797421}
-  m_PrefabAsset: {fileID: 0}
---- !u!1001 &1503461620846364748
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 8090287494469674823}
-    m_Modifications:
-    - target: {fileID: 878993099091267819, guid: dc60125b78695de43a450852f8101d10, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -297.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 878993099091267819, guid: dc60125b78695de43a450852f8101d10, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -188.6
-      objectReference: {fileID: 0}
-    - target: {fileID: 878993099091267819, guid: dc60125b78695de43a450852f8101d10, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -10.3
-      objectReference: {fileID: 0}
-    - target: {fileID: 878993099091267819, guid: dc60125b78695de43a450852f8101d10, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.7071068
-      objectReference: {fileID: 0}
-    - target: {fileID: 878993099091267819, guid: dc60125b78695de43a450852f8101d10, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 878993099091267819, guid: dc60125b78695de43a450852f8101d10, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0.7071068
-      objectReference: {fileID: 0}
-    - target: {fileID: 878993099091267819, guid: dc60125b78695de43a450852f8101d10, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 878993099091267819, guid: dc60125b78695de43a450852f8101d10, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 878993099091267819, guid: dc60125b78695de43a450852f8101d10, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: -90
-      objectReference: {fileID: 0}
-    - target: {fileID: 878993099091267819, guid: dc60125b78695de43a450852f8101d10, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1566633728491210951, guid: dc60125b78695de43a450852f8101d10, type: 3}
-      propertyPath: rhythmSlider
-      value: 
-      objectReference: {fileID: 122864520917474810}
-    - target: {fileID: 1566633728491210951, guid: dc60125b78695de43a450852f8101d10, type: 3}
-      propertyPath: rhythmTarget
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 1566633728491210951, guid: dc60125b78695de43a450852f8101d10, type: 3}
-      propertyPath: cooldownObject
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 1566633728491210951, guid: dc60125b78695de43a450852f8101d10, type: 3}
-      propertyPath: rhythmTargetLeft
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 1566633728491210951, guid: dc60125b78695de43a450852f8101d10, type: 3}
-      propertyPath: rhythmTargetRight
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 3930968705077024376, guid: dc60125b78695de43a450852f8101d10, type: 3}
-      propertyPath: showDebugLogs
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5657707268177514977, guid: dc60125b78695de43a450852f8101d10, type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5657707268177514977, guid: dc60125b78695de43a450852f8101d10, type: 3}
-      propertyPath: inventoryGameObject
-      value: 
-      objectReference: {fileID: 3053237541463927900}
-    - target: {fileID: 5675321481151379428, guid: dc60125b78695de43a450852f8101d10, type: 3}
-      propertyPath: m_Name
-      value: Player
-      objectReference: {fileID: 0}
-    - target: {fileID: 6369621648110085496, guid: dc60125b78695de43a450852f8101d10, type: 3}
-      propertyPath: hasBackpack
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6369621648110085496, guid: dc60125b78695de43a450852f8101d10, type: 3}
-      propertyPath: AddItemPopup
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 6369621648110085496, guid: dc60125b78695de43a450852f8101d10, type: 3}
-      propertyPath: interactingScript
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 7137697055784097519, guid: dc60125b78695de43a450852f8101d10, type: 3}
-      propertyPath: staminaFill
-      value: 
-      objectReference: {fileID: 682601056385945867}
-    - target: {fileID: 7137697055784097519, guid: dc60125b78695de43a450852f8101d10, type: 3}
-      propertyPath: staminaSlider
-      value: 
-      objectReference: {fileID: 2373368011447158285}
-    - target: {fileID: 7147037502482933178, guid: dc60125b78695de43a450852f8101d10, type: 3}
-      propertyPath: powerSlider
-      value: 
-      objectReference: {fileID: 2565303304831035471}
-    - target: {fileID: 8123318097379088782, guid: dc60125b78695de43a450852f8101d10, type: 3}
-      propertyPath: posessionBar
-      value: 
-      objectReference: {fileID: 6908533894573884054}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: dc60125b78695de43a450852f8101d10, type: 3}
---- !u!4 &1796815244453075111 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 878993099091267819, guid: dc60125b78695de43a450852f8101d10, type: 3}
-  m_PrefabInstance: {fileID: 1503461620846364748}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1921867422204754901
 PrefabInstance:
@@ -916,6 +792,11 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 9091907123189174325, guid: 3efd7678575bb2541bf756e1e4a7d085, type: 3}
   m_PrefabInstance: {fileID: 6085407656402549865}
   m_PrefabAsset: {fileID: 0}
+--- !u!224 &3935373791905821840 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 7128907498651470073, guid: 3efd7678575bb2541bf756e1e4a7d085, type: 3}
+  m_PrefabInstance: {fileID: 6085407656402549865}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &5432244671434552757 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2238433853390555612, guid: 3efd7678575bb2541bf756e1e4a7d085, type: 3}
@@ -932,17 +813,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 1762378042174893310, guid: 3efd7678575bb2541bf756e1e4a7d085, type: 3}
   m_PrefabInstance: {fileID: 6085407656402549865}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &6836272265634005855 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 769244045635010358, guid: 3efd7678575bb2541bf756e1e4a7d085, type: 3}
-  m_PrefabInstance: {fileID: 6085407656402549865}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Slider
 --- !u!114 &6908533894573884054 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 834218150429097727, guid: 3efd7678575bb2541bf756e1e4a7d085, type: 3}
