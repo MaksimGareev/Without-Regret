@@ -1,6 +1,7 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(CanvasGroup), typeof(AudioSource))]
 public class ObjectiveCanvas : MonoBehaviour
@@ -82,8 +83,14 @@ public class ObjectiveCanvas : MonoBehaviour
             Debug.LogError("ObjectiveCanvas: Received null ObjectiveInstance in HandleObjectiveActivated.");
             return;
         }
+        
         currentObjective = newObjective;
-        audioSource.Play(); // play scribble sfx
+
+        if (SceneManager.GetActiveScene().name != "MainMenu")
+        {
+            audioSource.Play(); // play scribble sfx
+        }
+        
         titleText.text = "New Objective Started!";
         descriptionText.text = newObjective.data.title + ": Check your journal for more information.";
         progressText.text = $"Progress: 0/{newObjective.data.requiredProgress}";

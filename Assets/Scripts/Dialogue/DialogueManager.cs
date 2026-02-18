@@ -182,6 +182,29 @@ public class DialogueManager : MonoBehaviour
         DialogueIsActive = false;
         playerController.SetDialogueActive(false);
 
+        if (activeDialogueTrigger != null)
+        {
+            // if the dialogue trigger has a reward item, add it to the inventory
+            if (activeDialogueTrigger.RewardItem != null)
+            {
+                Inventory inventory = FindObjectOfType<Inventory>();
+                if (inventory != null)
+                {
+                    inventory.AddItem(activeDialogueTrigger.RewardItem);
+                }
+                else
+                {
+                    Debug.LogError("No inventory found in scene to add dialogue reward item to.");
+                }
+            }
+            
+            // if the dialogue trigger has a linked objective, add progress to it
+            if (activeDialogueTrigger.linkedObjective != null && ObjectiveManager.Instance != null)
+            {
+                ObjectiveManager.Instance.AddProgress(activeDialogueTrigger.linkedObjective.objectiveID, 1);
+            }
+        }
+
         StartCoroutine(cam.EndCameraZoom());
         cam.SetCameraLocked(false);
     }

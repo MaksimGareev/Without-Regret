@@ -237,13 +237,13 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
             Debug.Log("DialogueTrigger: Starting dialogue from JSON");
             GameManager.Instance.dialogueManager.StartDialogueFromJson(CompleteJsonDialogueFile, this);
 
-            if (ObjectiveManager.Instance != null && linkedObjective != null)
-            {
-                if (ObjectiveManager.Instance.IsObjectiveActive(linkedObjective.objectiveID))
-                {
-                    ObjectiveManager.Instance.AddProgress(linkedObjective.objectiveID, 1);
-                }
-            }
+            // if (ObjectiveManager.Instance != null && linkedObjective != null)
+            // {
+            //     if (ObjectiveManager.Instance.IsObjectiveActive(linkedObjective.objectiveID))
+            //     {
+            //         ObjectiveManager.Instance.AddProgress(linkedObjective.objectiveID, 1);
+            //     }
+            // }
             
             return;
         }
@@ -273,13 +273,13 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
             GameManager.Instance.dialogueManager.StartDialogueFromJson(jsonDialogueFile, this);
             
             // Add Progress to objective if there is one to add to, (Talking to irene completes the "talk to irene" objective)
-            if (ObjectiveManager.Instance != null && linkedObjective != null)
-            {
-                if (ObjectiveManager.Instance.IsObjectiveActive(linkedObjective.objectiveID))
-                {
-                    ObjectiveManager.Instance.AddProgress(linkedObjective.objectiveID, 1);
-                }
-            }
+            // if (ObjectiveManager.Instance != null && linkedObjective != null)
+            // {
+            //     if (ObjectiveManager.Instance.IsObjectiveActive(linkedObjective.objectiveID))
+            //     {
+            //         ObjectiveManager.Instance.AddProgress(linkedObjective.objectiveID, 1);
+            //     }
+            // }
 
             TalkedAlready = true;
         }
@@ -289,13 +289,13 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
             Debug.Log("DialogueTrigger: Starting dialogue from JSON");
             GameManager.Instance.dialogueManager.StartDialogueFromJson(TalkedJsonDialogueFile, this);
 
-            if (ObjectiveManager.Instance != null && linkedObjective != null)
-            {
-                if (ObjectiveManager.Instance.IsObjectiveActive(linkedObjective.objectiveID))
-                {
-                    ObjectiveManager.Instance.AddProgress(linkedObjective.objectiveID, 1);
-                }
-            }
+            // if (ObjectiveManager.Instance != null && linkedObjective != null)
+            // {
+            //     if (ObjectiveManager.Instance.IsObjectiveActive(linkedObjective.objectiveID))
+            //     {
+            //         ObjectiveManager.Instance.AddProgress(linkedObjective.objectiveID, 1);
+            //     }
+            // }
         }
 
     }
@@ -346,14 +346,14 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
             {
                 GameManager.Instance.dialogueManager.StartDialogueFromJson(jsonDialogueFile, this);
 
-                // Add Progress to objective if there is one to add to, (Talking to irene completes the "talk to irene" objective)
-                if (ObjectiveManager.Instance != null && linkedObjective != null)
-                {
-                    if (ObjectiveManager.Instance.IsObjectiveActive(linkedObjective.objectiveID))
-                    {
-                        ObjectiveManager.Instance.AddProgress(linkedObjective.objectiveID, 1);
-                    }
-                }
+                // // Add Progress to objective if there is one to add to, (Talking to irene completes the "talk to irene" objective)
+                // if (ObjectiveManager.Instance != null && linkedObjective != null)
+                // {
+                //     if (ObjectiveManager.Instance.IsObjectiveActive(linkedObjective.objectiveID))
+                //     {
+                //         ObjectiveManager.Instance.AddProgress(linkedObjective.objectiveID, 1);
+                //     }
+                // }
             }
 
             TalkedAlready = true;
