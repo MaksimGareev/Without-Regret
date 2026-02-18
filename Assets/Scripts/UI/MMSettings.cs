@@ -4,7 +4,6 @@ using TMPro;
 using UnityEngine.EventSystems;
 using System.Collections;
 using UnityEngine.InputSystem;
-using UnityEditor.EditorTools;
 
 public class MMSettings : MonoBehaviour
 {
