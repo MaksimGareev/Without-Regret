@@ -64,6 +64,7 @@ public class Gate : SaveableWithID
             rightDoorAnimator.SetBool("NearPlayer", true);
             leftDoorAnimator.SetBool("NearPlayer", true);
             opened = true;
+            SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
         }
     }
 
