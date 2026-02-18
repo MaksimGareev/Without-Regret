@@ -126,7 +126,7 @@ public class PlayerInteracting : MonoBehaviour
 
     private void ScanForInteractable()
     {
-        Collider[] hits = Physics.OverlapSphere(transform.position, interactionRange);
+        Collider[] hits = Physics.OverlapSphere(transform.position + transform.forward * interactOffset, interactionRange);
 
         var interactables = hits.Select(h => h.GetComponent<IInteractable>()).Where(i => i != null && i.CanInteract(gameObject)).ToList();  //OrderByDescending(i => i.interactionPriority).FirstOrDefault();
 

@@ -16,7 +16,7 @@ public class Inventory : MonoBehaviour, ISaveable
     
     //private GameObject interactingScript;
     private GameObject backpack;
-    private TextMeshProUGUI AddItemPopup;
+    //private TextMeshProUGUI AddItemPopup;
 
     [Header("Leaf Objective")]
     [SerializeField] private ItemData LeavesReward;
@@ -66,20 +66,20 @@ public class Inventory : MonoBehaviour, ISaveable
             }
         }
 
-        if (AddItemPopup == null)
-        {
-            //var foundObjects = FindObjectsByType<TextMeshProUGUI>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-            AddItemPopup = GameObject.Find("Inventory Add popup")?.GetComponent<TextMeshProUGUI>();
-            if (AddItemPopup == null)
-            {
-                Debug.LogError("AddItemPopup TextMeshProUGUI not found in the scene. Please ensure a TextMeshProUGUI named 'Inventory Add popup' exists in the scene as a child of the PlayerUICanvas.");
-            }
-        }
+        // if (AddItemPopup == null)
+        // {
+        //     //var foundObjects = FindObjectsByType<TextMeshProUGUI>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        //     AddItemPopup = GameObject.Find("Inventory Add popup")?.GetComponent<TextMeshProUGUI>();
+        //     if (AddItemPopup == null)
+        //     {
+        //         Debug.LogError("AddItemPopup TextMeshProUGUI not found in the scene. Please ensure a TextMeshProUGUI named 'Inventory Add popup' exists in the scene as a child of the PlayerUICanvas.");
+        //     }
+        // }
 
 
 
-        if(AddItemPopup != null)
-            AddItemPopup.gameObject.SetActive(false);
+        if(GameManager.Instance.inventoryPopupText != null)
+            GameManager.Instance.inventoryPopupText.gameObject.SetActive(false);
     }
 
     private void Start()
@@ -282,10 +282,10 @@ public class Inventory : MonoBehaviour, ISaveable
 
     private IEnumerator ItemAddedPopUp(ItemData Item)
     {
-        AddItemPopup.text = "Item Added to Inventory: " + Item.ItemName;
-        AddItemPopup.gameObject.SetActive(true);
+        GameManager.Instance.inventoryPopupText.text = "Item Added to Inventory: " + Item.ItemName;
+        GameManager.Instance.inventoryPopupText.gameObject.SetActive(true);
         yield return new WaitForSecondsRealtime(1.5f);
-        AddItemPopup.gameObject.SetActive(false);
+        GameManager.Instance.inventoryPopupText.gameObject.SetActive(false);
     }
 
     public void AddLeaves()

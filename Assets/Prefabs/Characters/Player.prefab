@@ -685,8 +685,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Controller: {fileID: 8821119716541630626}
   animator: {fileID: 1306356219283198842}
-  staminaSlider: {fileID: 0}
-  staminaFill: {fileID: 0}
   normalColor: {r: 0, g: 0.5764706, b: 0.43529412, a: 1}
   cooldownColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   SprintDust: {fileID: 82863498991437760}
@@ -695,6 +693,7 @@ MonoBehaviour:
   SprintSpeed: 8
   SprintDuration: 3
   sprintCooldown: 4
+  emptyStaminaSpeedFactor: 0.5
   staminaLingerDuration: 1
   StationaryCamera: 0
   SprintTimer: 3
@@ -782,7 +781,6 @@ MonoBehaviour:
   holdTime: 5
   chargeKey: 1
   chargeButton: Xbox RightStick Click
-  Indoors: 0
   animator: {fileID: 1306356219283198842}
 --- !u!114 &6369621648110085496
 MonoBehaviour:
@@ -881,16 +879,12 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5675321481151379428}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f78a7fb4d2306884f91c728f43a6e04d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerFishing
   fishingAction: {fileID: -5528296139197480759, guid: f1f4dbfd8c64cd440924988ec4fb6f6a, type: 3}
-  fishingRod: {fileID: 11400000, guid: 045ead20566c4ae48b6fc950da2d9472, type: 2}
-  castOrigin: {fileID: 878993099091267819}
-  playerEquipItem: {fileID: 771315798553256207}
-  castChargeSlider: {fileID: 0}
   castForce: 10
   maxCastDistance: 30
   minCastDistance: 2
@@ -899,8 +893,11 @@ MonoBehaviour:
   castCooldown: 0.5
   reelEnableDelay: 0.75
   disableMovementWhileFishing: 1
-  castTargetPrefab: {fileID: 0}
   targetSweepSpeed: 1
+  fishingRod: {fileID: 11400000, guid: 045ead20566c4ae48b6fc950da2d9472, type: 2}
+  castOrigin: {fileID: 878993099091267819}
+  castChargeSlider: {fileID: 0}
+  castTargetPrefab: {fileID: 0}
   showDebugLogs: 0
 --- !u!114 &3930968705077024376
 MonoBehaviour:

@@ -1,4 +1,5 @@
 using System.Collections;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -29,6 +30,7 @@ public class GameManager : MonoBehaviour
     public GameObject LockPickUI;
     public RectTransform inventoryRectTransform;
     public InventoryUIController inventoryInteractingScript;
+    public TextMeshProUGUI inventoryPopupText;
     [HideInInspector] public GameObject interactionIconsCanvas;
     [HideInInspector] public GameObject journalUICanvas;
     [HideInInspector] public GameObject playerUICanvas;
