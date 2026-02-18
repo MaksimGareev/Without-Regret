@@ -78,6 +78,7 @@ public class PlayerFloating : MonoBehaviour
 
     void OnEnable()
     {
+        controls.Enable();
         floatAction.action.performed += ctx => ReadSubmit(ctx);
         floatAction.action.canceled += ctx => ReadSubmit(ctx);
         controls.Player.Move.performed += ctx => ReadMove(ctx);
@@ -85,6 +86,7 @@ public class PlayerFloating : MonoBehaviour
     }
     void OnDisable()
     {
+        controls.Disable();
         floatAction.action.performed -= ctx => ReadSubmit(ctx);
         floatAction.action.canceled -= ctx => ReadSubmit(ctx);
         controls.Player.Move.performed -= ctx => ReadMove(ctx);
