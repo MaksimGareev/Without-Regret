@@ -4,15 +4,27 @@ using System.Collections;
 public class FallResetTrigger : MonoBehaviour
 {
     [Header("Reset Settings")]
+    [Tooltip("Time in seconds to wait after the player enters the trigger before starting to move them to the reset point.")]
     public float delayBeforeReset = 0.5f;
+
+    [Tooltip("Duration in seconds for the player to be moved from their current position to the reset point. During this time, the player's movement will be locked and they will be faded out.")]
     public float moveDuration = 0.8f;
+
+    [Tooltip("Alpha value to set on the player's materials during the reset movement. This will make the player appear faded out while they are being moved to the reset point.")]
     public float fadedAlpha = 0.3f;
+
+    [Tooltip("Number of rings to subtract from the player when they fall and trigger a reset. This will cause the Timer Ring UI to update and visually show the player losing \"Health\".")]
     public int amountOfRingsToSubtract = 1;
+    [Tooltip("Cooldown time in seconds after a reset during which the trigger will be disabled to prevent multiple rapid resets if the player is still within the trigger area.")]
+    public float triggerDisableCooldown = 1f;
 
     [Header("Reset Point(auto-assigned if child exists)")]
     public Transform resetPoint;
-    public float triggerDisableCooldown = 1f;
+
+    [Header("Debugging")]
+    [Tooltip("If true, debug logs will be printed to the console regarding this script. This can be helpful for troubleshooting and ensuring the reset logic is working as intended, but should be left false when not needed.")]
     public bool showDebugLogs = false;
+
     private bool isResetting = false;
     private float lastResetTime = -Mathf.Infinity;
     private Collider triggerCollider;

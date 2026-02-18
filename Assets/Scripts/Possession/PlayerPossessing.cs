@@ -12,10 +12,11 @@ public class PlayerPossessing : MonoBehaviour
     [SerializeField] private float searchConeAngle = 30f;
     [SerializeField] private KeyCode possessKey = KeyCode.R;
     [SerializeField] private KeyCode possessButton = KeyCode.JoystickButton9;
-    private Slider possessionBar;
     [SerializeField] private GameObject iconPrefab;
     [SerializeField] private Vector3 iconOffset = new Vector3(0f, 2f, 0f);
+    [SerializeField] private LayerMask mask;
 
+    //private Slider possessionBar;
     private GameObject popupInstance;
     private PlayerController playerController;
     private Rigidbody playerRigidbody;
@@ -25,8 +26,11 @@ public class PlayerPossessing : MonoBehaviour
     private NavMeshAgent enemyNavMeshAgent;
     private Rigidbody enemyRigidbody;
     private float possessionTimer;
+    private float TimeSincePossession;
+    private float rechargeDelay = 1.5f;
+    private float rechargeSpeed = .5f;
     private PossessedEnemyResisting target = null;
-    public LayerMask mask;
+    
     RaycastHit hit;
     private bool posessing = false;
     public bool shouldShowIcon = true;
@@ -35,21 +39,24 @@ public class PlayerPossessing : MonoBehaviour
     {
         playerController = GetComponent<PlayerController>();
         playerRigidbody = GetComponent<Rigidbody>();
+        possessionTimer = possessionDuration;
 
-        if (possessionBar == null)
-        {
-           possessionBar = GameObject.Find("PossessionBar")?.GetComponent<Slider>();
-        }
+        // if (possessionBar == null)
+        // {
+        //    possessionBar = GameObject.Find("PossessionBar")?.GetComponent<Slider>();
+        // }
 
-        if (possessionBar != null)
+        if (GameManager.Instance.possessionSlider != null)
         {
-            possessionBar.value = 1;
-            possessionBar.gameObject.SetActive(false);
+            GameManager.Instance.possessionSlider.value = 1;
+            GameManager.Instance.possessionSlider.gameObject.SetActive(false);
         }
     }
 
     private void Update()
     {
+        if (Time.timeScale == 0) return;
+        
         if (Input.GetKeyDown(possessKey))
         {
             TryStartPossession();
@@ -80,7 +87,7 @@ public class PlayerPossessing : MonoBehaviour
         if (possessedEnemyMovement != null)
         {
             possessionTimer -= Time.deltaTime;
-            possessionBar.value = Mathf.InverseLerp(0, possessionDuration, possessionTimer);
+            GameManager.Instance.possessionSlider.value = Mathf.InverseLerp(0, possessionDuration, possessionTimer);
 
                 Vector3 input = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
                 possessedEnemyMovement.UpdatePossession(input);
@@ -89,6 +96,23 @@ public class PlayerPossessing : MonoBehaviour
                 {
                     EndPossession();
                 }
+        }
+        if(!posessing && possessionTimer < possessionDuration)
+        {
+            GameManager.Instance.possessionSlider.gameObject.SetActive(true);
+            if (TimeSincePossession >= rechargeDelay)
+            {
+                possessionTimer += Time.deltaTime * rechargeSpeed;
+                GameManager.Instance.possessionSlider.value = Mathf.InverseLerp(0, possessionDuration, possessionTimer);
+            }
+            else
+            {
+                TimeSincePossession += Time.deltaTime;
+            }
+        }
+        else if (possessionTimer >= possessionDuration)
+        {
+            GameManager.Instance.possessionSlider.gameObject.SetActive(false);
         }
     }
 
@@ -176,14 +200,11 @@ public class PlayerPossessing : MonoBehaviour
         }
 
         posessing = true;
-        possessionBar.gameObject.SetActive(true);
+        GameManager.Instance.possessionSlider.gameObject.SetActive(true);
         normalEnemyMovement = target.GetComponent<PatrollingEnemy>();
         enemyRigidbody = target.GetComponent<Rigidbody>();
         enemyPOV = target.GetComponent<EnemyFieldOfView>();
         possessedEnemyMovement = target;
-        
-
-        possessionTimer = possessionDuration;
 
         if (playerController != null)
         {
@@ -239,8 +260,7 @@ public class PlayerPossessing : MonoBehaviour
             }
         }
 
-        possessionBar.gameObject.SetActive(false);
-        possessionBar.value = 1;
+        GameManager.Instance.possessionSlider.gameObject.SetActive(false);
 
         if (enemyPOV != null)
         {
@@ -259,6 +279,7 @@ public class PlayerPossessing : MonoBehaviour
             GetComponent<CharacterController>().enabled = true;
         }
         posessing = false;
+        TimeSincePossession = 0;
         ClearTargetInfo();
     }
 

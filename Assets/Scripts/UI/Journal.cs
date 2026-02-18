@@ -39,8 +39,8 @@ public class Journal : MonoBehaviour
     //[Header("Characters")]
     //[SerializeField] private GameObject charactersPage;
 
-    [Header("Canvases")]
-    [SerializeField] private Canvas[] canvasesToDisable;
+    //[Header("Canvases")]
+    //[SerializeField] private Canvas[] canvasesToDisable;
     [HideInInspector] public bool isJournalOpen = false;
 
     private List<ObjectiveInstance> objectivesList;
@@ -140,6 +140,7 @@ public class Journal : MonoBehaviour
             Cursor.lockState = CursorLockMode.None;
             Time.timeScale = 0f;
             EnableJournalInput();
+            DisableOtherCanvases();
         }
         else
         {
@@ -147,12 +148,75 @@ public class Journal : MonoBehaviour
             Cursor.lockState = CursorLockMode.Locked;
             Time.timeScale = 1f;
             DisableJournalInput();
+            EnableOtherCanvases();
         }
 
-        foreach (Canvas canvas in canvasesToDisable)
+        // foreach (Canvas canvas in canvasesToDisable)
+        // {
+        //     if (canvas != null)
+        //         canvas.enabled = !isJournalOpen;
+        // }
+    }
+
+    private void EnableOtherCanvases()
+    {
+        Debug.Log("Enabling other canvases from Journal");
+        if (GameManager.Instance == null) return;
+
+        if (GameManager.Instance.mainCanvas != null && !GameManager.Instance.mainCanvas.activeSelf)
         {
-            if (canvas != null)
-                canvas.enabled = !isJournalOpen;
+            GameManager.Instance.mainCanvas.SetActive(true);
+        }
+
+        if (GameManager.Instance.interactionIconsCanvas != null && !GameManager.Instance.interactionIconsCanvas.activeSelf)
+        {
+            GameManager.Instance.interactionIconsCanvas.SetActive(true);
+        }
+
+        if (GameManager.Instance.playerUICanvas != null && !GameManager.Instance.playerUICanvas.activeSelf)
+        {
+            GameManager.Instance.playerUICanvas.SetActive(true);
+        }
+
+        if (GameManager.Instance.gameOverCanvas != null && !GameManager.Instance.gameOverCanvas.activeSelf)
+        {
+            GameManager.Instance.gameOverCanvas.SetActive(GameOverManager.Instance.isGameOver);
+        }
+
+        if (GameManager.Instance.objectivePanel != null && !GameManager.Instance.objectivePanel.activeSelf)
+        {
+            GameManager.Instance.objectivePanel.SetActive(GameManager.Instance.objectiveCanvas.IsVisible());
+        }
+    }
+
+    private void DisableOtherCanvases()
+    {
+        Debug.Log("Disabling other canvases from Journal");
+        if (GameManager.Instance == null) return;
+
+        if (GameManager.Instance.mainCanvas != null && GameManager.Instance.mainCanvas.activeSelf)
+        {
+            GameManager.Instance.mainCanvas.SetActive(false);
+        }
+
+        if (GameManager.Instance.interactionIconsCanvas != null && GameManager.Instance.interactionIconsCanvas.activeSelf)
+        {
+            GameManager.Instance.interactionIconsCanvas.SetActive(false);
+        }
+
+        if (GameManager.Instance.playerUICanvas != null && GameManager.Instance.playerUICanvas.activeSelf)
+        {
+            GameManager.Instance.playerUICanvas.SetActive(false);
+        }
+
+        if (GameManager.Instance.gameOverCanvas != null && GameManager.Instance.gameOverCanvas.activeSelf)
+        {
+            GameManager.Instance.gameOverCanvas.SetActive(false);
+        }
+
+        if (GameManager.Instance.objectivePanel != null && GameManager.Instance.objectivePanel.activeSelf)
+        {
+            GameManager.Instance.objectivePanel.SetActive(false);
         }
     }
 
