@@ -310,7 +310,8 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
 
     private void OnTriggerEnter(Collider other)
     {
-        StartCoroutine(WaitForGameManagerReady(other));
+        StartDialogueFromTrigger(other);
+        //StartCoroutine(WaitForGameManagerReady(other));
     }
 
     private IEnumerator WaitForGameManagerReady(Collider other)
