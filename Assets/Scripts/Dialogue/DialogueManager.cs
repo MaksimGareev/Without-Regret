@@ -321,7 +321,7 @@ public class DialogueManager : MonoBehaviour
         }
 
         // Irene move after talked
-        if (npc == "Irene" && ireneNPC != null & activeDialogueTrigger.TalkedAlready && ireneNPC.GoBackHomeSpot != null)
+        if (npc == "Irene" && ireneNPC != null && activeDialogueTrigger.TalkedAlready && ireneNPC.GoBackHomeSpot != null)
         {
             ireneNPC.targetSpot = ireneNPC.GoBackHomeSpot;
             ireneNPC.StartTravel();

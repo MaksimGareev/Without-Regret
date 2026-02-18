@@ -128,7 +128,18 @@ public class PlayerInteracting : MonoBehaviour
     {
         Collider[] hits = Physics.OverlapSphere(transform.position + transform.forward * interactOffset, interactionRange);
 
-        var interactables = hits.Select(h => h.GetComponent<IInteractable>()).Where(i => i != null && i.CanInteract(gameObject)).ToList();  //OrderByDescending(i => i.interactionPriority).FirstOrDefault();
+        var interactables = hits.Select(h => h.GetComponent<IInteractable>()).Where(i => i != null && i.CanInteract(gameObject)).Where(i =>
+        {
+            Vector3 dirToTarget = ((MonoBehaviour)i).transform.position - transform.position;
+            dirToTarget.Normalize();
+
+            float dot = Vector3.Dot(transform.forward, dirToTarget);
+
+            return dot > 0.5f; // Only objects roughly in front
+        })
+            .ToList();
+              
+            //OrderByDescending(i => i.interactionPriority).FirstOrDefault();
 
         if (interactables.Count == 0)
         {

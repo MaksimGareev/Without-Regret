@@ -120,8 +120,8 @@ public class Irene : MonoBehaviour
         {
             isTraveling = false;
             arrived = true;
-            //agent.ResetPath();
-            animator.SetBool("isIdle", !isMoving);
+            agent.ResetPath();
+            agent.velocity = Vector3.zero;
             ReactivateDialogue(); ; // enable dialogue trigger upon arrival
             Debug.Log("Irene reached the destination.");
         }
@@ -180,7 +180,11 @@ public class Irene : MonoBehaviour
 
     public void movementAnimation()
     {
-        if (isTraveling)
+        if (arrived)
+        {
+            isMoving = false;
+        }
+        else if (isTraveling)
         {
             isMoving = agent.velocity.sqrMagnitude > 0.05f;
         }

@@ -38,6 +38,7 @@ public class Barry : MonoBehaviour
         //IsFollowing = false;
         isTraveling = true;
         arrived = false;
+        dialogueTrigger.isLookingAtPlayer = false;
 
         agent.SetDestination(targetSpot.position);
         Debug.Log("Barry is now traveling to her destination");
@@ -73,7 +74,6 @@ public class Barry : MonoBehaviour
         if (!agent.pathPending && agent.remainingDistance <= stopDistance)
         {
             isTraveling = false;
-            dialogueTrigger.isLookingAtPlayer = false;
             arrived = true;
             Debug.Log("Barry reached the destination.");
         }
