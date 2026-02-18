@@ -5,7 +5,7 @@ public class Barry : MonoBehaviour
 {
     public float Speed = 3f;      // movement speed
     public float RotationSpeed = 3f;    // how fast the NPC rotates
-
+    public DialogueTrigger dialogueTrigger;
     public Transform targetSpot;
     public Transform lookAtTarget;
     public bool isTraveling = false;
@@ -18,7 +18,7 @@ public class Barry : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        agent.updateRotation = false;
     }
 
     // Update is called once per frame
@@ -37,6 +37,9 @@ public class Barry : MonoBehaviour
     {
         //IsFollowing = false;
         isTraveling = true;
+        arrived = false;
+
+        agent.SetDestination(targetSpot.position);
         Debug.Log("Barry is now traveling to her destination");
     }
 
@@ -53,12 +56,12 @@ public class Barry : MonoBehaviour
 
         // Movement
         //transform.position = Vector3.MoveTowards(transform.position, targetSpot.position, Speed * Time.deltaTime);
-
+        /*
         if (!agent.pathPending && agent.remainingDistance < 0.5f && agent != null)
         {
             agent.SetDestination(targetSpot.position);
         }
-
+        */
         // Rotate towards target
         if (direction.sqrMagnitude > 0.001f)
         {
@@ -67,9 +70,10 @@ public class Barry : MonoBehaviour
         }
 
         // Stop when close to target destination
-        if (Vector3.Distance(transform.position, targetSpot.position) < stopDistance)
+        if (!agent.pathPending && agent.remainingDistance <= stopDistance)
         {
             isTraveling = false;
+            dialogueTrigger.isLookingAtPlayer = false;
             arrived = true;
             Debug.Log("Barry reached the destination.");
         }

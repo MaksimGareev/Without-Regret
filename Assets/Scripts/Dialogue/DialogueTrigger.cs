@@ -8,7 +8,7 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
 {
     [Header("Animation")]
     public Animator animator;
-    public bool isTalking;
+    public bool isTalking = false;
     private Coroutine talkRoutine;
     public float interactionPriority => 10f;
     public InteractType interactType => InteractType.Dialogue;

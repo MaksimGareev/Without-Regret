@@ -18,6 +18,7 @@ public class Irene : MonoBehaviour
     public DialogueTrigger dialogueTrigger; // dialogue trigger script reference
 
     public Transform targetSpot;
+    public Transform GoBackHomeSpot;
     public Transform lookAtTarget;
     private NavMeshAgent agent;
     public bool isTraveling;
@@ -119,7 +120,8 @@ public class Irene : MonoBehaviour
         {
             isTraveling = false;
             arrived = true;
-            agent.ResetPath();
+            //agent.ResetPath();
+            animator.SetBool("isIdle", !isMoving);
             ReactivateDialogue(); ; // enable dialogue trigger upon arrival
             Debug.Log("Irene reached the destination.");
         }
