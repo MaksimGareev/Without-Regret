@@ -147,6 +147,7 @@ public class Irene : MonoBehaviour
         CanFollowPlayer = false;
         IsFollowing = false;
         isTraveling = true;
+        dialogueTrigger.isLookingAtPlayer = false;
         arrived = false;
         Debug.Log("Irene is now traveling to her destination");
     }
