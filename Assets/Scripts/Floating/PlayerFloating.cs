@@ -516,8 +516,6 @@ public class PlayerFloating : MonoBehaviour
         animator.SetBool("isFloating", true);
     }
 
-
-
     private void resetAnimations()
     {
         animator.SetBool("isIdle", false);

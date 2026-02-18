@@ -9,10 +9,23 @@ public abstract class SaveableWithID : MonoBehaviour, ISaveable
     {
         if (Application.isPlaying) return;
 
-        if (string.IsNullOrEmpty(uniqueID))
+        if (string.IsNullOrEmpty(uniqueID) || !IsUniqueID(uniqueID))
         {
             RefreshUniqueID();
         }
+    }
+
+    private static bool IsUniqueID(string id)
+    {
+        var allSaveables = FindObjectsOfType<SaveableWithID>();
+        foreach (var saveable in allSaveables)
+        {
+            if (saveable != null && saveable.GetUniqueID() == id)
+            {
+                return false;
+            }
+        }
+        return true;
     }
 
     public void RefreshUniqueID()
