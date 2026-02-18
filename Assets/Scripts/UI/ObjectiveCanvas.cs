@@ -18,6 +18,7 @@ public class ObjectiveCanvas : MonoBehaviour
 
     [Header("Debug")]
     [SerializeField] private bool showDebugLogs = false;
+    private bool isShowing = false;
 
     private ObjectiveInstance currentObjective;
     private AudioSource audioSource;

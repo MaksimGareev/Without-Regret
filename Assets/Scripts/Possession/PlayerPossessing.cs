@@ -55,6 +55,8 @@ public class PlayerPossessing : MonoBehaviour
 
     private void Update()
     {
+        if (Time.timeScale == 0) return;
+        
         if (Input.GetKeyDown(possessKey))
         {
             TryStartPossession();

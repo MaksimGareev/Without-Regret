@@ -16,8 +16,10 @@ public class GameManager : MonoBehaviour
     // References to child objects
     //[HideInInspector] public GameObject player;
     [HideInInspector] public GameObject saveManager;
+    public GameObject saveCanvas;
     [HideInInspector] public GameObject audioManager;
     [HideInInspector] public GameObject gameOverManager;
+    public GameObject gameOverCanvas;
     [HideInInspector] public GameObject mainCanvas;
     public Slider staminaSlider;
     public Slider throwingSlider;
@@ -33,10 +35,15 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI inventoryPopupText;
     [HideInInspector] public GameObject interactionIconsCanvas;
     [HideInInspector] public GameObject journalUICanvas;
+    public GameObject journalUI;
     [HideInInspector] public GameObject playerUICanvas;
     [HideInInspector] public GameObject pauseManager;
+    public GameObject pauseMenu;
     [HideInInspector] public DialogueManager dialogueManager;
+    public GameObject dialoguePanel;
     [HideInInspector] public GameObject objectiveManager;
+    public ObjectiveCanvas objectiveCanvas;
+    public GameObject objectivePanel;
     [HideInInspector] public GameObject eventSystem;
 
     private void Awake()

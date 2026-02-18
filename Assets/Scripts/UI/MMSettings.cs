@@ -408,6 +408,8 @@ public class MMSettings : MonoBehaviour
 
     private void OnTabRight()
     {
+        if (!settingsPanel.activeSelf) return;
+        
         if (!controlSchemeOpen && !confirmationPanel.activeSelf)
         {
             if (videoSettingsOpen)
@@ -427,6 +429,8 @@ public class MMSettings : MonoBehaviour
 
     private void OnTabLeft()
     {
+        if (!settingsPanel.activeSelf) return;
+
         if (!controlSchemeOpen && !confirmationPanel.activeSelf)
         {
             if (videoSettingsOpen)
@@ -446,6 +450,8 @@ public class MMSettings : MonoBehaviour
 
     private void OnResetSettings()
     {
+        if (!settingsPanel.activeSelf) return;
+
         if (!confirmationPanel.activeSelf && !controlSchemeOpen && hasChangedSettings)
         {
             ConfirmBeforeReset();
@@ -454,6 +460,8 @@ public class MMSettings : MonoBehaviour
 
     private void OnApplySettings()
     {
+        if (!settingsPanel.activeSelf) return;
+
         if (!confirmationPanel.activeSelf && !controlSchemeOpen && hasUnappliedChanges)
         {
             ConfirmBeforeApply();
@@ -462,6 +470,8 @@ public class MMSettings : MonoBehaviour
 
     private void OnDiscardSettings()
     {
+        if (!settingsPanel.activeSelf) return;
+
         if (!confirmationPanel.activeSelf && !controlSchemeOpen && hasUnappliedChanges)
         {
             ConfirmBeforeDiscardChanges();
