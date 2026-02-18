@@ -2,33 +2,39 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour, ISaveable
 {   
     [HideInInspector] public CharacterController Controller;
     private Camera PlayerCamera;
     [HideInInspector] public Animator animator;
-    [HideInInspector] public Slider staminaSlider;
-    [HideInInspector] public Image staminaFill;
+    //public Slider staminaSlider;
+    //public Image staminaFill;
 
     [Header("Sprint UI Colors")]
     public Color normalColor = new Color(0f, 147f/255f, 111f/255f);
     public Color cooldownColor = Color.grey;
+    public ParticleSystem SprintDust;
 
     [Header("Movement Settings")]
     public bool MovementLocked = false;
+    private bool wasMovementLocked = false; //for animator purposes to not cause performance issues
     public float Speed = 1f;
     public float SprintSpeed = 2f;
     public float SprintDuration = 3f;
     public float sprintCooldown = 4f;
+    [SerializeField, Tooltip("The speed the player moves at when their sprint stamina is at 0. Only relevant for when they're holding a moveable object. Lower numbers = lower speed")] 
+    private float emptyStaminaSpeedFactor = 0.5f;
     public float staminaLingerDuration = 1f;
     private float staminaLingerTimer = 0f;
+    [SerializeField] private bool StationaryCamera;
 
     public float SprintTimer = 3f;
     private bool canSprint = true;
     private bool sprintOnCooldown = false;
     private bool isSprinting = false;
-    private (bool movingObject, float sprintDepletionRate, float sprintDecay, bool allowSprint) moveableObjectMod = (false, 1f, 1f, true);
+    private (bool movingObject, float sprintDepletionRate, float staminaDecay, bool allowSprint) moveableObjectMod = (false, 1f, 1f, true);
     private Coroutine sprintCooldownRoutine;
 
     [Header("Gravity / Ground Settings")]
@@ -54,6 +60,7 @@ public class PlayerController : MonoBehaviour, ISaveable
     private PlayerControls controls;
     private Rigidbody rb;
     private Vector2 moveInput;
+    private Vector3 lookInput;
     private float deadzone = 0.15f;
     private bool cutsceneLocked = false;
     private Vector3 lockedPosition;
@@ -61,6 +68,9 @@ public class PlayerController : MonoBehaviour, ISaveable
     private bool resetLocked = false;
     private PlayerThrowing playerThrowing;
     private bool isThrowing;
+    private bool isMoving;
+    private readonly float moveCheckDelay = 0.1f;
+    private float lastStoppedCheck = -1f;
 
     private void Awake()
     {
@@ -68,19 +78,19 @@ public class PlayerController : MonoBehaviour, ISaveable
         animator = GetComponentInChildren<Animator>();
 
 
-        if (staminaSlider == null)
-        {
-            staminaSlider = GameObject.Find("StaminaSlider")?.GetComponent<Slider>();
-        }
+        // if (staminaSlider == null && GameManager.Instance != null)
+        // {
+        //     staminaSlider = GameManager.Instance.staminaSlider;
+        // }
 
-        if (staminaFill == null)
-        {
-            staminaFill = GameObject.Find("StaminaFill")?.GetComponent<Image>();
-        }
+        // if (staminaFill == null && GameManager.Instance != null)
+        // {
+        //     staminaFill = GameManager.Instance.staminaFill;
+        // }
 
-        if (staminaSlider != null)
+        if (GameManager.Instance.staminaSlider != null)
         {
-            staminaSlider.maxValue = SprintDuration;
+            GameManager.Instance.staminaSlider.maxValue = SprintDuration;
         }
 
         if (PlayerCamera == null)
@@ -88,10 +98,10 @@ public class PlayerController : MonoBehaviour, ISaveable
 
         SprintTimer = SprintDuration;
 
-        if (staminaSlider != null)
+        if (GameManager.Instance.staminaSlider != null)
         {
-            staminaSlider.value = SprintTimer;
-            staminaSlider.gameObject.SetActive(false);
+            GameManager.Instance.staminaSlider.value = SprintTimer;
+            GameManager.Instance.staminaSlider.gameObject.SetActive(false);
         }
 
         playerThrowing = gameObject.GetComponent<PlayerThrowing>();
@@ -109,10 +119,12 @@ public class PlayerController : MonoBehaviour, ISaveable
         controls = new PlayerControls();
 
         controls.Player.Move.performed += ctx => moveInput = ctx.ReadValue<Vector2>();
-        controls.Player.Move.canceled += ctx => moveInput = Vector2.zero;
+        controls.Player.Move.canceled += ctx => moveInput = ctx.ReadValue<Vector2>();
 
         controls.Player.Sprint.performed += ctx => StartSprinting();
         controls.Player.Sprint.canceled += ctx => StopSprinting();
+
+        controls.Player.Look.performed += ctx => lookInput = ctx.ReadValue<Vector2>();
 
         rb = GetComponent<Rigidbody>();
 
@@ -225,8 +237,33 @@ public class PlayerController : MonoBehaviour, ISaveable
             return;
         }
 
+        //if (MovementLocked)
+        //{
+        //    if (!wasMovementLocked)
+        //    {
+        //        resetAnimations();
+        //        animator.SetBool("isIdle", true);
+        //    }
+
+        //    wasMovementLocked = true;
+
+        //    moveInput = Vector2.zero;
+
+        //    if (gravityEnabled)
+        //        yVelocity += gravity * Time.deltaTime;
+
+        //    Controller.Move(new Vector3(0, yVelocity, 0) * Time.deltaTime);
+        //    return;
+        //}
+        //else
+        //{
+        //    wasMovementLocked = false;
+        //}
+
         if (MovementLocked)
         {
+            resetAnimations();
+            animator.SetBool("isIdle", true);
             moveInput = Vector2.zero;
             if (gravityEnabled)
             {
@@ -257,10 +294,27 @@ public class PlayerController : MonoBehaviour, ISaveable
 
         float currentSpeed = Speed;
 
-        bool isMoving = move.sqrMagnitude >= 0.01f; //detects if the player is moving
+        // Only set isMoving to false after no movement is detected for a short period
+        if (moveInput != Vector2.zero)
+        {
+            isMoving = true;
+            lastStoppedCheck = -1f;
+        }
+        else if (lastStoppedCheck <= 0f)
+        {
+            // Mark the time when we first detect no movement input
+            lastStoppedCheck = Time.time;
+        }
+        else if (Time.time > (lastStoppedCheck + moveCheckDelay))
+        {
+            // Enough time has passed for the player to be considered stopped
+            isMoving = false;
+            lastStoppedCheck = -1f;
+        }
 
         //animator.SetBool("isWalking", isMoving);
         //animator.SetBool("isIdle", !isMoving);
+
 
         //gets isMoving state to change animator state to idle or walking
         if (isMoving)
@@ -288,26 +342,27 @@ public class PlayerController : MonoBehaviour, ISaveable
 
         if (!sprintOnCooldown)
         {
-            // Change canSprint if cooldown isn't active to avoid unintended re-enabling of sprint
+            // Only change canSprint if cooldown isn't active to avoid unintended re-enabling of sprint
             canSprint = moveableObjectMod.allowSprint;
         }
 
-        if (staminaFill != null && staminaSlider != null)
+        if (GameManager.Instance.staminaFill != null && GameManager.Instance.staminaSlider != null)
         {
             // Sprint logic
             if (isSprinting && canSprint && !sprintOnCooldown)
             {
     
-            if (isMoving && SprintTimer > 0f)
+                if (isMoving && SprintTimer > 0f)
                 {
                     currentSpeed = SprintSpeed;
                     float depletionRate = moveableObjectMod.movingObject ? moveableObjectMod.sprintDepletionRate : 1f;
                     SprintTimer -= Time.deltaTime * depletionRate; // Stamina depletes faster if moving an object
-                    staminaSlider.gameObject.SetActive(true);
-                    staminaSlider.value = SprintTimer; //sets slider to stamina when going down
+                    GameManager.Instance.staminaSlider.gameObject.SetActive(true);
+                    GameManager.Instance.staminaSlider.value = SprintTimer; //sets slider to stamina when going down
                     animator.speed = 1.4f; // speeds up walk animation when sprinting
 
-                    //Debug.Log("Sprinting. Current SprintTimer: " + SprintTimer);
+                    if (showDebugLogs)
+                        Debug.Log("Sprinting. Current SprintTimer: " + SprintTimer);
                 }
                 else if (!moveableObjectMod.movingObject)
                 {
@@ -315,8 +370,8 @@ public class PlayerController : MonoBehaviour, ISaveable
                     isSprinting = false;
                     currentSpeed = Speed;
 
-                    if (staminaFill != null)
-                        staminaFill.color = cooldownColor;
+                    if (GameManager.Instance.staminaFill != null)
+                        GameManager.Instance.staminaFill.color = cooldownColor;
 
                     if (sprintCooldownRoutine != null)
                     {
@@ -326,23 +381,24 @@ public class PlayerController : MonoBehaviour, ISaveable
                     sprintCooldownRoutine = StartCoroutine(SprintCooldown());
                 }
             }
-            else if (moveableObjectMod.movingObject && !isSprinting && SprintTimer > 0f)
+            else if (moveableObjectMod.movingObject && !isSprinting && isMoving && SprintTimer > 0f)
             {
-                // Decay sprint stamina when carrying an object
+                // Decay sprint stamina when walking with an object in hand
                 if (sprintCooldownRoutine != null)
                 {
                     // Stop any existing cooldown routine if we start moving an object again to prevent premature reset of SprintTimer
                     StopCoroutine(sprintCooldownRoutine);
                     sprintCooldownRoutine = null;
                 }
-                SprintTimer -= Time.deltaTime * moveableObjectMod.sprintDecay;
-                staminaSlider.gameObject.SetActive(true);
-                staminaSlider.value = SprintTimer;
+                SprintTimer -= Time.deltaTime * moveableObjectMod.staminaDecay;
+                GameManager.Instance.staminaSlider.gameObject.SetActive(true);
+                GameManager.Instance.staminaSlider.value = SprintTimer;
                 // Don't start cooldown to ensure SprintTimer doesn't reset prematurely
 
-                //Debug.Log("Depleting stamina while moving object. Current SprintTimer: " + SprintTimer);
+                if (showDebugLogs)
+                    Debug.Log("Depleting stamina while moving object. Current SprintTimer: " + SprintTimer);
             }
-            else if (!moveableObjectMod.movingObject && !sprintOnCooldown && !isSprinting && SprintTimer < Mathf.Epsilon)
+            else if (!moveableObjectMod.movingObject && !sprintOnCooldown && !isSprinting && SprintTimer <= 0f)
             {
                 // If not moving an object, is not sprinting and stamina is fully depleted, start cooldown
                 isSprinting = false;
@@ -350,14 +406,22 @@ public class PlayerController : MonoBehaviour, ISaveable
             }
 
             //Out of Stamina
-            if (SprintTimer <= 0f && !sprintOnCooldown)
+            if (moveableObjectMod.movingObject && SprintTimer <= 0f)
+            {
+                // When stamina is empty and moving an object, slow down movement even further
+                currentSpeed = Speed * emptyStaminaSpeedFactor;
+
+                isSprinting = false;
+                canSprint = false;
+            }
+            else if (SprintTimer <= 0f && !sprintOnCooldown)
             {
                 isSprinting = false;
                 animator.SetBool("isSprinting", false);
 
                 canSprint = false;
-                if (staminaFill != null)
-                    staminaFill.color = cooldownColor;
+                if (GameManager.Instance.staminaFill != null)
+                    GameManager.Instance.staminaFill.color = cooldownColor;
 
                 if (sprintCooldownRoutine != null)
                 {
@@ -366,29 +430,30 @@ public class PlayerController : MonoBehaviour, ISaveable
                 sprintOnCooldown = true;
                 sprintCooldownRoutine = StartCoroutine(SprintCooldown());
             }
-            else if (!moveableObjectMod.movingObject && !isSprinting && SprintTimer < SprintDuration )
+            else if (!moveableObjectMod.movingObject && !isSprinting && SprintTimer < SprintDuration)
             {
                 // Regenerating stamina
                 animator.SetBool("isSprinting", false);
                 SprintTimer += Time.deltaTime;
-                staminaSlider.gameObject.SetActive(true);
-                staminaSlider.value = SprintTimer;
+                GameManager.Instance.staminaSlider.gameObject.SetActive(true);
+                GameManager.Instance.staminaSlider.value = SprintTimer;
 
-                //Debug.Log("Regenerating stamina. Current SprintTimer: " + SprintTimer);
+                if (showDebugLogs)
+                    Debug.Log("Regenerating stamina. Current SprintTimer: " + SprintTimer);
             }
             else if (!isSprinting && SprintTimer >= SprintDuration)
             {
                 // Stamina is full, reset values
                 SprintTimer = SprintDuration;
-                staminaSlider.value = SprintTimer;
+                GameManager.Instance.staminaSlider.value = SprintTimer;
                 canSprint = true;
                 sprintOnCooldown = false;
-                if (staminaFill != null)
+                if (GameManager.Instance.staminaFill != null)
                 {
-                    staminaFill.color = normalColor;
+                    GameManager.Instance.staminaFill.color = normalColor;
                 }
 
-                if (staminaSlider.value >= staminaSlider.maxValue)
+                if (GameManager.Instance.staminaSlider.value >= GameManager.Instance.staminaSlider.maxValue)
                 {
                     //if (staminaSlider.gameObject.activeSelf) Debug.Log("Stamina full, deactivating stamina slider.");
 
@@ -398,7 +463,7 @@ public class PlayerController : MonoBehaviour, ISaveable
                         sprintCooldownRoutine = null;
                     }
 
-                    staminaSlider.gameObject.SetActive(false);
+                    GameManager.Instance.staminaSlider.gameObject.SetActive(false);
                 }
 
                 //if (staminaLingerTimer <= 0f)
@@ -431,13 +496,21 @@ public class PlayerController : MonoBehaviour, ISaveable
             float angle = Mathf.Atan2(move.x, move.z) * Mathf.Rad2Deg;
             transform.rotation = Quaternion.Euler(0f, angle, 0f);
         }
-        else if(isThrowing)
+        else if(isThrowing && !StationaryCamera)
         {
             Vector3 camForward = PlayerCamera.transform.forward;
             camForward.y = 0f;
             camForward.Normalize();
             float angle = Mathf.Atan2(camForward.x, camForward.z) * Mathf.Rad2Deg;
             transform.rotation = Quaternion.Euler(0f, angle, 0f);
+        }
+        else if(isThrowing && StationaryCamera)
+        {
+            if(lookInput.magnitude > 0)
+            {
+                float angle = Mathf.Atan2(lookInput.x, -lookInput.y) * Mathf.Rad2Deg;
+                transform.rotation = Quaternion.Euler(0f, -angle, 0f);
+            }
         }
     }
 
@@ -453,6 +526,8 @@ public class PlayerController : MonoBehaviour, ISaveable
             }
         }
 
+        resetAnimations();
+        animator.SetBool("isIdle", true);
         DialogueActive = active;
         if (active == true)
         {
@@ -491,7 +566,15 @@ public class PlayerController : MonoBehaviour, ISaveable
         {
             isSprinting = true;
             animator.SetBool("isSprinting", true);
+
+            if (SprintDust != null && !SprintDust.isPlaying)
+            {
+                Debug.Log("Started Dust");
+                SprintDust.Play();
+            }
         }
+        
+
     }
 
     private void StopSprinting()
@@ -502,35 +585,44 @@ public class PlayerController : MonoBehaviour, ISaveable
         }
         isSprinting = false;
         animator.SetBool("isSprinting", false);
+
+        if (SprintDust != null && SprintDust.isPlaying)
+        {
+            Debug.Log("Stopped Dust");
+            SprintDust.Stop();
+        }
     }
 
     IEnumerator SprintCooldown()
     {
-        //Debug.Log("Sprint cooldown started.");
+        if (showDebugLogs)
+            Debug.Log("Sprint cooldown started.");
         yield return new WaitForSeconds(sprintCooldown);
-        //Debug.Log("Sprint cooldown ended. Stamina reset.");
+        if (showDebugLogs)
+            Debug.Log("Sprint cooldown ended. Stamina reset.");
         SprintTimer = SprintDuration;
         canSprint = true;
         sprintOnCooldown = false;
 
-        if (staminaFill != null)
+        if (GameManager.Instance.staminaFill != null)
         {
-            staminaFill.color = normalColor;
+            GameManager.Instance.staminaFill.color = normalColor;
         }
 
         sprintCooldownRoutine = null;
     }
 
-    public void MovingObject(bool isMovingObject, float sprintReduction = 1f, float sprintDecay = 1f, bool allowSprint = true)
+    public void MovingObject(bool isMovingObject, float sprintReduction = 1f, float staminaDecay = 1f, bool allowSprint = true)
     {
-        moveableObjectMod = (isMovingObject, sprintReduction, sprintDecay, allowSprint);
+        moveableObjectMod = (isMovingObject, sprintReduction, staminaDecay, allowSprint);
         if (!sprintOnCooldown && allowSprint == false)
         {
             // If not currently in cooldown and sprint is disallowed, change canSprint directly
             canSprint = allowSprint;
         }
 
-        //Debug.Log($"MovingObject called. isMovingObject: {isMovingObject}, sprintReduction: {sprintReduction}, sprintDecay: {sprintDecay}, allowSprint: {allowSprint}");
+        if (showDebugLogs)
+            Debug.Log($"MovingObject called. isMovingObject: {isMovingObject}, sprintReduction: {sprintReduction}, staminaDecay: {staminaDecay}, allowSprint: {allowSprint}");
     }
 
     public void SetVerticalVelocity(float newVelocity) => yVelocity = newVelocity;
@@ -546,6 +638,8 @@ public class PlayerController : MonoBehaviour, ISaveable
 
     public void SetCutsceneLocked(bool locked)
     {
+        resetAnimations(); //resets animation to idle during a cutscene
+        animator.SetBool("isIdle", true);
         cutsceneLocked = locked;
 
         if (locked)

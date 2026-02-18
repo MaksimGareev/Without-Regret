@@ -81,6 +81,16 @@ public class PlayerInteracting : MonoBehaviour
             return;
         }
 
+        // // needs another early return here for if moveableTarget != null, otherwise the call to handle 
+        // // interaction below will call mantle's interaction when interact button is pressed.
+        // if (moveTarget != null && Interact != null && Interact.triggered)
+        // {
+        //     if (showDebugLogs) Debug.Log("Move input detected!");
+        //     //TryShowTutorial(moveTarget.interactType);
+        //     moveTarget.OnPlayerInteraction(gameObject);
+        //     return;
+        // }
+
         // Interact with moveable objects or dialogue
         if (currentTarget != null && Interact != null && Interact.triggered)
         {
@@ -116,9 +126,20 @@ public class PlayerInteracting : MonoBehaviour
 
     private void ScanForInteractable()
     {
-        Collider[] hits = Physics.OverlapSphere(transform.position, interactionRange);
+        Collider[] hits = Physics.OverlapSphere(transform.position + transform.forward * interactOffset, interactionRange);
 
-        var interactables = hits.Select(h => h.GetComponent<IInteractable>()).Where(i => i != null && i.CanInteract(gameObject)).ToList();  //OrderByDescending(i => i.interactionPriority).FirstOrDefault();
+        var interactables = hits.Select(h => h.GetComponent<IInteractable>()).Where(i => i != null && i.CanInteract(gameObject)).Where(i =>
+        {
+            Vector3 dirToTarget = ((MonoBehaviour)i).transform.position - transform.position;
+            dirToTarget.Normalize();
+
+            float dot = Vector3.Dot(transform.forward, dirToTarget);
+
+            return dot > 0.5f; // Only objects roughly in front
+        })
+            .ToList();
+              
+            //OrderByDescending(i => i.interactionPriority).FirstOrDefault();
 
         if (interactables.Count == 0)
         {
@@ -136,8 +157,6 @@ public class PlayerInteracting : MonoBehaviour
 
         // Highlight icon
         ButtonIcons.Instance?.Highlight(currentTarget.interactType);
-
-       
     }
     
     private bool TryShowTutorial(InteractType type, System.Action onComplete)

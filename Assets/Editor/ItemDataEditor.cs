@@ -42,7 +42,7 @@ public class ItemDataEditor : Editor
         EditorGUILayout.Space();
 
         var itemType = (ItemType)itemTypeProp.enumValueIndex;
-        if (itemType == ItemType.ThrowableItem || itemType == ItemType.GrabbableItem)
+        if (itemType == ItemType.ThrowableItem || itemType == ItemType.GrabbableItem || itemType == ItemType.EquippableItem)
         {
             EditorGUILayout.LabelField("Transform Settings (adjusts the transforms of the visual object)", EditorStyles.boldLabel);
             EditorGUILayout.PropertyField(equippedScaleProp, new GUIContent("Equipped Scale Transform"));
