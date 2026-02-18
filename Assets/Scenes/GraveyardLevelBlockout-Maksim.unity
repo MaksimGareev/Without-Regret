@@ -4519,6 +4519,7 @@ GameObject:
   m_Component:
   - component: {fileID: 73550504}
   - component: {fileID: 73550503}
+  - component: {fileID: 73550505}
   m_Layer: 0
   m_Name: Scene Light
   m_TagString: Untagged
@@ -4606,6 +4607,35 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!114 &73550505
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 73550502}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalLightData
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_CustomShadowLayers: 0
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
+  m_SoftShadowQuality: 0
+  m_RenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_ShadowRenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_Version: 4
+  m_LightLayerMask: 1
+  m_ShadowLayerMask: 1
+  m_RenderingLayers: 1
+  m_ShadowRenderingLayers: 1
 --- !u!1001 &74314502
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -27461,7 +27491,7 @@ Terrain:
   m_StaticShadowCaster: 0
   m_IgnoreQualitySettings: 0
   m_ReflectionProbeUsage: 1
-  m_MaterialTemplate: {fileID: 10652, guid: 0000000000000000f000000000000000, type: 0}
+  m_MaterialTemplate: {fileID: 2100000, guid: 594ea882c5a793440b60ff72d896021e, type: 2}
   m_BakeLightProbesForTrees: 1
   m_PreserveTreePrototypeLayers: 0
   m_DeringLightProbesForTrees: 1
@@ -27517,7 +27547,7 @@ MonoBehaviour:
   m_OverrideTileSize: 0
   m_TileSize: 256
   m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.16666667
+  m_VoxelSize: 0.083333336
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: 98a4db969e68ef6489ded7de32749529, type: 2}
   m_BuildHeightMesh: 0
@@ -35933,6 +35963,10 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 8356966130249687414, guid: c6d1c474088e9634bbf2928c08aac656, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: -1134714066672644336, guid: 6ca346a8698055446a23cf01a81b9977, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -45400,6 +45434,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 469f0fe6405838f4fbf94fb3567ecd38, type: 3}
       insertIndex: -1
       addedObject: {fileID: 848057745}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 469f0fe6405838f4fbf94fb3567ecd38, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 848057747}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 469f0fe6405838f4fbf94fb3567ecd38, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 848057746}
   m_SourcePrefab: {fileID: 100100000, guid: 469f0fe6405838f4fbf94fb3567ecd38, type: 3}
 --- !u!1 &848057744 stripped
 GameObject:
@@ -45420,6 +45460,62 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::OutlineEffect
   outlineColor: {r: 0, g: 0, b: 0, a: 1}
   outlineWidth: 0.01
+--- !u!23 &848057746
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 848057744}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &848057747
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 848057744}
+  m_Mesh: {fileID: 0}
 --- !u!43 &849404463
 Mesh:
   m_ObjectHideFlags: 0
@@ -51085,6 +51181,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4081335531108956419, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4081335531108956419, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4081335531108956419, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4081335531108956419, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5273993982251385165, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -51174,38 +51286,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
---- !u!224 &911411260 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 3105080686631781647, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
-  m_PrefabInstance: {fileID: 911411259}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &911411261 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2050183522725417625, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
-  m_PrefabInstance: {fileID: 911411259}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &911411262 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5186221428553786729, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
-  m_PrefabInstance: {fileID: 911411259}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!1 &911411263 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7020237606844082684, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
-  m_PrefabInstance: {fileID: 911411259}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &926573091
 GameObject:
   m_ObjectHideFlags: 0
@@ -52533,7 +52613,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
-  m_AdditionalShaderChannelsFlag: 0
+  m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0
@@ -54023,7 +54103,7 @@ Terrain:
   m_StaticShadowCaster: 0
   m_IgnoreQualitySettings: 0
   m_ReflectionProbeUsage: 1
-  m_MaterialTemplate: {fileID: 10652, guid: 0000000000000000f000000000000000, type: 0}
+  m_MaterialTemplate: {fileID: 2100000, guid: 594ea882c5a793440b60ff72d896021e, type: 2}
   m_BakeLightProbesForTrees: 1
   m_PreserveTreePrototypeLayers: 0
   m_DeringLightProbesForTrees: 1
@@ -57368,6 +57448,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8302932641977396187, guid: a3714c0ac6c7c7e41b517f273f50ce62, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: -1134714066672644336, guid: 6ca346a8698055446a23cf01a81b9977, type: 3}
     - target: {fileID: 8349488743086242389, guid: a3714c0ac6c7c7e41b517f273f50ce62, type: 3}
       propertyPath: promptUI
       value: 
@@ -61688,7 +61772,7 @@ Terrain:
   m_StaticShadowCaster: 0
   m_IgnoreQualitySettings: 0
   m_ReflectionProbeUsage: 1
-  m_MaterialTemplate: {fileID: 10652, guid: 0000000000000000f000000000000000, type: 0}
+  m_MaterialTemplate: {fileID: 2100000, guid: 594ea882c5a793440b60ff72d896021e, type: 2}
   m_BakeLightProbesForTrees: 1
   m_PreserveTreePrototypeLayers: 0
   m_DeringLightProbesForTrees: 1
@@ -66792,6 +66876,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5256605505714893680, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5256605505714893680, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5256605505714893680, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5256605505714893680, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7723209263034436145, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
       propertyPath: m_Name
       value: DialogueManager
@@ -66799,19 +66899,19 @@ PrefabInstance:
     - target: {fileID: 7951233116101154460, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
       propertyPath: NPCNameText
       value: 
-      objectReference: {fileID: 911411262}
+      objectReference: {fileID: 0}
     - target: {fileID: 7951233116101154460, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
       propertyPath: DialogueText
       value: 
-      objectReference: {fileID: 911411261}
+      objectReference: {fileID: 0}
     - target: {fileID: 7951233116101154460, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
       propertyPath: DialoguePanel
       value: 
-      objectReference: {fileID: 911411263}
+      objectReference: {fileID: 0}
     - target: {fileID: 7951233116101154460, guid: b686a4c85209a3d489c336a2093622ee, type: 3}
       propertyPath: ChoicesContainer
       value: 
-      objectReference: {fileID: 911411260}
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -81771,6 +81871,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Test Throwable Item
       objectReference: {fileID: 0}
+    - target: {fileID: 1057894214392518941, guid: 8012a6fb752d12c408bf4d6db4b361a3, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: -1134714066672644336, guid: 6ca346a8698055446a23cf01a81b9977, type: 3}
     - target: {fileID: 6322807526584299951, guid: 8012a6fb752d12c408bf4d6db4b361a3, type: 3}
       propertyPath: m_LocalPosition.x
       value: 13.958478
@@ -98606,6 +98710,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2014178374}
   - component: {fileID: 2014178375}
+  - component: {fileID: 2014178376}
   m_Layer: 0
   m_Name: Spot Light
   m_TagString: Untagged
@@ -98693,6 +98798,35 @@ Light:
   m_LightUnit: 1
   m_LuxAtDistance: 1
   m_EnableSpotReflector: 1
+--- !u!114 &2014178376
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2014178373}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalLightData
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_CustomShadowLayers: 0
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
+  m_SoftShadowQuality: 0
+  m_RenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_ShadowRenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_Version: 4
+  m_LightLayerMask: 1
+  m_ShadowLayerMask: 1
+  m_RenderingLayers: 1
+  m_ShadowRenderingLayers: 1
 --- !u!43 &2032722023
 Mesh:
   m_ObjectHideFlags: 0
