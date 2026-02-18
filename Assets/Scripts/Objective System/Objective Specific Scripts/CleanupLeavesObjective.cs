@@ -10,6 +10,15 @@ public class CleanupLeavesObjective : MonoBehaviour
         ObjectiveManager.Instance.OnObjectiveCompleted.AddListener(SetObjectiveInactive);
     }
 
+    private void Start()
+    {
+        // If the objective is already active (e.g. player is reloading a save), make sure the leaves are interactable
+        if (ObjectiveManager.Instance.IsObjectiveActive(linkedObjective.objectiveID))
+        {
+            SetObjectiveActive(new ObjectiveInstance(linkedObjective));
+        }
+    }
+
     private void SetObjectiveActive(ObjectiveInstance objective)
     {
         if (objective.data == linkedObjective)
