@@ -30,7 +30,7 @@ public class PauseManager : MonoBehaviour
     [SerializeField] private MMSettings settingsScript;
     [SerializeField] private GameObject settingsPanel;
     [SerializeField] private GameObject confirmationPanel;
-    [SerializeField] private Canvas[] otherCanvasesToDisable;
+    //[SerializeField] private Canvas[] otherCanvasesToDisable;
 
     [HideInInspector] public bool isGamePaused = false;
     [HideInInspector] public bool usingController { get; private set; } = false;
@@ -287,11 +287,7 @@ public class PauseManager : MonoBehaviour
         inputActions.FindActionMap("UI").Enable();
 
         // Disable other canvases
-        foreach (var canvas in otherCanvasesToDisable)
-        {
-            if (canvas != null)
-                canvas.enabled = false;
-        }
+        DisableOtherCanvases();
 
         // Set initial selected button
         EventSystem.current.SetSelectedGameObject(resumeButton.gameObject);
@@ -364,18 +360,9 @@ public class PauseManager : MonoBehaviour
         isGamePaused = false;
 
         // Re-enable other canvases
-        foreach (var canvas in otherCanvasesToDisable)
+        if (SceneManager.GetActiveScene().name != "MainMenu")
         {
-            if (canvas == null) continue;
-
-            canvas.enabled = true;
-            
-            InventoryUIController inventoryCanvas = canvas.GetComponentInChildren<InventoryUIController>();
-            if (inventoryCanvas != null)
-            {
-                Cursor.visible = true;
-                Cursor.lockState = CursorLockMode.Confined;
-            }
+            EnableOtherCanvases();
         }
 
         Time.timeScale = 1f;
@@ -384,6 +371,76 @@ public class PauseManager : MonoBehaviour
         inputActions.FindActionMap("Player").Enable();
         
         //Debug.Log("Resuming Game...");
+    }
+
+    private void EnableOtherCanvases()
+    {
+        if (GameManager.Instance == null) return;
+
+        if (GameManager.Instance.mainCanvas != null && !GameManager.Instance.mainCanvas.activeSelf)
+        {
+            GameManager.Instance.mainCanvas.SetActive(true);
+        }
+
+        if (GameManager.Instance.interactionIconsCanvas != null && !GameManager.Instance.interactionIconsCanvas.activeSelf)
+        {
+            GameManager.Instance.interactionIconsCanvas.SetActive(true);
+        }
+
+        if (GameManager.Instance.playerUICanvas != null && !GameManager.Instance.playerUICanvas.activeSelf)
+        {
+            GameManager.Instance.playerUICanvas.SetActive(true);
+        }
+
+        if (GameManager.Instance.gameOverCanvas != null && !GameManager.Instance.gameOverCanvas.activeSelf)
+        {
+            GameManager.Instance.gameOverCanvas.SetActive(GameOverManager.Instance.isGameOver);
+        }
+
+        if (GameManager.Instance.objectivePanel != null && !GameManager.Instance.objectivePanel.activeSelf)
+        {
+            GameManager.Instance.objectivePanel.SetActive(GameManager.Instance.objectiveCanvas.IsVisible());
+        }
+    }
+
+    private void DisableOtherCanvases()
+    {
+        if (GameManager.Instance == null) return;
+
+        if (GameManager.Instance.mainCanvas != null && GameManager.Instance.mainCanvas.activeSelf)
+        {
+            GameManager.Instance.mainCanvas.SetActive(false);
+        }
+
+        if (GameManager.Instance.interactionIconsCanvas != null && GameManager.Instance.interactionIconsCanvas.activeSelf)
+        {
+            GameManager.Instance.interactionIconsCanvas.SetActive(false);
+        }
+
+        if (GameManager.Instance.journalUI != null && GameManager.Instance.journalUI.activeSelf)
+        {
+            GameManager.Instance.journalUI.SetActive(false);
+        }
+
+        if (GameManager.Instance.playerUICanvas != null && GameManager.Instance.playerUICanvas.activeSelf)
+        {
+            GameManager.Instance.playerUICanvas.SetActive(false);
+        }
+
+        if (GameManager.Instance.gameOverCanvas != null && GameManager.Instance.gameOverCanvas.activeSelf)
+        {
+            GameManager.Instance.gameOverCanvas.SetActive(false);
+        }
+
+        if (GameManager.Instance.dialoguePanel != null && GameManager.Instance.dialoguePanel.activeSelf)
+        {
+            GameManager.Instance.dialoguePanel.SetActive(false);
+        }
+
+        if (GameManager.Instance.objectivePanel != null && GameManager.Instance.objectivePanel.activeSelf)
+        {
+            GameManager.Instance.objectivePanel.SetActive(false);
+        }
     }
 
     private void ConfirmBeforeQuit()
@@ -459,6 +516,8 @@ public class PauseManager : MonoBehaviour
         {
             SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
         }
+
+        DisableOtherCanvases();
 
         // Logic to quit to main menu
         SceneManager.LoadScene("MainMenu");

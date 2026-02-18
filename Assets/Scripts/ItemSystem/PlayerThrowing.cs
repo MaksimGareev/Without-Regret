@@ -11,18 +11,16 @@ public class PlayerThrowing : MonoBehaviour
     private Transform throwOrigin;
     private Camera playerCamera;
     private PlayerEquipItem playerEquipItem;
-    private GameObject interactingScript;
     private GameObject WorldThrowPointer;
 
     [Header("Throwing Pointer and UI Settings")]
     [SerializeField] private float MaxPointerLength = 10;
     [SerializeField] private float MinPointerLength = 1;
-    [SerializeField] private Slider powerSlider;
+    //[SerializeField] private Slider powerSlider;
     [SerializeField] private LineRenderer line;
     [SerializeField] [Range(10, 100)] private int linePoints = 25;
     [SerializeField] [Range(0.01f, 0.25f)] private float timeBetweenPoints = 0.1f;
     [SerializeField] private LayerMask lineLayerMask;//set layers here that the throwables collide with.
-    private InventoryUIController inventoryUI;
     private ToggleInventoryUI inventoryToggle;
     
     [Header("Throw Settings")]
@@ -49,12 +47,12 @@ public class PlayerThrowing : MonoBehaviour
 
     private void Start()
     {
-        if (powerSlider != null)
+        if (GameManager.Instance.throwingSlider != null)
         {
-            powerSlider.minValue = 0f;
-            powerSlider.maxValue = 1f;
-            powerSlider.value = 0f;
-            powerSlider.gameObject.SetActive(false);
+            GameManager.Instance.throwingSlider.minValue = 0f;
+            GameManager.Instance.throwingSlider.maxValue = 1f;
+            GameManager.Instance.throwingSlider.value = 0f;
+            GameManager.Instance.throwingSlider.gameObject.SetActive(false);
         }
         WorldThrowPointer.SetActive(false);
         PointerScale = WorldThrowPointer.transform.localScale;
@@ -107,15 +105,6 @@ public class PlayerThrowing : MonoBehaviour
                 Debug.LogError("Throwing Origin GameObject with Transform component not found in the scene. Please ensure a GameObject named 'Throwing Origin' exists as a child of the player.");
             }
         }
-        
-        if (powerSlider == null)
-        {
-            powerSlider = GameObject.Find("ThrowingSlider")?.GetComponent<Slider>();
-            if (powerSlider == null)
-            {
-                Debug.LogError("ThrowingSlider GameObject with Slider component not found in the scene. Please ensure a GameObject named 'ThrowingSlider' exists in the MainCanvas prefab with a Slider component attached.");
-            }
-        }
 
         if (WorldThrowPointer == null)
         {
@@ -123,25 +112,6 @@ public class PlayerThrowing : MonoBehaviour
             if (WorldThrowPointer == null)
             {
                 Debug.LogError("WorldThrowIndicator GameObject not found in the scene. Please ensure a GameObject named 'WorldThrowIndicator' exists in the scene as a child of the player.");
-            }
-        }
-
-        if (interactingScript == null)
-        {
-            var foundObjects = FindObjectsByType<InventoryUIController>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-            interactingScript = foundObjects.Length > 0 ? foundObjects[0].gameObject : null;
-            if (interactingScript == null)
-            {
-                Debug.LogError("InteractingScript GameObject not found in the scene. Please ensure a GameObject named 'InteractingScript' exists in the scene as a child of the Inventory UI in the MainCanvas.");
-            }
-        }
-
-        if (interactingScript != null && inventoryUI == null)
-        {
-            inventoryUI = interactingScript.GetComponent<InventoryUIController>();
-            if (inventoryUI == null)
-            {
-                Debug.LogError("InventoryUIController component not found on the interactingScript GameObject. Please ensure an InventoryUIController component is added to the interactingScript GameObject.");
             }
         }
 
@@ -178,7 +148,7 @@ public class PlayerThrowing : MonoBehaviour
             return;
         }
 
-        inventoryUI.RefreshInventoryUI();
+        GameManager.Instance.inventoryInteractingScript.RefreshInventoryUI();
         playerEquipItem.UnequipItem();
         Instantiate(itemToDrop.WorldPrefab, transform.position + transform.forward * 1f, Quaternion.identity);
     }
@@ -229,10 +199,10 @@ public class PlayerThrowing : MonoBehaviour
             }
             DrawProjection();
 
-            if (powerSlider != null)
+            if (GameManager.Instance.throwingSlider != null)
             {
-                powerSlider.value = currentCharge;
-                powerSlider.gameObject.SetActive(true);
+                GameManager.Instance.throwingSlider.value = currentCharge;
+                GameManager.Instance.throwingSlider.gameObject.SetActive(true);
             }
 
             if (WorldThrowPointer != null)
@@ -251,10 +221,10 @@ public class PlayerThrowing : MonoBehaviour
                     //ThrowItem(normalized, true);
                     isCharging = false;
 
-                    if (powerSlider != null)
+                    if (GameManager.Instance.throwingSlider != null)
                     {
-                        powerSlider.value = 0f;
-                        powerSlider.gameObject.SetActive(false);
+                        GameManager.Instance.throwingSlider.value = 0f;
+                        GameManager.Instance.throwingSlider.gameObject.SetActive(false);
                         PointerScale.x = MinPointerLength;
                         WorldThrowPointer.transform.localScale = PointerScale;
                         WorldThrowPointer.SetActive(false);
@@ -271,10 +241,10 @@ public class PlayerThrowing : MonoBehaviour
                     //ThrowItem(normalized, false);
                     isCharging = false;
 
-                    if (powerSlider != null)
+                    if (GameManager.Instance.throwingSlider != null)
                     {
-                        powerSlider.value = 0f;
-                        powerSlider.gameObject.SetActive(false);
+                        GameManager.Instance.throwingSlider.value = 0f;
+                        GameManager.Instance.throwingSlider.gameObject.SetActive(false);
                         PointerScale.x = MinPointerLength;
                         WorldThrowPointer.transform.localScale = PointerScale;
                         WorldThrowPointer.SetActive(false);
@@ -301,7 +271,7 @@ public class PlayerThrowing : MonoBehaviour
         }
 
         inventory.RemoveItem(itemToThrow);
-        inventoryUI.RefreshInventoryUI();
+        GameManager.Instance.inventoryInteractingScript.RefreshInventoryUI();
         playerEquipItem.UnequipItem();
 
         GameObject gameObject = Instantiate(itemToThrow.WorldPrefab, throwOrigin.position, Quaternion.identity);
@@ -326,10 +296,10 @@ public class PlayerThrowing : MonoBehaviour
             currentUpwardForce = Mathf.Lerp(upwardForceMax, upwardForceMin, charge);
             rb.AddForce(direction * throwForce + Vector3.up * currentUpwardForce, ForceMode.Impulse);
         }
-        if (powerSlider != null)
+        if (GameManager.Instance.throwingSlider != null)
         {
-            powerSlider.value = 0f;
-            powerSlider.gameObject.SetActive(false);
+            GameManager.Instance.throwingSlider.value = 0f;
+            GameManager.Instance.throwingSlider.gameObject.SetActive(false);
             PointerScale.x = MinPointerLength;
             WorldThrowPointer.transform.localScale = PointerScale;
             WorldThrowPointer.SetActive(false);
