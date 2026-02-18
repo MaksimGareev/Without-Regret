@@ -321,9 +321,9 @@ public class DialogueManager : MonoBehaviour
         }
 
         // Irene move after talked
-        if (npc == "Irene" && ireneNPC != null & activeDialogueTrigger.TalkedAlready && ireneDestinationTransform != null)
+        if (npc == "Irene" && ireneNPC != null & activeDialogueTrigger.TalkedAlready && ireneNPC.GoBackHomeSpot != null)
         {
-            ireneNPC.targetSpot = ireneDestinationTransform;
+            ireneNPC.targetSpot = ireneNPC.GoBackHomeSpot;
             ireneNPC.StartTravel();
         }
 
@@ -502,7 +502,7 @@ public class DialogueManager : MonoBehaviour
     void SelectChoice(DialogueChoice c)
     {
         choiceTimerSlider.gameObject.SetActive(false);
-        DirectionalImage.SetActive(false);
+        //DirectionalImage.SetActive(false);
         CanChoose = false;
         StopCoroutine(timerRoutine);
 
@@ -601,6 +601,7 @@ public class DialogueManager : MonoBehaviour
     private IEnumerator SwapPortrait(Sprite newPortrait)
     {
         if (playerPortrait == null || portraitGroup == null) yield break;
+        DirectionalImage.SetActive(false);
         Debug.Log("swaping portrait");
 
         // fade out
