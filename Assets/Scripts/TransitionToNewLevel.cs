@@ -16,6 +16,7 @@ public class TransitionToNewLevel : MonoBehaviour
     public bool needsObjective = true;
     
     private bool isObjectiveActive = false;
+    private bool canTrigger = false;
 
     private void OnEnable()
     {
@@ -28,6 +29,8 @@ public class TransitionToNewLevel : MonoBehaviour
         {
             isObjectiveActive = ObjectiveManager.Instance.IsObjectiveActive(linkedObjective.objectiveID);
         }
+
+        CheckIfPlayerSpawnedInTrigger();
     }
 
   // private void Update()
@@ -47,7 +50,7 @@ public class TransitionToNewLevel : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (sceneToLoad == null || (!isObjectiveActive && needsObjective)) return;
+        if (sceneToLoad == null || (!isObjectiveActive && needsObjective) || !canTrigger) return;
 
         if (other.CompareTag("Player"))
         {
@@ -55,7 +58,30 @@ public class TransitionToNewLevel : MonoBehaviour
         }
     }
 
-    void LoadScene()
+    private void CheckIfPlayerSpawnedInTrigger()
+    {
+        Collider[] colliders = Physics.OverlapBox(transform.position, GetComponent<Collider>().bounds.extents, Quaternion.identity);
+        foreach (Collider collider in colliders)
+        {
+            if (collider.CompareTag("Player"))
+            {
+                canTrigger = false;
+                return;
+            }
+        }
+
+        canTrigger = true;
+    }
+
+    void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Player") && !canTrigger)
+        {
+            canTrigger = true;
+        }
+    }
+
+  void LoadScene()
     {
         if (needsObjective)
         {

@@ -11,10 +11,12 @@ public class GraveObjectiveSlot : MonoBehaviour
     [SerializeField] private GameObject ghostPrefab;
     private Transform lockingPosition;
     private GameObject player;
+    private PlayerMovingObjects playerMovingObjects;
     private bool isObjectiveActive = false;
     private Rigidbody rb;
     private bool didOnce = false;
     private GameObject ghostInstance;
+    private GameObject[] gravestones;
     private float ghostAlpha = 0.7f;
 
     private void OnEnable()
@@ -27,6 +29,11 @@ public class GraveObjectiveSlot : MonoBehaviour
     {
         lockingPosition = GetComponentInChildren<Transform>();
         player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
+        {
+            playerMovingObjects = player.GetComponent<PlayerMovingObjects>();
+        }
+
 
         if (lockingPosition == null)
         {
@@ -79,11 +86,12 @@ public class GraveObjectiveSlot : MonoBehaviour
                 Destroy(rb);
             }
         }
+
+        gravestones = GameObject.FindGameObjectsWithTag("Gravestone");
     }
 
     private void Update()
     {
-        GameObject[] gravestones = GameObject.FindGameObjectsWithTag("Gravestone");
         foreach (GameObject gravestone in gravestones)
         {
             MoveableObject moveable = gravestone.GetComponent<MoveableObject>();
@@ -127,15 +135,22 @@ public class GraveObjectiveSlot : MonoBehaviour
 
             if (gravestone != null && !didOnce)
             {
-                gravestone.OnPlayerInteraction(player);
+                if (playerMovingObjects != null && playerMovingObjects.IsOccupied())
+                {
+                    gravestone.OnPlayerInteraction(player);
+                }
                 gravestone.isGrabbable = false;
                 other.gameObject.transform.position = lockingPosition.position;
                 other.gameObject.transform.rotation = lockingPosition.rotation;
-                ObjectiveManager.Instance.AddProgress(linkedObjective.objectiveID, 1);
+                if (Time.timeSinceLevelLoad > 1f) // Prevents adding progress if reloading save and gravestone is already placed in the correct position from previous session.
+                {
+                    ObjectiveManager.Instance.AddProgress(linkedObjective.objectiveID, 1);
+                }
                 rb.constraints = RigidbodyConstraints.FreezeAll;
                 didOnce = true;
 
                 DisableGhost();
+                SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
             }
         }
     }
