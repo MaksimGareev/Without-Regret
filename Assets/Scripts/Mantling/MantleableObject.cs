@@ -5,16 +5,27 @@ using UnityEngine;
 public class MantleableObject : MonoBehaviour, IInteractable
 {
     [Header("Mantle Target Offset")]
+    [Tooltip("Offset applied to the mantle target position. This determines where the player will be positioned when they mantle onto this object. This is visibly represented in editor as a green sphere and line.")]
     [SerializeField] private Vector3 mantleOffset = new Vector3(0f, 2.0f, 0.5f);
+    
+    [Tooltip("Whether to show gizmos for the mantle target position in the editor. This can help with adjusting the mantle offset to get the desired mantle position on this object.")]
     [SerializeField] private bool showGizmos = true;
-    public float interactionPriority => 5f;
+
     //[SerializeField] private GameObject iconPrefab;
     //public bool shouldShowIcon = true;
     //private GameObject popupInstance;
+    [Tooltip("Type of interaction this object will have. This is used to determine the interaction prompt and icon that will show up when the player is in range.")]
     public InteractType interactType => InteractType.Mantle;
+    [Tooltip("Priority of this object's interaction. Lower priority objects will be interacted with first if multiple items are in range.")]
+    public float interactionPriority => 5f;
 
+    [Tooltip("Maximum horizontal distance the player can be from the mantle target position to initiate a mantle. This is used to prevent mantling from too far away.")]
     [SerializeField] private float maxMantleDistance = 2f;
+
+    [Tooltip("Minimum height difference between the player and the mantle target position to allow mantling. This is used to prevent mantling onto objects that are too low to the ground.")]
     [SerializeField] private float minHeight = 0.8f;
+
+    [Tooltip("Maximum height difference between the player and the mantle target position to allow mantling. This is used to prevent mantling onto objects that are too high to reach.")]
     [SerializeField] private float maxHeight = 3f;
 
     private void Update()

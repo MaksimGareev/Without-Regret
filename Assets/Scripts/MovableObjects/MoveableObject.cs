@@ -1,7 +1,6 @@
 using UnityEngine;
 using Unity.AI.Navigation;
 using System;
-using System.Collections;
 
 [RequireComponent(typeof(Rigidbody))]
 public class MoveableObject : MonoBehaviour, IInteractable
@@ -9,10 +8,10 @@ public class MoveableObject : MonoBehaviour, IInteractable
     // [SerializeField] private LayerMask groundLayer;
     [SerializeField] private float moveSlowdownDivisor = 3f;
     [SerializeField] private float sprintSlowdownDivisor = 3f;
-    [SerializeField, Tooltip("Modifies how quickly the player's sprint timer is reduced when this object is held while sprinting")] 
-    private float sprintDepletionFactor = 1.15f;
-    [SerializeField, Tooltip("Modifies how quickly the player's sprint timer is naturally reduced when this object is held while not sprinting. i.e 0 means there's no decay")]
-    private float sprintTimerDecay = 1f;
+    [SerializeField, Tooltip("Modifies how quickly the player's sprint timer is reduced when this object is held while sprinting. Higher number = Faster reduction")] 
+    private float sprintDepletionFactor = 1.05f;
+    [SerializeField, Tooltip("Modifies how quickly the player's sprint timer is reduced when this object is held while moving (but not sprinting). Higher number = faster reduction")]
+    private float staminaReduction = 0.5f;
     [SerializeField] private bool allowSprint = true;
     [SerializeField] ItemData requiredItem;
     [SerializeField] private float maxGrabDistance = 2.5f;
@@ -217,15 +216,15 @@ public class MoveableObject : MonoBehaviour, IInteractable
         
     }*/
 
-    private void FixedUpdate()
+    private void Update()
     {
         if (IsGrabbed && grabPoint != null)
         {
             // Apply the configured offsets so the held object position/rotation can be tuned.
             // Position offset is interpreted in the grabPoint's local space (TransformPoint).
-            
             // Rotation offset is applied relative to grabPoint rotation.
-            transform.SetPositionAndRotation(grabPoint.TransformPoint(heldPositionOffset), grabPoint.rotation * Quaternion.Euler(heldRotationOffset));
+            rb.MovePosition(grabPoint.position + heldPositionOffset);
+            rb.MoveRotation(grabPoint.rotation * Quaternion.Euler(heldRotationOffset));
         }
         /*
         float distance = Vector3.Distance(transform.position, player.position);
@@ -310,6 +309,6 @@ public class MoveableObject : MonoBehaviour, IInteractable
     public float GetMoveSlowdown() => moveSlowdownDivisor;
     public float GetSprintSlowdown() => sprintSlowdownDivisor;
     public float GetSprintDepletion() => sprintDepletionFactor;
-    public float GetSprintTimerDecay() => sprintTimerDecay;
+    public float GetSprintTimerDecay() => staminaReduction;
     public bool GetAllowSprint() => allowSprint;
 }

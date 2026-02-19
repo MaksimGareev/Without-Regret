@@ -3,14 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public class SaveManager : MonoBehaviour
 {
     public static SaveManager Instance { get; private set; }
 
+    [Tooltip("Reference to the TextMeshProUGUI component that will display saving status messages to the player. This should be a child of the SaveManager GameObject.")]
+    [SerializeField] private TextMeshProUGUI savingText;
+
     private List<ISaveable> saveables = new List<ISaveable>();
     private List<ISaveable> persistentSaveables = new List<ISaveable>();
-    
+
+    [Tooltip("If true, the game will automatically save at regular intervals. Auto-saving will only occur when the player is in a scene other than the Main Menu.")]
     public bool shouldAutoSave = true;
     private float autoSaveInterval = 300f; // Auto-save every 5 minutes
     private float autoSaveTimer = 0f;
@@ -19,7 +24,10 @@ public class SaveManager : MonoBehaviour
     // Dictionary to store unlock states
     private Dictionary<string, bool> unlockedItems = new Dictionary<string, bool>();
 
+    [Tooltip("Reference to the InputActionAsset that contains the player's input actions. There should only be one InputActionAsset that exists in the project (PlayerControls)")]
     public InputActionAsset inputActions;
+
+    [Tooltip("If true, the SaveManager will log detailed debug information about saveables and save/load operations to the console. This can be helpful for debugging save/load issues during development, but should be set to false when not needed.")]
     public bool showDebugLogs = true;
 
     private void Awake()
@@ -229,6 +237,7 @@ public class SaveManager : MonoBehaviour
     {
         if (isSaving) return;
         isSaving = true;
+        StartCoroutine(ShowSavingText());
 
         SaveData data = SaveSystem.Load(slot) ?? new SaveData(slot);
 
@@ -249,6 +258,21 @@ public class SaveManager : MonoBehaviour
 
         SaveSystem.Save(data, slot);
         isSaving = false;
+    }
+
+    private IEnumerator ShowSavingText()
+    {
+        if (savingText != null)
+        {
+            savingText.gameObject.SetActive(true);
+            savingText.text = "Saving...";
+
+            yield return new WaitForSecondsRealtime(1f);
+            savingText.text = "Progress Saved!";
+
+            yield return new WaitForSecondsRealtime(2f);
+            savingText.gameObject.SetActive(false);
+        }
     }
 
     public void LoadGame(int slot)

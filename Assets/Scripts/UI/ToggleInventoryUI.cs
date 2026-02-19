@@ -27,19 +27,19 @@ public class ToggleInventoryUI : MonoBehaviour
 
     void Awake()
     {
-        if (inventoryGameObject == null)
-        {
-            inventoryGameObject = GameObject.Find("Inventory");
-            if (inventoryGameObject == null)
-            {
-                Debug.LogError("Inventory GameObject not found in the scene. Please ensure a GameObject named 'Inventory' exists in the scene as a child of the MainCanvas.");
-            }
-        }
+        // if (inventoryGameObject == null)
+        // {
+        //     inventoryGameObject = GameObject.Find("Inventory");
+        //     if (inventoryGameObject == null)
+        //     {
+        //         Debug.LogError("Inventory GameObject not found in the scene. Please ensure a GameObject named 'Inventory' exists in the scene as a child of the MainCanvas.");
+        //     }
+        // }
 
-        rectTransform = inventoryGameObject.GetComponent<RectTransform>();
+        // rectTransform = inventoryGameObject.GetComponent<RectTransform>();
 
-        rectTransform.anchoredPosition = disabledPosition;
-        inventoryGameObject.SetActive(false);
+        GameManager.Instance.inventoryRectTransform.anchoredPosition = disabledPosition;
+        GameManager.Instance.InventoryUI.SetActive(false);
 
         // Initialize input actions
         inventoryAction = inputActions.FindAction("Player/Inventory");
@@ -74,7 +74,7 @@ public class ToggleInventoryUI : MonoBehaviour
 
         if (isEnabled)
         {
-            Cursor.lockState = CursorLockMode.Confined;
+            Cursor.lockState = CursorLockMode.None;
         }
         else
         {
@@ -88,10 +88,10 @@ public class ToggleInventoryUI : MonoBehaviour
     {
         if (enabled)
         {
-            inventoryGameObject.SetActive(true);
+            GameManager.Instance.InventoryUI.SetActive(true);
         }
 
-        Vector2 startPosition = rectTransform.anchoredPosition;
+        Vector2 startPosition = GameManager.Instance.inventoryRectTransform.anchoredPosition;
         Vector2 endPosition = enabled ? enabledPosition : disabledPosition;
 
         float timeElapsed = 0f;
@@ -99,15 +99,15 @@ public class ToggleInventoryUI : MonoBehaviour
         {
             timeElapsed += Time.deltaTime;
             float lerpControl = slideCurve.Evaluate(timeElapsed / slideDuration);
-            rectTransform.anchoredPosition = Vector2.Lerp(startPosition, endPosition, lerpControl);
+            GameManager.Instance.inventoryRectTransform.anchoredPosition = Vector2.Lerp(startPosition, endPosition, lerpControl);
             yield return null;
         }
 
-        rectTransform.anchoredPosition = endPosition;
+        GameManager.Instance.inventoryRectTransform.anchoredPosition = endPosition;
 
         if (!enabled)
         {
-            inventoryGameObject.SetActive(false);
+            GameManager.Instance.InventoryUI.SetActive(false);
         }
     }
 }

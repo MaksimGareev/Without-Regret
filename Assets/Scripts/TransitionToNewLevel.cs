@@ -4,24 +4,46 @@ using UnityEngine.SceneManagement;
 
 public class TransitionToNewLevel : MonoBehaviour
 {
+    [Header("Scene Transition Settings")]
+    [Tooltip("The scene that this trigger will load when the player enters it. Drag and drop the scene asset from the project window into this field.")]
     public SceneReference sceneToLoad;
+
+    [Header("Objective Settings")]
+    [Tooltip("Objective that must be ACTIVE to allow the player to trigger the scene transition. If the player does not have the linked objective ACTIVE, they will not be able to trigger the scene transition. When the player enters this trigger, it will add progress to the linked objective.")]
     public ObjectiveData linkedObjective;
+
+    [Tooltip("If false, the player will be able to trigger the scene transition without needing to have the linked objective active, and the Linked Objective will be ignored. If true, the player must have the linked objective ACTIVE in order to trigger the scene transition, and the Linked Objective will need to be assigned.")]
     public bool needsObjective = true;
+    
+    [Tooltip("If true, the trigger will add progress to the linked objective when the player enters the trigger. If false, entering the trigger will not add progress to the linked objective, but will still be locked based on the needs objective toggle.")]
+    public bool addProgress = false;
+    
     private bool isObjectiveActive = false;
+    private bool canTrigger = true;
 
     private void OnEnable()
     {
         ObjectiveManager.Instance.OnObjectiveActivated.AddListener(SetObjectiveActive);
     }
 
-    private void Update()
+    private void Start()
     {
-        if (ObjectiveManager.Instance == null || linkedObjective == null) return;
-
-        //isObjectiveActive = ObjectiveManager.Instance.IsObjectiveCompleted(linkedObjective.objectiveID);
+        if (ObjectiveManager.Instance != null && linkedObjective != null && !isObjectiveActive)
+        {
+            isObjectiveActive = ObjectiveManager.Instance.IsObjectiveActive(linkedObjective.objectiveID);
+        }
+        canTrigger = false;
+        CheckIfPlayerSpawnedInTrigger();
     }
 
-    private void SetObjectiveActive(ObjectiveInstance objective)
+  // private void Update()
+  // {
+  //     if (ObjectiveManager.Instance == null || linkedObjective == null) return;
+
+  //     //isObjectiveActive = ObjectiveManager.Instance.IsObjectiveCompleted(linkedObjective.objectiveID);
+  // }
+
+  private void SetObjectiveActive(ObjectiveInstance objective)
     {
         if (objective.data == linkedObjective)
         {
@@ -31,7 +53,7 @@ public class TransitionToNewLevel : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (sceneToLoad == null || (!isObjectiveActive && needsObjective)) return;
+        if (sceneToLoad == null || (!isObjectiveActive && needsObjective) || !canTrigger) return;
 
         if (other.CompareTag("Player"))
         {
@@ -39,7 +61,30 @@ public class TransitionToNewLevel : MonoBehaviour
         }
     }
 
-    void LoadScene()
+    private void CheckIfPlayerSpawnedInTrigger()
+    {
+        Collider[] colliders = Physics.OverlapBox(transform.position, GetComponent<Collider>().bounds.extents, Quaternion.identity);
+        foreach (Collider collider in colliders)
+        {
+            if (collider.CompareTag("Player"))
+            {
+                canTrigger = false;
+                return;
+            }
+        }
+
+        canTrigger = true;
+    }
+
+    void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Player") && !canTrigger)
+        {
+            canTrigger = true;
+        }
+    }
+
+  void LoadScene()
     {
         if (needsObjective)
         {
@@ -48,7 +93,11 @@ public class TransitionToNewLevel : MonoBehaviour
             {
                 if (obj.data == linkedObjective)
                 {
-                    ObjectiveManager.Instance.AddProgress(linkedObjective.objectiveID, 1);
+                    if (addProgress)
+                    {
+                        ObjectiveManager.Instance.AddProgress(linkedObjective.objectiveID, 1);
+                    }
+
                     StartCoroutine(WaitToLoadScene());
                     return;
                 }

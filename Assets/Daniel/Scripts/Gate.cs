@@ -3,9 +3,16 @@ using System;
 
 public class Gate : SaveableWithID
 {
+    [Header("References")]
+    [Tooltip("The door on the right side of the gate. This should be a child object of the gate with an Animator component that controls the door's opening and closing animations.")]
     [SerializeField] private GameObject RotateRightDoor;
+    [Tooltip("The door on the left side of the gate. This should be a child object of the gate with an Animator component that controls the door's opening and closing animations.")]
     [SerializeField] private GameObject RotateLeftDoor;
+
+    [Header("Objective Settings")]
+    [Tooltip("Objective that must be COMPLETED to unlock the gate. If the player has not COMPLETED the linked objective, the gate will remain locked and will not open when the player walks towards it.")]
     [SerializeField] private ObjectiveData linkedObjective;
+    [Tooltip("If false, the gate will be permanently unlocked and will not require an objective to be completed. If true, the gate will be locked until the linked objective is completed.")]
     public bool needsObjective = true;
     private bool locked = true;
     private bool opened = false;
@@ -57,6 +64,7 @@ public class Gate : SaveableWithID
             rightDoorAnimator.SetBool("NearPlayer", true);
             leftDoorAnimator.SetBool("NearPlayer", true);
             opened = true;
+            SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
         }
     }
 

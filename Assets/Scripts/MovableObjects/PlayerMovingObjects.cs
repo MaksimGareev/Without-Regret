@@ -7,7 +7,7 @@ public class PlayerMovingObjects : MonoBehaviour
 {
     private Animator animator;
     [Header("General Settings")]
-    [SerializeField] public Transform grabPoint;
+    [Tooltip("Where moveable objects will snap to (should already be set)")] public Transform grabPoint;
 
     [Header("Debugging")]
     [SerializeField] private bool showDebugLogs = false;
@@ -31,8 +31,7 @@ public class PlayerMovingObjects : MonoBehaviour
     public void OnMovingObject(MoveableObject obj)
     {
         // Return early if already occupied or object is already being moved
-        if (IsOccupied()) return;
-        if (!movedObjects.Add(obj)) return;
+        if (IsOccupied() || !movedObjects.Add(obj)) return;
 
         if (movedObjects.Count > 1 && showDebugLogs)
         {
@@ -49,7 +48,7 @@ public class PlayerMovingObjects : MonoBehaviour
         if (animator != null)
         {
             GrabbingAnimationHandler();
-            Debug.Log("Grabbed");
+            if (showDebugLogs) Debug.Log("Grabbed");
         }
         
         normalMoveSpeed = playerController.Speed;
@@ -99,7 +98,7 @@ public class PlayerMovingObjects : MonoBehaviour
         isGrabbing = true;
         StartCoroutine(pickup());
         animator.SetBool("isGrabbing", true);
-        Debug.Log("Grabbing");
+        if (showDebugLogs) Debug.Log("Grabbing");
     }
 
     IEnumerator pickup()
@@ -119,7 +118,7 @@ public class PlayerMovingObjects : MonoBehaviour
 
     private void resetAnimations()
     {
-        Debug.Log("Reset animations");
+        if (showDebugLogs) Debug.Log("Reset animations");
         animator.SetBool("isIdle", false);
         animator.SetBool("isWalking", false);
         animator.SetBool("isGrabbing", false);

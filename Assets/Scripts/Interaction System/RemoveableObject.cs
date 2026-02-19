@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class RemoveableObject : MonoBehaviour, IInteractable
 {
+    [Tooltip("Item required to remove this object. If null, no item is required and the object can be removed immediately.")]
     [SerializeField] ItemData requiredItem;
     public float interactionPriority => 1;
     public InteractType interactType => InteractType.Remove;

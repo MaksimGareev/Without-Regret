@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class CrackTrigger : MonoBehaviour
 {
-    public CrackBlendShapeStepSnap crack;
+    public CrackTest2 crack;
 
     void OnTriggerEnter(Collider other)
     {

@@ -11,12 +11,12 @@ public class Inventory : MonoBehaviour, ISaveable
     [HideInInspector] public List<ItemData> keyItems = new();
     [HideInInspector] public List<ItemData> otherItems = new();
 
-    public List<ItemData> KeyItems => keyItems;
-    public List<ItemData> OtherItems => otherItems;
+    [HideInInspector] public List<ItemData> KeyItems => keyItems;
+    [HideInInspector] public List<ItemData> OtherItems => otherItems;
     
-    private GameObject interactingScript;
+    //private GameObject interactingScript;
     private GameObject backpack;
-    private TextMeshProUGUI AddItemPopup;
+    //private TextMeshProUGUI AddItemPopup;
 
     [Header("Leaf Objective")]
     [SerializeField] private ItemData LeavesReward;
@@ -28,7 +28,7 @@ public class Inventory : MonoBehaviour, ISaveable
     [SerializeField] private bool hasBackpack = false;
     private PlayerController playerController;
     private PlayerEquipItem playerEquipItem;
-    private InventoryUIController inventoryUI;
+    //private InventoryUIController inventoryUI;
     private ToggleInventoryUI toggleInventoryUI;
     private CameraMovement cameraMovement;
     [HideInInspector] public WorldItem itemToCollect;
@@ -45,17 +45,17 @@ public class Inventory : MonoBehaviour, ISaveable
         cameraMovement = Camera.main.GetComponent<CameraMovement>();
         itemToCollect = null;
 
-        if (interactingScript == null)
-        {
-            var foundObjects = FindObjectsByType<GameObject>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-            interactingScript = System.Array.Find(foundObjects, obj => obj.name == "InteractingScript");
-            if (interactingScript == null)
-            {
-                Debug.LogError("InteractingScript GameObject not found in the scene. Please ensure a GameObject named 'InteractingScript' exists in the scene as a child of the Inventory UI in the MainCanvas.");
-            }
-        }
+        // if (interactingScript == null)
+        // {
+        //     var foundObjects = FindObjectsByType<GameObject>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        //     interactingScript = System.Array.Find(foundObjects, obj => obj.name == "InteractingScript");
+        //     if (interactingScript == null)
+        //     {
+        //         Debug.LogError("InteractingScript GameObject not found in the scene. Please ensure a GameObject named 'InteractingScript' exists in the scene as a child of the Inventory UI in the MainCanvas.");
+        //     }
+        // }
 
-        inventoryUI = interactingScript.GetComponent<InventoryUIController>();
+        // inventoryUI = interactingScript.GetComponent<InventoryUIController>();
 
         if (backpack == null)
         {
@@ -66,20 +66,20 @@ public class Inventory : MonoBehaviour, ISaveable
             }
         }
 
-        if (AddItemPopup == null)
-        {
-            //var foundObjects = FindObjectsByType<TextMeshProUGUI>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-            AddItemPopup = GameObject.Find("Inventory Add popup")?.GetComponent<TextMeshProUGUI>();
-            if (AddItemPopup == null)
-            {
-                Debug.LogError("AddItemPopup TextMeshProUGUI not found in the scene. Please ensure a TextMeshProUGUI named 'Inventory Add popup' exists in the scene as a child of the PlayerUICanvas.");
-            }
-        }
+        // if (AddItemPopup == null)
+        // {
+        //     //var foundObjects = FindObjectsByType<TextMeshProUGUI>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        //     AddItemPopup = GameObject.Find("Inventory Add popup")?.GetComponent<TextMeshProUGUI>();
+        //     if (AddItemPopup == null)
+        //     {
+        //         Debug.LogError("AddItemPopup TextMeshProUGUI not found in the scene. Please ensure a TextMeshProUGUI named 'Inventory Add popup' exists in the scene as a child of the PlayerUICanvas.");
+        //     }
+        // }
 
 
 
-        if(AddItemPopup != null)
-            AddItemPopup.gameObject.SetActive(false);
+        if(GameManager.Instance.inventoryPopupText != null)
+            GameManager.Instance.inventoryPopupText.gameObject.SetActive(false);
     }
 
     private void Start()
@@ -154,7 +154,7 @@ public class Inventory : MonoBehaviour, ISaveable
             toggleInventoryUI.hasBackpack = true;
         }
 
-        inventoryUI.RefreshInventoryUI();
+        GameManager.Instance.inventoryInteractingScript.RefreshInventoryUI();
     }
     
     private void SetBackpackActive()
@@ -219,7 +219,7 @@ public class Inventory : MonoBehaviour, ISaveable
             itemToCollect = null;
         }        
 
-        inventoryUI.RefreshInventoryUI();
+        GameManager.Instance.inventoryInteractingScript.RefreshInventoryUI();
 
         if (SaveManager.Instance != null)
         {
@@ -252,7 +252,7 @@ public class Inventory : MonoBehaviour, ISaveable
         
         itemsList.Remove(item);
 
-        inventoryUI.RefreshInventoryUI();
+        GameManager.Instance.inventoryInteractingScript.RefreshInventoryUI();
 
         if (SaveManager.Instance != null)
         {
@@ -282,10 +282,10 @@ public class Inventory : MonoBehaviour, ISaveable
 
     private IEnumerator ItemAddedPopUp(ItemData Item)
     {
-        AddItemPopup.text = "Item Added to Inventory: " + Item.ItemName;
-        AddItemPopup.gameObject.SetActive(true);
+        GameManager.Instance.inventoryPopupText.text = "Item Added to Inventory: " + Item.ItemName;
+        GameManager.Instance.inventoryPopupText.gameObject.SetActive(true);
         yield return new WaitForSecondsRealtime(1.5f);
-        AddItemPopup.gameObject.SetActive(false);
+        GameManager.Instance.inventoryPopupText.gameObject.SetActive(false);
     }
 
     public void AddLeaves()

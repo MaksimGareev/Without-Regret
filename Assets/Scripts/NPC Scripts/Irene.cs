@@ -5,16 +5,20 @@ using UnityEngine.AI;
 
 public class Irene : MonoBehaviour
 {
+    public Animator animator;
     [HideInInspector] public Transform player;            // the player to follow
     public string npcName = "Irene";    // string data of npc name
     public float FollowDistance = 2f;   // how far behind the player
     public float FollowSpeed = 3f;      // movement speed
     public float RotationSpeed = 3f;    // how fast the NPC rotates
     public bool IsFollowing = false;
+    private bool isMoving = false; //detects whether or not Irene is moving for animator purposes
+    private Vector3 lastPosition;
 
     public DialogueTrigger dialogueTrigger; // dialogue trigger script reference
 
     public Transform targetSpot;
+    public Transform GoBackHomeSpot;
     public Transform lookAtTarget;
     private NavMeshAgent agent;
     public bool isTraveling;
@@ -33,6 +37,8 @@ public class Irene : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        movementAnimation();
+
         if (IsFollowing == true)
         {
             Follow();
@@ -115,6 +121,7 @@ public class Irene : MonoBehaviour
             isTraveling = false;
             arrived = true;
             agent.ResetPath();
+            agent.velocity = Vector3.zero;
             ReactivateDialogue(); ; // enable dialogue trigger upon arrival
             Debug.Log("Irene reached the destination.");
         }
@@ -140,6 +147,7 @@ public class Irene : MonoBehaviour
         CanFollowPlayer = false;
         IsFollowing = false;
         isTraveling = true;
+        dialogueTrigger.isLookingAtPlayer = false;
         arrived = false;
         Debug.Log("Irene is now traveling to her destination");
     }
@@ -169,5 +177,29 @@ public class Irene : MonoBehaviour
     public bool NPCNameMatches(string name)
     {
         return string.Equals(npcName, name, System.StringComparison.OrdinalIgnoreCase);
+    }
+
+    public void movementAnimation()
+    {
+        if (arrived)
+        {
+            isMoving = false;
+        }
+        else if (isTraveling)
+        {
+            isMoving = agent.velocity.sqrMagnitude > 0.05f;
+        }
+        else if (IsFollowing)
+        {
+            Vector3 delta = transform.position - lastPosition;
+            delta.y = 0;
+
+            isMoving = delta.sqrMagnitude > 0.00005f;
+        }
+
+        animator.SetBool("isWalking", isMoving);
+        animator.SetBool("isIdle", !isMoving);
+
+        lastPosition = transform.position;
     }
 }

@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class ObjectiveTriggerVolume : MonoBehaviour
 {
+    [Header("Objective Trigger Settings")]
+    [Tooltip("The ObjectiveData asset that this trigger volume is linked to. When the player enters this trigger, it will add progress to the linked objective.")]
     [SerializeField] private ObjectiveData linkedObjective;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
