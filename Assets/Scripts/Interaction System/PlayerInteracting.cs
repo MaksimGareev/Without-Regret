@@ -12,7 +12,7 @@ public class PlayerInteracting : MonoBehaviour
     [SerializeField] private InputActionAsset InputActions;
     [SerializeField] private float interactionRange = 3f;
     [SerializeField] private float interactOffset = 1f;
-    
+
     private InputAction Interact;
     private InputAction Mantle;
     private bool currentlyInteracting = false;
@@ -55,7 +55,7 @@ public class PlayerInteracting : MonoBehaviour
 
         if (heldObject != null)
         {
-            if (Interact.WasPressedThisFrame())
+            if (Interact.triggered)
             {
                 //TryShowTutorial(heldObject.interactType);
                 heldObject.OnPlayerInteraction(gameObject);
@@ -80,16 +80,6 @@ public class PlayerInteracting : MonoBehaviour
             mantleTarget.OnPlayerInteraction(gameObject);
             return;
         }
-
-        // // needs another early return here for if moveableTarget != null, otherwise the call to handle 
-        // // interaction below will call mantle's interaction when interact button is pressed.
-        // if (moveTarget != null && Interact != null && Interact.triggered)
-        // {
-        //     if (showDebugLogs) Debug.Log("Move input detected!");
-        //     //TryShowTutorial(moveTarget.interactType);
-        //     moveTarget.OnPlayerInteraction(gameObject);
-        //     return;
-        // }
 
         // Interact with moveable objects or dialogue
         if (currentTarget != null && Interact != null && Interact.triggered)
@@ -126,20 +116,9 @@ public class PlayerInteracting : MonoBehaviour
 
     private void ScanForInteractable()
     {
-        Collider[] hits = Physics.OverlapSphere(transform.position + transform.forward * interactOffset, interactionRange);
+        Collider[] hits = Physics.OverlapSphere(transform.position, interactionRange);
 
-        var interactables = hits.Select(h => h.GetComponent<IInteractable>()).Where(i => i != null && i.CanInteract(gameObject)).Where(i =>
-        {
-            Vector3 dirToTarget = ((MonoBehaviour)i).transform.position - transform.position;
-            dirToTarget.Normalize();
-
-            float dot = Vector3.Dot(transform.forward, dirToTarget);
-
-            return dot > 0.5f; // Only objects roughly in front
-        })
-            .ToList();
-              
-            //OrderByDescending(i => i.interactionPriority).FirstOrDefault();
+        var interactables = hits.Select(h => h.GetComponent<IInteractable>()).Where(i => i != null && i.CanInteract(gameObject)).ToList();  //OrderByDescending(i => i.interactionPriority).FirstOrDefault();
 
         if (interactables.Count == 0)
         {
@@ -150,38 +129,17 @@ public class PlayerInteracting : MonoBehaviour
             return;
         }
 
-        mantleTarget = interactables
-            .OfType<MantleableObject>()
-            .OrderByDescending(i => i.interactionPriority)
-            .FirstOrDefault();
-
-        moveTarget = interactables
-            .OfType<MoveableObject>()
-            .OrderByDescending(i => i.interactionPriority)
-            .FirstOrDefault();
-
-        currentTarget = interactables
-            .Where(i => !(i is MantleableObject) && !(i is MoveableObject))
-            .OrderByDescending(i => i.interactionPriority)
-            .FirstOrDefault();
-
-        if (mantleTarget != null)
-            ButtonIcons.Instance?.Highlight(mantleTarget.interactType);
-        else if (moveTarget != null)
-            ButtonIcons.Instance?.Highlight(moveTarget.interactType);
-        else if (currentTarget != null)
-            ButtonIcons.Instance?.Highlight(currentTarget.interactType);
-
-        /*currentTarget = interactables.OrderByDescending(i => i.interactionPriority).FirstOrDefault();
+        currentTarget = interactables.OrderByDescending(i => i.interactionPriority).FirstOrDefault();
 
         mantleTarget = currentTarget as MantleableObject;
         moveTarget = currentTarget as MoveableObject;
-        */
 
         // Highlight icon
         ButtonIcons.Instance?.Highlight(currentTarget.interactType);
+
+
     }
-    
+
     private bool TryShowTutorial(InteractType type, System.Action onComplete)
     {
         if (InteractionTutorialManager.Instance == null)
