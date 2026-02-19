@@ -1,4 +1,5 @@
 using System.Collections;
+using UnityEditor.EditorTools;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -14,6 +15,9 @@ public class TransitionToNewLevel : MonoBehaviour
 
     [Tooltip("If false, the player will be able to trigger the scene transition without needing to have the linked objective active, and the Linked Objective will be ignored. If true, the player must have the linked objective ACTIVE in order to trigger the scene transition, and the Linked Objective will need to be assigned.")]
     public bool needsObjective = true;
+    
+    [Tooltip("If true, the trigger will add progress to the linked objective when the player enters the trigger. If false, entering the trigger will not add progress to the linked objective, but will still be locked based on the needs objective toggle.")]
+    public bool addProgress = false;
     
     private bool isObjectiveActive = false;
     private bool canTrigger = false;
@@ -90,7 +94,11 @@ public class TransitionToNewLevel : MonoBehaviour
             {
                 if (obj.data == linkedObjective)
                 {
-                    ObjectiveManager.Instance.AddProgress(linkedObjective.objectiveID, 1);
+                    if (addProgress)
+                    {
+                        ObjectiveManager.Instance.AddProgress(linkedObjective.objectiveID, 1);
+                    }
+
                     StartCoroutine(WaitToLoadScene());
                     return;
                 }
