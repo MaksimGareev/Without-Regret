@@ -112,7 +112,7 @@ public class Door : MonoBehaviour, IInteractable
             SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
         }
 
-        if (addProgress &&ObjectiveManager.Instance != null && needsObjective && linkedObjective != null)
+        if (addProgress && ObjectiveManager.Instance != null && needsObjective && linkedObjective != null && ObjectiveManager.Instance.IsObjectiveActive(linkedObjective.objectiveID))
         {
             ObjectiveManager.Instance.AddProgress(linkedObjective.objectiveID, 1);
         }

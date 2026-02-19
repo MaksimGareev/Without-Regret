@@ -10,14 +10,14 @@ public class BackpackObjective : MonoBehaviour
     {
         Inventory.OnItemAdded += CheckForBag;
 
-        if (ObjectiveManager.Instance != null)
+        if (ObjectiveManager.Instance != null && linkedObjective != null && !ObjectiveManager.Instance.IsObjectiveCompleted(linkedObjective.objectiveID))
         {
             ObjectiveManager.Instance.OnObjectiveActivated.AddListener(EnableBackpacks);
             Debug.Log($"{gameObject.name}: Subscribed to OnObjectiveActivated event.");
         }
         else
         {
-            Debug.LogWarning("ObjectiveManager instance is null. Cannot subscribe to OnObjectiveActivated event.");
+            Debug.LogWarning("ObjectiveManager instance is null or objective is already complete. Cannot subscribe to OnObjectiveActivated event.");
         }
 
         // catch up in case the objective is already active
