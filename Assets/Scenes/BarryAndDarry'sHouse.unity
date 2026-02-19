@@ -737,8 +737,8 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 646f90011cc4d244ba122a8a54b8f0bb, type: 3}
   m_PrefabInstance: {fileID: 41479494}
   m_PrefabAsset: {fileID: 0}
---- !u!65 &41479496
-BoxCollider:
+--- !u!136 &41479496
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -755,9 +755,11 @@ BoxCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 85.47341, y: 36.88274, z: 54.88307}
-  m_Center: {x: -0.16074869, y: 7.1685038, z: 0.0000000032129321}
+  serializedVersion: 2
+  m_Radius: 31.96
+  m_Height: 22.54573
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &43640541
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6047,7 +6049,7 @@ MonoBehaviour:
   moveSlowdownDivisor: 1.5
   sprintSlowdownDivisor: 3
   sprintDepletionFactor: 1.15
-  sprintTimerDecay: 1
+  staminaReduction: 0.5
   allowSprint: 1
   requiredItem: {fileID: 0}
   maxGrabDistance: 2.5
@@ -17876,15 +17878,34 @@ MonoBehaviour:
   currentSceneName: 
   currentSceneIndex: 0
   saveManager: {fileID: 0}
+  saveCanvas: {fileID: 0}
   audioManager: {fileID: 0}
   gameOverManager: {fileID: 0}
+  gameOverCanvas: {fileID: 0}
   mainCanvas: {fileID: 0}
+  staminaSlider: {fileID: 0}
+  throwingSlider: {fileID: 0}
+  possessionSlider: {fileID: 0}
+  floatingSlider: {fileID: 0}
+  floatTargetArea: {fileID: 0}
+  floatCooldown: {fileID: 0}
+  staminaFill: {fileID: 0}
+  InventoryUI: {fileID: 0}
+  LockPickUI: {fileID: 0}
+  inventoryRectTransform: {fileID: 0}
+  inventoryInteractingScript: {fileID: 0}
+  inventoryPopupText: {fileID: 0}
   interactionIconsCanvas: {fileID: 0}
   journalUICanvas: {fileID: 0}
+  journalUI: {fileID: 0}
   playerUICanvas: {fileID: 0}
   pauseManager: {fileID: 0}
+  pauseMenu: {fileID: 0}
   dialogueManager: {fileID: 0}
+  dialoguePanel: {fileID: 0}
   objectiveManager: {fileID: 0}
+  objectiveCanvas: {fileID: 0}
+  objectivePanel: {fileID: 0}
   eventSystem: {fileID: 0}
 --- !u!114 &1089963679
 MonoBehaviour:
@@ -31557,7 +31578,7 @@ MonoBehaviour:
   moveSlowdownDivisor: 2
   sprintSlowdownDivisor: 3
   sprintDepletionFactor: 1.15
-  sprintTimerDecay: 1
+  staminaReduction: 0.5
   allowSprint: 1
   requiredItem: {fileID: 0}
   maxGrabDistance: 2.5
@@ -33687,7 +33708,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Darry
   agent: {fileID: 3138802798869841170}
-  target: {fileID: 1600173494}
+  targets: []
+  currentTarget: {fileID: 0}
   Speed: 1
   RotationSpeed: 3
   targetSpot: {fileID: 0}
@@ -33695,6 +33717,7 @@ MonoBehaviour:
   isTraveling: 0
   arrived: 0
   stopDistance: 0.5
+  updateRate: 0.2
   linkedHouseObjective: {fileID: 0}
   linkedNeighborhoodObjective: {fileID: 0}
 --- !u!54 &3138802798869841173
