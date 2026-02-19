@@ -19,7 +19,7 @@ public class TransitionToNewLevel : MonoBehaviour
     public bool addProgress = false;
     
     private bool isObjectiveActive = false;
-    private bool canTrigger = false;
+    private bool canTrigger = true;
 
     private void OnEnable()
     {
@@ -32,7 +32,7 @@ public class TransitionToNewLevel : MonoBehaviour
         {
             isObjectiveActive = ObjectiveManager.Instance.IsObjectiveActive(linkedObjective.objectiveID);
         }
-
+        canTrigger = false;
         CheckIfPlayerSpawnedInTrigger();
     }
 
