@@ -55,7 +55,7 @@ public class PlayerInteracting : MonoBehaviour
 
         if (heldObject != null)
         {
-            if (Interact.triggered)
+            if (Interact.WasPressedThisFrame())
             {
                 //TryShowTutorial(heldObject.interactType);
                 heldObject.OnPlayerInteraction(gameObject);
@@ -150,10 +150,33 @@ public class PlayerInteracting : MonoBehaviour
             return;
         }
 
-        currentTarget = interactables.OrderByDescending(i => i.interactionPriority).FirstOrDefault();
+        mantleTarget = interactables
+            .OfType<MantleableObject>()
+            .OrderByDescending(i => i.interactionPriority)
+            .FirstOrDefault();
+
+        moveTarget = interactables
+            .OfType<MoveableObject>()
+            .OrderByDescending(i => i.interactionPriority)
+            .FirstOrDefault();
+
+        currentTarget = interactables
+            .Where(i => !(i is MantleableObject) && !(i is MoveableObject))
+            .OrderByDescending(i => i.interactionPriority)
+            .FirstOrDefault();
+
+        if (mantleTarget != null)
+            ButtonIcons.Instance?.Highlight(mantleTarget.interactType);
+        else if (moveTarget != null)
+            ButtonIcons.Instance?.Highlight(moveTarget.interactType);
+        else if (currentTarget != null)
+            ButtonIcons.Instance?.Highlight(currentTarget.interactType);
+
+        /*currentTarget = interactables.OrderByDescending(i => i.interactionPriority).FirstOrDefault();
 
         mantleTarget = currentTarget as MantleableObject;
         moveTarget = currentTarget as MoveableObject;
+        */
 
         // Highlight icon
         ButtonIcons.Instance?.Highlight(currentTarget.interactType);

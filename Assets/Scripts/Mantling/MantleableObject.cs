@@ -11,13 +11,13 @@ public class MantleableObject : MonoBehaviour, IInteractable
     [Tooltip("Whether to show gizmos for the mantle target position in the editor. This can help with adjusting the mantle offset to get the desired mantle position on this object.")]
     [SerializeField] private bool showGizmos = true;
 
-    [Tooltip("Priority of this object's interaction. Lower priority objects will be interacted with first if multiple items are in range.")]
-    public float interactionPriority => 5f;
     //[SerializeField] private GameObject iconPrefab;
     //public bool shouldShowIcon = true;
     //private GameObject popupInstance;
     [Tooltip("Type of interaction this object will have. This is used to determine the interaction prompt and icon that will show up when the player is in range.")]
     public InteractType interactType => InteractType.Mantle;
+    [Tooltip("Priority of this object's interaction. Lower priority objects will be interacted with first if multiple items are in range.")]
+    public float interactionPriority => 5f;
 
     [Tooltip("Maximum horizontal distance the player can be from the mantle target position to initiate a mantle. This is used to prevent mantling from too far away.")]
     [SerializeField] private float maxMantleDistance = 2f;
