@@ -791,6 +791,26 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 303.13013, y: 890.7672, z: 351.47476}
   m_Center: {x: 8.9889345, y: 62.771152, z: 158.15791}
+--- !u!114 &89653559
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 89653556}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc6995ddd5c98c7439fad9eded40dc8f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Door
+  sceneToLoad:
+    sceneAsset: {fileID: 102900000, guid: f75bceb00c7b9da41a2a647d96b72f7e, type: 3}
+    scenePath: Assets/Scenes/Echo'sHouseAstral.unity
+  interactDistance: 5
+  linkedObjective: {fileID: 11400000, guid: e8e042ada4182f947b293528972d83ee, type: 2}
+  needsObjective: 1
+  addProgress: 1
+  interactSound: {fileID: 0}
 --- !u!1001 &111191503
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1527,6 +1547,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 859243268267753215, guid: 4e57c5a007cdac149850e9563c72c82c, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1488528624}
+    - targetCorrespondingSourceObject: {fileID: 859243268267753215, guid: 4e57c5a007cdac149850e9563c72c82c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1488528625}
   m_SourcePrefab: {fileID: 100100000, guid: 4e57c5a007cdac149850e9563c72c82c, type: 3}
 --- !u!4 &223088786 stripped
 Transform:
@@ -8218,6 +8241,10 @@ PrefabInstance:
       propertyPath: isCollectible
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8209122591772879969, guid: 2fb16b61ca03777408a9d2164316e150, type: 3}
+      propertyPath: uniqueID
+      value: 02e392b7-338d-4f8e-ba3d-53ca411a840c
+      objectReference: {fileID: 0}
     - target: {fileID: 8657645946949767162, guid: 2fb16b61ca03777408a9d2164316e150, type: 3}
       propertyPath: m_Name
       value: Backpack
@@ -12472,6 +12499,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 78f63799d8b7b5e4e881db1b70fab2f9, type: 3}
       insertIndex: -1
       addedObject: {fileID: 89653558}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 78f63799d8b7b5e4e881db1b70fab2f9, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 89653559}
   m_SourcePrefab: {fileID: 100100000, guid: 78f63799d8b7b5e4e881db1b70fab2f9, type: 3}
 --- !u!850595691 &751582412
 LightingSettings:
@@ -14216,7 +14246,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1104601806056575187, guid: 8234364b2d17d5848bc48e63195ea058, type: 3}
       propertyPath: uniqueID
-      value: 463a7be5-ae57-437c-abe6-05926cd9cf66
+      value: d7c3497b-9d55-4481-8078-a9005960c7c1
       objectReference: {fileID: 0}
     - target: {fileID: 2275537426101191861, guid: 8234364b2d17d5848bc48e63195ea058, type: 3}
       propertyPath: m_LocalPosition.x
@@ -15337,6 +15367,50 @@ MonoBehaviour:
   blendDistance: 0
   weight: 1
   priority: 0
+--- !u!114 &1488528625
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 223088787}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalCameraData
+  m_RenderShadows: 1
+  m_RequiresDepthTextureOption: 2
+  m_RequiresOpaqueTextureOption: 2
+  m_CameraType: 0
+  m_Cameras: []
+  m_RendererIndex: -1
+  m_VolumeLayerMask:
+    serializedVersion: 2
+    m_Bits: 1
+  m_VolumeTrigger: {fileID: 0}
+  m_VolumeFrameworkUpdateModeOption: 2
+  m_RenderPostProcessing: 0
+  m_Antialiasing: 0
+  m_AntialiasingQuality: 2
+  m_StopNaN: 0
+  m_Dithering: 0
+  m_ClearDepth: 1
+  m_AllowXRRendering: 1
+  m_AllowHDROutput: 1
+  m_UseScreenCoordOverride: 0
+  m_ScreenSizeOverride: {x: 0, y: 0, z: 0, w: 0}
+  m_ScreenCoordScaleBias: {x: 0, y: 0, z: 0, w: 0}
+  m_RequiresDepthTexture: 0
+  m_RequiresColorTexture: 0
+  m_TaaSettings:
+    m_Quality: 3
+    m_FrameInfluence: 0.1
+    m_JitterScale: 1
+    m_MipBias: 0
+    m_VarianceClampScale: 0.9
+    m_ContrastAdaptiveSharpening: 0
+  m_Version: 2
 --- !u!1001 &1504147158
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -19627,6 +19701,10 @@ PrefabInstance:
       value: JonathanNeighborhood
       objectReference: {fileID: 0}
     - target: {fileID: 8430188261884346717, guid: 558083b16e4ca884ea05b07a66ae7af2, type: 3}
+      propertyPath: linkedObjective
+      value: 
+      objectReference: {fileID: 11400000, guid: b5a2022d1c60ccc409f1f13c57e6775a, type: 2}
+    - target: {fileID: 8430188261884346717, guid: 558083b16e4ca884ea05b07a66ae7af2, type: 3}
       propertyPath: sceneToLoad.scenePath
       value: Assets/Scenes/JonathanNeighborhood.unity
       objectReference: {fileID: 0}
@@ -19655,6 +19733,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3096833380224275490, guid: 6d145a8f2933d58498ef6ff2a7d15e98, type: 3}
+      propertyPath: uniqueID
+      value: c20c72d9-4555-4523-9d01-9b71e1f7c09a
+      objectReference: {fileID: 0}
     - target: {fileID: 3108664399994057373, guid: 6d145a8f2933d58498ef6ff2a7d15e98, type: 3}
       propertyPath: m_Name
       value: bouquet
