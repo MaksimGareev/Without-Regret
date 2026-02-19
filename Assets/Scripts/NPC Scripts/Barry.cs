@@ -38,7 +38,10 @@ public class Barry : MonoBehaviour
         //IsFollowing = false;
         isTraveling = true;
         arrived = false;
-        dialogueTrigger.isLookingAtPlayer = false;
+        if (dialogueTrigger != null)
+        {
+            dialogueTrigger.isLookingAtPlayer = false;
+        }
 
         agent.SetDestination(targetSpot.position);
         Debug.Log("Barry is now traveling to her destination");
