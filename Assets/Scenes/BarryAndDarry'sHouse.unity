@@ -21482,6 +21482,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b674532fb3ee12c47af8209333544c07, type: 3}
+--- !u!4 &1326772196 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 130697325566216422, guid: 558083b16e4ca884ea05b07a66ae7af2, type: 3}
+  m_PrefabInstance: {fileID: 121174859}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1327367745
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -31579,7 +31584,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1f1ab1a81f3ad7468ec1fe89381d319, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MoveableObject
-  moveSlowdownDivisor: 2
+  moveSlowdownDivisor: 1.5
   sprintSlowdownDivisor: 3
   sprintDepletionFactor: 1.15
   staminaReduction: 0.5
@@ -33712,7 +33717,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Darry
   agent: {fileID: 3138802798869841170}
-  targets: []
+  targets:
+  - {fileID: 1326772196}
   currentTarget: {fileID: 0}
   Speed: 1
   RotationSpeed: 3
