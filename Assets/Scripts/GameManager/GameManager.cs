@@ -1,8 +1,10 @@
 using System.Collections;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -14,15 +16,34 @@ public class GameManager : MonoBehaviour
     // References to child objects
     //[HideInInspector] public GameObject player;
     [HideInInspector] public GameObject saveManager;
+    public GameObject saveCanvas;
     [HideInInspector] public GameObject audioManager;
     [HideInInspector] public GameObject gameOverManager;
+    public GameObject gameOverCanvas;
     [HideInInspector] public GameObject mainCanvas;
+    public Slider staminaSlider;
+    public Slider throwingSlider;
+    public Slider possessionSlider;
+    public Slider floatingSlider;
+    public RectTransform floatTargetArea;
+    public Slider floatCooldown;
+    public Image staminaFill;
+    public GameObject InventoryUI;
+    public GameObject LockPickUI;
+    public RectTransform inventoryRectTransform;
+    public InventoryUIController inventoryInteractingScript;
+    public TextMeshProUGUI inventoryPopupText;
     [HideInInspector] public GameObject interactionIconsCanvas;
     [HideInInspector] public GameObject journalUICanvas;
+    public GameObject journalUI;
     [HideInInspector] public GameObject playerUICanvas;
     [HideInInspector] public GameObject pauseManager;
-    [HideInInspector] public GameObject dialogueManager;
+    public GameObject pauseMenu;
+    [HideInInspector] public DialogueManager dialogueManager;
+    public GameObject dialoguePanel;
     [HideInInspector] public GameObject objectiveManager;
+    public ObjectiveCanvas objectiveCanvas;
+    public GameObject objectivePanel;
     [HideInInspector] public GameObject eventSystem;
 
     private void Awake()
@@ -56,6 +77,7 @@ public class GameManager : MonoBehaviour
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         StartCoroutine(WaitForCopiesToDelete());
+        //UpdateChildReferences();
     }
 
     private IEnumerator WaitForCopiesToDelete()
@@ -90,7 +112,7 @@ public class GameManager : MonoBehaviour
         journalUICanvas = GetComponentInChildren<Journal>()?.gameObject;
         playerUICanvas = GetComponentInChildren<TimerRingUI>()?.gameObject;
         pauseManager = GetComponentInChildren<PauseManager>()?.gameObject;
-        dialogueManager = GetComponentInChildren<DialogueManager>()?.gameObject;
+        dialogueManager = GetComponentInChildren<DialogueManager>();
         objectiveManager = GetComponentInChildren<ObjectiveManager>()?.gameObject;
         eventSystem = GetComponentInChildren<EventSystem>()?.gameObject;
     }
@@ -130,8 +152,8 @@ public class GameManager : MonoBehaviour
             if (pauseManager.activeSelf)
                 pauseManager.SetActive(false);
 
-            if (dialogueManager.activeSelf)
-                dialogueManager.SetActive(false);
+            if (dialogueManager.gameObject.activeSelf)
+                dialogueManager.gameObject.SetActive(false);
         }
         else
         {
@@ -156,8 +178,8 @@ public class GameManager : MonoBehaviour
             if (!pauseManager.activeSelf)
                 pauseManager.SetActive(true);
 
-            if (!dialogueManager.activeSelf)
-                dialogueManager.SetActive(true);
+            if (!dialogueManager.gameObject.activeSelf)
+                dialogueManager.gameObject.SetActive(true);
         }
 
         // var players = GameObject.FindGameObjectsWithTag("Player");

@@ -7,27 +7,32 @@ using System.Linq;
 public class Door : MonoBehaviour, IInteractable
 {
     [Header("Door Settings")]
-    //scene to load
+    [Tooltip("The scene that this door will load when the player interacts with it. Drag and drop the scene asset from the project window into this field.")]
     public SceneReference sceneToLoad;
-
-    // Interaction      
-    public float interactDistance = 3f;
+    [Tooltip("Distance at which the player can interact with the door.")]
+    public float interactDistance = 5f;
     public float interactionPriority => 5f;
     public InteractType interactType => InteractType.Door;
 
     // Player
     private Transform player;
+    [Header("Objective Settings")]
+    [Tooltip("Objective that must be ACTIVE to allow the player to interact with this door. If the player has not ACTIVE the linked objective, they will not be able to interact with the door.")]
     public ObjectiveData linkedObjective;
+
+    [Tooltip("If false, the player will be able to interact with this door without needing to complete the linked objective, and the Linked Objective will be ignored. If true, the player must complete the linked objective before they can interact with this door, and the Linked Objective will need to be assigned.")]
     public bool needsObjective = true;
 
+    [Tooltip("If true, interacting with the door will add progress to the linked objective. If false, interacting with the door will not add progress to the linked objective, but will still be locked based on the needs objective toggle.")]
+    public bool addProgress = false;
 
     [Header("Audio Settings")]
-
+    [Tooltip("Sound that will play when the player interacts with the door.")]
     public AudioClip interactSound;
     private AudioSource audioSource; //not sure if needed ,but will keep for now
 
-    private bool isPlayerNear = false;
-    private bool isInteracting = false;
+    // private bool isPlayerNear = false;
+    // private bool isInteracting = false;
 
     private void Awake()
     {
@@ -63,8 +68,8 @@ public class Door : MonoBehaviour, IInteractable
         if (!needsObjective) return true;
         
 
-        var completed = ObjectiveManager.Instance.GetCompletedObjectives();
-        return completed.Any(o => o.data == linkedObjective);
+        var active = ObjectiveManager.Instance.GetActiveObjectives();
+        return active.Any(o => o.data == linkedObjective);
     }
 
     public void OnPlayerInteraction(GameObject player)
@@ -105,6 +110,11 @@ public class Door : MonoBehaviour, IInteractable
         if (SaveManager.Instance != null)
         {
             SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
+        }
+
+        if (addProgress && ObjectiveManager.Instance != null && needsObjective && linkedObjective != null && ObjectiveManager.Instance.IsObjectiveActive(linkedObjective.objectiveID))
+        {
+            ObjectiveManager.Instance.AddProgress(linkedObjective.objectiveID, 1);
         }
         
         yield return new WaitForSeconds(0.1f);

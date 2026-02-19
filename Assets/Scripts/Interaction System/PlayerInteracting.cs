@@ -12,7 +12,7 @@ public class PlayerInteracting : MonoBehaviour
     [SerializeField] private InputActionAsset InputActions;
     [SerializeField] private float interactionRange = 3f;
     [SerializeField] private float interactOffset = 1f;
-    
+
     private InputAction Interact;
     private InputAction Mantle;
     private bool currentlyInteracting = false;
@@ -137,9 +137,9 @@ public class PlayerInteracting : MonoBehaviour
         // Highlight icon
         ButtonIcons.Instance?.Highlight(currentTarget.interactType);
 
-       
+
     }
-    
+
     private bool TryShowTutorial(InteractType type, System.Action onComplete)
     {
         if (InteractionTutorialManager.Instance == null)

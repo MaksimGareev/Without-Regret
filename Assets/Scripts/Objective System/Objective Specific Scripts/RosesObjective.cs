@@ -17,6 +17,14 @@ public class RosesObjective : MonoBehaviour
         Inventory.OnItemAdded -= CheckForRose;
     }
 
+    private void Start()
+    {
+        if (ObjectiveManager.Instance != null && ObjectiveManager.Instance.IsObjectiveActive(linkedObjective.objectiveID))
+        {
+            EnableRoses(new ObjectiveInstance(linkedObjective));
+        }
+    }
+
     private void EnableRoses(ObjectiveInstance objective)
     {
         if (itemsEnabled || objective.data != linkedObjective) return;

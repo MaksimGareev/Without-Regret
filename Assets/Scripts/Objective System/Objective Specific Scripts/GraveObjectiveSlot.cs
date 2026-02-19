@@ -4,14 +4,19 @@ using UnityEngine;
 
 public class GraveObjectiveSlot : MonoBehaviour
 {
+    [Header("References")]
+    [Tooltip("Objective data for the objective this slot is linked to. This is used to check if the objective is ACTIVE and to add progress when a gravestone is placed.")]
     [SerializeField] private ObjectiveData linkedObjective;
+    [Tooltip("Ghost prefab to show the player where to put the gravestone. Will be made transparent automatically.")]
+    [SerializeField] private GameObject ghostPrefab;
     private Transform lockingPosition;
     private GameObject player;
+    private PlayerMovingObjects playerMovingObjects;
     private bool isObjectiveActive = false;
     private Rigidbody rb;
     private bool didOnce = false;
-    [SerializeField] private GameObject ghostPrefab;
     private GameObject ghostInstance;
+    private GameObject[] gravestones;
     private float ghostAlpha = 0.7f;
 
     private void OnEnable()
@@ -24,6 +29,11 @@ public class GraveObjectiveSlot : MonoBehaviour
     {
         lockingPosition = GetComponentInChildren<Transform>();
         player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
+        {
+            playerMovingObjects = player.GetComponent<PlayerMovingObjects>();
+        }
+
 
         if (lockingPosition == null)
         {
@@ -38,6 +48,15 @@ public class GraveObjectiveSlot : MonoBehaviour
         if (linkedObjective == null)
         {
             Debug.LogWarning("No objective linked in inspector!");
+        }
+        
+        // Check if the linked objective is already active at the start (i.e. on reloading save), reenable gravestones.
+        if (linkedObjective != null && ObjectiveManager.Instance != null)
+        {
+            if (ObjectiveManager.Instance.IsObjectiveActive(linkedObjective.objectiveID))
+            {
+                SetObjectiveActive(new ObjectiveInstance(linkedObjective));
+            }
         }
 
         if (!isObjectiveActive)
@@ -67,11 +86,12 @@ public class GraveObjectiveSlot : MonoBehaviour
                 Destroy(rb);
             }
         }
+
+        gravestones = GameObject.FindGameObjectsWithTag("Gravestone");
     }
 
     private void Update()
     {
-        GameObject[] gravestones = GameObject.FindGameObjectsWithTag("Gravestone");
         foreach (GameObject gravestone in gravestones)
         {
             MoveableObject moveable = gravestone.GetComponent<MoveableObject>();
@@ -115,15 +135,22 @@ public class GraveObjectiveSlot : MonoBehaviour
 
             if (gravestone != null && !didOnce)
             {
-                gravestone.OnPlayerInteraction(player);
+                if (playerMovingObjects != null && playerMovingObjects.IsOccupied())
+                {
+                    gravestone.OnPlayerInteraction(player);
+                }
                 gravestone.isGrabbable = false;
                 other.gameObject.transform.position = lockingPosition.position;
                 other.gameObject.transform.rotation = lockingPosition.rotation;
-                ObjectiveManager.Instance.AddProgress(linkedObjective.objectiveID, 1);
+                if (Time.timeSinceLevelLoad > 1f) // Prevents adding progress if reloading save and gravestone is already placed in the correct position from previous session.
+                {
+                    ObjectiveManager.Instance.AddProgress(linkedObjective.objectiveID, 1);
+                }
                 rb.constraints = RigidbodyConstraints.FreezeAll;
                 didOnce = true;
 
                 DisableGhost();
+                SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
             }
         }
     }
