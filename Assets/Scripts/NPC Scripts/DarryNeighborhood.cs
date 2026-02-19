@@ -13,6 +13,7 @@ public class DarryNeighborhood : MonoBehaviour
     public bool isTraveling;
     public bool arrived = false;
     public float stopDistance = 0.5f;
+    public GameObject IntruderTrigger;
 
     public string npcName = "Darry";
 
@@ -23,7 +24,7 @@ public class DarryNeighborhood : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-
+        IntruderTrigger.SetActive(false);
     }
 
     // Update is called once per frame
@@ -32,11 +33,21 @@ public class DarryNeighborhood : MonoBehaviour
         if (isTraveling)
         {
             TravelToTarget();
+
+            if (IntruderTrigger != null)
+            {
+                IntruderTrigger.SetActive(true);
+            }
+            else
+            {
+                Debug.Log("Intruder trigger is still inactive");
+            }
         }
         /*else if (arrived && lookAtTarget != null)
         {
             LookAtObject();
         }*/
+
     }
     public void StartTravel()
     {
