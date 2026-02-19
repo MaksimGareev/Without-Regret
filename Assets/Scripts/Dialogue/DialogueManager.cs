@@ -341,7 +341,7 @@ public class DialogueManager : MonoBehaviour
         if (darryNPC != null && (npc == "Reed" || npc == "Darry"))
         {
             darryNPC.StartTravel();
-
+            /*
             if (IntruderTrigger != null)
             {
                 IntruderTrigger.SetActive(true);
@@ -350,6 +350,8 @@ public class DialogueManager : MonoBehaviour
             {
                 Debug.Log("Intruder trigger is still inactive");
             }
+            */
+
         }
         else if (darryNPC == null)
         {
