@@ -1,37 +1,39 @@
 {
     "dialogueLines": [
         {
+            "LineID": "Start",
             "Speaker": "Friendly NPC",
             "text": "Hello! Welcome to the neighborhood.",
             "requiredMorality": 0,
             "choices": [
                 {
                     "text": "first",
-                    "nextIndex": 1,
+                    "NextLineID": "first response",
                     "moralityChange": 2,
                     "directionString": "Up"
                 },
                 {
                     "text": "second",
-                    "nextIndex": 2,
+                    "NextLineID": "second response",
                     "moralityChange": -2,
                     "directionString": "Right"
                 },
                 {
-                    "text": " third",
-                    "nextIndex": 3,
+                    "text": "third",
+                    "NextLineID": "third response",
                     "moralityChange": -2,
                     "directionString": "Down"
                 },
                 {
                     "text": "fourth",
-                    "nextIndex": 4,
+                    "NextLineID": "fourth response",
                     "moralityChange": -2,
                     "directionString": "Left"
                 }
             ]
         },
         {
+            "LineID": "first response",
             "Speaker": "Friendly NPC",
             "text": "You chose the first response.",
             "requiredMorality": 0,
@@ -39,18 +41,21 @@
             "endDialogueAfterLine": true
         },
         {
+            "LineID": "second response",
             "text": "You chose the second response.",
             "requiredMorality": 0,
             "choices": [],
             "endDialogueAfterLine": true
         },
         {
+            "LineID": "third response",
             "text": "You chose the third response.",
             "requiredMorality": 0,
             "choices": [],
             "endDialogueAfterLine": true
         },
         {
+            "LineID": "fourth response",
             "text": "You chose the fourth response.",
             "requiredMorality": 0,
             "choices": [],
