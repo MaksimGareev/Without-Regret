@@ -146,7 +146,7 @@ public class DialogueManager : MonoBehaviour
 
         index = 0;
 
-        playerController = FindObjectOfType<PlayerController>();
+        playerController = FindAnyObjectByType<PlayerController>();
         cam = Camera.main.GetComponent<CameraMovement>();
 
         activeDialogueTrigger = trigger;
