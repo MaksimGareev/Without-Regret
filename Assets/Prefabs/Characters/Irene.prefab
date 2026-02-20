@@ -227,11 +227,12 @@ MonoBehaviour:
   player: {fileID: 0}
   npcName: Irene
   FollowDistance: 1
-  FollowSpeed: 1.75
-  RotationSpeed: 1.75
+  FollowSpeed: 2.25
+  RotationSpeed: 2.25
   IsFollowing: 0
   dialogueTrigger: {fileID: 1311592278050812008}
   targetSpot: {fileID: 0}
+  GoBackHomeSpot: {fileID: 0}
   lookAtTarget: {fileID: 0}
   isTraveling: 0
   arrived: 0
@@ -256,10 +257,10 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.5
-  m_Height: 2
+  m_Radius: 0.49999905
+  m_Height: 2.2811189
   m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0.06847668, y: -0.06126952, z: -0.15497565}
 --- !u!114 &1311592278050812008
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -273,8 +274,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DialogueTrigger
   animator: {fileID: 349482740540396060}
+  isTalking: 0
   NPCName: Irene
-  promptUI: {fileID: 0}
   chatRange: 3
   jsonDialogueFile: {fileID: 4900000, guid: 4784a40bd37475b458c97f350302f4f3, type: 3}
   TalkedJsonDialogueFile: {fileID: 4900000, guid: 9a4e3adf62e696a4d9f3dcc5d6f93c62, type: 3}
@@ -324,7 +325,7 @@ NavMeshAgent:
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
-  m_Height: 2
+  m_Height: 2.3
   m_BaseOffset: 1.2
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
@@ -351,7 +352,7 @@ Rigidbody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
@@ -365,11 +366,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8708396805832778714, guid: 45a88adc597e936479e3050849a183af, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 45a88adc597e936479e3050849a183af, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.102
+      value: 0.937
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 45a88adc597e936479e3050849a183af, type: 3}
       propertyPath: m_LocalPosition.y
