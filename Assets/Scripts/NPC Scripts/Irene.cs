@@ -32,6 +32,8 @@ public class Irene : MonoBehaviour
     {
         player = GameObject.FindGameObjectWithTag("Player").transform;
         agent = GetComponent<NavMeshAgent>();
+        agent.stoppingDistance = FollowDistance;
+        agent.updateRotation = false;
     }
 
     // Update is called once per frame
@@ -68,18 +70,23 @@ public class Irene : MonoBehaviour
 
     public void Follow()
     {
+        animator.SetBool("isTalking", false);
+        if (dialogueTrigger != null)
+        {
+            dialogueTrigger.StopLookingAtPlayer();
+        }
         if (player == null) return;
 
-        // target behind the player
-        Vector3 targetPosition = player.position - player.forward * FollowDistance;
+        float distanceToPlayer = Vector3.Distance(transform.position, player.position); //calculates distance from the player as NPC is following
 
-        // Keep at the same height as the player
-        targetPosition.y = transform.position.y;
+        if (distanceToPlayer <= FollowDistance + 1.5f) //stops the NPC from following the player when they are too close
+        {
+            agent.ResetPath();
+            return;
+        }
 
-        // smoothly move towards the player
-        transform.position = Vector3.Lerp(transform.position, targetPosition, FollowSpeed * Time.deltaTime);
+        agent.SetDestination(player.position);
 
-        // always face the player
         Vector3 LookDirection = player.position - transform.position;
         LookDirection.y = 0f;
 
@@ -92,6 +99,11 @@ public class Irene : MonoBehaviour
 
     public void TravelToTarget()
     {
+        animator.SetBool("isTalking", false);
+        if (dialogueTrigger != null)
+        {
+            dialogueTrigger.StopLookingAtPlayer();
+        }
         if (targetSpot == null || agent == null)
         {
             Debug.Log("There is no target for Irene to go to");
@@ -185,21 +197,11 @@ public class Irene : MonoBehaviour
         {
             isMoving = false;
         }
-        else if (isTraveling)
-        {
-            isMoving = agent.velocity.sqrMagnitude > 0.05f;
-        }
-        else if (IsFollowing)
-        {
-            Vector3 delta = transform.position - lastPosition;
-            delta.y = 0;
-
-            isMoving = delta.sqrMagnitude > 0.00005f;
-        }
+        isMoving = agent.velocity.sqrMagnitude > 0.05f;
 
         animator.SetBool("isWalking", isMoving);
         animator.SetBool("isIdle", !isMoving);
 
-        lastPosition = transform.position;
+        //lastPosition = transform.position;
     }
 }
