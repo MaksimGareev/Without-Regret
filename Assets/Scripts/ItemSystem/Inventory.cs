@@ -18,11 +18,6 @@ public class Inventory : MonoBehaviour, ISaveable
     private GameObject backpack;
     //private TextMeshProUGUI AddItemPopup;
 
-    [Header("Leaf Objective")]
-    [SerializeField] private ItemData LeavesReward;
-    [SerializeField] private ItemData TrashbagRefForRemoval;
-    private int NumLeavesCollected;
-
     [Header("Debugging")]
     [SerializeField] private bool showDebugLogs = false;
     [SerializeField] private bool hasBackpack = false;
@@ -286,17 +281,6 @@ public class Inventory : MonoBehaviour, ISaveable
         GameManager.Instance.inventoryPopupText.gameObject.SetActive(true);
         yield return new WaitForSecondsRealtime(1.5f);
         GameManager.Instance.inventoryPopupText.gameObject.SetActive(false);
-    }
-
-    public void AddLeaves()
-    {
-        NumLeavesCollected++;
-
-        if(NumLeavesCollected >= 5)
-        {
-            AddItem(LeavesReward);
-            RemoveItem(TrashbagRefForRemoval);
-        }
     }
 }
 
