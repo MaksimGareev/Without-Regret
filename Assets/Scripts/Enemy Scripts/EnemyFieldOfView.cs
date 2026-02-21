@@ -78,7 +78,7 @@ public class EnemyFieldOfView : MonoBehaviour
     public bool isAttacking;
 
     private bool isStunned = false;
-    private float stunDuration = 2f;
+    [SerializeField] private float stunDuration = 2f;
     private float timeSinceStunned = 0f;
 
     [SerializeField] private PatrollingEnemy normalMovement;
