@@ -60,6 +60,16 @@ public class ButtonIcons : MonoBehaviour
         }
     }
 
+    public void HighlightMultiple(List<IInteractable> interactables)
+    {
+        //Clear();
+
+        foreach (var interactable in interactables)
+        {
+            Highlight(interactable.interactType);
+        }
+    }
+
     public void Clear()
     {
         foreach (var icon in iconMap.Values)
