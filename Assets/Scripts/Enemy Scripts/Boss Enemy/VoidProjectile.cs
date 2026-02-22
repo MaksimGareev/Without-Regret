@@ -7,18 +7,16 @@ public class VoidProjectile : MonoBehaviour
     [SerializeField] private float lifetime = 8f;
 
     private GameObject voidPoolPrefab;
-    private float voidPoolLifetime;
-    private float voidPoolDamageDelay;
+    private VoidPoolSettings voidPoolSettings;
     private Action onExplosion;
 
     private float initTime;
 
-    public void Initialize(Action onExplosion, GameObject voidPoolPrefab, float voidPoolLifetime, float voidPoolDamageDelay)
+    public void Initialize(Action onExplosion, GameObject voidPoolPrefab, VoidPoolSettings settings)
     {
         this.voidPoolPrefab = voidPoolPrefab;
-        this.voidPoolLifetime = voidPoolLifetime;
         this.onExplosion = onExplosion;
-        this.voidPoolDamageDelay = voidPoolDamageDelay;
+        voidPoolSettings = settings;
 
         initTime = Time.time;
     }
@@ -41,7 +39,7 @@ public class VoidProjectile : MonoBehaviour
             GameObject voidPool = Instantiate(voidPoolPrefab, gameObject.transform.position, Quaternion.identity);
             if (voidPool.TryGetComponent<VoidPool>(out var pool))
             {
-                pool.Initialize(voidPoolLifetime, voidPoolDamageDelay);
+                pool.Initialize(voidPoolSettings);
             }
             else
             {
