@@ -18,7 +18,7 @@ public class MoveableObject : MonoBehaviour, IInteractable
 
     [Header("Transform Settings")]
     [SerializeField, Tooltip("Certain transform offsets can cause overlapping colliders and lead to weird player movement, so this option is here as a failsafe")] 
-    private bool disableColliderWhileHeld = false;
+    private bool disableColliderWhileHeld = true;
     [SerializeField] private Vector3 heldPositionOffset = Vector3.zero;
     [SerializeField] private Vector3 heldRotationOffset = Vector3.zero;
 
