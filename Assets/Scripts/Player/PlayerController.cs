@@ -19,7 +19,7 @@ public class PlayerController : MonoBehaviour, ISaveable
 
     [Header("Sprint Fade Settings")]
     private Coroutine staminaFadeRoutine;
-    public float staminaFadeDuration = 0.5f;
+    public float staminaFadeDuration = 1.5f;
     private CanvasGroup staminaGroup;
 
 
@@ -664,7 +664,7 @@ public class PlayerController : MonoBehaviour, ISaveable
         while (t < staminaFadeDuration) 
         {
             t += Time.deltaTime;
-            staminaGroup.alpha = Mathf.MoveTowards(start, 0f, t / staminaFadeDuration);
+            staminaGroup.alpha = Mathf.MoveTowards(start, 0f, t * staminaFadeDuration);
 
             if (staminaGroup.alpha <= 0.01f) //instantly dissapears the bar at lower floats to avoid very low numbers like 0.000019764
             {
