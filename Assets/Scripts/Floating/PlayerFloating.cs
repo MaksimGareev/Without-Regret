@@ -31,6 +31,8 @@ public class PlayerFloating : MonoBehaviour
     private float rhythmWindow = 0.3f;
     [SerializeField, Tooltip("Determines the size of the rhythm bar")] 
     private float rhythmInterval = 1f;
+    [SerializeField, Tooltip("Determines how low the rhythmWindow can be")]
+    private float rhythmBuffer = 0.33f;
     private PlayerControls controls;
     private Vector2 moveInput;
     private bool floatInput;
@@ -72,9 +74,6 @@ public class PlayerFloating : MonoBehaviour
     // randomized window (normalized 0..1)
     private float windowStartNormalized = 0f;
     private float windowWidthNormalized = 0f;
-
-    // When true the rhythmTimer counts down back to 0 after reaching rhythmInterval
-    private bool timerCountingDown = false;
 
     void OnEnable()
     {
@@ -201,7 +200,7 @@ public class PlayerFloating : MonoBehaviour
         windowWidthNormalized = Mathf.Clamp01(clampedWindow / rhythmInterval);
 
         // choose a single random start position so the window is [start, start+width]
-        windowStartNormalized = Random.Range(0f, 1f - windowWidthNormalized);
+        windowStartNormalized = Random.Range(rhythmBuffer, 1f - windowWidthNormalized);
         float windowEndNormalized = windowStartNormalized + windowWidthNormalized;
 
         // Make sure the target rect is parented to the slider so anchors are relative
@@ -263,7 +262,6 @@ public class PlayerFloating : MonoBehaviour
         IsFloating = true;
         floatTimer = 0f;
         rhythmTimer = 0f;
-        timerCountingDown = false;
 
         // randomize window for this float session so player sees a new target each time
         SetupRhythmTargets();
@@ -303,7 +301,6 @@ public class PlayerFloating : MonoBehaviour
         IsFloating = false;
         rhythmTimer = 0f;
         floatTimer = 0f;
-        timerCountingDown = false;
         if (GameManager.Instance.floatingSlider != null) GameManager.Instance.floatingSlider.value = 0f;
 
         IsCoolingDown = true;
@@ -326,27 +323,14 @@ public class PlayerFloating : MonoBehaviour
 
     private void HandleRhythmInput()
     {
-        // Advance or count down the rhythm timer depending on state
-        if (!timerCountingDown)
+        rhythmTimer += Time.deltaTime;
+        if (rhythmTimer >= rhythmInterval)
         {
-            rhythmTimer += Time.deltaTime;
-            if (rhythmTimer >= rhythmInterval)
-            {
-                rhythmTimer = rhythmInterval;
-                timerCountingDown = true;
-            }
-        }
-        else
-        {
-            rhythmTimer -= Time.deltaTime;
-            if (rhythmTimer <= 0f)
-            {
-                // No successful input during the up/down cycle -> failure
-                if (showDebugLogs) Debug.Log("Floating Rhythm Failure: timer returned to 0 without success.");
-                failState = true;
-                StopFloating();
-                return;
-            }
+            // No successful input during cycle -> failure
+            if (showDebugLogs) Debug.Log("Floating Rhythm Failure: rhythmTimer exceeded the interval");
+            failState = true;
+            StopFloating();
+            return;
         }
 
         floatTimer += Time.deltaTime;
@@ -373,7 +357,6 @@ public class PlayerFloating : MonoBehaviour
             {
                 // success
                 rhythmTimer = 0f;
-                timerCountingDown = false;
                 if (GameManager.Instance.floatingSlider != null)
                 {
                     GameManager.Instance.floatingSlider.value = 0f;
