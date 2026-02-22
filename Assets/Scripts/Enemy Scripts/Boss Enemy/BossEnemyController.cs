@@ -10,14 +10,13 @@ public class BossEnemyController : MonoBehaviour
 
     [Header("Void Attack Settings")]
     [SerializeField] float projectileSpeed = 5f;
-    [SerializeField] float voidPoolLifetime = 5f;
-    [SerializeField, Tooltip("How long the player must be in the pool for before they start taking damage")]
-    float voidPoolDamageDelay = 1f;
+    [SerializeField] VoidPoolSettings voidPoolSettings = new(5f, 1f, null, new int[] { 1, 3 });
 
     private Rigidbody voidProjectileRigidbody;
 
     [Header("References")]
     [SerializeField] Transform player;
+    [SerializeField] GameObject enemyPrefab;
     [SerializeField] GameObject voidProjectilePrefab;
     [SerializeField] GameObject voidPoolPrefab;
     [SerializeField] Transform projectileSpawn;
@@ -50,6 +49,15 @@ public class BossEnemyController : MonoBehaviour
             projectileSpawnPoint = projectileSpawn.position;
         }
 
+        if (enemyPrefab != null)
+        {
+            voidPoolSettings.enemyPrefab = enemyPrefab;
+        }
+        else
+        {
+            Debug.LogError("Enemy prefab for the void pool is missing");
+        }
+
         // set up the array of actions the boss can perform
         actions = new Action[] { VoidProjectile, ArmSweep, DropPillars };
     }
@@ -70,7 +78,7 @@ public class BossEnemyController : MonoBehaviour
     {
         // Will pick an action at random once every action is fully implemented
         /*
-        int choice = UnityEngine.Random.Range(0, actions.Length - 1);
+        int choice = UnityEngine.Random.Range(0, actions.Length);
         actions[choice]();
         */
 
@@ -95,7 +103,7 @@ public class BossEnemyController : MonoBehaviour
 
         if (showDebugLogs) Debug.Log("Performing Void Projectile action");
 
-        voidProjectilePrefab.GetComponent<VoidProjectile>().Initialize(EndAction, voidPoolPrefab, voidPoolLifetime); // End action when projectile hits something
+        voidProjectilePrefab.GetComponent<VoidProjectile>().Initialize(EndAction, voidPoolPrefab, voidPoolSettings); // End action when projectile hits something
 
         // Launch the void projectile from the spawnpoint toward the player's position
         voidProjectilePrefab.transform.SetPositionAndRotation(projectileSpawnPoint, Quaternion.identity);
