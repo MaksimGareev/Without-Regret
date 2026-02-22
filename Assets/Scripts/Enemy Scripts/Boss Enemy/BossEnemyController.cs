@@ -9,7 +9,7 @@ public class BossEnemyController : MonoBehaviour
     [SerializeField, Tooltip("A delay before the boss starts acting")] float startDelay = 1.5f;
 
     [Header("Void Attack Settings")]
-    [SerializeField] float projectileSpeed = 5f;
+    [SerializeField, Min(0.1f)] float projectileSpeed = 5f;
     [SerializeField] VoidPoolSettings voidPoolSettings = new(5f, 1f, null, new int[] { 1, 3 });
 
     private Rigidbody voidProjectileRigidbody;
@@ -82,7 +82,7 @@ public class BossEnemyController : MonoBehaviour
         actions[choice]();
         */
 
-        VoidProjectile();
+        //VoidProjectile();
     }
 
     void EndAction()
@@ -115,10 +115,10 @@ public class BossEnemyController : MonoBehaviour
             Vector3 target = player.position;
 
             Vector3 toTarget = target - origin;
-            // compute time-to-target based on horizontal distance and a speed factor (projectileSpeed used as speed baseline)
+            // compute time-to-target based on horizontal distance and projectileSpeed
             Vector3 toTargetXZ = new Vector3(toTarget.x, 0f, toTarget.z);
             float horizontalDistance = toTargetXZ.magnitude;
-            float time = Mathf.Clamp(horizontalDistance / Mathf.Max(0.1f, projectileSpeed), 0.25f, 3f);
+            float time = Mathf.Clamp(horizontalDistance / projectileSpeed, 0.25f, 3f);
 
             // required initial velocity:
             Vector3 initialVelocity = toTarget / time - 0.5f * time * Physics.gravity;
@@ -141,5 +141,35 @@ public class BossEnemyController : MonoBehaviour
     void DropPillars()
     {
 
+    }
+
+    void Die()
+    {
+        Debug.Log("Boss' health has depleted");
+        Destroy(gameObject); // Replace with death sequence later
+    }
+
+    public void TakeDamage(int value = 1)
+    {
+        // Take damage to the current health part
+        healthPerPart[currentPart - 1] -= value;
+
+        if (showDebugLogs) Debug.Log($"Boss took {value} damage. Current phase: {currentPart}, Current health: {healthPerPart[currentPart - 1]}");
+
+        if (healthPerPart[currentPart - 1] <= 0)
+        {
+            if (currentPart >= healthPerPart.Length)
+            {
+                // Final part has been depleted
+                Die();
+            }
+            else
+            {
+                // Transition to the next part
+                currentPart++;
+
+                if (showDebugLogs) Debug.Log("Transitioned to phase " + currentPart);
+            }
+        }
     }
 }
