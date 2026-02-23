@@ -30,7 +30,6 @@ public class ButtonHighlighting : MonoBehaviour, IPointerEnterHandler, IPointerE
         if (button == null)
         {
             Debug.LogError("ButtonHighlighting script must be attached to a GameObject with a Button component.");
-            enabled = false;
             return;
         }
 
@@ -39,21 +38,22 @@ public class ButtonHighlighting : MonoBehaviour, IPointerEnterHandler, IPointerE
 
         if (textComponent != null)
         {
-            textOriginalColor = textComponent.color;
+            textOriginalColor = textComponent.color; // Store the original text color
         }
 
         backgroundImage = button.GetComponent<Image>();
 
         if (backgroundImage != null)
         {
-            backgroundImage.color = backgroundOriginalColor;
+            backgroundImage.color = backgroundOriginalColor; // Ensure the background starts with the original color
         }
 
-        originalScale = this.transform.localScale;
+        originalScale = this.transform.localScale;  // Store the original scale of the button
 
-        button.onClick.AddListener(OnHighlight);
+        button.onClick.AddListener(OnHighlight); // Highlight the button when it's clicked
     }
 
+    // Implementing the interface methods to handle pointer and selection events
     public void OnDeselect(BaseEventData eventData)
     {
         OnUnhighlight();
@@ -75,6 +75,7 @@ public class ButtonHighlighting : MonoBehaviour, IPointerEnterHandler, IPointerE
         OnHighlight();
     }
 
+    // Method to apply the highlight effect to the button
     public void OnHighlight()
     {
         if (button == null) return;
@@ -95,6 +96,7 @@ public class ButtonHighlighting : MonoBehaviour, IPointerEnterHandler, IPointerE
         this.transform.localScale = originalScale * 1.1f;
     }
 
+    // Method to reset the button's appearance to its original state
     public void OnUnhighlight()
     {
         if (button == null) return;

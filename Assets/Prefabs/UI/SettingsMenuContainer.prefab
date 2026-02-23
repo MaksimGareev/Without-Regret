@@ -134,6 +134,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2a8692e3b82475449cab99a2daf8be5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ButtonHighlighting
+  stayHighlighted: 0
 --- !u!1 &61624003006474067
 GameObject:
   m_ObjectHideFlags: 0
@@ -372,6 +373,7 @@ GameObject:
   - component: {fileID: 1678075924154424832}
   - component: {fileID: 2052439230187112612}
   - component: {fileID: 6682068269919289401}
+  - component: {fileID: 2910502793202697417}
   m_Layer: 5
   m_Name: M&KButton
   m_TagString: Untagged
@@ -494,6 +496,19 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &2910502793202697417
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 151251100464329442}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2a8692e3b82475449cab99a2daf8be5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonHighlighting
+  stayHighlighted: 0
 --- !u!1 &221244719461110446
 GameObject:
   m_ObjectHideFlags: 0
@@ -2660,6 +2675,7 @@ GameObject:
   - component: {fileID: 209402793387034048}
   - component: {fileID: 8909162124935827074}
   - component: {fileID: 5396799950280893807}
+  - component: {fileID: 3278341788770265502}
   m_Layer: 5
   m_Name: ControllerButton
   m_TagString: Untagged
@@ -2782,6 +2798,19 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &3278341788770265502
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1665618336991045440}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2a8692e3b82475449cab99a2daf8be5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonHighlighting
+  stayHighlighted: 0
 --- !u!1 &1681292052000001420
 GameObject:
   m_ObjectHideFlags: 0
@@ -4469,6 +4498,7 @@ GameObject:
   - component: {fileID: 8061647443590142716}
   - component: {fileID: 1876760797220590051}
   - component: {fileID: 932756633031220719}
+  - component: {fileID: 2815293559579712961}
   m_Layer: 5
   m_Name: ControlsButton
   m_TagString: Untagged
@@ -4590,6 +4620,19 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &2815293559579712961
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2714136710141082193}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2a8692e3b82475449cab99a2daf8be5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonHighlighting
+  stayHighlighted: 0
 --- !u!1 &2768119774952025370
 GameObject:
   m_ObjectHideFlags: 0
@@ -6404,7 +6447,6 @@ MonoBehaviour:
   inputActions: {fileID: -944628639613478452, guid: f1f4dbfd8c64cd440924988ec4fb6f6a, type: 3}
   pendingChangeColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   defaultColor: {r: 1, g: 1, b: 1, a: 1}
-  TabEnabledColor: {r: 0.4980392, g: 1, b: 0.8313726, a: 1}
   legendsEnabledColor: {r: 1, g: 0.9882353, b: 0.88235295, a: 1}
   legendsDisabledColor: {r: 1, g: 0.9882353, b: 0.88235295, a: 0.49019608}
   parentMenu: {fileID: 0}
@@ -8498,6 +8540,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2a8692e3b82475449cab99a2daf8be5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ButtonHighlighting
+  stayHighlighted: 0
 --- !u!1 &4726881790665839737
 GameObject:
   m_ObjectHideFlags: 0
@@ -9705,6 +9748,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2a8692e3b82475449cab99a2daf8be5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ButtonHighlighting
+  stayHighlighted: 0
 --- !u!1 &5656889586651396178
 GameObject:
   m_ObjectHideFlags: 0
@@ -11679,6 +11723,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2a8692e3b82475449cab99a2daf8be5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ButtonHighlighting
+  stayHighlighted: 0
 --- !u!1 &6580528006762915383
 GameObject:
   m_ObjectHideFlags: 0
@@ -11813,6 +11858,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2a8692e3b82475449cab99a2daf8be5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ButtonHighlighting
+  stayHighlighted: 0
 --- !u!1 &6933211836856573466
 GameObject:
   m_ObjectHideFlags: 0
@@ -12617,6 +12663,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2a8692e3b82475449cab99a2daf8be5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ButtonHighlighting
+  stayHighlighted: 0
 --- !u!1 &7885103768819662304
 GameObject:
   m_ObjectHideFlags: 0

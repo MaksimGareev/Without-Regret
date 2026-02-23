@@ -22,9 +22,6 @@ public class MMSettings : MonoBehaviour
     [Tooltip("Default color for all text in the settings menu.")]
     [SerializeField] private Color defaultColor = Color.white;
 
-    // [Tooltip("Color for the text of the currently selected tab.")]
-    // [SerializeField] private Color TabEnabledColor = Color.aquamarine;
-
     [Tooltip("Color for the text of the control legends when they are enabled.")]
     [SerializeField] private Color legendsEnabledColor = Color.white;
 
