@@ -12,7 +12,7 @@ public class QTETriggerVolume : MonoBehaviour, IInteractable
 
     [SerializeField] bool showDebugLogs = false;
 
-    private int[] directionAssignments = new int[] { 0, 0, 0, 0 }; // 0 = up, 1 = left, 2 = down, 3 = right in terms of layout on the d-pad and arrow keys. Randomly generated on QTE start
+    private readonly int[] directionAssignments = new int[] { 0, 0, 0, 0 }; // 0 = up, 1 = left, 2 = down, 3 = right in terms of layout on the d-pad and arrow keys. Randomly generated on QTE start
     private int arrowIndex = 0;
     private int arrowsLength;
     private PlayerControls controls;
@@ -41,6 +41,7 @@ public class QTETriggerVolume : MonoBehaviour, IInteractable
 
         if (!controlsLocked && arrowIndex < directionAssignments.Length)
         {
+            // Check the player's input
             if (controls.LockPicking.ArrowUp.triggered)
             {
                 CheckDirection(0);
@@ -93,6 +94,7 @@ public class QTETriggerVolume : MonoBehaviour, IInteractable
 
     public void OnPlayerInteraction(GameObject player)
     {
+        // Generate sequence for the QTE, freeze player movement, and initialize UI
         GenerateSolutions();
         playerController.MovementLocked = true;
         playerController.enabled = false;
@@ -124,6 +126,7 @@ public class QTETriggerVolume : MonoBehaviour, IInteractable
     {
         if (input == directionAssignments[arrowIndex])
         {
+            // Correct direction, move on
             Color tempColor = Color.green;
             tempColor.a = 0.75f;
             arrows[arrowIndex].color = tempColor;
@@ -139,11 +142,10 @@ public class QTETriggerVolume : MonoBehaviour, IInteractable
     }
     IEnumerator WrongDirection()
     {
-        if (showDebugLogs) Debug.Log("Wrong Direction");
+        if (showDebugLogs) Debug.Log("Wrong Direction input, resetting");
         for (int i = 0; i < arrowsLength; i++)
         {
-            Color tempColor = Color.red;
-            arrows[i].color = tempColor;
+            arrows[i].color = Color.red;
         }
 
         yield return new WaitForSeconds(.25f);

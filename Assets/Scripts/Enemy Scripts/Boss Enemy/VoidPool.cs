@@ -49,7 +49,7 @@ public class VoidPool : MonoBehaviour
 
             Vector3 randomPosition = new Vector3(randomX, transform.position.y + 1, randomZ);
 
-            // Instantiate the object at the random position with no rotation
+            // Instantiate the enemy at the random position with no rotation
             Instantiate(settings.enemyPrefab, randomPosition, Quaternion.identity);
         }
     }

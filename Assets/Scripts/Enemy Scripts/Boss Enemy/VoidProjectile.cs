@@ -39,6 +39,7 @@ public class VoidProjectile : MonoBehaviour
             GameObject voidPool = Instantiate(voidPoolPrefab, gameObject.transform.position, Quaternion.identity);
             if (voidPool.TryGetComponent<VoidPool>(out var pool))
             {
+                // Update void pool with necessary parameters
                 pool.Initialize(voidPoolSettings);
             }
             else
