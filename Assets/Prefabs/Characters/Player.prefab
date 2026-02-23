@@ -688,6 +688,7 @@ MonoBehaviour:
   normalColor: {r: 0, g: 0.5764706, b: 0.43529412, a: 1}
   cooldownColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   SprintDust: {fileID: 82863498991437760}
+  staminaFadeDuration: 1.5
   MovementLocked: 0
   Speed: 4
   SprintSpeed: 8
@@ -927,6 +928,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovingObjects
   grabPoint: {fileID: 1136661512570076457}
+  controller: {fileID: 8821119716541630626}
+  playerInput: {fileID: 6640155716822935536}
   showDebugLogs: 0
 --- !u!114 &6640155716822935536
 MonoBehaviour:
