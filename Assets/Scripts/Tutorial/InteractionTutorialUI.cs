@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.InputSystem;
+using System.Collections;
 
 public class InteractionTutorialUI : MonoBehaviour
 {
@@ -8,6 +9,9 @@ public class InteractionTutorialUI : MonoBehaviour
 
     [SerializeField] private GameObject panel;
     [SerializeField] private TextMeshProUGUI descriptionText;
+
+    private float fadeDuration = 0.5f;
+    private CanvasGroup canvasGroup;
 
     public bool IsShowing { get; private set; }
 
@@ -22,6 +26,23 @@ public class InteractionTutorialUI : MonoBehaviour
         }
 
         Instance = this;
+
+        if (panel == null)
+        {
+            Debug.LogError("Panel reference missing");
+            return;
+        }
+
+        canvasGroup = panel.GetComponent<CanvasGroup>();
+        if (canvasGroup == null)
+        {
+            canvasGroup = panel.AddComponent<CanvasGroup>();
+        }
+
+        canvasGroup.alpha = 0f;
+        canvasGroup.interactable = false;
+        canvasGroup.blocksRaycasts = false;
+
         panel.SetActive(false);
         IsShowing = false;
     }
@@ -37,6 +58,8 @@ public class InteractionTutorialUI : MonoBehaviour
         descriptionText.text = text;
         panel.SetActive(true);
         descriptionText.gameObject.SetActive(true);
+
+        StartCoroutine(FadeCanvasGroup(canvasGroup, 0f, 1f, fadeDuration));
 
         IsShowing = true;
         onConfrimCallBack = onConfirm;
@@ -60,6 +83,8 @@ public class InteractionTutorialUI : MonoBehaviour
 
     public void HideTutorial()
     {
+        StartCoroutine(FadeOutAndDeactivate());
+        /*
         panel.SetActive(false);
         descriptionText.gameObject.SetActive(false);
         Time.timeScale = 1f;
@@ -68,6 +93,40 @@ public class InteractionTutorialUI : MonoBehaviour
 
         onConfrimCallBack?.Invoke();
         onConfrimCallBack = null;
+        */
+    }
+
+    private IEnumerator FadeOutAndDeactivate()
+    {
+        yield return FadeCanvasGroup(canvasGroup, 1f, 0f, fadeDuration);
+
+        panel.SetActive(false);
+        descriptionText.gameObject.SetActive(false);
+
+        IsShowing = false;
+        Time.timeScale = 1f;
+
+        onConfrimCallBack?.Invoke();
+        onConfrimCallBack = null;
+    }
+
+    private IEnumerator FadeCanvasGroup(CanvasGroup cg, float start, float end, float duration)
+    {
+        float elapsed = 0f;
+        cg.alpha = start;
+        cg.interactable = end > 0f;
+        cg.blocksRaycasts = end > 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            cg.alpha = Mathf.Lerp(start, end, elapsed / duration);
+            yield return null;
+        }
+
+        cg.alpha = end;
+        cg.interactable = end > 0f;
+        cg.blocksRaycasts = end > 0f;
     }
 
 }

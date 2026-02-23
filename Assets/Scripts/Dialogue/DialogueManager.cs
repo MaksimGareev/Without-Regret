@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.Audio;
 
 public class DialogueManager : MonoBehaviour
 {
@@ -46,6 +47,10 @@ public class DialogueManager : MonoBehaviour
     [SerializeField] AudioSource typingSource;
     [Tooltip("Audio clips of each letter A-Z")]
     [SerializeField] List<AudioClip> letterClips;
+
+    [Header("Audio Mixer Groups")]
+    [SerializeField] AudioMixerGroup maleVoiceGroup;
+    [SerializeField] AudioMixerGroup femaleVoiceGroup;
 
     [Header("Choice Selection")]
     [Tooltip("How long the player needs to hold to confirm a selection")]
@@ -242,6 +247,9 @@ public class DialogueManager : MonoBehaviour
         
 
         npcNameText.text = currentLine.Speaker;
+
+        SetVoiceGender(currentLine.NPCGender);
+
         continueArrow.SetActive(false);
         ClearChoices();
 
@@ -292,6 +300,21 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
+    void SetVoiceGender(string gender)
+    {
+        if (string.IsNullOrEmpty(gender)) return;
+
+        switch (gender.ToLower())
+        {
+            case "male":
+                if (maleVoiceGroup != null) typingSource.outputAudioMixerGroup = maleVoiceGroup;
+                break;
+            case "female":
+                if (femaleVoiceGroup != null) typingSource.outputAudioMixerGroup = femaleVoiceGroup;
+                break;
+        }
+    }
+
     void OnConfirmPressed()
     {
         // if dialogue is still being built and confirm is press build out full line
@@ -323,24 +346,6 @@ public class DialogueManager : MonoBehaviour
             EndDialogue();
         }
 
-        // if typing is finished and there are no choices go to the next line
-        /*
-        if (dialogue != null && index < dialogue.dialogueLines.Count)
-        {
-            DialogueLine line = dialogue.dialogueLines[index];
-            if (line.endDialogueAfterLine)
-            {
-                EndDialogue();
-                HandleNPCMovementsAfterLine();
-            }
-            else
-            {
-                continueArrow.SetActive(false);
-                index++;
-                ShowLine();
-            }
-        }
-        */
     }
 
     // Move NPCs or trigger irene to follow the player
