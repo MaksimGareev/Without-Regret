@@ -13,6 +13,7 @@ public class DialogueLine
 {
     public string LineID;                       // Id of the current line of dialogue
     public string Speaker;                      // Name of the speaker of the current line of dialogue
+    public string NPCGender;
     public string text;                         // text of the dialogue line
     public int requiredMorality;
     public string NextLineID;                   // the id of the next line of dialogue if there are no choices to choose from
