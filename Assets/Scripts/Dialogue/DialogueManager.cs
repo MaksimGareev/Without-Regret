@@ -134,6 +134,7 @@ public class DialogueManager : MonoBehaviour
     void OnEnable() => controls.Enable();
     void OnDisable() => controls.Disable();
 
+    // Load Json file on start of dialogue interaction
     public void StartDialogueFromJson(TextAsset json, DialogueTrigger trigger)
     {
         dialogue = JsonUtility.FromJson<DialogueData>(json.text);
@@ -142,7 +143,6 @@ public class DialogueManager : MonoBehaviour
         foreach (var line in dialogue.dialogueLines)
         {
             LineLookup[line.LineID] = line;
-            //if (line.choices == null) continue;
 
             if (line.choices != null)
             {
@@ -158,15 +158,20 @@ public class DialogueManager : MonoBehaviour
         playerController = FindObjectOfType<PlayerController>();
         cam = Camera.main.GetComponent<CameraMovement>();
 
+        // assign the current active dialogue trigger
         activeDialogueTrigger = trigger;
+
+        // NPC references for movement if needed
         ireneNPC = FindAnyObjectByType<Irene>();
         barryNPC = FindAnyObjectByType<Barry>();
         darryNPC = FindAnyObjectByType<DarryNeighborhood>();
 
+        // activate dialogue UI
         DialoguePanel.SetActive(true);
         playerPortrait.gameObject.SetActive(true);
         npcNameText.text = dialogue.npcName;
 
+        // set dialogue to true and lock camera rotation
         DialogueIsActive = true;
         playerController.SetDialogueActive(true);
         cam.SetCameraLocked(true);
@@ -179,15 +184,18 @@ public class DialogueManager : MonoBehaviour
         ShowLine();
     }
 
+    // End dialogue interaction
     public void EndDialogue()
     {
         StopAllCoroutines();
 
+        // deactivate Dialogue UI
         DialoguePanel.SetActive(false);
         playerPortrait.gameObject.SetActive(false);
         continueArrow.SetActive(false);
         ClearChoices();
 
+        // set dialogue interaction to false
         DialogueIsActive = false;
         playerController.SetDialogueActive(false);
 
@@ -218,8 +226,10 @@ public class DialogueManager : MonoBehaviour
         cam.SetCameraLocked(false);
     }
 
+    // Show current line of dialogue
     void ShowLine()
     {
+        // search for Line ID of current line
         if (!LineLookup.ContainsKey(currentLineID))
         {
             EndDialogue();
@@ -239,6 +249,7 @@ public class DialogueManager : MonoBehaviour
 
     }
 
+    // type out current line of dialogue and pauses for punctuation
     IEnumerator TypeLine(DialogueLine line)
     {
         typing = true;
@@ -270,6 +281,7 @@ public class DialogueManager : MonoBehaviour
 
         typing = false;
 
+        // activate continue arrow when line is built and there are no choices
         if (line.choices == null || line.choices.Count == 0)
         {
             continueArrow.SetActive(true);
@@ -292,6 +304,7 @@ public class DialogueManager : MonoBehaviour
         // ignore confirm if chioces are present
         if (CanChoose) return;
 
+        // if current line has endDialogueAfterLine true end dialogue and move NPC if needed
         if (currentLine.endDialogueAfterLine)
         {
             EndDialogue();
@@ -299,6 +312,7 @@ public class DialogueManager : MonoBehaviour
             return;
         }
 
+        // if next line does not have NextLineID end dialogue
         if (!string.IsNullOrEmpty(currentLine.NextLineID))
         {
             currentLineID = currentLine.NextLineID;
@@ -329,6 +343,7 @@ public class DialogueManager : MonoBehaviour
         */
     }
 
+    // Move NPCs or trigger irene to follow the player
     void HandleNPCMovementsAfterLine()
     {
         if (activeDialogueTrigger == null) return;
@@ -370,17 +385,6 @@ public class DialogueManager : MonoBehaviour
         if (darryNPC != null && (npc == "Reed" || npc == "Darry"))
         {
             darryNPC.StartTravel();
-            /*
-            if (IntruderTrigger != null)
-            {
-                IntruderTrigger.SetActive(true);
-            }
-            else
-            {
-                Debug.Log("Intruder trigger is still inactive");
-            }
-            */
-
         }
         else if (darryNPC == null)
         {
@@ -388,6 +392,7 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
+    // if line is being built and player presses the confirm button build the line immediately
     void SkipTyping()
     {
        if (!typing) return;
@@ -407,6 +412,7 @@ public class DialogueManager : MonoBehaviour
        }
     }
 
+    // spawn answer choices if current line prompts them to
     void SpawnChoices(List<DialogueChoice> choices)
     {
         CanChoose = true;
@@ -440,6 +446,7 @@ public class DialogueManager : MonoBehaviour
         HandleDirectionalSelection();
     }
 
+    // read the value of directional input when choices are present
     void HandleDirectionalSelection()
     {
         Vector2 input = controls.Dialogue.Move.ReadValue<Vector2>();
@@ -478,6 +485,7 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
+    // Highlight choices when player presses or holds in direction of answer choices
     void HighlightChoice(ChoiceDirection dir)
     {
         foreach (var obj in spawnedChoices)
@@ -510,6 +518,7 @@ public class DialogueManager : MonoBehaviour
         visual.image.fillAmount = Mathf.Clamp01(progress);
     }
 
+    // reset hold feedback if player lets go of directional input
     void ResetHold()
     {
         holdTimer = 0;
@@ -560,6 +569,7 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
+    // Handle countdown of time remaining to select answer choice
     IEnumerator ChoiceTimer(List<DialogueChoice> choices)
     {
         float t = choiceTimeLimit;
@@ -582,6 +592,7 @@ public class DialogueManager : MonoBehaviour
         SelectChoice(GetBiasedChoice(choices));
     }
 
+    // Handle auto selection if player does not choose in time, take into account past answers with slight randomness
     DialogueChoice GetBiasedChoice(List<DialogueChoice> choices)
     {
         int dominant = Mathf.Max(posCount, negCount, neutralCount);
@@ -607,6 +618,7 @@ public class DialogueManager : MonoBehaviour
         return best;
     }
 
+    // apply morality change of selected answer choice
     void ApplyMorality(int change)
     {
         playerMorality += change;
@@ -628,6 +640,7 @@ public class DialogueManager : MonoBehaviour
         portraitRoutine = StartCoroutine(SwapPortrait(newPortrait));
     }
 
+    // Change player and NPC portrait in response to dialogue choice selection
     private IEnumerator SwapPortrait(Sprite newPortrait)
     {
         if (playerPortrait == null || portraitGroup == null) yield break;
@@ -678,6 +691,7 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
+    // play sounds of letters when being built
     void PlayTypingSound(char c)
     {
         if (char.IsWhiteSpace(c)) return;
@@ -689,6 +703,7 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
+    // set directional position of answer choices when spawned
     Vector2 GetDirPos(ChoiceDirection dir)
     {
         return dir switch
@@ -701,6 +716,7 @@ public class DialogueManager : MonoBehaviour
         };
     }
 
+    // remove answer choices
     void ClearChoices()
     {
         foreach (var c in spawnedChoices)
@@ -708,6 +724,7 @@ public class DialogueManager : MonoBehaviour
         spawnedChoices.Clear();
     }
 
+    // show pop up message of morality change and current total morality
     void ShowPopup(string msg)
     {
         popupText.text = msg;
@@ -716,6 +733,7 @@ public class DialogueManager : MonoBehaviour
         StartCoroutine(FadePopup());
     }
 
+    // make pop up fade away after selection
     IEnumerator FadePopup()
     {
         yield return new WaitForSeconds(1f);
