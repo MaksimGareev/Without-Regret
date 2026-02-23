@@ -84,16 +84,6 @@ public class InteractionTutorialUI : MonoBehaviour
     public void HideTutorial()
     {
         StartCoroutine(FadeOutAndDeactivate());
-        /*
-        panel.SetActive(false);
-        descriptionText.gameObject.SetActive(false);
-        Time.timeScale = 1f;
-
-        IsShowing = false;
-
-        onConfrimCallBack?.Invoke();
-        onConfrimCallBack = null;
-        */
     }
 
     private IEnumerator FadeOutAndDeactivate()
