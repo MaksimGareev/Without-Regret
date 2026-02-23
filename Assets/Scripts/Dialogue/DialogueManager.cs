@@ -5,6 +5,15 @@ using TMPro;
 using UnityEngine.UI;
 using UnityEngine.Audio;
 
+[System.Serializable]
+public class NPCPortraitSet
+{
+    public string npcName;
+    public Sprite happy;
+    public Sprite neutral;
+    public Sprite upset;
+}
+
 public class DialogueManager : MonoBehaviour
 {
     public static bool DialogueIsActive;
@@ -42,6 +51,10 @@ public class DialogueManager : MonoBehaviour
     [SerializeField] float portraitFadeTime = .25f;
     [Tooltip("How long the new portrait stays before reverting back to the default")]
     [SerializeField] float portraitHoldTime = .75f;
+
+    [Header("NPC Portraits")]
+    [SerializeField] private Image npcPortrait;
+    [SerializeField] private List<NPCPortraitSet> npcPortraitSets;
 
     [Header("Audio")]
     [SerializeField] AudioSource typingSource;
@@ -92,7 +105,9 @@ public class DialogueManager : MonoBehaviour
     Coroutine typingRoutine;
     Coroutine timerRoutine;
     Coroutine portraitRoutine;
+
     CanvasGroup portraitGroup;
+    CanvasGroup npcPortraitGroup;
 
     public int playerMorality;
     int posCount, negCount, neutralCount;
@@ -105,10 +120,17 @@ public class DialogueManager : MonoBehaviour
     private void Awake()
     {
         controls = new PlayerControls();
+        
         portraitGroup = playerPortrait.GetComponent<CanvasGroup>();
         if (!portraitGroup)
         {
             portraitGroup = playerPortrait.gameObject.AddComponent<CanvasGroup>();
+        }
+
+        npcPortraitGroup = npcPortrait.GetComponent<CanvasGroup>();
+        if (!npcPortraitGroup)
+        {
+            npcPortraitGroup = npcPortrait.gameObject.AddComponent<CanvasGroup>();
         }
 
         foreach (var v in holdVisuals)
@@ -229,6 +251,7 @@ public class DialogueManager : MonoBehaviour
 
         StartCoroutine(cam.EndCameraZoom());
         cam.SetCameraLocked(false);
+        npcPortrait.gameObject.SetActive(false);
     }
 
     // Show current line of dialogue
@@ -247,6 +270,8 @@ public class DialogueManager : MonoBehaviour
         
 
         npcNameText.text = currentLine.Speaker;
+
+        SetNPCPortrait(currentLine.lineTone);
 
         SetVoiceGender(currentLine.NPCGender);
 
@@ -313,6 +338,26 @@ public class DialogueManager : MonoBehaviour
                 if (femaleVoiceGroup != null) typingSource.outputAudioMixerGroup = femaleVoiceGroup;
                 break;
         }
+    }
+
+    void SetNPCPortrait(LineTone lineTone)
+    {
+        if (npcPortrait == null || currentLine == null) return;
+
+        NPCPortraitSet set = npcPortraitSets.Find(p => p.npcName == currentLine.Speaker);
+        if (set == null) return;
+
+        Sprite newSprite = lineTone switch
+        {
+            LineTone.Happy => set.happy,
+            LineTone.Neutral => set.neutral,
+            LineTone.Upset => set.upset,
+            _ => set.neutral
+        };
+
+        npcPortrait.sprite = newSprite;
+        npcPortrait.gameObject.SetActive(true);
+
     }
 
     void OnConfirmPressed()
