@@ -2,6 +2,7 @@ using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.InputSystem;
 
 public class PlayerMovingObjects : MonoBehaviour
 {
@@ -104,13 +105,19 @@ public class PlayerMovingObjects : MonoBehaviour
     IEnumerator pickup()
     {
         animator.SetTrigger("pickup");
+        Debug.Log("Picking up!");
+        playerController.DisableInput();
         yield return new WaitForSeconds(1.5f);
+        playerController.EnableInput();
     }
 
     IEnumerator placeDown()
     {
         animator.SetTrigger("placing");
+        Debug.Log("Placing down!");
+        playerController.DisableInput();
         yield return new WaitForSeconds(1.5f);
+        playerController.EnableInput();
         resetAnimations();
     }
 
@@ -124,6 +131,8 @@ public class PlayerMovingObjects : MonoBehaviour
         animator.SetBool("isGrabbing", false);
         animator.SetBool("isFloating", false);
     }
+
+    
 
     public bool IsOccupied() => movedObjects.Count > 0;
 }

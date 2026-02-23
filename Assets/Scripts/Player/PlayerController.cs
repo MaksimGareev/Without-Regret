@@ -249,6 +249,8 @@ public class PlayerController : MonoBehaviour, ISaveable
             return;
         }
 
+
+
         //if (MovementLocked)
         //{
         //    if (!wasMovementLocked)
@@ -786,6 +788,16 @@ public class PlayerController : MonoBehaviour, ISaveable
         yield return new WaitForSeconds(2f);
 
         specialIdle = false;
+    }
+
+    public void DisableInput() //for disabling/freezing the player throughout other scripts
+    {
+        controls.Disable();
+    }
+
+    public void EnableInput() //for enabling/unfreezing the player throughout other scripts
+    {
+        controls.Enable();
     }
 
 
