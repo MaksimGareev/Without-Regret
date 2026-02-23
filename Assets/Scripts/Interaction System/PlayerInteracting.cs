@@ -5,23 +5,19 @@ using UnityEngine.InputSystem;
 
 public class PlayerInteracting : MonoBehaviour
 {
-    [Header("References")]
-    //[SerializeField] private GameObject promptUI;
-
     [Header("General Settings")]
     [SerializeField] private InputActionAsset InputActions;
     [SerializeField] private float interactionRange = 3f;
-    [SerializeField] private float interactOffset = 1f;
 
     private InputAction Interact;
     private InputAction Mantle;
+
+    private List<IInteractable> currentTargets = new List<IInteractable>();
+
     private bool currentlyInteracting = false;
 
-    [Header("Debugging")]
-    [SerializeField] private bool showDebugLogs;
-    private IInteractable currentTarget;
-    private MantleableObject mantleTarget;
-    private MoveableObject moveTarget;
+    private float lastDetectionTime;
+    [SerializeField] private float detectionGraceTime = 0.15f;
 
     // Moveable object
     private MoveableObject heldObject;
@@ -47,12 +43,14 @@ public class PlayerInteracting : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // Stop interaction during tutorial UI
         if (InteractionTutorialUI.Instance != null &&
             InteractionTutorialUI.Instance.IsShowing)
         {
             return;
         }
 
+        // If holding an object press interact again to realease it (stop picking up multiple items)
         if (heldObject != null)
         {
             if (Interact.triggered)
@@ -65,28 +63,31 @@ public class PlayerInteracting : MonoBehaviour
 
         ScanForInteractable();
 
-        if (currentTarget == null)
+        if (currentTargets.Count == 0)
             return;
-
-        var targetMono = currentTarget as MonoBehaviour;
-        if (targetMono == null)
-            return;
+        
 
         // Interact with mantleable Objects
-        if (mantleTarget != null && Mantle != null && Mantle.triggered)
+        if (Mantle.triggered)
         {
-            if (showDebugLogs) Debug.Log("Mantle input detected!");
-            //TryShowTutorial(mantleTarget.interactType);
-            mantleTarget.OnPlayerInteraction(gameObject);
-            return;
+            var mantle = currentTargets.FirstOrDefault(i => i.interactType == InteractType.Mantle);
+
+            if (mantle != null)
+            {
+                mantle.OnPlayerInteraction(gameObject);
+                return;
+            }
         }
 
         // Interact with moveable objects or dialogue
-        if (currentTarget != null && Interact != null && Interact.triggered)
+        if (Interact.triggered)
         {
-            //TryShowTutorial(currentTarget.interactType);
-            //currentTarget.OnPlayerInteraction(gameObject);
-            HandleInteracton(currentTarget);
+            var interact = currentTargets.FirstOrDefault(i => i.interactType != InteractType.Mantle);
+
+            if (interact != null)
+            {
+                HandleInteracton(interact);
+            }
         }
 
     }
@@ -114,32 +115,37 @@ public class PlayerInteracting : MonoBehaviour
         heldObject = null;
     }
 
+    // Scan for interactable objects or triggers in front of the player
     private void ScanForInteractable()
     {
-        Collider[] hits = Physics.OverlapSphere(transform.position, interactionRange);
+        Collider[] hits = Physics.OverlapSphere(transform.position, interactionRange,~0, QueryTriggerInteraction.Collide);
 
-        var interactables = hits.Select(h => h.GetComponent<IInteractable>()).Where(i => i != null && i.CanInteract(gameObject)).ToList();  //OrderByDescending(i => i.interactionPriority).FirstOrDefault();
-
-        if (interactables.Count == 0)
+        var detectedTargets = hits
+                                .SelectMany(h => h.GetComponentsInParent<IInteractable>())
+                                .Distinct().Where(i => i != null && i.CanInteract(gameObject))
+                                .OrderByDescending(i => i.interactionPriority)
+                                .ToList();
+        
+        // Check if something is detected in this frame and highlight interaction button
+        if (detectedTargets.Count > 0)
         {
-            currentTarget = null;
-            mantleTarget = null;
-            moveTarget = null;
-            ButtonIcons.Instance?.Clear();
+            currentTargets = detectedTargets;
+            lastDetectionTime = Time.time;
+
+            ButtonIcons.Instance?.HighlightMultiple(currentTargets);
             return;
         }
 
-        currentTarget = interactables.OrderByDescending(i => i.interactionPriority).FirstOrDefault();
-
-        mantleTarget = currentTarget as MantleableObject;
-        moveTarget = currentTarget as MoveableObject;
-
-        // Highlight icon
-        ButtonIcons.Instance?.Highlight(currentTarget.interactType);
-
+        // if nothing is detected clear the buttons after the detection grace period and clear interaction buttons
+        if (Time.time - lastDetectionTime > detectionGraceTime)
+        {
+            currentTargets.Clear();
+            ButtonIcons.Instance?.Clear();
+        }
 
     }
 
+    // Activate tutorial description on first interaction with specific interaction type
     private bool TryShowTutorial(InteractType type, System.Action onComplete)
     {
         if (InteractionTutorialManager.Instance == null)
@@ -172,6 +178,6 @@ public class PlayerInteracting : MonoBehaviour
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position + transform.forward * interactOffset, interactionRange);
+        Gizmos.DrawWireSphere(transform.position, interactionRange);
     }
 }

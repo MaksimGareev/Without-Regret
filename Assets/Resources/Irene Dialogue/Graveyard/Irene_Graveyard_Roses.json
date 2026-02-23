@@ -1,6 +1,7 @@
 {
     "dialogueLines": [
         {
+            "LineID": "start",
             "Speaker": "Irene",
             "text": "Oh, I almost forgot! Did you bring the flowers?",
             "requiredMorality": 0,
@@ -9,41 +10,52 @@
                     "text": "(Shows Flowers)",
                     "nextIndex": 3,
                     "moralityChange": 2,
-                    "directionString": "Up"
+                    "directionString": "Up",
+                    "NextLineID": "Good response"
                 },
                 {
                     "text": "Flowers?",
                     "nextIndex": 1,
                     "moralityChange": -1,
-                    "directionString": "Down"
+                    "directionString": "Down",
+                    "NextLineID": "Bad response"
                 }
             ]
         },
         {
+            "LineID": "Bad response",
             "Speaker": "Irene",
             "text": "Seriously?!?!",
             "requiredMorality": 0,
+            "NextLineID": "Bad response 2",
             "choices": []
         },
         {
+            "LineID": "Bad response 2",
             "Speaker": "Irene",
             "text": "Ugh, I can't believe you Echo.",
             "requiredMorality": 0,
+            "NextLineID": "Check on Reed",
             "choices": []
         },
         {
+            "LineID": "Good response",
             "Speaker": "Irene",
             "text": "Of course you did. Sorry for doubting you.",
             "requiredMorality": 1,
+            "NextLineID": "Good response 2",
             "choices": []
         },
         {
+            "LineID": "Good response 2",
             "Speaker": "Irene",
             "text": "Those are beautiful! Great job, Echo.",
             "requiredMorality": 1,
+            "NextLineID": "Check on Reed",
             "choices": []
         },
         {
+            "LineID": "Check on Reed",
             "Speaker": "Irene",
             "text": "While we're here, why don't you chat with Reed over there and see what's going on? I'll be by the Shed if you need me.",
             "requiredMorality": 0,
