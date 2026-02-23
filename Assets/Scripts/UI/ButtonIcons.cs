@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using TMPro;
 
 public class ButtonIcons : MonoBehaviour
 {
@@ -11,11 +12,12 @@ public class ButtonIcons : MonoBehaviour
     {
         public InteractType type;
         public RawImage icon;
+        public TextMeshProUGUI text;
     }
 
     [SerializeField] private List<InteractionIcon> icons;
 
-    private Dictionary<InteractType, RawImage> iconMap;
+    private Dictionary<InteractType, InteractionIcon> iconMap;
 
     private void Awake()
     {
@@ -27,14 +29,23 @@ public class ButtonIcons : MonoBehaviour
 
         Instance = this;
 
-        iconMap = new Dictionary<InteractType, RawImage>();
+        iconMap = new Dictionary<InteractType, InteractionIcon>();
 
         foreach (var entry in icons)
         {
+            if (!iconMap.ContainsKey(entry.type))
+            {
+                iconMap.Add(entry.type, entry);
+            }
+
             if (entry.icon != null)
             {
-                iconMap[entry.type] = entry.icon;
                 entry.icon.gameObject.SetActive(false);
+            }
+            
+            if (entry.text != null)
+            {
+                entry.text.gameObject.SetActive(false);
             }
         }
     }
@@ -43,16 +54,17 @@ public class ButtonIcons : MonoBehaviour
     {
         //Clear();
 
-        if (iconMap.TryGetValue(type, out RawImage icon))
+        if (iconMap.TryGetValue(type, out InteractionIcon entry))
         {
-            if (icon != null)
+            if (entry.icon != null)
             {
-                icon.gameObject.SetActive(true);
+                entry.icon.gameObject.SetActive(true);
             }
-            else
+            
+            if (entry.text != null)
             {
-                Debug.LogWarning($"Icon for InteractType {type} is not assigned in the inspector.");
-            } 
+                entry.text.gameObject.SetActive(true);
+            }
         }
         else
         {
@@ -60,26 +72,29 @@ public class ButtonIcons : MonoBehaviour
         }
     }
 
+    public void HighlightMultiple(List<IInteractable> interactables)
+    {
+        //Clear();
+
+        foreach (var interactable in interactables)
+        {
+            Highlight(interactable.interactType);
+        }
+    }
+
     public void Clear()
     {
-        foreach (var icon in iconMap.Values)
+        foreach (var entry in iconMap.Values)
         {
-            if (icon != null)
+            if (entry.icon != null)
             {
-                icon.gameObject.SetActive(false);
+                entry.icon.gameObject.SetActive(false);
+            }
+            if (entry.text != null)
+            {
+                entry.text.gameObject.SetActive(false);
             }
         }
     }
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
 }
