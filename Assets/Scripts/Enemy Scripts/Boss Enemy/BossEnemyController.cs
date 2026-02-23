@@ -82,7 +82,7 @@ public class BossEnemyController : MonoBehaviour
         actions[choice]();
         */
 
-        //VoidProjectile();
+        VoidProjectile();
     }
 
     void EndAction()

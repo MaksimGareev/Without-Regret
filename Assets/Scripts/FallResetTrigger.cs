@@ -4,23 +4,19 @@ using System.Collections;
 public class FallResetTrigger : MonoBehaviour
 {
     [Header("Reset Settings")]
-    [Tooltip("Time in seconds to wait after the player enters the trigger before starting to move them to the reset point.")]
-    public float delayBeforeReset = 0.5f;
-
-    [Tooltip("Duration in seconds for the player to be moved from their current position to the reset point. During this time, the player's movement will be locked and they will be faded out.")]
-    public float moveDuration = 0.8f;
-
-    [Tooltip("Alpha value to set on the player's materials during the reset movement. This will make the player appear faded out while they are being moved to the reset point.")]
-    public float fadedAlpha = 0.3f;
-
-    [Tooltip("Number of rings to subtract from the player when they fall and trigger a reset. This will cause the Timer Ring UI to update and visually show the player losing \"Health\".")]
-    public int amountOfRingsToSubtract = 1;
-    [Tooltip("Cooldown time in seconds after a reset during which the trigger will be disabled to prevent multiple rapid resets if the player is still within the trigger area.")]
-    public float triggerDisableCooldown = 1f;
-
-    [Header("Reset Point(auto-assigned if child exists)")]
-    public Transform resetPoint;
-
+    [SerializeField, Tooltip("Time in seconds to wait after the player enters the trigger before starting to move them to the reset point.")]
+    private float delayBeforeReset = 0.5f;
+    [SerializeField, Tooltip("Duration in seconds for the player to be moved from their current position to the reset point. During this time, the player's movement will be locked and they will be faded out.")]
+    private float moveDuration = 0.8f;
+    [SerializeField, Tooltip("Alpha value to set on the player's materials during the reset movement. This will make the player appear faded out while they are being moved to the reset point.")]
+    private float fadedAlpha = 0.3f;
+    [SerializeField, Tooltip("Number of rings to subtract from the player when they fall and trigger a reset. This will cause the Timer Ring UI to update and visually show the player losing \"Health\".")]
+    private int amountOfRingsToSubtract = 1;
+    [SerializeField, Tooltip("Cooldown time in seconds after a reset during which the trigger will be disabled to prevent multiple rapid resets if the player is still within the trigger area.")]
+    private float triggerDisableCooldown = 1f;
+    [SerializeField, Header("Reset Point(auto-assigned if child exists)")]
+    private Transform resetPoint;
+    
     [Header("Debugging")]
     [Tooltip("If true, debug logs will be printed to the console regarding this script. This can be helpful for troubleshooting and ensuring the reset logic is working as intended, but should be left false when not needed.")]
     public bool showDebugLogs = false;
@@ -54,9 +50,7 @@ public class FallResetTrigger : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        PlayerController player = other.GetComponent<PlayerController>();
-
-        if (player == null)
+        if (!other.TryGetComponent<PlayerController>(out var player))
         {
             return;
         }
@@ -112,15 +106,15 @@ public class FallResetTrigger : MonoBehaviour
         {
             triggerCollider.enabled = false;
         }
-
+        // Notify PlayerController to lock movement
         player.SetResetLock(true);
-        
+
         yield return new WaitForSeconds(delayBeforeReset);
-        
+        // Wait until player moves to the resetPoint
         yield return StartCoroutine(LerpPlayerToPoint(player, resetPoint));
         
         yield return new WaitForSeconds(0.15f);
-        
+        // Reset has completed, wait for timeout to ensure player is outside of trigger
         player.SetResetLock(false);
 
         float waitStart = Time.time;
@@ -157,9 +151,8 @@ public class FallResetTrigger : MonoBehaviour
 
     private IEnumerator LerpPlayerToPoint(PlayerController player, Transform target)
     {
+        // Smoothly move player to the reset point
         CharacterController controller = player.GetComponent<CharacterController>();
-
-        bool controllerWasEnabled = controller == null ? false : controller.enabled;
 
         if (controller != null && controller.enabled)
         {
@@ -167,12 +160,8 @@ public class FallResetTrigger : MonoBehaviour
         }
 
         Transform playerTransform = player.transform;
-        Vector3 startPosition = playerTransform.position;
-        Quaternion startRotation = playerTransform.rotation;
-
-        Vector3 endPosition = target.position;
-        Quaternion endRotation = target.rotation;
-
+        playerTransform.GetPositionAndRotation(out Vector3 startPosition, out Quaternion startRotation);
+        target.GetPositionAndRotation(out Vector3 endPosition, out Quaternion endRotation);
         SetPlayerAlpha(player, fadedAlpha);
 
         float elapsedTime = 0f;
@@ -187,9 +176,7 @@ public class FallResetTrigger : MonoBehaviour
             yield return null;
         }
 
-        playerTransform.position = endPosition;
-        playerTransform.rotation = endRotation;
-
+        playerTransform.SetPositionAndRotation(endPosition, endRotation);
         SetPlayerAlpha(player, 1f);
 
         if (controller != null)
@@ -200,6 +187,7 @@ public class FallResetTrigger : MonoBehaviour
 
     private void SetPlayerAlpha(PlayerController player, float alpha)
     {
+        // Make the player appear more transparent
         Renderer[] renderers = player.GetComponentsInChildren<Renderer>();
 
         foreach (Renderer renderer in renderers)
@@ -239,6 +227,7 @@ public class FallResetTrigger : MonoBehaviour
 
     private bool PlayerInsideTrigger(PlayerController player)
     {
+        // Check if the player is within the trigger collider
         Collider triggerCollider = GetComponent<Collider>();
         Collider playerCollider = player.GetComponent<Collider>();
 
@@ -247,6 +236,7 @@ public class FallResetTrigger : MonoBehaviour
 
     private void OnDrawGizmosSelected()
     {
+        // Draw the collider box and direction to the resetPoint in editor
         if (resetPoint == null)
         {
             return;
