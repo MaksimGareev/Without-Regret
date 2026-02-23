@@ -32,7 +32,9 @@ public class PlayerFloating : MonoBehaviour
     [SerializeField, Tooltip("Determines the size of the rhythm bar")] 
     private float rhythmInterval = 1f;
     [SerializeField, Tooltip("Determines how low the rhythmWindow can be")]
-    private float rhythmBuffer = 0.33f;
+    private float rhythmWindowMin = 0.33f;
+    [SerializeField, Tooltip("Defines a buffer for determining success. If the player misses the window, but the input is within the buffer, it still counts as a success")]
+    private float rhythmBuffer = 0.15f;
     private PlayerControls controls;
     private Vector2 moveInput;
     private bool floatInput;
@@ -200,7 +202,7 @@ public class PlayerFloating : MonoBehaviour
         windowWidthNormalized = Mathf.Clamp01(clampedWindow / rhythmInterval);
 
         // choose a single random start position so the window is [start, start+width]
-        windowStartNormalized = Random.Range(rhythmBuffer, 1f - windowWidthNormalized);
+        windowStartNormalized = Random.Range(rhythmWindowMin, 1f - windowWidthNormalized);
         float windowEndNormalized = windowStartNormalized + windowWidthNormalized;
 
         // Make sure the target rect is parented to the slider so anchors are relative
@@ -209,10 +211,21 @@ public class PlayerFloating : MonoBehaviour
         GameManager.Instance.floatTargetArea.SetParent(sliderRect, false);
 
         // Set anchors to define the single window region on the slider
-        GameManager.Instance.floatTargetArea.anchorMin = new Vector2(windowStartNormalized, 0f);
-        GameManager.Instance.floatTargetArea.anchorMax = new Vector2(windowEndNormalized, 1f);
-        GameManager.Instance.floatTargetArea.offsetMin = Vector2.zero;
-        GameManager.Instance.floatTargetArea.offsetMax = Vector2.zero;
+
+        if (GameManager.Instance.floatingSlider.direction == Slider.Direction.LeftToRight)
+        {
+            GameManager.Instance.floatTargetArea.anchorMin = new Vector2(windowStartNormalized, 0f);
+            GameManager.Instance.floatTargetArea.anchorMax = new Vector2(windowEndNormalized, 1f);
+            GameManager.Instance.floatTargetArea.offsetMin = Vector2.zero;
+            GameManager.Instance.floatTargetArea.offsetMax = Vector2.zero;
+        }
+        else if (GameManager.Instance.floatingSlider.direction == Slider.Direction.BottomToTop)
+        {
+            GameManager.Instance.floatTargetArea.anchorMin = new Vector2(0f, windowStartNormalized);
+            GameManager.Instance.floatTargetArea.anchorMax = new Vector2(1f, windowEndNormalized);
+            GameManager.Instance.floatTargetArea.offsetMin = Vector2.zero;
+            GameManager.Instance.floatTargetArea.offsetMax = Vector2.zero;
+        }
 
         if (showDebugLogs)
         {
@@ -353,7 +366,7 @@ public class PlayerFloating : MonoBehaviour
             float timing = Mathf.Clamp01(rhythmTimer / rhythmInterval);
 
             // check if timing falls inside the success window
-            if (timing >= windowStartNormalized && timing <= (windowStartNormalized + windowWidthNormalized))
+            if ((timing + rhythmBuffer) >= windowStartNormalized && (timing - rhythmBuffer) <= (windowStartNormalized + windowWidthNormalized))
             {
                 // success
                 rhythmTimer = 0f;
@@ -366,14 +379,14 @@ public class PlayerFloating : MonoBehaviour
 
                 if (showDebugLogs)
                 {
-                    Debug.Log($"Floating Rhythm Success. Rhythm Timing = {timing:F3} | Success Window: {windowStartNormalized:F3}-{windowStartNormalized+windowWidthNormalized:F3}");
+                    Debug.Log($"Floating Rhythm Success. Rhythm Timing = {timing:F3} | Success Window: {windowStartNormalized:F3}-{windowStartNormalized+windowWidthNormalized:F3} | Buffer: {rhythmBuffer}");
                 }
             }
             else
             {
                 if (showDebugLogs)
                 {
-                    Debug.Log($"Floating Rhythm Failure. Rhythm Timing = {timing:F3} | Success Window: {windowStartNormalized:F3}-{windowStartNormalized + windowWidthNormalized:F3}");
+                    Debug.Log($"Floating Rhythm Failure. Rhythm Timing = {timing:F3} | Success Window: {windowStartNormalized:F3}-{windowStartNormalized + windowWidthNormalized:F3} | Buffer: {rhythmBuffer}");
                 }
                 // Immediate failure on incorrect input
                 failState = true;
