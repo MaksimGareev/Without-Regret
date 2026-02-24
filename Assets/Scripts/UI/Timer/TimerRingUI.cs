@@ -79,7 +79,6 @@ public class TimerRingUI : MonoBehaviour
         {
             Debug.LogError("GameOverManager instance not found! Cannot trigger game over.");
         }
-        
     }
 
     public void SetRingState(RingState state)
