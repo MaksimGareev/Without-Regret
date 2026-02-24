@@ -58,11 +58,11 @@ public class PlayerMovingObjects : MonoBehaviour
         playerController.SprintSpeed = normalSprintSpeed / obj.GetSprintSlowdown();
         playerController.MovingObject(true, obj.GetSprintDepletion(), obj.GetSprintTimerDecay(), obj.GetAllowSprint());
 
-        if (playerController.animator != null)
+        if (playerController.Animator != null)
         {
-            playerController.animator.SetBool("isIdle", false);
-            playerController.animator.SetBool("isWalking", false);
-            playerController.animator.SetBool("isGrabbing", true);
+            playerController.Animator.SetBool("isIdle", false);
+            playerController.Animator.SetBool("isWalking", false);
+            playerController.Animator.SetBool("isGrabbing", true);
         }
         
 

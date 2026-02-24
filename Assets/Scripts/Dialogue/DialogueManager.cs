@@ -182,7 +182,7 @@ public class DialogueManager : MonoBehaviour
 
         currentLineID = dialogue.dialogueLines[0].LineID;
 
-        playerController = FindObjectOfType<PlayerController>();
+        playerController = FindAnyObjectByType<PlayerController>();
         cam = Camera.main.GetComponent<CameraMovement>();
 
         // assign the current active dialogue trigger
