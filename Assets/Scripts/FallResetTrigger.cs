@@ -89,22 +89,23 @@ public class FallResetTrigger : MonoBehaviour
         {
             Debug.Log($"{name}: Player entered reset trigger. Starting reset sequence.");
         }
-
-        if (!other.CompareTag("Player"))
-        {
-            return;
-        }
-
-        if (TimerRingUI.Instance != null)
-        {
-            TimerRingUI.Instance.SubtractRingSection(amountOfRingsToSubtract);
-        }
         
         StartCoroutine(HandleReset(player));
     }
 
     private IEnumerator HandleReset(PlayerController player)
     {
+        if (Time.timeSinceLevelLoad < 0.1f)
+        {
+            TeleportPlayerToPoint(player, resetPoint);
+            yield break;
+        }
+
+        if (TimerRingUI.Instance != null)
+        {
+            TimerRingUI.Instance.SubtractRingSection(amountOfRingsToSubtract);
+        }
+
         isResetting = true;
         lastResetTime = Time.time;
 
@@ -112,11 +113,11 @@ public class FallResetTrigger : MonoBehaviour
         {
             triggerCollider.enabled = false;
         }
-
+        
         player.SetResetLock(true);
         
         yield return new WaitForSeconds(delayBeforeReset);
-        
+
         yield return StartCoroutine(LerpPlayerToPoint(player, resetPoint));
         
         yield return new WaitForSeconds(0.15f);
@@ -191,6 +192,24 @@ public class FallResetTrigger : MonoBehaviour
         playerTransform.rotation = endRotation;
 
         SetPlayerAlpha(player, 1f);
+
+        if (controller != null)
+        {
+            controller.enabled = true;
+        }
+    }
+
+    private void TeleportPlayerToPoint(PlayerController player, Transform target)
+    {
+        CharacterController controller = player.GetComponent<CharacterController>();
+
+        if (controller != null && controller.enabled)
+        {
+            controller.enabled = false;
+        }
+
+        player.transform.position = target.position;
+        player.transform.rotation = target.rotation;
 
         if (controller != null)
         {

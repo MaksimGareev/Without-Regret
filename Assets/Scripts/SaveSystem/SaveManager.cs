@@ -259,6 +259,15 @@ public class SaveManager : MonoBehaviour
 
         data.lastSceneName = SceneManager.GetActiveScene().name;
 
+        if (TimerRingUI.Instance != null && TimerRingUI.Instance.currentRingState != TimerRingUI.RingState.Empty)
+        {
+            data.playerSaveData.currentRingState = TimerRingUI.Instance.currentRingState;
+        }
+        else if (TimerRingUI.Instance == null && TimerRingUI.Instance.currentRingState == TimerRingUI.RingState.Empty)
+        {
+            data.playerSaveData.currentRingState = TimerRingUI.RingState.Full;
+        }
+
         RefreshSaveables();
 
         if (showDebugLogs) Debug.Log($"[SaveManager.SaveGame] Saveables count = {saveables.Count}");
@@ -333,6 +342,16 @@ public class SaveManager : MonoBehaviour
                 if (showDebugLogs) Debug.Log($"[SaveManager.LoadGame] Loading PlayerController");
                 break;
             }
+        }
+        
+        // Set the timer ring state to the state in the saved data
+        if (TimerRingUI.Instance != null && data.playerSaveData.currentRingState != TimerRingUI.RingState.Empty)
+        {
+            TimerRingUI.Instance.SetRingState(data.playerSaveData.currentRingState);
+        }
+        else if (TimerRingUI.Instance != null && data.playerSaveData.currentRingState == TimerRingUI.RingState.Empty)
+        {
+            TimerRingUI.Instance.SetRingState(TimerRingUI.RingState.Full);
         }
 
         // Call to the objective manager to auto enable an objective, necessary when loading a save to continue where the player left off
