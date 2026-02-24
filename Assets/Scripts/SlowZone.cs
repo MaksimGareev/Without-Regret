@@ -40,7 +40,7 @@ public class SlowZone : MonoBehaviour
         {
             patrollingEnemy.baseSpeed /= slowMultiplier;
         }
-        if (other.gameObject.layer == LayerMask.NameToLayer("NPC") && other.TryGetComponent<Irene>(out var irene)
+        if (other.gameObject.layer == LayerMask.NameToLayer("NPC") && other.TryGetComponent<Irene>(out var irene))
         {
             //placeholder for comparing to each NPC, using Irene as example for now
             irene.FollowSpeed /= slowMultiplier;
