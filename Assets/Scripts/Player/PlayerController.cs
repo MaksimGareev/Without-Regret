@@ -663,6 +663,15 @@ public class PlayerController : MonoBehaviour, ISaveable
         specialIdle = false;
     }
 
+    public void DisableInput() //for disabling/freezing the player throughout other scripts
+    {
+        controls.Disable();
+    }
+
+    public void EnableInput() //for enabling/unfreezing the player throughout other scripts
+    {
+        controls.Enable();
+    }
 
     private void ResetAnimations()
     {

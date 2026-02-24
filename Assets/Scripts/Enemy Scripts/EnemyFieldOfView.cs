@@ -1,3 +1,8 @@
+//This script is used for the Enemy Aggro logic. The enemy has a radius and field of view, and when a player or NPC is visible through this FOV, the enemy then starts chasing. In terms of the player, the enemy will chase for the duration that is
+//set through the "Max Chase Duration" Variable. When the player outruns the enemy and leaves its radius, the enemy will lose aggro and go back to patrolling. Additionally, the enemy can be escaped when the player loses line of sight for the duration of
+//the "Max Chase Duration" variable, when the player is out of the enemies line of sight, the "Chase Duration" variable will start counting down every second. If the player is seen while this is counting down, the chase duration will reset back up, if
+//it reaches 0, then the enemy drops aggro and goes back to patrolling.
+
 using UnityEngine;
 using System;
 using System.Collections;
