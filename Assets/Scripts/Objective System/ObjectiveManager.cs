@@ -4,6 +4,9 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 
+// The Objective Manager is responsible for managing the player's objectives throughout the game. 
+// It keeps track of active and completed objectives, and handles the activation of new objectives as the player progresses. 
+// It also communicates with the Objective UI to display the current objectives to the player, and with the Save System to save and load objective progress.
 public class ObjectiveManager : MonoBehaviour, ISaveable
 {
     public static ObjectiveManager Instance { get; private set; }
@@ -11,19 +14,18 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
     [Header("Objectives")]
     [Tooltip("List of all objectives in the game. Objectives will be automatically activated in the order they are listed here. Next objective will only be activated once the previous one is completed.")]
     [SerializeField] private List<ObjectiveData> allObjectives;
-    private int currentObjectiveIndex = 0;
     
     [Tooltip("List of currently active objectives. You should not modify this directly, as objectives will be added and removed from this list automatically as they are activated and completed. This should only be used for debugging purposes and for other scripts to access.")]
     [SerializeField] private List<ObjectiveInstance> activeObjectives = new();
 
     [Tooltip("List of completed objectives. You should not modify this directly, as objectives will be added to this list automatically when they are completed. This should only be used for debugging purposes and for other scripts to access.")]
     [SerializeField] private List<ObjectiveInstance> completedObjectives = new();
-    private bool objectivesInSceneCompleted = false;
     
     [Tooltip("Reference to the ObjectiveCanvas that exists as a child of this Objective Manager Prefab.")]
     [SerializeField] private ObjectiveCanvas objectiveCanvas;
 
-    //[Header("Events")]
+    // Events for when an objective is activated, updated, or completed. 
+    // These are used to communicate with the Objective UI and other listeners so that they can react accordingly
     [HideInInspector] public UnityEvent<ObjectiveInstance> OnObjectiveActivated = new();
     [HideInInspector] public UnityEvent<ObjectiveInstance> OnObjectiveProgressUpdated = new();
     [HideInInspector] public UnityEvent<ObjectiveInstance> OnObjectiveCompleted = new();
@@ -42,6 +44,7 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
             return;
         }
 
+        // Find objective canvas reference in children, log error if not found
         objectiveCanvas = GetComponentInChildren<ObjectiveCanvas>();
         if (objectiveCanvas == null)
         {
@@ -52,6 +55,8 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
         StartCoroutine(RegisterWhenReady());
     }
 
+    // Wait until SaveManager instance is available before registering, since SaveManager is 
+    // also a singleton and may not be initialized yet when ObjectiveManager's Awake is called.
     private IEnumerator RegisterWhenReady()
     {
         while (SaveManager.Instance == null)
@@ -60,20 +65,22 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
         }
 
         SaveManager.Instance.RegisterSaveable(this);
-        Debug.Log("ObjectiveManager Registered with SaveManager");
+        // Debug.Log("ObjectiveManager Registered with SaveManager");
     }
 
+    // Saves all active and completed objectives progress and completion status to the given SaveData
+    // This is called by the SaveManager when saving the game
     public void SaveTo(SaveData data)
     {
-        Debug.Log($"[ObjectiveManager.SaveTo] called, activeObjectives.Count = {activeObjectives.Count}, completedObjectives.count = {completedObjectives.Count}");
-
-        data.objectiveSaveData.currentObjectiveIndex = currentObjectiveIndex;
+        // Debug.Log($"[ObjectiveManager.SaveTo] called, activeObjectives.Count = {activeObjectives.Count}, completedObjectives.count = {completedObjectives.Count}");
 
         data.objectiveSaveData.objectives.Clear();
-
+        
+        // Assign all relevant data from the objective instance to an ObjectiveRecord, which is a serializable class that can be saved by the Save System.
+        // Looping through active objectives list
         foreach (var inst in activeObjectives)
         {
-            Debug.Log($"[ObjectiveManager.SaveTo] saving ACTIVE {inst.data.objectiveID} progress {inst.currentProgress}");
+            // Debug.Log($"[ObjectiveManager.SaveTo] saving ACTIVE {inst.data.objectiveID} progress {inst.currentProgress}");
             data.objectiveSaveData.objectives.Add(new ObjectiveRecord
             {
                 objectiveID = inst.data.objectiveID,
@@ -83,9 +90,10 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
             });
         }
 
+        // Looping through completed objectives list
         foreach (var inst in completedObjectives)
         {
-            Debug.Log($"[ObjectiveManager.SaveTo] saving COMPLETED {inst.data.objectiveID} progress {inst.currentProgress}");
+            // Debug.Log($"[ObjectiveManager.SaveTo] saving COMPLETED {inst.data.objectiveID} progress {inst.currentProgress}");
             data.objectiveSaveData.objectives.Add(new ObjectiveRecord
             {
                 objectiveID = inst.data.objectiveID,
@@ -96,15 +104,17 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
         }
     }
 
+    // Loads all objectives progress & completion status from the given SaveData
+    // This is called by the SaveManager when loading a game
     public void LoadFrom(SaveData data)
     {
-        currentObjectiveIndex = data.objectiveSaveData.currentObjectiveIndex;
-
+        // Clear current objectives lists before loading from save data
         activeObjectives.Clear();
         completedObjectives.Clear();
 
         foreach (var record in data.objectiveSaveData.objectives)
         {
+            // Check if the objective from the save data exists in the list of all objectives, if not, skip it and log a warning
             ObjectiveData objective = allObjectives.Find(o => o.objectiveID == record.objectiveID);
 
             if (objective == null)
@@ -113,6 +123,7 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
                 continue;
             }
 
+            // Create a new instance of the objective from the save data, then add it to the appropriate list
             ObjectiveInstance inst = new ObjectiveInstance(objective);
             inst.SetProgress(record.progress);
 
@@ -127,8 +138,10 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
         }
     }
 
+    // Handles logic for activating an objective
     public void ActivateObjective(ObjectiveData objective)
     {
+        // Early returns if objective is null or already active/completed
         if (objective == null)
         {
             Debug.LogWarning($"Objective is null");
@@ -141,19 +154,24 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
             return;
         }
 
+        // Create new instance of the objective and add it to the active objectives list
         ObjectiveInstance newObjective = new ObjectiveInstance(objective);
         activeObjectives.Add(newObjective);
 
-        // fire event so ObjectiveUI (or other listeners) can react
+        // Fire event so ObjectiveUI (or other listeners) can react
         OnObjectiveActivated.Invoke(newObjective);
 
-        Debug.Log($"Objective '{newObjective.data.title}' has been activated");
+        // Debug.Log($"Objective '{newObjective.data.title}' has been activated");
+
+        // Save the game after activating a new objective
         if (SaveManager.Instance != null)
         {
             SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
         }
     }
 
+    // Helper method to activate and objective by its ID.
+    // Not currently used, may be used later for side quests
     public void ActivateObjectiveByID(string objectiveID)
     {
         ObjectiveData found = allObjectives.Find(o => o.objectiveID == objectiveID);
@@ -174,8 +192,10 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
         }
     }
 
+    // Handles logic for adding progress to an objective.
     public void AddProgress(string ObjectiveID, int amount)
     {
+        // Find the objective in the active objectives list, return early if its not found
         var objective = activeObjectives.Find(o => o.data.objectiveID == ObjectiveID);
 
         if (objective == null)
@@ -184,8 +204,10 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
         }
 
         objective.AddProgress(amount);
-        Debug.Log($"Objective '{objective.data.title}' progress increased to {objective.currentProgress}/{objective.data.requiredProgress}");
 
+        //Debug.Log($"Objective '{objective.data.title}' progress increased to {objective.currentProgress}/{objective.data.requiredProgress}");
+
+        // Check if the objective is completed after adding progress, and if so, complete the objective
         if (objective.isCompleted)
         {
             CompleteObjective(objective);
@@ -196,12 +218,15 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
             OnObjectiveProgressUpdated.Invoke(objective);
         }
 
+        // Save the game after updating progress
         if (SaveManager.Instance != null)
         {
             SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
         }
     }
 
+    // This coroutine is used to delay the activation of the next objective until after the objective completion UI has finished 
+    // displaying so that the player is not immediately hit with a new objective popup right after completing an objective.
     private IEnumerator ActivateNextObjectiveAfterDelay()
     {
         yield return new WaitForSeconds(0.5f);
@@ -212,6 +237,7 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
             objectiveCanvas = (ObjectiveCanvas)FindFirstObjectByType(typeof(ObjectiveCanvas));
         }
 
+        // Wait until objective popup is no longer visible before activating the next objective
         if (objectiveCanvas != null)
         {
             yield return new WaitUntil(() => !objectiveCanvas.IsVisible());
@@ -221,6 +247,7 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
             Debug.LogWarning("No object with ObjectiveCanvas exists in this scene");
         }
 
+        // Activate the next objective in the list that is not already completed
         foreach (var next in allObjectives)
         {
             if (!completedObjectives.Exists(o => o.data == next))
@@ -229,13 +256,13 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
                 yield break;
             }
         }
-
-        objectivesInSceneCompleted = true;
-        Debug.Log("All objectives complete");
     }
 
+    // Ensures that an objective is automatically activated when the game starts
+    // This is primarily called by the SaveManager upon loading a scene
     public void EnsureActiveObjective()
     {
+        // Move objective to completed list if not already moved there
         if (activeObjectives.Count > 0)
         {
             foreach (var obj in activeObjectives)
@@ -247,6 +274,7 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
             }
         }
 
+        // Activate the first objective in the list that is not already completed
         for (int i = 0; i < allObjectives.Count; i++)
         {
             if (!completedObjectives.Exists(o => o.data == allObjectives[i]))
@@ -255,50 +283,44 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
                 return;
             }
         }
-
-        Debug.Log("All objectives completed");
     }
 
+    // Handles logic for completing an objective
     private void CompleteObjective(ObjectiveInstance objective)
     {
+        // Mark objective as completed and move it from active to completed list
         objective.isCompleted = true;
         completedObjectives.Add(objective);
         activeObjectives.Remove(objective);
 
-        // notify listeners (ObjectiveUI will display completion)
+        // Notify listeners (ObjectiveUI will display completion)
         OnObjectiveCompleted.Invoke(objective);
 
         Debug.Log($"Objective '{objective.data.title}' completed!");
 
-        // trigger next objective after UI (listeners) finished
+        // Trigger next objective after UI (listeners) finished
         StartCoroutine(ActivateNextObjectiveAfterDelay());
 
-        currentObjectiveIndex++;
-
+        // Save the game
         if (SaveManager.Instance != null)
         {
             SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
         }
     }
 
-    // check if a specific objective is completed
+    // Returns true if the objective is completed, false otherwise.
     public bool IsObjectiveCompleted(string id)
     {
         return completedObjectives.Exists(o => o.data.objectiveID == id);
     }
 
-    // check if the player has completed all of the objectives in the current scene
-    public bool AllObjectivesCompletedInScene()
-    {
-        return objectivesInSceneCompleted;
-    }
-
-    // check if a specific objective is active
+    // Returns true if the objective is currently active, false if not.
     public bool IsObjectiveActive(string id)
     {
         return activeObjectives.Exists(o => o.data.objectiveID == id);
     }
 
+    // Remove itself from the SaveManager's list for tracking saveable objects
     private void OnDestroy()
     {
         if (SaveManager.Instance != null)
@@ -307,6 +329,7 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
         }
     }
 
+    // This is called by the SaveManager when the player deletes a save file to also clear the objectives lists.
     public void ClearObjectivesOnDelete()
     {
         activeObjectives.Clear();
@@ -318,6 +341,7 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
         }
     }
 
+    // Getters for active and completed objectives lists.
     public IEnumerable<ObjectiveInstance> GetActiveObjectives() => activeObjectives;
     public IEnumerable<ObjectiveInstance> GetCompletedObjectives() => completedObjectives;
 }

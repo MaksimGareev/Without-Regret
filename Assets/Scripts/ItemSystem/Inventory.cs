@@ -2,39 +2,27 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using TMPro;
 
+// Inventory system for the player. This script manages the player's inventory, including adding and removing items, as well as saving and loading the inventory state.
 public class Inventory : MonoBehaviour, ISaveable
 {
-    private readonly List<ItemData> itemsList = new List<ItemData>();
+    private readonly List<ItemData> itemsList = new List<ItemData>(); // List of all items
+    public List<ItemData> keyItems = new(); // List of key items to show on the Key items tab
+    public List<ItemData> otherItems = new(); // List of other items to show on the Other items tab
 
-    [HideInInspector] public List<ItemData> keyItems = new();
-    [HideInInspector] public List<ItemData> otherItems = new();
-
-    [HideInInspector] public List<ItemData> KeyItems => keyItems;
-    [HideInInspector] public List<ItemData> OtherItems => otherItems;
-    
-    //private GameObject interactingScript;
-    private GameObject backpack;
-    //private TextMeshProUGUI AddItemPopup;
-
-    [Header("Leaf Objective")]
-    [SerializeField] private ItemData LeavesReward;
-    [SerializeField] private ItemData TrashbagRefForRemoval;
-    private int NumLeavesCollected;
+    [HideInInspector] public List<ItemData> KeyItems => keyItems; // Public getter for key items list
+    [HideInInspector] public List<ItemData> OtherItems => otherItems; // Public getter for other items list
+    private GameObject backpack; // Reference to the physical Backpack GameObject on the player
 
     [Header("Debugging")]
     [SerializeField] private bool showDebugLogs = false;
     [SerializeField] private bool hasBackpack = false;
     private PlayerController playerController;
     private PlayerEquipItem playerEquipItem;
-    //private InventoryUIController inventoryUI;
     private ToggleInventoryUI toggleInventoryUI;
     private CameraMovement cameraMovement;
     [HideInInspector] public WorldItem itemToCollect;
-
     public static event System.Action<ItemData> OnItemAdded;
-
 
     private void Awake()
     {
@@ -45,18 +33,6 @@ public class Inventory : MonoBehaviour, ISaveable
         cameraMovement = Camera.main.GetComponent<CameraMovement>();
         itemToCollect = null;
 
-        // if (interactingScript == null)
-        // {
-        //     var foundObjects = FindObjectsByType<GameObject>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-        //     interactingScript = System.Array.Find(foundObjects, obj => obj.name == "InteractingScript");
-        //     if (interactingScript == null)
-        //     {
-        //         Debug.LogError("InteractingScript GameObject not found in the scene. Please ensure a GameObject named 'InteractingScript' exists in the scene as a child of the Inventory UI in the MainCanvas.");
-        //     }
-        // }
-
-        // inventoryUI = interactingScript.GetComponent<InventoryUIController>();
-
         if (backpack == null)
         {
             backpack = GameObject.Find("PlayerBackpack");
@@ -66,20 +42,10 @@ public class Inventory : MonoBehaviour, ISaveable
             }
         }
 
-        // if (AddItemPopup == null)
-        // {
-        //     //var foundObjects = FindObjectsByType<TextMeshProUGUI>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-        //     AddItemPopup = GameObject.Find("Inventory Add popup")?.GetComponent<TextMeshProUGUI>();
-        //     if (AddItemPopup == null)
-        //     {
-        //         Debug.LogError("AddItemPopup TextMeshProUGUI not found in the scene. Please ensure a TextMeshProUGUI named 'Inventory Add popup' exists in the scene as a child of the PlayerUICanvas.");
-        //     }
-        // }
-
-
-
         if(GameManager.Instance.inventoryPopupText != null)
+        {
             GameManager.Instance.inventoryPopupText.gameObject.SetActive(false);
+        }
     }
 
     private void Start()
@@ -286,17 +252,6 @@ public class Inventory : MonoBehaviour, ISaveable
         GameManager.Instance.inventoryPopupText.gameObject.SetActive(true);
         yield return new WaitForSecondsRealtime(1.5f);
         GameManager.Instance.inventoryPopupText.gameObject.SetActive(false);
-    }
-
-    public void AddLeaves()
-    {
-        NumLeavesCollected++;
-
-        if(NumLeavesCollected >= 5)
-        {
-            AddItem(LeavesReward);
-            RemoveItem(TrashbagRefForRemoval);
-        }
     }
 }
 

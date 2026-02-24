@@ -558,7 +558,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2485806063289981746, guid: c54c39eda9de61049b70981fbde792f3, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4875223903461986467}
   m_SourcePrefab: {fileID: 100100000, guid: c54c39eda9de61049b70981fbde792f3, type: 3}
 --- !u!224 &712698939106026368 stripped
 RectTransform:
@@ -570,12 +573,33 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 697786671701558935, guid: c54c39eda9de61049b70981fbde792f3, type: 3}
   m_PrefabInstance: {fileID: 1460528042484833592}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 3907873187264153098}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
+--- !u!1 &3907873187264153098 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2485806063289981746, guid: c54c39eda9de61049b70981fbde792f3, type: 3}
+  m_PrefabInstance: {fileID: 1460528042484833592}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &4875223903461986467
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3907873187264153098}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2a8692e3b82475449cab99a2daf8be5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonHighlighting
+  textOriginalColor: {r: 1, g: 1, b: 1, a: 1}
+  textHighlightColor: {r: 0.4980392, g: 1, b: 0.8313726, a: 1}
+  backgroundOriginalColor: {r: 1, g: 1, b: 1, a: 1}
+  backgroundHighlightColor: {r: 0.4980392, g: 1, b: 0.8313726, a: 1}
 --- !u!1001 &2014799974559419542
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -733,7 +757,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2485806063289981746, guid: c54c39eda9de61049b70981fbde792f3, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2428118241322432712}
   m_SourcePrefab: {fileID: 100100000, guid: c54c39eda9de61049b70981fbde792f3, type: 3}
 --- !u!224 &456786103088509486 stripped
 RectTransform:
@@ -745,9 +772,30 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 697786671701558935, guid: c54c39eda9de61049b70981fbde792f3, type: 3}
   m_PrefabInstance: {fileID: 2014799974559419542}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 4145944538168285092}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
+--- !u!1 &4145944538168285092 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2485806063289981746, guid: c54c39eda9de61049b70981fbde792f3, type: 3}
+  m_PrefabInstance: {fileID: 2014799974559419542}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2428118241322432712
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4145944538168285092}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2a8692e3b82475449cab99a2daf8be5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonHighlighting
+  textOriginalColor: {r: 1, g: 1, b: 1, a: 1}
+  textHighlightColor: {r: 0.4980392, g: 1, b: 0.8313726, a: 1}
+  backgroundOriginalColor: {r: 1, g: 1, b: 1, a: 1}
+  backgroundHighlightColor: {r: 0.4980392, g: 1, b: 0.8313726, a: 1}

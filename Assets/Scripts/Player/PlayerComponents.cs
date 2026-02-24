@@ -36,6 +36,8 @@ public class PlayerComponents : MonoBehaviour
         characterController = GetComponent<CharacterController>();
         inventoryToggle = GetComponent<ToggleInventoryUI>();
         playerMantling = GetComponent<PlayerMantling>();
+
+        initialized = true;
     }
 
     public static void InitializeComponents(GameObject player)
