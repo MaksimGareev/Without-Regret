@@ -22,6 +22,7 @@ public class WorldItem : MonoBehaviour, IInteractable
     public Animator animator;
     public float collectAnimation;
     Coroutine collectCoroutine;
+    private Transform player;
     public PlayerController playerController;
 
     [HideInInspector] public bool hasBeenCollected = false;
@@ -64,12 +65,12 @@ public class WorldItem : MonoBehaviour, IInteractable
         inventory.itemToCollect = this;
 
         hasBeenCollected = true;
-        collectCoroutine = StartCoroutine(collectAnimationDelay());
+        collectCoroutine = StartCoroutine(CollectAnimationDelay());
 
         ButtonIcons.Instance?.Clear();
     }
 
-    IEnumerator collectAnimationDelay()
+    IEnumerator CollectAnimationDelay()
     {
         animator.SetBool("isCollecting", true);
         animator.SetTrigger("collect");
