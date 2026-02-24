@@ -17,6 +17,12 @@ public class PlayerController : MonoBehaviour, ISaveable
     public Color cooldownColor = Color.grey;
     public ParticleSystem SprintDust;
 
+    [Header("Sprint Fade Settings")]
+    private Coroutine staminaFadeRoutine;
+    public float staminaFadeDuration = 1.5f;
+    private CanvasGroup staminaGroup;
+
+
     [Header("Movement Settings")]
     public bool MovementLocked = false;
     private bool wasMovementLocked = false; //for animator purposes to not cause performance issues
@@ -91,6 +97,12 @@ public class PlayerController : MonoBehaviour, ISaveable
         if (GameManager.Instance.staminaSlider != null)
         {
             GameManager.Instance.staminaSlider.maxValue = SprintDuration;
+        }
+
+        staminaGroup = GameManager.Instance.staminaSlider.GetComponent<CanvasGroup>(); //sets stamina bar alpha to visible if accessible
+        if (staminaGroup != null)
+        {
+            staminaGroup.alpha = 1f;
         }
 
         if (PlayerCamera == null)
@@ -237,6 +249,8 @@ public class PlayerController : MonoBehaviour, ISaveable
             return;
         }
 
+
+
         //if (MovementLocked)
         //{
         //    if (!wasMovementLocked)
@@ -357,6 +371,10 @@ public class PlayerController : MonoBehaviour, ISaveable
                     currentSpeed = SprintSpeed;
                     float depletionRate = moveableObjectMod.movingObject ? moveableObjectMod.sprintDepletionRate : 1f;
                     SprintTimer -= Time.deltaTime * depletionRate; // Stamina depletes faster if moving an object
+                    if (staminaGroup != null)
+                    {
+                        staminaGroup.alpha = 1f;
+                    }
                     GameManager.Instance.staminaSlider.gameObject.SetActive(true);
                     GameManager.Instance.staminaSlider.value = SprintTimer; //sets slider to stamina when going down
                     animator.speed = 1.4f; // speeds up walk animation when sprinting
@@ -391,6 +409,10 @@ public class PlayerController : MonoBehaviour, ISaveable
                     sprintCooldownRoutine = null;
                 }
                 SprintTimer -= Time.deltaTime * moveableObjectMod.staminaDecay;
+                if (staminaGroup != null)
+                {
+                    staminaGroup.alpha = 1f;
+                }
                 GameManager.Instance.staminaSlider.gameObject.SetActive(true);
                 GameManager.Instance.staminaSlider.value = SprintTimer;
                 // Don't start cooldown to ensure SprintTimer doesn't reset prematurely
@@ -435,6 +457,10 @@ public class PlayerController : MonoBehaviour, ISaveable
                 // Regenerating stamina
                 animator.SetBool("isSprinting", false);
                 SprintTimer += Time.deltaTime;
+                if (staminaGroup != null)
+                {
+                    staminaGroup.alpha = 1f;
+                }
                 GameManager.Instance.staminaSlider.gameObject.SetActive(true);
                 GameManager.Instance.staminaSlider.value = SprintTimer;
 
@@ -445,6 +471,13 @@ public class PlayerController : MonoBehaviour, ISaveable
             {
                 // Stamina is full, reset values
                 SprintTimer = SprintDuration;
+
+                if (staminaFadeRoutine != null)
+                {
+                    StopCoroutine(staminaFadeRoutine);
+                }
+                staminaFadeRoutine = StartCoroutine(StaminaFadeAway());
+
                 GameManager.Instance.staminaSlider.value = SprintTimer;
                 canSprint = true;
                 sprintOnCooldown = false;
@@ -463,7 +496,6 @@ public class PlayerController : MonoBehaviour, ISaveable
                         sprintCooldownRoutine = null;
                     }
 
-                    GameManager.Instance.staminaSlider.gameObject.SetActive(false);
                 }
 
                 //if (staminaLingerTimer <= 0f)
@@ -567,6 +599,19 @@ public class PlayerController : MonoBehaviour, ISaveable
             isSprinting = true;
             animator.SetBool("isSprinting", true);
 
+            if (staminaGroup != null)
+            {
+                staminaGroup.alpha = 1f;
+            }
+
+            GameManager.Instance.staminaSlider.gameObject.SetActive(true);
+
+            if (staminaFadeRoutine != null)
+            {
+                StopCoroutine(staminaFadeRoutine);
+                staminaFadeRoutine = null;
+            }
+
             if (SprintDust != null && !SprintDust.isPlaying)
             {
                 Debug.Log("Started Dust");
@@ -595,6 +640,10 @@ public class PlayerController : MonoBehaviour, ISaveable
 
     IEnumerator SprintCooldown()
     {
+        animator.SetBool("isExhausted", true); //plays exhausted animation when player runs out of stamina
+        animator.SetTrigger("Exhaust");
+        yield return new WaitForSeconds(1.4f);
+        animator.SetBool("isExhausted", false);
         if (showDebugLogs)
             Debug.Log("Sprint cooldown started.");
         yield return new WaitForSeconds(sprintCooldown);
@@ -610,6 +659,29 @@ public class PlayerController : MonoBehaviour, ISaveable
         }
 
         sprintCooldownRoutine = null;
+    }
+    private IEnumerator StaminaFadeAway() //Fades the stamina bar away slowly
+    {
+        if (staminaGroup == null) yield break;
+
+        float t = 0f; //time float
+        float start = staminaGroup.alpha;
+
+        while (t < staminaFadeDuration) 
+        {
+            t += Time.deltaTime;
+            staminaGroup.alpha = Mathf.MoveTowards(start, 0f, t * staminaFadeDuration);
+
+            if (staminaGroup.alpha <= 0.01f) //instantly dissapears the bar at lower floats to avoid very low numbers like 0.000019764
+            {
+                staminaGroup.alpha = 0f;
+                break;
+            }
+            yield return null;
+        }
+
+        staminaGroup.alpha = 0f;
+        GameManager.Instance.staminaSlider.gameObject.SetActive(false);
     }
 
     public void MovingObject(bool isMovingObject, float sprintReduction = 1f, float staminaDecay = 1f, bool allowSprint = true)
@@ -720,6 +792,16 @@ public class PlayerController : MonoBehaviour, ISaveable
         yield return new WaitForSeconds(2f);
 
         specialIdle = false;
+    }
+
+    public void DisableInput() //for disabling/freezing the player throughout other scripts
+    {
+        controls.Disable();
+    }
+
+    public void EnableInput() //for enabling/unfreezing the player throughout other scripts
+    {
+        controls.Enable();
     }
 
 
