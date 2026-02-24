@@ -65,7 +65,11 @@ public class DialogueManager : MonoBehaviour
     public GameObject IntruderTrigger;
 
     DialogueData dialogue;
-    int index;
+
+    Dictionary<string, DialogueLine> LineLookup = new();
+    DialogueLine currentLine;
+    string currentLineID;
+
     bool typing;
     bool CanChoose;
     bool waitingForHoldCompletion = false;
@@ -133,18 +137,23 @@ public class DialogueManager : MonoBehaviour
     public void StartDialogueFromJson(TextAsset json, DialogueTrigger trigger)
     {
         dialogue = JsonUtility.FromJson<DialogueData>(json.text);
+        LineLookup.Clear();
 
         foreach (var line in dialogue.dialogueLines)
         {
-            if (line.choices == null) continue;
+            LineLookup[line.LineID] = line;
+            //if (line.choices == null) continue;
 
-            foreach (var choice in line.choices)
+            if (line.choices != null)
             {
-                choice.ParseDirection();
+                foreach (var choice in line.choices)
+                {
+                    choice.ParseDirection();
+                }
             }
         }
 
-        index = 0;
+        currentLineID = dialogue.dialogueLines[0].LineID;
 
         playerController = FindObjectOfType<PlayerController>();
         cam = Camera.main.GetComponent<CameraMovement>();
@@ -211,21 +220,22 @@ public class DialogueManager : MonoBehaviour
 
     void ShowLine()
     {
-        if (index >= dialogue.dialogueLines.Count)
+        if (!LineLookup.ContainsKey(currentLineID))
         {
             EndDialogue();
             return;
         }
 
+        currentLine = LineLookup[currentLineID];
+
         DirectionalImage.SetActive(false);
+        
 
-        DialogueLine line = dialogue.dialogueLines[index];
-
-        npcNameText.text = line.Speaker;
+        npcNameText.text = currentLine.Speaker;
         continueArrow.SetActive(false);
         ClearChoices();
 
-        typingRoutine = StartCoroutine(TypeLine(line));
+        typingRoutine = StartCoroutine(TypeLine(currentLine));
 
     }
 
@@ -282,7 +292,25 @@ public class DialogueManager : MonoBehaviour
         // ignore confirm if chioces are present
         if (CanChoose) return;
 
+        if (currentLine.endDialogueAfterLine)
+        {
+            EndDialogue();
+            HandleNPCMovementsAfterLine();
+            return;
+        }
+
+        if (!string.IsNullOrEmpty(currentLine.NextLineID))
+        {
+            currentLineID = currentLine.NextLineID;
+            ShowLine();
+        }
+        else
+        {
+            EndDialogue();
+        }
+
         // if typing is finished and there are no choices go to the next line
+        /*
         if (dialogue != null && index < dialogue.dialogueLines.Count)
         {
             DialogueLine line = dialogue.dialogueLines[index];
@@ -298,6 +326,7 @@ public class DialogueManager : MonoBehaviour
                 ShowLine();
             }
         }
+        */
     }
 
     void HandleNPCMovementsAfterLine()
@@ -363,19 +392,18 @@ public class DialogueManager : MonoBehaviour
     {
        if (!typing) return;
           StopCoroutine(typingRoutine);
-          dialogueText.text = dialogue.dialogueLines[index].text;
+          dialogueText.text = currentLine.text;
           typing = false;
-
-      DialogueLine line = dialogue.dialogueLines[index];
+        
 
        // After skiping show arrow or choices immediately
-       if (line.choices == null || line.choices.Count == 0)
+       if (currentLine.choices == null || currentLine.choices.Count == 0)
        {
             continueArrow.SetActive(true);
        }
        else
        {
-            SpawnChoices(line.choices);
+            SpawnChoices(currentLine.choices);
        }
     }
 
@@ -503,9 +531,9 @@ public class DialogueManager : MonoBehaviour
 
     void SelectChoice(DialogueChoice c)
     {
+        CanChoose = false;
         choiceTimerSlider.gameObject.SetActive(false);
         //DirectionalImage.SetActive(false);
-        CanChoose = false;
         StopCoroutine(timerRoutine);
 
         ClearChoices();
@@ -517,13 +545,13 @@ public class DialogueManager : MonoBehaviour
     {
         ApplyMorality(c.moralityChange);
 
-    ShowPopup($"Morality changed by {c.moralityChange}. New Morality: {playerMorality}");
+        ShowPopup($"Morality changed by {c.moralityChange}. New Morality: {playerMorality}");
 
-    yield return new WaitForSeconds(portraitFadeTime * 2 + portraitHoldTime);
+        yield return new WaitForSeconds(portraitFadeTime * 2 + portraitHoldTime);
 
-        if (c.nextIndex >= 0)
+        if (!string.IsNullOrEmpty(c.NextLineID))
         {
-            index = c.nextIndex;
+            currentLineID = c.NextLineID;
             ShowLine();
         }
         else
