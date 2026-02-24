@@ -133,8 +133,12 @@ public class ConfirmationUI : MonoBehaviour
 
         confirmButton.onClick.RemoveAllListeners();
         cancelButton.onClick.RemoveAllListeners();
+
         confirmButton.interactable = false;
         cancelButton.interactable = false;
+
+        confirmButton.GetComponent<ButtonHighlighting>().OnUnhighlight();
+        cancelButton.GetComponent<ButtonHighlighting>().OnUnhighlight();
 
         StopAllCoroutines();
     }

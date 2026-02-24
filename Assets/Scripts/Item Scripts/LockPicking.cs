@@ -6,7 +6,6 @@ using TMPro;
 
 public class LockPicking : MonoBehaviour
 {
-    public Camera cam;
     public RectTransform InnerLock;
     public RectTransform PickCursor;
     public GameObject LockPickUi;

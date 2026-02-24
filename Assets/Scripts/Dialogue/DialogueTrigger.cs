@@ -18,6 +18,8 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
     public string NPCName = "Friendly NPC";
     [Tooltip("How far away the player must be to interact with the NPC")]
     public float chatRange = 3f;
+    [SerializeField, Tooltip("The position the player moves to when interacting with the NPC, if null the player will not move from the point of interaction")]
+    private Transform playerMovePoint;
 
     [Header("Json dialogue files")]
     [Tooltip("Json file that will be loaded on the players first interaction with a NPC or used for the story dialogue trigger")]
@@ -93,7 +95,7 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
         npcWander = GetComponent<NpcMovement>();
 
         // Dialogue Manager
-        dialogueManager = FindObjectOfType<DialogueManager>();
+        dialogueManager = FindAnyObjectByType<DialogueManager>();
         if (dialogueManager == null)
         {
             Debug.LogError("DialogueManager not found in the scene. Please add one.");
@@ -160,10 +162,7 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
 
         isTalking = true;
         SafeSetBool("isTalking", isTalking);
-        if (talkRoutine == null)
-        {
-            talkRoutine = StartCoroutine(TalkAnimationCycle());
-        }
+        talkRoutine ??= StartCoroutine(TalkAnimationCycle());
 
         Vector3 Direction = player.position - transform.position;
         Direction.y = 0f; // Prevent tilting
@@ -172,6 +171,27 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
 
         Quaternion targetRotation = Quaternion.LookRotation(Direction);
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, lookSpeed * Time.deltaTime);
+    }
+
+    private IEnumerator MoveAndLookAt(Transform mover, Transform lookat)
+    {
+        // Move a transform to the specified point, then rotate it toward lookat
+        while (mover.transform != playerMovePoint)
+        {
+            mover.position = Vector3.MoveTowards(mover.position, playerMovePoint.position, 2f * Time.deltaTime);
+            yield return new WaitForSeconds(0.01f);
+        }
+
+        Vector3 direction = lookat.position - mover.position; // get direction from mover to the lookat target
+        direction.y = 0f; // Prevent tilting
+
+        if (direction.sqrMagnitude < 0.01f) yield break;
+
+        Quaternion targetRotation = Quaternion.LookRotation(direction);
+        while (Quaternion.Angle(mover.rotation, targetRotation) > 0.5f)
+        {
+            mover.rotation = Quaternion.Slerp(mover.rotation, targetRotation, lookSpeed * Time.deltaTime);
+        }
     }
 
     public void StopLookingAtPlayer()
@@ -220,6 +240,8 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
         DisablePopupIcon();
 
         isLookingAtPlayer = true;
+        if (playerMovePoint != null)
+            StartCoroutine(MoveAndLookAt(player, this.transform));
 
         // check if the player completed any objectives the npc is responsible for
         bool allCompleted = true;

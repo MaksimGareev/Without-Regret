@@ -14,8 +14,6 @@ public class PlayerCrawling : MonoBehaviour
     [Header("Crawl Settings")]
     [SerializeField] private float crawlSpeed = 1f;
     [SerializeField] private GameObject playerModel;
-    [SerializeField] private float heightReduction = 0.7f;
-    [SerializeField] private float heightLerpSpeed = 8f; // speed of collider/controller height smoothing
     [SerializeField] private Collider regularCollider;
     [SerializeField] private Collider crawlingCollider;
 

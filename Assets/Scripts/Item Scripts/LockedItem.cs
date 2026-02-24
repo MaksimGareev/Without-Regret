@@ -82,7 +82,7 @@ public class LockedItem : MonoBehaviour, IInteractable
     // Update is called once per frame
     void Update()
     {
-        if (hasBeenLockpicked || player == null || ButtonIcons.Instance == null || !player.GetComponent<Inventory>().keyItems.Any(x => x.ItemName == "Lock Pick"))
+        if (hasBeenLockpicked || player == null || ButtonIcons.Instance == null)
         {
             return;
         }

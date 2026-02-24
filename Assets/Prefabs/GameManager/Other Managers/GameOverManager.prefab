@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 5201855828716752743}
   - component: {fileID: 3332313376765436556}
   - component: {fileID: 1386351280369198099}
+  - component: {fileID: 5490095958514270082}
   m_Layer: 5
   m_Name: RetryButton
   m_TagString: Untagged
@@ -121,6 +122,19 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &5490095958514270082
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 400643404001991749}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2a8692e3b82475449cab99a2daf8be5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonHighlighting
+  stayHighlighted: 0
 --- !u!1 &1502325494694260203
 GameObject:
   m_ObjectHideFlags: 0
@@ -532,7 +546,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &9065174933505562238
 RectTransform:
   m_ObjectHideFlags: 0
@@ -605,6 +619,7 @@ GameObject:
   - component: {fileID: 3123539299950137717}
   - component: {fileID: 7996883131435138113}
   - component: {fileID: 6082289705339853315}
+  - component: {fileID: 7832768228556232594}
   m_Layer: 5
   m_Name: QuitButton
   m_TagString: Untagged
@@ -714,6 +729,19 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &7832768228556232594
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8434402735084020524}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2a8692e3b82475449cab99a2daf8be5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonHighlighting
+  stayHighlighted: 0
 --- !u!1 &8466600706602002367
 GameObject:
   m_ObjectHideFlags: 0
