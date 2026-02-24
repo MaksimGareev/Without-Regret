@@ -19,19 +19,23 @@ public class WorldItem : MonoBehaviour, IInteractable
     public bool isCollectible = true;
 
     [Header("Player Animation")]
-    public Animator animator;
-    public float collectAnimation;
-    Coroutine collectCoroutine;
+    public float animationDuration = 1.5f; // Duration of the collect animation in seconds
+    private Coroutine collectCoroutine;
+    private Animator animator;
     private Transform player;
-    public PlayerController playerController;
-
+    private PlayerController playerController;
     [HideInInspector] public bool hasBeenCollected = false;
     public ItemData ItemData => itemData;
+
     public void Start()
     {
         // Player reference
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
         playerController = player.GetComponent<PlayerController>();
+        if (player != null)
+        {
+            animator = player.GetComponentInChildren<Animator>();
+        }
 
         if (hasBeenCollected)
         {
@@ -72,12 +76,27 @@ public class WorldItem : MonoBehaviour, IInteractable
 
     IEnumerator CollectAnimationDelay()
     {
+        if (!animator)
+        {
+            Debug.LogWarning("Animator not found on the player in the scene");
+            yield break;
+        }
+
         animator.SetBool("isCollecting", true);
         animator.SetTrigger("collect");
-        playerController.DisableInput();
-        yield return new WaitForSeconds(collectAnimation);
+        // playerController.DisableInput();
+        yield return new WaitForSeconds(animationDuration);
         animator.SetBool("isCollecting", false);
-        playerController.EnableInput();
+        // playerController.EnableInput();
         gameObject.SetActive(false);
+    }
+
+    private void OnDisable()
+    {
+        if (collectCoroutine != null)
+        {
+            StopCoroutine(collectCoroutine);
+            collectCoroutine = null;
+        }
     }
 }
