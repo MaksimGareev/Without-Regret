@@ -512,7 +512,7 @@ public class PlayerController : MonoBehaviour, ISaveable
 
             if (SprintDust != null && !SprintDust.isPlaying)
             {
-                Debug.Log("Started Dust");
+                //Debug.Log("Started Dust");
                 SprintDust.Play();
             }
         }
@@ -529,7 +529,7 @@ public class PlayerController : MonoBehaviour, ISaveable
 
         if (SprintDust != null && SprintDust.isPlaying)
         {
-            Debug.Log("Stopped Dust");
+            //Debug.Log("Stopped Dust");
             SprintDust.Stop();
         }
     }
