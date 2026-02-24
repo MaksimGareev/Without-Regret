@@ -1,86 +1,115 @@
 {
     "dialogueLines": [
         {
+            "LineID": "Start",
             "Speaker": "Reed",
             "text": "Hey Echo! Long time no see. Just paying my usual visit to Derry. Everything's still vivid in my head, how that night went...do you have some time right now?",
             "requiredMorality": 0,
             "choices": [
                 {
                     "text": "Sure.",
-                    "nextIndex": 1,
+                    "NextLineID": "Nice",
                     "moralityChange": 1,
                     "directionString": "Up"
                 },
                 {
                     "text": "Not really, but go ahead.",
-                    "nextIndex": 2,
+                    "NextLineID": "Mean",
                     "moralityChange": -1,
                     "directionString": "Down"
+                },
+                {
+                    "text": "I mean, might be awkward, but why not?",
+                    "NextLineID": "Nice",
+                    "moralityChange": 1,
+                    "directionString": "Left"
+                },
+                {
+                    "text": "I need to go walk my hamster, so make it quick.",
+                    "NextLineID": "Mean",
+                    "moralityChange": -1,
+                    "directionString": "Right"
                 }
             ]
         },
         {
+            "LineID": "Nice",
             "Speaker": "Reed",
             "text": "Thanks, I've been really needing to vent.",
             "requiredMorality": 1,
+            "NextLineID": "Part I",
             "choices": []
         },
         {
+            "LineID": "Mean",
             "Speaker": "Reed",
             "text": "Uhm, okay...I'll make it quick then.",
             "requiredMorality": -1,
+            "NextLineID": "Part I",
             "choices": []
         },
         {
+            "LineID": "Part I",
             "Speaker": "Reed",
-            "text": "As you know, Derry and I lived together. One day, I brought home a new TV only to find it broken on the floor the next day, with my car missing as well. I was furious. I waited all day for him to come back, so I could kick his ass.",
+            "text": "As you know, Derry and I lived together. One day, I brought home a new TV only to find it broken on the floor the next day, with my car missing as well. I was furious. I waited all day for him to come back, so I could kick his ass...",
             "requiredMorality": 0,
             "choices": [
                 {
                     "text": "(Stay focused.)",
-                    "nextIndex": 4,
+                    "NextLineID": "Part II",
                     "moralityChange": 1,
                     "directionString": "Up"
                 },
                 {
                     "text": "(Doze off.)",
-                    "nextIndex": 7,
+                    "NextLineID": "Part VI",
                     "moralityChange": -1,
                     "directionString": "Down"
                 }
             ]
         },
         {
+            "LineID": "Part II",
             "Speaker": "Reed",
-            "text": "Later on, Derry came back and I got on his case... it got nasty, almost physical, then I drove away. While I was driving, I noticed a receipt for a TV from earlier that day. I checked the trunk and realized Derry went and got new TV.",
+            "text": "...Later on, Derry came back and I got on his case...it got nasty, almost physical, then I drove away. While I was driving, I noticed a receipt for a TV from earlier that day. I checked the trunk and realized Derry went and got a new TV.",
             "requiredMorality": 0,
+            "NextLineID": "Part III",
             "choices": []
         },
         {
+            "LineID": "Part III",
             "Speaker": "Reed",
             "text": "I felt awful for being such an asshole when he was trying to make up for his accident. I worked up the courage to apologize on the drive home, and when I got back...",
             "requiredMorality": 0,
+            "NextLineID": "Part IV",
             "choices": []
         },
         {
+            "LineID": "Part IV",
             "Speaker": "Reed",
             "text": "The house was up in flames. The fire fighters did everything they could, and when I asked about Derry...I still remember the look on the paramedic's face.",
             "requiredMorality": 0,
+            "NextLineID": "Part V",
             "choices": []
         },
         {
+            "LineID": "Part V",
             "Speaker": "Reed",
             "text": "I really appreciate you listening. It means more than you think.",
             "requiredMorality": 0,
+            "NextLineID": "Part VII",
             "choices": []
         },
         {
+            "LineID": "Part VI",
             "Speaker": "Reed",
             "text": "Sorry, my emotional baggage is the last thing you'd care about.",
             "requiredMorality": -1,
+            "NextLineID": "Part VII",
             "choices": []
         },
         {
+            "LineID": "Part VII",
             "Speaker": "Reed",
             "text": "It's getting late. I lost my spare keys around here, but I honestly can't be bothered. I'm gonna head home. If you'd like to look for them, they might be somewhere in the leaves.",
             "requiredMorality": 0,
