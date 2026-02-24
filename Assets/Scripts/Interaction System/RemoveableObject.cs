@@ -8,9 +8,14 @@ public class RemoveableObject : MonoBehaviour, IInteractable
     public float interactionPriority => 1;
     public InteractType interactType => InteractType.Remove;
     public event Action OnInteracted;
+    [SerializeField] private CleanupLeavesObjective objective;
 
     private bool interactable = true;
 
+    void Start()
+    {
+        objective = (CleanupLeavesObjective)FindFirstObjectByType(typeof(CleanupLeavesObjective));
+    }
     void OnEnable()
     {
         interactable = true;
@@ -26,7 +31,7 @@ public class RemoveableObject : MonoBehaviour, IInteractable
 
         if (requiredItem != null && player.TryGetComponent<Inventory>(out var items))
         {
-            if (!items.OtherItems.Contains(requiredItem))
+            if (!items.KeyItems.Contains(requiredItem))
             {
                 // Required item is not in inventory
                 Debug.Log($"Player tried to remove {gameObject.name}, but is missing required item {requiredItem.ItemName}");
@@ -36,8 +41,9 @@ public class RemoveableObject : MonoBehaviour, IInteractable
 
         // Object is removed; notify listeners and disable gameobject
         OnInteracted?.Invoke();
+        objective.AddLeaves();
         gameObject.SetActive(false);
-        player.GetComponent<Inventory>().AddLeaves();
+        
     }
 
     public bool CanInteract(GameObject player)

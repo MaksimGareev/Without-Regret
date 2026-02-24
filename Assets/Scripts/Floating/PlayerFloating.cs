@@ -31,16 +31,14 @@ public class PlayerFloating : MonoBehaviour
     private float rhythmWindow = 0.3f;
     [SerializeField, Tooltip("Determines the size of the rhythm bar")] 
     private float rhythmInterval = 1f;
+    [SerializeField, Tooltip("Determines how low the rhythmWindow can be")]
+    private float rhythmWindowMin = 0.33f;
+    [SerializeField, Tooltip("Defines a buffer for determining success. If the player misses the window, but the input is within the buffer, it still counts as a success")]
+    private float rhythmBuffer = 0.15f;
     private PlayerControls controls;
     private Vector2 moveInput;
     private bool floatInput;
-    //private Slider cooldownSlider;
     private bool failState = false;
-
-    [Header("References")]
-    //[SerializeField] private Slider rhythmSlider;
-    //[SerializeField] private RectTransform rhythmTarget;
-    //[SerializeField] private GameObject cooldownObject;
     private Image cooldownFillImage;
     private Color originalCooldownColor;
 
@@ -53,6 +51,9 @@ public class PlayerFloating : MonoBehaviour
     private Camera playerCamera;
     private ToggleInventoryUI toggleInventoryUI;
     private Animator animator;
+    private RectTransform floatTargetArea;
+    private Slider floatingSlider;
+    private Slider cooldownSlider;
 
     public bool IsFloating { get; private set; } = false;
     private bool canFloat = false;
@@ -72,9 +73,6 @@ public class PlayerFloating : MonoBehaviour
     // randomized window (normalized 0..1)
     private float windowStartNormalized = 0f;
     private float windowWidthNormalized = 0f;
-
-    // When true the rhythmTimer counts down back to 0 after reaching rhythmInterval
-    private bool timerCountingDown = false;
 
     void OnEnable()
     {
@@ -102,33 +100,6 @@ public class PlayerFloating : MonoBehaviour
         playerCamera = Camera.main;
         controls = new PlayerControls();
 
-        // if (rhythmSlider == null)
-        // {
-        //     rhythmSlider = GameObject.Find("FloatingSlider").GetComponent<Slider>();
-        //     if (rhythmSlider == null)
-        //     {
-        //         Debug.LogError("PlayerFloating: Rhythm Slider could not be found. Please ensure there is a reference to a GameObject named 'FloatingSlider' with a Slider component inside of the MainCanvas prefab.");
-        //     }
-        // }
-
-        // if (rhythmTarget == null)
-        // {
-        //     rhythmTarget = GameObject.Find("TargetArea").GetComponent<RectTransform>();
-        //     if (rhythmTarget == null)
-        //     {
-        //         Debug.LogError("PlayerFloating: Rhythm Target could not be found. Please ensure there is a reference to a GameObject named 'TargetArea' with a RectTransform component inside of the MainCanvas prefab, as a child of the FloatingSlider.");
-        //     }
-        // }
-
-        // if (cooldownObject == null)
-        // {
-        //     cooldownObject = GameObject.Find("Floating Cooldown");
-        //     if (cooldownObject == null)
-        //     {
-        //         Debug.LogError("PlayerFloating: Cooldown Object could not be found. Please ensure there is a reference to a GameObject named 'Floating Cooldown' with a Slider component inside of the MainCanvas prefab.");
-        //     }
-        // }
-
         if (animator == null)
         {
             animator = GetComponentInChildren<Animator>();
@@ -140,10 +111,20 @@ public class PlayerFloating : MonoBehaviour
 
         if (GameManager.Instance.floatCooldown != null)
         {
-            //cooldownSlider = cooldownObject.GetComponent<Slider>();
-            cooldownFillImage = GameManager.Instance.floatCooldown.fillRect.GetComponent<Image>();
+            cooldownSlider = GameManager.Instance.floatCooldown;
+            cooldownFillImage = cooldownSlider.fillRect.GetComponent<Image>();
             originalCooldownColor = cooldownFillImage.color;
-            GameManager.Instance.floatCooldown.gameObject.SetActive(false);
+            cooldownSlider.gameObject.SetActive(false);
+        }
+
+        if (GameManager.Instance.floatingSlider != null)
+        {
+            floatingSlider = GameManager.Instance.floatingSlider;
+        }
+
+        if (GameManager.Instance.floatTargetArea != null)
+        {
+            floatTargetArea = GameManager.Instance.floatTargetArea;
         }
 
         // Assign floatInput based on the state of the Input Action
@@ -181,13 +162,13 @@ public class PlayerFloating : MonoBehaviour
     private void Start()
     {
         SetupRhythmTargets();
-        if (GameManager.Instance.floatingSlider != null)
-            GameManager.Instance.floatingSlider.gameObject.SetActive(false);
+        if (floatingSlider != null)
+            floatingSlider.gameObject.SetActive(false);
     }
 
     private void SetupRhythmTargets()
     {
-        if (GameManager.Instance.floatingSlider == null || GameManager.Instance.floatTargetArea == null)
+        if (floatingSlider == null || floatTargetArea == null)
             return;
 
         if (rhythmInterval <= 0f)
@@ -201,19 +182,29 @@ public class PlayerFloating : MonoBehaviour
         windowWidthNormalized = Mathf.Clamp01(clampedWindow / rhythmInterval);
 
         // choose a single random start position so the window is [start, start+width]
-        windowStartNormalized = Random.Range(0f, 1f - windowWidthNormalized);
+        windowStartNormalized = Random.Range(rhythmWindowMin, 1f - windowWidthNormalized);
         float windowEndNormalized = windowStartNormalized + windowWidthNormalized;
 
         // Make sure the target rect is parented to the slider so anchors are relative
-        if (!GameManager.Instance.floatingSlider.TryGetComponent<RectTransform>(out var sliderRect)) return;
+        if (!floatingSlider.TryGetComponent<RectTransform>(out var sliderRect)) return;
 
-        GameManager.Instance.floatTargetArea.SetParent(sliderRect, false);
+        floatTargetArea.SetParent(sliderRect, false);
 
-        // Set anchors to define the single window region on the slider
-        GameManager.Instance.floatTargetArea.anchorMin = new Vector2(windowStartNormalized, 0f);
-        GameManager.Instance.floatTargetArea.anchorMax = new Vector2(windowEndNormalized, 1f);
-        GameManager.Instance.floatTargetArea.offsetMin = Vector2.zero;
-        GameManager.Instance.floatTargetArea.offsetMax = Vector2.zero;
+        // Set anchors to define the single window region on the slider (depending on slider direction)
+        if (floatingSlider.direction == Slider.Direction.LeftToRight)
+        {
+            floatTargetArea.anchorMin = new Vector2(windowStartNormalized, 0f);
+            floatTargetArea.anchorMax = new Vector2(windowEndNormalized, 1f);
+            floatTargetArea.offsetMin = Vector2.zero;
+            floatTargetArea.offsetMax = Vector2.zero;
+        }
+        else if (floatingSlider.direction == Slider.Direction.BottomToTop)
+        {
+            floatTargetArea.anchorMin = new Vector2(0f, windowStartNormalized);
+            floatTargetArea.anchorMax = new Vector2(1f, windowEndNormalized);
+            floatTargetArea.offsetMin = Vector2.zero;
+            floatTargetArea.offsetMax = Vector2.zero;
+        }
 
         if (showDebugLogs)
         {
@@ -259,11 +250,11 @@ public class PlayerFloating : MonoBehaviour
         animator.SetBool("isFloating", false);
         animator.SetTrigger("floatStart");
         StartCoroutine(FloatAnimationHandler());
-        GameManager.Instance.floatingSlider.gameObject.SetActive(true);
+
+        floatingSlider.gameObject.SetActive(true);
         IsFloating = true;
         floatTimer = 0f;
         rhythmTimer = 0f;
-        timerCountingDown = false;
 
         // randomize window for this float session so player sees a new target each time
         SetupRhythmTargets();
@@ -299,12 +290,11 @@ public class PlayerFloating : MonoBehaviour
         animator.SetTrigger("isLanding");
         animator.SetBool("isFloating", false);
 
-        GameManager.Instance.floatingSlider.gameObject.SetActive(false);
+        floatingSlider.gameObject.SetActive(false);
         IsFloating = false;
         rhythmTimer = 0f;
         floatTimer = 0f;
-        timerCountingDown = false;
-        if (GameManager.Instance.floatingSlider != null) GameManager.Instance.floatingSlider.value = 0f;
+        if (floatingSlider != null) floatingSlider.value = 0f;
 
         IsCoolingDown = true;
         cooldownTimer = floatCooldown;
@@ -326,27 +316,14 @@ public class PlayerFloating : MonoBehaviour
 
     private void HandleRhythmInput()
     {
-        // Advance or count down the rhythm timer depending on state
-        if (!timerCountingDown)
+        rhythmTimer += Time.deltaTime;
+        if (rhythmTimer >= rhythmInterval)
         {
-            rhythmTimer += Time.deltaTime;
-            if (rhythmTimer >= rhythmInterval)
-            {
-                rhythmTimer = rhythmInterval;
-                timerCountingDown = true;
-            }
-        }
-        else
-        {
-            rhythmTimer -= Time.deltaTime;
-            if (rhythmTimer <= 0f)
-            {
-                // No successful input during the up/down cycle -> failure
-                if (showDebugLogs) Debug.Log("Floating Rhythm Failure: timer returned to 0 without success.");
-                failState = true;
-                StopFloating();
-                return;
-            }
+            // No successful input during cycle -> failure
+            if (showDebugLogs) Debug.Log("Floating Rhythm Failure: rhythmTimer exceeded the interval");
+            failState = true;
+            StopFloating();
+            return;
         }
 
         floatTimer += Time.deltaTime;
@@ -369,28 +346,27 @@ public class PlayerFloating : MonoBehaviour
             float timing = Mathf.Clamp01(rhythmTimer / rhythmInterval);
 
             // check if timing falls inside the success window
-            if (timing >= windowStartNormalized && timing <= (windowStartNormalized + windowWidthNormalized))
+            if ((timing + rhythmBuffer) >= windowStartNormalized && (timing - rhythmBuffer) <= (windowStartNormalized + windowWidthNormalized))
             {
                 // success
                 rhythmTimer = 0f;
-                timerCountingDown = false;
-                if (GameManager.Instance.floatingSlider != null)
+                if (floatingSlider != null)
                 {
-                    GameManager.Instance.floatingSlider.value = 0f;
+                    floatingSlider.value = 0f;
                 }
 
                 SetupRhythmTargets(); // new window for next input
 
                 if (showDebugLogs)
                 {
-                    Debug.Log($"Floating Rhythm Success. Rhythm Timing = {timing:F3} | Success Window: {windowStartNormalized:F3}-{windowStartNormalized+windowWidthNormalized:F3}");
+                    Debug.Log($"Floating Rhythm Success. Rhythm Timing = {timing:F3} | Success Window: {windowStartNormalized:F3}-{windowStartNormalized+windowWidthNormalized:F3} | Buffer: {rhythmBuffer}");
                 }
             }
             else
             {
                 if (showDebugLogs)
                 {
-                    Debug.Log($"Floating Rhythm Failure. Rhythm Timing = {timing:F3} | Success Window: {windowStartNormalized:F3}-{windowStartNormalized + windowWidthNormalized:F3}");
+                    Debug.Log($"Floating Rhythm Failure. Rhythm Timing = {timing:F3} | Success Window: {windowStartNormalized:F3}-{windowStartNormalized + windowWidthNormalized:F3} | Buffer: {rhythmBuffer}");
                 }
                 // Immediate failure on incorrect input
                 failState = true;
@@ -401,9 +377,9 @@ public class PlayerFloating : MonoBehaviour
 
     private void UpdateRhythmUI()
     {
-        if (GameManager.Instance.floatingSlider != null)
+        if (floatingSlider != null)
         {
-            GameManager.Instance.floatingSlider.value = Mathf.Clamp01(rhythmTimer / rhythmInterval);
+            floatingSlider.value = Mathf.Clamp01(rhythmTimer / rhythmInterval);
         }
     }
 
@@ -474,18 +450,20 @@ public class PlayerFloating : MonoBehaviour
     {
         if (IsCoolingDown)
         {
-            if (GameManager.Instance.floatCooldown != null)
+            if (cooldownSlider != null)
             {
-                GameManager.Instance.floatCooldown.gameObject.SetActive(true);
+                cooldownSlider.gameObject.SetActive(true);
                 if (failState)
                 {
+                    // If the player failed the minigame, the cooldown fill is red
                     cooldownFillImage.color = Color.red;
                 }
                 else
                 {
+                    // Otherwise, if time ran out normally, cooldown fill is normal
                     cooldownFillImage.color = originalCooldownColor;
                 }
-                GameManager.Instance.floatCooldown.value = Mathf.Clamp01(1f - (cooldownTimer / floatCooldown));
+                cooldownSlider.value = Mathf.Clamp01(1f - (cooldownTimer / floatCooldown));
             }
             
             cooldownTimer -= Time.deltaTime;
@@ -495,10 +473,10 @@ public class PlayerFloating : MonoBehaviour
                 failState = false;
             }
         }
-        else if (GameManager.Instance.floatCooldown != null)
+        else if (cooldownSlider != null)
         {
-            GameManager.Instance.floatCooldown.gameObject.SetActive(false);
-            GameManager.Instance.floatCooldown.value = 0f;
+            cooldownSlider.gameObject.SetActive(false);
+            cooldownSlider.value = 0f;
         }
     }
 
@@ -511,14 +489,14 @@ public class PlayerFloating : MonoBehaviour
     {
         if (!IsFloating)
         {
-            resetAnimations();
+            ResetAnimations();
         }
         IsFloating = true;
         yield return new WaitForSeconds(0.5f);
         animator.SetBool("isFloating", true);
     }
 
-    private void resetAnimations()
+    private void ResetAnimations()
     {
         animator.SetBool("isIdle", false);
         animator.SetBool("isWalking", false);

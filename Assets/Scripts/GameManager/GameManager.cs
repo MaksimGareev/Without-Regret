@@ -1,20 +1,22 @@
 using System.Collections;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+// The GameManager is a singleton that persists across scenes and manages references to important child objects
+// It allows other scripts to reference these child objects without all needing to individually find the objects themselves.
+// It also ensures that each scene has the appropriate UI, Managers, and other necessary objects without Designer input.
+// It also handles toggling the active state of child objects based on the current scene
 public class GameManager : MonoBehaviour
 {
-    public static GameManager Instance;
-    [HideInInspector] public bool instanceReady = false;
+    public static GameManager Instance; // Singleton instance
+    [HideInInspector] public bool instanceReady = false; // Flag to let other scripts know when it is appropriate to acces the GameManager
     public string currentSceneName;
     public int currentSceneIndex;
 
-    // References to child objects
-    //[HideInInspector] public GameObject player;
+    // References to child objects, for the most part the names match the object names in heirarchy for assignment
     [HideInInspector] public GameObject saveManager;
     public GameObject saveCanvas;
     [HideInInspector] public GameObject audioManager;
@@ -64,12 +66,14 @@ public class GameManager : MonoBehaviour
 
     private void OnEnable()
     {
+        // Subscribe to scene change events
         SceneManager.activeSceneChanged += OnSceneChanged;
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     private void OnDisable()
     {
+        // Unsubscribe from scene change events
         SceneManager.activeSceneChanged -= OnSceneChanged;
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
@@ -77,9 +81,9 @@ public class GameManager : MonoBehaviour
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         StartCoroutine(WaitForCopiesToDelete());
-        //UpdateChildReferences();
     }
 
+    // Waits until all duplicate GameManager instances are deleted, marks the instance as ready for other scripts to access
     private IEnumerator WaitForCopiesToDelete()
     {
         yield return null; // Wait for the next frame to ensure all objects are loaded
@@ -94,16 +98,17 @@ public class GameManager : MonoBehaviour
 
         instanceReady = true;
 
+        // Load game data if not in main menu
         if (SaveManager.Instance != null && SceneManager.GetActiveScene().name != "MainMenu")
         {
             SaveManager.Instance.LoadGame(SaveSystem.activeSaveSlot);
         }
     }
 
+    // Finds and updates references to child objects
+    // Currently only done once on GameManager's Awake
     private void UpdateChildReferences()
     {
-        // Find child objects and store references to them
-        //player = GetComponentInChildren<PlayerController>()?.gameObject;
         saveManager = GetComponentInChildren<SaveManager>()?.gameObject;
         audioManager = GetComponentInChildren<AudioManager>()?.gameObject;
         gameOverManager = GetComponentInChildren<GameOverManager>()?.gameObject;
@@ -117,23 +122,25 @@ public class GameManager : MonoBehaviour
         eventSystem = GetComponentInChildren<EventSystem>()?.gameObject;
     }
 
-    // Know what scene the player is in
+    // Called from the scene change event subscribed to above
+    // Updates info about current scene and toggles child objects appropriately
     private void OnSceneChanged(Scene oldScene, Scene newScene)
     {
         instanceReady = false;
         StartCoroutine(WaitForCopiesToDelete());
 
-        Debug.Log("Scene changed to: " + newScene.name);
+        // Debug.Log("Scene changed to: " + newScene.name);
         currentSceneName = newScene.name;
         currentSceneIndex = newScene.buildIndex;
 
-        //UpdateChildReferences(); // Update references to child objects when the scene changes
+        ToggleChildrenActive();
+    }
 
+    // Disables child objects that aren't needed when in the main menu, enables them in other levels if not already
+    private void ToggleChildrenActive()
+    {
         if (currentSceneName == "MainMenu")
         {
-            // if (player.activeSelf)
-            //     player.SetActive(false);
-
             if (gameOverManager.activeSelf)
                 gameOverManager.SetActive(false);
 
@@ -157,9 +164,6 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            // if (!player.activeSelf)
-            //     player.SetActive(true);
-
             if (!gameOverManager.activeSelf)
                 gameOverManager.SetActive(true);
 
@@ -181,37 +185,5 @@ public class GameManager : MonoBehaviour
             if (!dialogueManager.gameObject.activeSelf)
                 dialogueManager.gameObject.SetActive(true);
         }
-
-        // var players = GameObject.FindGameObjectsWithTag("Player");
-        // while (players.Length > 1)
-        // {
-        //     //yield return null;
-        //     players = GameObject.FindGameObjectsWithTag("Player");
-
-        //     foreach (var otherPlayer in players)
-        //     {
-        //         if (otherPlayer.gameObject != this.player)
-        //         {
-        //             // If another player instance is found, update the main player reference and destroy the duplicate
-        //             otherPlayer.gameObject.SetActive(false);
-
-        //             var data = SaveSystem.Load(SaveSystem.activeSaveSlot);
-
-        //             bool hasTransform = 
-        //             data != null && 
-        //             data.playerSaveData != null &&
-        //             data.playerSaveData.TryGetPlayerTransform(currentSceneName, out float[] pos, out float[] rot);
-
-        //             if (!hasTransform)
-        //             {
-        //                 this.player.transform.position = otherPlayer.transform.position;
-        //                 this.player.transform.rotation = otherPlayer.transform.rotation;
-        //                 this.player.transform.localScale = otherPlayer.transform.localScale; 
-        //             }
-        //             this.player.SetActive(true);
-        //             Destroy(otherPlayer.gameObject);
-        //         }
-        //     }
-        // }
     }
 }

@@ -3,6 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.Audio;
+
+[System.Serializable]
+public class NPCPortraitSet
+{
+    public string npcName;
+    public Sprite happy;
+    public Sprite neutral;
+    public Sprite upset;
+}
 
 public class DialogueManager : MonoBehaviour
 {
@@ -42,10 +52,18 @@ public class DialogueManager : MonoBehaviour
     [Tooltip("How long the new portrait stays before reverting back to the default")]
     [SerializeField] float portraitHoldTime = .75f;
 
+    [Header("NPC Portraits")]
+    [SerializeField] private Image npcPortrait;
+    [SerializeField] private List<NPCPortraitSet> npcPortraitSets;
+
     [Header("Audio")]
     [SerializeField] AudioSource typingSource;
     [Tooltip("Audio clips of each letter A-Z")]
     [SerializeField] List<AudioClip> letterClips;
+
+    [Header("Audio Mixer Groups")]
+    [SerializeField] AudioMixerGroup maleVoiceGroup;
+    [SerializeField] AudioMixerGroup femaleVoiceGroup;
 
     [Header("Choice Selection")]
     [Tooltip("How long the player needs to hold to confirm a selection")]
@@ -87,7 +105,9 @@ public class DialogueManager : MonoBehaviour
     Coroutine typingRoutine;
     Coroutine timerRoutine;
     Coroutine portraitRoutine;
+
     CanvasGroup portraitGroup;
+    CanvasGroup npcPortraitGroup;
 
     public int playerMorality;
     int posCount, negCount, neutralCount;
@@ -100,10 +120,17 @@ public class DialogueManager : MonoBehaviour
     private void Awake()
     {
         controls = new PlayerControls();
+        
         portraitGroup = playerPortrait.GetComponent<CanvasGroup>();
         if (!portraitGroup)
         {
             portraitGroup = playerPortrait.gameObject.AddComponent<CanvasGroup>();
+        }
+
+        npcPortraitGroup = npcPortrait.GetComponent<CanvasGroup>();
+        if (!npcPortraitGroup)
+        {
+            npcPortraitGroup = npcPortrait.gameObject.AddComponent<CanvasGroup>();
         }
 
         foreach (var v in holdVisuals)
@@ -134,6 +161,7 @@ public class DialogueManager : MonoBehaviour
     void OnEnable() => controls.Enable();
     void OnDisable() => controls.Disable();
 
+    // Load Json file on start of dialogue interaction
     public void StartDialogueFromJson(TextAsset json, DialogueTrigger trigger)
     {
         dialogue = JsonUtility.FromJson<DialogueData>(json.text);
@@ -142,7 +170,6 @@ public class DialogueManager : MonoBehaviour
         foreach (var line in dialogue.dialogueLines)
         {
             LineLookup[line.LineID] = line;
-            //if (line.choices == null) continue;
 
             if (line.choices != null)
             {
@@ -155,18 +182,23 @@ public class DialogueManager : MonoBehaviour
 
         currentLineID = dialogue.dialogueLines[0].LineID;
 
-        playerController = FindObjectOfType<PlayerController>();
+        playerController = FindAnyObjectByType<PlayerController>();
         cam = Camera.main.GetComponent<CameraMovement>();
 
+        // assign the current active dialogue trigger
         activeDialogueTrigger = trigger;
+
+        // NPC references for movement if needed
         ireneNPC = FindAnyObjectByType<Irene>();
         barryNPC = FindAnyObjectByType<Barry>();
         darryNPC = FindAnyObjectByType<DarryNeighborhood>();
 
+        // activate dialogue UI
         DialoguePanel.SetActive(true);
         playerPortrait.gameObject.SetActive(true);
         npcNameText.text = dialogue.npcName;
 
+        // set dialogue to true and lock camera rotation
         DialogueIsActive = true;
         playerController.SetDialogueActive(true);
         cam.SetCameraLocked(true);
@@ -179,15 +211,18 @@ public class DialogueManager : MonoBehaviour
         ShowLine();
     }
 
+    // End dialogue interaction
     public void EndDialogue()
     {
         StopAllCoroutines();
 
+        // deactivate Dialogue UI
         DialoguePanel.SetActive(false);
         playerPortrait.gameObject.SetActive(false);
         continueArrow.SetActive(false);
         ClearChoices();
 
+        // set dialogue interaction to false
         DialogueIsActive = false;
         playerController.SetDialogueActive(false);
 
@@ -216,10 +251,13 @@ public class DialogueManager : MonoBehaviour
 
         StartCoroutine(cam.EndCameraZoom());
         cam.SetCameraLocked(false);
+        npcPortrait.gameObject.SetActive(false);
     }
 
+    // Show current line of dialogue
     void ShowLine()
     {
+        // search for Line ID of current line
         if (!LineLookup.ContainsKey(currentLineID))
         {
             EndDialogue();
@@ -232,6 +270,11 @@ public class DialogueManager : MonoBehaviour
         
 
         npcNameText.text = currentLine.Speaker;
+
+        SetNPCPortrait(currentLine.lineTone);
+
+        SetVoiceGender(currentLine.NPCGender);
+
         continueArrow.SetActive(false);
         ClearChoices();
 
@@ -239,6 +282,7 @@ public class DialogueManager : MonoBehaviour
 
     }
 
+    // type out current line of dialogue and pauses for punctuation
     IEnumerator TypeLine(DialogueLine line)
     {
         typing = true;
@@ -270,6 +314,7 @@ public class DialogueManager : MonoBehaviour
 
         typing = false;
 
+        // activate continue arrow when line is built and there are no choices
         if (line.choices == null || line.choices.Count == 0)
         {
             continueArrow.SetActive(true);
@@ -278,6 +323,41 @@ public class DialogueManager : MonoBehaviour
         {
             SpawnChoices(line.choices);
         }
+    }
+
+    void SetVoiceGender(string gender)
+    {
+        if (string.IsNullOrEmpty(gender)) return;
+
+        switch (gender.ToLower())
+        {
+            case "male":
+                if (maleVoiceGroup != null) typingSource.outputAudioMixerGroup = maleVoiceGroup;
+                break;
+            case "female":
+                if (femaleVoiceGroup != null) typingSource.outputAudioMixerGroup = femaleVoiceGroup;
+                break;
+        }
+    }
+
+    void SetNPCPortrait(LineTone lineTone)
+    {
+        if (npcPortrait == null || currentLine == null) return;
+
+        NPCPortraitSet set = npcPortraitSets.Find(p => p.npcName == currentLine.Speaker);
+        if (set == null) return;
+
+        Sprite newSprite = lineTone switch
+        {
+            LineTone.Happy => set.happy,
+            LineTone.Neutral => set.neutral,
+            LineTone.Upset => set.upset,
+            _ => set.neutral
+        };
+
+        npcPortrait.sprite = newSprite;
+        npcPortrait.gameObject.SetActive(true);
+
     }
 
     void OnConfirmPressed()
@@ -292,6 +372,7 @@ public class DialogueManager : MonoBehaviour
         // ignore confirm if chioces are present
         if (CanChoose) return;
 
+        // if current line has endDialogueAfterLine true end dialogue and move NPC if needed
         if (currentLine.endDialogueAfterLine)
         {
             EndDialogue();
@@ -299,6 +380,7 @@ public class DialogueManager : MonoBehaviour
             return;
         }
 
+        // if next line does not have NextLineID end dialogue
         if (!string.IsNullOrEmpty(currentLine.NextLineID))
         {
             currentLineID = currentLine.NextLineID;
@@ -309,26 +391,9 @@ public class DialogueManager : MonoBehaviour
             EndDialogue();
         }
 
-        // if typing is finished and there are no choices go to the next line
-        /*
-        if (dialogue != null && index < dialogue.dialogueLines.Count)
-        {
-            DialogueLine line = dialogue.dialogueLines[index];
-            if (line.endDialogueAfterLine)
-            {
-                EndDialogue();
-                HandleNPCMovementsAfterLine();
-            }
-            else
-            {
-                continueArrow.SetActive(false);
-                index++;
-                ShowLine();
-            }
-        }
-        */
     }
 
+    // Move NPCs or trigger irene to follow the player
     void HandleNPCMovementsAfterLine()
     {
         if (activeDialogueTrigger == null) return;
@@ -370,17 +435,6 @@ public class DialogueManager : MonoBehaviour
         if (darryNPC != null && (npc == "Reed" || npc == "Darry"))
         {
             darryNPC.StartTravel();
-            /*
-            if (IntruderTrigger != null)
-            {
-                IntruderTrigger.SetActive(true);
-            }
-            else
-            {
-                Debug.Log("Intruder trigger is still inactive");
-            }
-            */
-
         }
         else if (darryNPC == null)
         {
@@ -388,6 +442,7 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
+    // if line is being built and player presses the confirm button build the line immediately
     void SkipTyping()
     {
        if (!typing) return;
@@ -407,6 +462,7 @@ public class DialogueManager : MonoBehaviour
        }
     }
 
+    // spawn answer choices if current line prompts them to
     void SpawnChoices(List<DialogueChoice> choices)
     {
         CanChoose = true;
@@ -440,6 +496,7 @@ public class DialogueManager : MonoBehaviour
         HandleDirectionalSelection();
     }
 
+    // read the value of directional input when choices are present
     void HandleDirectionalSelection()
     {
         Vector2 input = controls.Dialogue.Move.ReadValue<Vector2>();
@@ -478,6 +535,7 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
+    // Highlight choices when player presses or holds in direction of answer choices
     void HighlightChoice(ChoiceDirection dir)
     {
         foreach (var obj in spawnedChoices)
@@ -510,6 +568,7 @@ public class DialogueManager : MonoBehaviour
         visual.image.fillAmount = Mathf.Clamp01(progress);
     }
 
+    // reset hold feedback if player lets go of directional input
     void ResetHold()
     {
         holdTimer = 0;
@@ -560,6 +619,7 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
+    // Handle countdown of time remaining to select answer choice
     IEnumerator ChoiceTimer(List<DialogueChoice> choices)
     {
         float t = choiceTimeLimit;
@@ -582,6 +642,7 @@ public class DialogueManager : MonoBehaviour
         SelectChoice(GetBiasedChoice(choices));
     }
 
+    // Handle auto selection if player does not choose in time, take into account past answers with slight randomness
     DialogueChoice GetBiasedChoice(List<DialogueChoice> choices)
     {
         int dominant = Mathf.Max(posCount, negCount, neutralCount);
@@ -607,6 +668,7 @@ public class DialogueManager : MonoBehaviour
         return best;
     }
 
+    // apply morality change of selected answer choice
     void ApplyMorality(int change)
     {
         playerMorality += change;
@@ -628,6 +690,7 @@ public class DialogueManager : MonoBehaviour
         portraitRoutine = StartCoroutine(SwapPortrait(newPortrait));
     }
 
+    // Change player and NPC portrait in response to dialogue choice selection
     private IEnumerator SwapPortrait(Sprite newPortrait)
     {
         if (playerPortrait == null || portraitGroup == null) yield break;
@@ -678,6 +741,7 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
+    // play sounds of letters when being built
     void PlayTypingSound(char c)
     {
         if (char.IsWhiteSpace(c)) return;
@@ -689,6 +753,7 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
+    // set directional position of answer choices when spawned
     Vector2 GetDirPos(ChoiceDirection dir)
     {
         return dir switch
@@ -701,6 +766,7 @@ public class DialogueManager : MonoBehaviour
         };
     }
 
+    // remove answer choices
     void ClearChoices()
     {
         foreach (var c in spawnedChoices)
@@ -708,6 +774,7 @@ public class DialogueManager : MonoBehaviour
         spawnedChoices.Clear();
     }
 
+    // show pop up message of morality change and current total morality
     void ShowPopup(string msg)
     {
         popupText.text = msg;
@@ -716,6 +783,7 @@ public class DialogueManager : MonoBehaviour
         StartCoroutine(FadePopup());
     }
 
+    // make pop up fade away after selection
     IEnumerator FadePopup()
     {
         yield return new WaitForSeconds(1f);

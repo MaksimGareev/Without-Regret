@@ -9,8 +9,6 @@ public class PossessedEnemyResisting : MonoBehaviour
     [Header("Possession Settings")]
     [SerializeField] private NavMeshAgent Agent;
     [SerializeField] private float moveSpeed = 20f;
-    [SerializeField] private float struggleStrength = 0.5f; // The strength of the enemy's resistance
-    [SerializeField, Range(0f, 1f)] private float struggleFrequency = 0.5f; // How often the enemy tries to resist the possession
 
     private bool isPossessed = false;
     private Vector3 playerInput;
