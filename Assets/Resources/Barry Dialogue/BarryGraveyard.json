@@ -1,6 +1,7 @@
 {
     "dialogueLines": [
         {
+            "LineID": "start",
             "Speaker": "Reed",
             "text": "Hey Echo! Long time no see. Just paying my usual visit to Derry. Everything's still vivid in my head, how that night went...do you have some time right now?",
             "requiredMorality": 0,
@@ -9,29 +10,36 @@
                     "text": "Sure.",
                     "nextIndex": 1,
                     "moralityChange": 1,
-                    "directionString": "Up"
+                    "directionString": "Up",
+                    "NextLineID": "Good response"
                 },
                 {
                     "text": "Not really, but go ahead.",
                     "nextIndex": 2,
                     "moralityChange": -1,
-                    "directionString": "Down"
+                    "directionString": "Down",
+                    "NextLineID": "Bad response"
                 }
             ]
         },
         {
+            "LineID": "Good response",
             "Speaker": "Reed",
             "text": "Thanks, I've been really needing to vent.",
             "requiredMorality": 1,
+            "NextLineID": "Story start",
             "choices": []
         },
         {
+            "LineID": "Bad response",
             "Speaker": "Reed",
             "text": "Uhm, okay...I'll make it quick then.",
             "requiredMorality": -1,
+            "NextLineID": "Story start",
             "choices": []
         },
         {
+            "LineID": "Story start",
             "Speaker": "Reed",
             "text": "As you know, Derry and I lived together. One day, I brought home a new TV only to find it broken on the floor the next day, with my car missing as well. I was furious. I waited all day for him to come back, so I could kick his ass.",
             "requiredMorality": 0,
@@ -40,47 +48,60 @@
                     "text": "(Stay focused.)",
                     "nextIndex": 4,
                     "moralityChange": 1,
-                    "directionString": "Up"
+                    "directionString": "Up",
+                    "NextLineID": "Story 2"
                 },
                 {
                     "text": "(Doze off.)",
                     "nextIndex": 7,
                     "moralityChange": -1,
-                    "directionString": "Down"
+                    "directionString": "Down",
+                    "NextLineID": "Story 2"
                 }
             ]
         },
         {
+            "LineID": "Story 2",
             "Speaker": "Reed",
             "text": "Later on, Derry came back and I got on his case... it got nasty, almost physical, then I drove away. While I was driving, I noticed a receipt for a TV from earlier that day. I checked the trunk and realized Derry went and got new TV.",
             "requiredMorality": 0,
+            "NextLineID": "Story 3",
             "choices": []
         },
         {
+            "LineID": "Story 3",
             "Speaker": "Reed",
             "text": "I felt awful for being such an asshole when he was trying to make up for his accident. I worked up the courage to apologize on the drive home, and when I got back...",
             "requiredMorality": 0,
+            "NextLineID": "Story 4",
             "choices": []
         },
         {
+            "LineID": "Story 4",
             "Speaker": "Reed",
             "text": "The house was up in flames. The fire fighters did everything they could, and when I asked about Derry...I still remember the look on the paramedic's face.",
             "requiredMorality": 0,
+            "NextLineID": "Story 5",
             "choices": []
         },
         {
+            "LineID": "Story 5",
             "Speaker": "Reed",
             "text": "I really appreciate you listening. It means more than you think.",
             "requiredMorality": 0,
+            "NextLineID": "Story 6",
             "choices": []
         },
         {
+            "LineID": "Story 6",
             "Speaker": "Reed",
             "text": "Sorry, my emotional baggage is the last thing you'd care about.",
             "requiredMorality": -1,
+            "NextLineID": "Story End",
             "choices": []
         },
         {
+            "LineID": "Story End",
             "Speaker": "Reed",
             "text": "It's getting late. I lost my spare keys around here, but I honestly can't be bothered. I'm gonna head home. If you'd like to look for them, they might be somewhere in the leaves.",
             "requiredMorality": 0,

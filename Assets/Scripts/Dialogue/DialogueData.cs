@@ -11,14 +11,23 @@ public class DialogueData
 [System.Serializable]
 public class DialogueLine
 {
-    public string LineID;                       // Id of the current line of dialogue
-    public string Speaker;                      // Name of the speaker of the current line of dialogue
-    public string text;                         // text of the dialogue line
+    public string LineID;                           // Id of the current line of dialogue
+    public string Speaker;                          // Name of the speaker of the current line of dialogue
+    public string NPCGender;
+    public string text;                             // text of the dialogue line
+    public LineTone lineTone = LineTone.Neutral;    // the NPC's tone that is linked to the portrait that is displayed durring the current line
     public int requiredMorality;
-    public string NextLineID;                   // the id of the next line of dialogue if there are no choices to choose from
-    public List<DialogueChoice> choices;        // list of choices
-    public List<string> objectivesToActivate;   // assign an objective to the player after engaging in dialogue
-    public bool endDialogueAfterLine;           // allows line to end dialogue after being said
+    public string NextLineID;                       // the id of the next line of dialogue if there are no choices to choose from
+    public List<DialogueChoice> choices;            // list of choices
+    public List<string> objectivesToActivate;       // assign an objective to the player after engaging in dialogue
+    public bool endDialogueAfterLine;               // allows line to end dialogue after being said
+}
+
+public enum LineTone
+{
+    Happy,
+    Neutral,
+    Upset
 }
 
 [System.Serializable]
