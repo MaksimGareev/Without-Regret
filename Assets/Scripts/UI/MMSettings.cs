@@ -22,9 +22,6 @@ public class MMSettings : MonoBehaviour
     [Tooltip("Default color for all text in the settings menu.")]
     [SerializeField] private Color defaultColor = Color.white;
 
-    [Tooltip("Color for the text of the currently selected tab.")]
-    [SerializeField] private Color TabEnabledColor = Color.aquamarine;
-
     [Tooltip("Color for the text of the control legends when they are enabled.")]
     [SerializeField] private Color legendsEnabledColor = Color.white;
 
@@ -284,6 +281,21 @@ public class MMSettings : MonoBehaviour
             tabRightAction.Enable();
         }
 
+        if (resetSettingsAction != null)
+        {
+            resetSettingsAction.Enable();
+        }
+
+        if (applySettingsAction != null)
+        {
+            applySettingsAction.Enable();
+        }
+
+        if (discardSettingsAction != null)
+        {
+            discardSettingsAction.Enable();
+        }
+
         if (parentMenu != null)
         {
             if (parentMenu.GetComponent<MainMenu>() != null && parentMenu.GetComponent<MainMenu>().usingController)
@@ -320,6 +332,21 @@ public class MMSettings : MonoBehaviour
         if (tabRightAction != null)
         {
             tabRightAction.Disable();
+        }
+
+        if (resetSettingsAction != null)
+        {
+            resetSettingsAction.Disable();
+        }
+
+        if (applySettingsAction != null)
+        {
+            applySettingsAction.Disable();
+        }
+
+        if (discardSettingsAction != null)
+        {
+            discardSettingsAction.Disable();
         }
 
         if (parentMenu != null)
@@ -485,9 +512,10 @@ public class MMSettings : MonoBehaviour
         controlsSettingsOpen = false;
 
         // Set button text colors
-        videoSettingsButton.gameObject.GetComponentInChildren<TextMeshProUGUI>().color = TabEnabledColor;
-        audioSettingsButton.gameObject.GetComponentInChildren<TextMeshProUGUI>().color = defaultColor;
-        controlsSettingsButton.gameObject.GetComponentInChildren<TextMeshProUGUI>().color = defaultColor;
+        videoSettingsButton.gameObject.GetComponent<ButtonHighlighting>().stayHighlighted = true;
+        videoSettingsButton.gameObject.GetComponent<ButtonHighlighting>().OnHighlight(); // Highlight video settings button
+        audioSettingsButton.gameObject.GetComponent<ButtonHighlighting>().OnUnhighlight();
+        controlsSettingsButton.gameObject.GetComponent<ButtonHighlighting>().OnUnhighlight();
 
         EnableAllButtonsAndSliders();
 
@@ -508,9 +536,10 @@ public class MMSettings : MonoBehaviour
         controlsSettingsOpen = false;
 
         // Set button text colors
-        audioSettingsButton.gameObject.GetComponentInChildren<TextMeshProUGUI>().color = TabEnabledColor;
-        videoSettingsButton.gameObject.GetComponentInChildren<TextMeshProUGUI>().color = defaultColor;
-        controlsSettingsButton.gameObject.GetComponentInChildren<TextMeshProUGUI>().color = defaultColor;
+        videoSettingsButton.gameObject.GetComponent<ButtonHighlighting>().OnUnhighlight();
+        audioSettingsButton.gameObject.GetComponent<ButtonHighlighting>().stayHighlighted = true;
+        audioSettingsButton.gameObject.GetComponent<ButtonHighlighting>().OnHighlight(); // Highlight audio settings button
+        controlsSettingsButton.gameObject.GetComponent<ButtonHighlighting>().OnUnhighlight();
 
         EnableAllButtonsAndSliders();
 
@@ -531,9 +560,10 @@ public class MMSettings : MonoBehaviour
         audioSettingsOpen = false;
 
         // Set button text colors
-        controlsSettingsButton.gameObject.GetComponentInChildren<TextMeshProUGUI>().color = TabEnabledColor;
-        videoSettingsButton.gameObject.GetComponentInChildren<TextMeshProUGUI>().color = defaultColor;
-        audioSettingsButton.gameObject.GetComponentInChildren<TextMeshProUGUI>().color = defaultColor;
+        videoSettingsButton.gameObject.GetComponent<ButtonHighlighting>().OnUnhighlight();
+        audioSettingsButton.gameObject.GetComponent<ButtonHighlighting>().OnUnhighlight();
+        controlsSettingsButton.gameObject.GetComponent<ButtonHighlighting>().stayHighlighted = true;
+        controlsSettingsButton.gameObject.GetComponent<ButtonHighlighting>().OnHighlight(); // Highlight controls settings button
 
         EnableAllButtonsAndSliders();
 
@@ -1083,12 +1113,6 @@ public class MMSettings : MonoBehaviour
         resetSettingsAction?.Disable();
         applySettingsAction?.Disable();
         discardSettingsAction?.Disable();
-
-        // tabLeftAction.performed -= ctx => OnTabLeft();
-        // tabRightAction.performed -= ctx => OnTabRight();
-        // resetSettingsAction.performed -= ctx => OnResetSettings();
-        // applySettingsAction.performed -= ctx => OnApplySettings();
-        // discardSettingsAction.performed -= ctx => OnDiscardSettings();
 
         resolutionDropdown.onValueChanged.RemoveListener(SetResolution);
         fullscreenToggle.onValueChanged.RemoveListener(SetFullscreen);

@@ -22,21 +22,23 @@ public class ControlSchemeUI : MonoBehaviour
         OnControllerClicked();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     private void OnControllerClicked()
     {
         controllerText.gameObject.SetActive(true);
         keyboardMouseText.gameObject.SetActive(false);
+
+        ControllerButton.GetComponent<ButtonHighlighting>().stayHighlighted = true;
+        ControllerButton.GetComponent<ButtonHighlighting>().OnHighlight();
+        KeyboardMouseButton.GetComponent<ButtonHighlighting>().OnUnhighlight();
     }
 
     private void OnKeyboardMouseClicked()
     {
         controllerText.gameObject.SetActive(false);
         keyboardMouseText.gameObject.SetActive(true);
+
+        ControllerButton.GetComponent<ButtonHighlighting>().OnUnhighlight();
+        KeyboardMouseButton.GetComponent<ButtonHighlighting>().stayHighlighted = true;
+        KeyboardMouseButton.GetComponent<ButtonHighlighting>().OnHighlight();
     }
 }
