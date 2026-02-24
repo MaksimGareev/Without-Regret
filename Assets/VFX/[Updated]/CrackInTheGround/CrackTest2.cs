@@ -21,6 +21,12 @@ public class CrackTest2 : MonoBehaviour
         // Get the SkinnedMeshRenderer on this object
         mesh = GetComponent<SkinnedMeshRenderer>();
 
+        if (mesh == null || mesh.sharedMesh == null)
+        {
+            Debug.LogWarning("No SkinnedMeshRenderer or mesh found!");
+            return;
+        }
+
         // Read ALL blend shapes on the mesh
         count = mesh.sharedMesh.blendShapeCount;
 
@@ -28,23 +34,15 @@ public class CrackTest2 : MonoBehaviour
         for (int i = 0; i < count; i++)
             mesh.SetBlendShapeWeight(i, 100f);
 
-        // Blend shapes 3 and 10 always stay at 0
-        if (count > 3)  mesh.SetBlendShapeWeight(3, 0f);
-        if (count > 10) mesh.SetBlendShapeWeight(10, 0f);
-
         // Choose initial random delay
         nextDelay = Random.Range(minDelay, maxDelay);
     }
 
     void Update()
     {
-        // Do nothing until StartCrack() is called, or once we're done
+        // Do nothing until StartCrack() is called
         if (!running || current >= count)
             return;
-
-        // Force blend shapes 3 and 10 to stay at 0
-        if (count > 3)  mesh.SetBlendShapeWeight(3, 0f);
-        if (count > 10) mesh.SetBlendShapeWeight(10, 0f);
 
         // Wait for the random delay
         timer += Time.deltaTime;
@@ -55,19 +53,12 @@ public class CrackTest2 : MonoBehaviour
         timer = 0f;
         nextDelay = Random.Range(minDelay, maxDelay);
 
-        // Skip snapping 3 and 10 (they stay at 0)
-        if (current == 3 || current == 10)
-        {
-            current++;
-            return;
-        }
-
         // Snap from 100 -> 0
         mesh.SetBlendShapeWeight(current, 0f);
         current++;
     }
 
-    // Called externally by trigger object
+    // Called by trigger object
     public void StartCrack()
     {
         running = true;

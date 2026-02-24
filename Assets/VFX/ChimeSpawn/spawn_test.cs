@@ -20,25 +20,29 @@ public class spawn_test : MonoBehaviour
 
     void Update()
     {
-        // rress 0 key to start animation
+        // press 0 key to start animation
         if (Input.GetKeyDown(KeyCode.Alpha0))
         {
             timer = 0f;
             isAnimating = true;
             materialInstance.SetFloat("_NoiseAmnt", 0f);
         }
-//update shader value over time
+
+        // update shader value over time
         if (isAnimating)
         {
             timer += Time.deltaTime;
 
             float value = Mathf.Clamp01(timer / duration);
             materialInstance.SetFloat("_NoiseAmnt", value);
-            //stop animating once we reach 1
 
+            // stop animating once we reach 1
             if (value >= 1f)
             {
                 isAnimating = false;
+
+                // Destroy object after spawn finishes
+                Destroy(gameObject);
             }
         }
     }
