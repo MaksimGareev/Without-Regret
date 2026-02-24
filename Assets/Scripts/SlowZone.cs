@@ -36,18 +36,14 @@ public class SlowZone : MonoBehaviour
             playerController.Speed /= slowMultiplier;
             playerController.SprintSpeed /= slowMultiplier;
         }
-        if (other.CompareTag("Enemy"))
+        if (other.CompareTag("Enemy") && other.TryGetComponent<PatrollingEnemy>(out var patrollingEnemy))
         {
-            PatrollingEnemy patrollingEnemy = other.GetComponent<PatrollingEnemy>();
             patrollingEnemy.baseSpeed /= slowMultiplier;
         }
-        if (other.gameObject.layer == LayerMask.NameToLayer("NPC"))
+        if (other.gameObject.layer == LayerMask.NameToLayer("NPC") && other.TryGetComponent<Irene>(out var irene)
         {
             //placeholder for comparing to each NPC, using Irene as example for now
-            Irene irene = other.GetComponent<Irene>();
-            {
-                irene.FollowSpeed /= slowMultiplier;
-            }
+            irene.FollowSpeed /= slowMultiplier;
         }
 
     }
