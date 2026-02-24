@@ -147,7 +147,7 @@ public class EnemyFieldOfView : MonoBehaviour
             //angle = targetAngle;
         }*/
 
-        Debug.Log($"Morality : {playerMorality}, Radius: {radius}, Angle: {angle}");
+        //Debug.Log($"Morality : {playerMorality}, Radius: {radius}, Angle: {angle}");
     }
 
     private void DetectPlayer()

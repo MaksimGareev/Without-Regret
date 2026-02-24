@@ -7,8 +7,8 @@ using UnityEngine.SceneManagement;
 public class Inventory : MonoBehaviour, ISaveable
 {
     private readonly List<ItemData> itemsList = new List<ItemData>(); // List of all items
-    private List<ItemData> keyItems = new(); // List of key items to show on the Key items tab
-    private List<ItemData> otherItems = new(); // List of other items to show on the Other items tab
+    public List<ItemData> keyItems = new(); // List of key items to show on the Key items tab
+    public List<ItemData> otherItems = new(); // List of other items to show on the Other items tab
 
     [HideInInspector] public List<ItemData> KeyItems => keyItems; // Public getter for key items list
     [HideInInspector] public List<ItemData> OtherItems => otherItems; // Public getter for other items list
