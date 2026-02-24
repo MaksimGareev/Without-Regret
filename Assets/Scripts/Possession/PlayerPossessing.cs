@@ -297,7 +297,7 @@ public class PlayerPossessing : MonoBehaviour
         if (popupInstance == null && iconPrefab != null && PopupManager.Instance != null)
         {
             popupInstance = PopupManager.Instance.CreatePopup(target.transform, iconPrefab).gameObject;
-            target.GetComponent<GameObject>().GetComponent<WorldPopup>().worldOffset = iconOffset;
+            target.gameObject.GetComponent<WorldPopup>().worldOffset = iconOffset;
             shouldShowIcon = true;
         }
     }

@@ -18,10 +18,20 @@ public class WorldItem : MonoBehaviour, IInteractable
     [Tooltip("Whether this item can be collected by the player. Setting this to false will make the item non-interactable and it will not show an interaction prompt.")]
     public bool isCollectible = true;
 
+    [Header("Player Animation")]
+    public Animator animator;
+    public float collectAnimation;
+    Coroutine collectCoroutine;
+    public PlayerController playerController;
+
     [HideInInspector] public bool hasBeenCollected = false;
     public ItemData ItemData => itemData;
     public void Start()
     {
+        // Player reference
+        player = GameObject.FindGameObjectWithTag("Player")?.transform;
+        playerController = player.GetComponent<PlayerController>();
+
         if (hasBeenCollected)
         {
             gameObject.SetActive(false);
@@ -54,8 +64,19 @@ public class WorldItem : MonoBehaviour, IInteractable
         inventory.itemToCollect = this;
 
         hasBeenCollected = true;
-        gameObject.SetActive(false);
+        collectCoroutine = StartCoroutine(collectAnimationDelay());
 
         ButtonIcons.Instance?.Clear();
+    }
+
+    IEnumerator collectAnimationDelay()
+    {
+        animator.SetBool("isCollecting", true);
+        animator.SetTrigger("collect");
+        playerController.DisableInput();
+        yield return new WaitForSeconds(collectAnimation);
+        animator.SetBool("isCollecting", false);
+        playerController.EnableInput();
+        gameObject.SetActive(false);
     }
 }

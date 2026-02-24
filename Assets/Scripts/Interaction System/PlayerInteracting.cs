@@ -5,13 +5,9 @@ using UnityEngine.InputSystem;
 
 public class PlayerInteracting : MonoBehaviour
 {
-    [Header("References")]
-    //[SerializeField] private GameObject promptUI;
-
     [Header("General Settings")]
     [SerializeField] private InputActionAsset InputActions;
     [SerializeField] private float interactionRange = 3f;
-    //[SerializeField] private float interactOffset = 1f;
 
     private InputAction Interact;
     private InputAction Mantle;
@@ -20,13 +16,8 @@ public class PlayerInteracting : MonoBehaviour
 
     private bool currentlyInteracting = false;
 
-    /*
-    [Header("Debugging")]
-    [SerializeField] private bool showDebugLogs;
-    private IInteractable currentTarget;
-    private MantleableObject mantleTarget;
-    private MoveableObject moveTarget;
-    */
+    private float lastDetectionTime;
+    [SerializeField] private float detectionGraceTime = 0.15f;
 
     // Moveable object
     private MoveableObject heldObject;
@@ -124,26 +115,37 @@ public class PlayerInteracting : MonoBehaviour
         heldObject = null;
     }
 
+    // Scan for interactable objects or triggers in front of the player
     private void ScanForInteractable()
     {
-        Collider[] hits = Physics.OverlapSphere(transform.position, interactionRange);
+        Collider[] hits = Physics.OverlapSphere(transform.position, interactionRange,~0, QueryTriggerInteraction.Collide);
 
-        currentTargets = hits.SelectMany(h => h.GetComponents<IInteractable>())
-                         .Where(i => i != null && i.CanInteract(gameObject))
-                         .OrderByDescending(i => i.interactionPriority)
-                         .ToList();
-        if (currentTargets.Count == 0)
+        var detectedTargets = hits
+                                .SelectMany(h => h.GetComponentsInParent<IInteractable>())
+                                .Distinct().Where(i => i != null && i.CanInteract(gameObject))
+                                .OrderByDescending(i => i.interactionPriority)
+                                .ToList();
+        
+        // Check if something is detected in this frame and highlight interaction button
+        if (detectedTargets.Count > 0)
         {
-            ButtonIcons.Instance?.Clear();
+            currentTargets = detectedTargets;
+            lastDetectionTime = Time.time;
+
+            ButtonIcons.Instance?.HighlightMultiple(currentTargets);
             return;
         }
 
-        // Highlight icon
-        ButtonIcons.Instance?.HighlightMultiple(currentTargets);
-
+        // if nothing is detected clear the buttons after the detection grace period and clear interaction buttons
+        if (Time.time - lastDetectionTime > detectionGraceTime)
+        {
+            currentTargets.Clear();
+            ButtonIcons.Instance?.Clear();
+        }
 
     }
 
+    // Activate tutorial description on first interaction with specific interaction type
     private bool TryShowTutorial(InteractType type, System.Action onComplete)
     {
         if (InteractionTutorialManager.Instance == null)
