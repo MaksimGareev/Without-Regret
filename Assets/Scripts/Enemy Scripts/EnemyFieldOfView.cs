@@ -222,27 +222,13 @@ public class EnemyFieldOfView : MonoBehaviour
                     canSeePlayer = false;
                     currentState = FOVState.Idle;
                     normalMovement.chasing = false;
-                    //angle = 90;
-                    //radius = 5;
-                    //Debug.Log("Player lost");
                 }
             }
-            //canSeePlayer = false;
-            //angle = 90;
-            //if (!canSeePlayer)
-            //{
-            //    canSeePlayer = false;
-            //    angle = 90; //enemy FOV decreases back to normal when player is lost
-            //    Debug.Log("Player lost");
-            //}
         }
         else
         {
             canSeePlayer = false;
             currentState = FOVState.Idle;
-            //angle = 90;
-            //radius = 5;
-            //Debug.Log("Player lost");
            
         }
     }
