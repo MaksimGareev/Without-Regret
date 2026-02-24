@@ -27,7 +27,7 @@ public class ObjectiveInstance
         }
     }
 
-    // Sets the current progress to a specific amount, i.e. if an action has a set progress value other than incrementing
+    // Sets the current progress to a specific amount, i.e. if an action has a set progress value other than incrementing by one
     public void SetProgress(int amount)
     {
         currentProgress = 0;

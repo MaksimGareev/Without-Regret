@@ -83,22 +83,23 @@ public class FallResetTrigger : MonoBehaviour
         {
             Debug.Log($"{name}: Player entered reset trigger. Starting reset sequence.");
         }
-
-        if (!other.CompareTag("Player"))
-        {
-            return;
-        }
-
-        if (TimerRingUI.Instance != null)
-        {
-            TimerRingUI.Instance.SubtractRingSection(amountOfRingsToSubtract);
-        }
         
         StartCoroutine(HandleReset(player));
     }
 
     private IEnumerator HandleReset(PlayerController player)
     {
+        if (Time.timeSinceLevelLoad < 0.1f)
+        {
+            TeleportPlayerToPoint(player, resetPoint);
+            yield break;
+        }
+
+        if (TimerRingUI.Instance != null)
+        {
+            TimerRingUI.Instance.SubtractRingSection(amountOfRingsToSubtract);
+        }
+
         isResetting = true;
         lastResetTime = Time.time;
 
@@ -106,14 +107,17 @@ public class FallResetTrigger : MonoBehaviour
         {
             triggerCollider.enabled = false;
         }
+        
         // Notify PlayerController to lock movement
         player.SetResetLock(true);
 
         yield return new WaitForSeconds(delayBeforeReset);
+        
         // Wait until player moves to the resetPoint
         yield return StartCoroutine(LerpPlayerToPoint(player, resetPoint));
         
         yield return new WaitForSeconds(0.15f);
+        
         // Reset has completed, wait for timeout to ensure player is outside of trigger
         player.SetResetLock(false);
 
@@ -178,6 +182,24 @@ public class FallResetTrigger : MonoBehaviour
 
         playerTransform.SetPositionAndRotation(endPosition, endRotation);
         SetPlayerAlpha(player, 1f);
+
+        if (controller != null)
+        {
+            controller.enabled = true;
+        }
+    }
+
+    private void TeleportPlayerToPoint(PlayerController player, Transform target)
+    {
+        CharacterController controller = player.GetComponent<CharacterController>();
+
+        if (controller != null && controller.enabled)
+        {
+            controller.enabled = false;
+        }
+
+        player.transform.position = target.position;
+        player.transform.rotation = target.rotation;
 
         if (controller != null)
         {
