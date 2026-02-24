@@ -2,11 +2,10 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
-using UnityEditor;
-//using UnityEditor.EditorTools;
 
 public class CameraMovement : MonoBehaviour
 {
+    // Enum to define cardinal directions for the default facing direction of the camera, to be used by designers in the inspector
     public enum WorldDirection
     {
         North,
@@ -14,30 +13,28 @@ public class CameraMovement : MonoBehaviour
         East,
         West
     }
-
-    [Header("General Settings")]
-    [Tooltip("Set to true if this camera is used in the astral plane for special effects.")]
-    public bool isAstral = false;
-
-    [Tooltip("Set to true if this camera is used indoors.")]
-    public bool isIndoors = false;
+    
+    // Not yet implemented, will apply appropriate vfx and movement settings
+    // [Header("General Settings")]
+    // [Tooltip("Set to true if this camera is used in the astral plane for special effects.")]
+    // public bool isAstral = false; 
+    // [Tooltip("Set to true if this camera is used indoors.")]
+    // public bool isIndoors = false;
 
     [Header("Input")]
     [Tooltip("Insert a reference to the PlayerControls Input Action Asset")]
     [SerializeField] private InputActionAsset inputActions;
-    private string actionMapName = "Player";
-    private string lookActionName = "Look";
     private InputAction lookAction;
 
     [Header("Follow Settings")]
     [Tooltip("Default offset of the camera from the player (Setting this to (0,0,0) will equal the Player's exact transform). This will be rotated based on the default facing direction below.")]
-    public Vector3 defaultOffset = new Vector3(0, 8, 8); // Height and distance away from the player
+    public Vector3 defaultOffset = new Vector3(0, 8, 8);
 
     [Tooltip("The offset of the position that the camera will aim at relative to the player (should be set to slightly above the player (y = 3)).")]
     public Vector3 defaultLookAtOffset = Vector3.zero;
 
     [Tooltip("Speed at which the camera moves to follow the player. Lower numbers are slower and smoother, higher numbers are faster and more rigid.")]
-    public float smoothSpeed = 5f; // Speed the camera moves to follow the player
+    public float smoothSpeed = 5f;
     private Transform target; // Reference the player as the intended target of the camera
 
     [Header("Default Facing Direction")]
@@ -71,25 +68,23 @@ public class CameraMovement : MonoBehaviour
     private Quaternion camRotCache = Quaternion.identity;
     private Vector3 lookAtCache = Vector3.zero;
     public bool CameraLocked { get; private set; }
-    //public Transform player;
-
     private Vector3 currentOffset;
     private Vector3 currentLookAtOffset;
     private float yaw;
     private float pitch;
     private Quaternion initialRotation;
-    //private PlayerThrowing playerThrowing;
-    private bool isThrowing;
     private ToggleInventoryUI toggleInventoryUI;
+    private PlayerController pc;
     private float mouseResetTimer;
     private bool lastInputWasMouse = false;
 
     private void Awake()
     {
+        // Set up input action references
         if (inputActions != null)
         {
-            var map = inputActions.FindActionMap(actionMapName, true);
-            lookAction = map.FindAction(lookActionName, true);
+            var map = inputActions.FindActionMap("Player", true);
+            lookAction = map.FindAction("Look", true);
         }
         else
         {
@@ -99,20 +94,24 @@ public class CameraMovement : MonoBehaviour
 
     private void OnEnable()
     {
+        // Enable input and subscribe to scene change event
         lookAction?.Enable();
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     private void OnDisable()
     {
+        // Unsubscribe from event and disable input
         lookAction?.Disable();
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
     private void Start()
     {
+        // Find the player and assign to target.
         target = GameObject.FindGameObjectWithTag("Player")?.transform;
 
+        // Disable self if no player is found
         if (target == null)
         {
             Debug.LogWarning("Camera target not assigned, and no GameObject with tag 'Player' found. Disabling CameraMovement.");
@@ -120,30 +119,38 @@ public class CameraMovement : MonoBehaviour
             return;
         }
 
-        //playerThrowing = target.GetComponent<PlayerThrowing>();
+        // Find the inventory UI script and player controller script
         toggleInventoryUI = target.GetComponent<ToggleInventoryUI>();
+        pc = target.GetComponent<PlayerController>();
 
+        // Set initial camera position and rotation based on the default facing direction
         Vector3 facingVector = DirectionToVector(defaultFacingDirection);
         initialRotation = Quaternion.LookRotation(facingVector, Vector3.up);
 
+        // Calculate the initial offset and lookAtOffset based on the default facing direction
         currentOffset = initialRotation * defaultOffset;
         currentLookAtOffset = initialRotation * defaultLookAtOffset;
 
+        // Initialize yaw and pitch to 0 so that the camera starts at the default rotation
         yaw = 0f;
         pitch = 0f;
 
+        // Set the initial position and rotation of the camera
         transform.position = target.position + currentOffset;
         transform.LookAt(target.position + currentLookAtOffset);
 
+        // Lock the cursor
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
+        // Delete this camera if it exists in the main menu
         if (SceneManager.GetActiveScene().name == "MainMenu")
         {
             Destroy(this);
         }
     }
 
+    // Resets camera state when a new scene is loaded to prevent carrying over any state from the previous scene, such as being locked or zooming.
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         StopAllCoroutines();
@@ -151,10 +158,9 @@ public class CameraMovement : MonoBehaviour
         isZooming = false;
         yaw = 0f;
         pitch = 0f;
-
-       // cameraPivot.localRotation = Quaternion.identity;
     }
 
+    // Converts the WorldDirection enum to a corresponding Vector3 direction in world space
     private Vector3 DirectionToVector(WorldDirection direction)
     {
         switch (direction)
@@ -172,21 +178,21 @@ public class CameraMovement : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
     void LateUpdate()
     {
+        // Do nothing if camera is locked or there is no target assigned
         if (CameraLocked) return;
         if (target == null) return;
-
-        PlayerController pc = target.GetComponent<PlayerController>();
 
         if (pc != null && pc.MovementLocked && pc.enabled)
         {
             pc.enabled = false;
         }
 
+        // Read look input
         Vector2 lookInput = lookAction != null ? lookAction.ReadValue<Vector2>() : Vector2.zero;
 
+        // Determine if the last input was from the mouse based on whether there is significant look input and the current control scheme
         if (lookInput.sqrMagnitude > 0.0001f && lookAction != null && lookAction.activeControl.device is Mouse)
         {
             lastInputWasMouse = true;
@@ -196,24 +202,23 @@ public class CameraMovement : MonoBehaviour
             lastInputWasMouse = false;
         }
 
+        // Check if there is significant look input to determine whether to rotate the camera or return to default position, and to reset the mouse timer
         bool hasLookInput = lookInput.sqrMagnitude > 0.0001f;
-
-        //if (playerThrowing != null)
-        //{
-        //    isThrowing = playerThrowing.GetIsCharging();
-        //}
 
         if (!hasLookInput && mouseResetTimer >= 0)
         {
             mouseResetTimer -= Time.deltaTime;
         }
 
-        bool blocked = isThrowing || (toggleInventoryUI != null && toggleInventoryUI.isEnabled) || (pc != null && pc.MovementLocked);
+        // Determine if camera control should be blocked based on whether the inventory UI is open or the player controller has movement locked
+        bool blocked = (toggleInventoryUI != null && toggleInventoryUI.isEnabled) || (pc != null && pc.MovementLocked);
 
+        // Only allow camera movement if not zooming
         if (!isZooming)
         {
             if (!blocked && hasLookInput)
             {
+                // If input is detected, call functions to apply rotation and handle the reset timer
                 float h = -lookInput.x;
                 float v = -lookInput.y;
 
@@ -229,6 +234,7 @@ public class CameraMovement : MonoBehaviour
             }
             else
             {
+                // Return the camera to its default position and rotation
                 if (rotateCamera)
                 {
                     ReturnRotation();
@@ -248,9 +254,12 @@ public class CameraMovement : MonoBehaviour
         } 
     }
 
+    // Handles camera rotation based on input, with separate handling for mouse and controller input. 
+    // Both mouse and controller input are scaled by separate sensitivity settings
+    // Yaw can be optionally restricted, and pitch is always restricted to prevent flipping.
     private void HandleRotation(float horizontalInput, float verticalInput, bool isMouse)
     {
-
+        // Scale input based on whether it's mouse or controller, and apply to yaw and pitch
         if (isMouse)
         {
             float mouseScale = mouseRotateScale * GameSettings.MouseSensitivity;
@@ -264,6 +273,7 @@ public class CameraMovement : MonoBehaviour
             pitch -= verticalInput * rotateSpeed * stickScale * Time.deltaTime;
         }
 
+        // Apply restrictions to yaw, otherwise wrap it around smoothly
         if (restrictYaw)
         {
             yaw = Mathf.Clamp(yaw, -maxYaw, maxYaw);
@@ -273,15 +283,18 @@ public class CameraMovement : MonoBehaviour
             yaw = Mathf.Repeat(yaw + 180f, 360f) - 180f;
         }
 
+        // Clamp pitch to prevent flipping
         pitch = Mathf.Clamp(pitch, -Mathf.Abs(maxPitch), Mathf.Abs(maxPitch));
 
+        // Calculate the new rotation based on the initial rotation and the current yaw and pitch
         Quaternion rotation = initialRotation * Quaternion.Euler(pitch, yaw, 0f);
 
+        // Update the current offset and lookAtOffset based on the new rotation
         currentOffset = rotation * defaultOffset;
-
         currentLookAtOffset = rotation * defaultLookAtOffset;
     }
     
+    // Smoothly returns the camera to its default position and rotation when there is no input for a certain amount of time
     private void ReturnRotation()
     {
         if (mouseResetTimer >= 0f)
@@ -302,6 +315,7 @@ public class CameraMovement : MonoBehaviour
         currentLookAtOffset = Vector3.Lerp(currentLookAtOffset, initialRotation * defaultLookAtOffset, returnSpeed * Time.deltaTime);
     }
 
+    // Public function to be called when a dialogue trigger is activated to start the camera zoom effect
     public void TriggerDialogueCamera(Transform dialogueTrigger)
     {
         if (!isZooming)
@@ -310,6 +324,7 @@ public class CameraMovement : MonoBehaviour
         }
     }
 
+    // Ends the camera zoom effect and releases control back to the normal camera movement
     public IEnumerator EndCameraZoom()
     {
         if (camPosCache == Vector3.zero || camRotCache == Quaternion.identity || lookAtCache == Vector3.zero)
@@ -340,6 +355,7 @@ public class CameraMovement : MonoBehaviour
         lookAtCache = Vector3.zero;
     }
 
+    // Public function to be called when an item is picked up to trigger the camera zoom
     public void TriggerPickupCameraEffect(Transform item)
     {
         if (!isZooming)
@@ -349,18 +365,21 @@ public class CameraMovement : MonoBehaviour
         }
     }
 
+    // Simple coroutine to pause the camera zoom when focusing on a pickup item, then trigger the end zoom function
     IEnumerator PauseZoomForItem()
     {
         yield return new WaitForSeconds(zoomDuration / 2f);
         StartCoroutine(EndCameraZoom());
     }
 
+    // This coroutine smoothly moves the camera to focus on a specific target (pickup or dialogue trigger), then holds until EndCameraZoom is called. 
+    // If dialogue is true, it will use a different offset for the camera position.
     public IEnumerator StartCameraZoom(Transform zoomTarget, bool dialogue = false)
     {
         CameraLocked = true;
         isZooming = true;
 
-        // Cashe current camera transform
+        // Cache current camera transform
         camPosCache = transform.position;
         camRotCache = transform.rotation;
 
@@ -389,6 +408,7 @@ public class CameraMovement : MonoBehaviour
 
         lookAtCache = zoomTarget.position;
 
+        // Smoothly move and rotate the camera to the target position and rotation
         float t = 0f;
         while (t < zoomDuration)
         {
@@ -401,6 +421,7 @@ public class CameraMovement : MonoBehaviour
         transform.SetPositionAndRotation(targetPos, targetRot);
     }
 
+    // Setter function for other scripts to lock the camera
     public void SetCameraLocked(bool locked)
     {
         CameraLocked = locked;

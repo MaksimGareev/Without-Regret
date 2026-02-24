@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class CollectableItem : MonoBehaviour, IInteractable
 {
@@ -10,12 +11,20 @@ public class CollectableItem : MonoBehaviour, IInteractable
     [HideInInspector] public bool hasBeenCollected = false;
     [SerializeField] private float icondDistance = 3f;
 
+    [Header("Player Animator")]
+    public Animator animator;
+    public float collectAnimation;
+    Coroutine collectCoroutine;
+    public PlayerController playerController;
+
     private Transform player;
 
     public void Start()
     {
         // Player reference
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
+        playerController = player.GetComponent<PlayerController>();
+        animator = player.GetComponentInChildren<Animator>();
 
         if (hasBeenCollected)
         {
@@ -36,9 +45,22 @@ public class CollectableItem : MonoBehaviour, IInteractable
         //inventory.itemToCollect = this;
 
         hasBeenCollected = true;
-        gameObject.SetActive(false);
+
+        collectCoroutine = StartCoroutine(collectAnimationDelay());
+
 
         ButtonIcons.Instance?.Clear();
+    }
+
+    IEnumerator collectAnimationDelay()
+    {
+        animator.SetBool("isCollecting", true);
+        animator.SetTrigger("collect");
+        playerController.DisableInput();
+        yield return new WaitForSeconds(collectAnimation);
+        animator.SetBool("isCollecting", false);
+        playerController.EnableInput();
+        gameObject.SetActive(false);
     }
 
 }

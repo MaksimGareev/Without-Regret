@@ -2,7 +2,6 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using System.Collections;
 
 public class GameOverManager : MonoBehaviour
 {
@@ -18,6 +17,8 @@ public class GameOverManager : MonoBehaviour
 
     [Header("Events")]
     [HideInInspector] public UnityEvent onGameOver;
+
+    public bool isGameOverUIActive() => gameOverUI != null && gameOverUI.activeSelf;
 
     private void Awake()
     {
@@ -45,6 +46,17 @@ public class GameOverManager : MonoBehaviour
         {
             quitButton.onClick.AddListener(Quit);
         }
+
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (TimerRingUI.Instance != null && TimerRingUI.Instance.currentRingState != TimerRingUI.RingState.Empty)
+        {
+            isGameOver = false;
+            DisableGameOverUI();
+        }
     }
 
     public void TriggerGameOver()
@@ -60,6 +72,11 @@ public class GameOverManager : MonoBehaviour
         Time.timeScale = 0f; // Pause the game
 
         EnableGameOverUI();
+
+        if (SaveManager.Instance != null)
+        {
+            SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
+        }
     }
 
     private void EnableGameOverUI()
@@ -74,6 +91,18 @@ public class GameOverManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
     }
 
+    private void DisableGameOverUI()
+    {
+        if (gameOverUI == null)
+        {
+            return;
+        }
+
+        gameOverUI.SetActive(false);
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+    }
+
     private void Quit()
     {
         Time.timeScale = 1f; // Resume the game before quitting
@@ -86,7 +115,7 @@ public class GameOverManager : MonoBehaviour
     {
         Time.timeScale = 1f; // Resume the game
         isGameOver = false;
-        gameOverUI.SetActive(false);
+        DisableGameOverUI();
 
         if (SaveManager.Instance != null)
         {
@@ -97,5 +126,10 @@ public class GameOverManager : MonoBehaviour
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
+    }
+
+    private void OnDestroy()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 }

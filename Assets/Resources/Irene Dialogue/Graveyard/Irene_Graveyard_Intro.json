@@ -1,19 +1,27 @@
 {
     "dialogueLines": [
         {
+            "LineID": "start",
             "Speaker": "Irene",
+            "NPCGender": "female",
             "text": "Hey Echo! Slept well, huh? You didn't even fix your hair!",
             "requiredMorality": 0,
+            "NextLineID": "Go to graveyard",
             "choices": []
         },
         {
+            "LineID": "Go to graveyard",
             "Speaker": "Irene",
+            "NPCGender": "female",
             "text": "So, we still going to the Graveyard?",
             "requiredMorality": 0,
+            "NextLineID": "Question",
             "choices": []
         },
         {
+            "LineID": "Question",
             "Speaker": "Irene",
+            "NPCGender": "female",
             "text": "You should respond with how you truly feel, just remember that your choices affect the world around you.",
             "requiredMorality": 0,
             "choices": [
@@ -21,12 +29,14 @@
                     "text": "Of course.",
                     "nextIndex": 3,
                     "moralityChange": 1,
+                    "NextLineID": "Good Path",
                     "directionString": "Up"
                 },
                 {
                     "text": "Meh.",
                     "nextIndex": 4,
                     "moralityChange": -1,
+                    "NextLineID": "Bad Path",
                     "directionString": "Down"
                 },
                 {
@@ -44,14 +54,18 @@
             ]
         },
         {
+            "LineID": "Good Path",
             "Speaker": "Irene",
+            "NPCGender": "female",
             "text": "Yay! Let's go.",
             "requiredMorality": 1,
             "choices": [],
             "endDialogueAfterLine": true
         },
         {
+            "LineID": "Bad Path",
             "Speaker": "Irene",
+            "NPCGender": "female",
             "text": "Ouch...well, I already walked over so we're going anyways.",
             "requiredMorality": -1,
             "choices": [],
