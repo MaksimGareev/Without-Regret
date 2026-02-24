@@ -7,16 +7,19 @@ public static class InteractionTutorialText
         switch (type)
         {
             case InteractType.Move:
-                return "Description text for moving objects.";
+                return "Press the X button or E key to move larger objects around the world.  Bring the item to the indicator to place the object or press the X button or E key to drop the object.";
 
             case InteractType.Mantle:
-                return "Description text for mantling.";
+                return "Press the A button or Spacebar to clime onto mantleable objects.";
 
             case InteractType.Dialogue:
-                return "Description text for dialogue.";
+                return "Press the X button or E key to engage in dialogue with characters in the world.  When dialogue choices appear hold the directional input corresponding to the choice you wish to select.  Echo has a limited time to respond";
 
             case InteractType.Pickup:
-                return "Description text for picking up smaller items.";
+                return "With your backpack equiped press the X button or E key to pickup smaller objects and put them into your inventory.";
+
+            case InteractType.Float:
+                return "Floating allows Echo to traverse gaps within the astarl plane.  Press the A button or spacebar in the green area to continue floating, echo can only float for little while and failing results becoming grounded again.";
 
             default:
                 return "";

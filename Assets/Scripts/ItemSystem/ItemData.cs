@@ -1,16 +1,20 @@
 using UnityEngine;
 
+// An enum to define different item types.
+// This is used to determing how the item interacts with the inventory and other player abilities like throwing or equipping.
 public enum ItemType
 {
-    KeyItem,
-    ThrowableItem,
-    GrabbableItem,
-    Backpack,
-    Collectable,
+    KeyItem, // Important items that are not able to be equipped to hand
+    ThrowableItem, // Items that can be thrown by the player
+    GrabbableItem, // Items that can be equipped to the players hand but not stored in the inventory
+    Backpack, // Should obly be used for backpack. Does not add to UI since it is the "inventory" itself
+    Collectable, // Will be used for collectibles that also show up in the journal (lore notes)
+    EquippableItem, // Default item type
     MiscItem,
-    EquippableItem
 }
 
+// ScriptableObject that holds data for items in the game. 
+// This is used to define the properties of an item, such as its name, description, icon, and prefabs for the world and visual representation.
 [CreateAssetMenu(menuName = "ScriptableObjects/Item", order = 1)]
 public class ItemData : ScriptableObject
 {
@@ -33,6 +37,7 @@ public class ItemData : ScriptableObject
     [Tooltip("Description of the item. This is used for display purposes when the player examines the item in the inventory.")]
     [SerializeField] private string description;
 
+    // Public getters for the private fields
     public string ItemName => itemName;
     public ItemType ItemType => itemType;
     public Sprite InvIcon => invIcon;

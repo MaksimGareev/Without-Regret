@@ -196,7 +196,6 @@ MonoBehaviour:
   moralitySpeedMultiplier: 0.15
   playerMorality: {fileID: 0}
   chasing: 0
-  showDebugLogs: 0
 --- !u!114 &1380278693743089735
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -221,10 +220,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   playerRef: {fileID: 0}
+  dialogueManager: {fileID: 0}
   animator: {fileID: 9082247397448081514}
   smoothFOV: 1
   fovSmoothSpeed: 2
-  dialogueManager: {fileID: 0}
   radius: 5
   aggroRadius: 0
   angle: 90
@@ -242,6 +241,7 @@ MonoBehaviour:
   attackRadius: 2
   attackCooldown: 1
   isAttacking: 0
+  stunDuration: 2
   normalMovement: {fileID: 922016468910080217}
 --- !u!114 &7884651440600371946
 MonoBehaviour:
@@ -272,7 +272,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Agent: {fileID: 7348955320931083906}
-  moveSpeed: 1
+  moveSpeed: 6.5
   struggleStrength: 10
   struggleFrequency: 0.1
 --- !u!95 &4739153725983210735

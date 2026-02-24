@@ -4,6 +4,12 @@ public class CleanupLeavesObjective : MonoBehaviour
 {
     [SerializeField] ObjectiveData linkedObjective;
 
+    [Header("Leaf Objective Item Assignments")]
+    [SerializeField] private ItemData LeavesReward;
+    [SerializeField] private ItemData TrashbagRefForRemoval;
+    private Inventory playerInv;
+    private int NumLeavesCollected;
+
     private void OnEnable()
     {
         ObjectiveManager.Instance.OnObjectiveActivated.AddListener(SetObjectiveActive);
@@ -12,6 +18,11 @@ public class CleanupLeavesObjective : MonoBehaviour
 
     private void Start()
     {
+        if(playerInv == null)
+        {
+            playerInv = (Inventory)FindFirstObjectByType(typeof(Inventory));
+        }
+
         // If the objective is already active (e.g. player is reloading a save), make sure the leaves are interactable
         if (ObjectiveManager.Instance.IsObjectiveActive(linkedObjective.objectiveID))
         {
@@ -52,5 +63,16 @@ public class CleanupLeavesObjective : MonoBehaviour
     void IncrementCount()
     {
         ObjectiveManager.Instance.AddProgress(linkedObjective.objectiveID, 1);
+    }
+
+    public void AddLeaves()
+    {
+        NumLeavesCollected++;
+
+        if (NumLeavesCollected >= 5)
+        {
+            playerInv.AddItem(LeavesReward);
+            playerInv.RemoveItem(TrashbagRefForRemoval);
+        }
     }
 }
