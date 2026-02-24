@@ -27,7 +27,7 @@ public class Inventory : MonoBehaviour, ISaveable
     private ToggleInventoryUI toggleInventoryUI;
     private CameraMovement cameraMovement;
     [HideInInspector] public WorldItem itemToCollect;
-    public static event System.Action<ItemData> OnItemAdded; // 
+    public static event System.Action<ItemData> OnItemAdded;
 
     private void Awake()
     {
