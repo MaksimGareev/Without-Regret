@@ -161,7 +161,7 @@ public class QTETriggerVolume : MonoBehaviour, IInteractable
     public void OnDrawGizmos()
     {
         // Visualize the trigger volume
-        Gizmos.color = Color.red;
+        Gizmos.color = Color.purple;
         Gizmos.DrawWireCube(transform.position, GetComponent<Collider>().bounds.size);
     }
 }
