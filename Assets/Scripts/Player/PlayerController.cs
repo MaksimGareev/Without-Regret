@@ -99,7 +99,7 @@ public class PlayerController : MonoBehaviour, ISaveable
             GameManager.Instance.staminaSlider.maxValue = SprintDuration;
         }
 
-        staminaGroup = GameManager.Instance.staminaSlider.GetComponent<CanvasGroup>();
+        staminaGroup = GameManager.Instance.staminaSlider.GetComponent<CanvasGroup>(); //sets stamina bar alpha to visible if accessible
         if (staminaGroup != null)
         {
             staminaGroup.alpha = 1f;
@@ -640,6 +640,10 @@ public class PlayerController : MonoBehaviour, ISaveable
 
     IEnumerator SprintCooldown()
     {
+        animator.SetBool("isExhausted", true); //plays exhausted animation when player runs out of stamina
+        animator.SetTrigger("Exhaust");
+        yield return new WaitForSeconds(1.4f);
+        animator.SetBool("isExhausted", false);
         if (showDebugLogs)
             Debug.Log("Sprint cooldown started.");
         yield return new WaitForSeconds(sprintCooldown);

@@ -191,13 +191,13 @@ public class Irene : MonoBehaviour
         return string.Equals(npcName, name, System.StringComparison.OrdinalIgnoreCase);
     }
 
-    public void movementAnimation()
+    public void movementAnimation() //handles movement animations
     {
         if (arrived)
         {
             isMoving = false;
         }
-        isMoving = agent.velocity.sqrMagnitude > 0.05f;
+        isMoving = agent.velocity.sqrMagnitude > 0.05f; //detects whether Irene is moving to play idle or walking animations
 
         animator.SetBool("isWalking", isMoving);
         animator.SetBool("isIdle", !isMoving);
