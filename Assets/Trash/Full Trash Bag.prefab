@@ -62,7 +62,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 56ac3c4f58ffc0241ac5c2ee4fa83478, type: 3}
       propertyPath: m_Name
-      value: Trash
+      value: Full Trash Bag
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 56ac3c4f58ffc0241ac5c2ee4fa83478, type: 3}
+      propertyPath: m_TagString
+      value: Throwable
       objectReference: {fileID: 0}
     - target: {fileID: 2995472086671753613, guid: 56ac3c4f58ffc0241ac5c2ee4fa83478, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
@@ -85,6 +89,15 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 56ac3c4f58ffc0241ac5c2ee4fa83478, type: 3}
       insertIndex: -1
       addedObject: {fileID: 8039916642121572839}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 56ac3c4f58ffc0241ac5c2ee4fa83478, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8869812512668389801}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 56ac3c4f58ffc0241ac5c2ee4fa83478, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -6629609782611027171}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 56ac3c4f58ffc0241ac5c2ee4fa83478, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5296315071837233515}
   m_SourcePrefab: {fileID: 100100000, guid: 56ac3c4f58ffc0241ac5c2ee4fa83478, type: 3}
 --- !u!1 &1142448165180116803 stripped
 GameObject:
@@ -180,7 +193,69 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 847a37dee96b3264aa6540fc255d7f3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WorldItem
-  itemData: {fileID: 11400000, guid: 3302c2daae4e8a54398e9865d1455df2, type: 2}
+  itemData: {fileID: 11400000, guid: 1125ebedf7f309a4a834456baf57e745, type: 2}
   icondDistance: 3
   isCollectible: 1
   hasBeenCollected: 0
+--- !u!65 &8869812512668389801
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1142448165180116803}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 21.454521, y: 17.51582, z: 20.284275}
+  m_Center: {x: -0.6427803, y: 8.650787, z: 0.45751715}
+--- !u!54 &-6629609782611027171
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1142448165180116803}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!114 &5296315071837233515
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1142448165180116803}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66f1e11e11dc9274aaa72011711667b7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ItemDistractingEnemy
+  distractionRadius: 15
+  distractionDuration: 3

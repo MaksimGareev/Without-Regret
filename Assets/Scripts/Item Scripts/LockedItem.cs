@@ -82,7 +82,7 @@ public class LockedItem : MonoBehaviour, IInteractable
     // Update is called once per frame
     void Update()
     {
-        if (hasBeenLockpicked || player == null || ButtonIcons.Instance == null || !player.GetComponent<Inventory>().KeyItems.Any(x => x.ItemName == "Lock Pick"))
+        if (hasBeenLockpicked || player == null || ButtonIcons.Instance == null)
         {
             return;
         }
@@ -152,7 +152,7 @@ public class LockedItem : MonoBehaviour, IInteractable
 
     private void TryInteract()
     {
-        if (!isInRange || GameManager.Instance.LockPickUI == null || hasBeenLockpicked || !player.gameObject.GetComponent<Inventory>().KeyItems.Any(x=> x.ItemName == "Lock Pick")) return;
+        if (!isInRange || GameManager.Instance.LockPickUI == null || hasBeenLockpicked || !player.gameObject.GetComponent<Inventory>().keyItems.Any(x=> x.ItemName == "Lock Pick")) return;
 
         // Show LockPick UI
         GameManager.Instance.LockPickUI.SetActive(true);
