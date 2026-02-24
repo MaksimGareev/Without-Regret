@@ -2540,6 +2540,61 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8012a6fb752d12c408bf4d6db4b361a3, type: 3}
+--- !u!1 &1290965560
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1290965562}
+  - component: {fileID: 1290965561}
+  m_Layer: 0
+  m_Name: TODManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1290965561
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1290965560}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20461bc29e8f7c740ab9b7190a7e3f34, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TODManager
+  directionalLight: {fileID: 1767740443}
+  Skybox_Morning: {fileID: 2100000, guid: d9cc0d0924a19114c8098d2ff1083fb5, type: 2}
+  Skybox_Evening: {fileID: 2100000, guid: 48b9fba025d5ca64e8b74cbc9ad69bdf, type: 2}
+  Skybox_Night: {fileID: 2100000, guid: f71eab94f59b0de41a725547499aa959, type: 2}
+  currentTime: 0
+  TransitionDuration: 5
+  nightGlowObjects: []
+  nightGlowIntensity: 3
+  nightSpotLights: []
+  nightFogParticles: []
+  linkedObjective: {fileID: 0}
+--- !u!4 &1290965562
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1290965560}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 13.75997, y: 3.80013, z: 85.33086}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1302324186
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5014,3 +5069,4 @@ SceneRoots:
   - {fileID: 269736956}
   - {fileID: 8870894370857221800}
   - {fileID: 1822508300}
+  - {fileID: 1290965562}
