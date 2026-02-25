@@ -6,7 +6,11 @@ public class CrackTrigger : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        Debug.Log("[Trigger] Hit by " + other.name);
-        crack.StartCrack();
+        if (other.CompareTag("Player"))
+        {
+             Debug.Log("[Trigger] Hit by " + other.name);
+            crack.StartCrack();
+        }
+       
     }
 }
