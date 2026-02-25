@@ -1,41 +1,51 @@
 {
     "dialogueLines": [
         {
+            "LineID": "Start",
             "Speaker": "Chime",
             "text": "Look, there's Reed!",
+            "lineTone": 0,
+            "NextLineID": "part 2",
             "requiredMorality": 0,
             "choices": []
         },
         {
+            "LineID": "part 2",
             "Speaker": "Chime",
             "text": "...It looks like he's arguing with someone, do you know who that is?",
             "requiredMorality": 0,
             "choices": [
                 {
                     "text": "Yeah, thats Derry.",
-                    "nextIndex": 2,
+                    "NextLineID": "good",
                     "moralityChange": 1,
                     "directionString": "Up"
                 },
                 {
                     "text": "Dunno. Didn't care much for his story. Still don't.",
-                    "nextIndex": 3,
+                    "NextLineID": "bad",
                     "moralityChange": -1,
                     "directionString": "Down"
                 }
             ]
         },
         {
+            "LineID": "good",
             "Speaker": "Chime",
             "text": "So that's the friend he was mourning in The Graveyard, you should see why they're arguing...",
+            "lineTone": 0,
             "requiredMorality": 1,
-            "choices": []
+            "choices": [],
+            "endDialogueAfterLine": true
         },
         {
+            "LineID": "bad",
             "Speaker": "Chime",
             "text": "That's his friend he was mourning in The Graveyard, Derry. Go figure out why they're arguing with each other.",
+            "lineTone": 0,
             "requiredMorality": -1,
-            "choices": []
+            "choices": [],
+            "endDialogueAfterLine": true
         }
     ]
 }

@@ -100,7 +100,7 @@ public class DialogueManager : MonoBehaviour
     float holdTimer = 0f;
     ChoiceDirection? currentDir = null;
 
-    bool confirmPressed;
+    bool resolvingChoice = false;
 
     Coroutine typingRoutine;
     Coroutine timerRoutine;
@@ -362,6 +362,9 @@ public class DialogueManager : MonoBehaviour
 
     void OnConfirmPressed()
     {
+        // Don't automatically end dialogue during pause after selection
+        if (resolvingChoice) return;  
+
         // if dialogue is still being built and confirm is press build out full line
         if (typing)
         {
@@ -590,6 +593,7 @@ public class DialogueManager : MonoBehaviour
 
     void SelectChoice(DialogueChoice c)
     {
+        resolvingChoice = true;
         CanChoose = false;
         choiceTimerSlider.gameObject.SetActive(false);
         //DirectionalImage.SetActive(false);
@@ -607,6 +611,8 @@ public class DialogueManager : MonoBehaviour
         ShowPopup($"Morality changed by {c.moralityChange}. New Morality: {playerMorality}");
 
         yield return new WaitForSeconds(portraitFadeTime * 2 + portraitHoldTime);
+
+        resolvingChoice = false;
 
         if (!string.IsNullOrEmpty(c.NextLineID))
         {
