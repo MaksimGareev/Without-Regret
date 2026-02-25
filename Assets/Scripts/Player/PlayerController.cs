@@ -110,9 +110,6 @@ public class PlayerController : MonoBehaviour, ISaveable
         controls.Player.Look.performed += ctx => lookInput = ctx.ReadValue<Vector2>();
 
         rb = GetComponent<Rigidbody>();
-
-       // controls.Player.LoadArtScene.performed += ctx => LoadArtScene();
-       // controls.Player.LoadMenuScene.performed += ctx => LoadMenuScene();
     }
 
     public void SaveTo(SaveData data)
@@ -653,6 +650,22 @@ public class PlayerController : MonoBehaviour, ISaveable
         specialIdle = false;
     }
 
+    public IEnumerator CollectAnimationDelay()
+    {
+        if (!Animator)
+        {
+            Debug.LogWarning("Animator not found on the player in the scene");
+            yield break;
+        }
+
+        Animator.SetBool("isCollecting", true);
+        Animator.SetTrigger("collect");
+        DisableInput();
+        yield return new WaitForSeconds(1.5f);
+        Animator.SetBool("isCollecting", false);
+        EnableInput();
+    }
+
     public void DisableInput() // for disabling/freezing the player throughout other scripts
     {
         controls.Disable();
@@ -667,7 +680,8 @@ public class PlayerController : MonoBehaviour, ISaveable
     {
         Animator.SetBool("isIdle", false);
         Animator.SetBool("isWalking", false);
-        //animator.SetBool("isGrabbing", false);
+        //Animator.SetBool("isGrabbing", false);
         Animator.SetBool("isFloating", false);
+        //Animator.SetBool("isCollecting", false);
     }
 }
