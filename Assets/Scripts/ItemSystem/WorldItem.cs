@@ -20,23 +20,11 @@ public class WorldItem : MonoBehaviour, IInteractable
 
     [Header("Player Animation")]
     public float animationDuration = 1.5f; // Duration of the collect animation in seconds
-    private Coroutine collectCoroutine;
-    private Animator animator;
-    private Transform player;
-    private PlayerController playerController;
     [HideInInspector] public bool hasBeenCollected = false;
     public ItemData ItemData => itemData;
 
     public void Start()
     {
-        // Player reference
-        player = GameObject.FindGameObjectWithTag("Player")?.transform;
-        playerController = player.GetComponent<PlayerController>();
-        if (player != null)
-        {
-            animator = player.GetComponentInChildren<Animator>();
-        }
-
         if (hasBeenCollected)
         {
             gameObject.SetActive(false);
