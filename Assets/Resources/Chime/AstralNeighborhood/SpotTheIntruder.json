@@ -1,14 +1,19 @@
 {
     "dialogueLines": [
         {
+            "LineID": "Start",
             "Speaker": "Chime",
             "text": "Look, over there!",
+            "lineTone": 0,
+            "NextLineID": "end",
             "requiredMorality": 0,
             "choices": []
         },
         {
+            "LineID": "end",
             "Speaker": "Chime",
             "text": "What was that? Quick, you have to find a way to get into Derry's house and save him, this might be what sets the house on fire!",
+            "lineTone": 0,
             "requiredMorality": 0,
             "choices": [],
             "objectivesToActivate": [ "intoBarryDarryHouse" ]
