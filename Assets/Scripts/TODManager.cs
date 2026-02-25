@@ -36,25 +36,25 @@ public class TODManager : MonoBehaviour
         ObjectiveManager.Instance.OnObjectiveCompleted.AddListener(ListenToObjective);
     }
 
-  void Start()
+    void Start()
     {
         UpdateLighting();
     }
 
-    // switch time after pressing l key for testing
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.L))
-        {
-            // cycle between morning -> evening -> night
-            if (currentTime == TOD.Morning)
-                StartCoroutine(TransitionTo(TOD.Evening, TransitionDuration));
-            else if (currentTime == TOD.Evening)
-                StartCoroutine(TransitionTo(TOD.Night, TransitionDuration));
-            else
-                StartCoroutine(TransitionTo(TOD.Morning, TransitionDuration));
-        }
-    }
+    // // switch time after pressing l key for testing
+    // void Update()
+    // {
+    //     if (Input.GetKeyDown(KeyCode.L))
+    //     {
+    //         // cycle between morning -> evening -> night
+    //         if (currentTime == TOD.Morning)
+    //             StartCoroutine(TransitionTo(TOD.Evening, TransitionDuration));
+    //         else if (currentTime == TOD.Evening)
+    //             StartCoroutine(TransitionTo(TOD.Night, TransitionDuration));
+    //         else
+    //             StartCoroutine(TransitionTo(TOD.Morning, TransitionDuration));
+    //     }
+    // }
 
     private void ListenToObjective(ObjectiveInstance objective)
     {
@@ -205,5 +205,10 @@ public class TODManager : MonoBehaviour
 
         // apply final state
         SetTOD(newTime);
+    }
+
+    private void OnDisable()
+    {
+        ObjectiveManager.Instance.OnObjectiveCompleted.RemoveListener(ListenToObjective);
     }
 }

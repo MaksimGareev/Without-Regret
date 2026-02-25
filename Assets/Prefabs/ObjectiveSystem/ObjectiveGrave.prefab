@@ -158,14 +158,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1f1ab1a81f3ad7468ec1fe89381d319, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MoveableObject
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 0
-  moveSlowdownMultiplier: 3
+  moveSlowdownDivisor: 3
+  sprintSlowdownDivisor: 3
+  sprintDepletionFactor: 1.05
+  staminaReduction: 0.5
+  allowSprint: 1
+  requiredItem: {fileID: 0}
+  maxGrabDistance: 2.5
+  disableColliderWhileHeld: 0
+  heldPositionOffset: {x: 0, y: 0, z: 0}
+  heldRotationOffset: {x: 0, y: 0, z: 0}
   isGrabbable: 1
-  iconDistance: 3
-  iconPrefab: {fileID: 7228842916403451623, guid: 8c37cda576505cc45bd7511edf89a1b3, type: 3}
-  shouldShowIcon: 1
+  navMeshSurface: {fileID: 0}
 --- !u!114 &9050450049671758505
 MonoBehaviour:
   m_ObjectHideFlags: 0
