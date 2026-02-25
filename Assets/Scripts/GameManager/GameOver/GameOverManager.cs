@@ -89,6 +89,13 @@ public class GameOverManager : MonoBehaviour
         gameOverUI.SetActive(true);
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
+
+        // Lock camera when game over UI is active
+        CameraMovement cam = FindFirstObjectByType<CameraMovement>();
+        if (cam != null)
+        {
+            cam.SetCameraLocked(true);
+        }
     }
 
     private void DisableGameOverUI()
@@ -101,6 +108,13 @@ public class GameOverManager : MonoBehaviour
         gameOverUI.SetActive(false);
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
+
+        // Unlock camera when game over UI is disabled
+        CameraMovement cam = FindFirstObjectByType<CameraMovement>();
+        if (cam != null)
+        {
+            cam.SetCameraLocked(false);
+        }
     }
 
     private void Quit()

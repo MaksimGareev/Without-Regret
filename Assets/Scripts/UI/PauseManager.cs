@@ -291,11 +291,19 @@ public class PauseManager : MonoBehaviour
 
         isGamePaused = true;
 
+        // Lock camera when pausing
+        CameraMovement cam = FindFirstObjectByType<CameraMovement>();
+        if (cam != null)
+        {
+            cam.SetCameraLocked(true);
+        }
+
         PlayerController playerController = FindFirstObjectByType<PlayerController>();
         if (playerController != null)
         {
             playerController.DisableInput();
         }
+
         inputActions.FindActionMap("UI").Enable();
 
         // Disable other canvases
@@ -367,9 +375,18 @@ public class PauseManager : MonoBehaviour
         pauseMenuPanel.SetActive(false);
         settingsScript.DisableSettingsPanel();
         backButton.gameObject.SetActive(false);
+
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
+
         isGamePaused = false;
+
+        // Unlock camera when resuming
+        CameraMovement cam = FindFirstObjectByType<CameraMovement>();
+        if (cam != null)
+        {
+            cam.SetCameraLocked(false);
+        }
 
         // Re-enable other canvases
         if (SceneManager.GetActiveScene().name != "MainMenu")
