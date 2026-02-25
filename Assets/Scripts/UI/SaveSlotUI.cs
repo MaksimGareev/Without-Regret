@@ -20,7 +20,7 @@ public class SaveSlotUI : MonoBehaviour
     [SerializeField] public Button[] newGameButtons = new Button[3];
 
     [Header("FirstLevelReference")]
-    [SerializeField] private string firstScene;
+    [SerializeField] private SceneReference firstScene;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -167,7 +167,7 @@ public class SaveSlotUI : MonoBehaviour
     {
         SaveManager.Instance.SetActiveSaveSlot(slot);
         SaveManager.Instance.LoadGame(slot);
-        SceneManager.LoadScene(firstScene);
+        SceneManager.LoadScene(firstScene.GetSceneName());
         Debug.Log("Starting New Game...");
     }
 
