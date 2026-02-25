@@ -136,6 +136,11 @@ public class Inventory : MonoBehaviour, ISaveable
 
         StartCoroutine(ItemAddedPopUp(item));
 
+        if (playerController != null)
+        {
+            StartCoroutine(playerController.CollectAnimationDelay());
+        }
+
         if (item.ItemType == ItemType.Backpack)
         {
             hasBackpack = true;

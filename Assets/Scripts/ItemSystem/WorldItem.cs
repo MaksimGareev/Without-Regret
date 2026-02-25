@@ -69,34 +69,7 @@ public class WorldItem : MonoBehaviour, IInteractable
         inventory.itemToCollect = this;
 
         hasBeenCollected = true;
-        collectCoroutine = StartCoroutine(CollectAnimationDelay());
 
         ButtonIcons.Instance?.Clear();
-    }
-
-    IEnumerator CollectAnimationDelay()
-    {
-        if (!animator)
-        {
-            Debug.LogWarning("Animator not found on the player in the scene");
-            yield break;
-        }
-
-        animator.SetBool("isCollecting", true);
-        animator.SetTrigger("collect");
-        // playerController.DisableInput();
-        yield return new WaitForSeconds(animationDuration);
-        animator.SetBool("isCollecting", false);
-        // playerController.EnableInput();
-        gameObject.SetActive(false);
-    }
-
-    private void OnDisable()
-    {
-        if (collectCoroutine != null)
-        {
-            StopCoroutine(collectCoroutine);
-            collectCoroutine = null;
-        }
     }
 }
