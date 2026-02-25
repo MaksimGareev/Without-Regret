@@ -680,8 +680,8 @@ public class PlayerController : MonoBehaviour, ISaveable
     {
         Animator.SetBool("isIdle", false);
         Animator.SetBool("isWalking", false);
-        Animator.SetBool("isGrabbing", false);
+        //Animator.SetBool("isGrabbing", false);
         Animator.SetBool("isFloating", false);
-        Animator.SetBool("isCollecting", false);
+        //Animator.SetBool("isCollecting", false);
     }
 }
