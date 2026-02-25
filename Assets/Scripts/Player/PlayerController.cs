@@ -641,16 +641,6 @@ public class PlayerController : MonoBehaviour, ISaveable
         }
     }
 
-    private void LoadArtScene()
-    {
-        SceneManager.LoadScene("ArtScene");
-    }
-
-    private void LoadMenuScene()
-    {
-        SceneManager.LoadScene("MenuTesting");
-    }
-
     private IEnumerator PlaySpecialIdle()
     {
         specialIdle = true;
@@ -663,12 +653,12 @@ public class PlayerController : MonoBehaviour, ISaveable
         specialIdle = false;
     }
 
-    public void DisableInput() //for disabling/freezing the player throughout other scripts
+    public void DisableInput() // for disabling/freezing the player throughout other scripts
     {
         controls.Disable();
     }
 
-    public void EnableInput() //for enabling/unfreezing the player throughout other scripts
+    public void EnableInput() // for enabling/unfreezing the player throughout other scripts
     {
         controls.Enable();
     }
