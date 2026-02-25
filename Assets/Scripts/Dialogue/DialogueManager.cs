@@ -9,8 +9,8 @@ using UnityEngine.Audio;
 public class NPCPortraitSet
 {
     public string npcName;
-    public Sprite happy;
     public Sprite neutral;
+    public Sprite happy;
     public Sprite upset;
 }
 

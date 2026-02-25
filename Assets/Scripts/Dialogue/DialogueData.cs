@@ -13,7 +13,7 @@ public class DialogueLine
 {
     public string LineID;                           // Id of the current line of dialogue
     public string Speaker;                          // Name of the speaker of the current line of dialogue
-    public string NPCGender;
+    public string NPCGender;                        // Identify what audio mixer for the speakers gender
     public string text;                             // text of the dialogue line
     public LineTone lineTone = LineTone.Neutral;    // the NPC's tone that is linked to the portrait that is displayed durring the current line
     public int requiredMorality;
@@ -25,9 +25,9 @@ public class DialogueLine
 
 public enum LineTone
 {
-    Happy,
-    Neutral,
-    Upset
+    Neutral,    // 0 = Neutral
+    Happy,      // 1 = Happy
+    Upset       // 2 = Upset
 }
 
 [System.Serializable]

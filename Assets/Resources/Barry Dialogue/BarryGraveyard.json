@@ -3,15 +3,16 @@
         {
             "LineID": "Start",
             "Speaker": "Reed",
+            "NPCGender": "male",
             "text": "Hey Echo! Long time no see. Just paying my usual visit to Derry. Everything's still vivid in my head, how that night went...do you have some time right now?",
+            "lineTone": 0,
             "requiredMorality": 0,
             "choices": [
                 {
                     "text": "Sure.",
                     "NextLineID": "Nice",
                     "moralityChange": 1,
-                    "directionString": "Up",
-                    "NextLineID": "Good response"
+                    "directionString": "Up"
                 },
                 {
                     "text": "Not really, but go ahead.",
@@ -36,7 +37,9 @@
         {
             "LineID": "Nice",
             "Speaker": "Reed",
+            "NPCGender": "male",
             "text": "Thanks, I've been really needing to vent.",
+            "lineTone": 1,
             "requiredMorality": 1,
             "NextLineID": "Part I",
             "choices": []
@@ -44,7 +47,9 @@
         {
             "LineID": "Mean",
             "Speaker": "Reed",
+            "NPCGender": "male",
             "text": "Uhm, okay...I'll make it quick then.",
+            "lineTone": 2,
             "requiredMorality": -1,
             "NextLineID": "Part I",
             "choices": []
@@ -52,29 +57,31 @@
         {
             "LineID": "Part I",
             "Speaker": "Reed",
+            "NPCGender": "male",
             "text": "As you know, Derry and I lived together. One day, I brought home a new TV only to find it broken on the floor the next day, with my car missing as well. I was furious. I waited all day for him to come back, so I could kick his ass...",
+            "lineTone": 2,
             "requiredMorality": 0,
             "choices": [
                 {
                     "text": "(Stay focused.)",
                     "NextLineID": "Part II",
                     "moralityChange": 1,
-                    "directionString": "Up",
-                    "NextLineID": "Story 2"
+                    "directionString": "Up"
                 },
                 {
                     "text": "(Doze off.)",
                     "NextLineID": "Part VI",
                     "moralityChange": -1,
-                    "directionString": "Down",
-                    "NextLineID": "Story 2"
+                    "directionString": "Down"
                 }
             ]
         },
         {
             "LineID": "Part II",
             "Speaker": "Reed",
+            "NPCGender": "male",
             "text": "...Later on, Derry came back and I got on his case...it got nasty, almost physical, then I drove away. While I was driving, I noticed a receipt for a TV from earlier that day. I checked the trunk and realized Derry went and got a new TV.",
+            "lineTone": 2,
             "requiredMorality": 0,
             "NextLineID": "Part III",
             "choices": []
@@ -82,7 +89,9 @@
         {
             "LineID": "Part III",
             "Speaker": "Reed",
+            "NPCGender": "male",
             "text": "I felt awful for being such an asshole when he was trying to make up for his accident. I worked up the courage to apologize on the drive home, and when I got back...",
+            "lineTone": 2,
             "requiredMorality": 0,
             "NextLineID": "Part IV",
             "choices": []
@@ -90,7 +99,9 @@
         {
             "LineID": "Part IV",
             "Speaker": "Reed",
+            "NPCGender": "male",
             "text": "The house was up in flames. The fire fighters did everything they could, and when I asked about Derry...I still remember the look on the paramedic's face.",
+            "lineTone": 2,
             "requiredMorality": 0,
             "NextLineID": "Part V",
             "choices": []
@@ -98,7 +109,9 @@
         {
             "LineID": "Part V",
             "Speaker": "Reed",
+            "NPCGender": "male",
             "text": "I really appreciate you listening. It means more than you think.",
+            "lineTone": 1,
             "requiredMorality": 0,
             "NextLineID": "Part VII",
             "choices": []
@@ -106,7 +119,9 @@
         {
             "LineID": "Part VI",
             "Speaker": "Reed",
+            "NPCGender": "male",
             "text": "Sorry, my emotional baggage is the last thing you'd care about.",
+            "lineTone": 2,
             "requiredMorality": -1,
             "NextLineID": "Part VII",
             "choices": []
@@ -114,7 +129,9 @@
         {
             "LineID": "Part VII",
             "Speaker": "Reed",
+            "NPCGender": "male",
             "text": "It's getting late. I lost my spare keys around here, but I honestly can't be bothered. I'm gonna head home. If you'd like to look for them, they might be somewhere in the leaves.",
+            "lineTone": 0,
             "requiredMorality": 0,
             "choices": [],
             "objectiveToActivate": [ "stackLeaves" ],
