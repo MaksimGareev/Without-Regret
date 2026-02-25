@@ -1,16 +1,24 @@
 {
-    "npcName": "Stevie",
     "dialogueLines": [
-      {
-        "text": " Hey kid! Echo, right? I see you here often with your friend Irene. She's a sweetheart, eh? Anyways, I appreciate you guys keepin' the place clean and honorin' your friend, so I thought I'd give you this.",
-        "requiredMorality": 0,
-        "choices": []
-      },
-      {
-        "text": "It's an old fishin' rod of mine, I want you to have it. It's not much, just somethin' for you to do if you're ever feeling lonely, to make peace with the quiet instead of letting it drive you crazy. Let me show you how to use it.",
-        "requiredMorality": 0,
-        "choices": []
-      }
+        {
+            "LineID": "start",
+            "Speaker": "Stevey",
+            "NPCGender": "male",
+            "text": " Hey kid! Echo, right? I see you here often with your friend Irene. She's a sweetheart, eh? Anyways, I appreciate you guys keepin' the place clean and honorin' your friend, so I thought I'd give you this.",
+            "lineTone": 0,
+            "NextLineID": "fishing rod",
+            "requiredMorality": 0,
+            "choices": []
+        },
+        {
+            "LineID": "fishing rod",
+            "Speaker": "Stevey",
+            "NPCGender": "male",
+            "text": "It's an old fishin' rod of mine, I want you to have it. It's not much, just somethin' for you to do if you're ever feeling lonely, to make peace with the quiet instead of letting it drive you crazy. Let me show you how to use it.",
+            "lineTone": 1,
+            "requiredMorality": 0,
+            "choices": []
+        }
     ]
 }
 
