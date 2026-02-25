@@ -283,11 +283,19 @@ public class PauseManager : MonoBehaviour
 
         // Logic to pause the game
         pauseMenuPanel.SetActive(true);
+        
         Time.timeScale = 0f;
+
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
+
         isGamePaused = true;
-        inputActions.FindActionMap("Player").Disable();
+
+        PlayerController playerController = FindFirstObjectByType<PlayerController>();
+        if (playerController != null)
+        {
+            playerController.DisableInput();
+        }
         inputActions.FindActionMap("UI").Enable();
 
         // Disable other canvases
@@ -372,7 +380,12 @@ public class PauseManager : MonoBehaviour
         Time.timeScale = 1f;
 
         inputActions.FindActionMap("UI").Disable();
-        inputActions.FindActionMap("Player").Enable();
+        //inputActions.FindActionMap("Player").Enable();
+        PlayerController playerController = FindFirstObjectByType<PlayerController>();
+        if (playerController != null)
+        {
+            playerController.EnableInput();
+        }
         
         //Debug.Log("Resuming Game...");
     }
