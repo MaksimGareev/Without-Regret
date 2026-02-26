@@ -125,6 +125,7 @@ public class MMSettings : MonoBehaviour
     public bool hasUnappliedChanges { get; private set; } = false;
     private bool hasChangedSettings = false;
     private ConfirmationUI confirmationUI;
+    private ControlSchemeUI controlSchemeScript;
 
     private void Awake()
     {
@@ -139,6 +140,13 @@ public class MMSettings : MonoBehaviour
         if (confirmationUI == null)
         {
             Debug.LogError("ConfirmationUI component not found on confirmationPanel.");
+        }
+
+        controlSchemeScript = controlSchemeUI.GetComponentInChildren<ControlSchemeUI>();
+
+        if (controlSchemeScript == null)
+        {
+            Debug.LogError("ControlSchemeUI component not found in any child of SettingsUI.");
         }
     }
     
@@ -451,6 +459,10 @@ public class MMSettings : MonoBehaviour
                 OpenVideoSettings();
             }
         }
+        else if (controlSchemeOpen && !confirmationPanel.activeSelf)
+        {
+            controlSchemeScript.SwitchTabs();
+        }
     }
 
     private void OnTabLeft()
@@ -471,6 +483,10 @@ public class MMSettings : MonoBehaviour
             {
                 OpenAudioSettings();
             }
+        }
+        else if (controlSchemeOpen && !confirmationPanel.activeSelf)
+        {
+            controlSchemeScript.SwitchTabs();
         }
     }
 

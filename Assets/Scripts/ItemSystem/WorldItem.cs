@@ -19,20 +19,12 @@ public class WorldItem : MonoBehaviour, IInteractable
     public bool isCollectible = true;
 
     [Header("Player Animation")]
-    public Animator animator;
-    public float collectAnimation;
-    Coroutine collectCoroutine;
-    private Transform player;
-    public PlayerController playerController;
-
+    public float animationDuration = 1.5f; // Duration of the collect animation in seconds
     [HideInInspector] public bool hasBeenCollected = false;
     public ItemData ItemData => itemData;
+
     public void Start()
     {
-        // Player reference
-        player = GameObject.FindGameObjectWithTag("Player")?.transform;
-        playerController = player.GetComponent<PlayerController>();
-
         if (hasBeenCollected)
         {
             gameObject.SetActive(false);
@@ -65,19 +57,7 @@ public class WorldItem : MonoBehaviour, IInteractable
         inventory.itemToCollect = this;
 
         hasBeenCollected = true;
-        collectCoroutine = StartCoroutine(CollectAnimationDelay());
 
         ButtonIcons.Instance?.Clear();
-    }
-
-    IEnumerator CollectAnimationDelay()
-    {
-        animator.SetBool("isCollecting", true);
-        animator.SetTrigger("collect");
-        playerController.DisableInput();
-        yield return new WaitForSeconds(collectAnimation);
-        animator.SetBool("isCollecting", false);
-        playerController.EnableInput();
-        gameObject.SetActive(false);
     }
 }

@@ -67,9 +67,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a40ba9254f066ed499136723990e8a6f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DialogueTrigger
+  animator: {fileID: 0}
+  isTalking: 0
   NPCName: 
-  promptUI: {fileID: 0}
   chatRange: 3
+  playerMovePoint: {fileID: 0}
   jsonDialogueFile: {fileID: 0}
   TalkedJsonDialogueFile: {fileID: 0}
   CompleteJsonDialogueFile: {fileID: 0}
@@ -84,6 +86,7 @@ MonoBehaviour:
   shouldShowIcon: 0
   enemy: {fileID: 0}
   focusCameraOnTrigger: 0
+  RewardItem: {fileID: 0}
   triggerType: 2
 --- !u!114 &1104601806056575187
 MonoBehaviour:

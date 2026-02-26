@@ -7,8 +7,8 @@ public class ControlSchemeUI : MonoBehaviour
     [Header("References")]
     [SerializeField] public Button ControllerButton;
     [SerializeField] private Button KeyboardMouseButton;
-    [SerializeField] private TextMeshProUGUI controllerText;
-    [SerializeField] private TextMeshProUGUI keyboardMouseText;
+    [SerializeField] private GameObject controllerMapping;
+    [SerializeField] private GameObject mouseKeyMapping;
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -24,8 +24,8 @@ public class ControlSchemeUI : MonoBehaviour
 
     private void OnControllerClicked()
     {
-        controllerText.gameObject.SetActive(true);
-        keyboardMouseText.gameObject.SetActive(false);
+        controllerMapping.SetActive(true);
+        mouseKeyMapping.SetActive(false);
 
         ControllerButton.GetComponent<ButtonHighlighting>().stayHighlighted = true;
         ControllerButton.GetComponent<ButtonHighlighting>().OnHighlight();
@@ -34,11 +34,23 @@ public class ControlSchemeUI : MonoBehaviour
 
     private void OnKeyboardMouseClicked()
     {
-        controllerText.gameObject.SetActive(false);
-        keyboardMouseText.gameObject.SetActive(true);
+        controllerMapping.SetActive(false);
+        mouseKeyMapping.SetActive(true);
 
         ControllerButton.GetComponent<ButtonHighlighting>().OnUnhighlight();
         KeyboardMouseButton.GetComponent<ButtonHighlighting>().stayHighlighted = true;
         KeyboardMouseButton.GetComponent<ButtonHighlighting>().OnHighlight();
+    }
+
+    public void SwitchTabs()
+    {
+        if (controllerMapping.activeSelf)
+        {
+            OnKeyboardMouseClicked();
+        }
+        else
+        {
+            OnControllerClicked();
+        }
     }
 }

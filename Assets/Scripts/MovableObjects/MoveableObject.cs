@@ -109,7 +109,7 @@ public class MoveableObject : MonoBehaviour, IInteractable
         rb.WakeUp();
     }
 
-    private void Update()
+    private void LateUpdate()
     {
         if (IsGrabbed && grabPoint != null)
         {
