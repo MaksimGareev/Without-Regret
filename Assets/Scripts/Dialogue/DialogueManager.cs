@@ -77,6 +77,7 @@ public class DialogueManager : MonoBehaviour
     [Header("NPC movement (trying to remove")]
     private DialogueTrigger activeDialogueTrigger;
     private Irene ireneNPC;
+    private Barry penelopeNPC;
     private Barry barryNPC;
     private DarryNeighborhood darryNPC;
     public Transform ireneDestinationTransform;
@@ -191,6 +192,7 @@ public class DialogueManager : MonoBehaviour
         // NPC references for movement if needed
         ireneNPC = FindAnyObjectByType<Irene>();
         barryNPC = FindAnyObjectByType<Barry>();
+        penelopeNPC = FindAnyObjectByType<Barry>();
         darryNPC = FindAnyObjectByType<DarryNeighborhood>();
 
         // activate dialogue UI
@@ -440,6 +442,16 @@ public class DialogueManager : MonoBehaviour
             darryNPC.StartTravel();
         }
         else if (darryNPC == null)
+        {
+            Debug.LogWarning("Darry npc not found in scene");
+        }
+
+        // Penelope movement
+        if (penelopeNPC != null && npc == "Penelope")
+        {
+            penelopeNPC.StartTravel();
+        }
+        else if (penelopeNPC == null)
         {
             Debug.LogWarning("Darry npc not found in scene");
         }
