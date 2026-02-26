@@ -1,5 +1,22 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+
+[System.Serializable]
+public struct ObjectiveTODPair<ObjectiveData, TOD>
+{
+    public ObjectiveData objectiveData;
+    public TOD time;
+}
+
+// enum for time of day
+[System.Serializable]
+public enum TOD
+{
+    Morning,
+    Evening,
+    Night
+}
 
 public class TODManager : MonoBehaviour
 {
@@ -9,13 +26,7 @@ public class TODManager : MonoBehaviour
     public Material Skybox_Evening;
     public Material Skybox_Night;
 
-    // enum for time of day
-    public enum TOD
-    {
-        Morning,
-        Evening,
-        Night
-    }
+    
 
     public TOD currentTime = TOD.Morning;
     public float TransitionDuration = 5f;
@@ -29,38 +40,71 @@ public class TODManager : MonoBehaviour
 
     // fog particles that should play only during night
     public ParticleSystem[] nightFogParticles;
-    public ObjectiveData linkedObjective;
 
-    private void OnEnable()
-    {
-        ObjectiveManager.Instance.OnObjectiveCompleted.AddListener(ListenToObjective);
-    }
+    [Tooltip("Mapping of objectives to their corresponding time of day changes. When an objective is ACTIVE, the TOD will transition to the mapped value.")]
+    [SerializeField] private List<ObjectiveTODPair<ObjectiveData, TOD>> objectiveTODList;
 
-  void Start()
-    {
-        UpdateLighting();
-    }
+    private Dictionary<ObjectiveData, TOD> objectiveTODRuntime = new Dictionary<ObjectiveData, TOD>();
 
-    // switch time after pressing l key for testing
-    void Update()
+    private void Awake()
     {
-        if (Input.GetKeyDown(KeyCode.L))
+        foreach (var pair in objectiveTODList)
         {
-            // cycle between morning -> evening -> night
-            if (currentTime == TOD.Morning)
-                StartCoroutine(TransitionTo(TOD.Evening, TransitionDuration));
-            else if (currentTime == TOD.Evening)
-                StartCoroutine(TransitionTo(TOD.Night, TransitionDuration));
+            if (!objectiveTODRuntime.ContainsKey(pair.objectiveData))
+            {
+                objectiveTODRuntime.Add(pair.objectiveData, pair.time);
+            }
             else
-                StartCoroutine(TransitionTo(TOD.Morning, TransitionDuration));
+            {
+                Debug.LogWarning($"Duplicate objective data {pair.objectiveData} in objectiveTODList");
+            } 
         }
     }
 
+    private void OnEnable()
+    {
+        ObjectiveManager.Instance.OnObjectiveActivated.AddListener(ListenToObjective);
+    }
+
+    void Start()
+    {
+        UpdateLighting();
+
+        foreach (var pair in objectiveTODRuntime)
+        {
+            if (ObjectiveManager.Instance.IsObjectiveActive(pair.Key.objectiveID))
+            {
+                SetTOD(pair.Value);
+                break;
+            }
+        }
+    }
+
+    // // switch time after pressing l key for testing
+    // void Update()
+    // {
+    //     if (Input.GetKeyDown(KeyCode.L))
+    //     {
+    //         // cycle between morning -> evening -> night
+    //         if (currentTime == TOD.Morning)
+    //             StartCoroutine(TransitionTo(TOD.Evening, TransitionDuration));
+    //         else if (currentTime == TOD.Evening)
+    //             StartCoroutine(TransitionTo(TOD.Night, TransitionDuration));
+    //         else
+    //             StartCoroutine(TransitionTo(TOD.Morning, TransitionDuration));
+    //     }
+    // }
+
     private void ListenToObjective(ObjectiveInstance objective)
     {
-        if (objective.data != linkedObjective) return;
-
-        StartCoroutine(TransitionTo(TOD.Evening, TransitionDuration));
+        foreach (var pair in objectiveTODRuntime)
+        {
+            if (pair.Key.objectiveID == objective.data.objectiveID)
+            {
+                StartCoroutine(TransitionTo(pair.Value, TransitionDuration));
+                break;
+            }
+        }
     }
 
     public void SetTOD(TOD newTime)
@@ -205,5 +249,10 @@ public class TODManager : MonoBehaviour
 
         // apply final state
         SetTOD(newTime);
+    }
+
+    private void OnDisable()
+    {
+        ObjectiveManager.Instance.OnObjectiveCompleted.RemoveListener(ListenToObjective);
     }
 }

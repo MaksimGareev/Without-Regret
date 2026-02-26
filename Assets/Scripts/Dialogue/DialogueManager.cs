@@ -9,8 +9,8 @@ using UnityEngine.Audio;
 public class NPCPortraitSet
 {
     public string npcName;
-    public Sprite happy;
     public Sprite neutral;
+    public Sprite happy;
     public Sprite upset;
 }
 
@@ -77,6 +77,7 @@ public class DialogueManager : MonoBehaviour
     [Header("NPC movement (trying to remove")]
     private DialogueTrigger activeDialogueTrigger;
     private Irene ireneNPC;
+    private Barry penelopeNPC;
     private Barry barryNPC;
     private DarryNeighborhood darryNPC;
     public Transform ireneDestinationTransform;
@@ -100,7 +101,7 @@ public class DialogueManager : MonoBehaviour
     float holdTimer = 0f;
     ChoiceDirection? currentDir = null;
 
-    bool confirmPressed;
+    bool resolvingChoice = false;
 
     Coroutine typingRoutine;
     Coroutine timerRoutine;
@@ -191,6 +192,7 @@ public class DialogueManager : MonoBehaviour
         // NPC references for movement if needed
         ireneNPC = FindAnyObjectByType<Irene>();
         barryNPC = FindAnyObjectByType<Barry>();
+        penelopeNPC = FindAnyObjectByType<Barry>();
         darryNPC = FindAnyObjectByType<DarryNeighborhood>();
 
         // activate dialogue UI
@@ -362,6 +364,9 @@ public class DialogueManager : MonoBehaviour
 
     void OnConfirmPressed()
     {
+        // Don't automatically end dialogue during pause after selection
+        if (resolvingChoice) return;  
+
         // if dialogue is still being built and confirm is press build out full line
         if (typing)
         {
@@ -437,6 +442,16 @@ public class DialogueManager : MonoBehaviour
             darryNPC.StartTravel();
         }
         else if (darryNPC == null)
+        {
+            Debug.LogWarning("Darry npc not found in scene");
+        }
+
+        // Penelope movement
+        if (penelopeNPC != null && npc == "Penelope")
+        {
+            penelopeNPC.StartTravel();
+        }
+        else if (penelopeNPC == null)
         {
             Debug.LogWarning("Darry npc not found in scene");
         }
@@ -590,6 +605,7 @@ public class DialogueManager : MonoBehaviour
 
     void SelectChoice(DialogueChoice c)
     {
+        resolvingChoice = true;
         CanChoose = false;
         choiceTimerSlider.gameObject.SetActive(false);
         //DirectionalImage.SetActive(false);
@@ -607,6 +623,8 @@ public class DialogueManager : MonoBehaviour
         ShowPopup($"Morality changed by {c.moralityChange}. New Morality: {playerMorality}");
 
         yield return new WaitForSeconds(portraitFadeTime * 2 + portraitHoldTime);
+
+        resolvingChoice = false;
 
         if (!string.IsNullOrEmpty(c.NextLineID))
         {

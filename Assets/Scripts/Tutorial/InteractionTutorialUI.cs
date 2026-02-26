@@ -65,6 +65,11 @@ public class InteractionTutorialUI : MonoBehaviour
         onConfrimCallBack = onConfirm;
 
         Time.timeScale = 0f;
+        PlayerController playerController = FindFirstObjectByType<PlayerController>();
+        if (playerController != null)
+        {
+            playerController.DisableInput();
+        }
     }
 
     public void Update()
@@ -95,6 +100,11 @@ public class InteractionTutorialUI : MonoBehaviour
 
         IsShowing = false;
         Time.timeScale = 1f;
+        PlayerController playerController = FindFirstObjectByType<PlayerController>();
+        if (playerController != null)
+        {
+            playerController.EnableInput();
+        }
 
         onConfrimCallBack?.Invoke();
         onConfrimCallBack = null;

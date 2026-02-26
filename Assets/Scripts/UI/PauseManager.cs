@@ -283,11 +283,27 @@ public class PauseManager : MonoBehaviour
 
         // Logic to pause the game
         pauseMenuPanel.SetActive(true);
+        
         Time.timeScale = 0f;
+
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
+
         isGamePaused = true;
-        inputActions.FindActionMap("Player").Disable();
+
+        // Lock camera when pausing
+        CameraMovement cam = FindFirstObjectByType<CameraMovement>();
+        if (cam != null)
+        {
+            cam.SetCameraLocked(true);
+        }
+
+        PlayerController playerController = FindFirstObjectByType<PlayerController>();
+        if (playerController != null)
+        {
+            playerController.DisableInput();
+        }
+
         inputActions.FindActionMap("UI").Enable();
 
         // Disable other canvases
@@ -359,9 +375,18 @@ public class PauseManager : MonoBehaviour
         pauseMenuPanel.SetActive(false);
         settingsScript.DisableSettingsPanel();
         backButton.gameObject.SetActive(false);
+
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
+
         isGamePaused = false;
+
+        // Unlock camera when resuming
+        CameraMovement cam = FindFirstObjectByType<CameraMovement>();
+        if (cam != null)
+        {
+            cam.SetCameraLocked(false);
+        }
 
         // Re-enable other canvases
         if (SceneManager.GetActiveScene().name != "MainMenu")
@@ -372,7 +397,12 @@ public class PauseManager : MonoBehaviour
         Time.timeScale = 1f;
 
         inputActions.FindActionMap("UI").Disable();
-        inputActions.FindActionMap("Player").Enable();
+        //inputActions.FindActionMap("Player").Enable();
+        PlayerController playerController = FindFirstObjectByType<PlayerController>();
+        if (playerController != null)
+        {
+            playerController.EnableInput();
+        }
         
         //Debug.Log("Resuming Game...");
     }

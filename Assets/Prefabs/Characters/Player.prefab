@@ -666,8 +666,6 @@ MonoBehaviour:
   crawlAction: {fileID: 7040659881675835329, guid: f1f4dbfd8c64cd440924988ec4fb6f6a, type: 3}
   crawlSpeed: 1
   playerModel: {fileID: 0}
-  heightReduction: 0.7
-  heightLerpSpeed: 8
   regularCollider: {fileID: 4804980216258344789}
   crawlingCollider: {fileID: 1036373522787229309}
   showDebugLogs: 1
@@ -684,18 +682,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Controller: {fileID: 8821119716541630626}
-  animator: {fileID: 1306356219283198842}
+  Animator: {fileID: 0}
   normalColor: {r: 0, g: 0.5764706, b: 0.43529412, a: 1}
   cooldownColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   SprintDust: {fileID: 82863498991437760}
-  staminaFadeDuration: 1.5
   MovementLocked: 0
   Speed: 4
   SprintSpeed: 8
   SprintDuration: 3
   sprintCooldown: 4
   emptyStaminaSpeedFactor: 0.5
-  staminaLingerDuration: 1
   StationaryCamera: 0
   SprintTimer: 3
   groundCheck: {fileID: 0}
@@ -703,7 +699,6 @@ MonoBehaviour:
   groundMask:
     serializedVersion: 2
     m_Bits: 0
-  idleTimer: 0
   showDebugLogs: 0
 --- !u!114 &8123318097379088782
 MonoBehaviour:
@@ -748,10 +743,12 @@ MonoBehaviour:
   hoverDrag: 3
   stickDeadzone: 0.2
   floatAction: {fileID: -5528296139197480759, guid: f1f4dbfd8c64cd440924988ec4fb6f6a, type: 3}
-  floatDuration: 5
+  floatDuration: 3
   floatCooldown: 3
   rhythmWindow: 0.3
   rhythmInterval: 1
+  rhythmWindowMin: 0.33
+  rhythmBuffer: 0.15
   showDebugLogs: 0
 --- !u!114 &7147037502482933178
 MonoBehaviour:
@@ -796,8 +793,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   keyItems: []
   otherItems: []
-  LeavesReward: {fileID: 11400000, guid: a065d2c0b388d544bac431e80abc25ff, type: 2}
-  TrashbagRefForRemoval: {fileID: 11400000, guid: 3302c2daae4e8a54398e9865d1455df2, type: 2}
   showDebugLogs: 0
   hasBackpack: 1
   itemToCollect: {fileID: 0}
@@ -913,8 +908,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInteracting
   InputActions: {fileID: -944628639613478452, guid: f1f4dbfd8c64cd440924988ec4fb6f6a, type: 3}
   interactionRange: 1
-  interactOffset: 1
-  showDebugLogs: 0
+  detectionGraceTime: 0.15
 --- !u!114 &2250357011382021346
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -1,20 +1,28 @@
 {
     "dialogueLines": [
         {
+            "LineID": "Start",
             "Speaker": "Chime",
             "text": "I don't think that's enough...we need to help Derry run away.",
+            "lineTone": 0,
+            "NextLineID": "part 2",
             "requiredMorality": 0,
             "choices": []
         },
         {
+            "LineID": "part 2",
             "Speaker": "Chime",
             "text": "Hurry, we need to find a way to bridge those gaps! You have the ability to float, I should have mentioned it earlier. Press A when you're close to a gap to activate your ability, then press A whenever the slider is in the green zone to stay in the air.",
+            "lineTone": 0,
+            "NextLineID": "part 3",
             "requiredMorality": 0,
             "choices": []
         },
         {
+            "LineID": "part 3",
             "Speaker": "Chime",
             "text": "I think you can use those crates to fill the gaps enough for Derry to make it across.",
+            "lineTone": 0,
             "requiredMorality": 0,
             "objectivesToActivate": [ "guideDarryToSafety" ],
             "choices": []
