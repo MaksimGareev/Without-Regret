@@ -2,7 +2,7 @@ using UnityEngine;
 using Unity.AI.Navigation;
 using System;
 
-[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(Rigidbody), typeof(Collider))]
 public class MoveableObject : MonoBehaviour, IInteractable
 {
     [SerializeField, Tooltip("When moving this object, the player's base speed is divided by this value")] 
@@ -21,7 +21,6 @@ public class MoveableObject : MonoBehaviour, IInteractable
     [SerializeField, Tooltip("Certain transform offsets can cause overlapping colliders and lead to weird player movement, so this option is here as a failsafe")] 
     private bool disableColliderWhileHeld = true;
     [SerializeField] private Vector3 heldPositionOffset = Vector3.zero;
-    [SerializeField] private Vector3 heldRotationOffset = Vector3.zero;
 
     private Transform grabPoint;
     private Rigidbody rb;
@@ -41,24 +40,25 @@ public class MoveableObject : MonoBehaviour, IInteractable
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
-        rb.interpolation = RigidbodyInterpolation.Interpolate;
-        coll = GetComponent<Collider>();
+        if (!TryGetComponent<Collider>(out coll))
+        {
+            disableColliderWhileHeld = false;
+        }
     }
 
     public bool CanInteract(GameObject player)
     {
-        if (isGrabbable == false)
+        if (isGrabbable == false || DialogueManager.DialogueIsActive)
             return false;
 
-        if (DialogueManager.DialogueIsActive)
-            return false;
-
-        float dist = Vector3.Distance(player.transform.position, transform.position);
-        if (dist > maxGrabDistance)
-            return false;
-
+        // Make sure player is facing toward the object by getting the Dot Product
         Vector3 toObject = (transform.position - player.transform.position).normalized;
-        if (Vector3.Dot(player.transform.forward, toObject) < 0.4f)
+        if (Vector3.Dot(player.transform.forward, toObject) < 0.5f)
+            return false;
+
+        // Make sure player is within grabbing distance of the collider
+        float distance = GetDistanceToCollider(coll, player.transform.position);
+        if (distance > maxGrabDistance)
             return false;
 
         return true;
@@ -68,38 +68,42 @@ public class MoveableObject : MonoBehaviour, IInteractable
     {
         if (!isGrabbable) return;
 
-        // Set Moveable Object position to the grabPoint
-        grabPoint = grabTransform;
+        // Get closest point on collider to grab position (world space)
+        Vector3 closestPoint = coll.ClosestPoint(grabTransform.position);
+
+        // Calculate offset from object pivot to that closest point
+        Vector3 pivotToClosest = closestPoint - transform.position;
+
+        // Move object so closest point aligns with grab transform
+        transform.position = grabTransform.position - pivotToClosest;
+
+        // Parent to grab point
+        transform.parent = grabTransform;
+
         IsGrabbed = true;
+
         rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
-
-        rb.isKinematic = true;
+        rb.constraints = RigidbodyConstraints.FreezeAll;
+        rb.isKinematic = false;
 
         if (disableColliderWhileHeld)
             coll.enabled = false;
 
-        // Apply offsets so object snaps into the intended held pose
-        ApplyHeldOffsets();
+        // Apply offsets after parenting (Rotate in world space to maintain rotation at time of grabbing)
+        transform.localPosition += heldPositionOffset;
 
         // remove Icon
         if (ButtonIcons.Instance != null)
             ButtonIcons.Instance.Clear();
     }
 
-    private void ApplyHeldOffsets()
-    {
-        if (grabPoint == null) return;
-
-        // Position: interpret heldPositionOffset in grabPoint local space
-        // Rotation: apply rotation offset relative to grabPoint rotation
-        transform.SetPositionAndRotation(grabPoint.TransformPoint(heldPositionOffset), grabPoint.rotation * Quaternion.Euler(heldRotationOffset));
-    }
-
     public void Release()
     {
         IsGrabbed = false;
         grabPoint = null;
+        transform.parent = null; // Unparent from grabpoint
+        rb.constraints = RigidbodyConstraints.FreezeRotation;
 
         if (disableColliderWhileHeld)
             coll.enabled = true;
@@ -107,18 +111,6 @@ public class MoveableObject : MonoBehaviour, IInteractable
         // Set rigidbody back to normal
         rb.isKinematic = false;
         rb.WakeUp();
-    }
-
-    private void LateUpdate()
-    {
-        if (IsGrabbed && grabPoint != null)
-        {
-            // Apply the configured offsets so the held object position/rotation can be tuned.
-            // Position offset is interpreted in the grabPoint's local space (TransformPoint).
-            // Rotation offset is applied relative to grabPoint rotation.
-            rb.MovePosition(grabPoint.position + heldPositionOffset);
-            rb.MoveRotation(grabPoint.rotation * Quaternion.Euler(heldRotationOffset));
-        }
     }
 
     public void OnPlayerInteraction(GameObject player)
@@ -166,6 +158,17 @@ public class MoveableObject : MonoBehaviour, IInteractable
 
         // Notify any listeners
         OnInteracted?.Invoke();
+    }
+
+    private float GetDistanceToCollider(Collider collider, Vector3 point)
+    {
+        // Find the closest point on the collider's surface to the player's position
+        Vector3 closestPoint = collider.ClosestPoint(point);
+
+        // Calculate the distance between the player's position and that closest point
+        float distance = Vector3.Distance(point, closestPoint);
+
+        return distance;
     }
 
     public float GetMoveSlowdown() => moveSlowdownDivisor;
