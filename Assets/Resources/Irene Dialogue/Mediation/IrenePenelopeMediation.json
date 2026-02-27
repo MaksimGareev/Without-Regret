@@ -1,0 +1,131 @@
+{
+  "dialogueLines": [
+    {
+      "LineID": "Start",
+      "Speaker": "Penelope",
+      "text": "Come on Irene! Who cares if the fog is thick, think of the memories we'll make!",
+      "requiredMorality": 0,
+      "choices": [
+        {
+          "text": "Try to sympathize but advise caution.",
+          "moralityChange": 1,
+          "NextLineID": "Sympathetic",
+          "directionString": "Up"
+        },
+        {
+          "text": "Give a stern NO.",
+          "moralityChange": -1,
+          "NextLineID": "Stern",
+          "directionString": "Down"
+        }
+      ]
+    },
+    {
+      "LineID": "Sympathetic",
+      "Speaker": "Irene",
+      "text": "Penny, I think it'd be fun, but this fog is too dense. We could get lost, or worse...",
+      "requiredMorality": 0,
+      "NextLineID": "Adventurous"
+    },
+    {
+      "LineID": "Stern",
+      "Speaker": "Irene",
+      "text": "Penelope, no. This is the kind of fog people don't come back from, it's too dangerous. There'll be other parties.",
+      "requiredMorality": 0,
+      "NextLineID": "Buzzkill"
+    },
+    {
+      "LineID": "Adventurous",
+      "Speaker": "Penelope",
+      "text": "We could get lost...OR we could have the night of our lives! Come on, Irene, ta-loo-rye-aye, come on, Irene...",
+      "requiredMorality": 0,
+      "choices": [
+        {
+          "text": "Double down on safety.",
+          "moralityChange": 1,
+          "NextLineID": "Safety",
+          "directionString": "Up"
+        },
+        {
+          "text": "Tell her to give it up.",
+          "moralityChange": -1,
+          "NextLineID": "Impatience",
+          "directionString": "Down"
+        },
+        {
+          "text": "Acknowledge the joke as funny.",
+          "moralityChange": 1,
+          "NextLineID": "Joke",
+          "directionString": "Left"
+        }
+      ]
+    },
+    {
+      "LineID": "Buzzkill",
+      "Speaker": "Penelope",
+      "text": "Ughhh you're such a buzzkill sometimes Irene.",
+      "requiredMorality": 0,
+      "choices": [
+        {
+          "text": "Maintain that you just want to be safe.",
+          "moralityChange": 1,
+          "NextLineID": "Safety",
+          "directionString": "Up"
+        },
+        {
+          "text": "Tell her to just give it up.",
+          "moralityChange": -1,
+          "NextLineID": "Impatience",
+          "directionString": "Down"
+        },
+        {
+          "text": "Brush off the insult.",
+          "moralityChange": 1,
+          "NextLineID": "TurntheCheek",
+          "directionString": "Left"
+        },
+        {
+          "text": "Insult her back.",
+          "moralityChange": -1,
+          "NextLineID": "Ditz",
+          "directionString": "Right"
+        }
+      ]
+    },
+    {
+      "LineID": "Joke",
+      "Speaker": "Irene",
+      "text": "Okay, that was kinda funny...but I'm Irene, not Eileen, and I'm not going through that fog.",
+      "requiredMorality": 0,
+      "NextLineID": "Safety"
+    },
+    {
+      "LineID": "TurntheCheek",
+      "Speaker": "Irene",
+      "text": "Do you really need to be so mean Penny?.",
+      "requiredMorality": 0,
+      "NextLineID": "Safety"
+    },
+    {
+      "LineID": "Safety",
+      "Speaker": "Irene",
+      "text": "Listen, I just want us to be safe, okay? Why don't we just stay in and play Animal Crossing, or maybe watch a movie.",
+      "requiredMorality": 0,
+      "endDialogueAfterLine": true
+    },
+    {
+      "LineID": "Impatience",
+      "Speaker": "Irene",
+      "text": "Penelope, can you listen to someone other than yourself for once please? It's not a good idea.",
+      "requiredMorality": 0,
+      "endDialogueAfterLine": true
+    },
+    {
+      "LineID": "Ditz",
+      "Speaker": "Irene",
+      "text": "I'd rather be a buzzkill than a ditz. I mean seriously, you can be so stupid sometimes. I really have to tell you it's a bad idea to go into a dark, foggy forest?",
+      "requiredMorality": 0,
+      "endDialogueAfterLine": true
+    }
+  ]
+}
