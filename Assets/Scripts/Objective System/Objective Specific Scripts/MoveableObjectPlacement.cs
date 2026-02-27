@@ -76,6 +76,12 @@ public class MoveableObjectPlacement : MonoBehaviour
         if (rebuildNavMesh)
         {
             navMeshSurfaces = FindObjectsByType<NavMeshSurface>(FindObjectsSortMode.None);
+
+            foreach (var surface in navMeshSurfaces)
+            {
+                Debug.Log("NavMeshSurface found: " + surface.gameObject.name);
+            }
+
             if (navMeshSurfaces.Length == 0)
             {
                 Debug.LogWarning("Rebuild NavMesh is enabled but no NavMeshSurfaces were found in the scene.");
@@ -196,8 +202,11 @@ public class MoveableObjectPlacement : MonoBehaviour
                 rb.constraints = RigidbodyConstraints.FreezeAll;
                 didOnce = true;
                 DisableGhost();
-                RebuildNavMesh();
-                SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
+                StartCoroutine(RebuildNavMesh());
+                if (SaveManager.Instance != null) 
+                {
+                    SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
+                }
             }
         }
     }
@@ -276,24 +285,31 @@ public class MoveableObjectPlacement : MonoBehaviour
 
     private IEnumerator RebuildNavMesh()
     {
-        if (!rebuildNavMesh || navMeshSurfaces.Length == 0) yield break;
+        if (!rebuildNavMesh || navMeshSurfaces == null || navMeshSurfaces.Length == 0) 
+        {
+            //Debug.LogWarning("Rebuild NavMesh is disabled or no NavMeshSurfaces found, skipping NavMesh rebuild.");
+            yield break;
+        }
 
         // wait for object to stop moving
         while (rb.linearVelocity.magnitude > 0.05f || rb.angularVelocity.magnitude > 0.05f)
         {
             yield return null;
+            //Debug.Log("Waiting for object to settle before rebuilding NavMesh...");
         }
 
         // Rebuild all NavMeshSurfaces in the scene
-        foreach (var surface in navMeshSurfaces)
+        foreach (NavMeshSurface surface in navMeshSurfaces)
         {
             surface.BuildNavMesh();
+            //Debug.Log("Rebuilding NavMesh on surface: " + surface.gameObject.name);
         }
 
         // Update all NavMeshLinks in the scene to ensure they connect properly to the updated NavMesh
         foreach (var link in FindObjectsByType<NavMeshLink>(FindObjectsSortMode.None))
         {
             link.UpdateLink();
+            //Debug.Log("Updating NavMeshLink: " + link.gameObject.name);
         }
     }
 
