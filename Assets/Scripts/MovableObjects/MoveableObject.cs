@@ -18,11 +18,8 @@ public class MoveableObject : MonoBehaviour, IInteractable
     [SerializeField] private float maxGrabDistance = 2.5f;
 
     [Header("Transform Settings")]
-    [SerializeField, Tooltip("Certain transform offsets can cause overlapping colliders and lead to weird player movement, so this option is here as a failsafe")] 
-    private bool disableColliderWhileHeld = true;
     [SerializeField] private Vector3 heldPositionOffset = Vector3.zero;
 
-    private Transform grabPoint;
     private Rigidbody rb;
     private PlayerMovingObjects mover;
 
@@ -40,10 +37,7 @@ public class MoveableObject : MonoBehaviour, IInteractable
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
-        if (!TryGetComponent<Collider>(out coll))
-        {
-            disableColliderWhileHeld = false;
-        }
+        coll = GetComponent<Collider>();
     }
 
     public bool CanInteract(GameObject player)
@@ -85,10 +79,7 @@ public class MoveableObject : MonoBehaviour, IInteractable
         rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
         rb.constraints = RigidbodyConstraints.FreezeAll;
-        rb.isKinematic = false;
-
-        if (disableColliderWhileHeld)
-            coll.enabled = false;
+        rb.isKinematic = true;
 
         // Apply offsets after parenting (Rotate in world space to maintain rotation at time of grabbing)
         transform.localPosition += heldPositionOffset;
@@ -101,12 +92,8 @@ public class MoveableObject : MonoBehaviour, IInteractable
     public void Release()
     {
         IsGrabbed = false;
-        grabPoint = null;
         transform.parent = null; // Unparent from grabpoint
         rb.constraints = RigidbodyConstraints.FreezeRotation;
-
-        if (disableColliderWhileHeld)
-            coll.enabled = true;
 
         // Set rigidbody back to normal
         rb.isKinematic = false;
@@ -143,6 +130,8 @@ public class MoveableObject : MonoBehaviour, IInteractable
                 Debug.LogWarning("Player tried to grab an object while having an item equipped.");
                 return;
             }
+            // Prevent collision with the player before grabbing
+            Physics.IgnoreCollision(coll, player.GetComponent<Collider>(), true);
             // Move to grabPoint
             Grab(mover.grabPoint);
             mover.OnMovingObject(this);
@@ -154,6 +143,8 @@ public class MoveableObject : MonoBehaviour, IInteractable
             Release();
             mover.OnReleaseObject(this);
             interacting.ClearHeldObjects();
+            // Reenable collision with the player after releasing
+            Physics.IgnoreCollision(coll, player.GetComponent<Collider>(), false);
         }
 
         // Notify any listeners
