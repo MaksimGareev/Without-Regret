@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.AI.Navigation;
 using UnityEngine;
 
 [RequireComponent(typeof(BoxCollider))]
@@ -23,7 +24,11 @@ public class MoveableObjectPlacement : MonoBehaviour
 
     [Tooltip("Whether to add progress to the linked objective when the player places a moveable object in this slot.")]
     [SerializeField] private bool addProgress;
+    
+    [Tooltip("Whether to rebuild the NavMesh after placing the moveable object in this slot. Leave this unchecked if the moveable object is not an obstacle that NPCs need to navigate around or on, to save on performance.")]
+    [SerializeField] private bool rebuildNavMesh = false;
 
+    private NavMeshSurface[] navMeshSurfaces;
     private GameObject player;
     private PlayerMovingObjects playerMovingObjects;
     private MoveableObject moveableObjectScript;
@@ -66,6 +71,15 @@ public class MoveableObjectPlacement : MonoBehaviour
         else
         {
             Debug.LogWarning("No moveable object instance linked in inspector!");
+        }
+
+        if (rebuildNavMesh)
+        {
+            navMeshSurfaces = FindObjectsByType<NavMeshSurface>(FindObjectsSortMode.None);
+            if (navMeshSurfaces.Length == 0)
+            {
+                Debug.LogWarning("Rebuild NavMesh is enabled but no NavMeshSurfaces were found in the scene.");
+            }
         }
         
         if (!isObjectiveActive && needsObjective && linkedObjective != null && ObjectiveManager.Instance != null)
@@ -178,10 +192,11 @@ public class MoveableObjectPlacement : MonoBehaviour
                     ObjectiveManager.Instance.AddProgress(linkedObjective.objectiveID, 1);
                 }
 
-                // Freeze the object in place and prevent further interactions with it, disable ghost, and save
+                // Freeze the object in place and prevent further interactions with it, disable ghost, rebuild navmesh and save
                 rb.constraints = RigidbodyConstraints.FreezeAll;
                 didOnce = true;
                 DisableGhost();
+                RebuildNavMesh();
                 SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
             }
         }
@@ -256,6 +271,29 @@ public class MoveableObjectPlacement : MonoBehaviour
         {
             ghostInstance.SetActive(false);
             ghostEnabled = false;
+        }
+    }
+
+    private IEnumerator RebuildNavMesh()
+    {
+        if (!rebuildNavMesh || navMeshSurfaces.Length == 0) yield break;
+
+        // wait for object to stop moving
+        while (rb.linearVelocity.magnitude > 0.05f || rb.angularVelocity.magnitude > 0.05f)
+        {
+            yield return null;
+        }
+
+        // Rebuild all NavMeshSurfaces in the scene
+        foreach (var surface in navMeshSurfaces)
+        {
+            surface.BuildNavMesh();
+        }
+
+        // Update all NavMeshLinks in the scene to ensure they connect properly to the updated NavMesh
+        foreach (var link in FindObjectsByType<NavMeshLink>(FindObjectsSortMode.None))
+        {
+            link.UpdateLink();
         }
     }
 
