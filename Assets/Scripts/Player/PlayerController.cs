@@ -95,7 +95,6 @@ public class PlayerController : MonoBehaviour, ISaveable
         if (GameManager.Instance.staminaSlider != null)
         {
             GameManager.Instance.staminaSlider.value = SprintTimer;
-            GameManager.Instance.staminaSlider.gameObject.SetActive(false);
         }
 
         playerThrowing = gameObject.GetComponent<PlayerThrowing>();
@@ -446,7 +445,6 @@ public class PlayerController : MonoBehaviour, ISaveable
                         sprintCooldownRoutine = null;
                     }
 
-                    GameManager.Instance.staminaSlider.gameObject.SetActive(false);
                 }
             }
         }
