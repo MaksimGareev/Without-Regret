@@ -382,8 +382,10 @@ public class MMSettings : MonoBehaviour
         var uniqueResolutions = new System.Collections.Generic.List<Resolution>();
         foreach (var res in resolutions)
         {
-            // Only add 16:9 resolutions
-            if (Mathf.Approximately((float)res.width / res.height, 16f / 9f))
+            // Include 16:9, 16:10, and 4:3 aspect ratios.
+            if (Mathf.Approximately((float)res.width / res.height, 16f / 9f) 
+            || Mathf.Approximately((float)res.width / res.height, 16f / 10f) 
+            || Mathf.Approximately((float)res.width / res.height, 4f / 3f))
             {
                 // Avoid duplicates
                 if (!uniqueResolutions.Exists(r => r.width == res.width && r.height == res.height))
