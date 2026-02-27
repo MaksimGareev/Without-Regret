@@ -28,6 +28,7 @@ public class GameManager : MonoBehaviour
     public Slider possessionSlider;
     public Slider floatingSlider;
     public RectTransform floatTargetArea;
+    public Slider floatTimerSlider;
     public Slider floatCooldown;
     public Image staminaFill;
     public GameObject InventoryUI;

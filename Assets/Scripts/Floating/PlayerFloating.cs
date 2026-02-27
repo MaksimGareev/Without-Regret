@@ -53,6 +53,7 @@ public class PlayerFloating : MonoBehaviour
     private Animator animator;
     private RectTransform floatTargetArea;
     private Slider floatingSlider;
+    private Slider timerSlider;
     private Slider cooldownSlider;
 
     public bool IsFloating { get; private set; } = false;
@@ -125,6 +126,12 @@ public class PlayerFloating : MonoBehaviour
         if (GameManager.Instance.floatTargetArea != null)
         {
             floatTargetArea = GameManager.Instance.floatTargetArea;
+        }
+
+        if (GameManager.Instance.floatTimerSlider != null)
+        {
+            timerSlider = GameManager.Instance.floatTimerSlider;
+            timerSlider.gameObject.SetActive(false);
         }
 
         // Assign floatInput based on the state of the Input Action
@@ -252,6 +259,7 @@ public class PlayerFloating : MonoBehaviour
         StartCoroutine(FloatAnimationHandler());
 
         floatingSlider.gameObject.SetActive(true);
+        timerSlider.gameObject.SetActive(true);
         IsFloating = true;
         floatTimer = 0f;
         rhythmTimer = 0f;
@@ -291,6 +299,7 @@ public class PlayerFloating : MonoBehaviour
         animator.SetBool("isFloating", false);
 
         floatingSlider.gameObject.SetActive(false);
+        timerSlider.gameObject.SetActive(false);
         IsFloating = false;
         rhythmTimer = 0f;
         floatTimer = 0f;
@@ -327,6 +336,10 @@ public class PlayerFloating : MonoBehaviour
         }
 
         floatTimer += Time.deltaTime;
+        if (timerSlider != null)
+        {
+            timerSlider.value = Mathf.Clamp01(floatTimer / floatDuration);
+        }
 
         if (floatTimer >= floatDuration)
         {
