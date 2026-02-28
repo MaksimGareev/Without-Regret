@@ -275,6 +275,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 39070511}
+  - component: {fileID: 39070512}
   m_Layer: 0
   m_Name: PenelopeCheckPoint (10)
   m_TagString: Untagged
@@ -297,6 +298,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &39070512
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 39070510}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 231b6692377eb9441b5f37e5bd573a6b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TraversablePoint
+  isTraversable: 0
 --- !u!1 &40569711
 GameObject:
   m_ObjectHideFlags: 0
@@ -2155,6 +2169,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 186007475}
+  - component: {fileID: 186007476}
   m_Layer: 0
   m_Name: PenelopeCheckPoint (7)
   m_TagString: Untagged
@@ -2177,6 +2192,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &186007476
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 186007474}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 231b6692377eb9441b5f37e5bd573a6b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TraversablePoint
+  isTraversable: 0
 --- !u!1 &190879587
 GameObject:
   m_ObjectHideFlags: 0
@@ -2253,6 +2281,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 204404063}
+  - component: {fileID: 204404064}
   m_Layer: 0
   m_Name: PenelopeCheckPoint (4)
   m_TagString: Untagged
@@ -2275,6 +2304,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &204404064
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 204404062}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 231b6692377eb9441b5f37e5bd573a6b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TraversablePoint
+  isTraversable: 1
 --- !u!1 &213811272
 GameObject:
   m_ObjectHideFlags: 0
@@ -3297,15 +3339,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2362952736690491265, guid: c15e4d30c466cad44b39e753409ff254, type: 3}
       propertyPath: maxSpeed
-      value: 0.5
+      value: 2.1
       objectReference: {fileID: 0}
     - target: {fileID: 2362952736690491265, guid: c15e4d30c466cad44b39e753409ff254, type: 3}
       propertyPath: minSpeed
-      value: 0.5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2362952736690491265, guid: c15e4d30c466cad44b39e753409ff254, type: 3}
       propertyPath: baseSpeed
-      value: 0.5
+      value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 2362952736690491265, guid: c15e4d30c466cad44b39e753409ff254, type: 3}
       propertyPath: targets.Array.size
@@ -3317,7 +3359,7 @@ PrefabInstance:
       objectReference: {fileID: 1322275391}
     - target: {fileID: 5097125487249138290, guid: c15e4d30c466cad44b39e753409ff254, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 87.82
+      value: 80.64
       objectReference: {fileID: 0}
     - target: {fileID: 5097125487249138290, guid: c15e4d30c466cad44b39e753409ff254, type: 3}
       propertyPath: m_LocalPosition.y
@@ -3325,7 +3367,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5097125487249138290, guid: c15e4d30c466cad44b39e753409ff254, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 276.71
+      value: 282.18
       objectReference: {fileID: 0}
     - target: {fileID: 5097125487249138290, guid: c15e4d30c466cad44b39e753409ff254, type: 3}
       propertyPath: m_LocalRotation.w
@@ -3360,6 +3402,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c15e4d30c466cad44b39e753409ff254, type: 3}
+--- !u!1 &273037604 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 43755293103271873, guid: c15e4d30c466cad44b39e753409ff254, type: 3}
+  m_PrefabInstance: {fileID: 273037603}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &273577278
 GameObject:
   m_ObjectHideFlags: 0
@@ -4719,6 +4766,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 437977821}
+  - component: {fileID: 437977822}
   m_Layer: 0
   m_Name: PenelopeCheckPoint (9)
   m_TagString: Untagged
@@ -4741,6 +4789,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &437977822
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 437977820}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 231b6692377eb9441b5f37e5bd573a6b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TraversablePoint
+  isTraversable: 1
 --- !u!4 &443750055 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 460248068452393797, guid: 21f1ab3455ff23b45abe8df2739abdde, type: 3}
@@ -5482,6 +5543,14 @@ PrefabInstance:
       propertyPath: moveableObjectInstance
       value: 
       objectReference: {fileID: 945784036}
+    - target: {fileID: 3570109941696432475, guid: aebce6ff4a8f7154aab1c2fc99b0563a, type: 3}
+      propertyPath: traversablePoints.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3570109941696432475, guid: aebce6ff4a8f7154aab1c2fc99b0563a, type: 3}
+      propertyPath: 'traversablePoints.Array.data[0]'
+      value: 
+      objectReference: {fileID: 1303165402}
     - target: {fileID: 6867195628652635518, guid: aebce6ff4a8f7154aab1c2fc99b0563a, type: 3}
       propertyPath: m_Name
       value: MoveableObjectLockingPoint
@@ -5931,7 +6000,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3086140246574635878, guid: 50418b5f2ca51554fb6c711361357d5e, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7348955320931083906, guid: 50418b5f2ca51554fb6c711361357d5e, type: 3}
       propertyPath: m_AgentTypeID
@@ -5939,7 +6008,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7504214182150986572, guid: 50418b5f2ca51554fb6c711361357d5e, type: 3}
       propertyPath: uniqueID
-      value: 4cb56805-cfb0-4c16-9bdf-51953f3838d6
+      value: 7576f737-11c2-4568-9636-33b592a1c743
       objectReference: {fileID: 0}
     - target: {fileID: 8169829489572737092, guid: 50418b5f2ca51554fb6c711361357d5e, type: 3}
       propertyPath: m_LocalPosition.x
@@ -7647,6 +7716,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 785496534}
+  - component: {fileID: 785496535}
   m_Layer: 0
   m_Name: PenelopeCheckPoint (1)
   m_TagString: Untagged
@@ -7663,12 +7733,25 @@ Transform:
   m_GameObject: {fileID: 785496533}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 110.08, y: 107.6, z: 230.79999}
+  m_LocalPosition: {x: 108.4, y: 107.6, z: 216.86}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &785496535
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 785496533}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 231b6692377eb9441b5f37e5bd573a6b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TraversablePoint
+  isTraversable: 0
 --- !u!1001 &788752716
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7701,6 +7784,14 @@ PrefabInstance:
       propertyPath: moveableObjectInstance
       value: 
       objectReference: {fileID: 956816650}
+    - target: {fileID: 3570109941696432475, guid: aebce6ff4a8f7154aab1c2fc99b0563a, type: 3}
+      propertyPath: traversablePoints.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3570109941696432475, guid: aebce6ff4a8f7154aab1c2fc99b0563a, type: 3}
+      propertyPath: 'traversablePoints.Array.data[0]'
+      value: 
+      objectReference: {fileID: 39070512}
     - target: {fileID: 6867195628652635518, guid: aebce6ff4a8f7154aab1c2fc99b0563a, type: 3}
       propertyPath: m_Name
       value: MoveableObjectLockingPoint (6)
@@ -7833,15 +7924,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 878993099091267819, guid: dc60125b78695de43a450852f8101d10, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 82.46
+      value: 99.02
       objectReference: {fileID: 0}
     - target: {fileID: 878993099091267819, guid: dc60125b78695de43a450852f8101d10, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 106.15
+      value: 100.75
       objectReference: {fileID: 0}
     - target: {fileID: 878993099091267819, guid: dc60125b78695de43a450852f8101d10, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 254.97
+      value: 278.01
       objectReference: {fileID: 0}
     - target: {fileID: 878993099091267819, guid: dc60125b78695de43a450852f8101d10, type: 3}
       propertyPath: m_LocalRotation.w
@@ -7882,6 +7973,10 @@ PrefabInstance:
     - target: {fileID: 5675321481151379428, guid: dc60125b78695de43a450852f8101d10, type: 3}
       propertyPath: m_TagString
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 7137697055784097519, guid: dc60125b78695de43a450852f8101d10, type: 3}
+      propertyPath: sprintCooldown
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -7977,6 +8072,14 @@ PrefabInstance:
       propertyPath: moveableObjectInstance
       value: 
       objectReference: {fileID: 686381496}
+    - target: {fileID: 3570109941696432475, guid: aebce6ff4a8f7154aab1c2fc99b0563a, type: 3}
+      propertyPath: traversablePoints.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3570109941696432475, guid: aebce6ff4a8f7154aab1c2fc99b0563a, type: 3}
+      propertyPath: 'traversablePoints.Array.data[0]'
+      value: 
+      objectReference: {fileID: 1951319963}
     - target: {fileID: 6867195628652635518, guid: aebce6ff4a8f7154aab1c2fc99b0563a, type: 3}
       propertyPath: m_Name
       value: MoveableObjectLockingPoint (3)
@@ -8311,7 +8414,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3086140246574635878, guid: 50418b5f2ca51554fb6c711361357d5e, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7348955320931083906, guid: 50418b5f2ca51554fb6c711361357d5e, type: 3}
       propertyPath: m_AgentTypeID
@@ -8319,7 +8422,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7504214182150986572, guid: 50418b5f2ca51554fb6c711361357d5e, type: 3}
       propertyPath: uniqueID
-      value: cece422f-a838-420c-ac82-fd138c033738
+      value: 04a5359a-a60c-4107-9d72-f2d71cba6b9d
       objectReference: {fileID: 0}
     - target: {fileID: 8169829489572737092, guid: 50418b5f2ca51554fb6c711361357d5e, type: 3}
       propertyPath: m_LocalPosition.x
@@ -9604,6 +9707,14 @@ PrefabInstance:
       propertyPath: moveableObjectInstance
       value: 
       objectReference: {fileID: 241719748}
+    - target: {fileID: 3570109941696432475, guid: aebce6ff4a8f7154aab1c2fc99b0563a, type: 3}
+      propertyPath: traversablePoints.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3570109941696432475, guid: aebce6ff4a8f7154aab1c2fc99b0563a, type: 3}
+      propertyPath: 'traversablePoints.Array.data[0]'
+      value: 
+      objectReference: {fileID: 785496535}
     - target: {fileID: 6867195628652635518, guid: aebce6ff4a8f7154aab1c2fc99b0563a, type: 3}
       propertyPath: m_Name
       value: MoveableObjectLockingPoint (1)
@@ -9766,7 +9877,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3086140246574635878, guid: 50418b5f2ca51554fb6c711361357d5e, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7348955320931083906, guid: 50418b5f2ca51554fb6c711361357d5e, type: 3}
       propertyPath: m_AgentTypeID
@@ -9774,7 +9885,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7504214182150986572, guid: 50418b5f2ca51554fb6c711361357d5e, type: 3}
       propertyPath: uniqueID
-      value: 3f0bda6b-d976-4a10-b48f-e2dd35ada1aa
+      value: 3c771631-94d1-4712-9703-43578d446ed5
       objectReference: {fileID: 0}
     - target: {fileID: 8169829489572737092, guid: 50418b5f2ca51554fb6c711361357d5e, type: 3}
       propertyPath: m_LocalPosition.x
@@ -10537,6 +10648,14 @@ PrefabInstance:
       propertyPath: moveableObjectInstance
       value: 
       objectReference: {fileID: 160594173}
+    - target: {fileID: 3570109941696432475, guid: aebce6ff4a8f7154aab1c2fc99b0563a, type: 3}
+      propertyPath: traversablePoints.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3570109941696432475, guid: aebce6ff4a8f7154aab1c2fc99b0563a, type: 3}
+      propertyPath: 'traversablePoints.Array.data[0]'
+      value: 
+      objectReference: {fileID: 1314984878}
     - target: {fileID: 6867195628652635518, guid: aebce6ff4a8f7154aab1c2fc99b0563a, type: 3}
       propertyPath: m_Name
       value: MoveableObjectLockingPoint (2)
@@ -10727,6 +10846,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1125188774}
+  - component: {fileID: 1125188775}
   m_Layer: 0
   m_Name: PenelopeCheckPoint
   m_TagString: Untagged
@@ -10749,6 +10869,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1125188775
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1125188773}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 231b6692377eb9441b5f37e5bd573a6b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TraversablePoint
+  isTraversable: 1
 --- !u!43 &1139297614
 Mesh:
   m_ObjectHideFlags: 0
@@ -10957,7 +11090,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3086140246574635878, guid: 50418b5f2ca51554fb6c711361357d5e, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7348955320931083906, guid: 50418b5f2ca51554fb6c711361357d5e, type: 3}
       propertyPath: m_AgentTypeID
@@ -10965,7 +11098,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7504214182150986572, guid: 50418b5f2ca51554fb6c711361357d5e, type: 3}
       propertyPath: uniqueID
-      value: 273ce7dc-2daa-4990-9783-12588d1ba072
+      value: 05ddeac8-334e-42ba-b84e-40ac6ed2d5dd
       objectReference: {fileID: 0}
     - target: {fileID: 8169829489572737092, guid: 50418b5f2ca51554fb6c711361357d5e, type: 3}
       propertyPath: m_LocalPosition.x
@@ -11158,6 +11291,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1197161724}
+  - component: {fileID: 1197161725}
   m_Layer: 0
   m_Name: PenelopeCheckPoint (11)
   m_TagString: Untagged
@@ -11180,6 +11314,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1197161725
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1197161723}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 231b6692377eb9441b5f37e5bd573a6b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TraversablePoint
+  isTraversable: 1
 --- !u!1 &1201990205
 GameObject:
   m_ObjectHideFlags: 0
@@ -12066,6 +12213,14 @@ PrefabInstance:
       propertyPath: moveableObjectInstance
       value: 
       objectReference: {fileID: 1479961472}
+    - target: {fileID: 3570109941696432475, guid: aebce6ff4a8f7154aab1c2fc99b0563a, type: 3}
+      propertyPath: traversablePoints.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3570109941696432475, guid: aebce6ff4a8f7154aab1c2fc99b0563a, type: 3}
+      propertyPath: 'traversablePoints.Array.data[0]'
+      value: 
+      objectReference: {fileID: 186007476}
     - target: {fileID: 6867195628652635518, guid: aebce6ff4a8f7154aab1c2fc99b0563a, type: 3}
       propertyPath: m_Name
       value: MoveableObjectLockingPoint (4)
@@ -12186,6 +12341,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1303165401}
+  - component: {fileID: 1303165402}
   m_Layer: 0
   m_Name: PenelopeCheckPoint (2)
   m_TagString: Untagged
@@ -12208,6 +12364,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1303165402
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1303165400}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 231b6692377eb9441b5f37e5bd573a6b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TraversablePoint
+  isTraversable: 0
 --- !u!1 &1314984876
 GameObject:
   m_ObjectHideFlags: 0
@@ -12217,6 +12386,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1314984877}
+  - component: {fileID: 1314984878}
   m_Layer: 0
   m_Name: PenelopeCheckPoint (5)
   m_TagString: Untagged
@@ -12239,6 +12409,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1314984878
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1314984876}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 231b6692377eb9441b5f37e5bd573a6b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TraversablePoint
+  isTraversable: 0
 --- !u!1 &1322275386 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: fbd1b5cdd28e42e43854b2f8387dd8e7, type: 3}
@@ -12254,11 +12437,11 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.44374436
-  m_Speed: 1.2
+  m_Speed: 2.2
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
-  m_StoppingDistance: 0
+  m_StoppingDistance: 0.05
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
@@ -12280,17 +12463,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ProtectedNPC
   agent: {fileID: 1322275387}
   CheckPoints:
-  - {fileID: 1125188774}
-  - {fileID: 785496534}
-  - {fileID: 1303165401}
-  - {fileID: 1339870646}
-  - {fileID: 204404063}
-  - {fileID: 1314984877}
-  - {fileID: 1951319962}
-  - {fileID: 1987492071}
-  - {fileID: 437977821}
-  - {fileID: 39070511}
-  - {fileID: 1197161724}
+  - {fileID: 1125188775}
+  - {fileID: 785496535}
+  - {fileID: 1303165402}
+  - {fileID: 1339870647}
+  - {fileID: 204404064}
+  - {fileID: 1314984878}
+  - {fileID: 1951319963}
+  - {fileID: 186007476}
+  - {fileID: 1987492072}
+  - {fileID: 437977822}
+  - {fileID: 39070512}
+  - {fileID: 1197161725}
   point: 0
 --- !u!4 &1322275391 stripped
 Transform:
@@ -12337,6 +12521,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1339870646}
+  - component: {fileID: 1339870647}
   m_Layer: 0
   m_Name: PenelopeCheckPoint (3)
   m_TagString: Untagged
@@ -12359,6 +12544,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1339870647
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1339870645}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 231b6692377eb9441b5f37e5bd573a6b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TraversablePoint
+  isTraversable: 1
 --- !u!1001 &1352842712
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -13661,6 +13859,85 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 460248068452393797, guid: 21f1ab3455ff23b45abe8df2739abdde, type: 3}
   m_PrefabInstance: {fileID: 1065856071}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1474114636
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1474114640}
+  - component: {fileID: 1474114639}
+  - component: {fileID: 1474114638}
+  - component: {fileID: 1474114637}
+  m_Layer: 0
+  m_Name: EnemyTriggerSpawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1474114637
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1474114636}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5e64a5136c98f34283207b53a894312, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SpawnChasingEnemy
+  Enemy: {fileID: 273037604}
+  hintMessage: Hurry Echo that thing is still chasing after Darry we need to help
+    him!
+  hasPassed: 0
+--- !u!65 &1474114638
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1474114636}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 8.414383, y: 4.3454514, z: 3.9680786}
+  m_Center: {x: -1.9274063, y: 0.96902084, z: -1.4074097}
+--- !u!33 &1474114639
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1474114636}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!4 &1474114640
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1474114636}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 83.47, y: 106.43, z: 253.67}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1479961472
 GameObject:
   m_ObjectHideFlags: 0
@@ -15237,7 +15514,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: fbd1b5cdd28e42e43854b2f8387dd8e7, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 100.4
+      value: 97.34
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: fbd1b5cdd28e42e43854b2f8387dd8e7, type: 3}
       propertyPath: m_LocalPosition.y
@@ -15245,7 +15522,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: fbd1b5cdd28e42e43854b2f8387dd8e7, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 268.73
+      value: 274.75
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: fbd1b5cdd28e42e43854b2f8387dd8e7, type: 3}
       propertyPath: m_LocalRotation.w
@@ -15282,6 +15559,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: fbd1b5cdd28e42e43854b2f8387dd8e7, type: 3}
       propertyPath: m_Name
       value: PenelopeUpdated
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: fbd1b5cdd28e42e43854b2f8387dd8e7, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: fbd1b5cdd28e42e43854b2f8387dd8e7, type: 3}
       propertyPath: m_IsActive
@@ -17213,6 +17494,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: LevelTransition
       objectReference: {fileID: 0}
+    - target: {fileID: 8170784763469595978, guid: 1d6f0063bbf73114e972c81b3875cb84, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -17472,6 +17757,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1951319962}
+  - component: {fileID: 1951319963}
   m_Layer: 0
   m_Name: PenelopeCheckPoint (6)
   m_TagString: Untagged
@@ -17494,6 +17780,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1951319963
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1951319961}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 231b6692377eb9441b5f37e5bd573a6b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TraversablePoint
+  isTraversable: 0
 --- !u!1001 &1971539604
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -17692,6 +17991,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1987492071}
+  - component: {fileID: 1987492072}
   m_Layer: 0
   m_Name: PenelopeCheckPoint (8)
   m_TagString: Untagged
@@ -17714,6 +18014,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1987492072
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1987492070}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 231b6692377eb9441b5f37e5bd573a6b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TraversablePoint
+  isTraversable: 1
 --- !u!1 &1990161672
 GameObject:
   m_ObjectHideFlags: 0
@@ -19219,7 +19532,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3086140246574635878, guid: 50418b5f2ca51554fb6c711361357d5e, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7348955320931083906, guid: 50418b5f2ca51554fb6c711361357d5e, type: 3}
       propertyPath: m_AgentTypeID
@@ -19227,7 +19540,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7504214182150986572, guid: 50418b5f2ca51554fb6c711361357d5e, type: 3}
       propertyPath: uniqueID
-      value: 70a1a796-1bf0-487e-b092-06dc12497427
+      value: 418869f9-378f-4153-9f54-f408dc3daffa
       objectReference: {fileID: 0}
     - target: {fileID: 8169829489572737092, guid: 50418b5f2ca51554fb6c711361357d5e, type: 3}
       propertyPath: m_LocalPosition.x
@@ -19309,7 +19622,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3086140246574635878, guid: 50418b5f2ca51554fb6c711361357d5e, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7348955320931083906, guid: 50418b5f2ca51554fb6c711361357d5e, type: 3}
       propertyPath: m_BaseOffset
@@ -19321,7 +19634,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7504214182150986572, guid: 50418b5f2ca51554fb6c711361357d5e, type: 3}
       propertyPath: uniqueID
-      value: 6188333b-c3e5-460a-9f65-a78a8732e55e
+      value: 8a617080-5d13-4748-86fa-157fcdeeec8f
       objectReference: {fileID: 0}
     - target: {fileID: 8169829489572737092, guid: 50418b5f2ca51554fb6c711361357d5e, type: 3}
       propertyPath: m_LocalPosition.x
@@ -19441,8 +19754,8 @@ SceneRoots:
   - {fileID: 699628944}
   - {fileID: 333208033}
   - {fileID: 881051214}
-  - {fileID: 490275858}
   - {fileID: 977849916}
+  - {fileID: 490275858}
   - {fileID: 1093692366}
   - {fileID: 861178086}
   - {fileID: 1284439687}
@@ -19475,3 +19788,4 @@ SceneRoots:
   - {fileID: 1567888474}
   - {fileID: 1035816218}
   - {fileID: 731415155}
+  - {fileID: 1474114640}
