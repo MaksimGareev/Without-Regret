@@ -111,21 +111,85 @@
       "Speaker": "Irene",
       "text": "Listen, I just want us to be safe, okay? Why don't we just stay in and play Animal Crossing, or maybe watch a movie.",
       "requiredMorality": 0,
-      "endDialogueAfterLine": true
+      "NextLineID": "PenelopeParty"
     },
     {
       "LineID": "Impatience",
       "Speaker": "Irene",
       "text": "Penelope, can you listen to someone other than yourself for once please? It's not a good idea.",
       "requiredMorality": 0,
-      "endDialogueAfterLine": true
+      "NextLineID": "PenelopeUpset"
     },
     {
       "LineID": "Ditz",
       "Speaker": "Irene",
       "text": "I'd rather be a buzzkill than a ditz. I mean seriously, you can be so stupid sometimes. I really have to tell you it's a bad idea to go into a dark, foggy forest?",
       "requiredMorality": 0,
-      "endDialogueAfterLine": true
+      "NextLineID": "PenelopeUpset"
+    },
+    {
+      "LineID": "PenelopeUpset",
+      "Speaker": "Penelope",
+      "text": "Ughhh you're such a buzzkill sometimes Irene.",
+      "requiredMorality": 0,
+      "choices": [
+        {
+          "text": "Maintain that you just want to be safe.",
+          "moralityChange": 1,
+          "NextLineID": "Safety",
+          "directionString": "Up"
+        },
+        {
+          "text": "Tell her to just give it up.",
+          "moralityChange": -1,
+          "NextLineID": "Impatience",
+          "directionString": "Down"
+        },
+        {
+          "text": "Brush off the insult.",
+          "moralityChange": 1,
+          "NextLineID": "TurntheCheek",
+          "directionString": "Left"
+        },
+        {
+          "text": "Insult her back.",
+          "moralityChange": -1,
+          "NextLineID": "Ditz",
+          "directionString": "Right"
+        }
+      ]
+    },
+    {
+      "LineID": "PenelopeParty",
+      "Speaker": "Penelope",
+      "text": "Ughhh you're such a buzzkill sometimes Irene.",
+      "requiredMorality": 0,
+      "choices": [
+        {
+          "text": "Maintain that you just want to be safe.",
+          "moralityChange": 1,
+          "NextLineID": "Safety",
+          "directionString": "Up"
+        },
+        {
+          "text": "Tell her to just give it up.",
+          "moralityChange": -1,
+          "NextLineID": "Impatience",
+          "directionString": "Down"
+        },
+        {
+          "text": "Brush off the insult.",
+          "moralityChange": 1,
+          "NextLineID": "TurntheCheek",
+          "directionString": "Left"
+        },
+        {
+          "text": "Insult her back.",
+          "moralityChange": -1,
+          "NextLineID": "Ditz",
+          "directionString": "Right"
+        }
+      ]
     }
   ]
 }
