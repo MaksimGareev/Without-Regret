@@ -13,6 +13,8 @@ public class MoveableObject : MonoBehaviour, IInteractable
     private float sprintDepletionFactor = 1.05f;
     [SerializeField, Tooltip("Modifies how quickly the player's sprint timer is reduced when this object is held while moving (but not sprinting). Higher number = faster reduction")]
     private float staminaReduction = 0.5f;
+    [SerializeField, Range(0, 1), Tooltip("Determines how strict the angle between the player forward vector and object must be to allow interaction. 1 = player can be facing parallel, 0 = player must be perfectly perpendicular")]
+    private float dotProductThreshold = 0.4f;
     [SerializeField] private bool allowSprint = true;
     [SerializeField] ItemData requiredItem;
     [SerializeField] private float maxGrabDistance = 2.5f;
@@ -30,9 +32,7 @@ public class MoveableObject : MonoBehaviour, IInteractable
 
     public event Action OnInteracted;
     private Collider coll;
-
-    [SerializeField] private NavMeshSurface navMeshSurface;
-
+    public Collider ObjectCollider => coll;
 
     private void Awake()
     {
@@ -47,7 +47,7 @@ public class MoveableObject : MonoBehaviour, IInteractable
 
         // Make sure player is facing toward the object by getting the Dot Product
         Vector3 toObject = (transform.position - player.transform.position).normalized;
-        if (Vector3.Dot(player.transform.forward, toObject) < 0.5f)
+        if (Vector3.Dot(player.transform.forward, toObject) < dotProductThreshold)
             return false;
 
         // Make sure player is within grabbing distance of the collider
@@ -116,12 +116,21 @@ public class MoveableObject : MonoBehaviour, IInteractable
             }
         }
 
+        
+
         // Only get grabbed if the player isnt holding something already
         if (!IsGrabbed && !mover.IsOccupied())
         {
             if (mover.grabPoint == null)
             {
                 Debug.LogError("Player grab point is null!");
+                return;
+            }
+            // Attempt to ensure that when the object is grabbed, there isn't major clipping with another object
+            // by checking the grab point for collisions.
+            if (mover.grabPoint.TryGetComponent<GrabPointCollisionCheck>(out var checker) && checker.CollidingWithSomethingExcept(coll))
+            {
+                Debug.Log("Player tried to grab an object, but their grab point is colliding with another object.");
                 return;
             }
             // Can't grab if an item is equipped
