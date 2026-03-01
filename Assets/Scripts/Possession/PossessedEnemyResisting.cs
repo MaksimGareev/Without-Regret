@@ -26,32 +26,18 @@ public class PossessedEnemyResisting : MonoBehaviour
 
         Vector3 moveDirection = playerInput.normalized * moveSpeed;
 
-        //struggleTimer += Time.fixedDeltaTime;
-
-        //if (struggleTimer >= struggleFrequency)
-        //{
-        //struggleTimer = 0f;
-
-        //struggleDirection = playerInput + (Random.insideUnitSphere * struggleStrength);
-        //struggleDirection.y = 0f;
-        //}
-
         Vector3 finalMoveDirection = gameObject.transform.position + playerInput.normalized * moveSpeed * Time.deltaTime * -1;
         finalMoveDirection.y = 0;
-
-        //rb.MovePosition(rb.position + finalMoveDirection * Time.fixedDeltaTime);
 
         Agent.destination = finalMoveDirection;
 
         Debug.DrawRay(transform.position, moveDirection, Color.white, 0.1f);
         Debug.DrawRay(transform.position, struggleDirection, Color.red, 0.1f);
-        //Debug.DrawRay(transform.position, finalMoveDirection, Color.green, 0.1f);
     }
 
     public void BeginPossession()
     {
         isPossessed = true;
-        //struggleTimer = 0f;
     }
 
     public void UpdatePossession(Vector3 input)

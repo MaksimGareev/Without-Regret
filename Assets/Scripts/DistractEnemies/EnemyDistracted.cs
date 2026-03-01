@@ -28,14 +28,14 @@ public class EnemyDistracted : MonoBehaviour
 
     void Update()
     {
-        if (!isDistracted || distraction == null)
+        if (!isDistracted || distraction == null)// if enemy is not destracted or somehow the destraction item is empty, skip the code
         {
             return;
         }
 
-        distractionTimer -= Time.deltaTime;
+        distractionTimer -= Time.deltaTime; // count down how long enemy remains distracted
 
-        if (enemyNavMeshAgent != null && !enemyNavMeshAgent.pathPending)
+        if (enemyNavMeshAgent != null && !enemyNavMeshAgent.pathPending) // if the nav agent isn't null and the agent isn't already following a route, move towards point of distraction
         {
             float distance = Vector3.Distance(transform.position, distractionPoint);
 

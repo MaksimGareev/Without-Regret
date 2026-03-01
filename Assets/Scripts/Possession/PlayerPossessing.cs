@@ -41,11 +41,6 @@ public class PlayerPossessing : MonoBehaviour
         playerRigidbody = GetComponent<Rigidbody>();
         possessionTimer = possessionDuration;
 
-        // if (possessionBar == null)
-        // {
-        //    possessionBar = GameObject.Find("PossessionBar")?.GetComponent<Slider>();
-        // }
-
         if (GameManager.Instance.possessionSlider != null)
         {
             GameManager.Instance.possessionSlider.value = 1;
@@ -128,54 +123,6 @@ public class PlayerPossessing : MonoBehaviour
         }
     }
 
-    //private PossessedEnemyResisting SelectEnemyMouse()
-    //{
-    //    Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-    //    if (Physics.Raycast(ray, out RaycastHit hit, 100f))
-    //    {
-    //        if (hit.collider.TryGetComponent<PossessedEnemyResisting>(out var target))
-    //        {
-    //            normalEnemyMovement = hit.collider.GetComponent<PatrollingEnemy>();
-    //            Debug.Log("Enemy found :" + hit.collider.gameObject.name);
-    //            StartPossession(target);
-    //        }
-    //    }
-
-    //    return null;
-    //}
-
-    //private PossessedEnemyResisting SelectEnemyController()
-    //{
-    //    Vector3 rightStick = CalculateInputFromPOV();
-
-    //    if (rightStick.sqrMagnitude < 0.1f)
-    //    {
-    //        return null;
-    //    }
-    //    Debug.DrawRay(transform.position, rightStick.normalized * possessionRange, Color.red, 0.5f);
-
-    //    Collider[] hits = Physics.OverlapSphere(transform.position, possessionRange);
-    //    Debug.Log("Found " + hits.Length + " colliders in range");
-        
-    //    foreach (var hit in hits)
-    //    {
-    //        Debug.Log("Collider: " + hit.name + " | Layer: " + LayerMask.LayerToName(hit.gameObject.layer) + " | Tag: " + hit.tag);
-    //        if (hit.CompareTag("Enemy"))
-    //        {
-    //            Vector3 directionToEnemy = (hit.transform.position - transform.position).normalized;
-    //            float angle = Vector3.Angle(rightStick, directionToEnemy);
-    //            if (angle < searchConeAngle)
-    //            {
-    //                normalEnemyMovement = hit.GetComponent<PatrollingEnemy>();
-    //                Debug.Log("Enemy found: " + hit.name);
-    //                return hit.GetComponent<PossessedEnemyResisting>();
-    //            }
-    //        }
-    //    }
-
-    //    return null;
-    //}
-
     private Vector3 CalculateInputFromPOV()
     {
         Vector3 input = new Vector3(Input.GetAxis("Xbox RightStick X"), 0, Input.GetAxis("Xbox RightStick Y"));
@@ -233,12 +180,6 @@ public class PlayerPossessing : MonoBehaviour
             enemyPOV.enabled = false;
         }
 
-        if (enemyRigidbody != null)
-        {
-            //enemyRigidbody.useGravity = false;
-        }
-
-
 
         if (!possessedEnemyMovement.enabled)
         {
@@ -265,11 +206,6 @@ public class PlayerPossessing : MonoBehaviour
         if (enemyPOV != null)
         {
             enemyPOV.enabled = true;
-        }
-
-        if (enemyRigidbody != null)
-        {
-            //enemyRigidbody.useGravity = true;
         }
 
         if (playerController != null)
