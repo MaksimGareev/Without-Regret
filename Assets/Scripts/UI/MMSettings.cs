@@ -530,10 +530,10 @@ public class MMSettings : MonoBehaviour
         controlsSettingsOpen = false;
 
         // Set button text colors
-        videoSettingsButton.gameObject.GetComponent<ButtonHighlighting>().stayHighlighted = true;
-        videoSettingsButton.gameObject.GetComponent<ButtonHighlighting>().OnHighlight(); // Highlight video settings button
-        audioSettingsButton.gameObject.GetComponent<ButtonHighlighting>().OnUnhighlight();
-        controlsSettingsButton.gameObject.GetComponent<ButtonHighlighting>().OnUnhighlight();
+        videoSettingsButton.gameObject.GetComponent<SelectableHighlighting>().stayHighlighted = true;
+        videoSettingsButton.gameObject.GetComponent<SelectableHighlighting>().ApplyHighlight(); // Highlight video settings button
+        audioSettingsButton.gameObject.GetComponent<SelectableHighlighting>().RemoveHighlight();
+        controlsSettingsButton.gameObject.GetComponent<SelectableHighlighting>().RemoveHighlight();
 
         EnableAllButtonsAndSliders();
 
@@ -554,10 +554,10 @@ public class MMSettings : MonoBehaviour
         controlsSettingsOpen = false;
 
         // Set button text colors
-        videoSettingsButton.gameObject.GetComponent<ButtonHighlighting>().OnUnhighlight();
-        audioSettingsButton.gameObject.GetComponent<ButtonHighlighting>().stayHighlighted = true;
-        audioSettingsButton.gameObject.GetComponent<ButtonHighlighting>().OnHighlight(); // Highlight audio settings button
-        controlsSettingsButton.gameObject.GetComponent<ButtonHighlighting>().OnUnhighlight();
+        videoSettingsButton.gameObject.GetComponent<SelectableHighlighting>().RemoveHighlight();
+        audioSettingsButton.gameObject.GetComponent<SelectableHighlighting>().stayHighlighted = true;
+        audioSettingsButton.gameObject.GetComponent<SelectableHighlighting>().ApplyHighlight(); // Highlight audio settings button
+        controlsSettingsButton.gameObject.GetComponent<SelectableHighlighting>().RemoveHighlight();
 
         EnableAllButtonsAndSliders();
 
@@ -578,10 +578,10 @@ public class MMSettings : MonoBehaviour
         audioSettingsOpen = false;
 
         // Set button text colors
-        videoSettingsButton.gameObject.GetComponent<ButtonHighlighting>().OnUnhighlight();
-        audioSettingsButton.gameObject.GetComponent<ButtonHighlighting>().OnUnhighlight();
-        controlsSettingsButton.gameObject.GetComponent<ButtonHighlighting>().stayHighlighted = true;
-        controlsSettingsButton.gameObject.GetComponent<ButtonHighlighting>().OnHighlight(); // Highlight controls settings button
+        videoSettingsButton.gameObject.GetComponent<SelectableHighlighting>().RemoveHighlight();
+        audioSettingsButton.gameObject.GetComponent<SelectableHighlighting>().RemoveHighlight();
+        controlsSettingsButton.gameObject.GetComponent<SelectableHighlighting>().stayHighlighted = true;
+        controlsSettingsButton.gameObject.GetComponent<SelectableHighlighting>().ApplyHighlight(); // Highlight controls settings button
 
         EnableAllButtonsAndSliders();
 
