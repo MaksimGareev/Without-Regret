@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using System.Collections;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Users;
 using TMPro;
 
 public class LockPicking : MonoBehaviour
@@ -66,10 +68,29 @@ public class LockPicking : MonoBehaviour
     [SerializeField] GameObject TutorialPopUp1;
     [SerializeField] GameObject TutorialPopUp2;
     [SerializeField] bool FirstTimeLock;
+
+    [Header("Input prompt ui fields")]
+    [SerializeField] GameObject ControllerInputUI;
+    [SerializeField] GameObject ControllerInputUIStageTwo;
+    [SerializeField] GameObject KeyboardInputUI;
+    [SerializeField] GameObject KeyboardInputUIStageTwo;
     private bool Tut1Active = false;
     private bool Tut2Active = false;
+    private PlayerInput input;
+    bool isController;
 
+    private bool IsController
+    {
+        get { return isController; }
+        set
+        {
+            if (value == isController)
+                return;
 
+            isController = value;
+            updateInputPrompt(isController);
+        }
+    }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Start()
     {
@@ -93,6 +114,7 @@ public class LockPicking : MonoBehaviour
         }
 
         controls = new PlayerControls();
+        IsController = true;
 
         // Rotation With GamePad
         controls.LockPicking.Rotate.performed += ctx => rotateInput = ctx.ReadValue<Vector2>();
@@ -116,7 +138,7 @@ public class LockPicking : MonoBehaviour
 
     private void OnEnable()
     {
-        controls.Enable();
+        controls.Enable(); 
     }
 
     private void OnDisable()
@@ -142,12 +164,14 @@ public class LockPicking : MonoBehaviour
 
                     // Apply rotation to pick cursor
                     PickCursor.localEulerAngles = new Vector3(0, 0, CurrentAngle - 90);
+                    IsController = true;
                 }
                 else if (KeyBoardInputValue != 0)// if detecting A and D input, uses this method
                 {
                     RotationAmount = -KeyBoardInputValue * CursorSpeed * Time.deltaTime;
                     CurrentAngle += RotationAmount;
                     PickCursor.localEulerAngles = new Vector3(0, 0, CurrentAngle - 90);
+                    IsController = false;
                 }
             }
             
@@ -187,8 +211,14 @@ public class LockPicking : MonoBehaviour
                     DurabilityMeter.gameObject.SetActive(false);
                     SecondStageActive = true;
                     StageTwoUI.SetActive(true);//switches controls to stage two, locks pick rotation
+                    updateInputPrompt(isController);
                     TriesRemainingText.gameObject.SetActive(true);
                     TriesRemainingText.text = ArrowAttempts + " attempts Remaining.";
+
+                    if (input != null)
+                    {
+                        updateInputPrompt(input);
+                    }
                     if (FirstTimeLock)
                     { 
                         TutorialPopUp2.SetActive(true);
@@ -214,6 +244,7 @@ public class LockPicking : MonoBehaviour
         {
             if (ArrowIndex < DirectionAssignments.Count)// handles input from WASD, the arrow keys, and d-pad once second stage is active
             {
+                
                 if (controls.LockPicking.ArrowUp.triggered)
                 {
                     CheckDirection(0);
@@ -329,6 +360,7 @@ public class LockPicking : MonoBehaviour
         Rigidbody rb = player.GetComponent<Rigidbody>();
         PickCursor.eulerAngles = new Vector3(0, 0, 0);
         GenerateSolutions();
+        updateInputPrompt(true);
         rb.constraints = RigidbodyConstraints.FreezeAll;
     }
 
@@ -456,6 +488,44 @@ public class LockPicking : MonoBehaviour
         {
             currentLockedItem.OnUnlocked();
             currentLockedItem = null;
+        }
+    }
+
+    private void updateInputPrompt(bool controller)
+    {
+        if (controller)
+        {
+            if (SecondStageActive)
+            {
+                ControllerInputUIStageTwo.SetActive(true);
+                KeyboardInputUIStageTwo.SetActive(false);
+                ControllerInputUI.SetActive(false);
+                KeyboardInputUI.SetActive(false);
+            }
+            else if (!SecondStageActive)
+            {
+                ControllerInputUI.SetActive(true);
+                KeyboardInputUI.SetActive(false);
+                ControllerInputUIStageTwo.SetActive(false);
+                KeyboardInputUIStageTwo.SetActive(false);
+            }
+        }
+        else
+        {
+            if (SecondStageActive)
+            {
+                ControllerInputUIStageTwo.SetActive(false);
+                KeyboardInputUIStageTwo.SetActive(true);
+                ControllerInputUI.SetActive(false);
+                KeyboardInputUI.SetActive(false);
+            }
+            else if (!SecondStageActive)
+            {
+                ControllerInputUI.SetActive(false);
+                KeyboardInputUI.SetActive(true);
+                ControllerInputUIStageTwo.SetActive(false);
+                KeyboardInputUIStageTwo.SetActive(false);
+            }
         }
     }
 }
