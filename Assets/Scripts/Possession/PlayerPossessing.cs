@@ -84,7 +84,7 @@ public class PlayerPossessing : MonoBehaviour
             possessionTimer -= Time.deltaTime;
             GameManager.Instance.possessionSlider.value = Mathf.InverseLerp(0, possessionDuration, possessionTimer);
 
-                Vector3 input = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+                Vector3 input = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), 0);
                 possessedEnemyMovement.UpdatePossession(input);
 
                 if (possessionTimer <= 0f || Input.GetKeyUp(possessKey) || Input.GetKeyUp(possessButton))
