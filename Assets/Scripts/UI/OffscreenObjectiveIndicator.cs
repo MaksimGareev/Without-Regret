@@ -13,6 +13,12 @@ public class OffscreenObjectiveIndicator : MonoBehaviour
     [SerializeField] private Canvas mainCanvas;
     [Tooltip("Margin of how far away the indicator will stay from the edges of the screen")]
     [SerializeField] private float offScreenMargin = 45f;
+    [Tooltip("The distance limit where the arrow will sit at max size. Any further than this and the arrow stays the same, closer this and the arrow starts to shrink")]
+    [SerializeField] private float maxSizeDistance = 2000f;
+    [Tooltip("The distance limit where the arrow wont get any smaller. Any closer than this wont change the arrow, any farther and the arrow starts to grow again.")]
+    [SerializeField] private float minSizeDistance = 20f;
+    [Tooltip("Minimum size the arrow will shrink to.")]
+    [SerializeField] private float minImageScale = 0.2f;
     [Tooltip("Public Variable accessible by any script, simply state whether or not you want this to be true at any given moment.")]
     public bool disableIndicator = false;
 
@@ -20,10 +26,14 @@ public class OffscreenObjectiveIndicator : MonoBehaviour
     private float spriteWidth;
     private float spriteHeight;
     private RectTransform canvasRect, rectTransform;
-
+    
+    private PlayerController player;
+    private float lerpAmount = 1f;
+    
     private Camera playerCam;
 
     Vector3 screenCenter = Vector3.zero;
+    Vector3 originalScale;
 
     Vector3 ScreenCenter
     {
@@ -49,6 +59,9 @@ public class OffscreenObjectiveIndicator : MonoBehaviour
         canvasRect = mainCanvas.GetComponent<RectTransform>();
 
         rectTransform = GetComponent<RectTransform>();
+        originalScale = rectTransform.localScale;
+
+        player = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
     }
 
     private void LateUpdate()
@@ -103,6 +116,27 @@ public class OffscreenObjectiveIndicator : MonoBehaviour
         Vector3 rotation = rectTransform.eulerAngles;
         rotation.z = Vector3.SignedAngle(Vector3.up, indicatorPosition - ScreenCenter, Vector3.forward);
         rectTransform.eulerAngles = rotation;
+
+        
+        float distance = Vector3.Distance(player.gameObject.transform.position, target.transform.position);
+
+        if(distance >= maxSizeDistance)
+        {
+            lerpAmount = 1;
+        }
+        if(distance <= minSizeDistance)
+        {
+            lerpAmount = 0;
+        }
+        else
+        {
+            lerpAmount = ((distance - minSizeDistance) / (maxSizeDistance - minSizeDistance)) * 100;
+        }
+
+        float scale = Mathf.Lerp(minImageScale, 1, lerpAmount);
+
+        rectTransform.localScale = originalScale * scale;
+
         indicator.SetActive(true);
 
         
