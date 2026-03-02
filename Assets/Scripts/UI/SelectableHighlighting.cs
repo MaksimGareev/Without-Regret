@@ -6,18 +6,19 @@ using UnityEngine.EventSystems;
 public class SelectableHighlighting : MonoBehaviour
 {
     private Color primaryHighlightColor = Color.aquamarine;
-    private Color backgroundHighlightColor = new Color(0.2f, 0.6f, 0.6f, 1.0f);
-    private Color primaryOriginalColor;
-    private Color backgroundOriginalColor;
-    private Color disabledColor = new Color(0.7f, 0.7f, 0.7f, 0.7f); // Semi-transparent gray for disabled state
+    private Color backgroundHighlightColor = new Color(0.25f, 0.7f, 0.6f, 1.0f);
+    //private Color primaryOriginalColor;
+    //private Color backgroundOriginalColor;
+    private Color disabledColor = new Color(0.7f, 0.7f, 0.7f, 0.5f); // Semi-transparent gray for disabled state
     private float highlightScaleMultiplier = 1.1f; // Scale factor for highlighting
+    private ColorBlock originalColorBlock; // To store the original color block of the Selectable
 
     private Selectable selectable;
     private Graphic backgroundGraphic;
     private Graphic primaryGraphic;
     private Vector3 originalScale;
     [HideInInspector] public bool stayHighlighted = false;
-    private bool currentInteractable;
+    //private bool currentInteractable;
 
     private void Awake()
     {
@@ -33,16 +34,18 @@ public class SelectableHighlighting : MonoBehaviour
 
         if (primaryGraphic != null)
         {
-            primaryOriginalColor = primaryGraphic.color; // Store the original text color
+            //primaryOriginalColor = primaryGraphic.color; // Store the original text color
         }
 
         if (backgroundGraphic != null)
         {
-            backgroundOriginalColor = backgroundGraphic.color; // Store the original background color
+            //backgroundOriginalColor = backgroundGraphic.color; // Store the original background color
         }
 
-        //selectable.transition = Selectable.Transition.None; // Disable default transitions to prevent conflicts with our custom highlighting
-        currentInteractable = selectable.interactable;
+        originalColorBlock = selectable.colors; // Store the original color block to restore later if needed
+        ApplyColorOverride();
+
+        //currentInteractable = selectable.interactable;
     }
 
     private void AddEventTriggers()
@@ -122,16 +125,39 @@ public class SelectableHighlighting : MonoBehaviour
         ApplyHighlight();
     }
 
-    private void Update()
+    // private void Update()
+    // {
+    //     if (selectable == null) return;
+
+    //     // Check for changes in interactable state
+    //     if (selectable.interactable != currentInteractable)
+    //     {
+    //         currentInteractable = selectable.interactable;
+    //         ApplyInteractableVisuals(currentInteractable);
+    //     }
+    // }
+
+    private void ApplyColorOverride()
     {
         if (selectable == null) return;
 
-        // Check for changes in interactable state
-        if (selectable.interactable != currentInteractable)
-        {
-            currentInteractable = selectable.interactable;
-            ApplyInteractableVisuals(currentInteractable);
-        }
+        ColorBlock colors = selectable.colors;
+
+        colors.highlightedColor = backgroundHighlightColor;
+        colors.pressedColor = backgroundHighlightColor * 0.9f;
+        colors.selectedColor = backgroundHighlightColor;
+        colors.disabledColor = disabledColor;
+        colors.colorMultiplier = 1.0f;
+        colors.fadeDuration = 0.1f;
+
+        selectable.colors = colors;
+    }
+
+    private void ResetColorOverride()
+    {
+        if (selectable == null) return;
+
+        selectable.colors = originalColorBlock; // Restore the original color block
     }
 
     private void SetGraphicsByType()
@@ -142,7 +168,7 @@ public class SelectableHighlighting : MonoBehaviour
         {
             primaryGraphic = GetComponentInChildren<TextMeshProUGUI>();
             backgroundGraphic = GetComponent<Image>();
-            backgroundHighlightColor = primaryHighlightColor;
+            //backgroundHighlightColor = primaryHighlightColor;
             originalScale = this.transform.localScale;
         }
         else if (selectable is Toggle toggle)
@@ -198,7 +224,7 @@ public class SelectableHighlighting : MonoBehaviour
         }
         else if (selectable is Toggle)
         {
-            highlightScaleMultiplier = 1.2f;
+            highlightScaleMultiplier = 1.3f;
 
             if (highlighted)
             {
@@ -238,7 +264,7 @@ public class SelectableHighlighting : MonoBehaviour
     }
 
     // Method to apply the highlight effect to the button
-    public void ApplyHighlight()
+    public void ApplyHighlight(bool isTab = false)
     {
         if (selectable == null) return;
 
@@ -249,7 +275,7 @@ public class SelectableHighlighting : MonoBehaviour
         }
 
         // Change the background color to the highlight color
-        if (backgroundGraphic != null)
+        if (isTab && backgroundGraphic != null)
         {
             backgroundGraphic.color = backgroundHighlightColor;
         }
@@ -259,7 +285,7 @@ public class SelectableHighlighting : MonoBehaviour
     }
 
     // Method to reset the button's appearance to its original state
-    public void RemoveHighlight()
+    public void RemoveHighlight(bool isTab = false)
     {
         if (selectable == null) return;
 
@@ -268,52 +294,22 @@ public class SelectableHighlighting : MonoBehaviour
         // Reset the button scale
         SetScaleByType(false);
 
-        if (!selectable.interactable)
-        {
-            ApplyInteractableVisuals(false);
-            return;
-        }
+        // if (!selectable.interactable)
+        // {
+        //     ApplyInteractableVisuals(false);
+        //     return;
+        // }
 
         // Reset the text color
         if (primaryGraphic != null)
         {
-            primaryGraphic.color = primaryOriginalColor;
+            primaryGraphic.color = originalColorBlock.normalColor;
         }
 
         // Reset the background color
-        if (backgroundGraphic != null)
+        if (isTab && backgroundGraphic != null)
         {
-            backgroundGraphic.color = backgroundOriginalColor;
-        }
-    }
-
-    private void ApplyInteractableVisuals(bool interactable)
-    {
-        if (selectable == null) return;
-
-        if (interactable)
-        {
-            // If the button is interactable, ensure it uses the original colors
-            if (primaryGraphic != null)
-            {
-                primaryGraphic.color = primaryOriginalColor;
-            }
-            if (backgroundGraphic != null)
-            {
-                backgroundGraphic.color = backgroundOriginalColor;
-            }
-        }
-        else
-        {
-            // If the button is not interactable, apply the disabled color
-            if (primaryGraphic != null)
-            {
-                primaryGraphic.color = disabledColor;
-            }
-            if (backgroundGraphic != null)
-            {
-                backgroundGraphic.color = disabledColor;
-            }
+            backgroundGraphic.color = originalColorBlock.normalColor;
         }
     }
 }

@@ -2,18 +2,18 @@ using UnityEngine;
 
 public class OrbitingPlatform : MonoBehaviour
 {
-    public enum RotationDirection 
+    public enum OrbitDirection 
     { 
         Clockwise, 
         CounterClockwise 
     }
 
-    [Header("Rotation Settings")]
-    [Tooltip("Direction of rotation for the platform.")]
-    [SerializeField] private RotationDirection rotationDirection = RotationDirection.Clockwise;
+    [Header("Orbit Settings")]
+    [Tooltip("Direction of orbit for the platform.")]
+    [SerializeField] private OrbitDirection orbitDirection = OrbitDirection.Clockwise;
 
     [Tooltip("Speed at which the platform rotates around the center point.")]
-    [SerializeField] private float rotateSpeed = 10f;
+    [SerializeField] private float orbitSpeed = 10f;
 
     [Tooltip("Radius of the circular path the platform follows around the center point.")]
     [SerializeField] private float radius = 5f;
@@ -34,13 +34,13 @@ public class OrbitingPlatform : MonoBehaviour
     {
         if (centerPoint == null) return;
 
-        if (rotationDirection == RotationDirection.CounterClockwise)
+        if (orbitDirection == OrbitDirection.CounterClockwise)
         {
-            currentAngle -= Time.deltaTime * rotateSpeed;
+            currentAngle -= Time.deltaTime * orbitSpeed;
         }
         else
         {
-            currentAngle += Time.deltaTime * rotateSpeed;
+            currentAngle += Time.deltaTime * orbitSpeed;
         }
 
         float x = Mathf.Cos(currentAngle) * radius;
