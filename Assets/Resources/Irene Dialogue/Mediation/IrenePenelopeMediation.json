@@ -35,7 +35,7 @@
       "LineID": "Stern",
       "Speaker": "Irene",
       "NPCGender": "female",
-      "text": "Penelope, no. This is the kind of fog people don't come back from, it's too dangerous. There'll be other parties.",
+      "text": "Penelope, no. You can't see five feet in front of you with this fog, it's too dangerous. There'll be other parties.",
       "lineTone": 0,
       "requiredMorality": 0,
       "NextLineID": "Buzzkill"
@@ -72,7 +72,7 @@
       "LineID": "Buzzkill",
       "Speaker": "Penelope",
       "NPCGender": "female",
-      "text": "Ughhh you're such a buzzkill sometimes Irene.",
+      "text": "Ughhh you're such a buzzkill sometimes Irene! You've always got some excuse to not go when you get invited to something fun.",
       "lineTone": 0,
       "requiredMorality": 0,
       "choices": [
@@ -198,7 +198,7 @@
       "text": "Penny...I'm sorry I lost my patience, okay?",
       "lineTone": 0,
       "requiredMorality": 0,
-      "NextLineID": "PenelopeUpset"
+      "NextLineID": "GoYourOwnWay"
     },
     {
       "LineID": "GoYourOwnWay",
@@ -207,7 +207,7 @@
       "text": "Look, if you really don't wanna miss the party, go. I don't think it's safe, so I'll stay back okay?",
       "lineTone": 0,
       "requiredMorality": 0,
-      "endDialogueAfterLine": true
+      "NextLineID": "GoYourOwnWay II"
     },
     {
       "LineID": "DontBeDumb",
@@ -216,7 +216,7 @@
       "text": "You can have fun without doing things that are dumb and potentially dangerous. I'm trying to offer alternatives but you aren't hearing it.",
       "lineTone": 0,
       "requiredMorality": 0,
-      "endDialogueAfterLine": true
+      "NextLineID": "DontBeDumb II"
     },
     {
       "LineID": "IDontCareAnymore",
@@ -225,7 +225,33 @@
       "text": "Do whatever you want Penelope. If you really think the FOMO will kill you before crashing into a tree because of the fog does, just go.",
       "lineTone": 0,
       "requiredMorality": 0,
+      "NextLineID": "IDontCareAnymore II"
+    },
+    {
+      "LineID": "GoYourOwnWay II",
+      "Speaker": "Penelope",
+      "NPCGender": "female",
+      "text": "Alright. I'll miss you, but I'm sure you'll miss me even more! Later!",
+      "lineTone": 0,
+      "requiredMorality": 0,
       "endDialogueAfterLine": true
-    }
+    },
+    {
+      "LineID": "DontBeDumb II",
+      "Speaker": "Penelope",
+      "NPCGender": "female",
+      "text": "I guess I'm not. Or maybe I'm tired of hearing it after so many times! If you don't want to spend time with me, just say that. Enjoy staying inside for the millionth time!",
+      "lineTone": 0,
+      "requiredMorality": 0,
+      "endDialogueAfterLine": true
+    },
+    {
+      "LineID": "IDontCareAnymore II",
+      "Speaker": "Penelope",
+      "NPCGender": "female",
+      "text": "What a nice thing to say Irene! Since you're convinced I'm gonna wrap myself around a tree, I'll go do just that on my way to the party! B*%#!.",
+      "lineTone": 0,
+      "requiredMorality": 0,
+      "endDialogueAfterLine": true
   ]
 }
