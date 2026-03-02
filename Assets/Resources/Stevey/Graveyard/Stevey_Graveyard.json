@@ -6,19 +6,59 @@
             "NPCGender": "male",
             "text": " Hey kid! Echo, right? I see you here often with your friend Irene. She's a sweetheart, eh? Anyways, I appreciate you guys keepin' the place clean and honorin' your friend, so I thought I'd give you this.",
             "lineTone": 0,
-            "NextLineID": "fishing rod",
+            "NextLineID": "lockpick I",
             "requiredMorality": 0,
             "choices": []
         },
         {
-            "LineID": "fishing rod",
+            "LineID": "lockpick I",
             "Speaker": "Stevey",
             "NPCGender": "male",
-            "text": "It's an old fishin' rod of mine, I want you to have it. It's not much, just somethin' for you to do if you're ever feeling lonely, to make peace with the quiet instead of letting it drive you crazy. Let me show you how to use it.",
+            "text": "That there's a lockpick, a remnant from my trouble makin' days. Seein' as you're just about in those days yourself, I want you to have it.",
+            "lineTone": 1,
+            "NextLineID": "lockpick II",
+            "requiredMorality": 0,
+            "choices": []
+        },
+        {
+            "LineID": "lockpick II",
+            "Speaker": "Stevey",
+            "NPCGender": "male",
+            "text": "To top it off, I've got just the thing you can practice on. Can you open up my trunk here? I forgot the key in my truck.",
+            "lineTone": 1,
+            "NextLineID": "lockpick III",
+            "requiredMorality": 0,
+            "choices": []
+        },
+        {
+            "LineID": "lockpick III",
+            "Speaker": "Stevey",
+            "NPCGender": "male",
+            "text": "Don't wanna go all the way back just for a key, but I can't fish without my rod!",
+            "lineTone": 1,
+            "NextLineID": "lockpick IV",
+            "requiredMorality": 0,
+            "choices": []
+        },
+        {
+            "LineID": "lockpick IV",
+            "Speaker": "Stevey",
+            "NPCGender": "male",
+            "text": "Don't wanna go all the way back just for a key, but I can't fish without my rod!",
+            "lineTone": 1,
+            "NextLineID": "lockpick V",
+            "requiredMorality": 0,
+            "choices": []
+        },
+        {
+            "LineID": "lockpick V",
+            "Speaker": "Stevey",
+            "NPCGender": "male",
+            "text": "Plus, if you're good enough to open my trunk, you'll probably be able to get into that locked box in the shed! I don't even remember what's in there!",
             "lineTone": 1,
             "requiredMorality": 0,
             "choices": []
-        }
+            "endDialogueAfterLine": true
+        },
     ]
 }
-
