@@ -206,8 +206,8 @@ public class GameOverManager : MonoBehaviour
 
     private void EnableOtherCanvases()
     {
-        Debug.Log("Enabling other canvases from Journal");
-        if (GameManager.Instance == null) return;
+        Debug.Log("Enabling other canvases from GameOverManager");
+        if (GameManager.Instance == null || SceneManager.GetActiveScene().name == "MainMenu") return;
 
         if (GameManager.Instance.mainCanvas != null && !GameManager.Instance.mainCanvas.activeSelf)
         {
@@ -242,8 +242,8 @@ public class GameOverManager : MonoBehaviour
 
     private void DisableOtherCanvases()
     {
-        Debug.Log("Disabling other canvases from Journal");
-        if (GameManager.Instance == null) return;
+        Debug.Log("Disabling other canvases from GameOverManager");
+        if (GameManager.Instance == null || SceneManager.GetActiveScene().name == "MainMenu") return;
 
         if (GameManager.Instance.mainCanvas != null && GameManager.Instance.mainCanvas.activeSelf)
         {
