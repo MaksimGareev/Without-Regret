@@ -92,7 +92,7 @@ public class Journal : MonoBehaviour
             return; // Do not allow pausing in the main menu
         }
 
-        if ((playerJournalAction.triggered || UIJournalAction.triggered) && !PauseManager.Instance.isGamePaused && !DialogueManager.DialogueIsActive)
+        if ((playerJournalAction.triggered || UIJournalAction.triggered) && !PauseManager.Instance.isGamePaused && !DialogueManager.DialogueIsActive && !GameOverManager.Instance.IsGameOver)
         {
             ToggleJournalUI();
         }
@@ -180,7 +180,7 @@ public class Journal : MonoBehaviour
 
         if (GameManager.Instance.gameOverCanvas != null && !GameManager.Instance.gameOverCanvas.activeSelf)
         {
-            GameManager.Instance.gameOverCanvas.SetActive(GameOverManager.Instance.isGameOver);
+            GameManager.Instance.gameOverCanvas.SetActive(GameOverManager.Instance.IsGameOver);
         }
 
         if (GameManager.Instance.objectivePanel != null && !GameManager.Instance.objectivePanel.activeSelf)
