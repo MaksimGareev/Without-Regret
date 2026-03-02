@@ -3,17 +3,54 @@
     {
       "LineID": "Start",
       "Speaker": "Penelope",
-      "text": "Echo! Thank goodness you're here.",
+      "NPCGender": "female",
+      "text": "Echo! Thank goodness you're here!",
+      "lineTone": 0,
       "requiredMorality": 0,
-      "NextLineID": "Listened",
-      "choices": []
+      "choices": [
+        {
+          "text": "Just glad you're okay.",
+          "moralityChange": 1,
+          "NextLineID": "Listened",
+          "directionString": "Up"
+        },
+        {
+          "text": "You can't park there.",
+          "moralityChange": -1,
+          "NextLineID": "Listened",
+          "directionString": "Down"
+        }
+      ]
     },
     {
       "LineID": "Listened",
       "Speaker": "Penelope",
+      "NPCGender": "female",
       "text": "I went and crashed my car into the river...I should've listened to Irene. I'm so stupid!",
+      "lineTone": 0,
       "requiredMorality": 0,
+      "NextLineID": "WhatIf",
       "choices": []
-    }
+    },
+    {
+      "LineID": "WhatIf",
+      "Speaker": "Penelope",
+      "NPCGender": "female",
+      "text": "She was all I could think of, it's like everything was in slow motion. I've gotta apologize to her.",
+      "lineTone": 0,
+      "requiredMorality": 0,
+      "NextLineID": "LetsGo",
+      "choices": []
+    },
+    {
+      "LineID": "LetsGo",
+      "Speaker": "Penelope",
+      "NPCGender": "female",
+      "text": "Come on Echo, let's get out of here.",
+      "lineTone": 0,
+      "requiredMorality": 0,
+      "choices": [],
+      "endDialogueAfterLine": true
+    },
   ]
 }
