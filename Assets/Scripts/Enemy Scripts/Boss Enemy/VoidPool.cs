@@ -13,10 +13,10 @@ public class VoidPool : MonoBehaviour
     public void Initialize(VoidPoolSettings settings)
     {
         this.settings = settings;
-        
+
         initTime = Time.time;
         // Spawn enemies as soon as the pool appears
-        SpawnEnemies(Random.Range(settings.numEnemiesToSpawn[0], settings.numEnemiesToSpawn[1] + 1));
+        SpawnEnemies(Random.Range(settings.minEnemiesToSpawn, settings.maxEnemiesToSpawn + 1));
     }
 
     private void OnTriggerEnter(Collider other)
@@ -50,7 +50,16 @@ public class VoidPool : MonoBehaviour
             Vector3 randomPosition = new Vector3(randomX, transform.position.y + 1, randomZ);
 
             // Instantiate the enemy at the random position with no rotation
-            Instantiate(settings.enemyPrefab, randomPosition, Quaternion.identity);
+            GameObject newEnemy = Instantiate(settings.enemyPrefab, randomPosition, Quaternion.identity);
+            // Add a lifetime component for the enemy so it gets destroyed after a delay
+            if (newEnemy.TryGetComponent<Lifetime>(out var lifetime))
+            {
+                lifetime.Initialize(newEnemy, settings.enemyLifetime);
+            }
+            else
+            {
+                newEnemy.AddComponent<Lifetime>().Initialize(newEnemy, settings.enemyLifetime);
+            }
         }
     }
 
@@ -88,14 +97,20 @@ public struct VoidPoolSettings
     public float lifetime;
     [Tooltip("How long the player must be in the pool before they take damage")]
     public float delayBeforeDamage;
-    [Tooltip("Defines the range for how many enemies to spawn from the pool. Should only be 2 values. Element 0 = min, Element 1 = max")]
-    public int[] numEnemiesToSpawn;
+    [Tooltip("Defines the minimum of the range for how many enemies to spawn from the pool.")]
+    public int minEnemiesToSpawn;
+    [Tooltip("Defines the maximum of the range for how many enemies to spawn from the pool.")]
+    public int maxEnemiesToSpawn;
+    [Tooltip("How long the enemies spawned from the void pool will last")]
+    public float enemyLifetime;
 
-    public VoidPoolSettings(float lifetime, float delayBeforeDamage, GameObject enemyPrefab, int[] numEnemiesToSpawn)
+    public VoidPoolSettings(float lifetime, float delayBeforeDamage, GameObject enemyPrefab, int minEnemiesToSpawn, int maxEnemiesToSpawn, float enemyLifetime)
     {
         this.lifetime = lifetime;
         this.delayBeforeDamage = delayBeforeDamage;
         this.enemyPrefab = enemyPrefab;
-        this.numEnemiesToSpawn = numEnemiesToSpawn;
+        this.minEnemiesToSpawn = minEnemiesToSpawn;
+        this.maxEnemiesToSpawn = maxEnemiesToSpawn;
+        this.enemyLifetime = enemyLifetime;
     }
 }
