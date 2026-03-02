@@ -6,9 +6,10 @@ using UnityEngine.EventSystems;
 public class SelectableHighlighting : MonoBehaviour
 {
     private Color primaryHighlightColor = Color.aquamarine;
-    private Color backgroundHighlightColor = new Color(0.2f, 0.6f, 0.6f);
+    private Color backgroundHighlightColor = new Color(0.2f, 0.6f, 0.6f, 1.0f);
     private Color primaryOriginalColor;
     private Color backgroundOriginalColor;
+    private Color disabledColor = new Color(0.7f, 0.7f, 0.7f, 0.7f); // Semi-transparent gray for disabled state
     private float highlightScaleMultiplier = 1.1f; // Scale factor for highlighting
 
     private Selectable selectable;
@@ -16,6 +17,7 @@ public class SelectableHighlighting : MonoBehaviour
     private Graphic primaryGraphic;
     private Vector3 originalScale;
     [HideInInspector] public bool stayHighlighted = false;
+    private bool currentInteractable;
 
     private void Awake()
     {
@@ -38,6 +40,9 @@ public class SelectableHighlighting : MonoBehaviour
         {
             backgroundOriginalColor = backgroundGraphic.color; // Store the original background color
         }
+
+        //selectable.transition = Selectable.Transition.None; // Disable default transitions to prevent conflicts with our custom highlighting
+        currentInteractable = selectable.interactable;
     }
 
     private void AddEventTriggers()
@@ -115,6 +120,18 @@ public class SelectableHighlighting : MonoBehaviour
     {
         if (!selectable.interactable) return;
         ApplyHighlight();
+    }
+
+    private void Update()
+    {
+        if (selectable == null) return;
+
+        // Check for changes in interactable state
+        if (selectable.interactable != currentInteractable)
+        {
+            currentInteractable = selectable.interactable;
+            ApplyInteractableVisuals(currentInteractable);
+        }
     }
 
     private void SetGraphicsByType()
@@ -248,6 +265,15 @@ public class SelectableHighlighting : MonoBehaviour
 
         if (stayHighlighted) stayHighlighted = false; // Reset the stayHighlighted flag when unhighlighting
 
+        // Reset the button scale
+        SetScaleByType(false);
+
+        if (!selectable.interactable)
+        {
+            ApplyInteractableVisuals(false);
+            return;
+        }
+
         // Reset the text color
         if (primaryGraphic != null)
         {
@@ -259,8 +285,35 @@ public class SelectableHighlighting : MonoBehaviour
         {
             backgroundGraphic.color = backgroundOriginalColor;
         }
+    }
 
-        // Reset the button scale
-        SetScaleByType(false);
+    private void ApplyInteractableVisuals(bool interactable)
+    {
+        if (selectable == null) return;
+
+        if (interactable)
+        {
+            // If the button is interactable, ensure it uses the original colors
+            if (primaryGraphic != null)
+            {
+                primaryGraphic.color = primaryOriginalColor;
+            }
+            if (backgroundGraphic != null)
+            {
+                backgroundGraphic.color = backgroundOriginalColor;
+            }
+        }
+        else
+        {
+            // If the button is not interactable, apply the disabled color
+            if (primaryGraphic != null)
+            {
+                primaryGraphic.color = disabledColor;
+            }
+            if (backgroundGraphic != null)
+            {
+                backgroundGraphic.color = disabledColor;
+            }
+        }
     }
 }

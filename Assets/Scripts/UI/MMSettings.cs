@@ -201,6 +201,31 @@ public class MMSettings : MonoBehaviour
 
     private void Update()
     {
+        // Override button interactivity if confirmation panel is open
+        if (confirmationPanel.activeSelf)
+        {
+            if (resetButton.interactable)
+            {
+                resetButton.interactable = false;
+                resetKeyImage.color = legendsDisabledColor;
+            }
+
+            if (applyButton.interactable)
+            {
+                applyButton.interactable = false;
+                applyKeyImage.color = legendsDisabledColor;
+            }
+
+            if (discardChangesButton.interactable)
+            {
+                discardChangesButton.interactable = false;
+                discardKeyImage.color = legendsDisabledColor;
+            }
+
+            // Dont allow tabbing or other settings actions while confirming
+            return;
+        }
+
         if (tabLeftAction.triggered)
         {
             OnTabLeft();
@@ -226,49 +251,45 @@ public class MMSettings : MonoBehaviour
             OnDiscardSettings();
         }
 
+        // Set reset button interactable based on if applied settings are default
         if (hasChangedSettings && !resetButton.interactable)
         {
             resetButton.interactable = true;
-            resetButtonImage.color = legendsEnabledColor;
             resetKeyImage.color = legendsEnabledColor;
 
         }
-        else if (!hasChangedSettings && resetButton.interactable && !confirmationPanel.activeSelf)
+        else if (!hasChangedSettings && resetButton.interactable)
         {
             resetButton.interactable = false;
-            resetButtonImage.color = legendsDisabledColor;
             resetKeyImage.color = legendsDisabledColor;
         }
 
+        // Set apply and discard buttons interactable based on if there are unapplied changes
         if (hasUnappliedChanges)
         {
             if (!applyButton.interactable)
             {
                 applyButton.interactable = true;
-                applyButtonImage.color = legendsEnabledColor;
                 applyKeyImage.color = legendsEnabledColor;
             }
 
             if (!discardChangesButton.interactable)
             {
                 discardChangesButton.interactable = true;
-                discardButtonImage.color = legendsEnabledColor;
                 discardKeyImage.color = legendsEnabledColor;
             }
         }
-        else if (!hasUnappliedChanges && !confirmationPanel.activeSelf)
+        else if (!hasUnappliedChanges)
         {
             if (applyButton.interactable)
             {
                 applyButton.interactable = false;
-                applyButtonImage.color = legendsDisabledColor;
                 applyKeyImage.color = legendsDisabledColor;
             }
             
             if (discardChangesButton.interactable)
             {
                 discardChangesButton.interactable = false;
-                discardButtonImage.color = legendsDisabledColor;
                 discardKeyImage.color = legendsDisabledColor;
             }
         }
