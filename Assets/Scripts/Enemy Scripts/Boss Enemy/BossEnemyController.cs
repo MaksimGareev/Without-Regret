@@ -10,7 +10,7 @@ public class BossEnemyController : MonoBehaviour
 
     [Header("Void Attack Settings")]
     [SerializeField, Min(0.1f)] float projectileSpeed = 5f;
-    [SerializeField] VoidPoolSettings voidPoolSettings = new(5f, 1f, null, new int[] { 1, 3 });
+    [SerializeField] VoidPoolSettings voidPoolSettings = new(5f, 1f, null, 1, 2, 6f);
 
     private Rigidbody voidProjectileRigidbody;
 
