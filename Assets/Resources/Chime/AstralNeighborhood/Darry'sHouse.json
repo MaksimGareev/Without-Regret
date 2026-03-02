@@ -3,20 +3,29 @@
         {
             "LineID": "Start",
             "Speaker": "Chime",
-            "text": "Phew, looks like we got in before anything ha-",
+            "text": "Echo, something bad's about to happen...You need to save Darry.",
             "lineTone": 0,
-            "NextLineID": "end",
             "requiredMorality": 0,
+            "NextLineID": "II",
             "choices": []
         },
         {
-            "LineID": "end",
+            "LineID": "II",
             "Speaker": "Chime",
-            "text": "Echo, something bad's about to happen...You need to save Darry. Move objects around to make a path he can use to escape. Keep whatever's trying to break in away from him by blocking off its path or distracting it.",
+            "text": "Move objects in the house around to block the enemy and make a path Darry can use to escape.",
+            "lineTone": 0,
+            "requiredMorality": 0,
+            "NextLineID": "III",
+            "choices": []
+        },
+        {
+            "LineID": "III",
+            "Speaker": "Chime",
+            "text": "If the enemy reaches Darry, it'll harm him and consume some of your Astral Health. Do your best to make sure Darry escapes in one piece.",
             "lineTone": 0,
             "requiredMorality": 0,
             "objectivesToActivate": [ "saveDarry" ],
-            "choices": []
+            "endDialogueAfterLine": true
         }
     ]
 }
