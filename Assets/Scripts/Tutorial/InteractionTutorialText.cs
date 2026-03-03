@@ -21,6 +21,9 @@ public static class InteractionTutorialText
             case InteractType.Float:
                 return "Floating allows Echo to traverse gaps within the astarl plane.  Press the A button or spacebar in the green area to continue floating, echo can only float for little while and failing results becoming grounded again.";
 
+            case InteractType.BossQTE:
+                return "Match the correct inputs to send a burst of energy at the boss and damage it";
+
             default:
                 return "";
         }

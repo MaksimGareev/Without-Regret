@@ -49,6 +49,8 @@ public class GameManager : MonoBehaviour
     public GameObject objectivePanel;
     [HideInInspector] public GameObject eventSystem;
 
+    [HideInInspector] public NewDialogueManager newDialogueManager;
+
     private void Awake()
     {
         // Singleton pattern to ensure only one instance of GameManager exists
