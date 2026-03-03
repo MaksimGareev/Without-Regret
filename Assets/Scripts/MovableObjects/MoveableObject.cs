@@ -1,5 +1,4 @@
 using UnityEngine;
-using Unity.AI.Navigation;
 using System;
 
 [RequireComponent(typeof(Rigidbody), typeof(Collider))]
