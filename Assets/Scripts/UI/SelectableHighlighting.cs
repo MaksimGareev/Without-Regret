@@ -122,6 +122,7 @@ public class SelectableHighlighting : MonoBehaviour
     public void OnPointerEnter(PointerEventData eventData)
     {
         if (!selectable.interactable) return;
+        EventSystem.current.SetSelectedGameObject(null);
         ApplyHighlight();
     }
 

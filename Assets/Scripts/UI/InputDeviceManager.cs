@@ -25,19 +25,19 @@ public class InputDeviceManager : MonoBehaviour
     [SerializeField] private RawImage actionImage1;
     [SerializeField] private RawImage actionImage2;
     [SerializeField] private RawImage actionImage3;
-    [SerializeField] private RawImage journalImage;
+    [SerializeField] private Sprite journalImage;
 
     [Header("Controller Sprites")]
     [SerializeField] private Texture controllerXButton;
     [SerializeField] private Texture controllerAButton;
     [SerializeField] private Texture controllerTrigger;
-    [SerializeField] private Texture controllerSelect;
+    [SerializeField] private Sprite controllerSelect;
 
     [Header("Keyboard Sprites")]
     [SerializeField] private Texture keyboardEKey;
     [SerializeField] private Texture keyboardSpacebar;
     [SerializeField] private Texture mouse;
-    [SerializeField] private Texture keyboardTab;
+    [SerializeField] private Sprite keyboardTab;
     
     [Header("Keyboard text")]
     [SerializeField] private TextMeshProUGUI tab;
@@ -96,7 +96,7 @@ public class InputDeviceManager : MonoBehaviour
                 actionImage1.texture = controllerXButton;
                 actionImage2.texture = controllerAButton;
                 actionImage3.texture = controllerTrigger;
-                journalImage.texture = controllerSelect;
+                journalImage = controllerSelect;
                 tab.gameObject.SetActive(false);
                 e.gameObject.SetActive(false);
                 spaceBar.gameObject.SetActive(false);
@@ -105,7 +105,7 @@ public class InputDeviceManager : MonoBehaviour
                 actionImage1.texture = keyboardEKey;
                 actionImage2.texture = keyboardSpacebar;
                 actionImage3.texture = mouse;
-                journalImage.texture = keyboardTab;
+                journalImage = keyboardTab;
                 tab.gameObject.SetActive(true);
                 e.gameObject.SetActive(true);
                 spaceBar.gameObject.SetActive(true);

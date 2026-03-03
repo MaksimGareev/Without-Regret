@@ -125,13 +125,14 @@ public class MoveableObject : MonoBehaviour, IInteractable
                 Debug.LogError("Player grab point is null!");
                 return;
             }
-            // Attempt to ensure that when the object is grabbed, there isn't major clipping with another object
-            // by checking the grab point for collisions.
-            if (mover.grabPoint.TryGetComponent<GrabPointCollisionCheck>(out var checker) && checker.CollidingWithSomethingExcept(coll))
-            {
-                Debug.Log("Player tried to grab an object, but their grab point is colliding with another object.");
-                return;
-            }
+            
+            // // Attempt to ensure that when the object is grabbed, there isn't major clipping with another object
+            // // by checking the grab point for collisions.
+            // if (mover.grabPoint.TryGetComponent<GrabPointCollisionCheck>(out var checker) && checker.CollidingWithSomethingExcept(coll))
+            // {
+            //     Debug.Log("Player tried to grab an object, but their grab point is colliding with another object.");
+            //     return;
+            // }
             // Can't grab if an item is equipped
             if (PlayerComponents.playerEquipItem.currentEquippedItem != null)
             {
