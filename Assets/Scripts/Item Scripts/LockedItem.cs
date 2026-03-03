@@ -60,16 +60,9 @@ public class LockedItem : MonoBehaviour, IInteractable
         controls = new PlayerControls();
         controls.Player.Interact.performed += ctx => TryInteract();
 
-        // Load unlock state from SaveManager
-        // if (SaveManager.Instance != null)
-        // {
-        //     hasBeenLockpicked = SaveManager.Instance.IsUnlocked(gameObject.name);
-        // }
-
         // Disable interaction if already unlocked
         if (hasBeenLockpicked)
         {
-            //DisablePopupIcon();
             Collider col = GetComponent<Collider>();
             if (col != null) col.enabled = false;
             ButtonIcons.Instance?.Clear();
@@ -94,10 +87,6 @@ public class LockedItem : MonoBehaviour, IInteractable
             if (!isInRange)
             {
                 isInRange = true;
-                /*if (!hasBeenLockpicked && promptUI != null)
-                {
-                    promptUI.SetActive(true); // Show the prompt when the player is in range
-                }*/
                  Debug.Log("Trying to highlight Lockpick icon");
                  ButtonIcons.Instance.Highlight(InteractType.Lockpick);
             }
@@ -107,24 +96,10 @@ public class LockedItem : MonoBehaviour, IInteractable
             if (isInRange)
             {
                 isInRange = false;
-                /*if (promptUI != null)
-                {
-                    promptUI.SetActive(false);
-                }*/
                 ButtonIcons.Instance.Clear();
                 
             }
         }
-
-        /*
-        if (shouldShowIcon && popupInstance == null && iconPrefab != null && PopupManager.Instance != null && !hasBeenLockpicked)
-        {
-            EnablePopupIcon();
-        }
-        else if (hasBeenLockpicked && popupInstance != null)
-        {
-            DisablePopupIcon();
-        }*/
     }
 
     public bool CanInteract(GameObject player)
@@ -158,10 +133,6 @@ public class LockedItem : MonoBehaviour, IInteractable
         GameManager.Instance.LockPickUI.SetActive(true);
         GameManager.Instance.LockPickUI.GetComponent<LockPicking>().NewLock(this);//(this.gameObject);
         GameManager.Instance.LockPickUI.GetComponent<LockPicking>().RewardItem = RewardItem;
-
-        /*if (promptUI != null)
-            promptUI.SetActive(false);
-        */
         // Disable player movement
         PlayerController pc = player.GetComponent<PlayerController>();
         if (pc != null)
@@ -208,12 +179,8 @@ public class LockedItem : MonoBehaviour, IInteractable
 
         if (SaveManager.Instance != null)
         {
-            //SaveManager.Instance.SetUnlocked(gameObject.name, true);
             SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
         }
-
-        //UnlockTop.transform.position = new Vector3(0f, 95f, -23f);
-        //UnlockTop.transform.rotation = new Vector3(-39f, 0f, 0f);
         if (isChest)
         {
             StartCoroutine(MoveAndRotateTop(UnlockTop, new Vector3(0f, 95f, -23f), Quaternion.Euler(-39f, 0f, 0f), 1f));
@@ -228,7 +195,6 @@ public class LockedItem : MonoBehaviour, IInteractable
         // Save unlock state
         if (SaveManager.Instance != null)
         {
-            //SaveManager.Instance.SetUnlocked(gameObject.name, true);
             SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
         }
 

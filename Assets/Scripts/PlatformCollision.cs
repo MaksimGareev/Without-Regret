@@ -6,7 +6,10 @@ public class PlatformCollision : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Player"))
         {
-            other.transform.SetParent(transform);
+            if (!other.GetComponent<PlayerFloating>().IsFloating)
+            {
+                other.transform.SetParent(transform);
+            }
         }
     }
     private void OnTriggerExit(Collider other)

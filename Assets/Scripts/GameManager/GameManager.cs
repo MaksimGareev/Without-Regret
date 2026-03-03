@@ -28,6 +28,7 @@ public class GameManager : MonoBehaviour
     public Slider possessionSlider;
     public Slider floatingSlider;
     public RectTransform floatTargetArea;
+    public Slider floatTimerSlider;
     public Slider floatCooldown;
     public Image staminaFill;
     public GameObject InventoryUI;
@@ -111,17 +112,17 @@ public class GameManager : MonoBehaviour
     // Currently only done once on GameManager's Awake
     private void UpdateChildReferences()
     {
-        saveManager = GetComponentInChildren<SaveManager>()?.gameObject;
-        audioManager = GetComponentInChildren<AudioManager>()?.gameObject;
-        gameOverManager = GetComponentInChildren<GameOverManager>()?.gameObject;
-        mainCanvas = transform.Find("MainCanvas")?.gameObject;
-        interactionIconsCanvas = GetComponentInChildren<PopupManager>()?.gameObject;
-        journalUICanvas = GetComponentInChildren<Journal>()?.gameObject;
-        playerUICanvas = GetComponentInChildren<TimerRingUI>()?.gameObject;
-        pauseManager = GetComponentInChildren<PauseManager>()?.gameObject;
+        saveManager = GetComponentInChildren<SaveManager>().gameObject;
+        audioManager = GetComponentInChildren<AudioManager>().gameObject;
+        gameOverManager = GetComponentInChildren<GameOverManager>().gameObject;
+        mainCanvas = transform.Find("MainCanvas").gameObject;
+        interactionIconsCanvas = GetComponentInChildren<PopupManager>().gameObject;
+        journalUICanvas = GetComponentInChildren<Journal>().gameObject;
+        playerUICanvas = GetComponentInChildren<TimerRingUI>().gameObject;
+        pauseManager = GetComponentInChildren<PauseManager>().gameObject;
         dialogueManager = GetComponentInChildren<DialogueManager>();
-        objectiveManager = GetComponentInChildren<ObjectiveManager>()?.gameObject;
-        eventSystem = GetComponentInChildren<EventSystem>()?.gameObject;
+        objectiveManager = GetComponentInChildren<ObjectiveManager>().gameObject;
+        eventSystem = GetComponentInChildren<EventSystem>().gameObject;
     }
 
     // Called from the scene change event subscribed to above
@@ -143,48 +144,48 @@ public class GameManager : MonoBehaviour
     {
         if (currentSceneName == "MainMenu")
         {
-            if (gameOverManager.activeSelf)
+            if (gameOverManager != null && gameOverManager.activeSelf)
                 gameOverManager.SetActive(false);
 
-            if (mainCanvas.activeSelf)
+            if (mainCanvas != null && mainCanvas.activeSelf)
                 mainCanvas.SetActive(false);
 
-            if (interactionIconsCanvas.activeSelf)
+            if (interactionIconsCanvas != null && interactionIconsCanvas.activeSelf)
                 interactionIconsCanvas.SetActive(false);
 
-            if (journalUICanvas.activeSelf)
+            if (journalUICanvas != null && journalUICanvas.activeSelf)
                 journalUICanvas.SetActive(false);
 
-            if (playerUICanvas.activeSelf)
+            if (playerUICanvas != null && playerUICanvas.activeSelf)
                 playerUICanvas.SetActive(false);
 
-            if (pauseManager.activeSelf)
+            if (pauseManager != null && pauseManager.activeSelf)
                 pauseManager.SetActive(false);
 
-            if (dialogueManager.gameObject.activeSelf)
+            if (dialogueManager != null && dialogueManager.gameObject.activeSelf)
                 dialogueManager.gameObject.SetActive(false);
         }
         else
         {
-            if (!gameOverManager.activeSelf)
+            if (gameOverManager != null && !gameOverManager.activeSelf)
                 gameOverManager.SetActive(true);
 
-            if (!mainCanvas.activeSelf)
+            if (mainCanvas != null && !mainCanvas.activeSelf)
                 mainCanvas.SetActive(true);
 
-            if (!interactionIconsCanvas.activeSelf)
+            if (interactionIconsCanvas != null && !interactionIconsCanvas.activeSelf)
                 interactionIconsCanvas.SetActive(true);
 
-            if (!journalUICanvas.activeSelf)
+            if (journalUICanvas != null && !journalUICanvas.activeSelf)
                 journalUICanvas.SetActive(true);
 
-            if (!playerUICanvas.activeSelf)
+            if (playerUICanvas != null && !playerUICanvas.activeSelf)
                 playerUICanvas.SetActive(true);
 
-            if (!pauseManager.activeSelf)
+            if (pauseManager != null && !pauseManager.activeSelf)
                 pauseManager.SetActive(true);
 
-            if (!dialogueManager.gameObject.activeSelf)
+            if (dialogueManager != null && !dialogueManager.gameObject.activeSelf)
                 dialogueManager.gameObject.SetActive(true);
         }
     }

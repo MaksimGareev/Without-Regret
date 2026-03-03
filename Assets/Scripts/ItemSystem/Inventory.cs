@@ -175,7 +175,7 @@ public class Inventory : MonoBehaviour, ISaveable
 
             if (!System.Array.Exists(scenesWOPickupEffect, scene => scene == SceneManager.GetActiveScene().name))
             {
-                cameraMovement.TriggerPickupCameraEffect(itemToCollect.transform);
+                cameraMovement?.TriggerPickupCameraEffect(itemToCollect.transform);
                 StartCoroutine(WaitForCameraTransition());
             }
             

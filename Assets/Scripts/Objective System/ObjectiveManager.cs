@@ -341,6 +341,44 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
         }
     }
 
+    // This method is used for testing purposes to skip to a specific objective and mark all previous objectives as completed.
+    public void SkipToObjective(ObjectiveData objective)
+    {
+        if (objective == null)
+        {
+            Debug.LogWarning($"Objective is null");
+            return;
+        }
+
+        if (!allObjectives.Contains(objective))
+        {
+            Debug.LogWarning($"Objective '{objective.title}' not found in list of all objectives.");
+            return;
+        }
+
+        // Reset all objectives to not completed and not active
+        activeObjectives.Clear();
+        completedObjectives.Clear();
+
+        // Mark all objecitves up to the given objective as completed
+        foreach (var obj in allObjectives)
+        {
+            if (obj == objective)
+            {
+                break;
+            }
+
+            if (!completedObjectives.Exists(o => o.data == obj))
+            {
+                ObjectiveInstance inst = new ObjectiveInstance(obj);
+                inst.SetProgress(obj.requiredProgress);
+                CompleteObjective(inst);
+            }
+        }
+
+        ActivateObjective(objective);
+    }
+
     // Getters for active and completed objectives lists.
     public IEnumerable<ObjectiveInstance> GetActiveObjectives() => activeObjectives;
     public IEnumerable<ObjectiveInstance> GetCompletedObjectives() => completedObjectives;
