@@ -10,6 +10,13 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
     public Animator animator;
     public bool isTalking = false;
     private Coroutine talkRoutine;
+    [Header("Chime Animation")]
+    public Animator chimeAnimator;
+    public bool chimeActive = false;
+    public Chime chimeScript;
+
+    private Animator playerAnimator;
+    private Coroutine playerTalkRoutine;
     public float interactionPriority => 10f;
     public InteractType interactType => InteractType.Dialogue;
 
@@ -91,6 +98,24 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
     {
         // Player reference
         player = GameObject.FindGameObjectWithTag("Player").transform;
+        if (playerAnimator == null)
+        {
+            playerAnimator = player.GetComponentInChildren<Animator>();
+            Debug.Log("Player Animator found!");
+        }
+        else
+            Debug.Log("Player Animator not found!");
+
+        //Finding chime + animator
+        GameObject chime = GameObject.FindWithTag("Chime");
+        if (chime != null)
+        {
+            chimeScript = chime.GetComponent<Chime>();
+            chimeAnimator = chime.GetComponentInChildren<Animator>();
+
+            chimeActive = true;
+        }
+
 
         npcWander = GetComponent<NpcMovement>();
 
@@ -207,6 +232,8 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
             talkRoutine = null;
         }
 
+        StopPlayerTalking();
+
         isLookingAtPlayer = false;
     }
 
@@ -240,6 +267,7 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
         DisablePopupIcon();
 
         isLookingAtPlayer = true;
+        StartPlayerTalking();
         if (playerMovePoint != null)
             StartCoroutine(MoveAndLookAt(player, this.transform));
 
@@ -404,6 +432,91 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
         }
     }
 
+    private void StartPlayerTalking()
+    {
+        if (playerAnimator == null)
+            return;
+        Debug.Log("Started Talking");
+        playerAnimator.SetBool("isTalking", true);
+        if (chimeActive)
+        {
+            chimeAnimator.SetBool("isTalking", true);
+        }
+
+        playerTalkRoutine ??= StartCoroutine(PlayerTalkAnimationCycle());
+    }
+
+    public void StartPlayerThinking()
+    {
+        if (playerAnimator == null)
+            return;
+
+        if (playerTalkRoutine != null)
+        {
+            StopCoroutine(playerTalkRoutine);
+            playerTalkRoutine = null;
+        }
+        playerAnimator.SetBool("Talk1", false);
+        playerAnimator.SetBool("Talk2", false);
+
+        playerAnimator.SetBool("Think", true);
+    }
+
+    public void StopPlayerThinking()
+    {
+        if (playerAnimator == null)
+            return;
+
+        if (playerTalkRoutine != null)
+        {
+            StopCoroutine(playerTalkRoutine);
+            playerTalkRoutine = null;
+        }
+
+        playerAnimator.SetBool("Think", false);
+        StartPlayerTalking();
+    }
+
+    private void StopPlayerTalking()
+    {
+        if (playerAnimator == null)
+            return;
+
+        playerAnimator.SetBool("isTalking", false);
+        playerAnimator.SetBool("Talk1", false);
+        playerAnimator.SetBool("Talk2", false);
+        if (chimeActive)
+        {
+            chimeAnimator.SetBool("isTalking", false);
+        }
+
+
+        if (playerTalkRoutine != null)
+        {
+            StopCoroutine(playerTalkRoutine);
+            playerTalkRoutine = null;
+        }
+    }
+
+    IEnumerator PlayerTalkAnimationCycle()
+    {
+        if (playerAnimator == null)
+            yield break;
+        Debug.Log("Started Talk animation cycle");
+        //if (playerAnimator.GetBool("isThinking"))
+        //    yield break;
+        while (playerAnimator.GetBool("isTalking"))
+        {
+            playerAnimator.SetBool("Talk1", true);
+            playerAnimator.SetBool("Talk2", false);
+            yield return new WaitForSeconds(5.0f);
+
+            playerAnimator.SetBool("Talk1", false);
+            playerAnimator.SetBool("Talk2", true);
+            yield return new WaitForSeconds(5.0f);
+        }
+    }
+
     IEnumerator TalkAnimationCycle() //currently cycles back and forth between both talk animations while speaking
     {
         if (animator == null)
@@ -412,10 +525,10 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
         {
             SafeSetBool("Talk2", false);
             SafeSetBool("Talk1", true);
-            yield return new WaitForSeconds(5);
+            yield return new WaitForSeconds(5.0f);
             SafeSetBool("Talk1", false);
             SafeSetBool("Talk2", true);
-            yield return new WaitForSeconds(5);
+            yield return new WaitForSeconds(5.0f);
         }
     }
 
