@@ -7,19 +7,19 @@ public static class InteractionTutorialText
         switch (type)
         {
             case InteractType.Move:
-                return "Press the X button or E key to move larger objects around the world.  Bring the item to the indicator to place the object or press the X button or E key to drop the object.";
+                return "Press the X button / E key to move larger objects around the world. Move the item to the indicator to place it, or press the X button / E key again to drop it.";
 
             case InteractType.Mantle:
-                return "Press the A button or Spacebar to clime onto mantleable objects.";
+                return "Press the A button / Spacebar to clime onto mantle-able objects.";
 
             case InteractType.Dialogue:
-                return "Press the X button or E key to engage in dialogue with characters in the world.  When dialogue choices appear hold the directional input corresponding to the choice you wish to select.  Echo has a limited time to respond";
+                return "Press the X button / E key to engage in dialogue with characters in the world. When dialogue choices appear, hold the directional input corresponding to a choice to select it. Your response time is limited.";
 
             case InteractType.Pickup:
-                return "With your backpack equiped press the X button or E key to pickup smaller objects and put them into your inventory.";
+                return "With your backpack equipped, press the X button / E key to pick up smaller objects and place them in your inventory.";
 
             case InteractType.Float:
-                return "Floating allows Echo to traverse gaps within the astarl plane.  Press the A button or spacebar in the green area to continue floating, echo can only float for little while and failing results becoming grounded again.";
+                return "Floating allows you to traverse gaps in the Astral Plane. Press the A button / Spacebar next to a gap to begin floating, and press it again when the indicator is in the green area to stay in the air. You can only float for little while, and failing results in becoming grounded again.";
 
             default:
                 return "";
