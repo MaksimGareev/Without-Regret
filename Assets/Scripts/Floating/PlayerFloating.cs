@@ -25,6 +25,8 @@ public class PlayerFloating : MonoBehaviour
     [Header("Rhythm / Input")]
     [SerializeField, Tooltip("Control input for floating")] 
     private InputActionReference floatAction;
+    [SerializeField, Tooltip("Control input for cancelling floating")]
+    private InputActionReference cancelFloatAction;
     [SerializeField] private float floatDuration = 5f;
     [SerializeField] private float floatCooldown = 3f;
     [SerializeField, Tooltip("Determines the size of the success window")]
@@ -53,6 +55,7 @@ public class PlayerFloating : MonoBehaviour
     private Animator animator;
     private RectTransform floatTargetArea;
     private Slider floatingSlider;
+    private Slider timerSlider;
     private Slider cooldownSlider;
 
     [Header("Chime Animation settings")]
@@ -87,6 +90,7 @@ public class PlayerFloating : MonoBehaviour
         floatAction.action.canceled += ctx => ReadSubmit(ctx);
         controls.Player.Move.performed += ctx => ReadMove(ctx);
         controls.Player.Move.canceled += ctx => ReadMove(ctx);
+        cancelFloatAction.action.performed += ctx => ReadCancel();
     }
     void OnDisable()
     {
@@ -95,6 +99,7 @@ public class PlayerFloating : MonoBehaviour
         floatAction.action.canceled -= ctx => ReadSubmit(ctx);
         controls.Player.Move.performed -= ctx => ReadMove(ctx);
         controls.Player.Move.canceled -= ctx => ReadMove(ctx);
+        cancelFloatAction.action.performed -= ctx => ReadCancel();
     }
 
     private void Awake()
@@ -144,6 +149,12 @@ public class PlayerFloating : MonoBehaviour
             floatTargetArea = GameManager.Instance.floatTargetArea;
         }
 
+        if (GameManager.Instance.floatTimerSlider != null)
+        {
+            timerSlider = GameManager.Instance.floatTimerSlider;
+            timerSlider.gameObject.SetActive(false);
+        }
+
         // Assign floatInput based on the state of the Input Action
         floatAction.action.performed += ctx => ReadSubmit(ctx);
         floatAction.action.canceled += ctx => ReadSubmit(ctx);
@@ -174,6 +185,15 @@ public class PlayerFloating : MonoBehaviour
         //{
         //    Debug.Log("PlayerFloating - Move Input: " + moveInput);
         //}
+    }
+
+    public void ReadCancel()
+    {
+        // Cancel floating if currently floating and cancel input is detected
+        if (IsFloating)
+        {
+            StopFloating();
+        }
     }
 
     private void Start()
@@ -274,6 +294,7 @@ public class PlayerFloating : MonoBehaviour
         }
 
         floatingSlider.gameObject.SetActive(true);
+        timerSlider.gameObject.SetActive(true);
         IsFloating = true;
         floatTimer = 0f;
         rhythmTimer = 0f;
@@ -316,6 +337,7 @@ public class PlayerFloating : MonoBehaviour
             chimeScript.ResetChimeAnimations();
 
         floatingSlider.gameObject.SetActive(false);
+        timerSlider.gameObject.SetActive(false);
         IsFloating = false;
         rhythmTimer = 0f;
         floatTimer = 0f;
@@ -352,6 +374,10 @@ public class PlayerFloating : MonoBehaviour
         }
 
         floatTimer += Time.deltaTime;
+        if (timerSlider != null)
+        {
+            timerSlider.value = Mathf.Clamp01(floatTimer / floatDuration);
+        }
 
         if (floatTimer >= floatDuration)
         {
