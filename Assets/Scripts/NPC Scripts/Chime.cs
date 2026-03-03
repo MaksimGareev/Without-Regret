@@ -98,9 +98,9 @@ public class Chime : MonoBehaviour
 
     public void setFloatingAnimation()
     {
-        animator.SetBool("isFloating", true);
         animator.SetBool("isIdle", false);
         animator.SetBool("isWalking", false);
+        animator.SetBool("isFloating", true);
     }
 
 
