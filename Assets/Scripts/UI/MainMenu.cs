@@ -384,9 +384,24 @@ public class MainMenu : MonoBehaviour
 
     public void SelectSaveMenuButton()
     {
-        EventSystem.current.SetSelectedGameObject(saveSlotsPanel.GetComponentInChildren<SaveSlotUI>().playButtons[0].gameObject.activeSelf 
-        ? saveSlotsPanel.GetComponentInChildren<SaveSlotUI>().playButtons[0].gameObject
-        : saveSlotsPanel.GetComponentInChildren<SaveSlotUI>().newGameButtons[0].gameObject);
+        Button buttonToSelect;
+
+        if (saveSlotsPanel.GetComponentInChildren<SaveSlotUI>().playButtons[0].gameObject.activeSelf)
+        {
+            buttonToSelect = saveSlotsPanel.GetComponentInChildren<SaveSlotUI>().playButtons[0];
+        }
+        else if (saveSlotsPanel.GetComponentInChildren<SaveSlotUI>().newGameButtons[0].gameObject.activeSelf)
+        {
+            buttonToSelect = saveSlotsPanel.GetComponentInChildren<SaveSlotUI>().newGameButtons[0];
+        }
+        else
+        {
+            Debug.LogWarning("No active play or new game buttons found in save slots panel.");
+            return;
+        }
+
+        EventSystem.current.SetSelectedGameObject(buttonToSelect.gameObject);
+        buttonToSelect.GetComponent<SelectableHighlighting>().ApplyHighlight();
     }
 
     private void ConfirmBeforeQuit()
