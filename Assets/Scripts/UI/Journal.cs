@@ -265,7 +265,15 @@ public class Journal : MonoBehaviour
         if (objectivesList.Count > index)
         {
             var instance = objectivesList[index];
-            objectiveDescriptionText.text = instance.data.description;
+            if (!instance.isCompleted)
+            {
+                objectiveDescriptionText.text = instance.data.description;
+            }
+            else
+            {
+                objectiveDescriptionText.text = instance.data.recap;
+            }
+            
             objectiveProgressText.text = $"Progress: {instance.currentProgress} / {instance.data.requiredProgress}";
         }
         else
