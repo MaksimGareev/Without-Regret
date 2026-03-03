@@ -90,6 +90,7 @@ public class PlayerController : MonoBehaviour, ISaveable
 
             chimeActive = true;
         }
+          
 
         if (GameManager.Instance.staminaSlider != null)
         {

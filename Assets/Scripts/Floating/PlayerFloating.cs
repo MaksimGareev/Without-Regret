@@ -269,7 +269,9 @@ public class PlayerFloating : MonoBehaviour
         StartCoroutine(FloatAnimationHandler());
 
         if (chimeActive)
+        {
             chimeScript.setFloatingAnimation();
+        }
 
         floatingSlider.gameObject.SetActive(true);
         IsFloating = true;
