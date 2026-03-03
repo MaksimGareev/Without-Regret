@@ -328,6 +328,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e3b9262b76b69d34b87124d143240539, type: 3}
+--- !u!1 &514851474 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8576361245306014099, guid: 3ec7a33f34fdce245a8693ec96d7d664, type: 3}
+  m_PrefabInstance: {fileID: 4526305563781456390}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &518822805
 GameObject:
   m_ObjectHideFlags: 0
@@ -1491,7 +1496,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4739791299965162435, guid: 3ec7a33f34fdce245a8693ec96d7d664, type: 3}
       propertyPath: uniqueID
-      value: 143fead0-a9fc-4d9e-8d6c-59384f0f2e0f
+      value: 501b6955-93cf-42d8-99d6-e8b7a5a7e7da
       objectReference: {fileID: 0}
     - target: {fileID: 6583842094603749823, guid: 3ec7a33f34fdce245a8693ec96d7d664, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1539,12 +1544,20 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7790211378159208611, guid: 3ec7a33f34fdce245a8693ec96d7d664, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7872790047243463844, guid: 3ec7a33f34fdce245a8693ec96d7d664, type: 3}
       propertyPath: player
       value: 
       objectReference: {fileID: 1339883343}
+    - target: {fileID: 7872790047243463844, guid: 3ec7a33f34fdce245a8693ec96d7d664, type: 3}
+      propertyPath: voidProjectileObject
+      value: 
+      objectReference: {fileID: 514851474}
+    - target: {fileID: 7872790047243463844, guid: 3ec7a33f34fdce245a8693ec96d7d664, type: 3}
+      propertyPath: voidPoolSettings.enemyLifetime
+      value: 10
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
