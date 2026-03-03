@@ -270,7 +270,17 @@ public class EnemyFieldOfView : MonoBehaviour
             //if enemy attacks NPC, trigger game over screen
         }
 
-        
+        if (other.gameObject.CompareTag("Throwable"))
+        {
+            if (other.gameObject.GetComponent<Rigidbody>().linearVelocity.sqrMagnitude > 0.001f)
+            {
+                other.gameObject.GetComponent<Rigidbody>().linearVelocity = Vector3.zero;
+                m_Agent.isStopped = true;
+                normalMovement.animator.SetBool("isIdle", true);
+                isStunned = true;
+                Debug.Log("Hit with throwable");
+            }
+        }
     }
 
     // check to see if the player is alive

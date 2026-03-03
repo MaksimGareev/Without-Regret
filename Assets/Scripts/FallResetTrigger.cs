@@ -6,17 +6,19 @@ public class FallResetTrigger : MonoBehaviour
     [Header("Reset Settings")]
     [SerializeField, Tooltip("Time in seconds to wait after the player enters the trigger before starting to move them to the reset point.")]
     private float delayBeforeReset = 0.5f;
-    [SerializeField, Tooltip("Duration in seconds for the player to be moved from their current position to the reset point. During this time, the player's movement will be locked and they will be faded out.")]
-    private float moveDuration = 0.8f;
+    [SerializeField, Tooltip("Duration in seconds for the screen to fully fade in/out from black")]
+    private float fadeDuration = 0.5f;
     [SerializeField, Tooltip("Alpha value to set on the player's materials during the reset movement. This will make the player appear faded out while they are being moved to the reset point.")]
     private float fadedAlpha = 0.3f;
     [SerializeField, Tooltip("Number of rings to subtract from the player when they fall and trigger a reset. This will cause the Timer Ring UI to update and visually show the player losing \"Health\".")]
     private int amountOfRingsToSubtract = 1;
     [SerializeField, Tooltip("Cooldown time in seconds after a reset during which the trigger will be disabled to prevent multiple rapid resets if the player is still within the trigger area.")]
     private float triggerDisableCooldown = 1f;
-    [SerializeField, Header("Reset Point(auto-assigned if child exists)")]
-    private Transform resetPoint;
-    
+    [SerializeField, Header("Reset Points (auto-assigned if children exist)")]
+    private ResetPoint[] resetPoints;
+    [SerializeField, Header("Black Screen (auto-assigned if child canvas exists)")]
+    private CanvasGroup blackScreen;
+
     [Header("Debugging")]
     [Tooltip("If true, debug logs will be printed to the console regarding this script. This can be helpful for troubleshooting and ensuring the reset logic is working as intended, but should be left false when not needed.")]
     public bool showDebugLogs = false;
@@ -24,6 +26,7 @@ public class FallResetTrigger : MonoBehaviour
     private bool isResetting = false;
     private float lastResetTime = -Mathf.Infinity;
     private Collider triggerCollider;
+    private Canvas fadeCanvas;
 
     private void Awake()
     {
@@ -42,9 +45,27 @@ public class FallResetTrigger : MonoBehaviour
             triggerCollider.isTrigger = true;
         }
 
-        if (resetPoint == null && transform.childCount > 0)
+        if ((resetPoints == null || resetPoints.Length < 1) && transform.childCount > 0)
         {
-            resetPoint = transform.GetChild(0);
+            resetPoints = GetComponentsInChildren<ResetPoint>();
+        }
+        if (resetPoints == null || resetPoints.Length < 1)
+        {
+            Debug.LogError("No reset points found for FallResetTrigger. Make sure the reference is assigned or that there are child objects with the ResetPoint component.", this);
+            enabled = false;
+        }
+
+        if (blackScreen == null && transform.childCount > 0)
+        {
+            blackScreen = GetComponentInChildren<CanvasGroup>();
+        }
+        if (blackScreen != null)
+        {
+            blackScreen.alpha = 0f;
+            blackScreen.interactable = false;
+            blackScreen.blocksRaycasts = false;
+            fadeCanvas = blackScreen.GetComponent<Canvas>();
+            fadeCanvas.enabled = false;
         }
     }
 
@@ -73,7 +94,7 @@ public class FallResetTrigger : MonoBehaviour
             return;
         }
 
-        if (resetPoint == null)
+        if (resetPoints == null || resetPoints.Length < 1)
         {
             Debug.LogError($"{name}: No reset point assigned for FallResetTrigger.");
             return;
@@ -84,6 +105,7 @@ public class FallResetTrigger : MonoBehaviour
             Debug.Log($"{name}: Player entered reset trigger. Starting reset sequence.");
         }
         
+        isResetting = true;
         StartCoroutine(HandleReset(player));
     }
 
@@ -91,7 +113,8 @@ public class FallResetTrigger : MonoBehaviour
     {
         if (Time.timeSinceLevelLoad < 0.1f)
         {
-            TeleportPlayerToPoint(player, resetPoint);
+            TeleportPlayerToPoint(player, resetPoints);
+            isResetting = false;
             yield break;
         }
 
@@ -113,11 +136,23 @@ public class FallResetTrigger : MonoBehaviour
 
         yield return new WaitForSeconds(delayBeforeReset);
         
-        // Wait until player moves to the resetPoint
-        yield return StartCoroutine(LerpPlayerToPoint(player, resetPoint));
         
-        yield return new WaitForSeconds(0.15f);
+        if (fadeCanvas != null)
+            fadeCanvas.enabled = true;
+
+        // Wait until screen fades to black
+        yield return StartCoroutine(FadeToBlack(player, true));
         
+        TeleportPlayerToPoint(player, resetPoints);
+
+        yield return new WaitForSeconds(0.4f);
+
+        // Wait until screen is visible again
+        yield return StartCoroutine(FadeToBlack(player, false));
+
+        if (fadeCanvas != null)
+            fadeCanvas.enabled = false;
+
         // Reset has completed, wait for timeout to ensure player is outside of trigger
         player.SetResetLock(false);
 
@@ -153,6 +188,8 @@ public class FallResetTrigger : MonoBehaviour
         isResetting = false;
     }
 
+    /* Commented out just in case we want to keep the movement
+     * 
     private IEnumerator LerpPlayerToPoint(PlayerController player, Transform target)
     {
         // Smoothly move player to the reset point
@@ -188,9 +225,19 @@ public class FallResetTrigger : MonoBehaviour
             controller.enabled = true;
         }
     }
+    */
 
-    private void TeleportPlayerToPoint(PlayerController player, Transform target)
+    private IEnumerator FadeToBlack(PlayerController player, bool fadeIn)
     {
+        // Make the screen fade in/out of black over time.
+        if (blackScreen == null)
+        {
+            Debug.LogError("No black screen CanvasGroup assigned for FallResetTrigger.");
+            yield break;
+        }
+        if (showDebugLogs)
+            Debug.Log($"{name}: Starting fade {(fadeIn ? "in to" : "out of")} black.");
+
         CharacterController controller = player.GetComponent<CharacterController>();
 
         if (controller != null && controller.enabled)
@@ -198,8 +245,49 @@ public class FallResetTrigger : MonoBehaviour
             controller.enabled = false;
         }
 
-        player.transform.position = target.position;
-        player.transform.rotation = target.rotation;
+        float elapsedTime = 0f;
+
+        float startAlpha = fadeIn ? 0f : 1f; // Start from transparent if fading in, or opaque if fading out
+        float targetAlpha = fadeIn ? 1f : 0f; // Target opaque if fading in, or transparent if fading out
+
+        while (elapsedTime < fadeDuration)
+        {
+            elapsedTime += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsedTime / fadeDuration);
+            blackScreen.alpha = Mathf.Lerp(startAlpha, targetAlpha, t);
+            yield return null;
+        }
+        blackScreen.alpha = targetAlpha;
+
+        if (controller != null)
+        {
+            controller.enabled = true;
+        }
+    }
+
+    private void TeleportPlayerToPoint(PlayerController player, ResetPoint[] targets)
+    {
+        CharacterController controller = player.GetComponent<CharacterController>();
+        Transform target = null;
+        float closestDistance = Mathf.Infinity;
+
+        if (controller != null && controller.enabled)
+        {
+            controller.enabled = false;
+        }
+
+        // Find the closest reset point to the player
+        for (int i = 0; i < targets.Length; ++i)
+        {
+            float distance = Vector3.Distance(player.transform.position, targets[i].transform.position);
+            if (distance < closestDistance)
+            {
+                target = targets[i].transform;
+                closestDistance = distance;
+            }
+        }
+
+        player.transform.SetPositionAndRotation(target.position, target.rotation);
 
         if (controller != null)
         {
@@ -256,16 +344,10 @@ public class FallResetTrigger : MonoBehaviour
         return triggerCollider.bounds.Intersects(playerCollider.bounds);
     }
 
-    private void OnDrawGizmosSelected()
+    private void OnDrawGizmos()
     {
-        // Draw the collider box and direction to the resetPoint in editor
-        if (resetPoint == null)
-        {
-            return;
-        }
-
+        // Draw the collider box in editor
         Gizmos.color = Color.cyan;
-        Gizmos.DrawWireSphere(resetPoint.position, 0.15f);
-        Gizmos.DrawLine(transform.position, resetPoint.position);
+        Gizmos.DrawWireCube(transform.position, GetComponent<Collider>().bounds.size);
     }
 }
