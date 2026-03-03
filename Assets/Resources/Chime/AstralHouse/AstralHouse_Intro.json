@@ -1,157 +1,157 @@
 {
-    "dialogueLines": [
+  "dialogueLines": [
+    {
+      "LineID": "Start",
+      "Speaker": "Chime",
+      "text": "Oh! You finally woke up.",
+      "lineTone": 1,
+      "requiredMorality": 0,
+      "choices": [
         {
-            "LineID": "Start",
-            "Speaker": "Chime",
-            "text": "Oh! You finally woke up.",
-            "lineTone": 1,
-            "requiredMorality": 0,
-            "choices": [
-                {
-                    "text": "Why does everything look...different?",
-                    "NextLineID": "part 2",
-                    "moralityChange": 1,
-                    "directionString": "Up"
-                },
-                {
-                    "text": "Who the **** are you?!",
-                    "NextLineID": "part 2",
-                    "moralityChange": -1,
-                    "directionString": "Down"
-                },
-                {
-                    "text": "This is what I get for eating random berries in the forest.",
-                    "NextLineID": "part 2",
-                    "moralityChange": 1,
-                    "directionString": "Left"
-                },
-                {
-                    "text": "Can you get away from me? Like, right now?",
-                    "NextLineID": "part 2",
-                    "moralityChange": -1,
-                    "directionString": "Right"
-                }
-            ]
+          "text": "Why does everything look...different?",
+          "NextLineID": "part 2",
+          "moralityChange": 1,
+          "directionString": "Up"
         },
         {
-            "LineID": "part 2",
-            "Speaker": "Chime",
-            "text": "I'm sure you have many questions, I'll do my best to explain. My name is Chime, your guiding fairy, and we're in the astral plane now. This is the astral form of your house.",
-            "lineTone": 0,
-            "requiredMorality": 0,
-            "choices": [
-                {
-                    "text": "What is the 'astral plane'?",
-                    "NextLineID": "part 3",
-                    "moralityChange": 1,
-                    "directionString": "Up"
-                },
-                {
-                    "text": "Respectfully, where the **** am I exactly?",
-                    "NextLineID": "part 3",
-                    "moralityChange": 1,
-                    "directionString": "Left"
-                },
-                {
-                    "text": "Yeah, that doesn't make things any clearer.",
-                    "NextLineID": "part 3",
-                    "moralityChange": -1,
-                    "directionString": "Down"
-                },
-                {
-                    "text": "Should I even bother? Can I go back to sleep?",
-                    "NextLineID": "part 3",
-                    "moralityChange": -1,
-                    "directionString": "Right"
-                }
-            ]
+          "text": "Who the **** are you?!",
+          "NextLineID": "part 2",
+          "moralityChange": -1,
+          "directionString": "Down"
         },
         {
-            "LineID": "part 3",
-            "Speaker": "Chime",
-            "lineTone": 0,
-            "text": "The astral plane is set in the past, but it's your present. You're special, Echo. Your involvement with everyone here saw to your awakening of powers. I'm here to guide you, so you can use those powers to better everyone's outcomes.",
-            "NextLineID": "Part I",
-            "requiredMorality": 0,
-            "choices": []
+          "text": "This is what I get for eating random berries in the forest.",
+          "NextLineID": "part 2",
+          "moralityChange": 1,
+          "directionString": "Left"
         },
         {
-            "LineID": "part 4",
-            "Speaker": "Chime",
-            "lineTone": 0,
-            "text": "Earlier today, your friends spoke of the people they lost, and how they wish they could have changed the past. Here, you can do just that, as a mediator of sorts.",
-            "NextLineID": "Part I",
-            "requiredMorality": 0,
-            "choices": []
-        },
-        {
-            "LineID": "part 5",
-            "Speaker": "Chime",
-            "lineTone": 0,
-            "text": "Can you help your friends move forward, without regret?",
-            "requiredMorality": 0,
-            "choices": [
-                {
-                    "text": "Yes, I can!",
-                    "NextLineID": "good",
-                    "moralityChange": 1,
-                    "directionString": "Up"
-                },
-                {
-                    "text": "I'm not sure, but I'll try.",
-                    "NextLineID": "good",
-                    "moralityChange": 1,
-                    "directionString": "Left"
-                },
-                {
-                    "text": "Why should I? I've got my own problems.",
-                    "NextLineID": "bad",
-                    "moralityChange": -1,
-                    "directionString": "Down"
-                },
-                {
-                    "text": "You know, you're asking a lot of someone who just woke up.",
-                    "NextLineID": "bad",
-                    "moralityChange": -1,
-                    "directionString": "Right"
-                }
-            ]
-        },
-        {
-            "LineID": "good",
-            "Speaker": "Chime",
-            "lineTone": 1,
-            "text": "That's the spirit! Let's get going.",
-            "NextLineID": "part 6",
-            "requiredMorality": 1,
-            "choices": []
-        },
-        {
-            "LineID": "bad",
-            "Speaker": "Chime",
-            "lineTone": 2,
-            "text": "Helping the others will fix your biggest problem. Just trust me.",
-            "NextLineID": "part 6",
-            "requiredMorality": -1,
-            "choices": []
-        },
-        {
-            "LineID": "part 6",
-            "Speaker": "Chime",
-            "lineTone": 0,
-            "text": "I saw you grab a map before you went to bed last night, do you still have it?",
-            "NextLineID": "end",
-            "requiredMorality": 0,
-            "choices": []
-        },
-        {
-            "LineID": "end",
-            "Speaker": "Chime",
-            "lineTone": 0,
-            "text": "Looking at the map, it seems we'll have to go through a gate in The Graveyard. Grab what you need, and when you're ready, we'll head out.",
-            "requiredMorality": 0,
-            "objectiveToActivate": "grabBackpack",
-            "choices": []
+          "text": "Can you get away from me? Like, right now?",
+          "NextLineID": "part 2",
+          "moralityChange": -1,
+          "directionString": "Right"
         }
-    ]
+      ]
+    },
+    {
+      "LineID": "part 2",
+      "Speaker": "Chime",
+      "text": "I'm sure you have many questions, I'll do my best to explain. My name is Chime, your guiding fairy, and we're in the astral plane now. This is the astral form of your house.",
+      "lineTone": 0,
+      "requiredMorality": 0,
+      "choices": [
+        {
+          "text": "What is the 'astral plane'?",
+          "NextLineID": "part 3",
+          "moralityChange": 1,
+          "directionString": "Up"
+        },
+        {
+          "text": "Respectfully, where the **** am I exactly?",
+          "NextLineID": "part 3",
+          "moralityChange": 1,
+          "directionString": "Left"
+        },
+        {
+          "text": "Yeah, that doesn't make things any clearer.",
+          "NextLineID": "part 3",
+          "moralityChange": -1,
+          "directionString": "Down"
+        },
+        {
+          "text": "Should I even bother? Can I go back to sleep?",
+          "NextLineID": "part 3",
+          "moralityChange": -1,
+          "directionString": "Right"
+        }
+      ]
+    },
+    {
+      "LineID": "part 3",
+      "Speaker": "Chime",
+      "lineTone": 0,
+      "text": "The astral plane is set in the past, but it's your present. You're special, Echo. Your involvement with everyone here saw to your awakening of powers. I'm here to guide you, so you can use those powers to better everyone's outcomes.",
+      "NextLineID": "Part I",
+      "requiredMorality": 0,
+      "choices": []
+    },
+    {
+      "LineID": "part 4",
+      "Speaker": "Chime",
+      "lineTone": 0,
+      "text": "Earlier today, your friends spoke of the people they lost, and how they wish they could have changed the past. Here, you can do just that, as a mediator of sorts.",
+      "NextLineID": "Part I",
+      "requiredMorality": 0,
+      "choices": []
+    },
+    {
+      "LineID": "part 5",
+      "Speaker": "Chime",
+      "lineTone": 0,
+      "text": "Can you help your friends move forward, without regret?",
+      "requiredMorality": 0,
+      "choices": [
+        {
+          "text": "Yes, I can!",
+          "NextLineID": "good",
+          "moralityChange": 1,
+          "directionString": "Up"
+        },
+        {
+          "text": "I'm not sure, but I'll try.",
+          "NextLineID": "good",
+          "moralityChange": 1,
+          "directionString": "Left"
+        },
+        {
+          "text": "Why should I? I've got my own problems.",
+          "NextLineID": "bad",
+          "moralityChange": -1,
+          "directionString": "Down"
+        },
+        {
+          "text": "You know, you're asking a lot of someone who just woke up.",
+          "NextLineID": "bad",
+          "moralityChange": -1,
+          "directionString": "Right"
+        }
+      ]
+    },
+    {
+      "LineID": "good",
+      "Speaker": "Chime",
+      "lineTone": 1,
+      "text": "That's the spirit! Let's get going.",
+      "NextLineID": "part 6",
+      "requiredMorality": 1,
+      "choices": []
+    },
+    {
+      "LineID": "bad",
+      "Speaker": "Chime",
+      "lineTone": 2,
+      "text": "Helping the others will fix your biggest problem. Just trust me.",
+      "NextLineID": "part 6",
+      "requiredMorality": -1,
+      "choices": []
+    },
+    {
+      "LineID": "part 6",
+      "Speaker": "Chime",
+      "lineTone": 0,
+      "text": "I saw you grab a map before you went to bed last night, do you still have it?",
+      "NextLineID": "end",
+      "requiredMorality": 0,
+      "choices": []
+    },
+    {
+      "LineID": "end",
+      "Speaker": "Chime",
+      "lineTone": 0,
+      "text": "Looking at the map, it seems we'll have to go through a gate in The Graveyard. Grab what you need, and when you're ready, we'll head out.",
+      "requiredMorality": 0,
+      "objectiveToActivate": "grabBackpack",
+      "choices": []
+    }
+  ]
 }
