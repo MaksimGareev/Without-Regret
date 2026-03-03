@@ -55,7 +55,7 @@ public class BossEnemyController : MonoBehaviour
 
         if (enemyPrefab != null)
         {
-            enemyPooler = new ObjectPool(enemyPrefab, 10, showDebugLogs);
+            enemyPooler = new ObjectPool(enemyPrefab, 10, showDebugLogs, transform);
         }
         else
         {
