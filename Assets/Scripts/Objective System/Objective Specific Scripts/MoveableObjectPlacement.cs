@@ -39,6 +39,8 @@ public class MoveableObjectPlacement : MonoBehaviour
     private bool ghostEnabled = false;
     private float ghostAlpha = 0.7f;
 
+    [SerializeField] private TraversablePoint[] traversablePoints;
+
     private void OnEnable()
     {
         ObjectiveManager.Instance.OnObjectiveActivated.AddListener(SetObjectiveActive);
@@ -191,6 +193,11 @@ public class MoveableObjectPlacement : MonoBehaviour
                 moveableObject.isGrabbable = false;
                 moveableObject.transform.position = lockingPosition.position;
                 moveableObject.transform.rotation = lockingPosition.rotation;
+
+                for(int i = 0; i<traversablePoints.Length; ++i)
+                {
+                    traversablePoints[i].isTraversable = true; //sets traversable points on protected NPC path to true
+                }
 
                 // Add progress to the objective if appropriate
                 if (Time.timeSinceLevelLoad > 1f && addProgress && linkedObjective != null && ObjectiveManager.Instance != null)
