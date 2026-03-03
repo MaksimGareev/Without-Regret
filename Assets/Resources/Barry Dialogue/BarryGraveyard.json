@@ -27,7 +27,7 @@
                     "directionString": "Left"
                 },
                 {
-                    "text": "I need to go walk my hamster, so make it quick.",
+                    "text": "I need to go walk my hamster...",
                     "NextLineID": "Mean",
                     "moralityChange": -1,
                     "directionString": "Right"
@@ -130,7 +130,50 @@
             "LineID": "Part VII",
             "Speaker": "Reed",
             "NPCGender": "male",
-            "text": "It's getting late. I lost my spare keys around here, but I honestly can't be bothered. I'm gonna head home. If you'd like to look for them, they might be somewhere in the leaves.",
+            "text": "Sh*%, I completely forgot to clean up the leaves like I told Stevey I would. I'm a mess.",
+            "lineTone": 2,
+            "requiredMorality": 0,
+            "NextLineID": "Part VIII",
+            "choices": []
+        },
+        {
+            "LineID": "Part VIII",
+            "Speaker": "Reed",
+            "NPCGender": "male",
+            "text": "I'm sorry to ask this of you Echo, but is there any chance you'll clean up the leaves? I'm sure Stevey will have something cool for you as a reward.",
+            "lineTone": 2,
+            "requiredMorality": 0,
+            "choices": [
+                {
+                    "text": "Don't worry about it, go home.",
+                    "NextLineID": "Part IX",
+                    "moralityChange": 1,
+                    "directionString": "Up"
+                },
+                {
+                    "text": "I'll do it, but you owe me.",
+                    "NextLineID": "Part X",
+                    "moralityChange": -1,
+                    "directionString": "Down"
+                }
+            ]
+        },
+        {
+            "LineID": "Part IX",
+            "Speaker": "Reed",
+            "NPCGender": "male",
+            "text": "You're a lifesaver, Echo! Grab a trash bag out of the shed and use that to grab the leaves, then toss the bag in the trash when you're done. Thanks again!",
+            "lineTone": 0,
+            "requiredMorality": 0,
+            "choices": [],
+            "objectiveToActivate": [ "stackLeaves" ],
+            "endDialogueAfterLine": true
+        },
+        {
+            "LineID": "Part X",
+            "Speaker": "Reed",
+            "NPCGender": "male",
+            "text": "I guess that's fair. Let me know what exactly that is next time I see you. You can grab a trash bag out of the shed to bag the leaves, then throw it in the dumpster after. Thanks for helping me.",
             "lineTone": 0,
             "requiredMorality": 0,
             "choices": [],
