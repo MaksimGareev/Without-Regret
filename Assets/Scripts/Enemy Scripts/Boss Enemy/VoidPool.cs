@@ -136,6 +136,16 @@ public class VoidPool : MonoBehaviour
                 TimerRingUI.Instance.SubtractRingSection(amountOfRingsToSubtract);
             }
 
+            // Show tutorial about the void pool
+            if (InteractionTutorialManager.Instance != null && !InteractionTutorialManager.Instance.HasSeenTutorial(InteractType.BossAttack))
+            {
+                if(InteractionTutorialUI.Instance != null)
+                {
+                    InteractionTutorialUI.Instance.ShowTutorial("Void pools damage you over time! Don't stay in them for too long to avoid damage!");
+                }
+                InteractionTutorialManager.Instance.MarkTutorialSeen(InteractType.BossAttack);
+            }
+
             enterTime = Time.time;
         }
     }
