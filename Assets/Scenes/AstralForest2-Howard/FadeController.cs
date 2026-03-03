@@ -6,41 +6,41 @@ public class FadeController : MonoBehaviour
 {
     public Image fadeImage;
     public float fadeDuration = 1f;
-    public float waitTime = 1f;
 
-    private bool hasFaded = false;
+    private bool isFading = false;
 
-    public void StartFade()
+    //Fade to black, run an action while black, then fade back in.
+    public void StartFadeWithBlackEvent(System.Action onBlack, float blackHoldTime = 0.1f)
     {
-        if (!hasFaded)
-        {
-            hasFaded = true;
-            StartCoroutine(FadeSequence());
-        }
+        if (!isFading)
+            StartCoroutine(FadeSequenceWithEvent(onBlack, blackHoldTime));
     }
 
-    IEnumerator FadeSequence()
+    private IEnumerator FadeSequenceWithEvent(System.Action onBlack, float blackHoldTime)
     {
-        yield return StartCoroutine(Fade(0f, 1f)); //Fade In
+        isFading = true;
 
-        yield return new WaitForSeconds(waitTime); //wait
+        yield return StartCoroutine(Fade(0f, 1f));  //fade to black
+        onBlack?.Invoke();                          //do stuff while black
+        yield return new WaitForSeconds(blackHoldTime);
+        yield return StartCoroutine(Fade(1f, 0f));  //fade back in
 
-        yield return StartCoroutine(Fade(1f, 0f)); //Fade Out
+        isFading = false;
     }
 
-    IEnumerator Fade(float startAlpha, float endAlpha)
+    private IEnumerator Fade(float startAlpha, float endAlpha)
     {
         float elapsed = 0f;
-        Color color = fadeImage.color;
+        Color c = fadeImage.color;
 
         while (elapsed < fadeDuration)
         {
             elapsed += Time.deltaTime;
-            float alpha = Mathf.Lerp(startAlpha, endAlpha, elapsed / fadeDuration);
-            fadeImage.color = new Color(color.r, color.g, color.b, alpha);
+            float a = Mathf.Lerp(startAlpha, endAlpha, elapsed / fadeDuration);
+            fadeImage.color = new Color(c.r, c.g, c.b, a);
             yield return null;
         }
 
-        fadeImage.color = new Color(color.r, color.g, color.b, endAlpha);
+        fadeImage.color = new Color(c.r, c.g, c.b, endAlpha);
     }
 }
