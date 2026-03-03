@@ -27,9 +27,9 @@ public class ControlSchemeUI : MonoBehaviour
         controllerMapping.SetActive(true);
         mouseKeyMapping.SetActive(false);
 
-        ControllerButton.GetComponent<ButtonHighlighting>().stayHighlighted = true;
-        ControllerButton.GetComponent<ButtonHighlighting>().OnHighlight();
-        KeyboardMouseButton.GetComponent<ButtonHighlighting>().OnUnhighlight();
+        ControllerButton.GetComponent<SelectableHighlighting>().stayHighlighted = true;
+        ControllerButton.GetComponent<SelectableHighlighting>().ApplyHighlight();
+        KeyboardMouseButton.GetComponent<SelectableHighlighting>().RemoveHighlight();
     }
 
     private void OnKeyboardMouseClicked()
@@ -37,9 +37,9 @@ public class ControlSchemeUI : MonoBehaviour
         controllerMapping.SetActive(false);
         mouseKeyMapping.SetActive(true);
 
-        ControllerButton.GetComponent<ButtonHighlighting>().OnUnhighlight();
-        KeyboardMouseButton.GetComponent<ButtonHighlighting>().stayHighlighted = true;
-        KeyboardMouseButton.GetComponent<ButtonHighlighting>().OnHighlight();
+        ControllerButton.GetComponent<SelectableHighlighting>().RemoveHighlight();
+        KeyboardMouseButton.GetComponent<SelectableHighlighting>().stayHighlighted = true;
+        KeyboardMouseButton.GetComponent<SelectableHighlighting>().ApplyHighlight();
     }
 
     public void SwitchTabs()
