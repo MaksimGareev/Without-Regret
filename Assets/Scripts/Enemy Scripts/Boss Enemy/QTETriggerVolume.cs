@@ -21,7 +21,7 @@ public class QTETriggerVolume : MonoBehaviour, IInteractable
 
     public float interactionPriority => 10;
 
-    public InteractType interactType => InteractType.Lockpick;
+    public InteractType interactType => InteractType.BossQTE;
 
     private void Awake()
     {

@@ -29,7 +29,7 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private Button settingsButton;
     [SerializeField] private Button creditsButton;
     [SerializeField] private Button quitButton;
-    [SerializeField] private Button backButton;
+    [SerializeField] public Button backButton;
     [SerializeField] private Button feedbackSurveyButton;
 
     [Header("Text References")]
@@ -260,7 +260,7 @@ public class MainMenu : MonoBehaviour
                 }
                 else if (settingsPanel.activeSelf && settingsScript.controlSchemeOpen)
                 {
-                    es.SetSelectedGameObject(settingsScript.controlSchemeUI.GetComponent<ControlSchemeUI>().ControllerButton.gameObject);
+                    es.SetSelectedGameObject(backButton.gameObject);
                 }
                 else if (creditsPanel.activeSelf)
                 {

@@ -10,14 +10,14 @@ public class BossEnemyController : MonoBehaviour
 
     [Header("Void Attack Settings")]
     [SerializeField, Min(0.1f)] float projectileSpeed = 5f;
-    [SerializeField] VoidPoolSettings voidPoolSettings = new(5f, 1f, null, new int[] { 1, 3 });
+    [SerializeField] VoidPoolSettings voidPoolSettings = new(5f, 1f, 1, 2, 6f);
 
     private Rigidbody voidProjectileRigidbody;
 
     [Header("References")]
     [SerializeField] Transform player;
     [SerializeField] GameObject enemyPrefab;
-    [SerializeField] GameObject voidProjectilePrefab;
+    [SerializeField] GameObject voidProjectileObject;
     [SerializeField] GameObject voidPoolPrefab;
     [SerializeField] Transform projectileSpawn;
 
@@ -30,6 +30,10 @@ public class BossEnemyController : MonoBehaviour
     private float timeSinceLastAction = -3f;
     private bool actionInProgress = false;
 
+    // Pools
+    private ObjectPool enemyPooler;
+    private ObjectPool voidPooler;
+
     private void Awake()
     {
         if (player == null)
@@ -38,10 +42,10 @@ public class BossEnemyController : MonoBehaviour
             Debug.LogWarning("Player reference for Boss Enemy is null, had to Find manually");
         }
 
-        if (voidProjectilePrefab != null)
+        if (voidProjectileObject != null)
         {
-            voidProjectileRigidbody = voidProjectilePrefab.GetComponent<Rigidbody>();
-            voidProjectilePrefab.SetActive(false);
+            voidProjectileRigidbody = voidProjectileObject.GetComponent<Rigidbody>();
+            voidProjectileObject.SetActive(false);
         }
 
         if (projectileSpawn != null)
@@ -51,11 +55,16 @@ public class BossEnemyController : MonoBehaviour
 
         if (enemyPrefab != null)
         {
-            voidPoolSettings.enemyPrefab = enemyPrefab;
+            enemyPooler = new ObjectPool(enemyPrefab, 10, showDebugLogs, transform);
         }
         else
         {
             Debug.LogError("Enemy prefab for the void pool is missing");
+        }
+
+        if (voidPoolPrefab != null)
+        {
+            voidPooler = new ObjectPool(voidPoolPrefab, 3, showDebugLogs);
         }
 
         // set up the array of actions the boss can perform
@@ -95,7 +104,7 @@ public class BossEnemyController : MonoBehaviour
 
     void VoidProjectile()
     {
-        if (voidProjectilePrefab == null)
+        if (voidProjectileObject == null)
         {
             Debug.LogError("Void Projectile Prefab reference is missing.");
             return;
@@ -103,11 +112,18 @@ public class BossEnemyController : MonoBehaviour
 
         if (showDebugLogs) Debug.Log("Performing Void Projectile action");
 
-        voidProjectilePrefab.GetComponent<VoidProjectile>().Initialize(EndAction, voidPoolPrefab, voidPoolSettings); // End action when projectile hits something
+        // Initialize projectile to know which pools to use
+        if (!voidProjectileObject.TryGetComponent<VoidProjectile>(out var voidProjectile))
+        {
+            Debug.LogError("VoidProjectile component missing on projectile prefab.");
+            return;
+        }
+
+        voidProjectile.Initialize(EndAction, voidPooler, enemyPooler, voidPoolSettings); // End action when projectile hits something
 
         // Launch the void projectile from the spawnpoint toward the player's position
-        voidProjectilePrefab.transform.SetPositionAndRotation(projectileSpawnPoint, Quaternion.identity);
-        voidProjectilePrefab.SetActive(true);
+        voidProjectileObject.transform.SetPositionAndRotation(projectileSpawnPoint, Quaternion.identity);
+        voidProjectileObject.SetActive(true);
 
         if (player != null)
         {

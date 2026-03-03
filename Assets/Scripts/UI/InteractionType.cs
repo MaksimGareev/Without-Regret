@@ -11,5 +11,8 @@ public enum InteractType
     Collectable,
     Float,
     Door,
+    Possess,
+    BossQTE,
+    BossAttack,
     Remove
 }

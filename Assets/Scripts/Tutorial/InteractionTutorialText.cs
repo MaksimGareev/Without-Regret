@@ -21,6 +21,9 @@ public static class InteractionTutorialText
             case InteractType.Float:
                 return "Floating allows you to traverse gaps in the Astral Plane. Press the A button / Spacebar next to a gap to begin floating, and press it again when the indicator is in the green area to stay in the air. You can only float for little while, and failing results in becoming grounded again.";
 
+            case InteractType.BossQTE:
+                return "Match the correct inputs to send a burst of energy at the boss and damage it";
+
             default:
                 return "";
         }
