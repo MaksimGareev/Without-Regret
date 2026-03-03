@@ -183,6 +183,7 @@ public class CameraMovement : MonoBehaviour
         // Do nothing if camera is locked or there is no target assigned
         if (CameraLocked) return;
         if (target == null) return;
+        if (GameOverManager.Instance != null && GameOverManager.Instance.IsGameOver) return;
 
         if (pc != null && pc.MovementLocked && pc.enabled)
         {

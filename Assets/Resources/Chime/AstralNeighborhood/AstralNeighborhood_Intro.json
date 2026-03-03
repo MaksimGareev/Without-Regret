@@ -1,16 +1,24 @@
 {
     "dialogueLines": [
         {
+            "LineID": "Start",
             "Speaker": "Chime",
-            "text": "Here in the Astral Plane, we are invisible to the others, but you still have the ability to subconsciously mediate in everyone's affairs and manipulate objects in the environment.",
+            "NPCGender": "female",
+            "text": "Here in the Astral Plane, we are invisible to the others, but you have abilities, such as being able to subconsciously mediate in everyone's affairs and manipulate objects in the environment.",
+            "lineTone": 0,
             "requiredMorality": 0,
+            "NextLineID": "II",
             "choices": []
         },
         {
+            "LineID": "II",
             "Speaker": "Chime",
+            "NPCGender": "female",
             "text": "Listen in on some of the conversations between people in the neighborhood. You'll be able to sway their thoughts and responses in conversation.",
+            "lineTone": 0,
             "requiredMorality": 0,
-            "choices": []
+            "choices": [],
+            "endDialogueAfterLine": true
         }
     ]
 }
