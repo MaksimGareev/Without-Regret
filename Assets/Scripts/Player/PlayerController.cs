@@ -10,6 +10,11 @@ public class PlayerController : MonoBehaviour, ISaveable
     private Camera PlayerCamera;
     [HideInInspector] public Animator Animator;
 
+    [Header("Chime Animation settings")]
+    public Animator chimeAnimator;
+    public bool chimeActive = false;
+    public Chime chimeScript;
+
     [Header("Sprint UI Colors")]
     [SerializeField] Color normalColor = new Color(0f, 147f/255f, 111f/255f);
     [SerializeField] Color cooldownColor = Color.grey;
@@ -75,6 +80,16 @@ public class PlayerController : MonoBehaviour, ISaveable
     {
         Controller = GetComponent<CharacterController>();
         Animator = GetComponentInChildren<Animator>();
+
+        //Finding chime + animator
+        GameObject chime = GameObject.FindWithTag("Chime");
+        if (chime != null)
+        {
+            chimeScript = chime.GetComponent<Chime>();
+            chimeAnimator = chime.GetComponentInChildren<Animator>();
+
+            chimeActive = true;
+        }
 
         if (GameManager.Instance.staminaSlider != null)
         {
@@ -284,6 +299,9 @@ public class PlayerController : MonoBehaviour, ISaveable
         {
             ResetAnimations();
             Animator.SetBool("isWalking", true);
+            if (chimeActive)
+                chimeScript.SetWalkingAnimation();
+
             idleTimer = 0f; // reset idle timer
         }
         if (!isMoving)
@@ -292,6 +310,8 @@ public class PlayerController : MonoBehaviour, ISaveable
             {
                 ResetAnimations();
                 Animator.SetBool("isIdle", true);
+                if (chimeActive)
+                    chimeScript.SetIdleAnimation();
             }
 
             idleTimer += Time.deltaTime;
@@ -685,8 +705,13 @@ public class PlayerController : MonoBehaviour, ISaveable
 
         ResetAnimations();
         Animator.SetTrigger("specialIdle");
+        if (chimeActive)
+            chimeScript.setSpecialIdleAnimation();
 
         yield return new WaitForSeconds(2f);
+
+        if (chimeActive)
+            chimeAnimator.SetBool("isInSpecialIdle", false);
 
         specialIdle = false;
     }

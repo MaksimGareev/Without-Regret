@@ -55,6 +55,12 @@ public class PlayerFloating : MonoBehaviour
     private Slider floatingSlider;
     private Slider cooldownSlider;
 
+    [Header("Chime Animation settings")]
+    public Animator chimeAnimator;
+    public bool chimeActive = false;
+    public Chime chimeScript;
+
+
     public bool IsFloating { get; private set; } = false;
     private bool canFloat = false;
     private float floatTimer = 0f;
@@ -108,6 +114,17 @@ public class PlayerFloating : MonoBehaviour
                 Debug.LogError("PlayerFloating: Animator component could not be found. Please ensure there is an Animator component on a child object for handling floating animations.");
             }
         }
+
+        //Finding chime + animator
+        GameObject chime = GameObject.FindWithTag("Chime");
+        if (chime != null)
+        {
+            chimeScript = chime.GetComponent<Chime>();
+            chimeAnimator = chime.GetComponentInChildren<Animator>();
+
+            chimeActive = true;
+        }
+
 
         if (GameManager.Instance.floatCooldown != null)
         {
@@ -251,6 +268,9 @@ public class PlayerFloating : MonoBehaviour
         animator.SetTrigger("floatStart");
         StartCoroutine(FloatAnimationHandler());
 
+        if (chimeActive)
+            chimeScript.setFloatingAnimation();
+
         floatingSlider.gameObject.SetActive(true);
         IsFloating = true;
         floatTimer = 0f;
@@ -289,6 +309,9 @@ public class PlayerFloating : MonoBehaviour
     {
         animator.SetTrigger("isLanding");
         animator.SetBool("isFloating", false);
+
+        if (chimeActive)
+            chimeScript.ResetChimeAnimations();
 
         floatingSlider.gameObject.SetActive(false);
         IsFloating = false;
