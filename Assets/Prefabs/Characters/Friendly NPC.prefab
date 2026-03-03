@@ -66,7 +66,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 2800000, guid: 32c388294f5c7b8469ea3f201a11b696, type: 3}
+  m_Texture: {fileID: 2800000, guid: 39850d55dd7363141bcdbb373e0e93f3, type: 3}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -110,7 +110,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 1.07}
   m_SizeDelta: {x: 592, y: 333}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &7268461171762982352
@@ -353,16 +353,18 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5575190084026342562}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a40ba9254f066ed499136723990e8a6f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DialogueTrigger
+  animator: {fileID: 0}
+  isTalking: 0
   NPCName: Friendly NPC
-  promptUI: {fileID: 0}
   chatRange: 3
-  jsonDialogueFile: {fileID: 0}
-  TalkedJsonDialogueFile: {fileID: 0}
+  playerMovePoint: {fileID: 0}
+  jsonDialogueFile: {fileID: 4900000, guid: b08ec039a12449f43922ab9ad0ca5db0, type: 3}
+  TalkedJsonDialogueFile: {fileID: 4900000, guid: ee0c8cc1c0e49c74eb182d939b56af22, type: 3}
   CompleteJsonDialogueFile: {fileID: 0}
   ActiveJsonDialogueFile: {fileID: 0}
   objectiveIDYouCareAbout: []
@@ -374,7 +376,8 @@ MonoBehaviour:
   iconPrefab: {fileID: 4114033263953508203, guid: 48024210bf4a4394fa37015b90b3b410, type: 3}
   shouldShowIcon: 1
   enemy: {fileID: 0}
-  focusCameraOnTrigger: 0
+  focusCameraOnTrigger: 1
+  RewardItem: {fileID: 0}
   triggerType: 0
 --- !u!95 &-3710363329669676532
 Animator:
@@ -415,6 +418,10 @@ MonoBehaviour:
   dialogueLine: Hi there Echo!
   triggerDistance: 3
   player: {fileID: 0}
+  padding: {x: 100, y: 50}
+  minWidth: 100
+  minHeight: 50
+  maxWidth: 1000
 --- !u!1 &8502622949037986501
 GameObject:
   m_ObjectHideFlags: 0
@@ -441,7 +448,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8502622949037986501}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -16}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -449,7 +456,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -45, y: 0}
+  m_AnchoredPosition: {x: -43, y: 0}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7837502734871230481
@@ -480,10 +487,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: New Text
+  m_text: 
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: dcc0e5f5d939b0f49b5d3f6c7ce0c35e, type: 2}
-  m_sharedMaterial: {fileID: -8055484152088242137, guid: dcc0e5f5d939b0f49b5d3f6c7ce0c35e, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -507,15 +514,15 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 22
-  m_fontSizeBase: 22
+  m_fontSize: 60
+  m_fontSizeBase: 60
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 2
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -545,7 +552,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: -51.478012, y: -10.987295, z: -145.19135, w: -10.284924}
+  m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0

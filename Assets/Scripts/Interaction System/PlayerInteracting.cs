@@ -82,7 +82,10 @@ public class PlayerInteracting : MonoBehaviour
         // Interact with moveable objects or dialogue
         if (Interact.triggered)
         {
-            var interact = currentTargets.FirstOrDefault(i => i.interactType != InteractType.Mantle);
+            var interact = currentTargets
+                .Where(i => i.interactType != InteractType.Mantle)
+                .OrderByDescending(i => i.interactionPriority)
+                .FirstOrDefault();
 
             if (interact != null)
             {
@@ -97,7 +100,9 @@ public class PlayerInteracting : MonoBehaviour
         if (target == null)
             return;
 
-        bool tutorialShown = TryShowTutorial(target.interactType, () => target.OnPlayerInteraction(gameObject));
+        bool tutorialShown = TryShowTutorial(
+            target.interactType,
+            () => target.OnPlayerInteraction(gameObject));
 
         if (tutorialShown)
             return;
@@ -120,29 +125,54 @@ public class PlayerInteracting : MonoBehaviour
     {
         Collider[] hits = Physics.OverlapSphere(transform.position, interactionRange,~0, QueryTriggerInteraction.Collide);
 
-        var detectedTargets = hits
-                                .SelectMany(h => h.GetComponentsInParent<IInteractable>())
-                                .Distinct().Where(i => i != null && i.CanInteract(gameObject))
-                                .OrderByDescending(i => i.interactionPriority)
-                                .ToList();
-        
-        // Check if something is detected in this frame and highlight interaction button
-        if (detectedTargets.Count > 0)
-        {
-            currentTargets = detectedTargets;
-            lastDetectionTime = Time.time;
+        // Collect all interactables
+        var interactables = hits
+            .SelectMany(h => h.GetComponentsInParent<IInteractable>())
+            .Where(i => i != null && i.CanInteract(gameObject))
+            .Distinct()
+            .ToList();
 
-            ButtonIcons.Instance?.HighlightMultiple(currentTargets);
+        if (interactables.Count == 0)
+        {
+            if (Time.time - lastDetectionTime > detectionGraceTime)
+            {
+                currentTargets.Clear();
+                ButtonIcons.Instance?.Clear();
+            }
             return;
         }
 
-        // if nothing is detected clear the buttons after the detection grace period and clear interaction buttons
-        if (Time.time - lastDetectionTime > detectionGraceTime)
+        // Group by object root
+        var grouped = interactables
+            .GroupBy(i => ((MonoBehaviour)i).transform.root);
+
+        List<IInteractable> bestTargets = new();
+
+        float bestScore = float.MinValue;
+
+        foreach (var group in grouped)
         {
-            currentTargets.Clear();
-            ButtonIcons.Instance?.Clear();
+            Transform root = group.Key;
+
+            float distance = Vector3.Distance(transform.position, root.position);
+
+            // Find highest priority interaction on this object
+            var groupBestPriority = group.Max(i => i.interactionPriority);
+
+            // calculate combined score
+            float score = groupBestPriority - distance * 2f;
+
+            if (score > bestScore)
+            {
+                bestScore = score;
+                bestTargets = group.ToList();
+            }
         }
 
+        currentTargets = bestTargets;
+        lastDetectionTime = Time.time;
+
+        ButtonIcons.Instance?.HighlightMultiple(currentTargets);
     }
 
     // Activate tutorial description on first interaction with specific interaction type
