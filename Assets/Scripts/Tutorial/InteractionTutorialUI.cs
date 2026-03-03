@@ -47,7 +47,7 @@ public class InteractionTutorialUI : MonoBehaviour
         IsShowing = false;
     }
 
-    public void ShowTutorial(string text, System.Action onConfirm)
+    public void ShowTutorial(string text, System.Action onConfirm = null)
     {
         if (panel == null || descriptionText == null)
         {
@@ -71,7 +71,17 @@ public class InteractionTutorialUI : MonoBehaviour
             playerController.DisableInput();
         }
     }
+    /*
+    public void ShowBossTutorial(InteractType type, string message)
+    {
+        if (canvasGroup == null) return;
 
+        descriptionText.text = message;
+
+        gameObject.SetActive(true);
+        StartCoroutine(FadeCanvasGroup(canvasGroup, 0f, 1f, fadeDuration));
+    }
+    */
     public void Update()
     {
         if (!IsShowing)
@@ -99,7 +109,9 @@ public class InteractionTutorialUI : MonoBehaviour
         descriptionText.gameObject.SetActive(false);
 
         IsShowing = false;
+
         Time.timeScale = 1f;
+
         PlayerController playerController = FindFirstObjectByType<PlayerController>();
         if (playerController != null)
         {

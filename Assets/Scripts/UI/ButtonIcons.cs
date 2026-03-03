@@ -50,6 +50,16 @@ public class ButtonIcons : MonoBehaviour
         }
     }
 
+    public void HighlightBest(IInteractable interactable)
+    {
+        Clear();
+
+        if (interactable == null) return;
+
+        Highlight(interactable.interactType);
+    }
+
+    
     public void Highlight(InteractType type)
     {
         //Clear();
@@ -71,6 +81,7 @@ public class ButtonIcons : MonoBehaviour
             Debug.LogWarning($"No icon found for InteractType {type}");
         }
     }
+    
 
     public void HighlightMultiple(List<IInteractable> interactables)
     {
