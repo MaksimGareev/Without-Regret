@@ -137,8 +137,8 @@ public class ConfirmationUI : MonoBehaviour
         confirmButton.interactable = false;
         cancelButton.interactable = false;
 
-        confirmButton.GetComponent<ButtonHighlighting>().OnUnhighlight();
-        cancelButton.GetComponent<ButtonHighlighting>().OnUnhighlight();
+        confirmButton.GetComponent<SelectableHighlighting>().RemoveHighlight();
+        cancelButton.GetComponent<SelectableHighlighting>().RemoveHighlight();
 
         StopAllCoroutines();
     }
