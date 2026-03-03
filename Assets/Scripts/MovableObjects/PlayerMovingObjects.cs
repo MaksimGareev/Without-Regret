@@ -1,15 +1,14 @@
 using UnityEngine;
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine.InputSystem;
 
 public class PlayerMovingObjects : MonoBehaviour
 {
     private Animator animator;
     [Header("General Settings")]
     [Tooltip("Where moveable objects will snap to (should already be set)")] public Transform grabPoint;
-
+    [Tooltip("Which layers will be ignored when checking for collisions while a MoveableObject is held.")]
+    [SerializeField] private LayerMask ignoreCollisionLayer;
     [Header("Debugging")]
     [SerializeField] private bool showDebugLogs = false;
 
@@ -153,7 +152,7 @@ public class PlayerMovingObjects : MonoBehaviour
             Quaternion rotation = obj.transform.rotation;
 
             // Query for overlapping colliders at the target location
-            Collider[] hits = Physics.OverlapBox(targetCenter, halfExtents, rotation, ~0, QueryTriggerInteraction.Ignore);
+            Collider[] hits = Physics.OverlapBox(targetCenter, halfExtents, rotation, ~ignoreCollisionLayer, QueryTriggerInteraction.Ignore);
             foreach (var hit in hits)
             {
                 if (hit == col) continue; // ignore self
