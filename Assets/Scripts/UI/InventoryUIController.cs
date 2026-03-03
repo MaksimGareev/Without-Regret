@@ -184,7 +184,18 @@ public class InventoryUIController : MonoBehaviour//, IPointerEnterHandler, IPoi
                 if (index < itemsList.Count)
                 {
                     slotItems[row, col] = itemsList[index];
-                    slotIcons[row, col].sprite = itemsList[index].InvIcon;
+                    if (itemsList[index].InvIcon != null)
+                    {
+                        slotIcons[row, col].sprite = itemsList[index].InvIcon;
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"Item {itemsList[index].ItemName} is missing an inventory icon!");
+                        if (emptySlotSprite != null)
+                        {
+                            slotIcons[row, col].sprite = emptySlotSprite;
+                        }
+                    }
                     slotIcons[row, col].color = Color.white;
                 }
                 else

@@ -3,6 +3,7 @@
         {
             "LineID": "Start",
             "Speaker": "Chime",
+            "NPCGender": "female",
             "text": "Look, there's Reed!",
             "lineTone": 0,
             "NextLineID": "part 2",
@@ -12,17 +13,19 @@
         {
             "LineID": "part 2",
             "Speaker": "Chime",
+            "NPCGender": "female",
             "text": "...It looks like he's arguing with someone, do you know who that is?",
+            "lineTone": 0,
             "requiredMorality": 0,
             "choices": [
                 {
-                    "text": "Yeah, thats Derry.",
+                    "text": "Yeah, thats Darry.",
                     "NextLineID": "good",
                     "moralityChange": 1,
                     "directionString": "Up"
                 },
                 {
-                    "text": "Dunno. Didn't care much for his story. Still don't.",
+                    "text": "Dunno. Didn't care much for his story.",
                     "NextLineID": "bad",
                     "moralityChange": -1,
                     "directionString": "Down"
@@ -32,6 +35,7 @@
         {
             "LineID": "good",
             "Speaker": "Chime",
+            "NPCGender": "female",
             "text": "So that's the friend he was mourning in The Graveyard, you should see why they're arguing...",
             "lineTone": 0,
             "requiredMorality": 1,
@@ -41,7 +45,8 @@
         {
             "LineID": "bad",
             "Speaker": "Chime",
-            "text": "That's his friend he was mourning in The Graveyard, Derry. Go figure out why they're arguing with each other.",
+            "NPCGender": "female",
+            "text": "That's his friend he was mourning in The Graveyard, Darry. Go figure out why they're arguing with each other.",
             "lineTone": 0,
             "requiredMorality": -1,
             "choices": [],
