@@ -10,7 +10,7 @@
                     "name": "Move",
                     "type": "Value",
                     "id": "351f2ccd-1f9f-44bf-9bec-d62ac5c5f408",
-                    "expectedControlType": "Analog",
+                    "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
@@ -154,6 +154,15 @@
                     "name": "Throwing",
                     "type": "Button",
                     "id": "73e3050b-48e6-4c2a-b47f-7e957d00b2ab",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Cancel Floating",
+                    "type": "Button",
+                    "id": "e8bca2b9-b759-4f82-81df-0dcfdb60a93b",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -666,6 +675,28 @@
                     "action": "Throwing",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "9d95e9eb-01ea-4429-acf5-8112e5e1f408",
+                    "path": "<Keyboard>/c",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "Cancel Floating",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a1a30b88-3cb2-4804-9f94-b493e72e4630",
+                    "path": "<Gamepad>/buttonEast",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad",
+                    "action": "Cancel Floating",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },
@@ -675,12 +706,12 @@
             "actions": [
                 {
                     "name": "Navigate",
-                    "type": "PassThrough",
+                    "type": "Value",
                     "id": "c95b2375-e6d9-4b88-9c4c-c5e76515df4b",
                     "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false
+                    "initialStateCheck": true
                 },
                 {
                     "name": "Submit",
@@ -2144,6 +2175,54 @@
                     "processors": "",
                     "groups": "Keyboard&Mouse;Gamepad;Touch;Joystick;XR",
                     "action": "Cancel",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "Debug",
+            "id": "fba161cf-7bc1-4685-82d6-3f78775ccd97",
+            "actions": [
+                {
+                    "name": "SkipObjective",
+                    "type": "Button",
+                    "id": "a28af3d8-4954-46e4-9db1-2b5333320b5e",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "ObjectiveDebugUI",
+                    "type": "Button",
+                    "id": "d8da6e29-c424-434b-aaef-84e59d2dfe0d",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "6b174330-7cf4-43c3-b730-8b5713c21290",
+                    "path": "<Keyboard>/upArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SkipObjective",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "55670a6f-e59f-40ea-baa5-953bf643a351",
+                    "path": "<Keyboard>/o",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ObjectiveDebugUI",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
