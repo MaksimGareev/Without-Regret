@@ -1,22 +1,37 @@
 using UnityEngine;
+using UnityEngine.AI;
 
 public class VoidPool : MonoBehaviour
 {
     private VoidPoolSettings settings;
     private readonly int amountOfRingsToSubtract = 1;
+    private ObjectPool enemyPooler;
 
     // Damage
     private float enterTime = -1;
-    // Lifetime
-    private float initTime;
 
-    public void Initialize(VoidPoolSettings settings)
+    private void OnDisable()
+    {
+        enterTime = -1;
+    }
+
+    public void Initialize(VoidPoolSettings settings, ObjectPool enemyPooler, ObjectPool selfPooler)
     {
         this.settings = settings;
+        this.enemyPooler = enemyPooler;
 
-        initTime = Time.time;
         // Spawn enemies as soon as the pool appears
         SpawnEnemies(Random.Range(settings.minEnemiesToSpawn, settings.maxEnemiesToSpawn + 1));
+
+        // Ensure this pool is returned after its lifetime
+        if (TryGetComponent<Lifetime>(out var lifetime))
+        {
+            lifetime.Initialize(gameObject, settings.lifetime, selfPooler);
+        }
+        else
+        {
+            gameObject.AddComponent<Lifetime>().Initialize(gameObject, settings.lifetime, selfPooler);
+        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -39,42 +54,80 @@ public class VoidPool : MonoBehaviour
 
     private void SpawnEnemies(int amount)
     {
+        if (enemyPooler == null)
+        {
+            Debug.LogError("Enemy pooler not found for VoidPool.", this);
+            return;
+        }
+
+        // Ensure physics sees the current transform position/rotation before reading collider bounds
+        Physics.SyncTransforms();
+
+        if (!gameObject.TryGetComponent<Collider>(out var col))
+        {
+            Debug.LogError("VoidPool has no Collider to define spawn area.", this);
+            return;
+        }
+
+        Bounds bounds = col.bounds;
+        float sampleRadius = Mathf.Max(bounds.extents.x, bounds.extents.z, 1f);
+
         for (int i = 0; i < amount; i++)
         {
-            Bounds bounds = gameObject.GetComponent<Collider>().bounds;
-
-            // Generate a random point within the bounds
+            // Generate a random point within the bounds (world space)
             float randomX = Random.Range(bounds.min.x, bounds.max.x);
             float randomZ = Random.Range(bounds.min.z, bounds.max.z);
+            float sampleY = bounds.center.y; // use center Y for sampling height
+            Vector3 randomPoint = new Vector3(randomX, sampleY, randomZ);
 
-            Vector3 randomPosition = new Vector3(randomX, transform.position.y + 1, randomZ);
-
-            // Instantiate the enemy at the random position with no rotation
-            GameObject newEnemy = Instantiate(settings.enemyPrefab, randomPosition, Quaternion.identity);
-            // Add a lifetime component for the enemy so it gets destroyed after a delay
-            if (newEnemy.TryGetComponent<Lifetime>(out var lifetime))
+            // Try to find a point on the NavMesh near the random point
+            Vector3 spawnPosition;
+            bool foundNavPos = NavMesh.SamplePosition(randomPoint, out NavMeshHit hit, sampleRadius, NavMesh.AllAreas);
+            if (foundNavPos)
             {
-                lifetime.Initialize(newEnemy, settings.enemyLifetime);
+                spawnPosition = hit.position;
             }
             else
             {
-                newEnemy.AddComponent<Lifetime>().Initialize(newEnemy, settings.enemyLifetime);
+                // fallback spawn position
+                spawnPosition = new Vector3(randomX, transform.position.y + 1f, randomZ);
+                Debug.LogWarning($"NavMesh.SamplePosition failed inside VoidPool bounds; falling back to world position {spawnPosition}", this);
+            }
+
+            // Get an enemy from the pool
+            GameObject newEnemy = enemyPooler.Get();
+
+            // Place the enemy. If it has a NavMeshAgent, warp it to the sampled NavMesh position.
+            if (newEnemy.TryGetComponent<NavMeshAgent>(out var agent))
+            {
+                // ensure agent is active/enabled before warping
+                if (!agent.isActiveAndEnabled)
+                    agent.enabled = true;
+
+                agent.Warp(spawnPosition);
+                newEnemy.transform.rotation = Quaternion.identity;
+            }
+            else
+            {
+                newEnemy.transform.SetPositionAndRotation(spawnPosition, Quaternion.identity);
+            }
+
+            // Add a lifetime component for the enemy so it gets returned after a delay
+            if (newEnemy.TryGetComponent<Lifetime>(out var lifetime))
+            {
+                lifetime.Initialize(newEnemy, settings.enemyLifetime, enemyPooler);
+            }
+            else
+            {
+                newEnemy.AddComponent<Lifetime>().Initialize(newEnemy, settings.enemyLifetime, enemyPooler);
             }
         }
     }
 
     private void Update()
     {
-        float currTime = Time.time;
-
-        // Destroy the pool once lifetime has run out
-        if (currTime > (initTime + settings.lifetime))
-        {
-            Destroy(gameObject);
-        }
-
         // Damage the player if they've been in the pool for too long
-        if (enterTime > -1 && currTime > (enterTime + settings.delayBeforeDamage))
+        if (enterTime > -1 && Time.time > (enterTime + settings.delayBeforeDamage))
         {
             Debug.Log("Player has been hurt by the void pool.");
 
@@ -92,7 +145,6 @@ public class VoidPool : MonoBehaviour
 [System.Serializable]
 public struct VoidPoolSettings
 {
-    [HideInInspector] public GameObject enemyPrefab;
     [Tooltip("How long the pool lasts before fading")]
     public float lifetime;
     [Tooltip("How long the player must be in the pool before they take damage")]
@@ -104,11 +156,10 @@ public struct VoidPoolSettings
     [Tooltip("How long the enemies spawned from the void pool will last")]
     public float enemyLifetime;
 
-    public VoidPoolSettings(float lifetime, float delayBeforeDamage, GameObject enemyPrefab, int minEnemiesToSpawn, int maxEnemiesToSpawn, float enemyLifetime)
+    public VoidPoolSettings(float lifetime, float delayBeforeDamage, int minEnemiesToSpawn, int maxEnemiesToSpawn, float enemyLifetime)
     {
         this.lifetime = lifetime;
         this.delayBeforeDamage = delayBeforeDamage;
-        this.enemyPrefab = enemyPrefab;
         this.minEnemiesToSpawn = minEnemiesToSpawn;
         this.maxEnemiesToSpawn = maxEnemiesToSpawn;
         this.enemyLifetime = enemyLifetime;
