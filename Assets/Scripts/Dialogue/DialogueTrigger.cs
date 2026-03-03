@@ -10,6 +10,10 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
     public Animator animator;
     public bool isTalking = false;
     private Coroutine talkRoutine;
+    [Header("Chime Animation")]
+    public Animator chimeAnimator;
+    public bool chimeActive = false;
+    public Chime chimeScript;
 
     private Animator playerAnimator;
     private Coroutine playerTalkRoutine;
@@ -101,6 +105,17 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
         }
         else
             Debug.Log("Player Animator not found!");
+
+        //Finding chime + animator
+        GameObject chime = GameObject.FindWithTag("Chime");
+        if (chime != null)
+        {
+            chimeScript = chime.GetComponent<Chime>();
+            chimeAnimator = chime.GetComponentInChildren<Animator>();
+
+            chimeActive = true;
+        }
+
 
         npcWander = GetComponent<NpcMovement>();
 
@@ -423,6 +438,10 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
             return;
         Debug.Log("Started Talking");
         playerAnimator.SetBool("isTalking", true);
+        if (chimeActive)
+        {
+            chimeAnimator.SetBool("isTalking", true);
+        }
 
         playerTalkRoutine ??= StartCoroutine(PlayerTalkAnimationCycle());
     }
@@ -466,6 +485,11 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
         playerAnimator.SetBool("isTalking", false);
         playerAnimator.SetBool("Talk1", false);
         playerAnimator.SetBool("Talk2", false);
+        if (chimeActive)
+        {
+            chimeAnimator.SetBool("isTalking", false);
+        }
+
 
         if (playerTalkRoutine != null)
         {
