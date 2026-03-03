@@ -23,6 +23,10 @@ public class Chime : MonoBehaviour
 
     public static bool isInDialogue = false;
 
+    [Header("Animator")]
+    public Animator animator;
+
+
     // Update is called once per frame
     void LateUpdate()
     {
@@ -46,8 +50,8 @@ public class Chime : MonoBehaviour
         {
             // Dialogue Mode
             Vector3 dialogueOffset = player.right * 1.2f + new Vector3(0f, 1f, 0f);
-           
-                //new Vector3(0f, Mathf.Sin(Time.time * BobSpeed) * BobHeight + 1f, OrbitRadius * 0.5f);
+
+            //new Vector3(0f, Mathf.Sin(Time.time * BobSpeed) * BobHeight + 1f, OrbitRadius * 0.5f);
             Vector3 bob = new Vector3(0f, Mathf.Sin(Time.time * BobSpeed) * BobHeight, 0f);
 
             targetPos = player.position + player.forward * 1.5f + dialogueOffset + bob;
@@ -71,5 +75,39 @@ public class Chime : MonoBehaviour
                 model.rotation = Quaternion.Slerp(model.rotation, lookRot, Time.deltaTime * lookSmooth);
             }
         }
+    }
+
+    //Chimes Animation functions
+
+    public void SetIdleAnimation()
+    {
+        animator.SetBool("isWalking", false);
+        animator.SetBool("isIdle", true);
+    }
+    public void setSpecialIdleAnimation()
+    {
+        animator.SetBool("isInSpecialIdle", true);
+        animator.SetTrigger("specialIdle");
+    }
+
+    public void SetWalkingAnimation()
+    {
+        animator.SetBool("isIdle", false);
+        animator.SetBool("isWalking", true);
+    }
+
+    public void setFloatingAnimation()
+    {
+        animator.SetBool("isIdle", false);
+        animator.SetBool("isWalking", false);
+        animator.SetBool("isFloating", true);
+    }
+
+
+    public void ResetChimeAnimations()
+    {
+        animator.SetBool("isIdle", false);
+        animator.SetBool("isWalking", false);
+        animator.SetBool("isFloating", false);
     }
 }

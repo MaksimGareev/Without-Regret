@@ -218,6 +218,9 @@ public class DialogueManager : MonoBehaviour
     {
         StopAllCoroutines();
 
+        if (activeDialogueTrigger != null)
+            activeDialogueTrigger.StopLookingAtPlayer(); //Call NPC to stop looking at player to end dialogue animations
+
         // deactivate Dialogue UI
         DialoguePanel.SetActive(false);
         playerPortrait.gameObject.SetActive(false);
@@ -484,6 +487,10 @@ public class DialogueManager : MonoBehaviour
         directionalChoices.Clear();
         choiceTimerSlider.gameObject.SetActive(true);
 
+        if (activeDialogueTrigger != null)
+            activeDialogueTrigger.StartPlayerThinking(); //Call NPC to start playing Player thinking animations while the player is making a choice
+
+
         if (DirectionalImage != null)
         {
             DirectionalImage.SetActive(true);
@@ -605,6 +612,9 @@ public class DialogueManager : MonoBehaviour
 
     void SelectChoice(DialogueChoice c)
     {
+        if (activeDialogueTrigger != null)
+            activeDialogueTrigger.StopPlayerThinking(); //Call NPC to stop the Player thinking animation when a decision is made
+
         resolvingChoice = true;
         CanChoose = false;
         choiceTimerSlider.gameObject.SetActive(false);

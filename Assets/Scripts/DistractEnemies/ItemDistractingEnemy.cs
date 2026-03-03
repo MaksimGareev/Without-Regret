@@ -13,29 +13,32 @@ public class ItemDistractingEnemy : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        if (hasLanded)
+        if (!collision.gameObject.CompareTag("Player") && !collision.gameObject.CompareTag("Enemy"))// if the object collides with anything other than the player, execute behavoir
         {
-            return;
-        }
-
-        BreakableObject breakableObject = collision.gameObject.GetComponent<BreakableObject>();
-
-        if (breakableObject != null)
-        {
-            breakableObject.Break();
-        }
-
-        hasLanded = true;
-
-        Collider[] hits = Physics.OverlapSphere(transform.position, distractionRadius);
-        foreach (Collider hit in hits)
-        {
-            if (hit.gameObject.CompareTag("Enemy"))
+            if (hasLanded)
             {
-                EnemyDistracted distractedEnemy = hit.GetComponent<EnemyDistracted>();
-                if (distractedEnemy != null)
+                return;
+            }
+
+            BreakableObject breakableObject = collision.gameObject.GetComponent<BreakableObject>();
+
+            if (breakableObject != null)
+            {
+                breakableObject.Break();
+            }
+
+            hasLanded = true;
+
+            Collider[] hits = Physics.OverlapSphere(transform.position, distractionRadius);// find enemies within radius and distract them
+            foreach (Collider hit in hits)
+            {
+                if (hit.gameObject.CompareTag("Enemy"))
                 {
-                    distractedEnemy.BeginDistraction(transform.position, distractionDuration, gameObject);
+                    EnemyDistracted distractedEnemy = hit.GetComponent<EnemyDistracted>();
+                    if (distractedEnemy != null)
+                    {
+                        distractedEnemy.BeginDistraction(transform.position, distractionDuration, gameObject);
+                    }
                 }
             }
         }

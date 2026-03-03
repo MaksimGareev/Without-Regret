@@ -181,8 +181,18 @@ public class CameraMovement : MonoBehaviour
     void LateUpdate()
     {
         // Do nothing if camera is locked or there is no target assigned
-        if (CameraLocked) return;
+        if (CameraLocked && lookAction != null && lookAction.enabled)
+        {
+            lookAction?.Disable();
+            return;
+        }
+        else if (!CameraLocked && lookAction != null && !lookAction.enabled)
+        {
+            lookAction?.Enable();
+        }
+        
         if (target == null) return;
+        if (GameOverManager.Instance != null && GameOverManager.Instance.IsGameOver) return;
 
         if (pc != null && pc.MovementLocked && pc.enabled)
         {

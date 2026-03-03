@@ -157,43 +157,29 @@ public class PlayerThrowing : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(chargeKeyInt) && !isCharging)
         {
-            if (!isCharging)
-            {
-                animator.SetBool("isChargingThrow", true);
-                animator.SetBool("canThrow", true);
-            }
-            isCharging = true;
-            currentCharge = 0f;
-            usingController = false;
-            //Cursor.visible = true;
-            //Cursor.lockState = CursorLockMode.Confined;
+            StartCharging(false);
         }
 
         if ((Input.GetAxis(chargeButton) > 0.1f) && !isCharging)
         {
-            isCharging = true;
-            currentCharge = 0f;
-            usingController = true;
+            StartCharging(true);
         }
 
         if (isCharging)
         {
-            if (currentCharge < 1f)
+            if (currentCharge < 1f) // increases charge amount with time
             {
                 currentCharge += chargeSpeed * Time.deltaTime;
-
-                //float normalized = Mathf.PingPong(currentCharge, 1f);
             }
-            else if (currentCharge >= 1f)
+            else if (currentCharge >= 1f) //when at max charge, starts a timer for how long the player can hold that max charge
             {
                 if(currentHoldTime < holdTime)
                 {
                     currentHoldTime += Time.deltaTime;
                 }
-                else
+                else // when timer runs out, automatically throws the item and stops further functionality
                 {
                     ThrowItem(currentCharge);
-                    //animator.SetTrigger("Throw"); //play throw animation when button is released
                     return;
                 }
             }
@@ -207,8 +193,6 @@ public class PlayerThrowing : MonoBehaviour
 
             if (WorldThrowPointer != null)
             {
-                //    PointerScale = Vector3.Lerp(new Vector3(MinPointerLength, PointerScale.y, PointerScale.z), new Vector3(MaxPointerLength, PointerScale.y, PointerScale.z), currentCharge);
-                //    WorldThrowPointer.transform.localScale = PointerScale;
                 WorldThrowPointer.gameObject.SetActive(true);
             }
 
@@ -217,19 +201,6 @@ public class PlayerThrowing : MonoBehaviour
                 if (Input.GetAxis(chargeButton) < 0.1f)
                 {
                     ThrowItem(currentCharge);
-                    //animator.SetTrigger("Throw"); //play throw animation when button is released
-                    //ThrowItem(normalized, true);
-                    isCharging = false;
-
-                    if (GameManager.Instance.throwingSlider != null)
-                    {
-                        GameManager.Instance.throwingSlider.value = 0f;
-                        GameManager.Instance.throwingSlider.gameObject.SetActive(false);
-                        PointerScale.x = MinPointerLength;
-                        WorldThrowPointer.transform.localScale = PointerScale;
-                        WorldThrowPointer.SetActive(false);
-                    }
-                    StartCoroutine(ThrowAnimHandler());
                 }
             }
             else
@@ -237,19 +208,6 @@ public class PlayerThrowing : MonoBehaviour
                 if (Input.GetMouseButtonUp(chargeKeyInt))
                 {
                     ThrowItem(currentCharge);
-                    //animator.SetTrigger("Throw"); //play throw animation when button is released
-                    //ThrowItem(normalized, false);
-                    isCharging = false;
-
-                    if (GameManager.Instance.throwingSlider != null)
-                    {
-                        GameManager.Instance.throwingSlider.value = 0f;
-                        GameManager.Instance.throwingSlider.gameObject.SetActive(false);
-                        PointerScale.x = MinPointerLength;
-                        WorldThrowPointer.transform.localScale = PointerScale;
-                        WorldThrowPointer.SetActive(false);
-                    }
-                    StartCoroutine(ThrowAnimHandler());
                 }
             }
             
@@ -262,7 +220,7 @@ public class PlayerThrowing : MonoBehaviour
 
     }
 
-    private void ThrowItem(float charge)
+    private void ThrowItem(float charge)// throws the item
     {
         ItemData itemToThrow = inventory.GetFirstThrowable();
         if (itemToThrow == null)
@@ -274,6 +232,8 @@ public class PlayerThrowing : MonoBehaviour
         GameManager.Instance.inventoryInteractingScript.RefreshInventoryUI();
         playerEquipItem.UnequipItem();
 
+        StartCoroutine(ThrowAnimHandler());// plays throw animation
+
         GameObject gameObject = Instantiate(itemToThrow.WorldPrefab, throwOrigin.position, Quaternion.identity);
 
         Rigidbody rb = gameObject.GetComponent<Rigidbody>();
@@ -282,19 +242,14 @@ public class PlayerThrowing : MonoBehaviour
         {
             Vector3 direction;
 
-                //Vector3 aimDirection = CalculateInputFromPOV();
+            Vector3 aimDirection = transform.forward;
 
-                //if (aimDirection.magnitude < 0.01f)
-                //{
-                    Debug.Log("Stick at neutral");
-                    Vector3 aimDirection = transform.forward;
-                //}
-
-                direction = aimDirection.normalized;
+            direction = aimDirection.normalized;
 
             float throwForce = Mathf.Lerp(minThrowForce, maxThrowForce, charge);
-            currentUpwardForce = Mathf.Lerp(upwardForceMax, upwardForceMin, charge);
-            rb.AddForce(direction * throwForce + Vector3.up * currentUpwardForce, ForceMode.Impulse);
+            currentUpwardForce = Mathf.Lerp(upwardForceMax, upwardForceMin, charge);// upward force dependant on how long charge is held. its at max when charging just begins.
+            Vector3 finalForce = direction * throwForce + Vector3.up.normalized * currentUpwardForce;
+            rb.AddForce(finalForce, ForceMode.Impulse);
         }
         if (GameManager.Instance.throwingSlider != null)
         {
@@ -307,22 +262,7 @@ public class PlayerThrowing : MonoBehaviour
         }
         currentHoldTime = 0;
         isCharging = false;
-    }
 
-    private Vector3 CalculateInputFromPOV()
-    {
-        Vector3 input = new Vector3(Input.GetAxis("Xbox RightStick X"), 0, Input.GetAxis("Xbox RightStick Y"));
-
-        Vector3 camForward = playerCamera.transform.forward;
-        camForward.y = 0f;
-        camForward.Normalize();
-
-        Vector3 camRight = playerCamera.transform.right;
-        camRight.y = 0;
-        camRight.Normalize();
-
-        Vector3 relativeDirection = (camRight * input.x + camForward * input.z).normalized;
-        return relativeDirection;
     }
 
     private void DrawProjection()
@@ -330,22 +270,17 @@ public class PlayerThrowing : MonoBehaviour
         line.enabled = true;
         line.positionCount = Mathf.CeilToInt(linePoints / timeBetweenPoints) + 1;
         Vector3 startPosition = throwOrigin.position;
-        float currentThrowForce = Mathf.Lerp(minThrowForce, maxThrowForce, currentCharge);
+        float currentThrowForce = Mathf.Lerp(minThrowForce, maxThrowForce, currentCharge);// uses same calculations as the throwing force to accurately predict the path of the item once thrown.
         currentUpwardForce = Mathf.Lerp(upwardForceMax, upwardForceMin, currentCharge);
         Vector3 direction;
 
-        //Vector3 aimDirection = CalculateInputFromPOV();
+        Vector3 aimDirection = transform.forward;
 
-        //if (aimDirection.magnitude < 0.01f)
-        //{
-            Debug.Log("Stick at neutral");
-            Vector3 aimDirection = transform.forward;
-        //}
         direction = aimDirection.normalized;
-        Vector3 startVelocity = direction * currentThrowForce + Vector3.up * currentUpwardForce / 1;
+        Vector3 startVelocity = direction * currentThrowForce + Vector3.up.normalized * currentUpwardForce / 1;
         int i = 0;
         line.SetPosition(i, startPosition);
-        for (float time = 0; time < linePoints; time += timeBetweenPoints)
+        for (float time = 0; time < linePoints; time += timeBetweenPoints)// draws multiple smaller lines between different points that were calculated to be along the item's throw path
         {
             i++;
             Vector3 point = startPosition + time * startVelocity;
@@ -368,14 +303,14 @@ public class PlayerThrowing : MonoBehaviour
 
     public bool GetIsCharging() => isCharging;
 
-    IEnumerator ThrowAnimHandler()
+    IEnumerator ThrowAnimHandler()// handles the animation of throwing
     {
         animator.SetBool("isChargingThrow", false);
         animator.SetTrigger("Throw");
         yield return new WaitForSeconds(2);
         animator.SetBool("canThrow", false);
     }
-    public void resetAnimations()
+    public void resetAnimations() // backup animation reseter
     {
         animator.SetBool("isIdle", false);
         animator.SetBool("isWalking", false);
@@ -383,5 +318,17 @@ public class PlayerThrowing : MonoBehaviour
         animator.SetBool("isSprinting", false);
         animator.SetBool("isGrabbing", false);
 
+    }
+
+    private void StartCharging(bool Controller) // handles starting the charging of a throw across both control types
+    {
+        if (!isCharging)
+        {
+            animator.SetBool("isChargingThrow", true);
+            animator.SetBool("canThrow", true);
+        }
+        isCharging = true;
+        currentCharge = 0f;
+        usingController = Controller;
     }
 }

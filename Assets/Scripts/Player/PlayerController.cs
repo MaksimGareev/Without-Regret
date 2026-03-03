@@ -10,6 +10,11 @@ public class PlayerController : MonoBehaviour, ISaveable
     private Camera PlayerCamera;
     [HideInInspector] public Animator Animator;
 
+    [Header("Chime Animation settings")]
+    public Animator chimeAnimator;
+    public bool chimeActive = false;
+    public Chime chimeScript;
+
     [Header("Sprint UI Colors")]
     [SerializeField] Color normalColor = new Color(0f, 147f/255f, 111f/255f);
     [SerializeField] Color cooldownColor = Color.grey;
@@ -34,6 +39,7 @@ public class PlayerController : MonoBehaviour, ISaveable
     private bool canSprint = true;
     private bool sprintOnCooldown = false;
     private bool isSprinting = false;
+    private PlayerMovingObjects mover;
     private (bool movingObject, float sprintDepletionRate, float staminaDecay, bool allowSprint) moveableObjectMod = (false, 1f, 1f, true);
     private Coroutine sprintCooldownRoutine;
 
@@ -76,6 +82,17 @@ public class PlayerController : MonoBehaviour, ISaveable
         Controller = GetComponent<CharacterController>();
         Animator = GetComponentInChildren<Animator>();
 
+        //Finding chime + animator
+        GameObject chime = GameObject.FindWithTag("Chime");
+        if (chime != null)
+        {
+            chimeScript = chime.GetComponent<Chime>();
+            chimeAnimator = chime.GetComponentInChildren<Animator>();
+
+            chimeActive = true;
+        }
+          
+
         if (GameManager.Instance.staminaSlider != null)
         {
             GameManager.Instance.staminaSlider.maxValue = SprintDuration;
@@ -95,7 +112,6 @@ public class PlayerController : MonoBehaviour, ISaveable
         if (GameManager.Instance.staminaSlider != null)
         {
             GameManager.Instance.staminaSlider.value = SprintTimer;
-            GameManager.Instance.staminaSlider.gameObject.SetActive(false);
         }
 
         playerThrowing = gameObject.GetComponent<PlayerThrowing>();
@@ -121,6 +137,7 @@ public class PlayerController : MonoBehaviour, ISaveable
         controls.Player.Look.performed += ctx => lookInput = ctx.ReadValue<Vector2>();
 
         rb = GetComponent<Rigidbody>();
+        mover = GetComponent<PlayerMovingObjects>();
     }
 
     public void SaveTo(SaveData data)
@@ -285,6 +302,9 @@ public class PlayerController : MonoBehaviour, ISaveable
         {
             ResetAnimations();
             Animator.SetBool("isWalking", true);
+            if (chimeActive)
+                chimeScript.SetWalkingAnimation();
+
             idleTimer = 0f; // reset idle timer
         }
         if (!isMoving)
@@ -293,6 +313,8 @@ public class PlayerController : MonoBehaviour, ISaveable
             {
                 ResetAnimations();
                 Animator.SetBool("isIdle", true);
+                if (chimeActive)
+                    chimeScript.SetIdleAnimation();
             }
 
             idleTimer += Time.deltaTime;
@@ -446,7 +468,6 @@ public class PlayerController : MonoBehaviour, ISaveable
                         sprintCooldownRoutine = null;
                     }
 
-                    GameManager.Instance.staminaSlider.gameObject.SetActive(false);
                 }
             }
         }
@@ -458,8 +479,25 @@ public class PlayerController : MonoBehaviour, ISaveable
         if (gravityEnabled)
             yVelocity += gravity * Time.deltaTime;
 
-        Vector3 combined = (move.normalized * currentSpeed) + new Vector3(0f, yVelocity, 0f);
-        Controller.Move(combined * Time.deltaTime);
+        // Build movement vectors
+        Vector3 horizontalMove = (move.normalized * currentSpeed) * Time.deltaTime;
+        Vector3 verticalMove = new Vector3(0f, yVelocity, 0f) * Time.deltaTime;
+
+        // If player is holding an object, ask PlayerMovingObjects if the horizontal move would cause clipping.
+        if (moveableObjectMod.movingObject)
+        {
+            bool canMove = mover.CanMoveBy(horizontalMove);
+            if (!canMove)
+            {
+                // block horizontal movement while still allowing vertical (gravity) to apply
+                horizontalMove = Vector3.zero;
+                // also mark not moving to avoid sprint/stamina drain visual change
+                isMoving = false;
+            }
+        }
+
+        Vector3 combined = horizontalMove + verticalMove;
+        Controller.Move(combined);
 
         if (move.sqrMagnitude > 0.01f && !isThrowing)
         {
@@ -687,8 +725,13 @@ public class PlayerController : MonoBehaviour, ISaveable
 
         ResetAnimations();
         Animator.SetTrigger("specialIdle");
+        if (chimeActive)
+            chimeScript.setSpecialIdleAnimation();
 
         yield return new WaitForSeconds(2f);
+
+        if (chimeActive)
+            chimeAnimator.SetBool("isInSpecialIdle", false);
 
         specialIdle = false;
     }
