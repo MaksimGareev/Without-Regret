@@ -61,7 +61,7 @@ public class Darry : MonoBehaviour
         updateTimer -= Time.deltaTime;
         if (updateTimer <= 0f)
         {
-            if (targets[currentIndex] != null)
+            if (currentIndex < targets.Length && targets[currentIndex] != null)
             {
                 agent.SetDestination(targets[currentIndex].position);
             }
@@ -132,7 +132,7 @@ public class Darry : MonoBehaviour
 
     void GoToNextTarget()
     {
-        Debug.Log("Going to next point");
+        //Debug.Log("Going to next point");
         StopWaitCoroutine();
         // ReachedNPC = false;
 
@@ -149,7 +149,7 @@ public class Darry : MonoBehaviour
         waitAfterBake = StartCoroutine(waitForNavmesh()); //Waits for navmesh to be baked before moving
         if (currentIndex >= targets.Length)
         {
-            Debug.Log("Enemy reached final target!");
+            //Debug.Log("Darry reached final target!");
             currentTarget = null;       // <--- set to null when no more targets
             agent.isStopped = true;     // stop the NavMeshAgent
 
