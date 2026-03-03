@@ -320,7 +320,8 @@ public class Journal : MonoBehaviour
 
                 if (instance.isCompleted)
                 {
-                    buttonText.text += " (Completed)";
+                    // Add strikethrough to completed objective text
+                    buttonText.text = $"<u thickness=15 offset=30>{data.title}</u>";
                     buttonText.color = completedObjectiveColor;
                 }
                 else
