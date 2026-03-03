@@ -10,7 +10,7 @@ public class ObjectPool
 
     private readonly GameObject objectHolder;
 
-    public ObjectPool (GameObject prefab, int initialSize, bool showDebugLogs = false)
+    public ObjectPool (GameObject prefab, int initialSize, bool showDebugLogs = false, Transform location = null)
     {
         this.Prefab = prefab;
         this.Pool = new Queue<GameObject>();
@@ -20,7 +20,8 @@ public class ObjectPool
 
         for (int i = 0; i < initialSize; i++)
         {
-            GameObject obj = GameObject.Instantiate(prefab, objectHolder.transform);
+            Vector3 spawnPos = location != null ? location.position : Vector3.zero;
+            GameObject obj = GameObject.Instantiate(prefab, spawnPos, Quaternion.identity, objectHolder.transform);
             obj.SetActive(false);
             Pool.Enqueue(obj);
         }
