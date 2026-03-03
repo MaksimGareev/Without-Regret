@@ -10,21 +10,37 @@ public class SlowZone : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             PlayerController playerController = other.GetComponent<PlayerController>();
-            playerController.Speed *= slowMultiplier;
-            playerController.SprintSpeed *= slowMultiplier;
+            if (playerController != null)
+            {
+                playerController.Speed *= slowMultiplier;
+                playerController.SprintSpeed *= slowMultiplier;
+            }
         }
         if (other.CompareTag("Enemy"))
         {
-            PatrollingEnemy patrollingEnemy = other.GetComponent<PatrollingEnemy>();
-            patrollingEnemy.baseSpeed *= slowMultiplier;
+            if (other.TryGetComponent<PatrollingEnemy>(out var patrollingEnemy))
+                patrollingEnemy.baseSpeed *= slowMultiplier;
+
+            if (other.TryGetComponent<ChasingEnemy>(out var chasingEnemy))
+                chasingEnemy.baseSpeed *= slowMultiplier;
         }
         if (other.gameObject.layer == LayerMask.NameToLayer("NPC"))
         {
             //placeholder for comparing to each NPC, using Irene as example for now
-            Irene irene = other.GetComponent<Irene>();
+            if (other.TryGetComponent<Irene>(out var irene))
             {
                 irene.FollowSpeed *= slowMultiplier;
             }
+            if (other.TryGetComponent<ProtectedNPC>(out var protNPC))
+            {
+                Debug.Log("Protected NPC detected");
+                protNPC.agent.speed *= slowMultiplier;
+            }
+            if (other.TryGetComponent<FriendlyNPC>(out var friendlyNPC))
+            {
+                friendlyNPC.agent.speed *= slowMultiplier;
+            }
+
         }
     }
 
@@ -33,17 +49,37 @@ public class SlowZone : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             PlayerController playerController = other.GetComponent<PlayerController>();
-            playerController.Speed /= slowMultiplier;
-            playerController.SprintSpeed /= slowMultiplier;
+            if (playerController != null)
+            {
+                playerController.Speed /= slowMultiplier;
+                playerController.SprintSpeed /= slowMultiplier;
+            }
         }
-        if (other.CompareTag("Enemy") && other.TryGetComponent<PatrollingEnemy>(out var patrollingEnemy))
+        if (other.CompareTag("Enemy"))
         {
-            patrollingEnemy.baseSpeed /= slowMultiplier;
+            if (other.TryGetComponent<PatrollingEnemy>(out var patrollingEnemy))
+                patrollingEnemy.baseSpeed /= slowMultiplier;
+
+            if (other.TryGetComponent<ChasingEnemy>(out var chasingEnemy))
+                chasingEnemy.baseSpeed /= slowMultiplier;
         }
-        if (other.gameObject.layer == LayerMask.NameToLayer("NPC") && other.TryGetComponent<Irene>(out var irene))
+
+        if (other.gameObject.layer == LayerMask.NameToLayer("NPC"))
         {
             //placeholder for comparing to each NPC, using Irene as example for now
-            irene.FollowSpeed /= slowMultiplier;
+            if (other.TryGetComponent<Irene>(out var irene))
+            {
+                irene.FollowSpeed /= slowMultiplier;
+            }
+            if (other.TryGetComponent<ProtectedNPC>(out var protNPC))
+            {
+                protNPC.agent.speed /= slowMultiplier;
+            }
+            if (other.TryGetComponent<FriendlyNPC>(out var friendlyNPC))
+            {
+                friendlyNPC.agent.speed /= slowMultiplier;
+            }
+
         }
 
     }

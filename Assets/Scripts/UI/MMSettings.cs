@@ -552,9 +552,9 @@ public class MMSettings : MonoBehaviour
 
         // Set button text colors
         videoSettingsButton.gameObject.GetComponent<SelectableHighlighting>().stayHighlighted = true;
-        videoSettingsButton.gameObject.GetComponent<SelectableHighlighting>().ApplyHighlight(); // Highlight video settings button
-        audioSettingsButton.gameObject.GetComponent<SelectableHighlighting>().RemoveHighlight();
-        controlsSettingsButton.gameObject.GetComponent<SelectableHighlighting>().RemoveHighlight();
+        videoSettingsButton.gameObject.GetComponent<SelectableHighlighting>().ApplyHighlight(true); // Highlight video settings button
+        audioSettingsButton.gameObject.GetComponent<SelectableHighlighting>().RemoveHighlight(true);
+        controlsSettingsButton.gameObject.GetComponent<SelectableHighlighting>().RemoveHighlight(true);
 
         EnableAllButtonsAndSliders();
 
@@ -575,10 +575,10 @@ public class MMSettings : MonoBehaviour
         controlsSettingsOpen = false;
 
         // Set button text colors
-        videoSettingsButton.gameObject.GetComponent<SelectableHighlighting>().RemoveHighlight();
+        videoSettingsButton.gameObject.GetComponent<SelectableHighlighting>().RemoveHighlight(true);
         audioSettingsButton.gameObject.GetComponent<SelectableHighlighting>().stayHighlighted = true;
-        audioSettingsButton.gameObject.GetComponent<SelectableHighlighting>().ApplyHighlight(); // Highlight audio settings button
-        controlsSettingsButton.gameObject.GetComponent<SelectableHighlighting>().RemoveHighlight();
+        audioSettingsButton.gameObject.GetComponent<SelectableHighlighting>().ApplyHighlight(true); // Highlight audio settings button
+        controlsSettingsButton.gameObject.GetComponent<SelectableHighlighting>().RemoveHighlight(true);
 
         EnableAllButtonsAndSliders();
 
@@ -599,10 +599,10 @@ public class MMSettings : MonoBehaviour
         audioSettingsOpen = false;
 
         // Set button text colors
-        videoSettingsButton.gameObject.GetComponent<SelectableHighlighting>().RemoveHighlight();
-        audioSettingsButton.gameObject.GetComponent<SelectableHighlighting>().RemoveHighlight();
+        videoSettingsButton.gameObject.GetComponent<SelectableHighlighting>().RemoveHighlight(true);
+        audioSettingsButton.gameObject.GetComponent<SelectableHighlighting>().RemoveHighlight(true);
         controlsSettingsButton.gameObject.GetComponent<SelectableHighlighting>().stayHighlighted = true;
-        controlsSettingsButton.gameObject.GetComponent<SelectableHighlighting>().ApplyHighlight(); // Highlight controls settings button
+        controlsSettingsButton.gameObject.GetComponent<SelectableHighlighting>().ApplyHighlight(true); // Highlight controls settings button
 
         EnableAllButtonsAndSliders();
 
@@ -1065,7 +1065,14 @@ public class MMSettings : MonoBehaviour
             controlSchemeUI.SetActive(true);
             settingsUI.SetActive(false);
             controlSchemeOpen = true;
-            EventSystem.current.SetSelectedGameObject(controlSchemeUI.GetComponent<ControlSchemeUI>().ControllerButton.gameObject);
+            if (GetComponentInParent<MainMenu>() != null)
+            {
+                EventSystem.current.SetSelectedGameObject(GetComponentInParent<MainMenu>().backButton.gameObject);
+            }
+            else if (GetComponentInParent<PauseManager>() != null)
+            {
+                EventSystem.current.SetSelectedGameObject(GetComponentInParent<PauseManager>().backButton.gameObject);
+            }
         }
     }
 

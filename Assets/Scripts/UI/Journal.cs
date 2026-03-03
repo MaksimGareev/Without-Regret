@@ -265,7 +265,15 @@ public class Journal : MonoBehaviour
         if (objectivesList.Count > index)
         {
             var instance = objectivesList[index];
-            objectiveDescriptionText.text = instance.data.description;
+            if (!instance.isCompleted)
+            {
+                objectiveDescriptionText.text = instance.data.description;
+            }
+            else
+            {
+                objectiveDescriptionText.text = instance.data.recap;
+            }
+            
             objectiveProgressText.text = $"Progress: {instance.currentProgress} / {instance.data.requiredProgress}";
         }
         else
@@ -320,7 +328,8 @@ public class Journal : MonoBehaviour
 
                 if (instance.isCompleted)
                 {
-                    buttonText.text += " (Completed)";
+                    // Add strikethrough to completed objective text
+                    buttonText.text = $"<u thickness=15 offset=30>{data.title}</u>";
                     buttonText.color = completedObjectiveColor;
                 }
                 else

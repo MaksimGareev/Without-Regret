@@ -23,7 +23,7 @@ public class PauseManager : MonoBehaviour
     [SerializeField] private Button reloadSaveButton;
     [SerializeField] private Button settingsButton;
     [SerializeField] private Button quitButton;
-    [SerializeField] private Button backButton;
+    [SerializeField] public Button backButton;
 
     [Header("UI Panels")]
     [SerializeField] public GameObject pauseMenuPanel;
@@ -258,7 +258,7 @@ public class PauseManager : MonoBehaviour
                 }
                 else if (settingsPanel.activeSelf && settingsScript.controlSchemeOpen)
                 {
-                    es.SetSelectedGameObject(settingsScript.controlSchemeUI.GetComponent<ControlSchemeUI>().ControllerButton.gameObject);
+                    es.SetSelectedGameObject(backButton.gameObject);
                 }
 
                 if (settingsPanel.activeSelf && !settingsScript.controllerLegends.activeSelf && settingsScript.keyboardLegends.activeSelf)
