@@ -2148,6 +2148,54 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "Debug",
+            "id": "fba161cf-7bc1-4685-82d6-3f78775ccd97",
+            "actions": [
+                {
+                    "name": "SkipObjective",
+                    "type": "Button",
+                    "id": "a28af3d8-4954-46e4-9db1-2b5333320b5e",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "ObjectiveDebugUI",
+                    "type": "Button",
+                    "id": "d8da6e29-c424-434b-aaef-84e59d2dfe0d",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "6b174330-7cf4-43c3-b730-8b5713c21290",
+                    "path": "<Keyboard>/upArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SkipObjective",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "55670a6f-e59f-40ea-baa5-953bf643a351",
+                    "path": "<Keyboard>/o",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ObjectiveDebugUI",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": [
