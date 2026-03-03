@@ -83,7 +83,7 @@ public class EnemyFieldOfView : MonoBehaviour
     public bool isAttacking;
 
     private bool isStunned = false;
-    [SerializeField] private float stunDuration = 2f;
+    private float stunDuration;
     private float timeSinceStunned = 0f;
 
     [SerializeField] private PatrollingEnemy normalMovement;
@@ -131,23 +131,6 @@ public class EnemyFieldOfView : MonoBehaviour
 
         baseRadius = Mathf.Lerp(maxRadius, minRadius, (normalizedMorality + 1f) / 2f);
         baseAngle = Mathf.Lerp(maxAngle, minAngle, (normalizedMorality + 1f) / 2f);
-
-        /*if (!canSeePlayer)
-        {
-
-            radius = baseRadius;
-            angle = baseAngle;
-
-            //radius = Mathf.Lerp(radius, targetRadius, Time.deltaTime * fovSmoothSpeed);
-            //angle = Mathf.Lerp(angle, targetAngle, Time.deltaTime * fovSmoothSpeed);
-        }
-        else
-        {
-           // radius = targetRadius;
-            //angle = targetAngle;
-        }*/
-
-        //Debug.Log($"Morality : {playerMorality}, Radius: {radius}, Angle: {angle}");
     }
 
     private void DetectPlayer()
@@ -211,11 +194,8 @@ public class EnemyFieldOfView : MonoBehaviour
                     {
                         m_Agent.destination = target.position; // if seen move towards the player
                     }
-                    //angle = Mathf.Max(baseAngle,230); // enemy FOV widens while chasing the player
-                    //radius = aggroRadius;
                     currentState = FOVState.Chasing;
                     return;
-                    //Debug.Log("Player detected");
                 }
             }
             if (canSeePlayer) //if player breaks line of sight enemy can still chase the player but chase timer will go down
@@ -308,7 +288,6 @@ public class EnemyFieldOfView : MonoBehaviour
     {
         if (other.name == "Player")
         {
-            //canSeePlayer = false;
             Debug.Log("Player is alive");
         }
     }
@@ -393,4 +372,13 @@ public class EnemyFieldOfView : MonoBehaviour
     }
 
     private FOVState currentState = FOVState.Idle;
+
+    public void GetStunned(float duration)
+    {
+        m_Agent.Stop();
+        normalMovement.animator.SetBool("isIdle", true);
+        isStunned = true;
+        Debug.Log("Hit with throwable");
+        stunDuration = duration;
+    }
 }
