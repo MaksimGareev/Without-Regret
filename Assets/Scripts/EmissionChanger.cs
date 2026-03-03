@@ -1,4 +1,3 @@
-
 using UnityEngine;
 
 public class EmissionChanger : MonoBehaviour
@@ -6,7 +5,8 @@ public class EmissionChanger : MonoBehaviour
     private Renderer r;
     private MaterialPropertyBlock mpb;
 
-    private static readonly int EmissionID = Shader.PropertyToID("_EmissionIntensity");
+    private static readonly int EmissionColorID = Shader.PropertyToID("_EmissionColor");
+    private static readonly int EmissionIntensityID = Shader.PropertyToID("_EmissionIntensity");
 
     void Awake()
     {
@@ -17,7 +17,10 @@ public class EmissionChanger : MonoBehaviour
     public void SetEmission(float intensity)
     {
         r.GetPropertyBlock(mpb);
-        mpb.SetFloat(EmissionID, intensity);
+
+        mpb.SetColor(EmissionColorID, Color.white); // assumes color is handled in shader
+        mpb.SetFloat(EmissionIntensityID, intensity);
+
         r.SetPropertyBlock(mpb);
     }
 }
