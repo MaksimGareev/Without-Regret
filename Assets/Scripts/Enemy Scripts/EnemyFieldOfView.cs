@@ -295,7 +295,7 @@ public class EnemyFieldOfView : MonoBehaviour
             if (other.gameObject.GetComponent<Rigidbody>().linearVelocity.sqrMagnitude > 0.001f)
             {
                 other.gameObject.GetComponent<Rigidbody>().linearVelocity = Vector3.zero;
-                m_Agent.Stop();
+                m_Agent.isStopped = true;
                 normalMovement.animator.SetBool("isIdle", true);
                 isStunned = true;
                 Debug.Log("Hit with throwable");
