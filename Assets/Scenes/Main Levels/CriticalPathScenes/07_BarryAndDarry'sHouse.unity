@@ -1971,13 +1971,17 @@ PrefabInstance:
       value: -2.997
       objectReference: {fileID: 0}
     - target: {fileID: 8430188261884346717, guid: 558083b16e4ca884ea05b07a66ae7af2, type: 3}
+      propertyPath: addProgress
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8430188261884346717, guid: 558083b16e4ca884ea05b07a66ae7af2, type: 3}
       propertyPath: needsObjective
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8430188261884346717, guid: 558083b16e4ca884ea05b07a66ae7af2, type: 3}
       propertyPath: linkedObjective
       value: 
-      objectReference: {fileID: 11400000, guid: 11566baeb701f5543b1fc43f37ee953e, type: 2}
+      objectReference: {fileID: 11400000, guid: ef4ea093afae3c74d909378f3952fc50, type: 2}
     - target: {fileID: 8430188261884346717, guid: 558083b16e4ca884ea05b07a66ae7af2, type: 3}
       propertyPath: sceneToLoad.scenePath
       value: Assets/Scenes/Main Levels/CriticalPathScenes/08_JonathanAstralNeighborhoodPostDarry.unity
@@ -6350,14 +6354,12 @@ MonoBehaviour:
   sprintSlowdownDivisor: 3
   sprintDepletionFactor: 1.15
   staminaReduction: 0.5
+  dotProductThreshold: 0.4
   allowSprint: 1
   requiredItem: {fileID: 0}
   maxGrabDistance: 2.5
-  disableColliderWhileHeld: 0
   heldPositionOffset: {x: 0, y: 0, z: 0}
-  heldRotationOffset: {x: 0, y: 0, z: 0}
   isGrabbable: 1
-  navMeshSurface: {fileID: 0}
 --- !u!1001 &392000254
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -31984,14 +31986,12 @@ MonoBehaviour:
   sprintSlowdownDivisor: 3
   sprintDepletionFactor: 1.15
   staminaReduction: 0.5
+  dotProductThreshold: 0.4
   allowSprint: 1
   requiredItem: {fileID: 0}
   maxGrabDistance: 2.5
-  disableColliderWhileHeld: 0
   heldPositionOffset: {x: 0, y: 0, z: 0}
-  heldRotationOffset: {x: 0, y: 0, z: 0}
   isGrabbable: 1
-  navMeshSurface: {fileID: 0}
 --- !u!1001 &2020298943
 PrefabInstance:
   m_ObjectHideFlags: 0
