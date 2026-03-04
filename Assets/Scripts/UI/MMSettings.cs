@@ -110,28 +110,28 @@ public class MMSettings : MonoBehaviour
     // Temporary variables to hold settings before applying
     private int tempResolutionIndex;
     private bool tempIsFullscreen;
-    private int tempMasterVolume;
-    private int tempSFXVolume;
-    private int tempMusicVolume;
-    private int tempDialogueVolume;
-    private int tempMouseSensitivity;
-    private int tempLeftStickSensitivity;
-    private int tempRightStickSensitivity;
-    private int tempLeftStickDeadZone;
-    private int tempRightStickDeadZone;
+    private float tempMasterVolume;
+    private float tempSFXVolume;
+    private float tempMusicVolume;
+    private float tempDialogueVolume;
+    private float tempMouseSensitivity;
+    private float tempLeftStickSensitivity;
+    private float tempRightStickSensitivity;
+    private float tempLeftStickDeadZone;
+    private float tempRightStickDeadZone;
 
     // Default values for settings
     private int defaultResolutionIndex;
     private const int defaultIsFullscreen = 1;
-    private const int defaultMasterVolume = 100;
-    private const int defaultSFXVolume = 100;
-    private const int defaultMusicVolume = 100;
-    private const int defaultDialogueVolume = 100;
-    private const int defaultMouseSensitivity = 100;
-    private const int defaultLeftStickSensitivity = 100;
-    private const int defaultRightStickSensitivity = 100;
-    private const int defaultLeftStickDeadZone = 10;
-    private const int defaultRightStickDeadZone = 10;
+    private const float defaultMasterVolume = 100;
+    private const float defaultSFXVolume = 100;
+    private const float defaultMusicVolume = 100;
+    private const float defaultDialogueVolume = 100;
+    private const float defaultMouseSensitivity = 100;
+    private const float defaultLeftStickSensitivity = 100;
+    private const float defaultRightStickSensitivity = 100;
+    private const float defaultLeftStickDeadZone = 10;
+    private const float defaultRightStickDeadZone = 10;
 
     private Resolution[] resolutions;
 
