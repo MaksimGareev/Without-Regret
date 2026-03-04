@@ -71,28 +71,21 @@ public class InteractionTutorialUI : MonoBehaviour
             playerController.DisableInput();
         }
     }
-    /*
-    public void ShowBossTutorial(InteractType type, string message)
-    {
-        if (canvasGroup == null) return;
 
-        descriptionText.text = message;
-
-        gameObject.SetActive(true);
-        StartCoroutine(FadeCanvasGroup(canvasGroup, 0f, 1f, fadeDuration));
-    }
-    */
     public void Update()
     {
         if (!IsShowing)
             return;
-
-        // Confirm input (keyboard + gamepad)
-        if (Keyboard.current.spaceKey.wasPressedThisFrame ||
-            Keyboard.current.enterKey.wasPressedThisFrame ||
-            (Gamepad.current != null && Gamepad.current.buttonSouth.wasPressedThisFrame))
+        
+        if (IsShowing)
         {
-            HideTutorial();
+            // Confirm input (keyboard + gamepad)
+            if (Keyboard.current.spaceKey.wasPressedThisFrame ||
+                Keyboard.current.enterKey.wasPressedThisFrame ||
+                (Gamepad.current != null && Gamepad.current.buttonSouth.wasPressedThisFrame))
+            {
+                HideTutorial();
+            }
         }
     }
 
