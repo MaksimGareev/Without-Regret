@@ -25,7 +25,7 @@ public class InputDeviceManager : MonoBehaviour
     [SerializeField] private RawImage actionImage1;
     [SerializeField] private RawImage actionImage2;
     [SerializeField] private RawImage actionImage3;
-    [SerializeField] private Sprite journalImage;
+    [SerializeField] private Image journalImage;
 
     [Header("Controller Sprites")]
     [SerializeField] private Texture controllerXButton;
@@ -75,7 +75,7 @@ public class InputDeviceManager : MonoBehaviour
         {
             CurrentMode = InputMode.Controller;
         }
-        else if (device is Keyboard)
+        else if (device is Keyboard || device is Mouse)
         {
             CurrentMode = InputMode.KeyboardMouse;
         }
@@ -96,7 +96,10 @@ public class InputDeviceManager : MonoBehaviour
                 actionImage1.texture = controllerXButton;
                 actionImage2.texture = controllerAButton;
                 actionImage3.texture = controllerTrigger;
-                journalImage = controllerSelect;
+                
+                journalImage.sprite = controllerSelect;
+                journalImage.rectTransform.sizeDelta = new Vector2(80, 80);
+                
                 tab.gameObject.SetActive(false);
                 e.gameObject.SetActive(false);
                 spaceBar.gameObject.SetActive(false);
@@ -105,7 +108,10 @@ public class InputDeviceManager : MonoBehaviour
                 actionImage1.texture = keyboardEKey;
                 actionImage2.texture = keyboardSpacebar;
                 actionImage3.texture = mouse;
-                journalImage = keyboardTab;
+
+                journalImage.sprite = keyboardTab;
+                journalImage.rectTransform.sizeDelta = new Vector2(140, 85);
+                
                 tab.gameObject.SetActive(true);
                 e.gameObject.SetActive(true);
                 spaceBar.gameObject.SetActive(true);
