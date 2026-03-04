@@ -22,21 +22,21 @@ public class InputDeviceManager : MonoBehaviour
     private IDisposable inputSubscription;
 
     [Header("UI References")]
-    [SerializeField] private RawImage actionImage1;
-    [SerializeField] private RawImage actionImage2;
-    [SerializeField] private RawImage actionImage3;
+    [SerializeField] private Image actionImage1;
+    [SerializeField] private Image actionImage2;
+    [SerializeField] private Image actionImage3;
     [SerializeField] private Image journalImage;
 
     [Header("Controller Sprites")]
-    [SerializeField] private Texture controllerXButton;
-    [SerializeField] private Texture controllerAButton;
-    [SerializeField] private Texture controllerTrigger;
+    [SerializeField] private Sprite controllerXButton;
+    [SerializeField] private Sprite controllerAButton;
+    [SerializeField] private Sprite controllerTrigger;
     [SerializeField] private Sprite controllerSelect;
 
     [Header("Keyboard Sprites")]
-    [SerializeField] private Texture keyboardEKey;
-    [SerializeField] private Texture keyboardSpacebar;
-    [SerializeField] private Texture mouse;
+    [SerializeField] private Sprite keyboardEKey;
+    [SerializeField] private Sprite keyboardSpacebar;
+    [SerializeField] private Sprite mouse;
     [SerializeField] private Sprite keyboardTab;
     
     [Header("Keyboard text")]
@@ -93,9 +93,14 @@ public class InputDeviceManager : MonoBehaviour
         switch (mode)
         {
             case InputMode.Controller:
-                actionImage1.texture = controllerXButton;
-                actionImage2.texture = controllerAButton;
-                actionImage3.texture = controllerTrigger;
+                actionImage1.sprite = controllerXButton;
+                actionImage1.rectTransform.sizeDelta = new Vector2(80, 80);
+
+                actionImage2.sprite = controllerAButton;
+                actionImage2.rectTransform.sizeDelta = new Vector2(80, 80);
+                
+                actionImage3.sprite = controllerTrigger;
+                actionImage3.rectTransform.sizeDelta = new Vector2(80, 75);
                 
                 journalImage.sprite = controllerSelect;
                 journalImage.rectTransform.sizeDelta = new Vector2(80, 80);
@@ -105,9 +110,14 @@ public class InputDeviceManager : MonoBehaviour
                 spaceBar.gameObject.SetActive(false);
                 break;
             case InputMode.KeyboardMouse:
-                actionImage1.texture = keyboardEKey;
-                actionImage2.texture = keyboardSpacebar;
-                actionImage3.texture = mouse;
+                actionImage1.sprite = keyboardEKey;
+                actionImage1.rectTransform.sizeDelta = new Vector2(80, 80);
+
+                actionImage2.sprite = keyboardSpacebar;
+                actionImage2.rectTransform.sizeDelta = new Vector2(140, 85);
+                
+                actionImage3.sprite = mouse;
+                actionImage3.rectTransform.sizeDelta = new Vector2(60, 80);
 
                 journalImage.sprite = keyboardTab;
                 journalImage.rectTransform.sizeDelta = new Vector2(140, 85);
