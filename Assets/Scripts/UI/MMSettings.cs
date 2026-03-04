@@ -110,28 +110,28 @@ public class MMSettings : MonoBehaviour
     // Temporary variables to hold settings before applying
     private int tempResolutionIndex;
     private bool tempIsFullscreen;
-    private float tempMasterVolume;
-    private float tempSFXVolume;
-    private float tempMusicVolume;
-    private float tempDialogueVolume;
-    private float tempMouseSensitivity;
-    private float tempLeftStickSensitivity;
-    private float tempRightStickSensitivity;
-    private float tempLeftStickDeadZone;
-    private float tempRightStickDeadZone;
+    private int tempMasterVolume;
+    private int tempSFXVolume;
+    private int tempMusicVolume;
+    private int tempDialogueVolume;
+    private int tempMouseSensitivity;
+    private int tempLeftStickSensitivity;
+    private int tempRightStickSensitivity;
+    private int tempLeftStickDeadZone;
+    private int tempRightStickDeadZone;
 
     // Default values for settings
     private int defaultResolutionIndex;
     private const int defaultIsFullscreen = 1;
-    private const float defaultMasterVolume = 100;
-    private const float defaultSFXVolume = 100;
-    private const float defaultMusicVolume = 100;
-    private const float defaultDialogueVolume = 100;
-    private const float defaultMouseSensitivity = 100;
-    private const float defaultLeftStickSensitivity = 100;
-    private const float defaultRightStickSensitivity = 100;
-    private const float defaultLeftStickDeadZone = 10;
-    private const float defaultRightStickDeadZone = 10;
+    private const int defaultMasterVolume = 100;
+    private const int defaultSFXVolume = 100;
+    private const int defaultMusicVolume = 100;
+    private const int defaultDialogueVolume = 100;
+    private const int defaultMouseSensitivity = 100;
+    private const int defaultLeftStickSensitivity = 100;
+    private const int defaultRightStickSensitivity = 100;
+    private const int defaultLeftStickDeadZone = 10;
+    private const int defaultRightStickDeadZone = 10;
 
     private Resolution[] resolutions;
 
@@ -648,9 +648,9 @@ public class MMSettings : MonoBehaviour
     private void SetMasterVolume(float volume)
     {
         // Set temporary values before actually applying
-        AudioManager.Instance?.SetMasterVolume(volume);
-        tempMasterVolume = volume;
-        masterVolumeValueText.text = Mathf.RoundToInt(volume * 100).ToString("F0") + "%";
+        AudioManager.Instance?.SetMasterVolume(Mathf.RoundToInt(volume));
+        tempMasterVolume = Mathf.RoundToInt(volume);
+        masterVolumeValueText.text = Mathf.RoundToInt(volume).ToString("F0") + "%";
 
         CheckIfHasUnappliedSettings();
     }
@@ -658,9 +658,9 @@ public class MMSettings : MonoBehaviour
     private void SetSFXVolume(float volume)
     {
         // Set temporary values before actually applying
-        AudioManager.Instance?.SetSFXVolume(volume);
-        tempSFXVolume = volume;
-        SFXVolumeValueText.text = Mathf.RoundToInt(volume * 100).ToString("F0") + "%";
+        AudioManager.Instance?.SetSFXVolume(Mathf.RoundToInt(volume));
+        tempSFXVolume = Mathf.RoundToInt(volume);
+        SFXVolumeValueText.text = Mathf.RoundToInt(volume).ToString("F0") + "%";
 
         CheckIfHasUnappliedSettings();
     }
@@ -668,9 +668,9 @@ public class MMSettings : MonoBehaviour
     private void SetMusicVolume(float volume)
     {
         // Set temporary values before actually applying
-        AudioManager.Instance?.SetMusicVolume(volume);
-        tempMusicVolume = volume;
-        musicVolumeValueText.text = Mathf.RoundToInt(volume * 100).ToString("F0") + "%";
+        AudioManager.Instance?.SetMusicVolume(Mathf.RoundToInt(volume));
+        tempMusicVolume = Mathf.RoundToInt(volume);
+        musicVolumeValueText.text = Mathf.RoundToInt(volume).ToString("F0") + "%";
 
         CheckIfHasUnappliedSettings();
     }
@@ -678,9 +678,9 @@ public class MMSettings : MonoBehaviour
     private void SetDialogueVolume(float volume)
     {
         // Set temporary values before actually applying
-        AudioManager.Instance?.SetDialogueVolume(volume);
-        tempDialogueVolume = volume;
-        dialogueVolumeValueText.text = Mathf.RoundToInt(volume * 100).ToString("F0") + "%";
+        AudioManager.Instance?.SetDialogueVolume(Mathf.RoundToInt(volume));
+        tempDialogueVolume = Mathf.RoundToInt(volume);
+        dialogueVolumeValueText.text = Mathf.RoundToInt(volume).ToString("F0") + "%";
 
         CheckIfHasUnappliedSettings();
     }
@@ -688,8 +688,8 @@ public class MMSettings : MonoBehaviour
     private void SetMouseSensitivity(float sensitivity)
     {
         // Set temporary values before actually applying
-        tempMouseSensitivity = sensitivity;
-        mouseSensitivityValueText.text = Mathf.RoundToInt(sensitivity * 100).ToString("F0") + "%";
+        tempMouseSensitivity = Mathf.RoundToInt(sensitivity);
+        mouseSensitivityValueText.text = Mathf.RoundToInt(sensitivity).ToString("F0") + "%";
 
         CheckIfHasUnappliedSettings();
     }
@@ -697,8 +697,8 @@ public class MMSettings : MonoBehaviour
     private void SetLeftStickSensitivity(float sensitivity)
     {
         // Set temporary values before actually applying
-        tempLeftStickSensitivity = sensitivity;
-        leftStickSensitivityValueText.text = Mathf.RoundToInt(sensitivity * 100).ToString("F0") + "%";
+        tempLeftStickSensitivity =  Mathf.RoundToInt(sensitivity);
+        leftStickSensitivityValueText.text = Mathf.RoundToInt(sensitivity).ToString("F0") + "%";
 
         CheckIfHasUnappliedSettings();
     }
@@ -706,8 +706,8 @@ public class MMSettings : MonoBehaviour
     private void SetRightStickSensitivity(float sensitivity)
     {
         // Set temporary values before actually applying    
-        tempRightStickSensitivity = sensitivity;
-        rightStickSensitivityValueText.text = Mathf.RoundToInt(sensitivity * 100).ToString("F0") + "%";
+        tempRightStickSensitivity =  Mathf.RoundToInt(sensitivity);
+        rightStickSensitivityValueText.text = Mathf.RoundToInt(sensitivity).ToString("F0") + "%";
 
         CheckIfHasUnappliedSettings();
     }
@@ -715,8 +715,8 @@ public class MMSettings : MonoBehaviour
     private void SetLeftStickDeadZone(float deadZone)
     {
         // Set temporary values before actually applying
-        tempLeftStickDeadZone = deadZone;
-        leftStickDeadZoneValueText.text = Mathf.RoundToInt(deadZone * 100).ToString("F0") + "%";
+        tempLeftStickDeadZone =  Mathf.RoundToInt(deadZone);
+        leftStickDeadZoneValueText.text = Mathf.RoundToInt(deadZone).ToString("F0") + "%";
 
         CheckIfHasUnappliedSettings();
     }
@@ -724,8 +724,8 @@ public class MMSettings : MonoBehaviour
     private void SetRightStickDeadZone(float deadZone)
     {
         // Set temporary values before actually applying
-        tempRightStickDeadZone = deadZone;
-        rightStickDeadZoneValueText.text = Mathf.RoundToInt(deadZone * 100).ToString("F0") + "%";
+        tempRightStickDeadZone =  Mathf.RoundToInt(deadZone);
+        rightStickDeadZoneValueText.text = Mathf.RoundToInt(deadZone).ToString("F0") + "%";
 
         CheckIfHasUnappliedSettings();
     }
@@ -935,15 +935,15 @@ public class MMSettings : MonoBehaviour
         // Save settings to PlayerPrefs
         PlayerPrefs.SetInt("resolution", tempResolutionIndex);
         PlayerPrefs.SetInt("fullscreen", tempIsFullscreen ? 1 : 0);
-        PlayerPrefs.SetFloat("masterVolume", tempMasterVolume);
-        PlayerPrefs.SetFloat("SFXVolume", tempSFXVolume);
-        PlayerPrefs.SetFloat("musicVolume", tempMusicVolume);
-        PlayerPrefs.SetFloat("dialogueVolume", tempDialogueVolume);
-        PlayerPrefs.SetFloat("mouseSensitivity", tempMouseSensitivity);
-        PlayerPrefs.SetFloat("leftStickSensitivity", tempLeftStickSensitivity);
-        PlayerPrefs.SetFloat("rightStickSensitivity", tempRightStickSensitivity);
-        PlayerPrefs.SetFloat("leftStickDeadZone", tempLeftStickDeadZone);
-        PlayerPrefs.SetFloat("rightStickDeadZone", tempRightStickDeadZone);
+        PlayerPrefs.SetInt("masterVolume", tempMasterVolume);
+        PlayerPrefs.SetInt("SFXVolume", tempSFXVolume);
+        PlayerPrefs.SetInt("musicVolume", tempMusicVolume);
+        PlayerPrefs.SetInt("dialogueVolume", tempDialogueVolume);
+        PlayerPrefs.SetInt("mouseSensitivity", tempMouseSensitivity);
+        PlayerPrefs.SetInt("leftStickSensitivity", tempLeftStickSensitivity);
+        PlayerPrefs.SetInt("rightStickSensitivity", tempRightStickSensitivity);
+        PlayerPrefs.SetInt("leftStickDeadZone", tempLeftStickDeadZone);
+        PlayerPrefs.SetInt("rightStickDeadZone", tempRightStickDeadZone);
 
         // Set texts back to white
         resolutionTitleText.color = defaultColor;
@@ -1011,15 +1011,15 @@ public class MMSettings : MonoBehaviour
         // Check if current settings differ from default settings, set hasChangedSettings accordingly
         if (PlayerPrefs.GetInt("resolution") != defaultResolutionIndex ||
             PlayerPrefs.GetInt("fullscreen") != defaultIsFullscreen ||
-            Mathf.Approximately(PlayerPrefs.GetFloat("masterVolume"), defaultMasterVolume) == false ||
-            Mathf.Approximately(PlayerPrefs.GetFloat("SFXVolume"), defaultSFXVolume) == false ||
-            Mathf.Approximately(PlayerPrefs.GetFloat("musicVolume"), defaultMusicVolume) == false ||
-            Mathf.Approximately(PlayerPrefs.GetFloat("dialogueVolume"), defaultDialogueVolume) == false ||
-            Mathf.Approximately(PlayerPrefs.GetFloat("mouseSensitivity"), defaultMouseSensitivity) == false ||
-            Mathf.Approximately(PlayerPrefs.GetFloat("leftStickSensitivity"), defaultLeftStickSensitivity) == false ||
-            Mathf.Approximately(PlayerPrefs.GetFloat("rightStickSensitivity"), defaultRightStickSensitivity) == false ||
-            Mathf.Approximately(PlayerPrefs.GetFloat("leftStickDeadZone"), defaultLeftStickDeadZone) == false ||
-            Mathf.Approximately(PlayerPrefs.GetFloat("rightStickDeadZone"), defaultRightStickDeadZone) == false)
+            PlayerPrefs.GetInt("masterVolume") != defaultMasterVolume ||
+            PlayerPrefs.GetInt("SFXVolume") != defaultSFXVolume ||
+            PlayerPrefs.GetInt("musicVolume") != defaultMusicVolume ||
+            PlayerPrefs.GetInt("dialogueVolume") != defaultDialogueVolume ||
+            PlayerPrefs.GetInt("mouseSensitivity") != defaultMouseSensitivity ||
+            PlayerPrefs.GetInt("leftStickSensitivity") != defaultLeftStickSensitivity ||
+            PlayerPrefs.GetInt("rightStickSensitivity") != defaultRightStickSensitivity ||
+            PlayerPrefs.GetInt("leftStickDeadZone") != defaultLeftStickDeadZone ||
+            PlayerPrefs.GetInt("rightStickDeadZone") != defaultRightStickDeadZone)
         {
             hasChangedSettings = true;
         }
@@ -1034,15 +1034,15 @@ public class MMSettings : MonoBehaviour
         // Check if temporary settings differ from currently applied settings
         bool resolutionChanged = tempResolutionIndex != PlayerPrefs.GetInt("resolution", resolutions.Length - 1);
         bool fullscreenChanged = tempIsFullscreen != (PlayerPrefs.GetInt("fullscreen", 1) == 1);
-        bool masterVolumeChanged = !Mathf.Approximately(tempMasterVolume, PlayerPrefs.GetFloat("masterVolume", 1f));
-        bool SFXVolumeChanged = !Mathf.Approximately(tempSFXVolume, PlayerPrefs.GetFloat("SFXVolume", 1f));
-        bool musicVolumeChanged = !Mathf.Approximately(tempMusicVolume, PlayerPrefs.GetFloat("musicVolume", 1f));
-        bool dialogueVolumeChanged = !Mathf.Approximately(tempDialogueVolume, PlayerPrefs.GetFloat("dialogueVolume", 1f));
-        bool mouseSensitivityChanged = !Mathf.Approximately(tempMouseSensitivity, PlayerPrefs.GetFloat("mouseSensitivity", 1f));
-        bool leftStickSensitivityChanged = !Mathf.Approximately(tempLeftStickSensitivity, PlayerPrefs.GetFloat("leftStickSensitivity", 1f));
-        bool rightStickSensitivityChanged = !Mathf.Approximately(tempRightStickSensitivity, PlayerPrefs.GetFloat("rightStickSensitivity", 1f));
-        bool leftStickDeadZoneChanged = !Mathf.Approximately(tempLeftStickDeadZone, PlayerPrefs.GetFloat("leftStickDeadZone", 0.1f));
-        bool rightStickDeadZoneChanged = !Mathf.Approximately(tempRightStickDeadZone, PlayerPrefs.GetFloat("rightStickDeadZone", 0.1f));
+        bool masterVolumeChanged = tempMasterVolume != PlayerPrefs.GetInt("masterVolume", defaultMasterVolume);
+        bool SFXVolumeChanged = tempSFXVolume != PlayerPrefs.GetInt("SFXVolume", defaultSFXVolume);
+        bool musicVolumeChanged = tempMusicVolume != PlayerPrefs.GetInt("musicVolume", defaultMusicVolume);
+        bool dialogueVolumeChanged = tempDialogueVolume != PlayerPrefs.GetInt("dialogueVolume", defaultDialogueVolume);
+        bool mouseSensitivityChanged = tempMouseSensitivity != PlayerPrefs.GetInt("mouseSensitivity", defaultMouseSensitivity);
+        bool leftStickSensitivityChanged = tempLeftStickSensitivity != PlayerPrefs.GetInt("leftStickSensitivity", defaultLeftStickSensitivity);
+        bool rightStickSensitivityChanged = tempRightStickSensitivity != PlayerPrefs.GetInt("rightStickSensitivity", defaultRightStickSensitivity);
+        bool leftStickDeadZoneChanged = tempLeftStickDeadZone != PlayerPrefs.GetInt("leftStickDeadZone", defaultLeftStickDeadZone);
+        bool rightStickDeadZoneChanged = tempRightStickDeadZone != PlayerPrefs.GetInt("rightStickDeadZone", defaultRightStickDeadZone);
 
         // Update hasUnappliedChanges based on if any setting has changed
         hasUnappliedChanges = 
@@ -1197,15 +1197,15 @@ public class MMSettings : MonoBehaviour
         // Load settings from PlayerPrefs or set to default values if not found
         tempResolutionIndex = PlayerPrefs.GetInt("resolution", defaultResolutionIndex);
         tempIsFullscreen = PlayerPrefs.GetInt("fullscreen", defaultIsFullscreen) == 1;
-        tempMasterVolume = PlayerPrefs.GetFloat("masterVolume", defaultMasterVolume);
-        tempSFXVolume = PlayerPrefs.GetFloat("SFXVolume", defaultSFXVolume);
-        tempMusicVolume = PlayerPrefs.GetFloat("musicVolume", defaultMusicVolume);
-        tempDialogueVolume = PlayerPrefs.GetFloat("dialogueVolume", defaultDialogueVolume);
-        tempMouseSensitivity = PlayerPrefs.GetFloat("mouseSensitivity", defaultMouseSensitivity);
-        tempLeftStickSensitivity = PlayerPrefs.GetFloat("leftStickSensitivity", defaultLeftStickSensitivity);
-        tempRightStickSensitivity = PlayerPrefs.GetFloat("rightStickSensitivity", defaultRightStickSensitivity);
-        tempLeftStickDeadZone = PlayerPrefs.GetFloat("leftStickDeadZone", defaultLeftStickDeadZone);
-        tempRightStickDeadZone = PlayerPrefs.GetFloat("rightStickDeadZone", defaultRightStickDeadZone);
+        tempMasterVolume = PlayerPrefs.GetInt("masterVolume", defaultMasterVolume);
+        tempSFXVolume = PlayerPrefs.GetInt("SFXVolume", defaultSFXVolume);
+        tempMusicVolume = PlayerPrefs.GetInt("musicVolume", defaultMusicVolume);
+        tempDialogueVolume = PlayerPrefs.GetInt("dialogueVolume", defaultDialogueVolume);
+        tempMouseSensitivity = PlayerPrefs.GetInt("mouseSensitivity", defaultMouseSensitivity);
+        tempLeftStickSensitivity = PlayerPrefs.GetInt("leftStickSensitivity", defaultLeftStickSensitivity);
+        tempRightStickSensitivity = PlayerPrefs.GetInt("rightStickSensitivity", defaultRightStickSensitivity);
+        tempLeftStickDeadZone = PlayerPrefs.GetInt("leftStickDeadZone", defaultLeftStickDeadZone);
+        tempRightStickDeadZone = PlayerPrefs.GetInt("rightStickDeadZone", defaultRightStickDeadZone);
 
         // Update UI elements to reflect loaded settings
         resolutionDropdown.value = tempResolutionIndex;
@@ -1295,15 +1295,6 @@ public class MMSettings : MonoBehaviour
         resetButton.interactable = hasChangedSettings;
         applyButton.interactable = hasUnappliedChanges;
         discardChangesButton.interactable = hasUnappliedChanges;
-
-        //resetButtonImage.color = hasChangedSettings ? legendsEnabledColor : legendsDisabledColor;
-        //resetKeyImage.color = hasChangedSettings ? legendsEnabledColor : legendsDisabledColor;
-
-        //applyButtonImage.color = hasUnappliedChanges ? legendsEnabledColor : legendsDisabledColor;
-        //applyKeyImage.color = hasUnappliedChanges ? legendsEnabledColor : legendsDisabledColor;
-
-        //discardButtonImage.color = hasUnappliedChanges ? legendsEnabledColor : legendsDisabledColor;
-        //discardKeyImage.color = hasUnappliedChanges ? legendsEnabledColor : legendsDisabledColor;
 
         resolutionDropdown.interactable = videoSettingsOpen;
         fullscreenToggle.interactable = videoSettingsOpen;
