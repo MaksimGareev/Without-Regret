@@ -272,13 +272,13 @@ public class CameraMovement : MonoBehaviour
         // Scale input based on whether it's mouse or controller, and apply to yaw and pitch
         if (isMouse)
         {
-            float mouseScale = mouseRotateScale * GameSettings.MouseSensitivity;
+            float mouseScale = mouseRotateScale * GameSettings.MouseSensitivity / 100f;
             yaw -= horizontalInput * mouseScale;
             pitch -= verticalInput * mouseScale;
         }
         else
         {
-            float stickScale = GameSettings.RightStickSensitivity;
+            float stickScale = GameSettings.RightStickSensitivity / 100f;
             yaw -= horizontalInput * rotateSpeed * stickScale * Time.deltaTime;
             pitch -= verticalInput * rotateSpeed * stickScale * Time.deltaTime;
         }

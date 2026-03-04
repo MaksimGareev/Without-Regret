@@ -460,10 +460,10 @@ public class MainMenu : MonoBehaviour
         backButton.onClick.RemoveListener(HandleUIBackButton);
         feedbackSurveyButton.onClick.RemoveListener(ConfirmBeforeFeedbackSurvey);
 
-        TabLeftAction.Disable();
-        TabRightAction.Disable();
-        confirmAction.Disable();
-        cancelAction.Disable();
+        TabLeftAction?.Disable();
+        TabRightAction?.Disable();
+        confirmAction?.Disable();
+        cancelAction?.Disable();
     }
 
     private void OnDestroy()
@@ -475,9 +475,9 @@ public class MainMenu : MonoBehaviour
         backButton.onClick.RemoveListener(HandleUIBackButton);
         feedbackSurveyButton.onClick.RemoveListener(ConfirmBeforeFeedbackSurvey);
 
-        TabLeftAction.Disable();
-        TabRightAction.Disable();
-        confirmAction.Disable();
-        cancelAction.Disable();
+        TabLeftAction?.Disable();
+        TabRightAction?.Disable();
+        confirmAction?.Disable();
+        cancelAction?.Disable();
     }
 }
