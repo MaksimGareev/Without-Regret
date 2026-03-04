@@ -24,8 +24,52 @@ public class PlayerInteracting : MonoBehaviour
 
     private void Awake()
     {
+        if (InputActions == null)
+        {
+            Debug.LogError("InputActions missing on PlayerInteracting.", this);
+            enabled = false;
+            return;
+        }
+
+        var map = InputActions.FindActionMap("Player", true);
+        if (map == null)
+        {
+            Debug.LogError("Player action map is missing in InputActions.", this);
+            enabled = false;
+            return;
+        }
+
+        Mantle = map.FindAction("Jump", this);
+        Interact = map.FindAction("Interact", this);
+
+        if (Mantle == null || Interact == null)
+        {
+            Debug.LogError("Required actions missing in Player map.", this);
+            enabled = false;
+        }
+
+        /*
         Mantle = InputActions.FindActionMap("Player").FindAction("Jump");
         Interact = InputActions.FindActionMap("Player").FindAction("Interact");
+        */
+    }
+
+    private void OnValidate()
+    {
+        if (InputActions == null)
+        {
+            Debug.LogError($"{nameof(PlayerInteracting)}: InputActions is missing.", this);
+        }
+
+        if (interactionRange <= 0)
+        {
+            interactionRange = 1f;
+        }
+
+        if (detectionGraceTime < 0)
+        {
+            detectionGraceTime = 0f;
+        }
     }
 
     private void OnEnable()

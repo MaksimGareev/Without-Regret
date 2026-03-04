@@ -21,6 +21,7 @@ public class InteractionTutorialUI : MonoBehaviour
     {
         if (Instance != null && Instance != this)
         {
+            Debug.LogWarning("Duplicate InteractionTutorialUI destroyed.");
             Destroy(gameObject);
             return;
         }
@@ -132,6 +133,14 @@ public class InteractionTutorialUI : MonoBehaviour
         cg.alpha = end;
         cg.interactable = end > 0f;
         cg.blocksRaycasts = end > 0f;
+    }
+
+    private void OnDestroy()
+    {
+       if (Instance == this)
+        {
+            Instance = null;
+        }
     }
 
 }
