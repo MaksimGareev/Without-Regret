@@ -534,7 +534,34 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
 
     private void SafeSetBool(string parameter, bool value) //this is used in place of animator.setbool so that it can function correctly on non-character objects
     {
+        if (animator == null)
+        {
+            return;
+        }
+
+        if (!HasParameter(parameter))
+        {
+            Debug.LogWarning($"Animator missing parameter: {parameter}", animator);
+            return;
+        }
+
+        animator.SetBool(parameter, value);
+
+        /*
         if (animator != null)
             animator.SetBool(parameter, value);
+        */
+    }
+
+    private bool HasParameter(string paramName)
+    {
+        foreach (var param in animator.parameters)
+        {
+            if (param.name == paramName)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }

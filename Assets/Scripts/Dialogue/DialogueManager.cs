@@ -165,11 +165,36 @@ public class DialogueManager : MonoBehaviour
     // Load Json file on start of dialogue interaction
     public void StartDialogueFromJson(TextAsset json, DialogueTrigger trigger)
     {
+        if (DialogueIsActive)
+        {
+            Debug.LogWarning("Attemped to start dialogue while another is active");
+            return;
+        }
+
         dialogue = JsonUtility.FromJson<DialogueData>(json.text);
+
+        if (dialogue == null || dialogue.dialogueLines == null || dialogue.dialogueLines.Count == 0)
+        {
+            Debug.LogError("Dialogue JSON is empty or malformed", this);
+            return;
+        }
+
         LineLookup.Clear();
 
         foreach (var line in dialogue.dialogueLines)
         {
+            if (string.IsNullOrEmpty(line.LineID))
+            {
+                Debug.LogError("Dialogue line missing LineID.");
+                continue;
+            }
+
+            if (LineLookup.ContainsKey(line.LineID))
+            {
+                Debug.LogError($"Duplicate LineID found: {line.LineID}");
+                continue;
+            }
+
             LineLookup[line.LineID] = line;
 
             if (line.choices != null)
@@ -263,8 +288,16 @@ public class DialogueManager : MonoBehaviour
     void ShowLine()
     {
         // search for Line ID of current line
-        if (!LineLookup.ContainsKey(currentLineID))
+        if (string.IsNullOrEmpty(currentLineID))
         {
+            Debug.LogError("CurrentLineID is null or empty");
+            EndDialogue();
+            return;
+        }
+
+        if (!LineLookup.TryGetValue(currentLineID, out currentLine))
+        {
+            Debug.LogError($"LineID not found in lookup: {currentLineID}");
             EndDialogue();
             return;
         }
@@ -619,7 +652,11 @@ public class DialogueManager : MonoBehaviour
         CanChoose = false;
         choiceTimerSlider.gameObject.SetActive(false);
         //DirectionalImage.SetActive(false);
-        StopCoroutine(timerRoutine);
+        if (timerRoutine != null)
+        {
+            StopCoroutine(timerRoutine);
+            timerRoutine = null;
+        }
 
         ClearChoices();
         StartCoroutine(ResolveChoiceRoutine(c));
