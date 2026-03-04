@@ -68,36 +68,39 @@ public class AudioManager : MonoBehaviour
         (CurrentMusic, NextMusic) = (NextMusic, CurrentMusic);
     }
 
-    public void SetMasterVolume(float volume)
+    public void SetMasterVolume(int volume)
     {
         ConvertVolumeToDecibels(MasterGroup, volume);
     }
 
-    public void SetMusicVolume(float volume)
+    public void SetMusicVolume(int volume)
     {
         ConvertVolumeToDecibels(MusicGroup, volume);
     }
 
-    public void SetSFXVolume(float volume)
+    public void SetSFXVolume(int volume)
     {
         ConvertVolumeToDecibels(SFXGroup, volume);
     }
 
-    public void SetDialogueVolume(float volume)
+    public void SetDialogueVolume(int volume)
     {
         ConvertVolumeToDecibels(DialogueGroup, volume);
     }
 
-    private void ConvertVolumeToDecibels(string audioMixerGroup, float volume)
+    private void ConvertVolumeToDecibels(string audioMixerGroup, int volume)
     {
         if (mixer == null) return;
 
-        float dB;
-        volume = Mathf.Clamp(volume, 0.0001f, 2f);
+        // convert volume int to float
+        float volumeFloat = volume / 100f;
 
-        if (volume > 0.0001f)
+        float dB;
+        volumeFloat = Mathf.Clamp(volumeFloat, 0.0001f, 2f);
+
+        if (volumeFloat > 0.0001f)
         {
-            dB = 20f * Mathf.Log10(volume);
+            dB = 20f * Mathf.Log10(volumeFloat);
         }
         else
         {
