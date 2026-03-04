@@ -442,7 +442,7 @@ public class DialogueManager : MonoBehaviour
         string npc = activeDialogueTrigger.NPCName;
 
         // irene follow
-        if (npc == "Irene" && ireneNPC != null)
+        if (npc == "Irene" && ireneNPC != null && activeDialogueTrigger.IsMediation == false)
         {
             if (!ireneNPC.IsFollowing)
                 ireneNPC.IsFollowing = true;
