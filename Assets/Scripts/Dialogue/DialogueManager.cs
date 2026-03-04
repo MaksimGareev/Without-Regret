@@ -400,6 +400,11 @@ public class DialogueManager : MonoBehaviour
 
     void OnConfirmPressed()
     {
+        if (!DialogueIsActive || currentLine == null)
+        {
+            return;
+        }
+
         // Don't automatically end dialogue during pause after selection
         if (resolvingChoice) return;  
 
