@@ -148,11 +148,11 @@ public class PlayerMovingObjects : MonoBehaviour
             // compute the target bounds after moving player by delta (held object moves with player as it's parented to grab point)
             Bounds b = col.bounds;
             Vector3 targetCenter = b.center + delta;
-            Vector3 halfExtents = b.extents;
+            Vector3 extents = b.extents * obj.ExtentsMultiplier;
             Quaternion rotation = obj.transform.rotation;
 
             // Query for overlapping colliders at the target location
-            Collider[] hits = Physics.OverlapBox(targetCenter, halfExtents, rotation, ~ignoreCollisionLayer, QueryTriggerInteraction.Ignore);
+            Collider[] hits = Physics.OverlapBox(targetCenter, extents, rotation, ~ignoreCollisionLayer, QueryTriggerInteraction.Ignore);
             foreach (var hit in hits)
             {
                 if (hit == col) continue; // ignore self
