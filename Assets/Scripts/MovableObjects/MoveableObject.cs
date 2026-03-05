@@ -18,6 +18,10 @@ public class MoveableObject : MonoBehaviour, IInteractable
     [SerializeField] ItemData requiredItem;
     [SerializeField] private float maxGrabDistance = 2.5f;
 
+    [Header("Collision Settings")]
+    [Tooltip("Modifies the size of the collider used to check for collisions with walls when the player is moving this object. A smaller size will make the check more lenient (and can cause some clipping)")]
+    [SerializeField] private float collisionCheckSizeMultiplier = 0.9f;
+
     [Header("Transform Settings")]
     [SerializeField] private Vector3 heldPositionOffset = Vector3.zero;
 
@@ -31,12 +35,17 @@ public class MoveableObject : MonoBehaviour, IInteractable
 
     public event Action OnInteracted;
     private Collider coll;
+    private bool trigger;
+
     public Collider ObjectCollider => coll;
+    public float ExtentsMultiplier => collisionCheckSizeMultiplier;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
         coll = GetComponent<Collider>();
+
+        trigger = coll.isTrigger;
     }
 
     public bool CanInteract(GameObject player)
@@ -80,6 +89,8 @@ public class MoveableObject : MonoBehaviour, IInteractable
         rb.constraints = RigidbodyConstraints.FreezeAll;
         rb.isKinematic = true;
 
+       coll.isTrigger = true;
+
         // Apply offsets after parenting (Rotate in world space to maintain rotation at time of grabbing)
         transform.localPosition += heldPositionOffset;
 
@@ -97,6 +108,8 @@ public class MoveableObject : MonoBehaviour, IInteractable
         // Set rigidbody back to normal
         rb.isKinematic = false;
         rb.WakeUp();
+
+        coll.isTrigger = trigger;
     }
 
     public void OnPlayerInteraction(GameObject player)
@@ -125,14 +138,15 @@ public class MoveableObject : MonoBehaviour, IInteractable
                 Debug.LogError("Player grab point is null!");
                 return;
             }
-            
+
             // // Attempt to ensure that when the object is grabbed, there isn't major clipping with another object
             // // by checking the grab point for collisions.
-            // if (mover.grabPoint.TryGetComponent<GrabPointCollisionCheck>(out var checker) && checker.CollidingWithSomethingExcept(coll))
-            // {
-            //     Debug.Log("Player tried to grab an object, but their grab point is colliding with another object.");
-            //     return;
-            // }
+            if (mover.grabPoint.TryGetComponent<GrabPointCollisionCheck>(out var checker) && checker.CollidingWithSomethingExcept(coll))
+            {
+                Debug.Log("Player tried to grab an object, but their grab point is colliding with another object.");
+                return;
+            }
+
             // Can't grab if an item is equipped
             if (PlayerComponents.playerEquipItem.currentEquippedItem != null)
             {
