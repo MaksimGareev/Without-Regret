@@ -14,8 +14,6 @@ public class PlayerThrowing : MonoBehaviour
     private GameObject WorldThrowPointer;
 
     [Header("Throwing Pointer and UI Settings")]
-    [SerializeField] private float MaxPointerLength = 10;
-    [SerializeField] private float MinPointerLength = 1;
     //[SerializeField] private Slider powerSlider;
     [SerializeField] private LineRenderer line;
     [SerializeField] [Range(10, 100)] private int linePoints = 25;
@@ -255,7 +253,6 @@ public class PlayerThrowing : MonoBehaviour
         {
             GameManager.Instance.throwingSlider.value = 0f;
             GameManager.Instance.throwingSlider.gameObject.SetActive(false);
-            PointerScale.x = MinPointerLength;
             WorldThrowPointer.transform.localScale = PointerScale;
             WorldThrowPointer.SetActive(false);
             line.enabled = false;
