@@ -23,9 +23,6 @@ public class LockPicking : MonoBehaviour
     private List<int> DirectionAssignments = new List<int>{ 0, 0, 0, 0 }; //0 = up, 1 = left, 2 = down, 3 = right in terms of layout on the d-pad and arrow keys. Randomly generated on lockpicking start
     public List<RawImage> Arrows;
 
-    [Min(1)]
-    [Range(1, 25)]
-
     [Header("Sound Vars")]
     public AudioSource Source;
     public AudioClip UnlockSound;
