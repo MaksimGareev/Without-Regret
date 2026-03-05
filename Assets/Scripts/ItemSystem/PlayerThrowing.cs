@@ -122,10 +122,8 @@ public class PlayerThrowing : MonoBehaviour
             }
         }
     }
-    
-
-    // Update is called once per frame
-    private void LateUpdate()
+   
+    private void LateUpdate()// set to late to help prevent stuttering
     {
         if (Time.timeScale != 0f && playerEquipItem.throwableEquipped && !inventoryToggle.isEnabled)
         {
@@ -138,7 +136,7 @@ public class PlayerThrowing : MonoBehaviour
 
     }
 
-    private void DropItem()
+    private void DropItem()// if not throwable, drop the item instead
     {
         ItemData itemToDrop = playerEquipItem.currentEquippedItem;
         if (itemToDrop == null)
@@ -151,7 +149,7 @@ public class PlayerThrowing : MonoBehaviour
         Instantiate(itemToDrop.WorldPrefab, transform.position + transform.forward * 1f, Quaternion.identity);
     }
 
-    private void HandleCharging()
+    private void HandleCharging()// charges the throw overtime
     {
         if (Input.GetMouseButtonDown(chargeKeyInt) && !isCharging)
         {
@@ -181,7 +179,7 @@ public class PlayerThrowing : MonoBehaviour
                     return;
                 }
             }
-            DrawProjection();
+            DrawProjection();// render line
 
             if (GameManager.Instance.throwingSlider != null)
             {
