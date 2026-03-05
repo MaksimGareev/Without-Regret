@@ -23,14 +23,13 @@ public class PauseManager : MonoBehaviour
     [SerializeField] private Button reloadSaveButton;
     [SerializeField] private Button settingsButton;
     [SerializeField] private Button quitButton;
-    [SerializeField] private Button backButton;
+    [SerializeField] public Button backButton;
 
     [Header("UI Panels")]
     [SerializeField] public GameObject pauseMenuPanel;
     [SerializeField] private MMSettings settingsScript;
     [SerializeField] private GameObject settingsPanel;
     [SerializeField] private GameObject confirmationPanel;
-    //[SerializeField] private Canvas[] otherCanvasesToDisable;
 
     [HideInInspector] public bool isGamePaused = false;
     [HideInInspector] public bool usingController { get; private set; } = false;
@@ -96,7 +95,7 @@ public class PauseManager : MonoBehaviour
         && !Journal.Instance.isJournalOpen 
         && !DialogueManager.DialogueIsActive 
         && !confirmationPanel.activeSelf 
-        && !(GameOverManager.Instance != null && GameOverManager.Instance.isGameOverUIActive()))
+        && !(GameOverManager.Instance != null && GameOverManager.Instance.IsGameOver))
         {
             if (!pauseMenuPanel.activeSelf && !settingsPanel.activeSelf)
             {
@@ -259,7 +258,7 @@ public class PauseManager : MonoBehaviour
                 }
                 else if (settingsPanel.activeSelf && settingsScript.controlSchemeOpen)
                 {
-                    es.SetSelectedGameObject(settingsScript.controlSchemeUI.GetComponent<ControlSchemeUI>().ControllerButton.gameObject);
+                    es.SetSelectedGameObject(backButton.gameObject);
                 }
 
                 if (settingsPanel.activeSelf && !settingsScript.controllerLegends.activeSelf && settingsScript.keyboardLegends.activeSelf)
@@ -428,7 +427,7 @@ public class PauseManager : MonoBehaviour
 
         if (GameManager.Instance.gameOverCanvas != null && !GameManager.Instance.gameOverCanvas.activeSelf)
         {
-            GameManager.Instance.gameOverCanvas.SetActive(GameOverManager.Instance.isGameOver);
+            GameManager.Instance.gameOverCanvas.SetActive(GameOverManager.Instance.IsGameOver);
         }
 
         if (GameManager.Instance.objectivePanel != null && !GameManager.Instance.objectivePanel.activeSelf)

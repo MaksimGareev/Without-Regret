@@ -1,15 +1,14 @@
 using UnityEngine;
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine.InputSystem;
 
 public class PlayerMovingObjects : MonoBehaviour
 {
     private Animator animator;
     [Header("General Settings")]
     [Tooltip("Where moveable objects will snap to (should already be set)")] public Transform grabPoint;
-
+    [Tooltip("Which layers will be ignored when checking for collisions while a MoveableObject is held.")]
+    [SerializeField] private LayerMask ignoreCollisionLayer;
     [Header("Debugging")]
     [SerializeField] private bool showDebugLogs = false;
 
@@ -74,7 +73,7 @@ public class PlayerMovingObjects : MonoBehaviour
 
     public void OnReleaseObject(MoveableObject obj)
     {
-        StartCoroutine(placeDown());
+        StartCoroutine(PlaceDown());
         //if (playerController.animator != null)
         //    playerController.animator.SetBool("isGrabbing", false);
         playerController.Speed = normalMoveSpeed;
@@ -94,15 +93,15 @@ public class PlayerMovingObjects : MonoBehaviour
     {
         if (!isGrabbing)
         {
-            resetAnimations();
+            ResetAnimations();
         }
         isGrabbing = true;
-        StartCoroutine(pickup());
+        StartCoroutine(Pickup());
         animator.SetBool("isGrabbing", true);
         if (showDebugLogs) Debug.Log("Grabbing");
     }
 
-    IEnumerator pickup()
+    IEnumerator Pickup()
     {
         animator.SetTrigger("pickup");
         Debug.Log("Picking up!");
@@ -111,19 +110,19 @@ public class PlayerMovingObjects : MonoBehaviour
         playerController.EnableInput();
     }
 
-    IEnumerator placeDown()
+    IEnumerator PlaceDown()
     {
         animator.SetTrigger("placing");
         Debug.Log("Placing down!");
         playerController.DisableInput();
         yield return new WaitForSeconds(1.5f);
         playerController.EnableInput();
-        resetAnimations();
+        ResetAnimations();
     }
 
 
 
-    private void resetAnimations()
+    private void ResetAnimations()
     {
         if (showDebugLogs) Debug.Log("Reset animations");
         animator.SetBool("isIdle", false);
@@ -132,7 +131,45 @@ public class PlayerMovingObjects : MonoBehaviour
         animator.SetBool("isFloating", false);
     }
 
-    
-
+    // Returns true if any objects are currently held
     public bool IsOccupied() => movedObjects.Count > 0;
+
+    // Predict whether moving the player by 'delta' (world-space) would cause any held object to overlap environment colliders.
+    // This uses the held object's world bounds as an approximate test (OverlapBox).
+    public bool CanMoveBy(Vector3 delta)
+    {
+        if (!IsOccupied()) return true;
+
+        foreach (var obj in movedObjects)
+        {
+            Collider col = obj.ObjectCollider;
+            if (col == null) continue;
+
+            // compute the target bounds after moving player by delta (held object moves with player as it's parented to grab point)
+            Bounds b = col.bounds;
+            Vector3 targetCenter = b.center + delta;
+            Vector3 halfExtents = b.extents;
+            Quaternion rotation = obj.transform.rotation;
+
+            // Query for overlapping colliders at the target location
+            Collider[] hits = Physics.OverlapBox(targetCenter, halfExtents, rotation, ~ignoreCollisionLayer, QueryTriggerInteraction.Ignore);
+            foreach (var hit in hits)
+            {
+                if (hit == col) continue; // ignore self
+                // ignore any colliders that belong to the player (so player's own collider won't block)
+                if (hit.transform.IsChildOf(transform)) continue;
+                // ignore the held object hierarchy
+                if (hit.transform.IsChildOf(obj.transform)) continue;
+
+                // Any other hit means we'd clip into something
+                if (showDebugLogs)
+                {
+                    Debug.Log($"CanMoveBy: movement blocked by {hit.name} (held object {obj.name} would overlap)");
+                }
+                return false;
+            }
+        }
+
+        return true;
+    }
 }

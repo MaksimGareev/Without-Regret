@@ -68,6 +68,28 @@ public class TimerRingUI : MonoBehaviour
         }
     }
 
+    public void AddRingSection(int sections)
+    {
+        for (int i = 0; i < sections; i++)
+        {
+            switch (currentRingState)
+            {
+                case RingState.Empty:
+                    SetRingState(RingState.OneThird);
+                    break;
+                case RingState.OneThird:
+                    SetRingState(RingState.TwoThirds);
+                    break;
+                case RingState.TwoThirds:
+                    SetRingState(RingState.Full);
+                    break;
+                case RingState.Full:
+                    break;
+            }
+        }
+    }
+
+
     private void EndGame()
     {   
         if (GameOverManager.Instance != null)

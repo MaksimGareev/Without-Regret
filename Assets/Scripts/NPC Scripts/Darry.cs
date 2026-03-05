@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
+using System.Collections;
 
 public class Darry : MonoBehaviour
 {
@@ -8,6 +9,7 @@ public class Darry : MonoBehaviour
     public Transform[] targets;
     private int currentIndex = 0;
     [HideInInspector] public Transform currentTarget;
+    private Coroutine waitAfterBake;
 
     // movemnet after dialogue
     public float Speed = 3f;      // movement speed
@@ -59,7 +61,7 @@ public class Darry : MonoBehaviour
         updateTimer -= Time.deltaTime;
         if (updateTimer <= 0f)
         {
-            if (targets[currentIndex] != null)
+            if (currentIndex < targets.Length && targets[currentIndex] != null)
             {
                 agent.SetDestination(targets[currentIndex].position);
             }
@@ -108,7 +110,9 @@ public class Darry : MonoBehaviour
         direction.y = 0f;
 
         // Movement
-        transform.position = Vector3.MoveTowards(transform.position, targetSpot.position, Speed * Time.deltaTime);
+        //transform.position = Vector3.MoveTowards(transform.position, targetSpot.position, Speed * Time.deltaTime);
+        //agent.destination = targetSpot.position;
+        agent.SetDestination(currentTarget.position);
 
         // Rotate towards target
         if (direction.sqrMagnitude > 0.001f)
@@ -128,6 +132,8 @@ public class Darry : MonoBehaviour
 
     void GoToNextTarget()
     {
+        //Debug.Log("Going to next point");
+        StopWaitCoroutine();
         // ReachedNPC = false;
 
         /*  // Destroy NPCs or objects if needed
@@ -140,11 +146,15 @@ public class Darry : MonoBehaviour
         // Move to next waypoint
         currentIndex++;
 
+        waitAfterBake = StartCoroutine(waitForNavmesh()); //Waits for navmesh to be baked before moving
         if (currentIndex >= targets.Length)
         {
-            Debug.Log("Enemy reached final target!");
+            //Debug.Log("Darry reached final target!");
             currentTarget = null;       // <--- set to null when no more targets
             agent.isStopped = true;     // stop the NavMeshAgent
+
+            StopWaitCoroutine();
+
             return; // Stop here, no more targets
         }
 
@@ -159,6 +169,8 @@ public class Darry : MonoBehaviour
     {
         if (other.CompareTag("door"))
         {
+            StopWaitCoroutine();
+
             this.gameObject.SetActive(false);
             //ObjectiveManager.Instance.AddProgress(linkedHouseObjective.objectiveID, 1);
             Debug.Log("Darry has reached the door.");
@@ -166,8 +178,23 @@ public class Darry : MonoBehaviour
 
         if (other.CompareTag("Finish"))
         {
+            StopWaitCoroutine();
+
             ObjectiveManager.Instance.AddProgress(linkedNeighborhoodObjective.objectiveID, 1);
             Debug.Log("Darry has made it to the end.");
+        }
+    }
+
+    IEnumerator waitForNavmesh()
+    {
+        yield return new WaitForSeconds(1.0f);
+    }
+    private void StopWaitCoroutine() //stops existing WaitForNavmesh coroutine
+    {
+        if (waitAfterBake != null)
+        {
+            StopCoroutine(waitAfterBake);
+            waitAfterBake = null;
         }
     }
 }

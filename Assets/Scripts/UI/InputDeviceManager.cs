@@ -1,7 +1,8 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.Controls;
+using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.UI;
+using TMPro;
 using System;
 
 public class InputDeviceManager : MonoBehaviour
@@ -18,17 +19,30 @@ public class InputDeviceManager : MonoBehaviour
 
     public event Action<InputMode> OnInputModeChanged;
 
+    private IDisposable inputSubscription;
+
     [Header("UI References")]
-    [SerializeField] private RawImage actionImage1;
-    [SerializeField] private RawImage actionImage2;
+    [SerializeField] private Image actionImage1;
+    [SerializeField] private Image actionImage2;
+    [SerializeField] private Image actionImage3;
+    [SerializeField] private Image journalImage;
 
     [Header("Controller Sprites")]
-    [SerializeField] private Texture controllerXButton;
-    [SerializeField] private Texture controllerAButton;
+    [SerializeField] private Sprite controllerXButton;
+    [SerializeField] private Sprite controllerAButton;
+    [SerializeField] private Sprite controllerTrigger;
+    [SerializeField] private Sprite controllerSelect;
 
     [Header("Keyboard Sprites")]
-    [SerializeField] private Texture keyboardEKey;
-    [SerializeField] private Texture keyboardSpacebar;
+    [SerializeField] private Sprite keyboardEKey;
+    [SerializeField] private Sprite keyboardSpacebar;
+    [SerializeField] private Sprite mouse;
+    [SerializeField] private Sprite keyboardTab;
+    
+    [Header("Keyboard text")]
+    [SerializeField] private TextMeshProUGUI tab;
+    [SerializeField] private TextMeshProUGUI e;
+    [SerializeField] private TextMeshProUGUI spaceBar;
 
     private void Awake()
     {
@@ -41,55 +55,37 @@ public class InputDeviceManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    void Update()
+    private void OnEnable()
     {
-        DetectInputDevice();
+        //inputSubscription = InputSystem.onAnyButtonPress.Subscribe(control => DetectInputDevice(control);
+        InputSystem.onEvent += OnInputEvent;
     }
 
-    private void DetectInputDevice()
+    private void OnDisable()
     {
-        InputMode previousMode = CurrentMode;
+        //inputSubscription?.Dispose();
+        InputSystem.onEvent -= OnInputEvent;
+    }
 
-        bool keyboardUsed = (Keyboard.current != null && Keyboard.current.anyKey.wasPressedThisFrame) || (Mouse.current != null && Mouse.current.delta.ReadValue() != Vector2.zero);
-        bool controllerUsed = false;
+    private void OnInputEvent(InputEventPtr eventPtr, InputDevice device)
+    {
+        InputMode previous = CurrentMode;
 
-        if (Gamepad.current != null)
-        {
-            foreach (var control in Gamepad.current.allControls)
-            {
-                if (control is ButtonControl button && button.wasPressedThisFrame)
-                {
-                    controllerUsed = true;
-                    break;
-                }
-            }
-
-            if (!controllerUsed)
-            {
-                var leftStick = Gamepad.current.leftStick.ReadValue();
-                var rightStick = Gamepad.current.rightStick.ReadValue();
-                if (leftStick.magnitude > 0.1f || rightStick.magnitude > 0.1f || Gamepad.current.leftTrigger.ReadValue() > 0.1f || Gamepad.current.rightTrigger.ReadValue() > 0.1f)
-                {
-                    controllerUsed = true;
-                }
-            }
-        }
-
-        if (keyboardUsed)
-        {
-            CurrentMode = InputMode.KeyboardMouse;
-        }
-        else if (controllerUsed)
+        if (device is Gamepad)
         {
             CurrentMode = InputMode.Controller;
         }
+        else if (device is Keyboard || device is Mouse)
+        {
+            CurrentMode = InputMode.KeyboardMouse;
+        }
 
-        // only invoke event if device changed
-        if (previousMode != CurrentMode)
+        if (previous != CurrentMode)
         {
             OnInputModeChanged?.Invoke(CurrentMode);
             UpdateUIForInputMode(CurrentMode);
         }
+
     }
 
     private void UpdateUIForInputMode(InputMode mode)
@@ -97,12 +93,38 @@ public class InputDeviceManager : MonoBehaviour
         switch (mode)
         {
             case InputMode.Controller:
-                if (actionImage1 != null) actionImage1.texture = controllerXButton;
-                if (actionImage2 != null) actionImage2.texture = controllerAButton;
+                actionImage1.sprite = controllerXButton;
+                actionImage1.rectTransform.sizeDelta = new Vector2(80, 80);
+
+                actionImage2.sprite = controllerAButton;
+                actionImage2.rectTransform.sizeDelta = new Vector2(80, 80);
+                
+                actionImage3.sprite = controllerTrigger;
+                actionImage3.rectTransform.sizeDelta = new Vector2(80, 75);
+                
+                journalImage.sprite = controllerSelect;
+                journalImage.rectTransform.sizeDelta = new Vector2(80, 80);
+                
+                tab.gameObject.SetActive(false);
+                e.gameObject.SetActive(false);
+                spaceBar.gameObject.SetActive(false);
                 break;
             case InputMode.KeyboardMouse:
-                if (actionImage1 != null) actionImage1.texture = keyboardEKey;
-                if (actionImage2 != null) actionImage2.texture = keyboardSpacebar;
+                actionImage1.sprite = keyboardEKey;
+                actionImage1.rectTransform.sizeDelta = new Vector2(80, 80);
+
+                actionImage2.sprite = keyboardSpacebar;
+                actionImage2.rectTransform.sizeDelta = new Vector2(140, 85);
+                
+                actionImage3.sprite = mouse;
+                actionImage3.rectTransform.sizeDelta = new Vector2(60, 80);
+
+                journalImage.sprite = keyboardTab;
+                journalImage.rectTransform.sizeDelta = new Vector2(140, 85);
+                
+                tab.gameObject.SetActive(true);
+                e.gameObject.SetActive(true);
+                spaceBar.gameObject.SetActive(true);
                 break;
         }
     }

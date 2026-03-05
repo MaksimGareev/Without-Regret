@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7355459551578340797}
   - component: {fileID: 407731454682795172}
+  - component: {fileID: 9195122183219357924}
   m_Layer: 0
   m_Name: ObjectiveManager
   m_TagString: Untagged
@@ -56,7 +57,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: f51cf8bb7c0bce9458075e9c7dd174db, type: 2}
   - {fileID: 11400000, guid: a027b5d7ae55ba341a809f88e56a62f2, type: 2}
   - {fileID: 11400000, guid: 6fffc74e583affb4d9c3c201d4bda571, type: 2}
-  - {fileID: 11400000, guid: 7ac4e8fc13c12f540829dc3bd2d3b92e, type: 2}
   - {fileID: 11400000, guid: 5d42f56f5aded984986bcd1cc47d2c2f, type: 2}
   - {fileID: 11400000, guid: 01508ef902352fc43b610540a0896f3b, type: 2}
   - {fileID: 11400000, guid: e8e042ada4182f947b293528972d83ee, type: 2}
@@ -66,6 +66,16 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 28a5990779ab48343aefd208fdc894a3, type: 2}
   - {fileID: 11400000, guid: ef4ea093afae3c74d909378f3952fc50, type: 2}
   - {fileID: 11400000, guid: 11566baeb701f5543b1fc43f37ee953e, type: 2}
+  - {fileID: 11400000, guid: 90cd370fe2eb08d4c9a06f6153abbc20, type: 2}
+  - {fileID: 11400000, guid: 67ef0d6d1796a5b45b4e3f7898b18ffe, type: 2}
+  - {fileID: 11400000, guid: 0f21f0b7a0ba3e24d8277bcf5126069d, type: 2}
+  - {fileID: 11400000, guid: 6f74ce670d508d4448dc0d9b35788394, type: 2}
+  - {fileID: 11400000, guid: e6a4fa42f8b95be42a1402514bcbbaee, type: 2}
+  - {fileID: 11400000, guid: 83f29f5bcb282b3418b708829347b808, type: 2}
+  - {fileID: 11400000, guid: 3bed2619718861543b2bb05f917fe4c0, type: 2}
+  - {fileID: 11400000, guid: 012fad80146c44a46b8766e3a2ee700c, type: 2}
+  - {fileID: 11400000, guid: f07fd285111ac5d4280b1faa6dcb2a59, type: 2}
+  - {fileID: 11400000, guid: 45d9b90927d837e4f9225fc46e84323c, type: 2}
   activeObjectives: []
   completedObjectives: []
   objectiveCanvas: {fileID: 134618414845322349}
@@ -78,6 +88,87 @@ MonoBehaviour:
   OnObjectiveCompleted:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &9195122183219357924
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3562051004862538675}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bdb2c539e4c227543b23511c105c4f2c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ObjectiveTesting
+  sceneObjectiveList:
+  - scene:
+      sceneAsset: {fileID: 102900000, guid: 3d99b1e76f5e0ea40ab1e4aec52aacd6, type: 3}
+      scenePath: Assets/Scenes/Main Levels/CriticalPathScenes/01_Echo'sHouse.unity
+    objectiveData: {fileID: 11400000, guid: 2538c85277e38ff4a9135fc1efbb57bb, type: 2}
+  - scene:
+      sceneAsset: {fileID: 102900000, guid: 61e1bca66e6067d41930f4d2c9499e12, type: 3}
+      scenePath: Assets/Scenes/Main Levels/CriticalPathScenes/02_JonathanNeighborhood.unity
+    objectiveData: {fileID: 11400000, guid: b5a2022d1c60ccc409f1f13c57e6775a, type: 2}
+  - scene:
+      sceneAsset: {fileID: 102900000, guid: 8d4ee8137cefd5f44a850a2d6431254e, type: 3}
+      scenePath: Assets/Scenes/Main Levels/CriticalPathScenes/03_Graveyard.unity
+    objectiveData: {fileID: 11400000, guid: 1d6c1356700a4f145948214b556f76d7, type: 2}
+  - scene:
+      sceneAsset: {fileID: 102900000, guid: e4992507590898e45b28810610f79cea, type: 3}
+      scenePath: Assets/Scenes/Main Levels/CriticalPathScenes/04_JonathanNeighborhoodPostGraveyard.unity
+    objectiveData: {fileID: 11400000, guid: 01508ef902352fc43b610540a0896f3b, type: 2}
+  - scene:
+      sceneAsset: {fileID: 102900000, guid: f75bceb00c7b9da41a2a647d96b72f7e, type: 3}
+      scenePath: Assets/Scenes/Main Levels/CriticalPathScenes/05_Echo'sHouseAstral.unity
+    objectiveData: {fileID: 11400000, guid: 93f26cb2922c29b42a8aeec812782225, type: 2}
+  - scene:
+      sceneAsset: {fileID: 102900000, guid: 803b745261b20c74e86203bdb35c6434, type: 3}
+      scenePath: Assets/Scenes/Main Levels/CriticalPathScenes/06_JonathanAstralNeighborhood.unity
+    objectiveData: {fileID: 11400000, guid: 7d82ab5253af7744cbcff50ae65e37a4, type: 2}
+  - scene:
+      sceneAsset: {fileID: 102900000, guid: aeeb0f66fa6e8ea4c8968bb38c3e6c96, type: 3}
+      scenePath: Assets/Scenes/Main Levels/CriticalPathScenes/07_BarryAndDarry'sHouse.unity
+    objectiveData: {fileID: 11400000, guid: ef4ea093afae3c74d909378f3952fc50, type: 2}
+  - scene:
+      sceneAsset: {fileID: 102900000, guid: 2f79be75f699f9641949d4e87d7e26e7, type: 3}
+      scenePath: Assets/Scenes/Main Levels/CriticalPathScenes/08_JonathanAstralNeighborhoodPostDarry.unity
+    objectiveData: {fileID: 11400000, guid: 11566baeb701f5543b1fc43f37ee953e, type: 2}
+  - scene:
+      sceneAsset: {fileID: 102900000, guid: b5fcef062a2bf064ab10eae4c1191738, type: 3}
+      scenePath: Assets/Scenes/Main Levels/CriticalPathScenes/09_Penelope'sHouse.unity
+    objectiveData: {fileID: 11400000, guid: 0f21f0b7a0ba3e24d8277bcf5126069d, type: 2}
+  - scene:
+      sceneAsset: {fileID: 102900000, guid: 3fb681e325a90314e89b0383e801ed7b, type: 3}
+      scenePath: Assets/Scenes/Main Levels/CriticalPathScenes/10_Penelope'sHouse2nd.unity
+    objectiveData: {fileID: 0}
+  - scene:
+      sceneAsset: {fileID: 102900000, guid: 7261f3005b0948a4e8fca748c8f3577b, type: 3}
+      scenePath: Assets/Scenes/Main Levels/CriticalPathScenes/11_AstralForest1-Daniel_13.unity
+    objectiveData: {fileID: 0}
+  - scene:
+      sceneAsset: {fileID: 102900000, guid: 4b14771acc6b92d42a79dc0c9e8afe0c, type: 3}
+      scenePath: Assets/Scenes/Main Levels/CriticalPathScenes/12_AstralForest2-Howard.unity
+    objectiveData: {fileID: 0}
+  - scene:
+      sceneAsset: {fileID: 102900000, guid: 36ddf310eb155db49b5bfc3b915d4704, type: 3}
+      scenePath: Assets/Scenes/Main Levels/CriticalPathScenes/14_JonathanAstralNeighborhoodPostSavingPenelope.unity
+    objectiveData: {fileID: 0}
+  - scene:
+      sceneAsset: {fileID: 102900000, guid: efd6542cf85e68a41a56e3d9a2bdd3b5, type: 3}
+      scenePath: Assets/Scenes/Main Levels/CriticalPathScenes/15_AstralForest3-Howard.unity
+    objectiveData: {fileID: 0}
+  - scene:
+      sceneAsset: {fileID: 102900000, guid: ec14ef81d5618b74b9786023966ff9c9, type: 3}
+      scenePath: Assets/Scenes/Main Levels/CriticalPathScenes/16_JonathanAstralNeighborhoodPostAstralForest3.unity
+    objectiveData: {fileID: 0}
+  - scene:
+      sceneAsset: {fileID: 102900000, guid: 837c468876eb8fc4395ab789b43d9fc8, type: 3}
+      scenePath: Assets/Scenes/Main Levels/CriticalPathScenes/17_NewAstralGraveyard-Daniel.unity
+    objectiveData: {fileID: 0}
+  inputActions: {fileID: 0}
+  debugUI: {fileID: 0}
+  LevelSelectButtons: []
+  CloseUIButton: {fileID: 0}
 --- !u!1001 &7282488595918665913
 PrefabInstance:
   m_ObjectHideFlags: 0

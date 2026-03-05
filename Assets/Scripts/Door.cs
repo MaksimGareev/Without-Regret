@@ -40,7 +40,7 @@ public class Door : MonoBehaviour, IInteractable
         audioSource.playOnAwake = false;
     }
 
-  private void Start()
+    private void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player").transform;
     }

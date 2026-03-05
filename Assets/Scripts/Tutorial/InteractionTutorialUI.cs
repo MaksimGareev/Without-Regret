@@ -21,6 +21,7 @@ public class InteractionTutorialUI : MonoBehaviour
     {
         if (Instance != null && Instance != this)
         {
+            Debug.LogWarning("Duplicate InteractionTutorialUI destroyed.");
             Destroy(gameObject);
             return;
         }
@@ -47,7 +48,7 @@ public class InteractionTutorialUI : MonoBehaviour
         IsShowing = false;
     }
 
-    public void ShowTutorial(string text, System.Action onConfirm)
+    public void ShowTutorial(string text, System.Action onConfirm = null)
     {
         if (panel == null || descriptionText == null)
         {
@@ -76,13 +77,16 @@ public class InteractionTutorialUI : MonoBehaviour
     {
         if (!IsShowing)
             return;
-
-        // Confirm input (keyboard + gamepad)
-        if (Keyboard.current.spaceKey.wasPressedThisFrame ||
-            Keyboard.current.enterKey.wasPressedThisFrame ||
-            (Gamepad.current != null && Gamepad.current.buttonSouth.wasPressedThisFrame))
+        
+        if (IsShowing)
         {
-            HideTutorial();
+            // Confirm input (keyboard + gamepad)
+            if (Keyboard.current.spaceKey.wasPressedThisFrame ||
+                Keyboard.current.enterKey.wasPressedThisFrame ||
+                (Gamepad.current != null && Gamepad.current.buttonSouth.wasPressedThisFrame))
+            {
+                HideTutorial();
+            }
         }
     }
 
@@ -99,7 +103,9 @@ public class InteractionTutorialUI : MonoBehaviour
         descriptionText.gameObject.SetActive(false);
 
         IsShowing = false;
+
         Time.timeScale = 1f;
+
         PlayerController playerController = FindFirstObjectByType<PlayerController>();
         if (playerController != null)
         {
@@ -127,6 +133,14 @@ public class InteractionTutorialUI : MonoBehaviour
         cg.alpha = end;
         cg.interactable = end > 0f;
         cg.blocksRaycasts = end > 0f;
+    }
+
+    private void OnDestroy()
+    {
+       if (Instance == this)
+        {
+            Instance = null;
+        }
     }
 
 }

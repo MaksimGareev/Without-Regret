@@ -6,15 +6,17 @@ public class VoidProjectile : MonoBehaviour
 {
     [SerializeField] private float lifetime = 8f;
 
-    private GameObject voidPoolPrefab;
+    private ObjectPool voidPoolPool;
+    private ObjectPool enemyPoolPool;
     private VoidPoolSettings voidPoolSettings;
     private Action onExplosion;
 
     private float initTime;
 
-    public void Initialize(Action onExplosion, GameObject voidPoolPrefab, VoidPoolSettings settings)
+    public void Initialize(Action onExplosion, ObjectPool voidPoolPool, ObjectPool enemyPoolPool, VoidPoolSettings settings)
     {
-        this.voidPoolPrefab = voidPoolPrefab;
+        this.voidPoolPool = voidPoolPool;
+        this.enemyPoolPool = enemyPoolPool;
         this.onExplosion = onExplosion;
         voidPoolSettings = settings;
 
@@ -33,14 +35,15 @@ public class VoidProjectile : MonoBehaviour
             }
         }
 
-        // Spawn a Void Pool and disable the projectile
-        if (voidPoolPrefab != null)
+        // Spawn a Void Pool from the pool and disable the projectile
+        if (voidPoolPool != null)
         {
-            GameObject voidPool = Instantiate(voidPoolPrefab, gameObject.transform.position, Quaternion.identity);
+            GameObject voidPool = voidPoolPool.Get(gameObject.transform.position, Quaternion.identity);
+
             if (voidPool.TryGetComponent<VoidPool>(out var pool))
             {
-                // Update void pool with necessary parameters
-                pool.Initialize(voidPoolSettings);
+                // Update void pool with necessary parameters and give it the enemy pool + self pool
+                pool.Initialize(voidPoolSettings, enemyPoolPool, voidPoolPool);
             }
             else
             {
@@ -49,9 +52,9 @@ public class VoidProjectile : MonoBehaviour
         }
         else
         {
-            Debug.LogError("Void Pool prefab is null");
+            Debug.LogError("Void Pool pool is null");
         }
-            
+
         gameObject.SetActive(false);
         onExplosion?.Invoke();
     }

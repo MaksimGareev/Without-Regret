@@ -14,7 +14,10 @@ public class SpawnChasingEnemy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (hasPassed == false)
+        {
+            Enemy.SetActive(false);
+        }   
     }
 
     private void OnTriggerEnter(Collider other)
