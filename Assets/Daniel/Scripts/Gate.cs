@@ -100,7 +100,9 @@ public class Gate : SaveableWithID
             Debug.Log($"Loading Gate: locked={state.locked}, opened={state.opened}, ID: {GetUniqueID()}");
         }
 
-        locked = state.locked;
+        bool objLockCheck = ObjectiveManager.Instance.IsObjectiveCompleted(linkedObjective.objectiveID);
+
+        locked = objLockCheck ? true : state.locked;
         opened = state.opened;
 
         if (opened)
