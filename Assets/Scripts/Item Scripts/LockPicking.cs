@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using System.Collections;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Users;
 using TMPro;
 
 public class LockPicking : MonoBehaviour
@@ -66,10 +68,29 @@ public class LockPicking : MonoBehaviour
     [SerializeField] GameObject TutorialPopUp1;
     [SerializeField] GameObject TutorialPopUp2;
     [SerializeField] bool FirstTimeLock;
+
+    [Header("Input prompt ui fields")]
+    [SerializeField] GameObject ControllerInputUI;
+    [SerializeField] GameObject ControllerInputUIStageTwo;
+    [SerializeField] GameObject KeyboardInputUI;
+    [SerializeField] GameObject KeyboardInputUIStageTwo;
     private bool Tut1Active = false;
     private bool Tut2Active = false;
+    private PlayerInput input;
+    bool isController;
 
+    private bool IsController
+    {
+        get { return isController; }
+        set
+        {
+            if (value == isController)
+                return;
 
+            isController = value;
+            updateInputPrompt(isController);
+        }
+    }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Start()
     {
@@ -93,6 +114,7 @@ public class LockPicking : MonoBehaviour
         }
 
         controls = new PlayerControls();
+        IsController = true;
 
         // Rotation With GamePad
         controls.LockPicking.Rotate.performed += ctx => rotateInput = ctx.ReadValue<Vector2>();
@@ -116,7 +138,7 @@ public class LockPicking : MonoBehaviour
 
     private void OnEnable()
     {
-        controls.Enable();
+        controls.Enable(); 
     }
 
     private void OnDisable()
@@ -138,21 +160,18 @@ public class LockPicking : MonoBehaviour
                 if (rotateInput.magnitude > 0)//if receiving controller stick input, uses this method
                 {
                     // Rotate pick cursor with horisontal input (A/D)
-                    //RotationAmount = -rotateInput * CursorSpeed * Time.deltaTime;
                     CurrentAngle = Mathf.Atan2(rotateInput.y, rotateInput.x) * Mathf.Rad2Deg;
-
-                    // Update and clamp rotation
-                    //CurrentAngle += RotationAmount;
-                    //CurrentAngle = Mathf.Clamp(CurrentAngle, -MaxAngle, MaxAngle);
 
                     // Apply rotation to pick cursor
                     PickCursor.localEulerAngles = new Vector3(0, 0, CurrentAngle - 90);
+                    IsController = true;
                 }
                 else if (KeyBoardInputValue != 0)// if detecting A and D input, uses this method
                 {
                     RotationAmount = -KeyBoardInputValue * CursorSpeed * Time.deltaTime;
                     CurrentAngle += RotationAmount;
                     PickCursor.localEulerAngles = new Vector3(0, 0, CurrentAngle - 90);
+                    IsController = false;
                 }
             }
             
@@ -177,9 +196,6 @@ public class LockPicking : MonoBehaviour
                 PickCursor.eulerAngles = new Vector3(0, 0, CurrentAngle - 90 + LockLerp);
             }
 
-            //Debug.Log(Percentage);
-            //PickCursor.eulerAngles = new Vector3(0, 0, LockLerp);
-
             if (LockLerp >= MaxRotation - 1)
             {
                 if (CurrentAngle < UnlockRange.y && CurrentAngle > UnlockRange.x)
@@ -195,8 +211,14 @@ public class LockPicking : MonoBehaviour
                     DurabilityMeter.gameObject.SetActive(false);
                     SecondStageActive = true;
                     StageTwoUI.SetActive(true);//switches controls to stage two, locks pick rotation
+                    updateInputPrompt(isController);
                     TriesRemainingText.gameObject.SetActive(true);
                     TriesRemainingText.text = ArrowAttempts + " attempts Remaining.";
+
+                    if (input != null)
+                    {
+                        updateInputPrompt(input);
+                    }
                     if (FirstTimeLock)
                     { 
                         TutorialPopUp2.SetActive(true);
@@ -206,7 +228,6 @@ public class LockPicking : MonoBehaviour
                 }
                 else if (MovePick == false)
                 {
-                    //PickCursor.eulerAngles = new Vector3(0, 0, LockLerp);
                     float RandomRotation = Random.insideUnitCircle.x;
                     PickCursor.eulerAngles += new Vector3(0, 0, Random.Range(-RandomRotation, RandomRotation));
                     if (!Source.isPlaying)
@@ -221,8 +242,9 @@ public class LockPicking : MonoBehaviour
         }
         else if (SecondStageActive && !ControlsLocked)
         {
-            if (ArrowIndex < DirectionAssignments.Count)
+            if (ArrowIndex < DirectionAssignments.Count)// handles input from WASD, the arrow keys, and d-pad once second stage is active
             {
+                
                 if (controls.LockPicking.ArrowUp.triggered)
                 {
                     CheckDirection(0);
@@ -245,7 +267,7 @@ public class LockPicking : MonoBehaviour
                 Unlock();
             }
         }
-        else if (Tut1Active)
+        else if (Tut1Active)// waits for player to exit the tutorial screen before unlocking the controls
         {
             if (controls.LockPicking.Next.triggered)
             {
@@ -254,7 +276,7 @@ public class LockPicking : MonoBehaviour
                 Tut1Active = false;
             }
         }
-        else if (Tut2Active)
+        else if (Tut2Active)// same as above but for the second screen
         {
             if (controls.LockPicking.Next.triggered)
             {
@@ -305,7 +327,7 @@ public class LockPicking : MonoBehaviour
 
     }
 
-    public void NewLock(LockedItem lockedItem)
+    public void NewLock(LockedItem lockedItem)// resets ui and gets info from the locked item such as if there will be a reward or not, then activates the minigame
     {
         if (FirstTimeLock)
         {
@@ -338,6 +360,7 @@ public class LockPicking : MonoBehaviour
         Rigidbody rb = player.GetComponent<Rigidbody>();
         PickCursor.eulerAngles = new Vector3(0, 0, 0);
         GenerateSolutions();
+        updateInputPrompt(true);
         rb.constraints = RigidbodyConstraints.FreezeAll;
     }
 
@@ -364,7 +387,7 @@ public class LockPicking : MonoBehaviour
 
     }
 
-    private void CheckDirection(int input)
+    private void CheckDirection(int input)// takes input from earlier and checks if the inputed direction matches the current arrow, if not, triggers fail state and removes a try
     {
         if (input == DirectionAssignments[ArrowIndex])
         {
@@ -386,7 +409,7 @@ public class LockPicking : MonoBehaviour
         }
     }
 
-    IEnumerator WrongDirection()
+    IEnumerator WrongDirection()// handles updating/reseting the ui with each failed arrow attempt
     {
         for (int i = 0; i < Arrows.Count; i++)
         {
@@ -403,14 +426,14 @@ public class LockPicking : MonoBehaviour
             Arrows[i].color = Color.white;
         }
         ControlsLocked = false;
-        if(CurrentArrowAttempts <= 0)
+        if(CurrentArrowAttempts <= 0)// if out of attempts, kicks player from the screen
         {
             DeactivateLockPick();
         }
 
     }
 
-    private void GenerateSolutions()
+    private void GenerateSolutions() // generates the random solutions to the lock picking minigame whenever its called, usually when the minigame starts
     {
         for (int i = 0; i < Arrows.Count; i++)
         {
@@ -465,6 +488,44 @@ public class LockPicking : MonoBehaviour
         {
             currentLockedItem.OnUnlocked();
             currentLockedItem = null;
+        }
+    }
+
+    private void updateInputPrompt(bool controller)
+    {
+        if (controller)
+        {
+            if (SecondStageActive)
+            {
+                ControllerInputUIStageTwo.SetActive(true);
+                KeyboardInputUIStageTwo.SetActive(false);
+                ControllerInputUI.SetActive(false);
+                KeyboardInputUI.SetActive(false);
+            }
+            else if (!SecondStageActive)
+            {
+                ControllerInputUI.SetActive(true);
+                KeyboardInputUI.SetActive(false);
+                ControllerInputUIStageTwo.SetActive(false);
+                KeyboardInputUIStageTwo.SetActive(false);
+            }
+        }
+        else
+        {
+            if (SecondStageActive)
+            {
+                ControllerInputUIStageTwo.SetActive(false);
+                KeyboardInputUIStageTwo.SetActive(true);
+                ControllerInputUI.SetActive(false);
+                KeyboardInputUI.SetActive(false);
+            }
+            else if (!SecondStageActive)
+            {
+                ControllerInputUI.SetActive(false);
+                KeyboardInputUI.SetActive(true);
+                ControllerInputUIStageTwo.SetActive(false);
+                KeyboardInputUIStageTwo.SetActive(false);
+            }
         }
     }
 }

@@ -76,8 +76,11 @@ public class PatrollingEnemy : MonoBehaviour
 
     void PickNewDestination()
     {
-        Vector3 point;
-        if (RandomPoint(centrePoint.position, range, out point))
+        if (centrePoint == null)
+        {
+            return;
+        }
+        if (RandomPoint(centrePoint.position, range, out Vector3 point))
         {
             Debug.DrawRay(point, Vector3.up, Color.blue, 1.0f); // Show next point
             agent.SetDestination(point); // Move NPC to point
@@ -87,8 +90,7 @@ public class PatrollingEnemy : MonoBehaviour
     bool RandomPoint(Vector3 center, float range, out Vector3 result)
     {
         Vector3 randomPoint = center + Random.insideUnitSphere * range; // Picking random point within range
-        NavMeshHit hit;
-        if (NavMesh.SamplePosition(randomPoint, out hit, 1.0f, NavMesh.AllAreas))
+        if (NavMesh.SamplePosition(randomPoint, out NavMeshHit hit, 1.0f, NavMesh.AllAreas))
         {
             result = hit.position;
 

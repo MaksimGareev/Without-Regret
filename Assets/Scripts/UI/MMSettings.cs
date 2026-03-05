@@ -110,15 +110,28 @@ public class MMSettings : MonoBehaviour
     // Temporary variables to hold settings before applying
     private int tempResolutionIndex;
     private bool tempIsFullscreen;
-    private float tempMasterVolume;
-    private float tempSFXVolume;
-    private float tempMusicVolume;
-    private float tempDialogueVolume;
-    private float tempMouseSensitivity;
-    private float tempLeftStickSensitivity;
-    private float tempRightStickSensitivity;
-    private float tempLeftStickDeadZone;
-    private float tempRightStickDeadZone;
+    private int tempMasterVolume;
+    private int tempSFXVolume;
+    private int tempMusicVolume;
+    private int tempDialogueVolume;
+    private int tempMouseSensitivity;
+    private int tempLeftStickSensitivity;
+    private int tempRightStickSensitivity;
+    private int tempLeftStickDeadZone;
+    private int tempRightStickDeadZone;
+
+    // Default values for settings
+    private int defaultResolutionIndex;
+    private const int defaultIsFullscreen = 1;
+    private const int defaultMasterVolume = 100;
+    private const int defaultSFXVolume = 100;
+    private const int defaultMusicVolume = 100;
+    private const int defaultDialogueVolume = 100;
+    private const int defaultMouseSensitivity = 100;
+    private const int defaultLeftStickSensitivity = 100;
+    private const int defaultRightStickSensitivity = 100;
+    private const int defaultLeftStickDeadZone = 10;
+    private const int defaultRightStickDeadZone = 10;
 
     private Resolution[] resolutions;
 
@@ -201,6 +214,31 @@ public class MMSettings : MonoBehaviour
 
     private void Update()
     {
+        // Override button interactivity if confirmation panel is open
+        if (confirmationPanel.activeSelf)
+        {
+            if (resetButton.interactable)
+            {
+                resetButton.interactable = false;
+                resetKeyImage.color = legendsDisabledColor;
+            }
+
+            if (applyButton.interactable)
+            {
+                applyButton.interactable = false;
+                applyKeyImage.color = legendsDisabledColor;
+            }
+
+            if (discardChangesButton.interactable)
+            {
+                discardChangesButton.interactable = false;
+                discardKeyImage.color = legendsDisabledColor;
+            }
+
+            // Dont allow tabbing or other settings actions while confirming
+            return;
+        }
+
         if (tabLeftAction.triggered)
         {
             OnTabLeft();
@@ -226,52 +264,48 @@ public class MMSettings : MonoBehaviour
             OnDiscardSettings();
         }
 
+        // Set reset button interactable based on if applied settings are default
         if (hasChangedSettings && !resetButton.interactable)
         {
             resetButton.interactable = true;
-            resetButtonImage.color = legendsEnabledColor;
             resetKeyImage.color = legendsEnabledColor;
 
         }
-        else if (!hasChangedSettings && resetButton.interactable && !confirmationPanel.activeSelf)
+        else if (!hasChangedSettings && resetButton.interactable)
         {
             resetButton.interactable = false;
-            resetButtonImage.color = legendsDisabledColor;
             resetKeyImage.color = legendsDisabledColor;
         }
 
-        if (hasUnappliedChanges)
-        {
-            if (!applyButton.interactable)
-            {
-                applyButton.interactable = true;
-                applyButtonImage.color = legendsEnabledColor;
-                applyKeyImage.color = legendsEnabledColor;
-            }
+        // Set apply and discard buttons interactable based on if there are unapplied changes
+        // if (hasUnappliedChanges)
+        // {
+        //     if (!applyButton.interactable)
+        //     {
+        //         applyButton.interactable = true;
+        //         applyKeyImage.color = legendsEnabledColor;
+        //     }
 
-            if (!discardChangesButton.interactable)
-            {
-                discardChangesButton.interactable = true;
-                discardButtonImage.color = legendsEnabledColor;
-                discardKeyImage.color = legendsEnabledColor;
-            }
-        }
-        else if (!hasUnappliedChanges && !confirmationPanel.activeSelf)
-        {
-            if (applyButton.interactable)
-            {
-                applyButton.interactable = false;
-                applyButtonImage.color = legendsDisabledColor;
-                applyKeyImage.color = legendsDisabledColor;
-            }
+        //     if (!discardChangesButton.interactable)
+        //     {
+        //         discardChangesButton.interactable = true;
+        //         discardKeyImage.color = legendsEnabledColor;
+        //     }
+        // }
+        // else if (!hasUnappliedChanges)
+        // {
+        //     if (applyButton.interactable)
+        //     {
+        //         applyButton.interactable = false;
+        //         applyKeyImage.color = legendsDisabledColor;
+        //     }
             
-            if (discardChangesButton.interactable)
-            {
-                discardChangesButton.interactable = false;
-                discardButtonImage.color = legendsDisabledColor;
-                discardKeyImage.color = legendsDisabledColor;
-            }
-        }
+        //     if (discardChangesButton.interactable)
+        //     {
+        //         discardChangesButton.interactable = false;
+        //         discardKeyImage.color = legendsDisabledColor;
+        //     }
+        // }
     }
 
     public void EnableSettingsPanel()
@@ -382,8 +416,10 @@ public class MMSettings : MonoBehaviour
         var uniqueResolutions = new System.Collections.Generic.List<Resolution>();
         foreach (var res in resolutions)
         {
-            // Only add 16:9 resolutions
-            if (Mathf.Approximately((float)res.width / res.height, 16f / 9f))
+            // Include 16:9, 16:10, and 4:3 aspect ratios.
+            if (Mathf.Approximately((float)res.width / res.height, 16f / 9f) 
+            || Mathf.Approximately((float)res.width / res.height, 16f / 10f) 
+            || Mathf.Approximately((float)res.width / res.height, 4f / 3f))
             {
                 // Avoid duplicates
                 if (!uniqueResolutions.Exists(r => r.width == res.width && r.height == res.height))
@@ -394,6 +430,7 @@ public class MMSettings : MonoBehaviour
         }
 
         resolutions = uniqueResolutions.ToArray();
+        defaultResolutionIndex = resolutions.Length - 1; // Default to highest resolution
         
         int currentResolutionIndex = 0;
 
@@ -528,10 +565,10 @@ public class MMSettings : MonoBehaviour
         controlsSettingsOpen = false;
 
         // Set button text colors
-        videoSettingsButton.gameObject.GetComponent<ButtonHighlighting>().stayHighlighted = true;
-        videoSettingsButton.gameObject.GetComponent<ButtonHighlighting>().OnHighlight(); // Highlight video settings button
-        audioSettingsButton.gameObject.GetComponent<ButtonHighlighting>().OnUnhighlight();
-        controlsSettingsButton.gameObject.GetComponent<ButtonHighlighting>().OnUnhighlight();
+        videoSettingsButton.gameObject.GetComponent<SelectableHighlighting>().stayHighlighted = true;
+        videoSettingsButton.gameObject.GetComponent<SelectableHighlighting>().ApplyHighlight(true); // Highlight video settings button
+        audioSettingsButton.gameObject.GetComponent<SelectableHighlighting>().RemoveHighlight(true);
+        controlsSettingsButton.gameObject.GetComponent<SelectableHighlighting>().RemoveHighlight(true);
 
         EnableAllButtonsAndSliders();
 
@@ -552,10 +589,10 @@ public class MMSettings : MonoBehaviour
         controlsSettingsOpen = false;
 
         // Set button text colors
-        videoSettingsButton.gameObject.GetComponent<ButtonHighlighting>().OnUnhighlight();
-        audioSettingsButton.gameObject.GetComponent<ButtonHighlighting>().stayHighlighted = true;
-        audioSettingsButton.gameObject.GetComponent<ButtonHighlighting>().OnHighlight(); // Highlight audio settings button
-        controlsSettingsButton.gameObject.GetComponent<ButtonHighlighting>().OnUnhighlight();
+        videoSettingsButton.gameObject.GetComponent<SelectableHighlighting>().RemoveHighlight(true);
+        audioSettingsButton.gameObject.GetComponent<SelectableHighlighting>().stayHighlighted = true;
+        audioSettingsButton.gameObject.GetComponent<SelectableHighlighting>().ApplyHighlight(true); // Highlight audio settings button
+        controlsSettingsButton.gameObject.GetComponent<SelectableHighlighting>().RemoveHighlight(true);
 
         EnableAllButtonsAndSliders();
 
@@ -576,10 +613,10 @@ public class MMSettings : MonoBehaviour
         audioSettingsOpen = false;
 
         // Set button text colors
-        videoSettingsButton.gameObject.GetComponent<ButtonHighlighting>().OnUnhighlight();
-        audioSettingsButton.gameObject.GetComponent<ButtonHighlighting>().OnUnhighlight();
-        controlsSettingsButton.gameObject.GetComponent<ButtonHighlighting>().stayHighlighted = true;
-        controlsSettingsButton.gameObject.GetComponent<ButtonHighlighting>().OnHighlight(); // Highlight controls settings button
+        videoSettingsButton.gameObject.GetComponent<SelectableHighlighting>().RemoveHighlight(true);
+        audioSettingsButton.gameObject.GetComponent<SelectableHighlighting>().RemoveHighlight(true);
+        controlsSettingsButton.gameObject.GetComponent<SelectableHighlighting>().stayHighlighted = true;
+        controlsSettingsButton.gameObject.GetComponent<SelectableHighlighting>().ApplyHighlight(true); // Highlight controls settings button
 
         EnableAllButtonsAndSliders();
 
@@ -596,110 +633,101 @@ public class MMSettings : MonoBehaviour
     {
         // Set temporary values before actually applying
         tempResolutionIndex = index;
-        resolutionTitleText.color = tempResolutionIndex == PlayerPrefs.GetInt("resolution", resolutions.Length - 1) ? defaultColor : pendingChangeColor;
-        hasUnappliedChanges = true;
+
+        CheckIfHasUnappliedSettings();
     }
 
     private void SetFullscreen(bool isFullscreen)
     {
         // Set temporary values before actually applying
         tempIsFullscreen = isFullscreen;
-        fullscreenTitleText.color = tempIsFullscreen == (PlayerPrefs.GetInt("fullscreen", 1) == 1) ? defaultColor : pendingChangeColor;
-        hasUnappliedChanges = true;
+
+        CheckIfHasUnappliedSettings();
     }
 
     private void SetMasterVolume(float volume)
     {
         // Set temporary values before actually applying
-        AudioManager.Instance?.SetMasterVolume(volume);
-        tempMasterVolume = volume;
-        masterVolumeTitleText.color = tempMasterVolume == PlayerPrefs.GetFloat("masterVolume", 1f) ? defaultColor : pendingChangeColor;
-        masterVolumeValueText.color = tempMasterVolume == PlayerPrefs.GetFloat("masterVolume", 1f) ? defaultColor : pendingChangeColor;
-        masterVolumeValueText.text = Mathf.RoundToInt(volume * 100).ToString("F0") + "%";
-        hasUnappliedChanges = true;
+        AudioManager.Instance?.SetMasterVolume(Mathf.RoundToInt(volume));
+        tempMasterVolume = Mathf.RoundToInt(volume);
+        masterVolumeValueText.text = Mathf.RoundToInt(volume).ToString("F0") + "%";
+
+        CheckIfHasUnappliedSettings();
     }
 
     private void SetSFXVolume(float volume)
     {
         // Set temporary values before actually applying
-        AudioManager.Instance?.SetSFXVolume(volume);
-        tempSFXVolume = volume;
-        SFXVolumeTitleText.color = tempSFXVolume == PlayerPrefs.GetFloat("SFXVolume", 1f) ? defaultColor : pendingChangeColor;
-        SFXVolumeValueText.color = tempSFXVolume == PlayerPrefs.GetFloat("SFXVolume", 1f) ? defaultColor : pendingChangeColor;
-        SFXVolumeValueText.text = Mathf.RoundToInt(volume * 100).ToString("F0") + "%";
-        hasUnappliedChanges = true;
+        AudioManager.Instance?.SetSFXVolume(Mathf.RoundToInt(volume));
+        tempSFXVolume = Mathf.RoundToInt(volume);
+        SFXVolumeValueText.text = Mathf.RoundToInt(volume).ToString("F0") + "%";
+
+        CheckIfHasUnappliedSettings();
     }
 
     private void SetMusicVolume(float volume)
     {
         // Set temporary values before actually applying
-        AudioManager.Instance?.SetMusicVolume(volume);
-        tempMusicVolume = volume;
-        musicVolumeTitleText.color = tempMusicVolume == PlayerPrefs.GetFloat("musicVolume", 1f) ? defaultColor : pendingChangeColor;
-        musicVolumeValueText.color = tempMusicVolume == PlayerPrefs.GetFloat("musicVolume", 1f) ? defaultColor : pendingChangeColor;
-        musicVolumeValueText.text = Mathf.RoundToInt(volume * 100).ToString("F0") + "%";
-        hasUnappliedChanges = true;
+        AudioManager.Instance?.SetMusicVolume(Mathf.RoundToInt(volume));
+        tempMusicVolume = Mathf.RoundToInt(volume);
+        musicVolumeValueText.text = Mathf.RoundToInt(volume).ToString("F0") + "%";
+
+        CheckIfHasUnappliedSettings();
     }
 
     private void SetDialogueVolume(float volume)
     {
         // Set temporary values before actually applying
-        AudioManager.Instance?.SetDialogueVolume(volume);
-        tempDialogueVolume = volume;
-        dialogueVolumeTitleText.color = tempDialogueVolume == PlayerPrefs.GetFloat("dialogueVolume", 1f) ? defaultColor : pendingChangeColor;
-        dialogueVolumeValueText.color = tempDialogueVolume == PlayerPrefs.GetFloat("dialogueVolume", 1f) ? defaultColor : pendingChangeColor;
-        dialogueVolumeValueText.text = Mathf.RoundToInt(volume * 100).ToString("F0") + "%";
-        hasUnappliedChanges = true;
+        AudioManager.Instance?.SetDialogueVolume(Mathf.RoundToInt(volume));
+        tempDialogueVolume = Mathf.RoundToInt(volume);
+        dialogueVolumeValueText.text = Mathf.RoundToInt(volume).ToString("F0") + "%";
+
+        CheckIfHasUnappliedSettings();
     }
 
     private void SetMouseSensitivity(float sensitivity)
     {
         // Set temporary values before actually applying
-        tempMouseSensitivity = sensitivity;
-        mouseSensitivityTitleText.color = tempMouseSensitivity == PlayerPrefs.GetFloat("mouseSensitivity", 1f) ? defaultColor : pendingChangeColor;
-        mouseSensitivityValueText.color = tempMouseSensitivity == PlayerPrefs.GetFloat("mouseSensitivity", 1f) ? defaultColor : pendingChangeColor;
-        mouseSensitivityValueText.text = Mathf.RoundToInt(sensitivity * 100).ToString("F0") + "%";
-        hasUnappliedChanges = true;
+        tempMouseSensitivity = Mathf.RoundToInt(sensitivity);
+        mouseSensitivityValueText.text = Mathf.RoundToInt(sensitivity).ToString("F0") + "%";
+
+        CheckIfHasUnappliedSettings();
     }
 
     private void SetLeftStickSensitivity(float sensitivity)
     {
         // Set temporary values before actually applying
-        tempLeftStickSensitivity = sensitivity;
-        leftStickSensitivityTitleText.color = tempLeftStickSensitivity == PlayerPrefs.GetFloat("leftStickSensitivity", 1f) ? defaultColor : pendingChangeColor;
-        leftStickSensitivityValueText.color = tempLeftStickSensitivity == PlayerPrefs.GetFloat("leftStickSensitivity", 1f) ? defaultColor : pendingChangeColor;
-        leftStickSensitivityValueText.text = Mathf.RoundToInt(sensitivity * 100).ToString("F0") + "%";
-        hasUnappliedChanges = true;
+        tempLeftStickSensitivity =  Mathf.RoundToInt(sensitivity);
+        leftStickSensitivityValueText.text = Mathf.RoundToInt(sensitivity).ToString("F0") + "%";
+
+        CheckIfHasUnappliedSettings();
     }
 
     private void SetRightStickSensitivity(float sensitivity)
     {
         // Set temporary values before actually applying    
-        tempRightStickSensitivity = sensitivity;
-        rightStickSensitivityTitleText.color = tempRightStickSensitivity == PlayerPrefs.GetFloat("rightStickSensitivity", 1f) ? defaultColor : pendingChangeColor;
-        rightStickSensitivityValueText.color = tempRightStickSensitivity == PlayerPrefs.GetFloat("rightStickSensitivity", 1f) ? defaultColor : pendingChangeColor;
-        rightStickSensitivityValueText.text = Mathf.RoundToInt(sensitivity * 100).ToString("F0") + "%";
-        hasUnappliedChanges = true;
+        tempRightStickSensitivity =  Mathf.RoundToInt(sensitivity);
+        rightStickSensitivityValueText.text = Mathf.RoundToInt(sensitivity).ToString("F0") + "%";
+
+        CheckIfHasUnappliedSettings();
     }
 
     private void SetLeftStickDeadZone(float deadZone)
     {
         // Set temporary values before actually applying
-        tempLeftStickDeadZone = deadZone;
-        leftStickDeadZoneTitleText.color = tempLeftStickDeadZone == PlayerPrefs.GetFloat("leftStickDeadZone", 0.1f) ? defaultColor : pendingChangeColor;
-        leftStickDeadZoneValueText.color = tempLeftStickDeadZone == PlayerPrefs.GetFloat("leftStickDeadZone", 0.1f) ? defaultColor : pendingChangeColor;
-        leftStickDeadZoneValueText.text = Mathf.RoundToInt(deadZone * 100).ToString("F0") + "%";
-        hasUnappliedChanges = true;
+        tempLeftStickDeadZone =  Mathf.RoundToInt(deadZone);
+        leftStickDeadZoneValueText.text = Mathf.RoundToInt(deadZone).ToString("F0") + "%";
+
+        CheckIfHasUnappliedSettings();
     }
 
     private void SetRightStickDeadZone(float deadZone)
     {
         // Set temporary values before actually applying
-        tempRightStickDeadZone = deadZone;
-        rightStickDeadZoneTitleText.color = tempRightStickDeadZone == PlayerPrefs.GetFloat("rightStickDeadZone", 0.1f) ? defaultColor : pendingChangeColor;
-        rightStickDeadZoneValueText.color = tempRightStickDeadZone == PlayerPrefs.GetFloat("rightStickDeadZone", 0.1f) ? pendingChangeColor : defaultColor;
-        rightStickDeadZoneValueText.text = Mathf.RoundToInt(deadZone * 100).ToString("F0") + "%";
-        hasUnappliedChanges = true;
+        tempRightStickDeadZone =  Mathf.RoundToInt(deadZone);
+        rightStickDeadZoneValueText.text = Mathf.RoundToInt(deadZone).ToString("F0") + "%";
+
+        CheckIfHasUnappliedSettings();
     }
 
     private void ConfirmBeforeApply()
@@ -907,15 +935,15 @@ public class MMSettings : MonoBehaviour
         // Save settings to PlayerPrefs
         PlayerPrefs.SetInt("resolution", tempResolutionIndex);
         PlayerPrefs.SetInt("fullscreen", tempIsFullscreen ? 1 : 0);
-        PlayerPrefs.SetFloat("masterVolume", tempMasterVolume);
-        PlayerPrefs.SetFloat("SFXVolume", tempSFXVolume);
-        PlayerPrefs.SetFloat("musicVolume", tempMusicVolume);
-        PlayerPrefs.SetFloat("dialogueVolume", tempDialogueVolume);
-        PlayerPrefs.SetFloat("mouseSensitivity", tempMouseSensitivity);
-        PlayerPrefs.SetFloat("leftStickSensitivity", tempLeftStickSensitivity);
-        PlayerPrefs.SetFloat("rightStickSensitivity", tempRightStickSensitivity);
-        PlayerPrefs.SetFloat("leftStickDeadZone", tempLeftStickDeadZone);
-        PlayerPrefs.SetFloat("rightStickDeadZone", tempRightStickDeadZone);
+        PlayerPrefs.SetInt("masterVolume", tempMasterVolume);
+        PlayerPrefs.SetInt("SFXVolume", tempSFXVolume);
+        PlayerPrefs.SetInt("musicVolume", tempMusicVolume);
+        PlayerPrefs.SetInt("dialogueVolume", tempDialogueVolume);
+        PlayerPrefs.SetInt("mouseSensitivity", tempMouseSensitivity);
+        PlayerPrefs.SetInt("leftStickSensitivity", tempLeftStickSensitivity);
+        PlayerPrefs.SetInt("rightStickSensitivity", tempRightStickSensitivity);
+        PlayerPrefs.SetInt("leftStickDeadZone", tempLeftStickDeadZone);
+        PlayerPrefs.SetInt("rightStickDeadZone", tempRightStickDeadZone);
 
         // Set texts back to white
         resolutionTitleText.color = defaultColor;
@@ -981,38 +1009,203 @@ public class MMSettings : MonoBehaviour
     private void CheckIfHasDefaultSettings()
     {
         // Check if current settings differ from default settings, set hasChangedSettings accordingly
-        hasChangedSettings = false;
-
-        if (PlayerPrefs.GetInt("resolution") != resolutions.Length - 1 ||
-            PlayerPrefs.GetInt("fullscreen") != 1 ||
-            PlayerPrefs.GetFloat("masterVolume") != 1f ||
-            PlayerPrefs.GetFloat("SFXVolume") != 1f ||
-            PlayerPrefs.GetFloat("musicVolume") != 1f ||
-            PlayerPrefs.GetFloat("dialogueVolume") != 1f ||
-            PlayerPrefs.GetFloat("mouseSensitivity") != 1f ||
-            PlayerPrefs.GetFloat("leftStickSensitivity") != 1f ||
-            PlayerPrefs.GetFloat("rightStickSensitivity") != 1f ||
-            PlayerPrefs.GetFloat("leftStickDeadZone") != 0.1f ||
-            PlayerPrefs.GetFloat("rightStickDeadZone") != 0.1f)
+        if (PlayerPrefs.GetInt("resolution") != defaultResolutionIndex ||
+            PlayerPrefs.GetInt("fullscreen") != defaultIsFullscreen ||
+            PlayerPrefs.GetInt("masterVolume") != defaultMasterVolume ||
+            PlayerPrefs.GetInt("SFXVolume") != defaultSFXVolume ||
+            PlayerPrefs.GetInt("musicVolume") != defaultMusicVolume ||
+            PlayerPrefs.GetInt("dialogueVolume") != defaultDialogueVolume ||
+            PlayerPrefs.GetInt("mouseSensitivity") != defaultMouseSensitivity ||
+            PlayerPrefs.GetInt("leftStickSensitivity") != defaultLeftStickSensitivity ||
+            PlayerPrefs.GetInt("rightStickSensitivity") != defaultRightStickSensitivity ||
+            PlayerPrefs.GetInt("leftStickDeadZone") != defaultLeftStickDeadZone ||
+            PlayerPrefs.GetInt("rightStickDeadZone") != defaultRightStickDeadZone)
         {
             hasChangedSettings = true;
+        }
+        else
+        {
+            hasChangedSettings = false;
+        }        
+    }
+
+    private void CheckIfHasUnappliedSettings()
+    {
+        // Check if temporary settings differ from currently applied settings
+        bool resolutionChanged = tempResolutionIndex != PlayerPrefs.GetInt("resolution", resolutions.Length - 1);
+        bool fullscreenChanged = tempIsFullscreen != (PlayerPrefs.GetInt("fullscreen", 1) == 1);
+        bool masterVolumeChanged = tempMasterVolume != PlayerPrefs.GetInt("masterVolume", defaultMasterVolume);
+        bool SFXVolumeChanged = tempSFXVolume != PlayerPrefs.GetInt("SFXVolume", defaultSFXVolume);
+        bool musicVolumeChanged = tempMusicVolume != PlayerPrefs.GetInt("musicVolume", defaultMusicVolume);
+        bool dialogueVolumeChanged = tempDialogueVolume != PlayerPrefs.GetInt("dialogueVolume", defaultDialogueVolume);
+        bool mouseSensitivityChanged = tempMouseSensitivity != PlayerPrefs.GetInt("mouseSensitivity", defaultMouseSensitivity);
+        bool leftStickSensitivityChanged = tempLeftStickSensitivity != PlayerPrefs.GetInt("leftStickSensitivity", defaultLeftStickSensitivity);
+        bool rightStickSensitivityChanged = tempRightStickSensitivity != PlayerPrefs.GetInt("rightStickSensitivity", defaultRightStickSensitivity);
+        bool leftStickDeadZoneChanged = tempLeftStickDeadZone != PlayerPrefs.GetInt("leftStickDeadZone", defaultLeftStickDeadZone);
+        bool rightStickDeadZoneChanged = tempRightStickDeadZone != PlayerPrefs.GetInt("rightStickDeadZone", defaultRightStickDeadZone);
+
+        // Update hasUnappliedChanges based on if any setting has changed
+        hasUnappliedChanges = 
+        resolutionChanged 
+        || fullscreenChanged 
+        || masterVolumeChanged 
+        || SFXVolumeChanged 
+        || musicVolumeChanged 
+        || dialogueVolumeChanged 
+        || mouseSensitivityChanged 
+        || leftStickSensitivityChanged 
+        || rightStickSensitivityChanged 
+        || leftStickDeadZoneChanged 
+        || rightStickDeadZoneChanged;
+
+        if (hasUnappliedChanges)
+        {
+            applyButton.interactable = true;
+            applyKeyImage.color = legendsEnabledColor;
+            discardChangesButton.interactable = true;
+            discardKeyImage.color = legendsEnabledColor;
+        }
+        else
+        {
+            applyButton.interactable = false;
+            applyKeyImage.color = legendsDisabledColor;
+            discardChangesButton.interactable = false;
+            discardKeyImage.color = legendsDisabledColor;
+        }
+
+        // Set text colors to indicate which settings have unapplied changes
+        if (resolutionChanged)
+        {
+            resolutionTitleText.color = pendingChangeColor;
+        }
+        else
+        {
+            resolutionTitleText.color = defaultColor;
+        }
+
+        if (fullscreenChanged)
+        {
+            fullscreenTitleText.color = pendingChangeColor;
+        }
+        else
+        {
+            fullscreenTitleText.color = defaultColor;
+        }
+
+        if (masterVolumeChanged)
+        {
+            masterVolumeTitleText.color = pendingChangeColor;
+            masterVolumeValueText.color = pendingChangeColor;
+        }
+        else
+        {
+            masterVolumeTitleText.color = defaultColor;
+            masterVolumeValueText.color = defaultColor;
+        }
+
+        if (SFXVolumeChanged)
+        {
+            SFXVolumeTitleText.color = pendingChangeColor;
+            SFXVolumeValueText.color = pendingChangeColor;
+        }
+        else
+        {
+            SFXVolumeTitleText.color = defaultColor;
+            SFXVolumeValueText.color = defaultColor;
+        }
+
+        if (musicVolumeChanged)
+        {
+            musicVolumeTitleText.color = pendingChangeColor;
+            musicVolumeValueText.color = pendingChangeColor;
+        }
+        else
+        {
+            musicVolumeTitleText.color = defaultColor;
+            musicVolumeValueText.color = defaultColor;
+        }
+
+        if (dialogueVolumeChanged)
+        {
+            dialogueVolumeTitleText.color = pendingChangeColor;
+            dialogueVolumeValueText.color = pendingChangeColor;
+        }
+        else
+        {
+            dialogueVolumeTitleText.color = defaultColor;
+            dialogueVolumeValueText.color = defaultColor;
+        }
+
+        if (mouseSensitivityChanged)
+        {
+            mouseSensitivityTitleText.color = pendingChangeColor;
+            mouseSensitivityValueText.color = pendingChangeColor;
+        }
+        else
+        {
+            mouseSensitivityTitleText.color = defaultColor;
+            mouseSensitivityValueText.color = defaultColor;
+        }
+
+        if (leftStickSensitivityChanged)
+        {
+            leftStickSensitivityTitleText.color = pendingChangeColor;
+            leftStickSensitivityValueText.color = pendingChangeColor;
+        }
+        else
+        {
+            leftStickSensitivityTitleText.color = defaultColor;
+            leftStickSensitivityValueText.color = defaultColor;
+        }
+
+        if (rightStickSensitivityChanged)
+        {
+            rightStickSensitivityTitleText.color = pendingChangeColor;
+            rightStickSensitivityValueText.color = pendingChangeColor;
+        }
+        else
+        {
+            rightStickSensitivityTitleText.color = defaultColor;
+            rightStickSensitivityValueText.color = defaultColor;
+        }
+
+        if (leftStickDeadZoneChanged)
+        {
+            leftStickDeadZoneTitleText.color = pendingChangeColor;
+            leftStickDeadZoneValueText.color = pendingChangeColor;
+        }
+        else
+        {
+            leftStickDeadZoneTitleText.color = defaultColor;
+            leftStickDeadZoneValueText.color = defaultColor;
+        }
+
+        if (rightStickDeadZoneChanged)
+        {
+            rightStickDeadZoneTitleText.color = pendingChangeColor;
+            rightStickDeadZoneValueText.color = pendingChangeColor;
+        }
+        else
+        {
+            rightStickDeadZoneTitleText.color = defaultColor;
+            rightStickDeadZoneValueText.color = defaultColor;
         }
     }
 
     public void LoadSettings()
     {
         // Load settings from PlayerPrefs or set to default values if not found
-        tempResolutionIndex = PlayerPrefs.GetInt("resolution", resolutions.Length - 1);
-        tempIsFullscreen = PlayerPrefs.GetInt("fullscreen", 1) == 1;
-        tempMasterVolume = PlayerPrefs.GetFloat("masterVolume", 1f);
-        tempSFXVolume = PlayerPrefs.GetFloat("SFXVolume", 1f);
-        tempMusicVolume = PlayerPrefs.GetFloat("musicVolume", 1f);
-        tempDialogueVolume = PlayerPrefs.GetFloat("dialogueVolume", 1f);
-        tempMouseSensitivity = PlayerPrefs.GetFloat("mouseSensitivity", 1f);
-        tempLeftStickSensitivity = PlayerPrefs.GetFloat("leftStickSensitivity", 1f);
-        tempRightStickSensitivity = PlayerPrefs.GetFloat("rightStickSensitivity", 1f);
-        tempLeftStickDeadZone = PlayerPrefs.GetFloat("leftStickDeadZone", 0.1f);
-        tempRightStickDeadZone = PlayerPrefs.GetFloat("rightStickDeadZone", 0.1f);
+        tempResolutionIndex = PlayerPrefs.GetInt("resolution", defaultResolutionIndex);
+        tempIsFullscreen = PlayerPrefs.GetInt("fullscreen", defaultIsFullscreen) == 1;
+        tempMasterVolume = PlayerPrefs.GetInt("masterVolume", defaultMasterVolume);
+        tempSFXVolume = PlayerPrefs.GetInt("SFXVolume", defaultSFXVolume);
+        tempMusicVolume = PlayerPrefs.GetInt("musicVolume", defaultMusicVolume);
+        tempDialogueVolume = PlayerPrefs.GetInt("dialogueVolume", defaultDialogueVolume);
+        tempMouseSensitivity = PlayerPrefs.GetInt("mouseSensitivity", defaultMouseSensitivity);
+        tempLeftStickSensitivity = PlayerPrefs.GetInt("leftStickSensitivity", defaultLeftStickSensitivity);
+        tempRightStickSensitivity = PlayerPrefs.GetInt("rightStickSensitivity", defaultRightStickSensitivity);
+        tempLeftStickDeadZone = PlayerPrefs.GetInt("leftStickDeadZone", defaultLeftStickDeadZone);
+        tempRightStickDeadZone = PlayerPrefs.GetInt("rightStickDeadZone", defaultRightStickDeadZone);
 
         // Update UI elements to reflect loaded settings
         resolutionDropdown.value = tempResolutionIndex;
@@ -1042,7 +1235,14 @@ public class MMSettings : MonoBehaviour
             controlSchemeUI.SetActive(true);
             settingsUI.SetActive(false);
             controlSchemeOpen = true;
-            EventSystem.current.SetSelectedGameObject(controlSchemeUI.GetComponent<ControlSchemeUI>().ControllerButton.gameObject);
+            if (GetComponentInParent<MainMenu>() != null)
+            {
+                EventSystem.current.SetSelectedGameObject(GetComponentInParent<MainMenu>().backButton.gameObject);
+            }
+            else if (GetComponentInParent<PauseManager>() != null)
+            {
+                EventSystem.current.SetSelectedGameObject(GetComponentInParent<PauseManager>().backButton.gameObject);
+            }
         }
     }
 
@@ -1095,15 +1295,6 @@ public class MMSettings : MonoBehaviour
         resetButton.interactable = hasChangedSettings;
         applyButton.interactable = hasUnappliedChanges;
         discardChangesButton.interactable = hasUnappliedChanges;
-
-        resetButtonImage.color = hasChangedSettings ? legendsEnabledColor : legendsDisabledColor;
-        resetKeyImage.color = hasChangedSettings ? legendsEnabledColor : legendsDisabledColor;
-
-        applyButtonImage.color = hasUnappliedChanges ? legendsEnabledColor : legendsDisabledColor;
-        applyKeyImage.color = hasUnappliedChanges ? legendsEnabledColor : legendsDisabledColor;
-
-        discardButtonImage.color = hasUnappliedChanges ? legendsEnabledColor : legendsDisabledColor;
-        discardKeyImage.color = hasUnappliedChanges ? legendsEnabledColor : legendsDisabledColor;
 
         resolutionDropdown.interactable = videoSettingsOpen;
         fullscreenToggle.interactable = videoSettingsOpen;

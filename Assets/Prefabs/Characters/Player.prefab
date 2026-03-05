@@ -41,6 +41,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1136661512570076457}
+  - component: {fileID: 8756947555473094642}
+  - component: {fileID: 4979938268524790114}
   m_Layer: 3
   m_Name: Grab Point
   m_TagString: Untagged
@@ -63,6 +65,39 @@ Transform:
   m_Children: []
   m_Father: {fileID: 878993099091267819}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &8756947555473094642
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 524415181430402353}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.3
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &4979938268524790114
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 524415181430402353}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c21fc29fcc1e8b44b2fa29776871d4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GrabPointCollisionCheck
 --- !u!1 &1093154503604420936
 GameObject:
   m_ObjectHideFlags: 0
@@ -573,7 +608,7 @@ CapsuleCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.5
-  m_Height: 2
+  m_Height: 2.2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!136 &1036373522787229309
@@ -683,9 +718,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Controller: {fileID: 8821119716541630626}
   Animator: {fileID: 0}
+  chimeAnimator: {fileID: 0}
+  chimeActive: 0
+  chimeScript: {fileID: 0}
   normalColor: {r: 0, g: 0.5764706, b: 0.43529412, a: 1}
   cooldownColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   SprintDust: {fileID: 82863498991437760}
+  staminaFadeDuration: 1.5
   MovementLocked: 0
   Speed: 4
   SprintSpeed: 8
@@ -743,6 +782,7 @@ MonoBehaviour:
   hoverDrag: 3
   stickDeadzone: 0.2
   floatAction: {fileID: -5528296139197480759, guid: f1f4dbfd8c64cd440924988ec4fb6f6a, type: 3}
+  cancelFloatAction: {fileID: -8918670899272728616, guid: f1f4dbfd8c64cd440924988ec4fb6f6a, type: 3}
   floatDuration: 3
   floatCooldown: 3
   rhythmWindow: 0.3
@@ -750,6 +790,9 @@ MonoBehaviour:
   rhythmWindowMin: 0.33
   rhythmBuffer: 0.15
   showDebugLogs: 0
+  chimeAnimator: {fileID: 0}
+  chimeActive: 0
+  chimeScript: {fileID: 0}
 --- !u!114 &7147037502482933178
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -922,6 +965,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovingObjects
   grabPoint: {fileID: 1136661512570076457}
+  ignoreCollisionLayer:
+    serializedVersion: 2
+    m_Bits: 512
   showDebugLogs: 0
 --- !u!114 &6640155716822935536
 MonoBehaviour:
@@ -1133,7 +1179,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 8135666d6946df443bf487c5ff01e2c3, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.177
+      value: -1.075
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 8135666d6946df443bf487c5ff01e2c3, type: 3}
       propertyPath: m_LocalPosition.z

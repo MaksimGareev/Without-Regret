@@ -13,45 +13,46 @@ public class PossessedEnemyResisting : MonoBehaviour
     private bool isPossessed = false;
     private Vector3 playerInput;
     private float struggleTimer;
+    private Camera PlayerCamera;
 
     private Vector3 struggleDirection;
 
 
+    private void Awake()
+    {
+        if (PlayerCamera == null)
+        {
+            PlayerCamera = Camera.main;
+        }
+    }
     private void FixedUpdate()
     {
         if (!isPossessed)
         {
             return;
         }
+        Vector3 move = Vector3.zero;
+        if (PlayerCamera != null)
+        {
+            Vector3 camForward = PlayerCamera.transform.forward;
+            camForward.y = 0f;
+            camForward.Normalize();
+            Vector3 camRight = PlayerCamera.transform.right;
+            camRight.y = 0f;
+            camRight.Normalize();
+            move = camForward * playerInput.y + camRight * playerInput.x;
 
-        Vector3 moveDirection = playerInput.normalized * moveSpeed;
-
-        //struggleTimer += Time.fixedDeltaTime;
-
-        //if (struggleTimer >= struggleFrequency)
-        //{
-        //struggleTimer = 0f;
-
-        //struggleDirection = playerInput + (Random.insideUnitSphere * struggleStrength);
-        //struggleDirection.y = 0f;
-        //}
-
-        Vector3 finalMoveDirection = gameObject.transform.position + playerInput.normalized * moveSpeed * Time.deltaTime * -1;
-        finalMoveDirection.y = 0;
-
-        //rb.MovePosition(rb.position + finalMoveDirection * Time.fixedDeltaTime);
+        }
+        Vector3 finalMoveDirection = gameObject.transform.position + move.normalized * moveSpeed * Time.deltaTime;
 
         Agent.destination = finalMoveDirection;
 
-        Debug.DrawRay(transform.position, moveDirection, Color.white, 0.1f);
-        Debug.DrawRay(transform.position, struggleDirection, Color.red, 0.1f);
-        //Debug.DrawRay(transform.position, finalMoveDirection, Color.green, 0.1f);
+
     }
 
     public void BeginPossession()
     {
         isPossessed = true;
-        //struggleTimer = 0f;
     }
 
     public void UpdatePossession(Vector3 input)

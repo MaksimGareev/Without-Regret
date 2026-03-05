@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.AI.Navigation;
 using UnityEngine;
 
 [RequireComponent(typeof(BoxCollider))]
@@ -23,7 +24,11 @@ public class MoveableObjectPlacement : MonoBehaviour
 
     [Tooltip("Whether to add progress to the linked objective when the player places a moveable object in this slot.")]
     [SerializeField] private bool addProgress;
+    
+    [Tooltip("Whether to rebuild the NavMesh after placing the moveable object in this slot. Leave this unchecked if the moveable object is not an obstacle that NPCs need to navigate around or on, to save on performance.")]
+    [SerializeField] private bool rebuildNavMesh = false;
 
+    private NavMeshSurface[] navMeshSurfaces;
     private GameObject player;
     private PlayerMovingObjects playerMovingObjects;
     private MoveableObject moveableObjectScript;
@@ -33,6 +38,8 @@ public class MoveableObjectPlacement : MonoBehaviour
     private GameObject ghostInstance;
     private bool ghostEnabled = false;
     private float ghostAlpha = 0.7f;
+
+    [SerializeField] private TraversablePoint[] traversablePoints;
 
     private void OnEnable()
     {
@@ -66,6 +73,21 @@ public class MoveableObjectPlacement : MonoBehaviour
         else
         {
             Debug.LogWarning("No moveable object instance linked in inspector!");
+        }
+
+        if (rebuildNavMesh)
+        {
+            navMeshSurfaces = FindObjectsByType<NavMeshSurface>(FindObjectsSortMode.None);
+
+            foreach (var surface in navMeshSurfaces)
+            {
+                Debug.Log("NavMeshSurface found: " + surface.gameObject.name);
+            }
+
+            if (navMeshSurfaces.Length == 0)
+            {
+                Debug.LogWarning("Rebuild NavMesh is enabled but no NavMeshSurfaces were found in the scene.");
+            }
         }
         
         if (!isObjectiveActive && needsObjective && linkedObjective != null && ObjectiveManager.Instance != null)
@@ -172,17 +194,26 @@ public class MoveableObjectPlacement : MonoBehaviour
                 moveableObject.transform.position = lockingPosition.position;
                 moveableObject.transform.rotation = lockingPosition.rotation;
 
+                for(int i = 0; i<traversablePoints.Length; ++i)
+                {
+                    traversablePoints[i].isTraversable = true; //sets traversable points on protected NPC path to true
+                }
+
                 // Add progress to the objective if appropriate
                 if (Time.timeSinceLevelLoad > 1f && addProgress && linkedObjective != null && ObjectiveManager.Instance != null)
                 {
                     ObjectiveManager.Instance.AddProgress(linkedObjective.objectiveID, 1);
                 }
 
-                // Freeze the object in place and prevent further interactions with it, disable ghost, and save
+                // Freeze the object in place and prevent further interactions with it, disable ghost, rebuild navmesh and save
                 rb.constraints = RigidbodyConstraints.FreezeAll;
                 didOnce = true;
                 DisableGhost();
-                SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
+                StartCoroutine(RebuildNavMesh());
+                if (SaveManager.Instance != null) 
+                {
+                    SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
+                }
             }
         }
     }
@@ -256,6 +287,36 @@ public class MoveableObjectPlacement : MonoBehaviour
         {
             ghostInstance.SetActive(false);
             ghostEnabled = false;
+        }
+    }
+
+    private IEnumerator RebuildNavMesh()
+    {
+        if (!rebuildNavMesh || navMeshSurfaces == null || navMeshSurfaces.Length == 0) 
+        {
+            //Debug.LogWarning("Rebuild NavMesh is disabled or no NavMeshSurfaces found, skipping NavMesh rebuild.");
+            yield break;
+        }
+
+        // wait for object to stop moving
+        while (rb.linearVelocity.magnitude > 0.05f || rb.angularVelocity.magnitude > 0.05f)
+        {
+            yield return null;
+            //Debug.Log("Waiting for object to settle before rebuilding NavMesh...");
+        }
+
+        // Rebuild all NavMeshSurfaces in the scene
+        foreach (NavMeshSurface surface in navMeshSurfaces)
+        {
+            surface.BuildNavMesh();
+            //Debug.Log("Rebuilding NavMesh on surface: " + surface.gameObject.name);
+        }
+
+        // Update all NavMeshLinks in the scene to ensure they connect properly to the updated NavMesh
+        foreach (var link in FindObjectsByType<NavMeshLink>(FindObjectsSortMode.None))
+        {
+            link.UpdateLink();
+            //Debug.Log("Updating NavMeshLink: " + link.gameObject.name);
         }
     }
 

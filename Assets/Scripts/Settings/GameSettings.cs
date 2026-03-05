@@ -5,22 +5,22 @@ public static class GameSettings
 {
     public static event Action OnSettingsChanged;
 
-    public static float MouseSensitivity { get; private set; } = 1f;
-    public static float LeftStickSensitivity { get; private set; } = 1f;
-    public static float RightStickSensitivity { get; private set; } = 1f;
-    public static float LeftStickDeadZone { get; private set; } = 0.1f;
-    public static float RightStickDeadZone { get; private set; } = 0.1f;
+    public static int MouseSensitivity { get; private set; } = 100;
+    public static int LeftStickSensitivity { get; private set; } = 100;
+    public static int RightStickSensitivity { get; private set; } = 100;
+    public static int LeftStickDeadZone { get; private set; } = 10;
+    public static int RightStickDeadZone { get; private set; } = 10;
 
     public static void LoadFromPrefs()
     {
-        MouseSensitivity = PlayerPrefs.GetFloat("mouseSensitivity", 1f);
-        LeftStickSensitivity = PlayerPrefs.GetFloat("leftStickSensitivity", 1f);
-        RightStickSensitivity = PlayerPrefs.GetFloat("rightStickSensitivity", 1f);
-        LeftStickDeadZone = PlayerPrefs.GetFloat("leftStickDeadZone", 0.1f);
-        RightStickDeadZone = PlayerPrefs.GetFloat("rightStickDeadZone", 0.1f);
+        MouseSensitivity = PlayerPrefs.GetInt("mouseSensitivity", 100);
+        LeftStickSensitivity = PlayerPrefs.GetInt("leftStickSensitivity", 100);
+        RightStickSensitivity = PlayerPrefs.GetInt("rightStickSensitivity", 100);
+        LeftStickDeadZone = PlayerPrefs.GetInt("leftStickDeadZone", 10);
+        RightStickDeadZone = PlayerPrefs.GetInt("rightStickDeadZone", 10);
     }
 
-    public static void ApplyControls(float mouseSensitivity, float leftStickSensitivity, float rightStickSensitivity, float leftStickDeadZone, float rightStickDeadZone)
+    public static void ApplyControls(int mouseSensitivity, int leftStickSensitivity, int rightStickSensitivity, int leftStickDeadZone, int rightStickDeadZone)
     {
         MouseSensitivity = mouseSensitivity;
         LeftStickSensitivity = leftStickSensitivity;
@@ -28,11 +28,11 @@ public static class GameSettings
         LeftStickDeadZone = leftStickDeadZone;
         RightStickDeadZone = rightStickDeadZone;
 
-        PlayerPrefs.SetFloat("mouseSensitivity", MouseSensitivity);
-        PlayerPrefs.SetFloat("leftStickSensitivity", LeftStickSensitivity);
-        PlayerPrefs.SetFloat("rightStickSensitivity", RightStickSensitivity);
-        PlayerPrefs.SetFloat("leftStickDeadZone", LeftStickDeadZone);
-        PlayerPrefs.SetFloat("rightStickDeadZone", RightStickDeadZone);
+        PlayerPrefs.SetInt("mouseSensitivity", MouseSensitivity);
+        PlayerPrefs.SetInt("leftStickSensitivity", LeftStickSensitivity);
+        PlayerPrefs.SetInt("rightStickSensitivity", RightStickSensitivity);
+        PlayerPrefs.SetInt("leftStickDeadZone", LeftStickDeadZone);
+        PlayerPrefs.SetInt("rightStickDeadZone", RightStickDeadZone);
 
         OnSettingsChanged?.Invoke();
     }
