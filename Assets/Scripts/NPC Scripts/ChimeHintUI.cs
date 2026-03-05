@@ -18,6 +18,10 @@ public class ChimeHintUI : MonoBehaviour
     private bool isShowing = false;
     private Coroutine hideRoutine;
 
+    [Header("Animation settings")]
+    public Animator animator;
+
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -62,6 +66,8 @@ public class ChimeHintUI : MonoBehaviour
 
     public void ShowHint()
     {
+        animator.SetBool("isHinting", true);
+
         // Get the current objective from Objective Manager
         ObjectiveInstance activeObjective = GetCurrentObjective();
 
@@ -88,6 +94,8 @@ public class ChimeHintUI : MonoBehaviour
 
     private IEnumerator HideBubbleAfterDelay()
     {
+        animator.SetBool("isHinting", false);
+
         yield return new WaitForSeconds(displayTime);
         hintBubbleUI.SetActive(false);
         hideRoutine = null;

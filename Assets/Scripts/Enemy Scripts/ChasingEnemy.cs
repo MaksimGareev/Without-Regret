@@ -14,7 +14,7 @@ public class ChasingEnemy : MonoBehaviour
     public bool Pursuiting = true;
 
     // Player morality effects
-    public float baseSpeed = 3.5f;
+    public float baseSpeed = 2f;
     public float minSpeed = 1.5f;
     public float maxSpeed = 6.5f;
     public float moralitySpeedMultiplier = 0.15f;
@@ -89,7 +89,7 @@ public class ChasingEnemy : MonoBehaviour
         updateTimer -= Time.deltaTime;
         if (updateTimer <= 0f)
         {
-            if (targets[currentIndex] != null)
+            if (currentIndex < targets.Length && targets[currentIndex] != null)
             {
                 agent.SetDestination(targets[currentIndex].position);
             }

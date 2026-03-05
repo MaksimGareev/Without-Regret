@@ -1,23 +1,24 @@
 {
-    "npcName": "Friendly NPC",
     "dialogueLines": [
         {
-            "text": "Hey! Welcome to the Neighborhood!",
+            "LineID": "Fakeout",
+            "Speaker": "Friendly Neighbor",
+            "NPCGender": "female",
+            "text": "Holy s#*&. I've never heard them at each other's throats like that.",
+            "lineTone": 0,
+            "NextLineID": "Big Noise",
             "requiredMorality": 0,
             "choices": []
         },
         {
-          "npcName": "Friendly NPC",
-            "text": "If you see these floating pages, don't hesitate to collect them.",
+            "LineID": "Big Noise",
+            "Speaker": "Friendly Neighbor",
+            "NPCGender": "female",
+            "text": "What was that?! Are you their friend? Maybe you should go check that out...",
+            "lineTone": 0,
             "requiredMorality": 0,
-            "choices": []
+            "choices": [],
+            "endDialogueAfterLine": true
         },
-        {
-          "npcName": "Friendly NPC",
-            "text": "It could lead to something special.",
-            "requiredMorality": 0,
-            "choices": []
-        }
     ]
 }
-

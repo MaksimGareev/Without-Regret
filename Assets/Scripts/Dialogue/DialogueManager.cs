@@ -165,11 +165,36 @@ public class DialogueManager : MonoBehaviour
     // Load Json file on start of dialogue interaction
     public void StartDialogueFromJson(TextAsset json, DialogueTrigger trigger)
     {
+        if (DialogueIsActive)
+        {
+            Debug.LogWarning("Attemped to start dialogue while another is active");
+            return;
+        }
+
         dialogue = JsonUtility.FromJson<DialogueData>(json.text);
+
+        if (dialogue == null || dialogue.dialogueLines == null || dialogue.dialogueLines.Count == 0)
+        {
+            Debug.LogError("Dialogue JSON is empty or malformed", this);
+            return;
+        }
+
         LineLookup.Clear();
 
         foreach (var line in dialogue.dialogueLines)
         {
+            if (string.IsNullOrEmpty(line.LineID))
+            {
+                Debug.LogError("Dialogue line missing LineID.");
+                continue;
+            }
+
+            if (LineLookup.ContainsKey(line.LineID))
+            {
+                Debug.LogError($"Duplicate LineID found: {line.LineID}");
+                continue;
+            }
+
             LineLookup[line.LineID] = line;
 
             if (line.choices != null)
@@ -218,6 +243,9 @@ public class DialogueManager : MonoBehaviour
     {
         StopAllCoroutines();
 
+        if (activeDialogueTrigger != null)
+            activeDialogueTrigger.StopLookingAtPlayer(); //Call NPC to stop looking at player to end dialogue animations
+
         // deactivate Dialogue UI
         DialoguePanel.SetActive(false);
         playerPortrait.gameObject.SetActive(false);
@@ -260,8 +288,16 @@ public class DialogueManager : MonoBehaviour
     void ShowLine()
     {
         // search for Line ID of current line
-        if (!LineLookup.ContainsKey(currentLineID))
+        if (string.IsNullOrEmpty(currentLineID))
         {
+            Debug.LogError("CurrentLineID is null or empty");
+            EndDialogue();
+            return;
+        }
+
+        if (!LineLookup.TryGetValue(currentLineID, out currentLine))
+        {
+            Debug.LogError($"LineID not found in lookup: {currentLineID}");
             EndDialogue();
             return;
         }
@@ -364,6 +400,11 @@ public class DialogueManager : MonoBehaviour
 
     void OnConfirmPressed()
     {
+        if (!DialogueIsActive || currentLine == null)
+        {
+            return;
+        }
+
         // Don't automatically end dialogue during pause after selection
         if (resolvingChoice) return;  
 
@@ -406,7 +447,7 @@ public class DialogueManager : MonoBehaviour
         string npc = activeDialogueTrigger.NPCName;
 
         // irene follow
-        if (npc == "Irene" && ireneNPC != null)
+        if (npc == "Irene" && ireneNPC != null && activeDialogueTrigger.IsMediation == false)
         {
             if (!ireneNPC.IsFollowing)
                 ireneNPC.IsFollowing = true;
@@ -483,6 +524,10 @@ public class DialogueManager : MonoBehaviour
         CanChoose = true;
         directionalChoices.Clear();
         choiceTimerSlider.gameObject.SetActive(true);
+
+        if (activeDialogueTrigger != null)
+            activeDialogueTrigger.StartPlayerThinking(); //Call NPC to start playing Player thinking animations while the player is making a choice
+
 
         if (DirectionalImage != null)
         {
@@ -605,11 +650,18 @@ public class DialogueManager : MonoBehaviour
 
     void SelectChoice(DialogueChoice c)
     {
+        if (activeDialogueTrigger != null)
+            activeDialogueTrigger.StopPlayerThinking(); //Call NPC to stop the Player thinking animation when a decision is made
+
         resolvingChoice = true;
         CanChoose = false;
         choiceTimerSlider.gameObject.SetActive(false);
         //DirectionalImage.SetActive(false);
-        StopCoroutine(timerRoutine);
+        if (timerRoutine != null)
+        {
+            StopCoroutine(timerRoutine);
+            timerRoutine = null;
+        }
 
         ClearChoices();
         StartCoroutine(ResolveChoiceRoutine(c));

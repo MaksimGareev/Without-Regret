@@ -9,35 +9,41 @@ public class LockedItem : MonoBehaviour, IInteractable
     [HideInInspector] public InteractType interactType => InteractType.Lockpick;
     [HideInInspector] public float interactionPriority => 5f;
 
-    public float LockpickRange = 1.5f;
+    [Header("Lockpick Settings")]
+    [Tooltip("Distance at which the player can interact with the locked item.")]
+    [SerializeField] private float LockpickRange = 1.5f;
     private Transform player;
 
-    [Header("UI Object Assginemtns")]
-    public GameObject promptUI;
-    //public GameObject LockPickUI;
+    [Header("UI Object Assginments")]
+    [SerializeField] private GameObject promptUI;
 
-    [Header("Type of Locked Item?")]
-    public bool isDoor = false;
-    public bool isChest = false;
+    [Header("Type of Locked Item")]
+    [SerializeField] private bool isChest = true;
 
     [Header("Unlock VFX and SFX")]
-    public AudioClip UnlockSound;
-    public GameObject UnlockTop;
+    [Tooltip("Sound that will play when the player successfully lockpicks this item.")]
+    [SerializeField] private AudioClip UnlockSound;
+
+    [Tooltip("Object that will play an animation or effect when the item is unlocked. For example, this could be a chest lid that opens when a chest is unlocked.")]
+    [SerializeField] private GameObject UnlockTop;
     private AudioSource audioSource;
+
+    [Header("Objective and Reward Settings")]
+    [Tooltip("Objective that must be ACTIVE to allow the player to interact with this locked item. If the player does not have the linked objective ACTIVE, they will not be able to interact with the locked item.")]
+    [SerializeField] private ObjectiveData linkedObjective;
+
+    [Tooltip("Whether or not the linked objective needs to be ACTIVE for the player to interact with this locked item.")]
+    [SerializeField] private bool needsObjective = true;
+
+    [Tooltip("If true, interacting with the locked item will add progress to the linked objective.")]
+    [SerializeField] private bool addProgress = true;
+
+    [Tooltip("Item that will be rewarded to the player upon successfully lockpicking this item. This is optional and can be left null if no reward is desired.")]
+    [SerializeField] private ItemData RewardItem;
 
     [HideInInspector] public bool hasBeenLockpicked = false; // Saving and loading this value is already handled by the SaveableWorldObject component
     [HideInInspector] public bool isInRange = false;
     private PlayerControls controls;
-
-    [Header ("IconSettings")]
-    public GameObject iconPrefab;
-    public bool shouldShowIcon = true;
-    private GameObject popupInstance;
-
-    [Header("Objective and Reward Settings")]
-    public ObjectiveData linkedObjective;
-    public bool needsObjective = true;
-    public ItemData RewardItem;
 
     // Start is called before the first frame update
     void Awake()
@@ -165,15 +171,11 @@ public class LockedItem : MonoBehaviour, IInteractable
             pc.enabled = true;
         }
 
-        if (isDoor == true)
-        {
-            audioSource.PlayOneShot(UnlockSound);
-            Destroy(gameObject);
-        }
-        else
-        {
-            // add animation for chest or drawer
-        }
+        // if (isDoor == true)
+        // {
+        //     audioSource.PlayOneShot(UnlockSound);
+        //     Destroy(gameObject);
+        // }
 
         ButtonIcons.Instance?.Clear();
 
@@ -181,6 +183,7 @@ public class LockedItem : MonoBehaviour, IInteractable
         {
             SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
         }
+
         if (isChest)
         {
             StartCoroutine(MoveAndRotateTop(UnlockTop, new Vector3(0f, 95f, -23f), Quaternion.Euler(-39f, 0f, 0f), 1f));
@@ -189,8 +192,6 @@ public class LockedItem : MonoBehaviour, IInteractable
         // Disable interaction
         Collider col = GetComponent<Collider>();
         if (col != null) col.enabled = false;
-
-        DisablePopupIcon();
 
         // Save unlock state
         if (SaveManager.Instance != null)
@@ -212,7 +213,7 @@ public class LockedItem : MonoBehaviour, IInteractable
                 }
             }
 
-            if (objectiveActive)
+            if (objectiveActive && addProgress)
             {
                 ObjectiveManager.Instance.AddProgress(linkedObjective.objectiveID, 1);
             }
@@ -239,24 +240,5 @@ public class LockedItem : MonoBehaviour, IInteractable
 
         target.transform.localPosition = endPos;
         target.transform.localRotation = endRot;
-    }
-
-    public void EnablePopupIcon()
-    {
-        if (popupInstance == null && iconPrefab != null && PopupManager.Instance != null)
-        {
-            popupInstance = PopupManager.Instance.CreatePopup(this.transform, iconPrefab).gameObject;
-            shouldShowIcon = true;
-        }
-    }
-
-    public void DisablePopupIcon()
-    {
-        if (popupInstance != null)
-        {
-            Destroy(popupInstance);
-            popupInstance = null;
-            shouldShowIcon = false;
-        }
     }
 }

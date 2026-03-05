@@ -109,4 +109,12 @@ public class Gate : SaveableWithID
             leftDoorAnimator.SetBool("NearPlayer", true);
         }
     }
+
+    private void OnDisable()
+    {
+        if (needsObjective && linkedObjective != null && ObjectiveManager.Instance != null)
+        {
+            ObjectiveManager.Instance.OnObjectiveCompleted.RemoveListener(SetObjectiveComplete);
+        }
+    }
 }
