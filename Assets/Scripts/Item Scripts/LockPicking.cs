@@ -100,6 +100,7 @@ public class LockPicking : MonoBehaviour
     }
     void Awake()
     {
+        updateInputPrompt(IsController);
         player = GameObject.FindGameObjectWithTag("Player").transform;
         rb = player.GetComponent<Rigidbody>();
         Source = FindAnyObjectByType<AudioSource>();
@@ -114,7 +115,6 @@ public class LockPicking : MonoBehaviour
         }
 
         controls = new PlayerControls();
-        IsController = true;
 
         // Rotation With GamePad
         controls.LockPicking.Rotate.performed += ctx => rotateInput = ctx.ReadValue<Vector2>();
@@ -153,6 +153,15 @@ public class LockPicking : MonoBehaviour
             DeactivateLockPick();
         }
 
+        if(InputDeviceManager.Instance.CurrentMode == InputDeviceManager.InputMode.Controller)
+        {
+            IsController = true;
+        }
+        else
+        {
+            IsController = false;
+        }
+
         if (!SecondStageActive && !ControlsLocked)// if second stage isn't active, recieves rotation inputs
         {
             if (MovePick == true)
@@ -164,14 +173,12 @@ public class LockPicking : MonoBehaviour
 
                     // Apply rotation to pick cursor
                     PickCursor.localEulerAngles = new Vector3(0, 0, CurrentAngle - 90);
-                    IsController = true;
                 }
                 else if (KeyBoardInputValue != 0)// if detecting A and D input, uses this method
                 {
                     RotationAmount = -KeyBoardInputValue * CursorSpeed * Time.deltaTime;
                     CurrentAngle += RotationAmount;
                     PickCursor.localEulerAngles = new Vector3(0, 0, CurrentAngle - 90);
-                    IsController = false;
                 }
             }
             
@@ -211,9 +218,9 @@ public class LockPicking : MonoBehaviour
                     DurabilityMeter.gameObject.SetActive(false);
                     SecondStageActive = true;
                     StageTwoUI.SetActive(true);//switches controls to stage two, locks pick rotation
-                    updateInputPrompt(isController);
                     TriesRemainingText.gameObject.SetActive(true);
                     TriesRemainingText.text = ArrowAttempts + " attempts Remaining.";
+                    updateInputPrompt(IsController);
 
                     if (input != null)
                     {
@@ -360,7 +367,6 @@ public class LockPicking : MonoBehaviour
         Rigidbody rb = player.GetComponent<Rigidbody>();
         PickCursor.eulerAngles = new Vector3(0, 0, 0);
         GenerateSolutions();
-        updateInputPrompt(true);
         rb.constraints = RigidbodyConstraints.FreezeAll;
     }
 
