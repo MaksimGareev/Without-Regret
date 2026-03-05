@@ -89,7 +89,7 @@ public class ChasingEnemy : MonoBehaviour
         updateTimer -= Time.deltaTime;
         if (updateTimer <= 0f)
         {
-            if (targets[currentIndex] != null)
+            if (currentIndex < targets.Length && targets[currentIndex] != null)
             {
                 agent.SetDestination(targets[currentIndex].position);
             }
