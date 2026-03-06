@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody))]
 public class OrbitingPlatform : MonoBehaviour
 {
     public enum OrbitDirection 
@@ -34,6 +35,9 @@ public class OrbitingPlatform : MonoBehaviour
 
     private float currentAngle = 0f;
     private bool objectiveComplete = false;
+    private Rigidbody rb;
+    private Vector3 lastPosition;
+    public Vector3 platformVelocity { get; private set; }
 
     private void Awake()
     {
@@ -41,8 +45,16 @@ public class OrbitingPlatform : MonoBehaviour
         {
             Debug.LogError("Center Point is not assigned for OrbitingPlatform.");
         }
-       
-        
+
+        rb = GetComponent<Rigidbody>();
+        if (rb == null)
+        {
+            Debug.LogError("Rigidbody component is missing on the OrbitingPlatform.");
+        }
+
+        rb.constraints = RigidbodyConstraints.FreezeRotation | RigidbodyConstraints.FreezePositionY;
+
+        lastPosition = transform.position;
     }
 
     private void OnEnable()
@@ -60,7 +72,7 @@ public class OrbitingPlatform : MonoBehaviour
         }
     }
 
-    private void LateUpdate()
+    private void FixedUpdate()
     {
         if (centerPoint == null || objectiveComplete) return;
 
@@ -91,7 +103,11 @@ public class OrbitingPlatform : MonoBehaviour
         float z = Mathf.Sin(currentAngle + offset) * radius;
 
         // Update the platform's position to orbit around the center point
-        transform.position = centerPoint.position + new Vector3(x, height, z);
+        Vector3 newPosition = centerPoint.position + new Vector3(x, 0, z);
+        rb.MovePosition(newPosition);
+
+        platformVelocity = (newPosition - lastPosition) / Time.fixedDeltaTime;
+        lastPosition = newPosition;
     }
 
     private void SetObjectiveComplete(ObjectiveInstance objective)
