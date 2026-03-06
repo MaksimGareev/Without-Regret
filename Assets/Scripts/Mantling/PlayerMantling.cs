@@ -48,7 +48,8 @@ public class PlayerMantling : MonoBehaviour
     public void StartMantle(MantleableObject point)
     {
         isMantling = true;
-        animator.SetBool("isMantling", true);
+        if (animator)
+            animator.SetBool("isMantling", true);
         mantleStartPos = transform.position;
         mantleEndPos = point.GetMantlePosition();
         mantleProgress = 0f;
@@ -109,7 +110,9 @@ public class PlayerMantling : MonoBehaviour
         }
 
         isMantling = false;
-        animator.SetBool("isMantling", false);
+
+        if (animator)
+            animator.SetBool("isMantling", false);
 
 
         if (playerController != null)
