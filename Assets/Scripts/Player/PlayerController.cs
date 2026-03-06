@@ -810,9 +810,4 @@ public class PlayerController : MonoBehaviour, ISaveable
     {
         currentPlatform = platform;
     }
-
-    public void ClearCurrentPlatform()
-    {
-        currentPlatform = null;
-    }
 }
