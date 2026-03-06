@@ -23,6 +23,14 @@ public class OrbitingPlatform : MonoBehaviour
 
     [Tooltip("Objective that, when completed, will stop the platform from orbiting.")]
     [SerializeField] private ObjectiveData linkedObjective;
+    
+    [Tooltip("Used to adjust the angle used in calculating position so that multiple islands don't start in the same place. Set between 0 and 360.")]
+    [SerializeField] private float offset;
+
+    [Tooltip("Used to adjust the starting y-position of the island")]
+    [SerializeField] private float height;
+
+   
 
     private float currentAngle = 0f;
     private bool objectiveComplete = false;
@@ -33,6 +41,8 @@ public class OrbitingPlatform : MonoBehaviour
         {
             Debug.LogError("Center Point is not assigned for OrbitingPlatform.");
         }
+       
+        
     }
 
     private void OnEnable()
@@ -77,11 +87,11 @@ public class OrbitingPlatform : MonoBehaviour
         }
 
         // Calculate the new position of the platform based on the current angle and radius
-        float x = Mathf.Cos(currentAngle) * radius;
-        float z = Mathf.Sin(currentAngle) * radius;
+        float x = Mathf.Cos(currentAngle + offset) * radius;
+        float z = Mathf.Sin(currentAngle + offset) * radius;
 
         // Update the platform's position to orbit around the center point
-        transform.position = centerPoint.position + new Vector3(x, 0, z);
+        transform.position = centerPoint.position + new Vector3(x, height, z);
     }
 
     private void SetObjectiveComplete(ObjectiveInstance objective)
