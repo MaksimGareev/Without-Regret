@@ -6,9 +6,14 @@ public class PlatformCollision : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Player"))
         {
-            if (!other.GetComponent<PlayerFloating>().IsFloating)
+            // if (!other.GetComponent<PlayerFloating>().IsFloating)
+            // {
+            //     other.transform.SetParent(transform);
+            // }
+
+            if (other.GetComponent<PlayerController>() != null)
             {
-                other.transform.SetParent(transform);
+                other.GetComponent<PlayerController>().SetCurrentPlatform(this.GetComponentInParent<OrbitingPlatform>());
             }
         }
     }
@@ -16,7 +21,11 @@ public class PlatformCollision : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Player"))
         {
-            other.transform.SetParent(null);
+            //other.transform.SetParent(null);
+            if (other.GetComponent<PlayerController>() != null)
+            {
+                other.GetComponent<PlayerController>().SetCurrentPlatform(null);
+            }
         }
     }
 }
