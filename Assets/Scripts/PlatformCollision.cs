@@ -6,11 +6,6 @@ public class PlatformCollision : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Player"))
         {
-            // if (!other.GetComponent<PlayerFloating>().IsFloating)
-            // {
-            //     other.transform.SetParent(transform);
-            // }
-
             if (other.GetComponent<PlayerController>() != null)
             {
                 other.GetComponent<PlayerController>().SetCurrentPlatform(this.GetComponentInParent<OrbitingPlatform>());
@@ -21,7 +16,6 @@ public class PlatformCollision : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Player"))
         {
-            //other.transform.SetParent(null);
             if (other.GetComponent<PlayerController>() != null)
             {
                 other.GetComponent<PlayerController>().SetCurrentPlatform(null);
