@@ -4,6 +4,8 @@ using UnityEngine.UI;
 
 public class QTETriggerVolume : MonoBehaviour, IInteractable
 {
+    [SerializeField] private int damage = 1;
+    [Header("References")]
     [SerializeField] private BossEnemyController bossEnemy;
     [SerializeField] private PlayerController playerController;
     [SerializeField, Tooltip("The QTE Canvas object")] private GameObject qteUI;
@@ -73,17 +75,17 @@ public class QTETriggerVolume : MonoBehaviour, IInteractable
             initiated = false;
 
             if (showDebugLogs) Debug.Log("QTE succeeded");
-
+            // Deal damage to boss enemy and disable trigger volume
             if (bossEnemy != null)
             {
-                bossEnemy.TakeDamage();
+                bossEnemy.TakeDamage(damage);
             }
             else
             {
                 Debug.LogError("Boss Enemy reference for QTE trigger volume is null!", this);
             }
 
-            Destroy(gameObject);
+            enabled = false;
         }
     }
 

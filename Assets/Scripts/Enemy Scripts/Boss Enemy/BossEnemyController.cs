@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class BossEnemyController : MonoBehaviour
 {
@@ -21,6 +23,16 @@ public class BossEnemyController : MonoBehaviour
     [SerializeField] GameObject voidPoolPrefab;
     [SerializeField] Transform projectileSpawn;
 
+    [Header("Boss Health UI")]
+    [Tooltip("Base slider prefab used to create one slider per phase at runtime.")]
+    [SerializeField] private Slider baseSliderPrefab;
+    [Tooltip("Container RectTransform under which the generated sliders will be placed.")]
+    [SerializeField] private RectTransform slidersContainer;
+    [Tooltip("Spacing in pixels between generated sliders.")]
+    [SerializeField] private float sliderSpacing = 4f;
+    [SerializeField] private Color activeFillColor = Color.white;
+    [SerializeField] private Color inactiveFillColor = new Color(0.5f, 0.5f, 0.5f, 0.6f);
+
     [Header("Debugging")]
     [SerializeField] bool showDebugLogs = false;
 
@@ -33,6 +45,9 @@ public class BossEnemyController : MonoBehaviour
     // Pools
     private ObjectPool enemyPooler;
     private ObjectPool voidPooler;
+
+    // Runtime list of sliders used by UI logic (either generated or the fallback `phaseSliders`)
+    private readonly List<Slider> healthSliders = new List<Slider>();
 
     private void Awake()
     {
@@ -69,6 +84,108 @@ public class BossEnemyController : MonoBehaviour
 
         // set up the array of actions the boss can perform
         actions = new Action[] { VoidProjectile, ArmSweep, DropPillars };
+
+        InitializeHealthUI();
+    }
+
+    private void InitializeHealthUI()
+    {
+        healthSliders.Clear();
+
+        int phases = healthPerPart != null ? healthPerPart.Length : 0;
+        if (phases == 0) return;
+
+        // Use runtime generation if both base prefab and container are provided
+        if (baseSliderPrefab != null && slidersContainer != null)
+        {
+            // Clear existing children in the container
+            for (int i = slidersContainer.childCount - 1; i >= 0; --i)
+            {
+                var child = slidersContainer.GetChild(i);
+                Destroy(child.gameObject);
+            }
+
+            float containerWidth = slidersContainer.rect.width;
+            if (containerWidth <= 0)
+            {
+                Debug.LogError("Sliders container has non-positive width. Cannot initialize health UI.");
+                return;
+            }
+            float totalSpacing = sliderSpacing * (phases - 1);
+            float widthPer = Mathf.Max(1f, (containerWidth - totalSpacing) / phases);
+
+            for (int i = 0; i < phases; i++)
+            {
+                GameObject sliderObject = Instantiate(baseSliderPrefab.gameObject, slidersContainer);
+                sliderObject.name = $"HealthBar - Phase {i + 1}";
+                if (!sliderObject.TryGetComponent<Slider>(out var slider))
+                {
+                    Debug.LogError("Base slider prefab does not contain a Slider component.");
+                    Destroy(sliderObject);
+                    continue;
+                }
+
+                // Adjust RectTransform width so sliders fit neatly inside the container
+                if (sliderObject.TryGetComponent<RectTransform>(out var rect))
+                {
+                    // Set anchors to left-center so anchoredPosition.x is measured from the left edge of the container.
+                    rect.anchorMin = new Vector2(0f, 0.5f);
+                    rect.anchorMax = new Vector2(0f, 0.5f);
+                    rect.pivot = new Vector2(0.5f, 0.5f);
+
+                    rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, widthPer);
+
+                    // Position sliders horizontally with spacing so they don't overlap
+                    float xPos = (widthPer * 0.5f) + i * (widthPer + sliderSpacing);
+                    rect.anchoredPosition = new Vector2(xPos, 0f);
+                }
+
+                // Configure slider values
+                slider.interactable = false;
+                slider.maxValue = Mathf.Max(1, healthPerPart[i]);
+                slider.value = Mathf.Clamp(healthPerPart[i], 0, slider.maxValue);
+
+                healthSliders.Add(slider);
+
+                // Set visual active state for the current phase only
+                SetSliderActiveVisual(i, i == (currentPart - 1));
+            }
+        }
+        else
+        {
+            Debug.LogError("Base slider prefab and/or sliders container reference is missing. Boss health UI will not be generated.");
+        }
+    }
+
+    // Sets the visual appearance of a slider to indicate whether the corresponding phase is active or not
+    private void SetSliderActiveVisual(int index, bool active)
+    {
+        if (index < 0 || index >= healthSliders.Count) return;
+        Slider slider = healthSliders[index];
+        if (slider == null) return;
+
+        if (slider.fillRect.TryGetComponent<Image>(out var fillImage))
+        {
+            fillImage.color = active ? activeFillColor : inactiveFillColor;
+        }
+    }
+
+    private void UpdateHealthUIForCurrentPhase()
+    {
+        int phase = currentPart - 1;
+        if (phase < 0 || phase >= healthSliders.Count) return;
+        Slider slider = healthSliders[phase];
+        if (slider == null) return;
+
+        slider.value = healthPerPart[phase];
+    }
+
+    private void ActivateNextPhaseUI(int previousPhaseIndex, int newPhaseIndex)
+    {
+        if (previousPhaseIndex >= 0 && previousPhaseIndex < healthSliders.Count)
+            SetSliderActiveVisual(previousPhaseIndex, false);
+        if (newPhaseIndex >= 0 && newPhaseIndex < healthSliders.Count)
+            SetSliderActiveVisual(newPhaseIndex, true);
     }
 
     private void Update()
@@ -153,7 +270,7 @@ public class BossEnemyController : MonoBehaviour
     {
 
     }
-    
+
     void DropPillars()
     {
 
@@ -172,6 +289,9 @@ public class BossEnemyController : MonoBehaviour
 
         if (showDebugLogs) Debug.Log($"Boss took {value} damage. Current phase: {currentPart}, Current health: {healthPerPart[currentPart - 1]}");
 
+        // Update UI for current phase
+        UpdateHealthUIForCurrentPhase();
+
         if (healthPerPart[currentPart - 1] <= 0)
         {
             if (currentPart >= healthPerPart.Length)
@@ -182,7 +302,23 @@ public class BossEnemyController : MonoBehaviour
             else
             {
                 // Transition to the next part
+                int previousIndex = currentPart - 1;
                 currentPart++;
+                int newIndex = currentPart - 1;
+
+                // Ensure next slider max/value are set (in case inspector values differ)
+                if (newIndex >= 0 && newIndex < healthSliders.Count)
+                {
+                    Slider next = healthSliders[newIndex];
+                    if (next != null)
+                    {
+                        next.maxValue = Mathf.Max(1, healthPerPart[newIndex]);
+                        next.value = Mathf.Clamp(healthPerPart[newIndex], 0, next.maxValue);
+                    }
+                }
+
+                // Update visuals: previous greyed out, new active
+                ActivateNextPhaseUI(previousIndex, newIndex);
 
                 if (showDebugLogs) Debug.Log("Transitioned to phase " + currentPart);
             }
