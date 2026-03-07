@@ -43,6 +43,7 @@ Transform:
   - {fileID: 7085567522544542160}
   - {fileID: 618859906433929431}
   - {fileID: 7127363433656952739}
+  - {fileID: 4727455323200666048}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3511942004292408439
@@ -91,6 +92,8 @@ MonoBehaviour:
   objectiveCanvas: {fileID: 403472247212193792}
   objectivePanel: {fileID: 180085543768728757}
   eventSystem: {fileID: 0}
+  sceneLoadManager: {fileID: 8408192078886067754}
+  newDialogueManager: {fileID: 0}
 --- !u!1001 &308260605462797421
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -474,6 +477,79 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7746545663286229471, guid: 9dd10ae009a26424e893a055fd837514, type: 3}
   m_PrefabInstance: {fileID: 4267970060108412438}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &4276381669634196940
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 8090287494469674823}
+    m_Modifications:
+    - target: {fileID: 8477002969012494724, guid: 4fff6cf1aac3d8044970f37bad682e99, type: 3}
+      propertyPath: m_Name
+      value: SceneLoadManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 8846065727316065292, guid: 4fff6cf1aac3d8044970f37bad682e99, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -238.36414
+      objectReference: {fileID: 0}
+    - target: {fileID: 8846065727316065292, guid: 4fff6cf1aac3d8044970f37bad682e99, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -137.12018
+      objectReference: {fileID: 0}
+    - target: {fileID: 8846065727316065292, guid: 4fff6cf1aac3d8044970f37bad682e99, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8846065727316065292, guid: 4fff6cf1aac3d8044970f37bad682e99, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8846065727316065292, guid: 4fff6cf1aac3d8044970f37bad682e99, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8846065727316065292, guid: 4fff6cf1aac3d8044970f37bad682e99, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8846065727316065292, guid: 4fff6cf1aac3d8044970f37bad682e99, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8846065727316065292, guid: 4fff6cf1aac3d8044970f37bad682e99, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8846065727316065292, guid: 4fff6cf1aac3d8044970f37bad682e99, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8846065727316065292, guid: 4fff6cf1aac3d8044970f37bad682e99, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 4fff6cf1aac3d8044970f37bad682e99, type: 3}
+--- !u!4 &4727455323200666048 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8846065727316065292, guid: 4fff6cf1aac3d8044970f37bad682e99, type: 3}
+  m_PrefabInstance: {fileID: 4276381669634196940}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &8408192078886067754 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5762114230493387750, guid: 4fff6cf1aac3d8044970f37bad682e99, type: 3}
+  m_PrefabInstance: {fileID: 4276381669634196940}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 076417f10a55257439e5600d67b1e0f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LoadingScreen
 --- !u!1001 &5048410746027758893
 PrefabInstance:
   m_ObjectHideFlags: 0

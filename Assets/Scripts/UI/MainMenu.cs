@@ -34,6 +34,8 @@ public class MainMenu : MonoBehaviour
 
     [Header("Text References")]
     [SerializeField] private TextMeshProUGUI versionNumberText;
+    [Tooltip("Game version number that will be applied to the version number text on the main menu.")]
+    [SerializeField] private string gameVersion = "v.0.2.9";
     [SerializeField] private TextMeshProUGUI playButtonText;
 
     [Header("Music")]
@@ -43,8 +45,6 @@ public class MainMenu : MonoBehaviour
     // Feedback Survey URL
     private string feedbackSurveyURL = "https://docs.google.com/forms/d/e/1FAIpQLSe6KfbYdlWsa25Scm4URfYHRRS8lzQC3mZkm6tqyS_uxxHObA/viewform?usp=sharing&ouid=106294286738853521476";
     
-    // String to update the version number text in main menu
-    private string gameVersion = "v.0.0.1";
     private SaveManager saveManager;
     [HideInInspector] public bool usingController { get; private set; } = false;
     private Button lastSelectedButton;
