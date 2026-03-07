@@ -486,15 +486,14 @@ public class PlayerController : MonoBehaviour, ISaveable
         // If player is holding an object, ask PlayerMovingObjects if the horizontal move would cause clipping.
         if (moveableObjectMod.movingObject)
         {
-            // Temp commented out, still causing issues
-            // bool canMove = mover.CanMoveBy(horizontalMove);
-            // if (!canMove)
-            // {
-            //     // block horizontal movement while still allowing vertical (gravity) to apply
-            //     horizontalMove = Vector3.zero;
-            //     // also mark not moving to avoid sprint/stamina drain visual change
-            //     isMoving = false;
-            // }
+            bool canMove = mover.CanMoveBy(horizontalMove);
+            if (!canMove)
+            {
+                // block horizontal movement while still allowing vertical (gravity) to apply
+                horizontalMove = Vector3.zero;
+                // also mark not moving to avoid sprint/stamina drain visual change
+                isMoving = false;
+            }
         }
 
         Vector3 combined = horizontalMove + verticalMove;

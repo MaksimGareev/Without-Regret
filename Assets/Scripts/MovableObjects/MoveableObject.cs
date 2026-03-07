@@ -14,9 +14,12 @@ public class MoveableObject : MonoBehaviour, IInteractable
     private float staminaReduction = 0.5f;
     [SerializeField, Range(0, 1), Tooltip("Determines how strict the angle between the player forward vector and object must be to allow interaction. 1 = player can be facing parallel, 0 = player must be perfectly perpendicular")]
     private float dotProductThreshold = 0.4f;
+    [SerializeField] private float maxGrabDistance = 2.5f;
+
+    [Header("Options")]
     [SerializeField] private bool allowSprint = true;
     [SerializeField] ItemData requiredItem;
-    [SerializeField] private float maxGrabDistance = 2.5f;
+    [SerializeField] private bool checkGrabPointCollisions = true;
 
     [Header("Transform Settings")]
     [SerializeField] private Vector3 heldPositionOffset = Vector3.zero;
@@ -125,14 +128,15 @@ public class MoveableObject : MonoBehaviour, IInteractable
                 Debug.LogError("Player grab point is null!");
                 return;
             }
-            
-            // // Attempt to ensure that when the object is grabbed, there isn't major clipping with another object
-            // // by checking the grab point for collisions.
-            // if (mover.grabPoint.TryGetComponent<GrabPointCollisionCheck>(out var checker) && checker.CollidingWithSomethingExcept(coll))
-            // {
-            //     Debug.Log("Player tried to grab an object, but their grab point is colliding with another object.");
-            //     return;
-            // }
+
+            // Attempt to ensure that when the object is grabbed, there isn't major clipping with another object
+            // by checking the grab point for collisions.
+            if (checkGrabPointCollisions && mover.grabPoint.TryGetComponent<GrabPointCollisionCheck>(out var checker) && checker.CollidingWithSomethingExcept(coll))
+            {
+                Debug.Log("Player tried to grab an object, but their grab point is colliding with another object.");
+                return;
+            }
+
             // Can't grab if an item is equipped
             if (PlayerComponents.playerEquipItem.currentEquippedItem != null)
             {
