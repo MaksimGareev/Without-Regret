@@ -525,7 +525,16 @@ public class PauseManager : MonoBehaviour
     private void ReloadSave()
     {
         // Logic to reload the last save
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        if (GameManager.Instance != null && GameManager.Instance.sceneLoadManager != null)
+        {
+            GameManager.Instance.sceneLoadManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
+        else
+        {
+            Debug.LogError("SceneLoadManager reference is missing in the GameManager. Reloading scene directly without fade transition.");
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
+
         ResumeGame();
         //Debug.Log("Reloading Save...");
     }
@@ -553,7 +562,16 @@ public class PauseManager : MonoBehaviour
         DisableOtherCanvases();
 
         // Logic to quit to main menu
-        SceneManager.LoadScene("MainMenu");
+        if (GameManager.Instance != null && GameManager.Instance.sceneLoadManager != null)
+        {
+            GameManager.Instance.sceneLoadManager.LoadScene("MainMenu");
+        }
+        else
+        {
+            Debug.LogError("SceneLoadManager reference is missing in the GameManager. Loading Main Menu scene directly without fade transition.");
+            SceneManager.LoadScene("MainMenu");
+        }
+        
         Time.timeScale = 1f; // Ensure time scale is reset
         isGamePaused = false;
         Cursor.visible = true;

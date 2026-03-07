@@ -254,7 +254,23 @@ public class DialogueManager : MonoBehaviour
 
         // set dialogue interaction to false
         DialogueIsActive = false;
-        playerController.SetDialogueActive(false);
+
+        if (playerController != null)
+        {
+            playerController.SetDialogueActive(false);
+        }
+        else
+        {
+            playerController = FindAnyObjectByType<PlayerController>();
+            if (playerController != null)
+            {
+                playerController.SetDialogueActive(false);
+            }
+            else
+            {
+                Debug.LogError("No PlayerController found in scene to set dialogue active state to false.");
+            }
+        }
 
         if (activeDialogueTrigger != null)
         {

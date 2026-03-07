@@ -810,4 +810,9 @@ public class PlayerController : MonoBehaviour, ISaveable
     {
         currentPlatform = platform;
     }
+
+    public bool IsGrounded()
+    {
+        return isGrounded;
+    }
 }
