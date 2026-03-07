@@ -24,6 +24,12 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
     [Tooltip("Reference to the ObjectiveCanvas that exists as a child of this Objective Manager Prefab.")]
     [SerializeField] private ObjectiveCanvas objectiveCanvas;
 
+    [Tooltip("UI indicator for offscreen objectives")]
+    [SerializeField] private OffscreenObjectiveIndicator ScreenSpaceIndicator;
+
+    [Tooltip("In-world Objective Indicator")]
+    [SerializeField] private GameObject WorldSpaceIndicator;
+
     // Events for when an objective is activated, updated, or completed. 
     // These are used to communicate with the Objective UI and other listeners so that they can react accordingly
     [HideInInspector] public UnityEvent<ObjectiveInstance> OnObjectiveActivated = new();
@@ -43,7 +49,10 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
             Destroy(gameObject);
             return;
         }
-
+        if(ScreenSpaceIndicator != null && WorldSpaceIndicator != null)
+        {
+            ScreenSpaceIndicator.target = WorldSpaceIndicator.transform;
+        }
         // Find objective canvas reference in children, log error if not found
         objectiveCanvas = GetComponentInChildren<ObjectiveCanvas>();
         if (objectiveCanvas == null)
@@ -161,7 +170,22 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
         // Fire event so ObjectiveUI (or other listeners) can react
         OnObjectiveActivated.Invoke(newObjective);
 
-        // Debug.Log($"Objective '{newObjective.data.title}' has been activated");
+        if(objective.markerTransform != null)
+        {
+            if(SceneManager.GetActiveScene().name == objective.sceneName)
+            {
+                WorldSpaceIndicator.SetActive(true);
+                WorldSpaceIndicator.transform.position = objective.markerTransform;
+            }
+            else
+            {
+                WorldSpaceIndicator.SetActive(false);
+            }
+        }
+        else
+        {
+            WorldSpaceIndicator.SetActive(false);
+        }
 
         // Save the game after activating a new objective
         if (SaveManager.Instance != null)
