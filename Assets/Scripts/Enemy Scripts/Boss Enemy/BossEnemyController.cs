@@ -12,15 +12,23 @@ public class BossEnemyController : MonoBehaviour
 
     [Header("Void Attack Settings")]
     [SerializeField, Min(0.1f)] float projectileSpeed = 5f;
+    [Tooltip("Percentage chance that a health pickup drops when an enemy created from a void pool despawns")]
+    [SerializeField, Range(0, 1f)] float healthDropChance = 0.7f;
     [SerializeField] VoidPoolSettings voidPoolSettings = new(5f, 1f, 1, 2, 6f);
 
     private Rigidbody voidProjectileRigidbody;
 
     [Header("References")]
     [SerializeField] Transform player;
+    [Tooltip("The enemy prefab used for spawning")]
     [SerializeField] GameObject enemyPrefab;
+    [Tooltip("The projectile prefab used for the void projectile attack")]
     [SerializeField] GameObject voidProjectileObject;
+    [Tooltip("A shadow object that appears on the ground to indicate where the void projectile will land")]
+    [SerializeField] GameObject voidProjectileShadow;
+    [Tooltip("The prefab used for the void pool created by the void projectile")]
     [SerializeField] GameObject voidPoolPrefab;
+    [Tooltip("The transform from which the void projectile will be launched. Position is used, rotation is ignored.")]
     [SerializeField] Transform projectileSpawn;
     [SerializeField] GameObject healthPickup;
 
@@ -42,6 +50,7 @@ public class BossEnemyController : MonoBehaviour
     private Action[] actions;
     private float timeSinceLastAction = -3f;
     private bool actionInProgress = false;
+    private LayerMask layerMask;
 
     // Pools
     private ObjectPool enemyPooler;
@@ -82,7 +91,10 @@ public class BossEnemyController : MonoBehaviour
         {
             voidPooler = new ObjectPool(voidPoolPrefab, 3, showDebugLogs);
             voidPoolSettings.healthPickup = healthPickup;
+            voidPoolSettings.healthDropChance = healthDropChance;
         }
+
+        layerMask = LayerMask.GetMask("Target", "Enemy"); // Used for raycasting the shadow position and detecting projectile collisions
 
         // set up the array of actions the boss can perform
         actions = new Action[] { VoidProjectile, ArmSweep, DropPillars };
@@ -217,6 +229,10 @@ public class BossEnemyController : MonoBehaviour
     {
         if (showDebugLogs) Debug.Log("Action ended. Restarting timer");
 
+        if (voidProjectileShadow != null)
+        {
+            voidProjectileShadow.SetActive(false);
+        }
         timeSinceLastAction = Time.time;
         actionInProgress = false;
     }
@@ -248,6 +264,20 @@ public class BossEnemyController : MonoBehaviour
         {
             Vector3 origin = projectileSpawnPoint;
             Vector3 target = player.position;
+
+            if (voidProjectileShadow != null)
+            {
+                // Position the shadow on the ground at the target location
+                if (Physics.Raycast(target + Vector3.up * 10f, Vector3.down, out RaycastHit hit, 20f, ~layerMask))
+                {
+                    voidProjectileShadow.transform.position = hit.point + Vector3.up * 0.01f; // Slightly above ground to avoid z-fighting
+                    voidProjectileShadow.SetActive(true);
+                }
+                else
+                {
+                    voidProjectileShadow.SetActive(false);
+                }
+            }
 
             Vector3 toTarget = target - origin;
             // compute time-to-target based on horizontal distance and projectileSpeed
