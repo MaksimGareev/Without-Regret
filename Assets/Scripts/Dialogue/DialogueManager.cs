@@ -277,7 +277,7 @@ public class DialogueManager : MonoBehaviour
             // if the dialogue trigger has a reward item, add it to the inventory
             if (activeDialogueTrigger.RewardItem != null)
             {
-                Inventory inventory = FindObjectOfType<Inventory>();
+                Inventory inventory = FindAnyObjectByType<Inventory>();
                 if (inventory != null)
                 {
                     inventory.AddItem(activeDialogueTrigger.RewardItem);
