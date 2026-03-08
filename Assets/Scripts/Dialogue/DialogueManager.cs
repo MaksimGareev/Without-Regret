@@ -410,6 +410,7 @@ public class DialogueManager : MonoBehaviour
         };
 
         npcPortrait.sprite = newSprite;
+        npcPortrait.SetNativeSize();
         npcPortrait.gameObject.SetActive(true);
 
     }
