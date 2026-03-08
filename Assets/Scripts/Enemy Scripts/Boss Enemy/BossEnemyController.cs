@@ -22,6 +22,7 @@ public class BossEnemyController : MonoBehaviour
     [SerializeField] GameObject voidProjectileObject;
     [SerializeField] GameObject voidPoolPrefab;
     [SerializeField] Transform projectileSpawn;
+    [SerializeField] GameObject healthPickup;
 
     [Header("Boss Health UI")]
     [Tooltip("Base slider prefab used to create one slider per phase at runtime.")]
@@ -80,6 +81,7 @@ public class BossEnemyController : MonoBehaviour
         if (voidPoolPrefab != null)
         {
             voidPooler = new ObjectPool(voidPoolPrefab, 3, showDebugLogs);
+            voidPoolSettings.healthPickup = healthPickup;
         }
 
         // set up the array of actions the boss can perform
