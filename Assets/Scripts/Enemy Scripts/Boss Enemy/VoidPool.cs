@@ -115,11 +115,11 @@ public class VoidPool : MonoBehaviour
             // Add a lifetime component for the enemy so it gets returned after a delay
             if (newEnemy.TryGetComponent<Lifetime>(out var lifetime))
             {
-                lifetime.Initialize(newEnemy, settings.enemyLifetime, enemyPooler);
+                lifetime.Initialize(newEnemy, settings.enemyLifetime, enemyPooler, settings.healthPickup);
             }
             else
             {
-                newEnemy.AddComponent<Lifetime>().Initialize(newEnemy, settings.enemyLifetime, enemyPooler);
+                newEnemy.AddComponent<Lifetime>().Initialize(newEnemy, settings.enemyLifetime, enemyPooler, settings.healthPickup);
             }
         }
     }
@@ -165,13 +165,16 @@ public struct VoidPoolSettings
     public int maxEnemiesToSpawn;
     [Tooltip("How long the enemies spawned from the void pool will last")]
     public float enemyLifetime;
+    [HideInInspector]
+    public GameObject healthPickup;
 
-    public VoidPoolSettings(float lifetime, float delayBeforeDamage, int minEnemiesToSpawn, int maxEnemiesToSpawn, float enemyLifetime)
+    public VoidPoolSettings(float lifetime, float delayBeforeDamage, int minEnemiesToSpawn, int maxEnemiesToSpawn, float enemyLifetime, GameObject healthPickup = null)
     {
         this.lifetime = lifetime;
         this.delayBeforeDamage = delayBeforeDamage;
         this.minEnemiesToSpawn = minEnemiesToSpawn;
         this.maxEnemiesToSpawn = maxEnemiesToSpawn;
         this.enemyLifetime = enemyLifetime;
+        this.healthPickup = healthPickup;
     }
 }

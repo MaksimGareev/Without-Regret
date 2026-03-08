@@ -4763,7 +4763,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BossEnemyController
   healthPerPart: 030000000300000003000000
-  timeBetweenActions: 300
+  timeBetweenActions: 3
   startDelay: 1.5
   projectileSpeed: 5
   voidPoolSettings:
@@ -4772,11 +4772,13 @@ MonoBehaviour:
     minEnemiesToSpawn: 1
     maxEnemiesToSpawn: 2
     enemyLifetime: 10
+    healthPickup: {fileID: 0}
   player: {fileID: 0}
   enemyPrefab: {fileID: 3086140246574635878, guid: 50418b5f2ca51554fb6c711361357d5e, type: 3}
   voidProjectileObject: {fileID: 8576361245306014099}
   voidPoolPrefab: {fileID: 6094352196004457944, guid: ced700967aa47a24b9321aa50e25ebed, type: 3}
   projectileSpawn: {fileID: 3124144539760143426}
+  healthPickup: {fileID: 1914410868309050336, guid: 5c30dd6d25372d14080c60411dd29b2e, type: 3}
   baseSliderPrefab: {fileID: 5423844392208258101, guid: 715582a152650ea45aa52e427a36e639, type: 3}
   slidersContainer: {fileID: 5598156055868058803}
   sliderSpacing: 4
@@ -4817,7 +4819,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 396345a249ba36f4bb0a50a5a53a9ca1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SaveableEnemyNPC
-  uniqueID: 65e09488-a9e9-4696-8e07-bf6c53810568
+  uniqueID: 300e89ba-3569-4297-86e2-7dafcf955254
 --- !u!1 &7808760994735140927
 GameObject:
   m_ObjectHideFlags: 0
