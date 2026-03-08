@@ -19,6 +19,8 @@ public class MoveableObject : MonoBehaviour, IInteractable
     [Header("Options")]
     [SerializeField] private bool allowSprint = true;
     [SerializeField] ItemData requiredItem;
+    [Min(0f), Tooltip("When the player is moving this object, the size of the collider used to check for collisions with the environment is multiplied by this factor.")]
+    [SerializeField] private float collisionCheckSizeFactor = 1f;
     [SerializeField] private bool checkGrabPointCollisions = true;
 
     [Header("Transform Settings")]
@@ -35,6 +37,7 @@ public class MoveableObject : MonoBehaviour, IInteractable
     public event Action OnInteracted;
     private Collider coll;
     public Collider ObjectCollider => coll;
+    public float CollisionCheckSizeFactor => collisionCheckSizeFactor;
 
     private void Awake()
     {
