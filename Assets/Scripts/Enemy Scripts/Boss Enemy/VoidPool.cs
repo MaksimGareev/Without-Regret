@@ -112,14 +112,25 @@ public class VoidPool : MonoBehaviour
                 newEnemy.transform.SetPositionAndRotation(spawnPosition, Quaternion.identity);
             }
 
-            // Add a lifetime component for the enemy so it gets returned after a delay
-            if (newEnemy.TryGetComponent<Lifetime>(out var lifetime))
+            // Decide whether to assign a health pickup to drop when this enemy dies based on the drop chance
+            GameObject healthPickup;
+            if (Random.Range(0f, 1f) <= settings.healthDropChance)
             {
-                lifetime.Initialize(newEnemy, settings.enemyLifetime, enemyPooler, settings.healthPickup);
+                healthPickup = settings.healthPickup;
             }
             else
             {
-                newEnemy.AddComponent<Lifetime>().Initialize(newEnemy, settings.enemyLifetime, enemyPooler, settings.healthPickup);
+                healthPickup = null;
+            }
+
+            // Add a lifetime component for the enemy so it gets returned after a delay
+            if (newEnemy.TryGetComponent<Lifetime>(out var lifetime))
+            {
+                lifetime.Initialize(newEnemy, settings.enemyLifetime, enemyPooler, healthPickup);
+            }
+            else
+            {
+                newEnemy.AddComponent<Lifetime>().Initialize(newEnemy, settings.enemyLifetime, enemyPooler, healthPickup);
             }
         }
     }
@@ -167,8 +178,10 @@ public struct VoidPoolSettings
     public float enemyLifetime;
     [HideInInspector]
     public GameObject healthPickup;
+    [HideInInspector]
+    public float healthDropChance;
 
-    public VoidPoolSettings(float lifetime, float delayBeforeDamage, int minEnemiesToSpawn, int maxEnemiesToSpawn, float enemyLifetime, GameObject healthPickup = null)
+    public VoidPoolSettings(float lifetime, float delayBeforeDamage, int minEnemiesToSpawn, int maxEnemiesToSpawn, float enemyLifetime, GameObject healthPickup = null, float healthDropChance = 0f)
     {
         this.lifetime = lifetime;
         this.delayBeforeDamage = delayBeforeDamage;
@@ -176,5 +189,6 @@ public struct VoidPoolSettings
         this.maxEnemiesToSpawn = maxEnemiesToSpawn;
         this.enemyLifetime = enemyLifetime;
         this.healthPickup = healthPickup;
+        this.healthDropChance = healthDropChance;
     }
 }
