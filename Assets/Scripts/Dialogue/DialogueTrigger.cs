@@ -15,6 +15,9 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
     public bool chimeActive = false;
     public Chime chimeScript;
 
+    [Header("Face Animation")]
+    public FaceHandler faceHandler;
+
     private Animator playerAnimator;
     private Coroutine playerTalkRoutine;
     public float interactionPriority => 10f;
@@ -115,6 +118,8 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
 
             chimeActive = true;
         }
+
+        faceHandler = gameObject.GetComponentInChildren<FaceHandler>();
 
 
         npcWander = GetComponent<NpcMovement>();
