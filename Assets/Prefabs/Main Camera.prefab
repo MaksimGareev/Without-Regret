@@ -107,17 +107,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isAstral: 0
-  isIndoors: 0
+  astralVFX: {fileID: 0}
   inputActions: {fileID: -944628639613478452, guid: f1f4dbfd8c64cd440924988ec4fb6f6a, type: 3}
+  followPlayer: 1
   defaultOffset: {x: 0, y: 8, z: 8}
   defaultLookAtOffset: {x: 0, y: 3, z: 0}
   smoothSpeed: 4
   defaultFacingDirection: 1
+  rotateCamera: 1
   rotateSpeed: 120
-  maxPitch: 20
   returnSpeed: 8
   mouseResetTime: 3
   mouseRotateScale: 0.08
+  restrictYaw: 0
+  maxYaw: 120
+  maxPitch: 20
   pickupOffset: {x: 3, y: 2, z: -5}
   zoomDuration: 2
   transitionSpeed: 2
