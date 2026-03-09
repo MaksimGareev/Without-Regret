@@ -252,7 +252,6 @@ public class CameraMovement : MonoBehaviour
         
         if (target == null) return;
         if (GameOverManager.Instance != null && GameOverManager.Instance.IsGameOver) return;
-        if (toggleInventoryUI != null && toggleInventoryUI.isEnabled) return;
         if (GameManager.Instance.pauseManager.GetComponent<PauseManager>() != null && GameManager.Instance.pauseManager.GetComponent<PauseManager>().isGamePaused) return;
         if (GameManager.Instance.journalUICanvas.GetComponent<Journal>() != null && GameManager.Instance.journalUICanvas.GetComponent<Journal>().isJournalOpen) return;
         if (GameManager.Instance.LockPickUI.GetComponent<LockPickUI>() != null && GameManager.Instance.LockPickUI.GetComponent<LockPickUI>().IsActive) return;
