@@ -115,7 +115,7 @@ public class PlayerMovingObjects : MonoBehaviour
         animator.SetTrigger("placing");
         Debug.Log("Placing down!");
         playerController.DisableInput();
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(1.3f);
         playerController.EnableInput();
         ResetAnimations();
     }
