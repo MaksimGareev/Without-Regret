@@ -147,13 +147,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1f1ab1a81f3ad7468ec1fe89381d319, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MoveableObject
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 0
-  moveSlowdownMultiplier: 3
+  moveSlowdownDivisor: 1.75
+  sprintSlowdownDivisor: 1.5
+  sprintDepletionFactor: 1.05
+  staminaReduction: 0.25
+  dotProductThreshold: 0.4
+  allowSprint: 1
   requiredItem: {fileID: 0}
-  isGrabbable: 1
-  iconDistance: 3
-  iconPrefab: {fileID: 0}
-  shouldShowIcon: 1
   maxGrabDistance: 2.5
+  collisionCheckSizeMultiplier: 0.9
+  heldPositionOffset: {x: 0, y: 0, z: 0}
+  isGrabbable: 1
