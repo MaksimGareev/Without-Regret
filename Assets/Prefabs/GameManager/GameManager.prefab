@@ -105,6 +105,14 @@ PrefabInstance:
       propertyPath: indicator
       value: 
       objectReference: {fileID: 5819534910230094526}
+    - target: {fileID: 407731454682795172, guid: 6ed92287928ce3d4f8c3f2385cba499e, type: 3}
+      propertyPath: WorldSpaceIndicator
+      value: 
+      objectReference: {fileID: 8561806092203776849}
+    - target: {fileID: 407731454682795172, guid: 6ed92287928ce3d4f8c3f2385cba499e, type: 3}
+      propertyPath: ScreenSpaceIndicator
+      value: 
+      objectReference: {fileID: 5819534910230094526}
     - target: {fileID: 448358551990040792, guid: 6ed92287928ce3d4f8c3f2385cba499e, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -238,7 +246,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5818059251255514250, guid: 224d01b31d7f5cd4e83e490766d72bc3, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2522140268738799371}
   m_SourcePrefab: {fileID: 100100000, guid: 224d01b31d7f5cd4e83e490766d72bc3, type: 3}
 --- !u!4 &4486856556751276027 stripped
 Transform:
@@ -248,6 +259,24 @@ Transform:
 --- !u!1 &6136705272438871711 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5818059251255514250, guid: 224d01b31d7f5cd4e83e490766d72bc3, type: 3}
+  m_PrefabInstance: {fileID: 401967149809058325}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2522140268738799371
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6136705272438871711}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e0e95feea0d7064f901c00832c99702, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ObjectiveSpriteBillboard
+  theCamera: {fileID: 0}
+--- !u!1 &8561806092203776849 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8306247095068268868, guid: 224d01b31d7f5cd4e83e490766d72bc3, type: 3}
   m_PrefabInstance: {fileID: 401967149809058325}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1921867422204754901
@@ -1509,7 +1538,7 @@ PrefabInstance:
       objectReference: {fileID: 7316323101061618638}
     - target: {fileID: 4577167145164744867, guid: 609895151fcb32f4d8b752b1cfc640bb, type: 3}
       propertyPath: disableIndicator
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

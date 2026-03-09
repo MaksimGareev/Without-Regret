@@ -64,6 +64,18 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
         StartCoroutine(RegisterWhenReady());
     }
 
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoad;
+    }
+
+    // Unsubscribe from the sceneLoaded event when the SaveManager is disabled to prevent memory leaks and unintended behavior
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoad;
+    }
+
+
     // Wait until SaveManager instance is available before registering, since SaveManager is 
     // also a singleton and may not be initialized yet when ObjectiveManager's Awake is called.
     private IEnumerator RegisterWhenReady()
@@ -170,22 +182,7 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
         // Fire event so ObjectiveUI (or other listeners) can react
         OnObjectiveActivated.Invoke(newObjective);
 
-        if(objective.markerTransform != null)
-        {
-            if(SceneManager.GetActiveScene().name == objective.sceneName)
-            {
-                WorldSpaceIndicator.SetActive(true);
-                WorldSpaceIndicator.transform.position = objective.markerTransform;
-            }
-            else
-            {
-                WorldSpaceIndicator.SetActive(false);
-            }
-        }
-        else
-        {
-            WorldSpaceIndicator.SetActive(false);
-        }
+        ManageObjectiveIndicator(objective);
 
         // Save the game after activating a new objective
         if (SaveManager.Instance != null)
@@ -401,6 +398,39 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
         }
 
         ActivateObjective(objective);
+    }
+
+    private void ManageObjectiveIndicator(ObjectiveData objective)
+    {
+        if (objective.markerTransform != null)
+        {
+            Debug.Log("Active Scene: " + SceneManager.GetActiveScene().buildIndex);
+            if (int.Equals(SceneManager.GetActiveScene().buildIndex, objective.sceneIndex) || int.Equals(SceneManager.GetActiveScene().buildIndex, 0))
+            {
+                WorldSpaceIndicator.transform.position = objective.markerTransform;
+                WorldSpaceIndicator.SetActive(true);
+            }
+            else
+            {
+                WorldSpaceIndicator.SetActive(false);
+            }
+        }
+        else
+        {
+            WorldSpaceIndicator.SetActive(false);
+        }
+    }
+
+    private void OnSceneLoad(Scene scene, LoadSceneMode mode)
+    {
+        if(SceneManager.GetActiveScene().buildIndex != 0)
+        {
+            EnsureActiveObjective();
+            if(WorldSpaceIndicator.GetComponent<ObjectiveMarker>() != null)
+            {
+                WorldSpaceIndicator.GetComponent<ObjectiveMarker>().WorldIndicator.GetComponent<ObjectiveSpriteBillboard>().FindCamera();
+            }
+        }
     }
 
     // Getters for active and completed objectives lists.

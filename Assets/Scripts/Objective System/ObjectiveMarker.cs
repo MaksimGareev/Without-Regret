@@ -4,8 +4,13 @@ public class ObjectiveMarker : MonoBehaviour
 {
     public GameObject WorldIndicator;
 
-    private void Start()
+    private void DisableIndicator()
     {
         WorldIndicator.SetActive(false);
+    }
+
+    private void EnableIndicator()
+    {
+        WorldIndicator.SetActive(true);
     }
 }

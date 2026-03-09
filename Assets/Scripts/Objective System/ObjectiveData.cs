@@ -26,8 +26,8 @@ public class ObjectiveData : ScriptableObject
     public int requiredProgress; // Amount of progress needed to complete the objective
 
     [Header("Scene")]
-    [Tooltip("Name of the scene where the objective takes place.")]
-    public string sceneName; // Name of the scene where the objective takes place
+    [Tooltip("Build index of the scene where the objective takes place.")]
+    public int sceneIndex; // build index of the scene where the objective takes place
 
     [Header("Objective Location")]
     [Tooltip("The ObjectiveMarker object you want the objective indicator to point to When this becomes the active objective.")]

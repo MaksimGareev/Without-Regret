@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 using Unity.VisualScripting;
 
 public class PlayerController : MonoBehaviour, ISaveable
-{   
+{
     [HideInInspector] public CharacterController Controller;
     private Camera PlayerCamera;
     [HideInInspector] public Animator Animator;
@@ -17,7 +17,7 @@ public class PlayerController : MonoBehaviour, ISaveable
     public Chime chimeScript;
 
     [Header("Sprint UI Colors")]
-    [SerializeField] Color normalColor = new Color(0f, 147f/255f, 111f/255f);
+    [SerializeField] Color normalColor = new Color(0f, 147f / 255f, 111f / 255f);
     [SerializeField] Color cooldownColor = Color.grey;
     [SerializeField] ParticleSystem SprintDust;
 
@@ -32,7 +32,7 @@ public class PlayerController : MonoBehaviour, ISaveable
     public float SprintSpeed = 2f;
     public float SprintDuration = 3f;
     public float sprintCooldown = 4f;
-    [SerializeField, Tooltip("The speed the player moves at when their sprint stamina is at 0. Only relevant for when they're holding a moveable object. Lower numbers = lower speed")] 
+    [SerializeField, Tooltip("The speed the player moves at when their sprint stamina is at 0. Only relevant for when they're holding a moveable object. Lower numbers = lower speed")]
     private float emptyStaminaSpeedFactor = 0.5f;
     [SerializeField] private bool StationaryCamera;
 
@@ -73,7 +73,7 @@ public class PlayerController : MonoBehaviour, ISaveable
     public bool showDebugLogs = false;
     private readonly bool resetLocked = false;
     private PlayerThrowing playerThrowing;
-    private bool isThrowing;
+    [HideInInspector] public bool isThrowing;
     private bool isMoving;
     private readonly float moveCheckDelay = 0.1f;
     private float lastStoppedCheck = -1f;
