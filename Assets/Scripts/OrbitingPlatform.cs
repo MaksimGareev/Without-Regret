@@ -14,7 +14,7 @@ public class OrbitingPlatform : MonoBehaviour
     [SerializeField] private OrbitDirection orbitDirection = OrbitDirection.Clockwise;
 
     [Tooltip("Speed at which the platform rotates around the center point.")]
-    [SerializeField] private float orbitSpeed = 1f;
+    public float orbitSpeed = 1f;
 
     [Tooltip("Radius of the circular path the platform follows around the center point.")]
     [SerializeField] private float radius = 5f;
@@ -22,8 +22,12 @@ public class OrbitingPlatform : MonoBehaviour
     [Tooltip("The central point around which the platform will rotate.")]
     [SerializeField] private Transform centerPoint;
 
+    [SerializeField, Tooltip("Boolean for if the platform needs an objective to stop orbiting.")] private bool needsObjective;
+
     [Tooltip("Objective that, when completed, will stop the platform from orbiting.")]
     [SerializeField] private ObjectiveData linkedObjective;
+
+    [SerializeField, Tooltip("Vector position of where the Platform should stop once its marked as objective completed")] private Vector3 stopLocation;
     
     [Tooltip("Used to adjust the angle used in calculating position so that multiple islands don't start in the same place. Set between 0 and 360.")]
     [SerializeField] private float offset;
@@ -35,6 +39,8 @@ public class OrbitingPlatform : MonoBehaviour
 
     private float currentAngle = 0f;
     private bool objectiveComplete = false;
+    private bool reachedLocation = false;
+    private float range = 5f;
     private Rigidbody rb;
     private Vector3 lastPosition;
     public Vector3 platformVelocity { get; private set; }
@@ -74,7 +80,7 @@ public class OrbitingPlatform : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (centerPoint == null || objectiveComplete) return;
+        if (centerPoint == null || reachedLocation) return;
 
         // Calculate the new angle based on the orbit direction and speed
         if (orbitDirection == OrbitDirection.CounterClockwise)
@@ -108,6 +114,17 @@ public class OrbitingPlatform : MonoBehaviour
 
         platformVelocity = (newPosition - lastPosition) / Time.fixedDeltaTime;
         lastPosition = newPosition;
+
+        if (objectiveComplete)
+        {
+            Vector3 offset = newPosition - stopLocation;
+            float squareLength = offset.sqrMagnitude;
+            float squareRange = range * range;
+            if (squareLength <= squareRange)
+            {
+                reachedLocation = true;
+            }
+        }
     }
 
     private void SetObjectiveComplete(ObjectiveInstance objective)
@@ -115,6 +132,19 @@ public class OrbitingPlatform : MonoBehaviour
         if (objective.data == linkedObjective)
         {
             objectiveComplete = true;
+        }
+    }
+
+    public void SetQTEComplete()
+    {
+        if (!needsObjective)
+        {
+            objectiveComplete = true;
+            Debug.Log("QTE completed, stopping");
+        }
+        else
+        {
+            Debug.Log("Platform is currently set to need a linked objective to be stoped.");
         }
     }
 
