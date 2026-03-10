@@ -354,12 +354,6 @@ public class SaveManager : MonoBehaviour
             TimerRingUI.Instance.SetRingState(TimerRingUI.RingState.Full);
         }
 
-        // Call to the objective manager to auto enable an objective, necessary when loading a save to continue where the player left off
-        if (ObjectiveManager.Instance != null)
-        {
-            ObjectiveManager.Instance.EnsureActiveObjective();
-        }
-
         // Ensure the game is not paused after loading, which can happen if the player saves while paused and then reloads that save
         if (PauseManager.Instance != null)
         {
