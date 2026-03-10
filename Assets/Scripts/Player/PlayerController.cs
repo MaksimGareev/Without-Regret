@@ -3,9 +3,10 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
+using Unity.VisualScripting;
 
 public class PlayerController : MonoBehaviour, ISaveable
-{   
+{
     [HideInInspector] public CharacterController Controller;
     private Camera PlayerCamera;
     [HideInInspector] public Animator Animator;
@@ -16,7 +17,7 @@ public class PlayerController : MonoBehaviour, ISaveable
     public Chime chimeScript;
 
     [Header("Sprint UI Colors")]
-    [SerializeField] Color normalColor = new Color(0f, 147f/255f, 111f/255f);
+    [SerializeField] Color normalColor = new Color(0f, 147f / 255f, 111f / 255f);
     [SerializeField] Color cooldownColor = Color.grey;
     [SerializeField] ParticleSystem SprintDust;
 
@@ -31,7 +32,7 @@ public class PlayerController : MonoBehaviour, ISaveable
     public float SprintSpeed = 2f;
     public float SprintDuration = 3f;
     public float sprintCooldown = 4f;
-    [SerializeField, Tooltip("The speed the player moves at when their sprint stamina is at 0. Only relevant for when they're holding a moveable object. Lower numbers = lower speed")] 
+    [SerializeField, Tooltip("The speed the player moves at when their sprint stamina is at 0. Only relevant for when they're holding a moveable object. Lower numbers = lower speed")]
     private float emptyStaminaSpeedFactor = 0.5f;
     [SerializeField] private bool StationaryCamera;
 
@@ -72,10 +73,11 @@ public class PlayerController : MonoBehaviour, ISaveable
     public bool showDebugLogs = false;
     private readonly bool resetLocked = false;
     private PlayerThrowing playerThrowing;
-    private bool isThrowing;
+    [HideInInspector] public bool isThrowing;
     private bool isMoving;
     private readonly float moveCheckDelay = 0.1f;
     private float lastStoppedCheck = -1f;
+    private OrbitingPlatform currentPlatform;
 
     private void Awake()
     {
@@ -444,11 +446,10 @@ public class PlayerController : MonoBehaviour, ISaveable
                 // Stamina is full, reset values
                 SprintTimer = SprintDuration;
 
-                 if (staminaFadeRoutine != null)
+                if (staminaFadeRoutine == null)
                 {
-                    StopCoroutine(staminaFadeRoutine);
+                    staminaFadeRoutine = StartCoroutine(StaminaFadeAway());
                 }
-                staminaFadeRoutine = StartCoroutine(StaminaFadeAway());
 
                 GameManager.Instance.staminaSlider.value = SprintTimer;
                 canSprint = true;
@@ -497,6 +498,14 @@ public class PlayerController : MonoBehaviour, ISaveable
         }
 
         Vector3 combined = horizontalMove + verticalMove;
+
+        Vector3 platformVelocity = Vector3.zero;
+        if (currentPlatform != null)
+        {
+            platformVelocity = currentPlatform.platformVelocity;
+            combined += platformVelocity * Time.deltaTime;
+        }
+
         Controller.Move(combined);
 
         if (move.sqrMagnitude > 0.01f && !isThrowing)
@@ -756,6 +765,13 @@ public class PlayerController : MonoBehaviour, ISaveable
     {
         if (staminaGroup == null) yield break;
 
+        // Wait before starting the fade
+        yield return new WaitForSeconds(0.5f);
+
+        // If stamina changed during the delay, cancel fade
+        if (SprintTimer < SprintDuration)
+            yield break;
+
         float t = 0f; //time float
         float start = staminaGroup.alpha;
 
@@ -774,6 +790,7 @@ public class PlayerController : MonoBehaviour, ISaveable
 
         staminaGroup.alpha = 0f;
         GameManager.Instance.staminaSlider.gameObject.SetActive(false);
+        staminaFadeRoutine = null;
     }
 
     public void DisableInput() // for disabling/freezing the player throughout other scripts
@@ -793,5 +810,10 @@ public class PlayerController : MonoBehaviour, ISaveable
         //Animator.SetBool("isGrabbing", false);
         Animator.SetBool("isFloating", false);
         //Animator.SetBool("isCollecting", false);
+    }
+
+    public void SetCurrentPlatform(OrbitingPlatform platform)
+    {
+        currentPlatform = platform;
     }
 }

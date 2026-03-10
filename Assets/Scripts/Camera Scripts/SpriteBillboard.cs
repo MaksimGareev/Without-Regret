@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class SpriteBillboard : MonoBehaviour
 {
-    private Camera theCamera;
-    // Update is called once per frame
+    [SerializeField] private Camera theCamera;
+
     void Start()
     {
         theCamera = Camera.main;

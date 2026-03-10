@@ -31,6 +31,8 @@ public class PauseManager : MonoBehaviour
     [SerializeField] private GameObject settingsPanel;
     [SerializeField] private GameObject confirmationPanel;
 
+    [SerializeField, Tooltip("The index for the scene that contains the boss fight to prevent saving on opening the pause menu for checkpoint functionality")] private int bossSceneIndex;
+
     [HideInInspector] public bool isGamePaused = false;
     [HideInInspector] public bool usingController { get; private set; } = false;
 
@@ -273,7 +275,7 @@ public class PauseManager : MonoBehaviour
     private void PauseGame()
     {
         // Save game before pausing
-        if (SaveManager.Instance != null)
+        if (SaveManager.Instance != null && SceneManager.GetActiveScene().buildIndex != bossSceneIndex)
         {
             SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
         }

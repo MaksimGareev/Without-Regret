@@ -76,6 +76,9 @@ public class LockPicking : MonoBehaviour
     private PlayerInput input;
     bool isController;
 
+    [Header("Animation")]
+    public Animator animator;
+
     private bool IsController
     {
         get { return isController; }
@@ -99,6 +102,7 @@ public class LockPicking : MonoBehaviour
     {
         updateInputPrompt(IsController);
         player = GameObject.FindGameObjectWithTag("Player").transform;
+        animator = player.GetComponentInChildren<Animator>();
         rb = player.GetComponent<Rigidbody>();
         Source = FindAnyObjectByType<AudioSource>();
         if (Source == null)
@@ -135,12 +139,22 @@ public class LockPicking : MonoBehaviour
 
     private void OnEnable()
     {
-        controls.Enable(); 
+        controls.Enable();
+        if (animator)
+        {
+            animator.SetBool("isLockpicking", true);
+        }
     }
 
     private void OnDisable()
     {
         controls.Disable();
+        if (animator)
+        {
+            animator.SetBool("isLockpicking", false);
+        }
+
+
     }
     // Update is called once per frame
     void Update()
