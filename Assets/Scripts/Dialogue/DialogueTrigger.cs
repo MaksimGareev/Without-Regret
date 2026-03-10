@@ -372,8 +372,21 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
 
     private void OnTriggerEnter(Collider other)
     {
-        StartDialogueFromTrigger(other);
+        PlayerController playerController = other.GetComponent<PlayerController>();
+        if (playerController != null)
+        {
+            StartCoroutine(WaitforPlayerReady(playerController, other));
+        }
+
+        //StartDialogueFromTrigger(other);
         //StartCoroutine(WaitForGameManagerReady(other));
+    }
+
+    private IEnumerator WaitforPlayerReady(PlayerController playerController, Collider other)
+    {
+        yield return new WaitForSeconds(0.1f);
+
+        StartDialogueFromTrigger(other);
     }
 
     private IEnumerator WaitForGameManagerReady(Collider other)

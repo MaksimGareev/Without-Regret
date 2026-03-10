@@ -48,6 +48,7 @@ public class GameManager : MonoBehaviour
     public ObjectiveCanvas objectiveCanvas;
     public GameObject objectivePanel;
     [HideInInspector] public GameObject eventSystem;
+    public SceneLoadManager sceneLoadManager;
 
     [HideInInspector] public NewDialogueManager newDialogueManager;
 
@@ -123,6 +124,7 @@ public class GameManager : MonoBehaviour
         dialogueManager = GetComponentInChildren<DialogueManager>();
         objectiveManager = GetComponentInChildren<ObjectiveManager>().gameObject;
         eventSystem = GetComponentInChildren<EventSystem>().gameObject;
+        sceneLoadManager = GetComponentInChildren<SceneLoadManager>();
     }
 
     // Called from the scene change event subscribed to above
