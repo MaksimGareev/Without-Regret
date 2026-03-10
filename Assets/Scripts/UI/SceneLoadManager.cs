@@ -1,11 +1,14 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class SceneLoadManager : MonoBehaviour
 {
+    public static SceneLoadManager Instance { get; private set; }
+
     [Header("References")]
     [Tooltip("The black screen image that will be faded in and out.")]
     [SerializeField] private Image blackScreen;
@@ -20,8 +23,20 @@ public class SceneLoadManager : MonoBehaviour
     [Tooltip("The duration of the fade in and fade out animations.")]
     [SerializeField] private float fadeDuration = 1f;
 
+    [HideInInspector] public UnityEvent OnSceneLoaded = new();
+
     private void Awake()
     {
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+
         if (blackScreen == null)
         {
             Debug.LogError("Black screen image reference is missing in the SceneLoadManager script.");
@@ -54,7 +69,7 @@ public class SceneLoadManager : MonoBehaviour
     private IEnumerator LoadSceneCoroutine(string sceneName)
     {
         yield return StartCoroutine(FadeInBlackScreen());
-        Time.timeScale = 0f;
+        //Time.timeScale = 0f;
 
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
         asyncLoad.allowSceneActivation = false;
@@ -67,16 +82,13 @@ public class SceneLoadManager : MonoBehaviour
         asyncLoad.allowSceneActivation = true;
 
         yield return null;
-        yield return new WaitForSecondsRealtime(0.1f);
 
+        OnSceneLoaded?.Invoke();
         Physics.SyncTransforms();
 
-        while (FindObjectsByType<GameObject>(FindObjectsSortMode.None).Length == 0)
-        {
-            yield return null;
-        }
+        yield return null;
 
-        Time.timeScale = 1f;
+        //Time.timeScale = 1f;
         yield return StartCoroutine(FadeOutBlackScreen());
     }
 
