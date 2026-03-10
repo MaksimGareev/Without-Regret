@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
+using Unity.VisualScripting;
 
 public class PlayerController : MonoBehaviour, ISaveable
 {   
@@ -76,6 +77,7 @@ public class PlayerController : MonoBehaviour, ISaveable
     private bool isMoving;
     private readonly float moveCheckDelay = 0.1f;
     private float lastStoppedCheck = -1f;
+    private OrbitingPlatform currentPlatform;
 
     private void Awake()
     {
@@ -498,6 +500,14 @@ public class PlayerController : MonoBehaviour, ISaveable
         }
 
         Vector3 combined = horizontalMove + verticalMove;
+
+        Vector3 platformVelocity = Vector3.zero;
+        if (currentPlatform != null)
+        {
+            platformVelocity = currentPlatform.platformVelocity;
+            combined += platformVelocity * Time.deltaTime;
+        }
+
         Controller.Move(combined);
 
         if (move.sqrMagnitude > 0.01f && !isThrowing)
@@ -794,5 +804,10 @@ public class PlayerController : MonoBehaviour, ISaveable
         //Animator.SetBool("isGrabbing", false);
         Animator.SetBool("isFloating", false);
         //Animator.SetBool("isCollecting", false);
+    }
+
+    public void SetCurrentPlatform(OrbitingPlatform platform)
+    {
+        currentPlatform = platform;
     }
 }
