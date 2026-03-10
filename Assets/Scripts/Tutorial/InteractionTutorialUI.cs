@@ -50,6 +50,7 @@ public class InteractionTutorialUI : MonoBehaviour
 
     public void ShowTutorial(string text, System.Action onConfirm = null)
     {
+        DisableOtherCanvases();
         if (panel == null || descriptionText == null)
         {
             Debug.LogError("Tutorial UI references missing");
@@ -71,6 +72,7 @@ public class InteractionTutorialUI : MonoBehaviour
         {
             playerController.DisableInput();
         }
+
     }
 
     public void Update()
@@ -93,6 +95,7 @@ public class InteractionTutorialUI : MonoBehaviour
     public void HideTutorial()
     {
         StartCoroutine(FadeOutAndDeactivate());
+        EnableOtherCanvases();
     }
 
     private IEnumerator FadeOutAndDeactivate()
@@ -140,6 +143,68 @@ public class InteractionTutorialUI : MonoBehaviour
        if (Instance == this)
         {
             Instance = null;
+        }
+    }
+
+    private void EnableOtherCanvases()
+    {
+        Debug.Log("Enabling other canvases from Journal");
+        if (GameManager.Instance == null) return;
+
+        if (GameManager.Instance.mainCanvas != null && !GameManager.Instance.mainCanvas.activeSelf)
+        {
+            GameManager.Instance.mainCanvas.SetActive(true);
+        }
+
+        if (GameManager.Instance.interactionIconsCanvas != null && !GameManager.Instance.interactionIconsCanvas.activeSelf)
+        {
+            GameManager.Instance.interactionIconsCanvas.SetActive(true);
+        }
+
+        if (GameManager.Instance.playerUICanvas != null && !GameManager.Instance.playerUICanvas.activeSelf)
+        {
+            GameManager.Instance.playerUICanvas.SetActive(true);
+        }
+
+        if (GameManager.Instance.gameOverCanvas != null && !GameManager.Instance.gameOverCanvas.activeSelf)
+        {
+            GameManager.Instance.gameOverCanvas.SetActive(GameOverManager.Instance.IsGameOver);
+        }
+
+        if (GameManager.Instance.objectivePanel != null && !GameManager.Instance.objectivePanel.activeSelf)
+        {
+            GameManager.Instance.objectivePanel.SetActive(GameManager.Instance.objectiveCanvas.IsVisible());
+        }
+    }
+
+    private void DisableOtherCanvases()
+    {
+        Debug.Log("Disabling other canvases from Journal");
+        if (GameManager.Instance == null) return;
+
+        if (GameManager.Instance.mainCanvas != null && GameManager.Instance.mainCanvas.activeSelf)
+        {
+            GameManager.Instance.mainCanvas.SetActive(false);
+        }
+
+        if (GameManager.Instance.interactionIconsCanvas != null && GameManager.Instance.interactionIconsCanvas.activeSelf)
+        {
+            GameManager.Instance.interactionIconsCanvas.SetActive(false);
+        }
+
+        if (GameManager.Instance.playerUICanvas != null && GameManager.Instance.playerUICanvas.activeSelf)
+        {
+            GameManager.Instance.playerUICanvas.SetActive(false);
+        }
+
+        if (GameManager.Instance.gameOverCanvas != null && GameManager.Instance.gameOverCanvas.activeSelf)
+        {
+            GameManager.Instance.gameOverCanvas.SetActive(false);
+        }
+
+        if (GameManager.Instance.objectivePanel != null && GameManager.Instance.objectivePanel.activeSelf)
+        {
+            GameManager.Instance.objectivePanel.SetActive(false);
         }
     }
 
