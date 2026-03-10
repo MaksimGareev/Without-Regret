@@ -1,0 +1,131 @@
+{
+  "dialogueLines": [
+    {
+      "LineID": "Start",
+      "Speaker": "Penelope",
+      "NPCGender": "female",
+      "text": "(Panting) I'm finally out of the forest...I can finally tell Irene...",
+      "lineTone": 0,
+      "NextLineID": "II",
+      "requiredMorality": 0,
+      "choices": []
+    },
+    {
+      "LineID": "II",
+      "Speaker": "Penelope",
+      "NPCGender": "female",
+      "text": "Wait, what's going on? Who are y-...Echo? What're you doing here?",
+      "lineTone": 0,
+      "NextLineID": "III",
+      "requiredMorality": 0,
+      "choices": []
+    },
+    {
+      "LineID": "III",
+      "Speaker": "Penelope",
+      "NPCGender": "female",
+      "text": "I feel strange...like I could float away. Please, what's going on??",
+      "lineTone": 0,
+      "requiredMorality": 0,
+      "choices": [
+        {
+          "text": "Breathe, you're okay.",
+          "NextLineID": "Breathe",
+          "moralityChange": 1,
+          "directionString": "Up"
+        },
+        {
+          "text": "Calm down.",
+          "NextLineID": "Calm Down",
+          "moralityChange": -1,
+          "directionString": "Down"
+        }
+      ]
+    },
+    {
+      "LineID": "Breathe",
+      "Speaker": "Echo",
+      "NPCGender": "female",
+      "text": "Breathe, Penelope. I know it's scary, but you're okay. Give me a minute, I'll explain.",
+      "lineTone": 0,
+      "NextLineID": "Trust",
+      "requiredMorality": 0,
+      "choices": []
+    },
+    {
+      "LineID": "Calm Down",
+      "Speaker": "Echo",
+      "NPCGender": "female",
+      "text": "Calm down. I can't hear myself think. If you give me 2 seconds, I'll tell you what's going on.",
+      "lineTone": 0,
+      "NextLineID": "Sorry",
+      "requiredMorality": 0,
+      "choices": []
+    },
+    {
+      "LineID": "Trust",
+      "Speaker": "Penelope",
+      "NPCGender": "female",
+      "text": "Okay, I'm trusting you Echo. Where are we, what's going on?",
+      "lineTone": 0,
+      "requiredMorality": 0,
+      "choices": [
+        {
+          "text": "I'm sorry, but you've already died...",
+          "NextLineID": "Nice",
+          "moralityChange": 1,
+          "directionString": "Up"
+        },
+        {
+          "text": "This might take a while...",
+          "NextLineID": "Nice II",
+          "moralityChange": -1,
+          "directionString": "Down"
+        }
+      ]
+    },
+    {
+      "LineID": "Sorry",
+      "Speaker": "Penelope",
+      "NPCGender": "female",
+      "text": "I'm sorry. I'm just really scared. Please, what's happening?",
+      "lineTone": 0,
+      "requiredMorality": 0,
+      "choices": [
+        {
+          "text": "I'm sorry, but you've already died...",
+          "NextLineID": "Nice",
+          "moralityChange": 1,
+          "directionString": "Up"
+        },
+        {
+          "text": "This might take a while...",
+          "NextLineID": "Nice II",
+          "moralityChange": -1,
+          "directionString": "Down"
+        }
+      ]
+    },
+    {
+      "LineID": "Nice",
+      "Speaker": "Echo",
+      "NPCGender": "female",
+      "text": "I'm sorry Penelope, but you've passed away. You've been dead for some time now...",
+      "lineTone": 0,
+      "NextLineID": "Nice II",
+      "requiredMorality": 0,
+      "choices": []
+    },
+    {
+      "LineID": "Nice II",
+      "Speaker": "Echo",
+      "NPCGender": "female",
+      "text": "This place we're in, while it looks just like back home, it's actually an 'afterlife' of sorts, called The Astral Plane.",
+      "lineTone": 0,
+      "NextLineID": "Trust",
+      "requiredMorality": 0,
+      "choices": [],
+      "endDialogueAfterLine": true
+    }
+  ]
+}
