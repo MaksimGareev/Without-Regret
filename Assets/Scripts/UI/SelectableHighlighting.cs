@@ -116,6 +116,7 @@ public class SelectableHighlighting : MonoBehaviour
     public void OnPointerExit(PointerEventData eventData)
     {
         if (stayHighlighted) return; // If the button should stay highlighted, don't unhighlight it
+        EventSystem.current.SetSelectedGameObject(null);
         RemoveHighlight();
     }
 
@@ -123,6 +124,7 @@ public class SelectableHighlighting : MonoBehaviour
     {
         if (!selectable.interactable) return;
         EventSystem.current.SetSelectedGameObject(null);
+        EventSystem.current.SetSelectedGameObject(this.gameObject);
         ApplyHighlight();
     }
 

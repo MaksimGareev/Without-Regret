@@ -13,10 +13,11 @@ public class Inventory : MonoBehaviour, ISaveable
     [HideInInspector] public List<ItemData> KeyItems => keyItems; // Public getter for key items list
     [HideInInspector] public List<ItemData> OtherItems => otherItems; // Public getter for other items list
     private GameObject backpack; // Reference to the physical Backpack GameObject on the player
+    [SerializeField] private bool hasBackpack = false;
 
     [Header("Debugging")]
     [SerializeField] private bool showDebugLogs = false;
-    [SerializeField] private bool hasBackpack = false;
+    private bool inventoryLoaded = false; // Flag to indicate if the inventory has finished loading from save data
     private PlayerController playerController;
     private PlayerEquipItem playerEquipItem;
     private ToggleInventoryUI toggleInventoryUI;
@@ -103,6 +104,8 @@ public class Inventory : MonoBehaviour, ISaveable
 
     public void LoadFrom(SaveData data)
     {
+        inventoryLoaded = false;
+
         itemsList.Clear();
         itemsList.AddRange(data.inventorySaveData.items);
 
@@ -121,6 +124,8 @@ public class Inventory : MonoBehaviour, ISaveable
         }
 
         GameManager.Instance.inventoryInteractingScript.RefreshInventoryUI();
+
+        inventoryLoaded = true;
     }
     
     private void SetBackpackActive()
@@ -257,6 +262,57 @@ public class Inventory : MonoBehaviour, ISaveable
         GameManager.Instance.inventoryPopupText.gameObject.SetActive(true);
         yield return new WaitForSecondsRealtime(1.5f);
         GameManager.Instance.inventoryPopupText.gameObject.SetActive(false);
+    }
+
+    private void SetHasBackpack(bool newHasBackpack)
+    {
+        hasBackpack = newHasBackpack;
+        if (hasBackpack)
+        {
+            SetBackpackActive();
+            toggleInventoryUI.hasBackpack = true;
+        }
+        else
+        {
+            backpack.SetActive(false);
+            toggleInventoryUI.hasBackpack = false;
+        }
+    }
+
+    public IEnumerator OverwriteInventory(List<ItemData> newInventory, bool newHasBackpack)
+    {
+        while (!inventoryLoaded)
+        {
+            Debug.LogWarning("Inventory not loaded yet, waiting...");
+            yield return null;
+        }
+
+        itemsList.Clear();
+
+        if (newInventory != null)
+        {
+            itemsList.AddRange(newInventory);
+        }
+
+        keyItems.Clear();
+        otherItems.Clear();
+
+        foreach (var item in newInventory)
+        {
+            if (item.ItemType == ItemType.KeyItem)
+            {
+                keyItems.Add(item);
+            }
+            else
+            {
+                otherItems.Add(item);
+            }
+        }
+
+        SetHasBackpack(newHasBackpack);
+
+        Debug.Log($"Inventory overwritten with {newInventory.Count} items. Backpack status: {newHasBackpack}");
+        yield break;
     }
 }
 
