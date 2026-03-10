@@ -413,7 +413,7 @@ public class GameOverManager : MonoBehaviour
         if (SaveManager.Instance != null)
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-            SaveManager.Instance.LoadGame(SaveSystem.activeSaveSlot, SceneManager.GetActiveScene());
+            SaveManager.Instance.LoadGame(SaveSystem.activeSaveSlot);
         }
         else
         {
