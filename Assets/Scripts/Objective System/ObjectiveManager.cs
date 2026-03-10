@@ -160,7 +160,7 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
     }
 
     // Handles logic for activating an objective
-    public void ActivateObjective(ObjectiveData objective)
+    public void ActivateObjective(ObjectiveData objective, Scene scene)
     {
         // Early returns if objective is null or already active/completed
         if (objective == null)
@@ -182,7 +182,7 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
         // Fire event so ObjectiveUI (or other listeners) can react
         OnObjectiveActivated.Invoke(newObjective);
 
-        ManageObjectiveIndicator(objective);
+        ManageObjectiveIndicator(objective, scene);
 
         // Save the game after activating a new objective
         if (SaveManager.Instance != null)
@@ -199,7 +199,7 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
 
         if (found != null)
         {
-            ActivateObjective(found);
+            ActivateObjective(found, SceneManager.GetActiveScene());
             Debug.Log($"Objective '{found.title}' has been activated");
         }
         else
@@ -273,7 +273,7 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
         {
             if (!completedObjectives.Exists(o => o.data == next))
             {
-                ActivateObjective(next);
+                ActivateObjective(next, SceneManager.GetActiveScene());
                 yield break;
             }
         }
@@ -281,7 +281,7 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
 
     // Ensures that an objective is automatically activated when the game starts
     // This is primarily called by the SaveManager upon loading a scene
-    public void EnsureActiveObjective()
+    public void EnsureActiveObjective(Scene newScene)
     {
         // Move objective to completed list if not already moved there
         if (activeObjectives.Count > 0)
@@ -300,7 +300,7 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
         {
             if (!completedObjectives.Exists(o => o.data == allObjectives[i]))
             {
-                ActivateObjective(allObjectives[i]);
+                ActivateObjective(allObjectives[i], newScene);
                 return;
             }
         }
@@ -358,7 +358,7 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
 
         if (SceneManager.GetActiveScene().name != "MainMenu")
         {
-            EnsureActiveObjective();
+            EnsureActiveObjective(SceneManager.GetActiveScene());
         }
     }
 
@@ -397,18 +397,21 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
             }
         }
 
-        ActivateObjective(objective);
+        ActivateObjective(objective, SceneManager.GetActiveScene());
     }
 
-    private void ManageObjectiveIndicator(ObjectiveData objective)
+    private void ManageObjectiveIndicator(ObjectiveData objective, Scene scene)
     {
         if (objective.markerTransform != null)
         {
-            Debug.Log("Active Scene: " + SceneManager.GetActiveScene().buildIndex);
-            if (int.Equals(SceneManager.GetActiveScene().buildIndex, objective.sceneIndex) || int.Equals(SceneManager.GetActiveScene().buildIndex, 0))
+            if (int.Equals(scene.buildIndex, objective.sceneIndex))
             {
+                Debug.Log("moving Marker");
                 WorldSpaceIndicator.transform.position = objective.markerTransform;
-                WorldSpaceIndicator.SetActive(true);
+                if (objective.hasMarker)
+                {
+                    WorldSpaceIndicator.SetActive(true);
+                }
             }
             else
             {
@@ -419,13 +422,22 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
         {
             WorldSpaceIndicator.SetActive(false);
         }
+        if (objective.hasOffScreenMarker)
+        {
+            ScreenSpaceIndicator.disableIndicator = false;
+        }
+        else
+        {
+            ScreenSpaceIndicator.disableIndicator = true;
+        }
     }
 
     private void OnSceneLoad(Scene scene, LoadSceneMode mode)
     {
-        if(SceneManager.GetActiveScene().buildIndex != 0)
+        if(scene.buildIndex != 0)
         {
-            EnsureActiveObjective();
+            Debug.Log("Scene Loaded: " + scene.name);
+            EnsureActiveObjective(scene);
             if(WorldSpaceIndicator.GetComponent<ObjectiveMarker>() != null)
             {
                 WorldSpaceIndicator.GetComponent<ObjectiveMarker>().WorldIndicator.GetComponent<ObjectiveSpriteBillboard>().FindCamera();
