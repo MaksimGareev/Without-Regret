@@ -10,22 +10,24 @@ public class VoidProjectile : MonoBehaviour
     private ObjectPool enemyPoolPool;
     private VoidPoolSettings voidPoolSettings;
     private Action onExplosion;
+    private bool showDebugLogs;
 
     private float initTime;
 
-    public void Initialize(Action onExplosion, ObjectPool voidPoolPool, ObjectPool enemyPoolPool, VoidPoolSettings settings)
+    public void Initialize(Action onExplosion, ObjectPool voidPoolPool, ObjectPool enemyPoolPool, VoidPoolSettings settings, bool showDebugLogs)
     {
         this.voidPoolPool = voidPoolPool;
         this.enemyPoolPool = enemyPoolPool;
         this.onExplosion = onExplosion;
         voidPoolSettings = settings;
+        this.showDebugLogs = showDebugLogs;
 
         initTime = Time.time;
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        Debug.Log("Void projectile burst");
+        if (showDebugLogs) Debug.Log("Void projectile burst");
 
         if (collision.transform.CompareTag("Player"))
         {
@@ -43,7 +45,7 @@ public class VoidProjectile : MonoBehaviour
             if (voidPool.TryGetComponent<VoidPool>(out var pool))
             {
                 // Update void pool with necessary parameters and give it the enemy pool + self pool
-                pool.Initialize(voidPoolSettings, enemyPoolPool, voidPoolPool);
+                pool.Initialize(voidPoolSettings, enemyPoolPool, voidPoolPool, showDebugLogs);
             }
             else
             {
