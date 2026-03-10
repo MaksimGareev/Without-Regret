@@ -59,7 +59,7 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
     // wandering
     private NpcMovement npcWander;
 
-    private bool playerInRange = false;
+    //private bool playerInRange = false;
     private Transform player;
     //private PlayerControls controls;
     [Tooltip("A bool identifying if the player has talked to this NPC already")]

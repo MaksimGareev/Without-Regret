@@ -8,22 +8,21 @@ public class PlayerPossessing : MonoBehaviour
 {
     [Header("Possession Settings")]
     [SerializeField] private float possessionDuration = 5f;
-    [SerializeField] private float possessionRange = 50f;
-    [SerializeField] private float searchConeAngle = 30f;
+    //[SerializeField] private float possessionRange = 50f;
+    //[SerializeField] private float searchConeAngle = 30f;
     [SerializeField] private KeyCode possessKey = KeyCode.R;
     [SerializeField] private KeyCode possessButton = KeyCode.JoystickButton9;
     [SerializeField] private GameObject iconPrefab;
     [SerializeField] private Vector3 iconOffset = new Vector3(0f, 2f, 0f);
     [SerializeField] private LayerMask mask;
 
-    //private Slider possessionBar;
     private GameObject popupInstance;
     private PlayerController playerController;
     private Rigidbody playerRigidbody;
     private PossessedEnemyResisting possessedEnemyMovement;
     private PatrollingEnemy normalEnemyMovement;
     private EnemyFieldOfView enemyPOV;
-    private NavMeshAgent enemyNavMeshAgent;
+    //private NavMeshAgent enemyNavMeshAgent;
     private Rigidbody enemyRigidbody;
     private float possessionTimer;
     private float TimeSincePossession;
