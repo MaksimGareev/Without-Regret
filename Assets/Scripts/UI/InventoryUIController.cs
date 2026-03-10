@@ -1,11 +1,11 @@
 using System.Collections.Generic;
-//using UnityEditor.SearchService;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-public class InventoryUIController : MonoBehaviour//, IPointerEnterHandler, IPointerExitHandler
+
+public class InventoryUIController : MonoBehaviour
 {
     [Header("Grid Settings")]
     [SerializeField] private int rows = 4;
@@ -13,6 +13,9 @@ public class InventoryUIController : MonoBehaviour//, IPointerEnterHandler, IPoi
     [SerializeField] private Button[] buttons;
     [SerializeField] private Sprite emptySlotSprite;
     [SerializeField] private InventoryTooltipUI tooltipUI;
+    [SerializeField] private Image backgroundPanel;
+    [SerializeField] private Sprite rightTabSprite;
+    [SerializeField] private Sprite leftTabSprite;
     [SerializeField] private Button keyItemsTabButton;
     [SerializeField] private Button otherItemsTabButton;
     [SerializeField] private Color highlightColor = new Color(0.70f, 0.70f, 0.70f, 0.70f);
@@ -217,7 +220,7 @@ public class InventoryUIController : MonoBehaviour//, IPointerEnterHandler, IPoi
             }
         }
 
-        //HighlightSelectedSlot();
+        HighlightSelectedSlot();
     }
 
     private void HandleControllerInput()
@@ -410,15 +413,24 @@ public class InventoryUIController : MonoBehaviour//, IPointerEnterHandler, IPoi
         currentTab = newTab;
         RefreshInventoryUI();
 
-        if (currentTab == InventoryTab.KeyItems)
+        if (backgroundPanel != null && rightTabSprite != null && leftTabSprite != null)
         {
-            keyItemsTabButton.image.color = Color.white;
-            otherItemsTabButton.image.color = hoverColor;
-        }
-        else
-        {
-            keyItemsTabButton.image.color = hoverColor;
-            otherItemsTabButton.image.color = Color.white;
+            if (currentTab == InventoryTab.KeyItems)
+            {
+                backgroundPanel.sprite = leftTabSprite;
+
+                // keyItemsTabButton.GetComponent<SelectableHighlighting>().stayHighlighted = true;
+                // keyItemsTabButton.GetComponent<SelectableHighlighting>()?.ApplyHighlight(true);
+                // otherItemsTabButton.GetComponent<SelectableHighlighting>()?.RemoveHighlight(true);
+            }
+            else
+            {
+                backgroundPanel.sprite = rightTabSprite;
+
+                // otherItemsTabButton.GetComponent<SelectableHighlighting>().stayHighlighted = true;
+                // otherItemsTabButton.GetComponent<SelectableHighlighting>()?.ApplyHighlight(true);
+                // keyItemsTabButton.GetComponent<SelectableHighlighting>()?.RemoveHighlight(true);
+            }
         }
     }
 
