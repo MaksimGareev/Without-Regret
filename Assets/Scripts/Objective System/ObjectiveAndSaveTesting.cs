@@ -239,6 +239,12 @@ public class ObjectiveAndSaveTesting : MonoBehaviour
         }
 
         var activeObjectives = ObjectiveManager.Instance.GetActiveObjectives();
+
+        if (activeObjectives == null)
+        {
+            Debug.LogWarning("No active objectives to skip");
+            return;
+        }
             
         foreach (var obj in activeObjectives)
         {
