@@ -24,6 +24,12 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
     [Tooltip("Reference to the ObjectiveCanvas that exists as a child of this Objective Manager Prefab.")]
     [SerializeField] private ObjectiveCanvas objectiveCanvas;
 
+    [Tooltip("UI indicator for offscreen objectives")]
+    [SerializeField] private OffscreenObjectiveIndicator ScreenSpaceIndicator;
+
+    [Tooltip("In-world Objective Indicator")]
+    [SerializeField] private GameObject WorldSpaceIndicator;
+
     // Events for when an objective is activated, updated, or completed. 
     // These are used to communicate with the Objective UI and other listeners so that they can react accordingly
     [HideInInspector] public UnityEvent<ObjectiveInstance> OnObjectiveActivated = new();
@@ -43,7 +49,10 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
             Destroy(gameObject);
             return;
         }
-
+        if(ScreenSpaceIndicator != null && WorldSpaceIndicator != null)
+        {
+            ScreenSpaceIndicator.target = WorldSpaceIndicator.transform;
+        }
         // Find objective canvas reference in children, log error if not found
         objectiveCanvas = GetComponentInChildren<ObjectiveCanvas>();
         if (objectiveCanvas == null)
@@ -54,6 +63,18 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
         // Register self with SaveManager as a savable entity
         StartCoroutine(RegisterWhenReady());
     }
+
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoad;
+    }
+
+    // Unsubscribe from the sceneLoaded event when the SaveManager is disabled to prevent memory leaks and unintended behavior
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoad;
+    }
+
 
     // Wait until SaveManager instance is available before registering, since SaveManager is 
     // also a singleton and may not be initialized yet when ObjectiveManager's Awake is called.
@@ -161,7 +182,7 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
         // Fire event so ObjectiveUI (or other listeners) can react
         OnObjectiveActivated.Invoke(newObjective);
 
-        // Debug.Log($"Objective '{newObjective.data.title}' has been activated");
+        ManageObjectiveIndicator(objective);
 
         // Save the game after activating a new objective
         if (SaveManager.Instance != null)
@@ -377,6 +398,39 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
         }
 
         ActivateObjective(objective);
+    }
+
+    private void ManageObjectiveIndicator(ObjectiveData objective)
+    {
+        if (objective.markerTransform != null)
+        {
+            Debug.Log("Active Scene: " + SceneManager.GetActiveScene().buildIndex);
+            if (int.Equals(SceneManager.GetActiveScene().buildIndex, objective.sceneIndex) || int.Equals(SceneManager.GetActiveScene().buildIndex, 0))
+            {
+                WorldSpaceIndicator.transform.position = objective.markerTransform;
+                WorldSpaceIndicator.SetActive(true);
+            }
+            else
+            {
+                WorldSpaceIndicator.SetActive(false);
+            }
+        }
+        else
+        {
+            WorldSpaceIndicator.SetActive(false);
+        }
+    }
+
+    private void OnSceneLoad(Scene scene, LoadSceneMode mode)
+    {
+        if(SceneManager.GetActiveScene().buildIndex != 0)
+        {
+            EnsureActiveObjective();
+            if(WorldSpaceIndicator.GetComponent<ObjectiveMarker>() != null)
+            {
+                WorldSpaceIndicator.GetComponent<ObjectiveMarker>().WorldIndicator.GetComponent<ObjectiveSpriteBillboard>().FindCamera();
+            }
+        }
     }
 
     // Getters for active and completed objectives lists.
