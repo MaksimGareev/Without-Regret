@@ -62,7 +62,7 @@ public class ToggleInventoryUI : MonoBehaviour
         }
     }
 
-    private void ToggleInventory()
+    public void ToggleInventory()
     {
         if (slideRoutine != null)
         {
@@ -110,4 +110,5 @@ public class ToggleInventoryUI : MonoBehaviour
             GameManager.Instance.InventoryUI.SetActive(false);
         }
     }
+
 }

@@ -10,22 +10,37 @@ public class NewDialogueManager : MonoBehaviour
     public static NewDialogueManager Instance;
 
     [Header("UI")]
+    [Tooltip("Main dialogue panel shown during dialogue interaction")]
     public GameObject dialoguePanel;
+    [Tooltip("The display text of the current dialogue line")]
     public TextMeshProUGUI dialogueText;
+    [Tooltip("Name display of the speaker")]
     public TextMeshProUGUI npcNameText;
+    [Tooltip("The transform containing the dialogue choices")]
     [SerializeField] Transform choiceContainer;
+    [Tooltip("The arrow image showing the player which direction to press to select an answer")]
     [SerializeField] GameObject directionalImage;
+    [Tooltip("Button prefab made for answer choices")]
     [SerializeField] GameObject choicePrefab;
+    [Tooltip("Blinking continue arrow indicating the player can continue to the next line")]
     [SerializeField] GameObject continueArrow;
+    [Tooltip("A scroll rect used to scroll through longer instances of dialogue")]
     [SerializeField] ScrollRect scrollRect;
+    [Tooltip("Slider indicating the time the player has to make a dialogue choice")]
     [SerializeField] Slider choiceTimerSlider;
+    [Tooltip("Pop up text showing the players change in morality and current total morality")]
     [SerializeField] TextMeshProUGUI popupText;
+    [Tooltip("The visual feedback of the players dialogue choice input")]
     [SerializeField] List<HoldDirectionVisual> holdVisuals;
 
     [Header("Player Portrait")]
+    [Tooltip("Copy image of the players UI")]
     public Image playerPortrait;
+    [Tooltip("Sprites that appear in response to different answer choices")]
     [SerializeField] Sprite defaultPortrait, positivePortrait, negativePortrait, neutralPortrait;
+    [Tooltip("How long the transition takes between portraits")]
     [SerializeField] float portraitFadeTime = 0.25f;
+    [Tooltip("How long the new portrait stays before reverting back to the default")]
     [SerializeField] float portraitHoldTime = 0.75f;
 
     [Header("NPC Portraits")]
@@ -34,6 +49,7 @@ public class NewDialogueManager : MonoBehaviour
 
     [Header("Audio")]
     [SerializeField] AudioSource typingSource;
+    [Tooltip("Audio clips of each letter A-Z")]
     [SerializeField] List<AudioClip> letterClips;
 
     [Header("Audio Mixer Groups")]
@@ -41,8 +57,11 @@ public class NewDialogueManager : MonoBehaviour
     [SerializeField] AudioMixerGroup femaleVoiceGroup;
 
     [Header("Choice Selection")]
+    [Tooltip("How long the player needs to hold to confirm a selection")]
     [SerializeField] float holdTimeToSelect = 1.2f;
+    [Tooltip("How much time the player has to make a choice")]
     [SerializeField] float choiceTimeLimit = 15f;
+    [Tooltip("How far the answer choices are spaced out from the center of the choice container")]
     [SerializeField] float choiceDistance = 250f;
 
     [Header("NPC movement (trying to remove")]
@@ -122,6 +141,7 @@ public class NewDialogueManager : MonoBehaviour
         controls.Dialogue.Confirm.performed += _ => OnConfirmPressed();
     }
 
+    // Build the dictionary of dialogue letter sounds
     void BuildLetterSounds()
     {
         for (int i = 0; i < letterClips.Count; i++)
@@ -146,8 +166,10 @@ public class NewDialogueManager : MonoBehaviour
         HandleDirectionalSelection();
     }
 
+    // Load dialogue based on the intended Scriptable object dialogue 
     public void StartDialogue(NewDialogueData dialogueSO, NewDialogueTrigger trigger)
     {
+        // check if scriptable object is present
         if (dialogueSO == null || dialogueSO.dialogueLines.Count == 0)
         {
             Debug.LogError("Dialogue data is empty or missing");
@@ -158,6 +180,7 @@ public class NewDialogueManager : MonoBehaviour
         dialogue = dialogueSO;
         lineLookup.Clear();
 
+        // search for line id to start dialogue
         foreach (var line in dialogue.dialogueLines)
         {
             lineLookup[line.LineID] = line;
@@ -168,17 +191,20 @@ public class NewDialogueManager : MonoBehaviour
         playerController = FindAnyObjectByType<PlayerController>();
         cam = Camera.main.GetComponent<CameraMovement>();
 
+        // activate dialogue UI
         dialoguePanel.SetActive(true);
         playerPortrait.gameObject.SetActive(true);
         npcNameText.text = dialogue.npcName;
 
         DialogueIsActive = true;
 
+        // set player controler to dialogue
         if (playerController != null)
         {
             playerController.SetDialogueActive(true);
         }
 
+        // zoom the camera if focus camera on trigger bool is true
         if (cam != null)
         {
             cam.SetCameraLocked(true);
@@ -191,8 +217,10 @@ public class NewDialogueManager : MonoBehaviour
         ShowLine();
     }
 
+    // Show the current line
     private void ShowLine()
     {
+        // If there is no line ID end dialogue
         if (!lineLookup.ContainsKey(currentLineID))
         {
             EndDialogue();
@@ -203,39 +231,33 @@ public class NewDialogueManager : MonoBehaviour
         dialogueText.text = "";
         npcNameText.text = currentLine.Speaker;
 
+        // set portrait and voice of speaker
         SetNPCPortrait(currentLine.lineTone);
         SetVoiceGender(currentLine.NPCGender);
 
+        // hide continue arrow and choices
         continueArrow.SetActive(false);
         ClearChoices();
 
+        // type the current line
         typingRoutine = StartCoroutine(TypeLine(currentLine));
 
-        /*
-        if (currentLine.choices != null && currentLine.choices.Count > 0)
-        {
-            SelectChoice(currentLine.choices[0]);
-            return;
-        }
-
-        if (currentLine.endDialogueAfterLine)
-        {
-            EndDialogue();
-            return;
-        }
-        */
     }
 
+    // function that handles the typing of the dialogue line
     IEnumerator TypeLine(NewDialogueLineData line)
     {
         typing = true;
+        // hide slider durring typing
         choiceTimerSlider.gameObject.SetActive(false);
 
+        // find intended sound for each letter in current line
         foreach (char c in line.text)
         {
             dialogueText.text += c;
             PlayTypingSound(c);
 
+            // create a small delay for punctuation
             float delay = .035f;
 
             switch (c)
@@ -258,10 +280,12 @@ public class NewDialogueManager : MonoBehaviour
 
         typing = false;
 
+        // if there are no choices present after the line is finished typing have the continue arrow spawn
         if (line.choices == null || line.choices.Count == 0)
         {
             continueArrow.SetActive(true);
         }
+        // if choices are available after line is built spawn choices
         else
         {
             SpawnChoices(line.choices);
@@ -270,27 +294,44 @@ public class NewDialogueManager : MonoBehaviour
 
     void OnConfirmPressed()
     {
+        // don't allow player to skip anything durring pauses in dialogue
         if (!DialogueIsActive) return;
         if (currentLine == null) return;
         if (resolvingChoice) return;
 
+        // if line is typing and confirm is pressed have the line be build instantly and spawn arrow if needed
         if (typing)
         {
-            StopCoroutine(typingRoutine);
+            if (typingRoutine != null)
+            {
+                StopCoroutine(typingRoutine);
+            }
             dialogueText.text = currentLine.text;
             typing = false;
-            continueArrow.SetActive(true);
+
+            if (currentLine.choices == null || currentLine.choices.Count == 0)
+            {
+                continueArrow.SetActive(true);
+            }
+            else
+            {
+                SpawnChoices(currentLine.choices);
+            }
+
             return;
         }
 
         if (canChoose) return;
 
+        // if end dialogue after line is true and player presses confirm end the dialogue
         if (currentLine.endDialogueAfterLine)
         {
+            HandleNPCMovementsAfterLine();
             EndDialogue();
             return;
         }
 
+        // go to next line if there is a next line ID intended
         if (!string.IsNullOrEmpty(currentLine.NextLineID))
         {
             currentLineID = currentLine.NextLineID;
@@ -301,7 +342,7 @@ public class NewDialogueManager : MonoBehaviour
             EndDialogue();
         }
     }
-    /*
+    
     // Move NPCs or trigger irene to follow the player
     void HandleNPCMovementsAfterLine()
     {
@@ -315,12 +356,18 @@ public class NewDialogueManager : MonoBehaviour
                 Irene irene = FindObjectOfType<Irene>();
                 if (irene != null)
                 {
-                    if (!irene.IsFollowing)
+                    if (!irene.IsFollowing && activeDialogueTrigger.IsMediation == false)
                     {
                         irene.IsFollowing = true;
+                        irene.Follow();
                     }
-
-                    if (activeDialogueTrigger.talkedAlready && irene.GoBackHomeSpot != null)
+                    
+                    if (irene.targetSpot != null)
+                    {
+                        irene.StartTravel();
+                    }
+                    
+                    if (activeDialogueTrigger.hasTalked && irene.GoBackHomeSpot != null && irene.arrived == true)
                     {
                         irene.targetSpot = irene.GoBackHomeSpot;
                         irene.StartTravel();
@@ -352,13 +399,16 @@ public class NewDialogueManager : MonoBehaviour
                 break;
         }
     }
-    */
+    
+
+    // handle spawning of choices when intended
     void SpawnChoices(List<NewDialogueChoiceData> choices)
     {
         canChoose = true;
         directionalChoices.Clear();
         choiceTimerSlider.gameObject.SetActive(true);
 
+        // spawn directional arrow to show which direction to hold to select answer
         if (directionalImage != null)
         {
             directionalImage.SetActive(true);
@@ -367,6 +417,7 @@ public class NewDialogueManager : MonoBehaviour
             rt.anchoredPosition = Vector2.zero;
         }
 
+        // create buttons and text from list of choices
         foreach (var c in choices)
         {
             GameObject obj = Instantiate(choicePrefab, choiceContainer);
@@ -377,9 +428,11 @@ public class NewDialogueManager : MonoBehaviour
             directionalChoices[c.direction] = c;
         }
 
+        // start decreaseing timer value of slider
         timerRoutine = StartCoroutine(ChoiceTimer(choices));
     }
 
+    // calculate morality effect of slected choice and enable pop up
     IEnumerator ResolveChoiceRoutine(NewDialogueChoiceData c)
     {
         ApplyMorality(c.moralityChange);
@@ -579,12 +632,14 @@ public class NewDialogueManager : MonoBehaviour
 
         TextMeshProUGUI txt = target.GetComponentInChildren<TextMeshProUGUI>();
 
+        // change color of text based on morality change value
         txt.color =
             choice.moralityChange > 0 ? Color.green :
             choice.moralityChange < 0 ? Color.red :
             Color.yellow;
     }
 
+    // update the hold UI to show how long the player needs to hold and give feedback to player
     void UpdateHoldUI(ChoiceDirection dir, float progress)
     {
         if (!holdMap.ContainsKey(dir)) return;
@@ -615,6 +670,7 @@ public class NewDialogueManager : MonoBehaviour
         }
     }
 
+    // select the choice
     private void SelectChoice(NewDialogueChoiceData c)
     {
         resolvingChoice = true;
@@ -624,6 +680,7 @@ public class NewDialogueManager : MonoBehaviour
         StartCoroutine(ResolveChoiceRoutine(c));
     }
 
+    // use the correct audio mixer to match character gender
     void SetVoiceGender(string gender)
     {
         if (string.IsNullOrEmpty(gender)) return;
@@ -631,6 +688,7 @@ public class NewDialogueManager : MonoBehaviour
         typingSource.outputAudioMixerGroup = gender.ToLower() == "male" ? maleVoiceGroup : femaleVoiceGroup;
     }
 
+    // set the correct NPC portrait intended for the current line
     void SetNPCPortrait(LineTone tone)
     {
         NPCPortraitSet set = npcPortraitSets.Find(p => p.npcName == currentLine.Speaker);
@@ -657,6 +715,7 @@ public class NewDialogueManager : MonoBehaviour
         }
     }
 
+    // get the directional position of the answer choices
     Vector2 GetDirPos(ChoiceDirection dir)
     {
         return dir switch
@@ -669,6 +728,7 @@ public class NewDialogueManager : MonoBehaviour
         };
     }
     
+    // clear answer choices
     void ClearChoices()
     {
         foreach (var c in spawnedChoices)
@@ -704,27 +764,12 @@ public class NewDialogueManager : MonoBehaviour
         popupText.gameObject.SetActive(false);
     }
 
-    /*
-    public void ContinueDialogue()
-    {
-        if (!DialogueIsActive) return;
-
-        if (currentLine.choices != null && currentLine.choices.Count > 0) return;
-
-        if (string.IsNullOrEmpty(currentLine.NextLineID))
-        {
-            EndDialogue();
-            return;
-        }
-
-        currentLineID = currentLine.NextLineID;
-        ShowLine();
-    }
-    */
+    // end the current dialogue instance
     public void EndDialogue()
     {
         DialogueIsActive = false;
 
+        // deactivate dialogue UI
         continueArrow.SetActive(false);
         dialoguePanel.SetActive(false);
         playerPortrait.gameObject.SetActive(false);
@@ -739,6 +784,7 @@ public class NewDialogueManager : MonoBehaviour
             activeDialogueTrigger.OnDialogueComplete();
         }
 
+        // return camera to original position
         StartCoroutine(cam.EndCameraZoom());
         cam.SetCameraLocked(false);
         npcPortrait.gameObject.SetActive(false);
