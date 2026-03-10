@@ -304,7 +304,7 @@ public class PlayerThrowing : MonoBehaviour
     {
         animator.SetBool("isChargingThrow", false);
         animator.SetTrigger("Throw");
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(0.5f);
         animator.SetBool("canThrow", false);
     }
     public void resetAnimations() // backup animation reseter
