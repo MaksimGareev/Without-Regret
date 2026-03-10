@@ -61,13 +61,13 @@ public class SaveManager : MonoBehaviour
     }
 
     // When a new scene is loaded, refresh the list of saveable objects and load the game from the active save slot if any save data exists.
-    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    private void OnSceneLoaded(Scene newScene, LoadSceneMode mode)
     {
         RefreshSaveables();
 
         if (saveables.Count > 0)
         {
-            LoadGame(SaveSystem.activeSaveSlot);
+            LoadGame(SaveSystem.activeSaveSlot, newScene);
         }
 
         else if (showDebugLogs)
@@ -308,7 +308,7 @@ public class SaveManager : MonoBehaviour
 
     // Loads the game from the specified save slot and applies the loaded data to all ISaveable objects in the scene. 
     // If no save data is found for the specified slot, a warning will be logged and no loading will occur.
-    public void LoadGame(int slot)
+    public void LoadGame(int slot, Scene scene)
     {
         // Try loading from the specified save slot, if no save exists then create a new one in that slot.
         SaveData data = SaveSystem.Load(slot)?? new SaveData(slot);
@@ -320,6 +320,10 @@ public class SaveManager : MonoBehaviour
             return;
         }
 
+        if (ObjectiveManager.Instance != null)
+        {
+            ObjectiveManager.Instance.EnsureActiveObjective(scene);
+        }
         RefreshSaveables();
 
         // Loop through the saveables list and call each object's LoadFrom method, passing in the loaded SaveData. 

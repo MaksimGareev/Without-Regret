@@ -415,6 +415,7 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
             }
             else
             {
+                Debug.Log("Scenes don't match");
                 WorldSpaceIndicator.SetActive(false);
             }
         }
@@ -436,8 +437,6 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
     {
         if(scene.buildIndex != 0)
         {
-            Debug.Log("Scene Loaded: " + scene.name);
-            EnsureActiveObjective(scene);
             if(WorldSpaceIndicator.GetComponent<ObjectiveMarker>() != null)
             {
                 WorldSpaceIndicator.GetComponent<ObjectiveMarker>().WorldIndicator.GetComponent<ObjectiveSpriteBillboard>().FindCamera();

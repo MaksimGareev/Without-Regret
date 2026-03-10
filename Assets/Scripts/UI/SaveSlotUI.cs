@@ -166,7 +166,7 @@ public class SaveSlotUI : MonoBehaviour
     private void NewGame(int slot = 1)
     {
         SaveManager.Instance.SetActiveSaveSlot(slot);
-        SaveManager.Instance.LoadGame(slot);
+        SaveManager.Instance.LoadGame(slot, SceneManager.GetSceneByBuildIndex(1));
         SceneManager.LoadScene(firstScene.GetSceneName());
         Debug.Log("Starting New Game...");
     }
