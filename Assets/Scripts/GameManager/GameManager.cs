@@ -84,11 +84,11 @@ public class GameManager : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        StartCoroutine(WaitForCopiesToDelete());
+        StartCoroutine(WaitForCopiesToDelete(scene));
     }
 
     // Waits until all duplicate GameManager instances are deleted, marks the instance as ready for other scripts to access
-    private IEnumerator WaitForCopiesToDelete()
+    private IEnumerator WaitForCopiesToDelete(Scene scene)
     {
         yield return null; // Wait for the next frame to ensure all objects are loaded
         yield return new WaitForEndOfFrame();
@@ -132,7 +132,7 @@ public class GameManager : MonoBehaviour
     private void OnSceneChanged(Scene oldScene, Scene newScene)
     {
         instanceReady = false;
-        StartCoroutine(WaitForCopiesToDelete());
+        StartCoroutine(WaitForCopiesToDelete(newScene));
 
         // Debug.Log("Scene changed to: " + newScene.name);
         currentSceneName = newScene.name;

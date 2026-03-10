@@ -408,6 +408,7 @@ public class GameOverManager : MonoBehaviour
         isGameOver = false;
         DisableGameOverUI();
         //EnableOtherCanvases();
+        Debug.Log("Restarting scene: " + SceneManager.GetActiveScene().name);
 
         if (SaveManager.Instance != null)
         {
