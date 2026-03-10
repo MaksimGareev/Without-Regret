@@ -66,15 +66,18 @@ public class OffscreenObjectiveIndicator : MonoBehaviour
 
     private void LateUpdate()
     {
-        Vector3 targetViewportPos = playerCam.WorldToViewportPoint(target.position);
+        if (target != null)
+        {
+            Vector3 targetViewportPos = playerCam.WorldToViewportPoint(target.position);
 
-        if (!TargetIsVisible(targetViewportPos) && !disableIndicator)
-        {
-            UpdateTarget(targetViewportPos);
-        }
-        else
-        {
-            indicator.SetActive(false);
+            if (!TargetIsVisible(targetViewportPos) && !disableIndicator)
+            {
+                UpdateTarget(targetViewportPos);
+            }
+            else
+            {
+                indicator.SetActive(false);
+            }
         }
 
     }

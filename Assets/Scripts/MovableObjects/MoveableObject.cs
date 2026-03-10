@@ -23,6 +23,10 @@ public class MoveableObject : MonoBehaviour, IInteractable
     [SerializeField] private float collisionCheckSizeFactor = 1f;
     [SerializeField] private bool checkGrabPointCollisions = true;
 
+    [Header("Collision Settings")]
+    [Tooltip("Modifies the size of the collider used to check for collisions with walls when the player is moving this object. A smaller size will make the check more lenient (and can cause some clipping)")]
+    [SerializeField] private float collisionCheckSizeMultiplier = 0.9f;
+
     [Header("Transform Settings")]
     [SerializeField] private Vector3 heldPositionOffset = Vector3.zero;
 
@@ -36,6 +40,8 @@ public class MoveableObject : MonoBehaviour, IInteractable
 
     public event Action OnInteracted;
     private Collider coll;
+    private bool trigger;
+
     public Collider ObjectCollider => coll;
     public float CollisionCheckSizeFactor => collisionCheckSizeFactor;
 
@@ -43,6 +49,8 @@ public class MoveableObject : MonoBehaviour, IInteractable
     {
         rb = GetComponent<Rigidbody>();
         coll = GetComponent<Collider>();
+
+        trigger = coll.isTrigger;
     }
 
     public bool CanInteract(GameObject player)
@@ -86,6 +94,8 @@ public class MoveableObject : MonoBehaviour, IInteractable
         rb.constraints = RigidbodyConstraints.FreezeAll;
         rb.isKinematic = true;
 
+       coll.isTrigger = true;
+
         // Apply offsets after parenting (Rotate in world space to maintain rotation at time of grabbing)
         transform.localPosition += heldPositionOffset;
 
@@ -103,6 +113,8 @@ public class MoveableObject : MonoBehaviour, IInteractable
         // Set rigidbody back to normal
         rb.isKinematic = false;
         rb.WakeUp();
+
+        coll.isTrigger = trigger;
     }
 
     public void OnPlayerInteraction(GameObject player)

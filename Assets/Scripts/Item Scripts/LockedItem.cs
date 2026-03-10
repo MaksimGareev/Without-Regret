@@ -14,9 +14,6 @@ public class LockedItem : MonoBehaviour, IInteractable
     [SerializeField] private float LockpickRange = 1.5f;
     private Transform player;
 
-    [Header("UI Object Assginments")]
-    [SerializeField] private GameObject promptUI;
-
     [Header("Type of Locked Item")]
     [SerializeField] private bool isChest = true;
 
@@ -54,10 +51,6 @@ public class LockedItem : MonoBehaviour, IInteractable
 
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
 
-        if (promptUI != null)
-        {
-            promptUI.SetActive(false);
-        }
         if (GameManager.Instance != null && GameManager.Instance.LockPickUI != null)
         {
             GameManager.Instance.LockPickUI.SetActive(false);

@@ -310,6 +310,10 @@ public class DialogueManager : MonoBehaviour
         npcNameText.text = currentLine.Speaker;
 
         SetNPCPortrait(currentLine.lineTone);
+        if (activeDialogueTrigger != null && activeDialogueTrigger.faceHandler != null) //Calls the faceHandler to display same expression as the NPC Portrait
+        {
+            activeDialogueTrigger.faceHandler.SetExpression(currentLine.lineTone);
+        }
 
         SetVoiceGender(currentLine.NPCGender);
 
