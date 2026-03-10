@@ -16,6 +16,8 @@ public class GrabPointCollisionCheck : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        if (other.isTrigger) return; // Ignore trigger colliders, as they shouldn't prevent grabbing
+            
         collisions.Add(other);
     }
 
@@ -29,6 +31,8 @@ public class GrabPointCollisionCheck : MonoBehaviour
         // Check if colliding with anything other than the specified collider
         // Either the collider is in the set and there's more than one collision, or
         // the collider is not in the set and there's still at least one collision
+        if (!GetComponent<Collider>().enabled) return false; // If the collider is disabled, consider it not colliding with anything
+
         return (collisions.Contains(collider) && collisions.Count > 1) || (!collisions.Contains(collider) && collisions.Count > 0);
     }
 }

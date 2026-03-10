@@ -14,9 +14,14 @@ public class MoveableObject : MonoBehaviour, IInteractable
     private float staminaReduction = 0.5f;
     [SerializeField, Range(0, 1), Tooltip("Determines how strict the angle between the player forward vector and object must be to allow interaction. 1 = player can be facing parallel, 0 = player must be perfectly perpendicular")]
     private float dotProductThreshold = 0.4f;
+    [SerializeField] private float maxGrabDistance = 2.5f;
+
+    [Header("Options")]
     [SerializeField] private bool allowSprint = true;
     [SerializeField] ItemData requiredItem;
-    [SerializeField] private float maxGrabDistance = 2.5f;
+    [Min(0f), Tooltip("When the player is moving this object, the size of the collider used to check for collisions with the environment is multiplied by this factor.")]
+    [SerializeField] private float collisionCheckSizeFactor = 1f;
+    [SerializeField] private bool checkGrabPointCollisions = true;
 
     [Header("Collision Settings")]
     [Tooltip("Modifies the size of the collider used to check for collisions with walls when the player is moving this object. A smaller size will make the check more lenient (and can cause some clipping)")]
@@ -38,7 +43,7 @@ public class MoveableObject : MonoBehaviour, IInteractable
     private bool trigger;
 
     public Collider ObjectCollider => coll;
-    public float ExtentsMultiplier => collisionCheckSizeMultiplier;
+    public float CollisionCheckSizeFactor => collisionCheckSizeFactor;
 
     private void Awake()
     {
@@ -139,9 +144,9 @@ public class MoveableObject : MonoBehaviour, IInteractable
                 return;
             }
 
-            // // Attempt to ensure that when the object is grabbed, there isn't major clipping with another object
-            // // by checking the grab point for collisions.
-            if (mover.grabPoint.TryGetComponent<GrabPointCollisionCheck>(out var checker) && checker.CollidingWithSomethingExcept(coll))
+            // Attempt to ensure that when the object is grabbed, there isn't major clipping with another object
+            // by checking the grab point for collisions.
+            if (checkGrabPointCollisions && mover.grabPoint.TryGetComponent<GrabPointCollisionCheck>(out var checker) && checker.CollidingWithSomethingExcept(coll))
             {
                 Debug.Log("Player tried to grab an object, but their grab point is colliding with another object.");
                 return;

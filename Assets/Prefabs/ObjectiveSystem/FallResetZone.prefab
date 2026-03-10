@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 8150201949450731833}
   - component: {fileID: 2070983694141613236}
   - component: {fileID: 3131401873780414967}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Fade Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -125,7 +125,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5586805179667617897}
   - component: {fileID: 4369813370938492339}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: RespawnPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -170,7 +170,7 @@ GameObject:
   - component: {fileID: 5513051848586170420}
   - component: {fileID: 9147524792187119386}
   - component: {fileID: 7666080116666992119}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Black Screen
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -245,7 +245,7 @@ GameObject:
   - component: {fileID: 242051791032084747}
   - component: {fileID: 3951321223011664229}
   - component: {fileID: 9192736022341318909}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: FallResetZone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -304,9 +304,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FallResetTrigger
   delayBeforeReset: 0.5
   fadeDuration: 0.5
-  fadedAlpha: 0.3
   amountOfRingsToSubtract: 1
   triggerDisableCooldown: 1
   resetPoints: []
-  blackScreen: {fileID: 0}
+  blackScreen: {fileID: 3131401873780414967}
   showDebugLogs: 0
