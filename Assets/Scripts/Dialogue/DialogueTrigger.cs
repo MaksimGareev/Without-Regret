@@ -15,6 +15,9 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
     public bool chimeActive = false;
     public Chime chimeScript;
 
+    [Header("Face Animation")]
+    public FaceHandler faceHandler;
+
     private Animator playerAnimator;
     private Coroutine playerTalkRoutine;
     public float interactionPriority => 10f;
@@ -115,6 +118,8 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
 
             chimeActive = true;
         }
+
+        faceHandler = gameObject.GetComponentInChildren<FaceHandler>();
 
 
         npcWander = GetComponent<NpcMovement>();
@@ -267,7 +272,14 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
         DisablePopupIcon();
 
         isLookingAtPlayer = true;
-        StartPlayerTalking();
+        if (IsMediation)
+        {
+            StartPlayerMediation();
+        }
+        else
+        {
+            StartPlayerTalking();
+        }
         if (playerMovePoint != null)
             StartCoroutine(MoveAndLookAt(player, this.transform));
 
@@ -446,6 +458,30 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
         playerTalkRoutine ??= StartCoroutine(PlayerTalkAnimationCycle());
     }
 
+    private void StartPlayerMediation()
+    {
+        if (playerAnimator == null)
+            return;
+        Debug.Log("Started Mediating");
+
+        if (playerTalkRoutine != null)
+        {
+            StopCoroutine(playerTalkRoutine);
+            playerTalkRoutine = null;
+        }
+        //if (chimeActive)
+        //{
+        //    chimeAnimator.SetBool("isTalking", true);
+        //}
+        playerAnimator.SetBool("isTalking", false);
+        playerAnimator.SetBool("Talk1", false);
+        playerAnimator.SetBool("Talk2", false);
+
+        playerAnimator.SetBool("isMediating", true);
+    }
+
+
+
     public void StartPlayerThinking()
     {
         if (playerAnimator == null)
@@ -474,7 +510,10 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
         }
 
         playerAnimator.SetBool("Think", false);
-        StartPlayerTalking();
+        if (!IsMediation)
+        {
+            StartPlayerTalking();
+        }
     }
 
     private void StopPlayerTalking()
@@ -485,6 +524,7 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
         playerAnimator.SetBool("isTalking", false);
         playerAnimator.SetBool("Talk1", false);
         playerAnimator.SetBool("Talk2", false);
+        playerAnimator.SetBool("isMediating", false);
         if (chimeActive)
         {
             chimeAnimator.SetBool("isTalking", false);
