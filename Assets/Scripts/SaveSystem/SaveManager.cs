@@ -67,7 +67,7 @@ public class SaveManager : MonoBehaviour
 
         if (saveables.Count > 0)
         {
-            LoadGame(SaveSystem.activeSaveSlot, newScene);
+            LoadGame(SaveSystem.activeSaveSlot);
         }
 
         else if (showDebugLogs)
@@ -308,7 +308,7 @@ public class SaveManager : MonoBehaviour
 
     // Loads the game from the specified save slot and applies the loaded data to all ISaveable objects in the scene. 
     // If no save data is found for the specified slot, a warning will be logged and no loading will occur.
-    public void LoadGame(int slot, Scene scene)
+    public void LoadGame(int slot)
     {
         // Try loading from the specified save slot, if no save exists then create a new one in that slot.
         SaveData data = SaveSystem.Load(slot)?? new SaveData(slot);
@@ -322,7 +322,7 @@ public class SaveManager : MonoBehaviour
 
         if (ObjectiveManager.Instance != null)
         {
-            ObjectiveManager.Instance.EnsureActiveObjective(scene);
+            ObjectiveManager.Instance.EnsureActiveObjective();
         }
         RefreshSaveables();
 
