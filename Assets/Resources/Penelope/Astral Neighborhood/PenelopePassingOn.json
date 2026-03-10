@@ -71,14 +71,14 @@
       "requiredMorality": 0,
       "choices": [
         {
-          "text": "You've already died...",
-          "NextLineID": "GoodCont",
+          "text": "I'm sorry, but you've already died...",
+          "NextLineID": "Nice",
           "moralityChange": 1,
           "directionString": "Up"
         },
         {
           "text": "This might take a while...",
-          "NextLineID": "BadCont",
+          "NextLineID": "Nice II",
           "moralityChange": -1,
           "directionString": "Down"
         }
@@ -93,18 +93,39 @@
       "requiredMorality": 0,
       "choices": [
         {
-          "text": "Breathe, you're okay.",
-          "NextLineID": "Breathe",
+          "text": "I'm sorry, but you've already died...",
+          "NextLineID": "Nice",
           "moralityChange": 1,
           "directionString": "Up"
         },
         {
-          "text": "Calm down.",
-          "NextLineID": "Calm Down",
+          "text": "This might take a while...",
+          "NextLineID": "Nice II",
           "moralityChange": -1,
           "directionString": "Down"
         }
       ]
+    },
+    {
+      "LineID": "Nice",
+      "Speaker": "Echo",
+      "NPCGender": "female",
+      "text": "I'm sorry Penelope, but you've passed away. You've been dead for some time now...",
+      "lineTone": 0,
+      "NextLineID": "Nice II",
+      "requiredMorality": 0,
+      "choices": []
+    },
+    {
+      "LineID": "Nice II",
+      "Speaker": "Echo",
+      "NPCGender": "female",
+      "text": "This place we're in, while it looks just like back home, it's actually an 'afterlife' of sorts, called The Astral Plane.",
+      "lineTone": 0,
+      "NextLineID": "Trust",
+      "requiredMorality": 0,
+      "choices": [],
+      "endDialogueAfterLine": true
     }
   ]
 }
