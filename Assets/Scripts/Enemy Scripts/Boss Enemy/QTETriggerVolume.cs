@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class QTETriggerVolume : MonoBehaviour, IInteractable
 {
@@ -9,6 +10,7 @@ public class QTETriggerVolume : MonoBehaviour, IInteractable
     [SerializeField, Tooltip("The QTE Canvas object")] private GameObject qteUI;
     [SerializeField, Tooltip("The sprite assets for each arrow. Should have 4 (in order of up->left->down->right)")] private Sprite[] arrowImages;
     [SerializeField, Tooltip("The image components of the arrows in the ArrowHolder. Should have 4")] private RawImage[] arrows;
+    [SerializeField, Tooltip("The platforms that this qte controls.")] private List<OrbitingPlatform> platforms;
 
     [SerializeField] bool showDebugLogs = false;
 
@@ -81,6 +83,16 @@ public class QTETriggerVolume : MonoBehaviour, IInteractable
             else
             {
                 Debug.LogError("Boss Enemy reference for QTE trigger volume is null!", this);
+            }
+
+            for (int i = 0; i < platforms.Count; i++)
+            {
+                platforms[i].SetQTEComplete();
+                platforms[i].orbitSpeed *= 2;
+            }
+            if( SaveManager.Instance != null)
+            {
+                SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
             }
 
             Destroy(gameObject);
