@@ -8,8 +8,8 @@ public class FallResetTrigger : MonoBehaviour
     private float delayBeforeReset = 0.5f;
     [SerializeField, Tooltip("Duration in seconds for the screen to fully fade in/out from black")]
     private float fadeDuration = 0.5f;
-    [SerializeField, Tooltip("Alpha value to set on the player's materials during the reset movement. This will make the player appear faded out while they are being moved to the reset point.")]
-    private float fadedAlpha = 0.3f;
+    //[SerializeField, Tooltip("Alpha value to set on the player's materials during the reset movement. This will make the player appear faded out while they are being moved to the reset point.")]
+    //private float fadedAlpha = 0.3f;
     [SerializeField, Tooltip("Number of rings to subtract from the player when they fall and trigger a reset. This will cause the Timer Ring UI to update and visually show the player losing \"Health\".")]
     private int amountOfRingsToSubtract = 1;
     [SerializeField, Tooltip("Cooldown time in seconds after a reset during which the trigger will be disabled to prevent multiple rapid resets if the player is still within the trigger area.")]

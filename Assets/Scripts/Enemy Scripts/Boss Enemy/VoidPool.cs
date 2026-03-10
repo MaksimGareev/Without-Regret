@@ -6,6 +6,7 @@ public class VoidPool : MonoBehaviour
     private VoidPoolSettings settings;
     private readonly int amountOfRingsToSubtract = 1;
     private ObjectPool enemyPooler;
+    private bool showDebugLogs = false;
 
     // Damage
     private float enterTime = -1;
@@ -15,10 +16,11 @@ public class VoidPool : MonoBehaviour
         enterTime = -1;
     }
 
-    public void Initialize(VoidPoolSettings settings, ObjectPool enemyPooler, ObjectPool selfPooler)
+    public void Initialize(VoidPoolSettings settings, ObjectPool enemyPooler, ObjectPool selfPooler, bool showDebugLogs)
     {
         this.settings = settings;
         this.enemyPooler = enemyPooler;
+        this.showDebugLogs = showDebugLogs;
 
         // Spawn enemies as soon as the pool appears
         SpawnEnemies(Random.Range(settings.minEnemiesToSpawn, settings.maxEnemiesToSpawn + 1));
@@ -38,7 +40,7 @@ public class VoidPool : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            Debug.Log("Player has entered void pool.");
+            if (showDebugLogs) Debug.Log("Player has entered void pool.");
             enterTime = Time.time;
         }
     }
@@ -47,7 +49,7 @@ public class VoidPool : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            Debug.Log("Player has exited void pool.");
+            if (showDebugLogs) Debug.Log("Player has exited void pool.");
             enterTime = -1;
         }
     }
@@ -112,14 +114,25 @@ public class VoidPool : MonoBehaviour
                 newEnemy.transform.SetPositionAndRotation(spawnPosition, Quaternion.identity);
             }
 
-            // Add a lifetime component for the enemy so it gets returned after a delay
-            if (newEnemy.TryGetComponent<Lifetime>(out var lifetime))
+            // Decide whether to assign a health pickup to drop when this enemy dies based on the drop chance
+            GameObject healthPickup;
+            if (Random.Range(0f, 1f) <= settings.healthDropChance)
             {
-                lifetime.Initialize(newEnemy, settings.enemyLifetime, enemyPooler);
+                healthPickup = settings.healthPickup;
             }
             else
             {
-                newEnemy.AddComponent<Lifetime>().Initialize(newEnemy, settings.enemyLifetime, enemyPooler);
+                healthPickup = null;
+            }
+
+            // Add a lifetime component for the enemy so it gets returned after a delay
+            if (newEnemy.TryGetComponent<Lifetime>(out var lifetime))
+            {
+                lifetime.Initialize(newEnemy, settings.enemyLifetime, enemyPooler, healthPickup);
+            }
+            else
+            {
+                newEnemy.AddComponent<Lifetime>().Initialize(newEnemy, settings.enemyLifetime, enemyPooler, healthPickup);
             }
         }
     }
@@ -129,7 +142,7 @@ public class VoidPool : MonoBehaviour
         // Damage the player if they've been in the pool for too long
         if (enterTime > -1 && Time.time > (enterTime + settings.delayBeforeDamage))
         {
-            Debug.Log("Player has been hurt by the void pool.");
+            if (showDebugLogs) Debug.Log("Player has been hurt by the void pool.");
 
             if (TimerRingUI.Instance != null)
             {
@@ -165,13 +178,19 @@ public struct VoidPoolSettings
     public int maxEnemiesToSpawn;
     [Tooltip("How long the enemies spawned from the void pool will last")]
     public float enemyLifetime;
+    [HideInInspector]
+    public GameObject healthPickup;
+    [HideInInspector]
+    public float healthDropChance;
 
-    public VoidPoolSettings(float lifetime, float delayBeforeDamage, int minEnemiesToSpawn, int maxEnemiesToSpawn, float enemyLifetime)
+    public VoidPoolSettings(float lifetime, float delayBeforeDamage, int minEnemiesToSpawn, int maxEnemiesToSpawn, float enemyLifetime, GameObject healthPickup = null, float healthDropChance = 0f)
     {
         this.lifetime = lifetime;
         this.delayBeforeDamage = delayBeforeDamage;
         this.minEnemiesToSpawn = minEnemiesToSpawn;
         this.maxEnemiesToSpawn = maxEnemiesToSpawn;
         this.enemyLifetime = enemyLifetime;
+        this.healthPickup = healthPickup;
+        this.healthDropChance = healthDropChance;
     }
 }
