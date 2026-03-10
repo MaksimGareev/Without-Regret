@@ -320,6 +320,10 @@ public class SaveManager : MonoBehaviour
             return;
         }
 
+        if (ObjectiveManager.Instance != null)
+        {
+            ObjectiveManager.Instance.EnsureActiveObjective();
+        }
         RefreshSaveables();
 
         // Loop through the saveables list and call each object's LoadFrom method, passing in the loaded SaveData. 
@@ -352,12 +356,6 @@ public class SaveManager : MonoBehaviour
         else if (TimerRingUI.Instance != null && data.playerSaveData.currentRingState == TimerRingUI.RingState.Empty)
         {
             TimerRingUI.Instance.SetRingState(TimerRingUI.RingState.Full);
-        }
-
-        // Call to the objective manager to auto enable an objective, necessary when loading a save to continue where the player left off
-        if (ObjectiveManager.Instance != null)
-        {
-            ObjectiveManager.Instance.EnsureActiveObjective();
         }
 
         // Ensure the game is not paused after loading, which can happen if the player saves while paused and then reloads that save
