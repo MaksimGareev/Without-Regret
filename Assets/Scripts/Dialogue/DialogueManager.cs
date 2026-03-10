@@ -254,14 +254,30 @@ public class DialogueManager : MonoBehaviour
 
         // set dialogue interaction to false
         DialogueIsActive = false;
-        playerController.SetDialogueActive(false);
+
+        if (playerController != null)
+        {
+            playerController.SetDialogueActive(false);
+        }
+        else
+        {
+            playerController = FindAnyObjectByType<PlayerController>();
+            if (playerController != null)
+            {
+                playerController.SetDialogueActive(false);
+            }
+            else
+            {
+                Debug.LogError("No PlayerController found in scene to set dialogue active state to false.");
+            }
+        }
 
         if (activeDialogueTrigger != null)
         {
             // if the dialogue trigger has a reward item, add it to the inventory
             if (activeDialogueTrigger.RewardItem != null)
             {
-                Inventory inventory = FindObjectOfType<Inventory>();
+                Inventory inventory = FindAnyObjectByType<Inventory>();
                 if (inventory != null)
                 {
                     inventory.AddItem(activeDialogueTrigger.RewardItem);
@@ -310,6 +326,10 @@ public class DialogueManager : MonoBehaviour
         npcNameText.text = currentLine.Speaker;
 
         SetNPCPortrait(currentLine.lineTone);
+        if (activeDialogueTrigger != null && activeDialogueTrigger.faceHandler != null) //Calls the faceHandler to display same expression as the NPC Portrait
+        {
+            activeDialogueTrigger.faceHandler.SetExpression(currentLine.lineTone);
+        }
 
         SetVoiceGender(currentLine.NPCGender);
 
@@ -394,6 +414,7 @@ public class DialogueManager : MonoBehaviour
         };
 
         npcPortrait.sprite = newSprite;
+        npcPortrait.SetNativeSize();
         npcPortrait.gameObject.SetActive(true);
 
     }

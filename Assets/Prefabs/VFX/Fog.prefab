@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 1690692910729733746}
   - component: {fileID: 8693708050544343463}
   - component: {fileID: 728106621701642060}
+  - component: {fileID: 5237303428826150854}
   m_Layer: 0
   m_Name: Fog
   m_TagString: Untagged
@@ -290,7 +291,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 15
+      scalar: 30
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -343,7 +344,7 @@ ParticleSystem:
     startSizeY:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 15
+      scalar: 30
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -396,7 +397,7 @@ ParticleSystem:
     startSizeZ:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 15
+      scalar: 30
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -4854,12 +4855,12 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 35.714584, y: 17.808147, z: 37.145214}
-  m_Center: {x: -0.68561244, y: -8.69593, z: -2.3449657}
+  m_Size: {x: 34.785408, y: 2.0062861, z: 46.951565}
+  m_Center: {x: -0.013378338, y: -2.2437859, z: 0.9959214}
 --- !u!114 &728106621701642060
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4878,10 +4879,27 @@ MonoBehaviour:
   fadedAlpha: 0.3
   amountOfRingsToSubtract: 1
   triggerDisableCooldown: 1
-  resetPoint: {fileID: 7166401378252431232}
-  localVolume: {fileID: 0}
+  resetPoint: {fileID: 0}
+  localVolume: {fileID: 5237303428826150854}
   showDebugLogs: 0
   timeSinceEnter: 0
+--- !u!114 &5237303428826150854
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 749175523680738637}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Core.Runtime::UnityEngine.Rendering.Volume
+  m_IsGlobal: 0
+  priority: 1
+  blendDistance: 10
+  weight: 1
+  sharedProfile: {fileID: 11400000, guid: f44584dca66e2bb4ca21f9c1ee405358, type: 2}
 --- !u!1 &3118037992568651974
 GameObject:
   m_ObjectHideFlags: 0
@@ -4907,7 +4925,7 @@ Transform:
   m_GameObject: {fileID: 3118037992568651974}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.014101781, z: -0, w: 0.99990064}
-  m_LocalPosition: {x: 6.06, y: 6.15, z: -18.6}
+  m_LocalPosition: {x: 1.5, y: 6.15, z: 32}
   m_LocalScale: {x: 19.403437, y: 24.496666, z: 24.49155}
   m_ConstrainProportionsScale: 0
   m_Children: []

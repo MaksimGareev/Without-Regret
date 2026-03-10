@@ -1,25 +1,40 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections.Generic;
 
 public class QTETriggerVolume : MonoBehaviour, IInteractable
 {
+    [Header("QTE Settings")]
+    [SerializeField] private int damage = 1;
+    [SerializeField, Tooltip("The number of inputs required to complete the QTE")] private int numInputs = 4;    
+
+    [Header("Arrow UI")]
+    [SerializeField, Tooltip("The QTE Canvas object")] private GameObject qteCanvas;
+    [SerializeField, Tooltip("Prefab for a single arrow RawImage (used to duplicate arrows at runtime).")] private RawImage arrowPrefab;
+    [SerializeField, Tooltip("Container RectTransform which will hold generated arrows.")] private RectTransform arrowsContainer;
+    [SerializeField, Tooltip("The sprite assets for each arrow. Should have 4 (in order of up->left->down->right)")] private Sprite[] arrowImages;
+    [SerializeField, Tooltip("Horizontal spacing (in pixels) between generated arrows")] private float arrowSpacing = 8f;
+
+    [Header("References")]
     [SerializeField] private BossEnemyController bossEnemy;
     [SerializeField] private PlayerController playerController;
-    [SerializeField, Tooltip("The QTE Canvas object")] private GameObject qteUI;
-    [SerializeField, Tooltip("The sprite assets for each arrow. Should have 4 (in order of up->left->down->right)")] private Sprite[] arrowImages;
-    [SerializeField, Tooltip("The image components of the arrows in the ArrowHolder. Should have 4")] private RawImage[] arrows;
+    //[SerializeField, Tooltip("The QTE Canvas object")] private GameObject qteUI;
+    //[SerializeField, Tooltip("The image components of the arrows in the ArrowHolder. Should have 4")] private RawImage[] arrows;
     [SerializeField, Tooltip("The platforms that this qte controls.")] private List<OrbitingPlatform> platforms;
 
+    [Header("Debug")]
     [SerializeField] bool showDebugLogs = false;
 
-    private readonly int[] directionAssignments = new int[] { 0, 0, 0, 0 }; // 0 = up, 1 = left, 2 = down, 3 = right in terms of layout on the d-pad and arrow keys. Randomly generated on QTE start
+    // runtime state
+    private int[] directionAssignments; // 0 = up, 1 = left, 2 = down, 3 = right
     private int arrowIndex = 0;
     private int arrowsLength;
     private PlayerControls controls;
     private bool controlsLocked = false;
     private bool initiated = false;
+
+    private readonly List<RawImage> runtimeArrows = new List<RawImage>();
 
     public float interactionPriority => 10;
 
@@ -28,8 +43,7 @@ public class QTETriggerVolume : MonoBehaviour, IInteractable
     private void Awake()
     {
         controls = new PlayerControls();
-        arrowsLength = arrows.Length;
-        qteUI.SetActive(false);
+        qteCanvas.SetActive(false);
     }
 
     void OnEnable()
@@ -37,9 +51,17 @@ public class QTETriggerVolume : MonoBehaviour, IInteractable
         controls.Enable();
     }
 
+    void OnDisable()
+    {
+        controls.Disable();
+    }
+
     private void Update()
     {
         if (!initiated) return;
+
+        // ensure we have assignments
+        if (directionAssignments == null || directionAssignments.Length == 0) return;
 
         if (!controlsLocked && arrowIndex < directionAssignments.Length)
         {
@@ -64,73 +86,134 @@ public class QTETriggerVolume : MonoBehaviour, IInteractable
         else if (arrowIndex >= directionAssignments.Length)
         {
             // Succeeded
-            qteUI.SetActive(false);
+            EndQTESuccess();
+            // qteUI.SetActive(false);
 
-            // Unlock player movement
-            Rigidbody rb = playerController.GetComponent<Rigidbody>();
-            playerController.MovementLocked = false;
-            playerController.enabled = true;
-            rb.constraints = RigidbodyConstraints.None;
-            rb.constraints = RigidbodyConstraints.FreezeRotation;
-            initiated = false;
+            // // Unlock player movement
+            // Rigidbody rb = playerController.GetComponent<Rigidbody>();
+            // playerController.MovementLocked = false;
+            // playerController.enabled = true;
+            // rb.constraints = RigidbodyConstraints.None;
+            // rb.constraints = RigidbodyConstraints.FreezeRotation;
+            // initiated = false;
 
-            if (showDebugLogs) Debug.Log("QTE succeeded");
+            // if (showDebugLogs) Debug.Log("QTE succeeded");
 
-            if (bossEnemy != null)
-            {
-                bossEnemy.TakeDamage();
-            }
-            else
-            {
-                Debug.LogError("Boss Enemy reference for QTE trigger volume is null!", this);
-            }
+            // if (bossEnemy != null)
+            // {
+            //     bossEnemy.TakeDamage();
+            // }
+            // else
+            // {
+            //     Debug.LogError("Boss Enemy reference for QTE trigger volume is null!", this);
+            // }
 
-            for (int i = 0; i < platforms.Count; i++)
-            {
-                platforms[i].SetQTEComplete();
-                platforms[i].orbitSpeed *= 2;
-            }
-            if( SaveManager.Instance != null)
-            {
-                SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
-            }
+            // for (int i = 0; i < platforms.Count; i++)
+            // {
+            //     platforms[i].SetQTEComplete();
+            //     platforms[i].orbitSpeed *= 2;
+            // }
+            // if ( SaveManager.Instance != null)
+            // {
+            //     SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
+            // }
 
-            Destroy(gameObject);
+            // Destroy(gameObject);
         }
     }
 
     public bool CanInteract(GameObject player)
     {
-        return !initiated && arrowIndex < directionAssignments.Length;
+        return !initiated;
     }
 
     public void OnPlayerInteraction(GameObject player)
     {
+        // Prepare UI and sequence
+        SetupArrowUI();
+
         // Generate sequence for the QTE, freeze player movement, and initialize UI
         GenerateSolutions();
+
         playerController.MovementLocked = true;
         playerController.enabled = false;
         player.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
 
-        for (int i = 0; i < arrowsLength; i++)
+        // Reset state
+        arrowIndex = 0;
+        controlsLocked = false;
+        initiated = true;
+
+        qteCanvas.SetActive(true);
+        if (showDebugLogs) Debug.Log("Starting QTE");
+    }
+
+    private void SetupArrowUI()
+    {
+        // clean any previous runtime arrows
+        runtimeArrows.Clear();
+
+        if (arrowPrefab == null || arrowsContainer == null)
         {
-            arrows[i].color = Color.white;
+            Debug.LogError("QTETriggerVolume: arrowPrefab or arrowsContainer not assigned. Cannot create QTE UI.");
+            return;
         }
 
-        qteUI.SetActive(true);
-        initiated = true; // start the qte
-        if (showDebugLogs) Debug.Log("Starting QTE");
+        // remove previous children (safe clear)
+        for (int i = arrowsContainer.childCount - 1; i >= 0; --i)
+            Destroy(arrowsContainer.GetChild(i).gameObject);
+
+        // ensure container width is available (default to prefab width if zero)
+        float containerWidth = Mathf.Max(0.0001f, arrowsContainer.rect.width);
+        float spacing = Mathf.Max(0f, arrowSpacing);
+        float totalSpacing = spacing * (numInputs - 1);
+        // Arrows should be sized to fit within the container with the specified spacing, but not be stretched beyond their original width
+        float widthPer = Mathf.Min(arrowPrefab.GetComponent<RectTransform>().rect.width, (containerWidth - totalSpacing) / numInputs);
+
+        for (int i = 0; i < numInputs; i++)
+        {
+            RawImage arrow = Instantiate(arrowPrefab, arrowsContainer);
+            arrow.color = Color.white;
+            arrow.gameObject.SetActive(true);
+            runtimeArrows.Add(arrow);
+
+            // position & size the arrow within the container, accounting for spacing
+            if (arrow.TryGetComponent<RectTransform>(out var rect))
+            {
+                // Use left-centered anchors so anchoredPosition.x is from left edge of container
+                rect.anchorMin = new Vector2(0f, 0.5f);
+                rect.anchorMax = new Vector2(0f, 0.5f);
+                rect.pivot = new Vector2(0.5f, 0.5f);
+
+                rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, widthPer);
+
+                float xPos = (widthPer * 0.5f) + i * (widthPer + spacing);
+                rect.anchoredPosition = new Vector2(xPos, 0f);
+            }
+        }
+
+        arrowsLength = runtimeArrows.Count;
+        directionAssignments = new int[arrowsLength];
     }
 
     private void GenerateSolutions()
     {
+        if (arrowImages == null || arrowImages.Length < 4)
+        {
+            Debug.LogError("QTETriggerVolume: Not enough arrow images assigned. Please assign 4 arrow sprites in the inspector.");
+            return;
+        }
+
         for (int i = 0; i < arrowsLength; i++)
         {
-            int direction = Random.Range(0, 4);
+            int direction = Random.Range(0, arrowImages.Length);
             directionAssignments[i] = direction;
 
-            //assigns sprites to the ui images based off directional inputs given
-            arrows[i].texture = arrowImages[direction].texture;
+            // assigns sprites to the ui images based off directional inputs given
+            if (runtimeArrows[i] != null)
+            {
+                runtimeArrows[i].texture = arrowImages[direction].texture;
+            }
         }
     }
 
@@ -139,9 +222,8 @@ public class QTETriggerVolume : MonoBehaviour, IInteractable
         if (input == directionAssignments[arrowIndex])
         {
             // Correct direction, move on
-            Color tempColor = Color.green;
-            tempColor.a = 0.75f;
-            arrows[arrowIndex].color = tempColor;
+            if (runtimeArrows[arrowIndex] != null)
+                runtimeArrows[arrowIndex].color = new Color(0f, 1f, 0f, 0.75f); // Green with slight transparency
             arrowIndex++;
         }
         else
@@ -152,23 +234,72 @@ public class QTETriggerVolume : MonoBehaviour, IInteractable
             StartCoroutine(WrongDirection());
         }
     }
+
     IEnumerator WrongDirection()
     {
         if (showDebugLogs) Debug.Log("Wrong Direction input, resetting");
-        for (int i = 0; i < arrowsLength; i++)
+        for (int i = 0; i < runtimeArrows.Count; i++)
         {
-            arrows[i].color = Color.red;
+            if (runtimeArrows[i] != null)
+                runtimeArrows[i].color = Color.red;
         }
 
         yield return new WaitForSeconds(.25f);
 
-        for (int i = 0; i < arrowsLength; i++)
+        for (int i = 0; i < runtimeArrows.Count; i++)
         {
-            arrows[i].color = Color.white;
+            if (runtimeArrows[i] != null)
+                runtimeArrows[i].color = Color.white;
         }
         controlsLocked = false;
     }
 
+    private void EndQTESuccess()
+    {
+        qteCanvas.SetActive(false);
+
+        // Unlock player movement
+        Rigidbody rb = playerController.GetComponent<Rigidbody>();
+        playerController.MovementLocked = false;
+        playerController.enabled = true;
+        rb.constraints = RigidbodyConstraints.None;
+        rb.constraints = RigidbodyConstraints.FreezeRotation;
+        initiated = false;
+
+        if (showDebugLogs) Debug.Log("QTE succeeded");
+
+        // Deal damage to boss enemy and disable trigger volume
+        if (bossEnemy != null)
+        {
+            bossEnemy.TakeDamage(damage);
+        }
+        else
+        {
+            Debug.LogError("Boss Enemy reference for QTE trigger volume is null!", this);
+        }
+
+        // Set platforms to QTE complete and increase their speed
+        for (int i = 0; i < platforms.Count; i++)
+        {
+            platforms[i].SetQTEComplete();
+            platforms[i].orbitSpeed *= 2;
+        }
+
+        // cleanup runtime arrows
+        if (arrowPrefab != null && arrowsContainer != null)
+        {
+            for (int i = arrowsContainer.childCount - 1; i >= 0; --i)
+                Destroy(arrowsContainer.GetChild(i).gameObject);
+        }
+
+        // Save game after successful QTE
+        if ( SaveManager.Instance != null)
+        {
+            SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
+        }
+
+        enabled = false;
+    }
 
     public void OnDrawGizmos()
     {

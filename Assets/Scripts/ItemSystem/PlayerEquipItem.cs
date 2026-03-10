@@ -6,6 +6,7 @@ public class PlayerEquipItem : MonoBehaviour
     [SerializeField] private GameObject equipTransform;
     public ItemData currentEquippedItem { get; private set; }
     private GameObject equippedItemInstance;
+    private ToggleInventoryUI toggleInventoryUI;
 
     [Header("Debugging")]
     [SerializeField] private bool showDebugLogs = false;
@@ -13,6 +14,13 @@ public class PlayerEquipItem : MonoBehaviour
     public bool throwableEquipped { get; private set; } = false;
     public bool grabbableEquipped { get; private set; } = false;
     public bool EquippableItemEquipped { get; private set; } = false;
+
+    private bool tutorialShown = false;
+
+    public void Awake()
+    {
+        toggleInventoryUI = GetComponent<ToggleInventoryUI>();
+    }
 
     public void EquipItem(ItemData itemToEquip)
     {
@@ -57,6 +65,21 @@ public class PlayerEquipItem : MonoBehaviour
         }
 
         throwableEquipped = itemToEquip != null && itemToEquip.ItemType == ItemType.ThrowableItem;
+        // Show tutorial for first time interaction
+        if (!tutorialShown && InteractionTutorialUI.Instance != null && itemToEquip.ItemType == ItemType.ThrowableItem)
+        {
+            tutorialShown = true;
+            if (toggleInventoryUI != null)
+            {
+                toggleInventoryUI.ToggleInventory();
+                InteractionTutorialUI.Instance.ShowTutorial(
+                "Throwable items can be used to distracted unaware enemies or be used to stun enemies that are chasing you."
+                 );
+                return;
+            }
+        }
+
+
         grabbableEquipped = itemToEquip != null && itemToEquip.ItemType == ItemType.GrabbableItem;
         EquippableItemEquipped = itemToEquip != null && itemToEquip.ItemType == ItemType.EquippableItem;
 
