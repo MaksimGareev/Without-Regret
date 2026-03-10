@@ -33,6 +33,7 @@ public class ObjectiveData : ScriptableObject
     [Tooltip("The ObjectiveMarker object you want the objective indicator to point to When this becomes the active objective.")]
     public Vector3 markerTransform; // Object that the objective indicator points to that also handles the on-screen quest marker
 
+    [Header("Objective Display")]
     [Tooltip("Turn off if you don't want the objective to have an in-world indicator.")]
     public bool hasMarker = true; // Whether or not the objective has an in-world marker
 
