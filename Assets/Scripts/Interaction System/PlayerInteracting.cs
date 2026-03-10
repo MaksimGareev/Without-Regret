@@ -14,7 +14,7 @@ public class PlayerInteracting : MonoBehaviour
 
     private List<IInteractable> currentTargets = new List<IInteractable>();
 
-    private bool currentlyInteracting = false;
+    //private bool currentlyInteracting = false;
 
     private float lastDetectionTime;
     [SerializeField] private float detectionGraceTime = 0.15f;

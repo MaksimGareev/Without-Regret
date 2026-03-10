@@ -9,7 +9,7 @@ public class CollectableItem : MonoBehaviour, IInteractable
     public bool CanInteract(GameObject player) => true;
     public bool isCollectible = true;
     [HideInInspector] public bool hasBeenCollected = false;
-    [SerializeField] private float icondDistance = 3f;
+    //[SerializeField] private float iconDistance = 3f;
 
     [Header("Player Animator")]
     public Animator animator;

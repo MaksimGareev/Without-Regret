@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections.Generic;
 
 public class QTETriggerVolume : MonoBehaviour, IInteractable
 {
@@ -20,9 +19,8 @@ public class QTETriggerVolume : MonoBehaviour, IInteractable
     [Header("References")]
     [SerializeField] private BossEnemyController bossEnemy;
     [SerializeField] private PlayerController playerController;
-    [SerializeField, Tooltip("The QTE Canvas object")] private GameObject qteUI;
-    [SerializeField, Tooltip("The sprite assets for each arrow. Should have 4 (in order of up->left->down->right)")] private Sprite[] arrowImages;
-    [SerializeField, Tooltip("The image components of the arrows in the ArrowHolder. Should have 4")] private RawImage[] arrows;
+    //[SerializeField, Tooltip("The QTE Canvas object")] private GameObject qteUI;
+    //[SerializeField, Tooltip("The image components of the arrows in the ArrowHolder. Should have 4")] private RawImage[] arrows;
     [SerializeField, Tooltip("The platforms that this qte controls.")] private List<OrbitingPlatform> platforms;
 
     [Header("Debug")]
@@ -88,39 +86,39 @@ public class QTETriggerVolume : MonoBehaviour, IInteractable
         else if (arrowIndex >= directionAssignments.Length)
         {
             // Succeeded
-            // EndQTESuccess();
-            qteUI.SetActive(false);
+            EndQTESuccess();
+            // qteUI.SetActive(false);
 
-            // Unlock player movement
-            Rigidbody rb = playerController.GetComponent<Rigidbody>();
-            playerController.MovementLocked = false;
-            playerController.enabled = true;
-            rb.constraints = RigidbodyConstraints.None;
-            rb.constraints = RigidbodyConstraints.FreezeRotation;
-            initiated = false;
+            // // Unlock player movement
+            // Rigidbody rb = playerController.GetComponent<Rigidbody>();
+            // playerController.MovementLocked = false;
+            // playerController.enabled = true;
+            // rb.constraints = RigidbodyConstraints.None;
+            // rb.constraints = RigidbodyConstraints.FreezeRotation;
+            // initiated = false;
 
-            if (showDebugLogs) Debug.Log("QTE succeeded");
+            // if (showDebugLogs) Debug.Log("QTE succeeded");
 
-            if (bossEnemy != null)
-            {
-                bossEnemy.TakeDamage();
-            }
-            else
-            {
-                Debug.LogError("Boss Enemy reference for QTE trigger volume is null!", this);
-            }
+            // if (bossEnemy != null)
+            // {
+            //     bossEnemy.TakeDamage();
+            // }
+            // else
+            // {
+            //     Debug.LogError("Boss Enemy reference for QTE trigger volume is null!", this);
+            // }
 
-            for (int i = 0; i < platforms.Count; i++)
-            {
-                platforms[i].SetQTEComplete();
-                platforms[i].orbitSpeed *= 2;
-            }
-            if ( SaveManager.Instance != null)
-            {
-                SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
-            }
+            // for (int i = 0; i < platforms.Count; i++)
+            // {
+            //     platforms[i].SetQTEComplete();
+            //     platforms[i].orbitSpeed *= 2;
+            // }
+            // if ( SaveManager.Instance != null)
+            // {
+            //     SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
+            // }
 
-            Destroy(gameObject);
+            // Destroy(gameObject);
         }
     }
 
@@ -269,6 +267,7 @@ public class QTETriggerVolume : MonoBehaviour, IInteractable
         initiated = false;
 
         if (showDebugLogs) Debug.Log("QTE succeeded");
+
         // Deal damage to boss enemy and disable trigger volume
         if (bossEnemy != null)
         {
@@ -279,11 +278,24 @@ public class QTETriggerVolume : MonoBehaviour, IInteractable
             Debug.LogError("Boss Enemy reference for QTE trigger volume is null!", this);
         }
 
+        // Set platforms to QTE complete and increase their speed
+        for (int i = 0; i < platforms.Count; i++)
+        {
+            platforms[i].SetQTEComplete();
+            platforms[i].orbitSpeed *= 2;
+        }
+
         // cleanup runtime arrows
         if (arrowPrefab != null && arrowsContainer != null)
         {
             for (int i = arrowsContainer.childCount - 1; i >= 0; --i)
                 Destroy(arrowsContainer.GetChild(i).gameObject);
+        }
+
+        // Save game after successful QTE
+        if ( SaveManager.Instance != null)
+        {
+            SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
         }
 
         enabled = false;

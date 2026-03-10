@@ -8,7 +8,6 @@ public class PlayerMantling : MonoBehaviour
     
     [Header("Debugging")]
     [SerializeField] private bool showDebugLogs = false;
-    [SerializeField] private bool showGizmos = true;
 
     [Header("Animator")]
     public Animator animator;
