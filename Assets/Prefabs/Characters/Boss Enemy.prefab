@@ -4884,11 +4884,63 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 568a565951e28c54daf49247b992c2d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BossEnemyController
-  healthPerPart: 030000000300000003000000
-  timeBetweenActions: 3
-  startDelay: 1.5
+  phases:
+  - Name: Phase 1
+    Health: 1
+    DelayBeforeStarting: 1.5
+    LoopActions: 0
+    Actions:
+    - Name: Phase 1 Void Attack 1
+      ActionType: 0
+      DelayUntilNextAction: 3
+      OnActionStart:
+        m_PersistentCalls:
+          m_Calls: []
+      OnActionEnd:
+        m_PersistentCalls:
+          m_Calls: []
+    - Name: Phase 1 Void Attack 2
+      ActionType: 0
+      DelayUntilNextAction: 3
+      OnActionStart:
+        m_PersistentCalls:
+          m_Calls: []
+      OnActionEnd:
+        m_PersistentCalls:
+          m_Calls: []
+  - Name: Phase 2
+    Health: 3
+    DelayBeforeStarting: 1.5
+    LoopActions: 1
+    Actions:
+    - Name: Phase 2 Void Attack
+      ActionType: 0
+      DelayUntilNextAction: 3
+      OnActionStart:
+        m_PersistentCalls:
+          m_Calls: []
+      OnActionEnd:
+        m_PersistentCalls:
+          m_Calls: []
+  - Name: Phase 3
+    Health: 3
+    DelayBeforeStarting: 1.5
+    LoopActions: 1
+    Actions:
+    - Name: Phase 3 Void Attack
+      ActionType: 0
+      DelayUntilNextAction: 3
+      OnActionStart:
+        m_PersistentCalls:
+          m_Calls: []
+      OnActionEnd:
+        m_PersistentCalls:
+          m_Calls: []
   projectileSpeed: 5
   healthDropChance: 0.7
+  shadowLayerMask:
+    serializedVersion: 2
+    m_Bits: 0
   voidPoolSettings:
     lifetime: 5
     delayBeforeDamage: 1
@@ -4944,7 +4996,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 396345a249ba36f4bb0a50a5a53a9ca1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SaveableEnemyNPC
-  uniqueID: 7eca84a6-d8d9-49a7-8d3e-7c6fd791b55f
+  uniqueID: 596293d6-6af0-4e5b-a36d-3af971047885
 --- !u!1 &7808760994735140927
 GameObject:
   m_ObjectHideFlags: 0

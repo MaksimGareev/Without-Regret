@@ -6,6 +6,7 @@ public class VoidPool : MonoBehaviour
     private VoidPoolSettings settings;
     private readonly int amountOfRingsToSubtract = 1;
     private ObjectPool enemyPooler;
+    private bool showDebugLogs = false;
 
     // Damage
     private float enterTime = -1;
@@ -15,10 +16,11 @@ public class VoidPool : MonoBehaviour
         enterTime = -1;
     }
 
-    public void Initialize(VoidPoolSettings settings, ObjectPool enemyPooler, ObjectPool selfPooler)
+    public void Initialize(VoidPoolSettings settings, ObjectPool enemyPooler, ObjectPool selfPooler, bool showDebugLogs)
     {
         this.settings = settings;
         this.enemyPooler = enemyPooler;
+        this.showDebugLogs = showDebugLogs;
 
         // Spawn enemies as soon as the pool appears
         SpawnEnemies(Random.Range(settings.minEnemiesToSpawn, settings.maxEnemiesToSpawn + 1));
@@ -38,7 +40,7 @@ public class VoidPool : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            Debug.Log("Player has entered void pool.");
+            if (showDebugLogs) Debug.Log("Player has entered void pool.");
             enterTime = Time.time;
         }
     }
@@ -47,7 +49,7 @@ public class VoidPool : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            Debug.Log("Player has exited void pool.");
+            if (showDebugLogs) Debug.Log("Player has exited void pool.");
             enterTime = -1;
         }
     }
@@ -140,7 +142,7 @@ public class VoidPool : MonoBehaviour
         // Damage the player if they've been in the pool for too long
         if (enterTime > -1 && Time.time > (enterTime + settings.delayBeforeDamage))
         {
-            Debug.Log("Player has been hurt by the void pool.");
+            if (showDebugLogs) Debug.Log("Player has been hurt by the void pool.");
 
             if (TimerRingUI.Instance != null)
             {
