@@ -2894,7 +2894,7 @@ GameObject:
   - component: {fileID: 138246226}
   - component: {fileID: 138246225}
   - component: {fileID: 138246224}
-  m_Layer: 15
+  m_Layer: 0
   m_Name: Cube (10)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2959,7 +2959,6 @@ MonoBehaviour:
   allowSprint: 1
   requiredItem: {fileID: 0}
   maxGrabDistance: 2.5
-  collisionCheckSizeMultiplier: 0.9
   heldPositionOffset: {x: 0, y: 0, z: 0}
   isGrabbable: 1
 --- !u!54 &138246227
@@ -3674,7 +3673,6 @@ MonoBehaviour:
   allowSprint: 1
   requiredItem: {fileID: 0}
   maxGrabDistance: 2.5
-  collisionCheckSizeMultiplier: 0.9
   heldPositionOffset: {x: 0, y: 0, z: 0}
   isGrabbable: 1
 --- !u!54 &160594175
@@ -4568,7 +4566,7 @@ GameObject:
   - component: {fileID: 183818598}
   - component: {fileID: 183818608}
   - component: {fileID: 183818607}
-  m_Layer: 15
+  m_Layer: 0
   m_Name: Cube (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4612,7 +4610,6 @@ MonoBehaviour:
   allowSprint: 1
   requiredItem: {fileID: 0}
   maxGrabDistance: 2.5
-  collisionCheckSizeMultiplier: 0.9
   heldPositionOffset: {x: 0, y: 0, z: 0}
   isGrabbable: 1
 --- !u!54 &183818600
@@ -6522,7 +6519,6 @@ MonoBehaviour:
   allowSprint: 1
   requiredItem: {fileID: 0}
   maxGrabDistance: 2.5
-  collisionCheckSizeMultiplier: 0.9
   heldPositionOffset: {x: 0, y: 0, z: 0}
   isGrabbable: 1
 --- !u!54 &241719750
@@ -10652,6 +10648,67 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3833593884849639669, guid: 13169e85968327c43a0ce7b247161052, type: 3}
   m_PrefabInstance: {fileID: 359545389}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &360930414
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 89893157591662467, guid: 4775886a46e482c41a6ef09f0441f0ce, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 77.95785
+      objectReference: {fileID: 0}
+    - target: {fileID: 89893157591662467, guid: 4775886a46e482c41a6ef09f0441f0ce, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 101.73421
+      objectReference: {fileID: 0}
+    - target: {fileID: 89893157591662467, guid: 4775886a46e482c41a6ef09f0441f0ce, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 87.45134
+      objectReference: {fileID: 0}
+    - target: {fileID: 89893157591662467, guid: 4775886a46e482c41a6ef09f0441f0ce, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 89893157591662467, guid: 4775886a46e482c41a6ef09f0441f0ce, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 89893157591662467, guid: 4775886a46e482c41a6ef09f0441f0ce, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 89893157591662467, guid: 4775886a46e482c41a6ef09f0441f0ce, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 89893157591662467, guid: 4775886a46e482c41a6ef09f0441f0ce, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 89893157591662467, guid: 4775886a46e482c41a6ef09f0441f0ce, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 89893157591662467, guid: 4775886a46e482c41a6ef09f0441f0ce, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 752370686164426406, guid: 4775886a46e482c41a6ef09f0441f0ce, type: 3}
+      propertyPath: m_Name
+      value: BackgroundMusicPlayer
+      objectReference: {fileID: 0}
+    - target: {fileID: 3470371879468502555, guid: 4775886a46e482c41a6ef09f0441f0ce, type: 3}
+      propertyPath: m_Resource
+      value: 
+      objectReference: {fileID: 8300000, guid: a56b1e90bbe94d942aa3ed4b79e23c2e, type: 3}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 4775886a46e482c41a6ef09f0441f0ce, type: 3}
 --- !u!1001 &365384191
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -13978,7 +14035,6 @@ MonoBehaviour:
   allowSprint: 1
   requiredItem: {fileID: 0}
   maxGrabDistance: 2.5
-  collisionCheckSizeMultiplier: 0.9
   heldPositionOffset: {x: 0, y: 0, z: 0}
   isGrabbable: 1
 --- !u!54 &483766872
@@ -20125,7 +20181,6 @@ MonoBehaviour:
   allowSprint: 1
   requiredItem: {fileID: 0}
   maxGrabDistance: 2.5
-  collisionCheckSizeMultiplier: 0.9
   heldPositionOffset: {x: 0, y: 0, z: 0}
   isGrabbable: 1
 --- !u!54 &686381505
@@ -24262,10 +24317,6 @@ PrefabInstance:
       propertyPath: sprintCooldown
       value: 3
       objectReference: {fileID: 0}
-    - target: {fileID: 8756947555473094642, guid: dc60125b78695de43a450852f8101d10, type: 3}
-      propertyPath: m_ExcludeLayers.m_Bits
-      value: 32767
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -27205,7 +27256,7 @@ GameObject:
   - component: {fileID: 945784048}
   - component: {fileID: 945784047}
   - component: {fileID: 945784049}
-  m_Layer: 15
+  m_Layer: 9
   m_Name: Cube (3)
   m_TagString: Crates
   m_Icon: {fileID: 0}
@@ -27566,7 +27617,6 @@ MonoBehaviour:
   allowSprint: 1
   requiredItem: {fileID: 0}
   maxGrabDistance: 2.5
-  collisionCheckSizeMultiplier: 0.9
   heldPositionOffset: {x: 0, y: 0, z: 0}
   isGrabbable: 1
 --- !u!54 &945784045
@@ -27659,7 +27709,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ced780c22dcf6ef4bb8e624b32e4787a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SaveableWorldObject
-  uniqueID: 2e1fface-e080-4350-9cd7-40c2fa1f1017
+  uniqueID: b5341d08-5fdf-4c90-83a8-2dce93b4dd40
 --- !u!1001 &946958799
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -28333,7 +28383,6 @@ MonoBehaviour:
   allowSprint: 1
   requiredItem: {fileID: 0}
   maxGrabDistance: 2.5
-  collisionCheckSizeMultiplier: 0.9
   heldPositionOffset: {x: 0, y: 0, z: 0}
   isGrabbable: 1
 --- !u!54 &956816658
@@ -34722,7 +34771,7 @@ GameObject:
   - component: {fileID: 1201990209}
   - component: {fileID: 1201990208}
   - component: {fileID: 1201990215}
-  m_Layer: 15
+  m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -35109,7 +35158,6 @@ MonoBehaviour:
   allowSprint: 1
   requiredItem: {fileID: 0}
   maxGrabDistance: 2.5
-  collisionCheckSizeMultiplier: 0.9
   heldPositionOffset: {x: 0, y: 0, z: 0}
   isGrabbable: 1
 --- !u!1001 &1203242676
@@ -41422,7 +41470,7 @@ GameObject:
   - component: {fileID: 1447514940}
   - component: {fileID: 1447514950}
   - component: {fileID: 1447514949}
-  m_Layer: 15
+  m_Layer: 0
   m_Name: Cube (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -41466,7 +41514,6 @@ MonoBehaviour:
   allowSprint: 1
   requiredItem: {fileID: 0}
   maxGrabDistance: 2.5
-  collisionCheckSizeMultiplier: 0.9
   heldPositionOffset: {x: 0, y: 0, z: 0}
   isGrabbable: 1
 --- !u!54 &1447514942
@@ -43007,7 +43054,6 @@ MonoBehaviour:
   allowSprint: 1
   requiredItem: {fileID: 0}
   maxGrabDistance: 2.5
-  collisionCheckSizeMultiplier: 0.9
   heldPositionOffset: {x: 0, y: 0, z: 0}
   isGrabbable: 1
 --- !u!54 &1479961481
@@ -48035,7 +48081,7 @@ GameObject:
   - component: {fileID: 1630372006}
   - component: {fileID: 1630372005}
   - component: {fileID: 1630372004}
-  m_Layer: 15
+  m_Layer: 0
   m_Name: Cube (8)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -48100,7 +48146,6 @@ MonoBehaviour:
   allowSprint: 1
   requiredItem: {fileID: 0}
   maxGrabDistance: 2.5
-  collisionCheckSizeMultiplier: 0.9
   heldPositionOffset: {x: 0, y: 0, z: 0}
   isGrabbable: 1
 --- !u!54 &1630372007
@@ -48585,7 +48630,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1639286169}
-  m_Layer: 15
+  m_Layer: 9
   m_Name: End
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -62008,6 +62053,7 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 250005530}
+  - {fileID: 360930414}
   - {fileID: 522413290}
   - {fileID: 1372864032}
   - {fileID: 817948526}
