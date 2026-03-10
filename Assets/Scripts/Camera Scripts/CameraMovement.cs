@@ -37,6 +37,9 @@ public class CameraMovement : MonoBehaviour
     [Tooltip("The offset of the position that the camera will aim at relative to the player (should be set to slightly above the player (y = 3)).")]
     public Vector3 defaultLookAtOffset = Vector3.zero;
 
+    [Tooltip("The offeset used instead of default when charging a throw")]
+    public Vector3 throwLookAtOffset = new Vector3(3,3,0);
+
     [Tooltip("Speed at which the camera moves to follow the player. Lower numbers are slower and smoother, higher numbers are faster and more rigid.")]
     [SerializeField] private float smoothSpeed = 5f;
     private Transform target; // Reference the player as the intended target of the camera
@@ -109,6 +112,7 @@ public class CameraMovement : MonoBehaviour
     private PlayerController pc;
     private float mouseResetTimer;
     private bool lastInputWasMouse = false;
+    private PlayerController playerController;
 
     private void Awake()
     {
@@ -156,6 +160,11 @@ public class CameraMovement : MonoBehaviour
     {
         // Find the player and assign to target.
         target = GameObject.FindGameObjectWithTag("Player")?.transform;
+
+        if (playerController == null) // get player controller
+        {
+            playerController = GameObject.FindGameObjectWithTag("Player")?.GetComponent<PlayerController>();
+        }
 
         // Disable self if no player is found
         if (target == null)
@@ -365,7 +374,15 @@ public class CameraMovement : MonoBehaviour
 
         // Update the current offset and lookAtOffset based on the new rotation
         currentOffset = rotation * defaultOffset;
-        currentLookAtOffset = rotation * defaultLookAtOffset;
+
+        if (!playerController.isThrowing)
+        {
+            currentLookAtOffset = rotation * defaultLookAtOffset;
+        }
+        else
+        {
+            currentLookAtOffset = rotation * throwLookAtOffset;
+        }
     }
     
     // Smoothly returns the camera to its default position and rotation when there is no input for a certain amount of time
@@ -386,7 +403,14 @@ public class CameraMovement : MonoBehaviour
         Quaternion rotation = initialRotation * Quaternion.Euler(pitch, yaw, 0f);
         currentOffset = rotation * defaultOffset;
 
-        currentLookAtOffset = Vector3.Lerp(currentLookAtOffset, initialRotation * defaultLookAtOffset, returnSpeed * Time.deltaTime);
+        if (!playerController.isThrowing)
+        {
+            currentLookAtOffset = Vector3.Lerp(currentLookAtOffset, initialRotation * defaultLookAtOffset, returnSpeed * Time.deltaTime);
+        }
+        else
+        {
+            currentLookAtOffset = Vector3.Lerp(currentLookAtOffset, initialRotation * throwLookAtOffset, returnSpeed * Time.deltaTime);
+        }
     }
 
     // Public function to be called when a dialogue trigger is activated to start the camera zoom effect

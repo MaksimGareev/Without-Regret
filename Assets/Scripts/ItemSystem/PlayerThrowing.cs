@@ -40,6 +40,8 @@ public class PlayerThrowing : MonoBehaviour
     private float currentCharge = 0f;
     private bool usingController;
     private Vector3 PointerScale;
+    private float TimeSinceChargingStart;
+    private float waitBeforeCharging = .75f;
 
     public Animator animator;
 
@@ -122,10 +124,8 @@ public class PlayerThrowing : MonoBehaviour
             }
         }
     }
-    
-
-    // Update is called once per frame
-    private void LateUpdate()
+   
+    private void LateUpdate()// set to late to help prevent stuttering
     {
         if (Time.timeScale != 0f && playerEquipItem.throwableEquipped && !inventoryToggle.isEnabled)
         {
@@ -138,7 +138,7 @@ public class PlayerThrowing : MonoBehaviour
 
     }
 
-    private void DropItem()
+    private void DropItem()// if not throwable, drop the item instead
     {
         ItemData itemToDrop = playerEquipItem.currentEquippedItem;
         if (itemToDrop == null)
@@ -151,7 +151,7 @@ public class PlayerThrowing : MonoBehaviour
         Instantiate(itemToDrop.WorldPrefab, transform.position + transform.forward * 1f, Quaternion.identity);
     }
 
-    private void HandleCharging()
+    private void HandleCharging()// charges the throw overtime
     {
         if (Input.GetMouseButtonDown(chargeKeyInt) && !isCharging)
         {
@@ -165,49 +165,57 @@ public class PlayerThrowing : MonoBehaviour
 
         if (isCharging)
         {
-            if (currentCharge < 1f) // increases charge amount with time
+            if (TimeSinceChargingStart >= waitBeforeCharging)
             {
-                currentCharge += chargeSpeed * Time.deltaTime;
-            }
-            else if (currentCharge >= 1f) //when at max charge, starts a timer for how long the player can hold that max charge
-            {
-                if(currentHoldTime < holdTime)
+                if (currentCharge < 1f) // increases charge amount with time
                 {
-                    currentHoldTime += Time.deltaTime;
+                    currentCharge += chargeSpeed * Time.deltaTime;
                 }
-                else // when timer runs out, automatically throws the item and stops further functionality
+                else if (currentCharge >= 1f) //when at max charge, starts a timer for how long the player can hold that max charge
                 {
-                    ThrowItem(currentCharge);
-                    return;
-                }
-            }
-            DrawProjection();
-
-            if (GameManager.Instance.throwingSlider != null)
-            {
-                GameManager.Instance.throwingSlider.value = currentCharge;
-                GameManager.Instance.throwingSlider.gameObject.SetActive(true);
-            }
-
-            if (WorldThrowPointer != null)
-            {
-                WorldThrowPointer.gameObject.SetActive(true);
-            }
-
-            if (usingController)
-            {
-                if (Input.GetAxis(chargeButton) < 0.1f)
-                {
-                    ThrowItem(currentCharge);
+                    if (currentHoldTime < holdTime)
+                    {
+                        currentHoldTime += Time.deltaTime;
+                    }
+                    else // when timer runs out, automatically throws the item and stops further functionality
+                    {
+                        ThrowItem(currentCharge);
+                        return;
+                    }
                 }
             }
             else
             {
-                if (Input.GetMouseButtonUp(chargeKeyInt))
-                {
-                    ThrowItem(currentCharge);
-                }
+                TimeSinceChargingStart += Time.deltaTime;
             }
+
+            DrawProjection();// render line
+
+                if (GameManager.Instance.throwingSlider != null)
+                {
+                    GameManager.Instance.throwingSlider.value = currentCharge;
+                    GameManager.Instance.throwingSlider.gameObject.SetActive(true);
+                }
+
+                if (WorldThrowPointer != null)
+                {
+                    WorldThrowPointer.gameObject.SetActive(true);
+                }
+
+                if (usingController)
+                {
+                    if (Input.GetAxis(chargeButton) < 0.1f)
+                    {
+                        ThrowItem(currentCharge);
+                    }
+                }
+                else
+                {
+                    if (Input.GetMouseButtonUp(chargeKeyInt))
+                    {
+                        ThrowItem(currentCharge);
+                    }
+                }
             
         }
         else
@@ -220,6 +228,7 @@ public class PlayerThrowing : MonoBehaviour
 
     private void ThrowItem(float charge)// throws the item
     {
+        TimeSinceChargingStart = 0;
         ItemData itemToThrow = inventory.GetFirstThrowable();
         if (itemToThrow == null)
         {
@@ -246,7 +255,7 @@ public class PlayerThrowing : MonoBehaviour
 
             float throwForce = Mathf.Lerp(minThrowForce, maxThrowForce, charge);
             currentUpwardForce = Mathf.Lerp(upwardForceMax, upwardForceMin, charge);// upward force dependant on how long charge is held. its at max when charging just begins.
-            Vector3 finalForce = direction * throwForce + Vector3.up.normalized * currentUpwardForce;
+            Vector3 finalForce = direction * throwForce + Vector3.up.normalized * currentUpwardForce / 1;
             rb.AddForce(finalForce, ForceMode.Impulse);
         }
         if (GameManager.Instance.throwingSlider != null)
@@ -304,7 +313,7 @@ public class PlayerThrowing : MonoBehaviour
     {
         animator.SetBool("isChargingThrow", false);
         animator.SetTrigger("Throw");
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(0.5f);
         animator.SetBool("canThrow", false);
     }
     public void resetAnimations() // backup animation reseter
