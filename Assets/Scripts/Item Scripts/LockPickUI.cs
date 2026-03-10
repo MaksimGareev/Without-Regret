@@ -19,6 +19,7 @@ public class LockPickUI : MonoBehaviour
 
     private float CurrentAngle = 0f;
     private bool isActive = false;
+    public bool IsActive => isActive;
 
     public float ShakeDuration = 0.2f;
     public float ShakeStrength = 10f;

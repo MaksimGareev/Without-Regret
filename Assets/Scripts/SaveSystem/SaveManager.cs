@@ -51,17 +51,17 @@ public class SaveManager : MonoBehaviour
     // When the SaveManager is enabled, subscribe to the sceneLoaded event
     private void OnEnable()
     {
-        SceneManager.sceneLoaded += OnSceneLoaded;
+        SceneLoadManager.Instance.OnSceneLoaded.AddListener(OnSceneLoaded);
     }
 
     // Unsubscribe from the sceneLoaded event when the SaveManager is disabled to prevent memory leaks and unintended behavior
     private void OnDisable()
     {
-        SceneManager.sceneLoaded -= OnSceneLoaded;
+        SceneLoadManager.Instance.OnSceneLoaded.RemoveListener(OnSceneLoaded);
     }
 
     // When a new scene is loaded, refresh the list of saveable objects and load the game from the active save slot if any save data exists.
-    private void OnSceneLoaded(Scene newScene, LoadSceneMode mode)
+    private void OnSceneLoaded()
     {
         RefreshSaveables();
 

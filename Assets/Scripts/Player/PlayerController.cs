@@ -446,11 +446,10 @@ public class PlayerController : MonoBehaviour, ISaveable
                 // Stamina is full, reset values
                 SprintTimer = SprintDuration;
 
-                 if (staminaFadeRoutine != null)
+                if (staminaFadeRoutine == null)
                 {
-                    StopCoroutine(staminaFadeRoutine);
+                    staminaFadeRoutine = StartCoroutine(StaminaFadeAway());
                 }
-                staminaFadeRoutine = StartCoroutine(StaminaFadeAway());
 
                 GameManager.Instance.staminaSlider.value = SprintTimer;
                 canSprint = true;
@@ -488,7 +487,6 @@ public class PlayerController : MonoBehaviour, ISaveable
         // If player is holding an object, ask PlayerMovingObjects if the horizontal move would cause clipping.
         if (moveableObjectMod.movingObject)
         {
-            // Temp commented out, still causing issues
             bool canMove = mover.CanMoveBy(horizontalMove);
             if (!canMove)
             {
@@ -767,6 +765,13 @@ public class PlayerController : MonoBehaviour, ISaveable
     {
         if (staminaGroup == null) yield break;
 
+        // Wait before starting the fade
+        yield return new WaitForSeconds(0.5f);
+
+        // If stamina changed during the delay, cancel fade
+        if (SprintTimer < SprintDuration)
+            yield break;
+
         float t = 0f; //time float
         float start = staminaGroup.alpha;
 
@@ -785,6 +790,7 @@ public class PlayerController : MonoBehaviour, ISaveable
 
         staminaGroup.alpha = 0f;
         GameManager.Instance.staminaSlider.gameObject.SetActive(false);
+        staminaFadeRoutine = null;
     }
 
     public void DisableInput() // for disabling/freezing the player throughout other scripts
@@ -809,5 +815,10 @@ public class PlayerController : MonoBehaviour, ISaveable
     public void SetCurrentPlatform(OrbitingPlatform platform)
     {
         currentPlatform = platform;
+    }
+
+    public bool IsGrounded()
+    {
+        return isGrounded;
     }
 }

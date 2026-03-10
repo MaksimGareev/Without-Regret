@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -7,11 +8,20 @@ using UnityEngine.UI;
 
 public class ObjectiveAndSaveTesting : MonoBehaviour
 {
-    [System.Serializable]
+    [Serializable]
     public struct SceneObjectivePair
     {
+        [Tooltip("Scene reference for this pair. The objective will be activated when this scene is loaded.")]
         public SceneReference scene;
+
+        [Tooltip("Objective to activate when the corresponding scene is loaded.")]
         public ObjectiveData objectiveData;
+
+        [Tooltip("Whether the player should have their backpack or not when beginning this scene. Most should have this enabled except for Echo's House")]
+        public bool hasBackpack;
+
+        [Tooltip("Items that should be in the player's inventory when starting this scene.")]
+        public List<ItemData> inventoryItems;
     }
 
     [Header("Testing Settings")]
@@ -20,6 +30,12 @@ public class ObjectiveAndSaveTesting : MonoBehaviour
 
     // Runtime dictionary for quick lookup of objectives based on scene name, populated on Awake from above List
     private Dictionary<string, ObjectiveData> sceneObjectiveMap = new Dictionary<string, ObjectiveData>();
+
+    // Runtime dictionary to determine if the player should have their backpack for a given scene, populated on Awake from above List
+    private Dictionary<string, bool> sceneBackpackMap = new Dictionary<string, bool>();
+
+    // Runtime dictionary to determine what items should be in the player's inventory for a given scene, populated on Awake from above List
+    private Dictionary<string, List<ItemData>> sceneInventoryMap = new Dictionary<string, List<ItemData>>();
 
     // Array to hold scene names for button listeners
     private string[] sceneNames;
@@ -63,6 +79,28 @@ public class ObjectiveAndSaveTesting : MonoBehaviour
         for (int i = 0; i < sceneObjectiveList.Count; i++)
         {
             sceneNames[i] = sceneObjectiveList[i].scene.GetSceneName();
+        }
+
+        // Populate backpack and inventory maps
+        foreach (var pair in sceneObjectiveList)
+        {
+            if (!sceneBackpackMap.ContainsKey(pair.scene.GetSceneName()))
+            {
+                sceneBackpackMap.Add(pair.scene.GetSceneName(), pair.hasBackpack);
+            }
+            else
+            {
+                Debug.LogWarning($"Duplicate scene {pair.scene.GetSceneName()} in sceneObjectiveList for backpack map");
+            }
+
+            if (!sceneInventoryMap.ContainsKey(pair.scene.GetSceneName()))
+            {
+                sceneInventoryMap.Add(pair.scene.GetSceneName(), pair.inventoryItems);
+            }
+            else
+            {
+                Debug.LogWarning($"Duplicate scene {pair.scene.GetSceneName()} in sceneObjectiveList for inventory map");
+            }
         }
     }
 
@@ -201,6 +239,12 @@ public class ObjectiveAndSaveTesting : MonoBehaviour
         }
 
         var activeObjectives = ObjectiveManager.Instance.GetActiveObjectives();
+
+        if (activeObjectives == null)
+        {
+            Debug.LogWarning("No active objectives to skip");
+            return;
+        }
             
         foreach (var obj in activeObjectives)
         {
@@ -210,18 +254,21 @@ public class ObjectiveAndSaveTesting : MonoBehaviour
 
     private void LoadScene(string sceneName)
     {
+        // Early return if ObjectiveManager instance is not available to avoid loading scene without setting objective and inventory
         if (ObjectiveManager.Instance == null)
         {
             Debug.LogWarning("ObjectiveManager instance is not available");
             return;
         }
 
+        // Load the selected scene and close the debug UI
         if (sceneObjectiveMap.ContainsKey(sceneName))
         {
             SceneManager.LoadScene(sceneName);
             CloseDebugUI();
         }
 
+        // Skip to the objective mapped to this scene, if it exists in the dictionary
         if (sceneObjectiveMap.TryGetValue(sceneName, out ObjectiveData objectiveData))
         {
             ObjectiveManager.Instance.SkipToObjective(objectiveData);
@@ -230,8 +277,47 @@ public class ObjectiveAndSaveTesting : MonoBehaviour
         {
             Debug.LogWarning($"No objective mapped for scene {sceneName}");
         }
+        
+        // Get the list of items to be in the player's inventory for this scene from the mapping, or an empty list if no mapping exists
+        List<ItemData> inventoryItems = new List<ItemData>();
+
+        if (!sceneInventoryMap.TryGetValue(sceneName, out inventoryItems))
+        {
+            Debug.LogWarning($"No inventory item mapping found for scene {sceneName}");
+        }
+        else
+        {
+            Debug.Log($"Inventory items mapped for scene {sceneName}: {inventoryItems.Count} items");
+        }
+
+        // Get the backpack status for this scene from the mapping, defaulting to true if no mapping exists
+        bool hasBackpack = true;
+        if (!sceneBackpackMap.TryGetValue(sceneName, out hasBackpack))
+        {
+            Debug.LogWarning($"No backpack mapping found for scene {sceneName}");
+        }
+        else
+        {
+            Debug.Log($"Backpack mapping for scene {sceneName}: hasBackpack = {hasBackpack}");
+        }
+
+        // Start the coroutine to overwrite the player's inventory with the mapped items and backpack status for this scene
+        StartCoroutine(OverwriteInventoryCoroutine(inventoryItems, hasBackpack));
     }
 
+    private IEnumerator OverwriteInventoryCoroutine(List<ItemData> inventoryItems, bool hasBackpack)
+    {
+        Inventory playerInventory = FindAnyObjectByType<Inventory>();
+        while (playerInventory == null)
+        {
+            Debug.LogWarning("Player Inventory not found, retrying...");
+            yield return null;
+            playerInventory = FindAnyObjectByType<Inventory>();
+        }
+
+        StartCoroutine(playerInventory.OverwriteInventory(inventoryItems, hasBackpack));
+    }
+    
     private void OnDisable()
     {
         RemoveListeners();
