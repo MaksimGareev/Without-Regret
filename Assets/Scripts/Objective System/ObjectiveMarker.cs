@@ -51,8 +51,19 @@ public class ObjectiveMarker : MonoBehaviour
         {
             if (int.Equals(scene.buildIndex, objective.data.sceneIndex))
             {
-                Debug.Log("moving Marker");
-                gameObject.transform.position = objective.data.markerTransform;
+                if (objective.data.markerTransform != new Vector3(0, 0, 0))
+                {
+                    Debug.Log("moving Marker");
+                    gameObject.transform.position = objective.data.markerTransform;
+                }
+                else
+                {
+                    WorldIndicator.SetActive(false);
+                    ScreenSpaceIndicator.disableIndicator = true;
+                    Debug.Log("No vector value given");
+                    return;
+                }
+                
                 if (objective.data.hasMarker)
                 {
                     WorldIndicator.SetActive(true);
@@ -71,6 +82,7 @@ public class ObjectiveMarker : MonoBehaviour
         if (objective.data.hasOffScreenMarker)
         {
             ScreenSpaceIndicator.disableIndicator = false;
+            Debug.Log("Offscreen indicator disabled for this objective.");
         }
         else
         {
