@@ -33,6 +33,7 @@ public class SaveManager : MonoBehaviour
     private float autoSaveTimer = 0f;  // Timer to track time since last auto-save
     private bool isSaving = false; // Flag to prevent multiple simultaneous save operations
 
+    public bool IsLoading { get; private set; } = false;
     private void Awake()
     {
         // Implementing the singleton pattern to ensure only one instance of SaveManager exists and persists across scenes
@@ -263,7 +264,7 @@ public class SaveManager : MonoBehaviour
         {
             data.playerSaveData.currentRingState = TimerRingUI.Instance.currentRingState;
         }
-        else if (TimerRingUI.Instance == null && TimerRingUI.Instance.currentRingState == TimerRingUI.RingState.Empty)
+        else if (TimerRingUI.Instance == null || TimerRingUI.Instance.currentRingState == TimerRingUI.RingState.Empty)
         {
             data.playerSaveData.currentRingState = TimerRingUI.RingState.Full;
         }
@@ -310,6 +311,8 @@ public class SaveManager : MonoBehaviour
     // If no save data is found for the specified slot, a warning will be logged and no loading will occur.
     public void LoadGame(int slot)
     {
+        IsLoading = true;
+
         // Try loading from the specified save slot, if no save exists then create a new one in that slot.
         SaveData data = SaveSystem.Load(slot)?? new SaveData(slot);
 
@@ -320,10 +323,6 @@ public class SaveManager : MonoBehaviour
             return;
         }
 
-        if (ObjectiveManager.Instance != null)
-        {
-            ObjectiveManager.Instance.EnsureActiveObjective();
-        }
         RefreshSaveables();
 
         // Loop through the saveables list and call each object's LoadFrom method, passing in the loaded SaveData. 
@@ -347,6 +346,11 @@ public class SaveManager : MonoBehaviour
                 break;
             }
         }
+
+        if (ObjectiveManager.Instance != null)
+        {
+            ObjectiveManager.Instance.EnsureActiveObjective();
+        }
         
         // Set the timer ring state to the state in the saved data
         if (TimerRingUI.Instance != null && data.playerSaveData.currentRingState != TimerRingUI.RingState.Empty)
@@ -363,6 +367,8 @@ public class SaveManager : MonoBehaviour
         {
             PauseManager.Instance.ResumeGame();
         }
+
+        IsLoading = false;
     }
 
     // Sets the active save slot number to the specified slot
