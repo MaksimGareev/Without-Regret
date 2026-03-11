@@ -5,11 +5,11 @@ public class ForPlayerSeeTroughScript : MonoBehaviour
     public static int PlayerPosID = Shader.PropertyToID("_PlayerPosition");
     public static int SizeID = Shader.PropertyToID("_Size");
 
-    // [SerializeField] Material WallMaterial;
+    [SerializeField] Material WallMaterial;
     [SerializeField] Camera Cam;
     [SerializeField] LayerMask Mask;
 
-    [SerializeField] Material[] WallMaterials;
+    //[SerializeField] Material[] WallMaterials;
 
    
 
@@ -20,9 +20,6 @@ public class ForPlayerSeeTroughScript : MonoBehaviour
         // Send player position to shader in viewport space
         var view = Cam.WorldToViewportPoint(transform.position);
         
-        
-       
-        
         // Direction from player to camera
         var dir = Cam.transform.position - transform.position;
 
@@ -30,26 +27,27 @@ public class ForPlayerSeeTroughScript : MonoBehaviour
         var ray = new Ray(transform.position, dir.normalized);
 
         // Check if something blocks the player
-        if (Physics.Raycast(ray, out hit, 3000, Mask)){
-           
-           for(int i = 0; i<WallMaterials.Length; ++i) 
-            WallMaterials[i].SetFloat(SizeID, 1f);
-        
+        if (!Physics.Raycast(ray, out hit, 3000, Mask)){
+          // Debug.Log("there's nothing in obstruction layer");
+           WallMaterial.SetFloat(SizeID, 0f);
+           return;
         }
         else
         {
-            for(int i = 0; i<WallMaterials.Length; ++i) 
-                 WallMaterials[i].SetFloat(SizeID, 0f);
+          // Debug.Log("This might be a wall! ");
+           
+           WallMaterial = hit.collider.gameObject.GetComponent<Renderer>().sharedMaterial;
+           
+           WallMaterial.SetFloat(SizeID, 1f);
+           WallMaterial.SetVector(PlayerPosID, view);
         }
 
         // Send player position to shader in viewport space
         
         //WallMaterial.SetVector(PlayerPosID, view);
         
-        for(int i = 0; i<WallMaterials.Length; ++i) 
-            WallMaterials[i].SetVector(PlayerPosID, view);
         
-           
+        //WallMaterial.SetVector(PlayerPosID, view);    
         
     }
 }
