@@ -33,6 +33,18 @@ public class GrabPointCollisionCheck : MonoBehaviour
         // the collider is not in the set and there's still at least one collision
         if (!GetComponent<Collider>().enabled) return false; // If the collider is disabled, consider it not colliding with anything
 
+        for (int i = 0; i < collisions.Count; i++)
+        {
+            if (collisions.Contains(collider))
+            {
+                Debug.Log($"Grab point is colliding with: {collider.gameObject.name}");
+            }
+            else
+            {
+                Debug.Log("Grab point is colliding with something, but not the specified collider.");
+            }
+        }
+
         return (collisions.Contains(collider) && collisions.Count > 1) || (!collisions.Contains(collider) && collisions.Count > 0);
     }
 }

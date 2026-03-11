@@ -6239,13 +6239,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MoveableObject
   moveSlowdownDivisor: 1.25
-  sprintSlowdownDivisor: 3
+  sprintSlowdownDivisor: 2
   sprintDepletionFactor: 1.15
   staminaReduction: 0.5
   dotProductThreshold: 0.4
+  maxGrabDistance: 2.5
   allowSprint: 1
   requiredItem: {fileID: 0}
-  maxGrabDistance: 2.5
+  collisionCheckSizeFactor: 0.8
+  checkGrabPointCollisions: 1
   collisionCheckSizeMultiplier: 0.9
   heldPositionOffset: {x: 0, y: 0, z: 0}
   isGrabbable: 1
@@ -7567,8 +7569,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 379.5078, y: 260.55325, z: 1320.6643}
-  m_Center: {x: 0.85204166, y: -129.7771, z: -218.49275}
+  m_Size: {x: 305.19296, y: 238.83846, z: 891.2504}
+  m_Center: {x: 3.8983998, y: -6.879283, z: -3.785851}
 --- !u!1001 &520003319
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7755,6 +7757,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: -190.3
       objectReference: {fileID: 0}
+    - target: {fileID: -8559708407855430160, guid: 609f5d47a77b749478e0407f8090891f, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -6961765323814970995, guid: 609f5d47a77b749478e0407f8090891f, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: -4032098205579404702, guid: 609f5d47a77b749478e0407f8090891f, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
@@ -7779,6 +7789,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Lower_Cabinet (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 609f5d47a77b749478e0407f8090891f, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1394858895859699542, guid: 609f5d47a77b749478e0407f8090891f, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1681647014233188899, guid: 609f5d47a77b749478e0407f8090891f, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2728608270557565993, guid: 609f5d47a77b749478e0407f8090891f, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
@@ -7787,6 +7809,18 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: a83a47af708bc8244ae0a3ba4b27aef7, type: 2}
+    - target: {fileID: 6576606328353946956, guid: 609f5d47a77b749478e0407f8090891f, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7425512798375013190, guid: 609f5d47a77b749478e0407f8090891f, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7541191433267837971, guid: 609f5d47a77b749478e0407f8090891f, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -25481,6 +25515,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 369.898
       objectReference: {fileID: 0}
+    - target: {fileID: -8489580868404781249, guid: 3aa9a6e2ca6722c4099134d99d89562d, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -7119149324266482893, guid: 3aa9a6e2ca6722c4099134d99d89562d, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -4826230600770051716, guid: 3aa9a6e2ca6722c4099134d99d89562d, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: -4627424000764826439, guid: 3aa9a6e2ca6722c4099134d99d89562d, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
@@ -25497,18 +25543,34 @@ PrefabInstance:
       propertyPath: m_Name
       value: Upper_Cabinet (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 3aa9a6e2ca6722c4099134d99d89562d, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1010776163485769757, guid: 3aa9a6e2ca6722c4099134d99d89562d, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: b706e91ab485344479ad54210bb8f49d, type: 2}
+    - target: {fileID: 1951798162562829166, guid: 3aa9a6e2ca6722c4099134d99d89562d, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2273007533269456725, guid: 3aa9a6e2ca6722c4099134d99d89562d, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: b706e91ab485344479ad54210bb8f49d, type: 2}
+    - target: {fileID: 5675329631854678966, guid: 3aa9a6e2ca6722c4099134d99d89562d, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6056810243141696801, guid: 3aa9a6e2ca6722c4099134d99d89562d, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: b706e91ab485344479ad54210bb8f49d, type: 2}
+    - target: {fileID: 6487137006109064984, guid: 3aa9a6e2ca6722c4099134d99d89562d, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -32392,14 +32454,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MoveableObject
   moveSlowdownDivisor: 1.5
-  sprintSlowdownDivisor: 3
+  sprintSlowdownDivisor: 2
   sprintDepletionFactor: 1.15
   staminaReduction: 0.5
   dotProductThreshold: 0.4
+  maxGrabDistance: 2.5
   allowSprint: 1
   requiredItem: {fileID: 0}
-  maxGrabDistance: 2.5
-  collisionCheckSizeMultiplier: 0.9
+  collisionCheckSizeFactor: 1
+  checkGrabPointCollisions: 1
+  collisionCheckSizeMultiplier: 0.8
   heldPositionOffset: {x: 0, y: 0, z: 0}
   isGrabbable: 1
 --- !u!1001 &2020298943
@@ -34232,7 +34296,7 @@ PrefabInstance:
     - target: {fileID: 8140110358006030969, guid: 8234364b2d17d5848bc48e63195ea058, type: 3}
       propertyPath: jsonDialogueFile
       value: 
-      objectReference: {fileID: 4900000, guid: 46baa7026e282d941936933c4f487494, type: 3}
+      objectReference: {fileID: 4900000, guid: d55866f1fddc0494bacc4829e5746cb2, type: 3}
     - target: {fileID: 8380495056165551582, guid: 8234364b2d17d5848bc48e63195ea058, type: 3}
       propertyPath: m_Name
       value: DialogueTrigger
