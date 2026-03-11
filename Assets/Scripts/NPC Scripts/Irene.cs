@@ -11,6 +11,8 @@ public class Irene : MonoBehaviour
     public float FollowDistance = 2f;   // how far behind the player
     public float FollowSpeed = 3f;      // movement speed
     public float RotationSpeed = 3f;    // how fast the NPC rotates
+    public float BaseSpeed = 3.5f;      // how fast the NPC is
+    public float SprintingSpeed = 6f;        // how fast the NPC is when the player is too far away
     public bool IsFollowing = false;
     private bool isMoving = false; //detects whether or not Irene is moving for animator purposes
     private Vector3 lastPosition;
@@ -78,6 +80,26 @@ public class Irene : MonoBehaviour
         if (player == null) return;
 
         float distanceToPlayer = Vector3.Distance(transform.position, player.position); //calculates distance from the player as NPC is following
+
+        if (distanceToPlayer >= FollowDistance + 5.0f)
+        {
+            if (agent.speed != SprintingSpeed)
+            {
+                agent.speed = SprintingSpeed;
+                animator.speed = 2;
+                Debug.Log("Irene is too far!");
+            }
+        }
+        else
+        {
+            // Reset speed
+            if (agent.speed != BaseSpeed)
+            {
+                agent.speed = BaseSpeed;
+                animator.speed = 1;
+
+            }
+        }
 
         if (distanceToPlayer <= FollowDistance + 1.5f) //stops the NPC from following the player when they are too close
         {

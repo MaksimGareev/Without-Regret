@@ -51,17 +51,17 @@ public class SaveManager : MonoBehaviour
     // When the SaveManager is enabled, subscribe to the sceneLoaded event
     private void OnEnable()
     {
-        SceneManager.sceneLoaded += OnSceneLoaded;
+        SceneLoadManager.Instance.OnSceneLoaded.AddListener(OnSceneLoaded);
     }
 
     // Unsubscribe from the sceneLoaded event when the SaveManager is disabled to prevent memory leaks and unintended behavior
     private void OnDisable()
     {
-        SceneManager.sceneLoaded -= OnSceneLoaded;
+        SceneLoadManager.Instance.OnSceneLoaded.RemoveListener(OnSceneLoaded);
     }
 
     // When a new scene is loaded, refresh the list of saveable objects and load the game from the active save slot if any save data exists.
-    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    private void OnSceneLoaded()
     {
         RefreshSaveables();
 
@@ -320,6 +320,10 @@ public class SaveManager : MonoBehaviour
             return;
         }
 
+        if (ObjectiveManager.Instance != null)
+        {
+            ObjectiveManager.Instance.EnsureActiveObjective();
+        }
         RefreshSaveables();
 
         // Loop through the saveables list and call each object's LoadFrom method, passing in the loaded SaveData. 
@@ -352,12 +356,6 @@ public class SaveManager : MonoBehaviour
         else if (TimerRingUI.Instance != null && data.playerSaveData.currentRingState == TimerRingUI.RingState.Empty)
         {
             TimerRingUI.Instance.SetRingState(TimerRingUI.RingState.Full);
-        }
-
-        // Call to the objective manager to auto enable an objective, necessary when loading a save to continue where the player left off
-        if (ObjectiveManager.Instance != null)
-        {
-            ObjectiveManager.Instance.EnsureActiveObjective();
         }
 
         // Ensure the game is not paused after loading, which can happen if the player saves while paused and then reloads that save
