@@ -96,14 +96,12 @@ public class ObjectiveMarker : MonoBehaviour
     {
         ObjectiveInstance objective = ObjectiveManager.Instance.GetActiveObjectives().FirstOrDefault();
         
-
         Refresh(objective, SceneManager.GetActiveScene());
 
-            if (WorldIndicator.GetComponent<ObjectiveSpriteBillboard>() != null)
-            {
-                WorldIndicator.GetComponent<ObjectiveSpriteBillboard>().FindCamera();
-                
-            }
+        if (WorldIndicator.GetComponent<ObjectiveSpriteBillboard>() != null)
+        {
+            WorldIndicator.GetComponent<ObjectiveSpriteBillboard>().FindCamera();    
+        }
 
     }
 }
