@@ -14,7 +14,6 @@ public class ObjectiveMarker : MonoBehaviour
     private void OnEnable()
     {
         SceneLoadManager.Instance.OnSceneLoaded.AddListener(OnSceneLoad);
-        
     }
 
     private void OnDisable()
@@ -81,10 +80,8 @@ public class ObjectiveMarker : MonoBehaviour
 
     private void OnSceneLoad()
     {
-        
         ObjectiveInstance objective = ObjectiveManager.Instance.GetActiveObjectives().FirstOrDefault();
         Refresh(objective, SceneManager.GetActiveScene());
-        
 
             if (WorldIndicator.GetComponent<ObjectiveMarker>() != null)
             {
