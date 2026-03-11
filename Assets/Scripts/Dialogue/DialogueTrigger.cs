@@ -146,7 +146,7 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
         if (DialogueManager.DialogueIsActive)
             return false;
 
-        if (triggerType == DialogueTriggerType.Story)
+        if (triggerType == DialogueTriggerType.Story || triggerType == DialogueTriggerType.Spawn)
             return false;
 
         if (TalkedAlready && TalkedJsonDialogueFile == null)
