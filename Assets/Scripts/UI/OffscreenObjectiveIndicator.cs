@@ -61,6 +61,7 @@ public class OffscreenObjectiveIndicator : MonoBehaviour
     private void RefreshCameraReference()
     {
         playerCam = Camera.main;
+        player = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
     }
 
     private void Start()
@@ -82,7 +83,7 @@ public class OffscreenObjectiveIndicator : MonoBehaviour
 
     private void LateUpdate()
     {
-        if (target != null && playerCam != null)
+        if (target != null && playerCam != null && player != null)
         {
             Vector3 targetViewportPos = playerCam.WorldToViewportPoint(target.position);
 
