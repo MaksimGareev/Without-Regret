@@ -10,7 +10,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 6940014297316468638, guid: e90c4b2811101ef4db37b2b11ff10d50, type: 3}
       propertyPath: m_Name
-      value: Rock_Tall Variant
+      value: Rock_Tall Variant_Mantleable
       objectReference: {fileID: 0}
     - target: {fileID: 6940014297316468638, guid: e90c4b2811101ef4db37b2b11ff10d50, type: 3}
       propertyPath: m_Layer
@@ -68,13 +68,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: -85.91501
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 1834559371267746864, guid: e90c4b2811101ef4db37b2b11ff10d50, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 6940014297316468638, guid: e90c4b2811101ef4db37b2b11ff10d50, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7122264669368111829}
+    - targetCorrespondingSourceObject: {fileID: 9188681836067828506, guid: e90c4b2811101ef4db37b2b11ff10d50, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1247736401621197411}
   m_SourcePrefab: {fileID: 100100000, guid: e90c4b2811101ef4db37b2b11ff10d50, type: 3}
 --- !u!1 &4634478734462750808 stripped
 GameObject:
@@ -96,5 +100,29 @@ MonoBehaviour:
   mantleOffset: {x: 1.79, y: -0.23, z: 0.5}
   showGizmos: 1
   maxMantleDistance: 8
-  minHeight: 0.8
-  maxHeight: 3
+--- !u!1 &6889340381121938652 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 9188681836067828506, guid: e90c4b2811101ef4db37b2b11ff10d50, type: 3}
+  m_PrefabInstance: {fileID: 2314599388576430022}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &1247736401621197411
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6889340381121938652}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 761.2407, y: 909.88965, z: 1009.5878}
+  m_Center: {x: -0.00009444891, y: 5.9751754, z: 504.79385}

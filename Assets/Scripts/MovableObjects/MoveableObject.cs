@@ -5,13 +5,13 @@ using System;
 public class MoveableObject : MonoBehaviour, IInteractable
 {
     [SerializeField, Tooltip("When moving this object, the player's base speed is divided by this value")] 
-    private float moveSlowdownDivisor = 3f;
+    private float moveSlowdownDivisor = 1.75f;
     [SerializeField, Tooltip("When moving this object, the player's sprinting speed is divided by this value")] 
-    private float sprintSlowdownDivisor = 3f;
+    private float sprintSlowdownDivisor = 1.5f;
     [SerializeField, Tooltip("Modifies how quickly the player's sprint timer is reduced when this object is held while sprinting. Higher number = Faster reduction")] 
     private float sprintDepletionFactor = 1.05f;
     [SerializeField, Tooltip("Modifies how quickly the player's sprint timer is reduced when this object is held while moving (but not sprinting). Higher number = faster reduction")]
-    private float staminaReduction = 0.5f;
+    private float staminaReduction = 0.35f;
     [SerializeField, Range(0, 1), Tooltip("Determines how strict the angle between the player forward vector and object must be to allow interaction. 1 = player can be facing parallel, 0 = player must be perfectly perpendicular")]
     private float dotProductThreshold = 0.4f;
     [SerializeField] private float maxGrabDistance = 2.5f;
