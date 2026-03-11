@@ -14,6 +14,10 @@ public class ObjectiveSpriteBillboard : MonoBehaviour
 
             transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z);
         }
+        else
+        {
+            FindCamera();
+        }
     }
 
     public void FindCamera()
