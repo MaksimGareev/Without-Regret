@@ -81,15 +81,36 @@ public class SceneLoadManager : MonoBehaviour
 
         asyncLoad.allowSceneActivation = true;
 
-        yield return null;
+        yield return new WaitForSecondsRealtime(0.1f);
 
         OnSceneLoaded?.Invoke();
         Physics.SyncTransforms();
 
-        yield return null;
+        yield return StartCoroutine(WaitForStableFrameRate());
 
         //Time.timeScale = 1f;
         yield return StartCoroutine(FadeOutBlackScreen());
+    }
+
+    private IEnumerator WaitForStableFrameRate()
+    {
+        int stableFrameCount = 0;
+        const int requiredStableFrames = 5;
+        const float maxFrameTime = 1f / 25f; // 25 FPS threshold
+
+        while (stableFrameCount < requiredStableFrames)
+        {
+            if (Time.unscaledDeltaTime < maxFrameTime)
+            {
+                stableFrameCount++;
+            }
+            else
+            {
+                stableFrameCount = 0; // Reset if we get a slow frame
+            }
+
+            yield return null;
+        }
     }
 
     private IEnumerator FadeInBlackScreen()
@@ -104,7 +125,7 @@ public class SceneLoadManager : MonoBehaviour
             textColor.a = Mathf.Lerp(0f, 1f, elapsedTime / fadeDuration);
             blackScreen.color = screenColor;
             loadingText.color = textColor;
-            elapsedTime += Time.deltaTime;
+            elapsedTime += Time.unscaledDeltaTime;
             yield return null;
         }
 
@@ -126,7 +147,7 @@ public class SceneLoadManager : MonoBehaviour
             textColor.a = Mathf.Lerp(1f, 0f, elapsedTime / fadeDuration);
             blackScreen.color = screenColor;
             loadingText.color = textColor;
-            elapsedTime += Time.deltaTime;
+            elapsedTime += Time.unscaledDeltaTime;
             yield return null;
         }
 

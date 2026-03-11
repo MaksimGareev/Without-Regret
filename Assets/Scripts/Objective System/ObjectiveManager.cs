@@ -30,6 +30,8 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
     [HideInInspector] public UnityEvent<ObjectiveInstance> OnObjectiveProgressUpdated = new();
     [HideInInspector] public UnityEvent<ObjectiveInstance> OnObjectiveCompleted = new();
 
+    private bool loadingFromSave = false;
+
     private void Awake()
     {
         // Singleton pattern
@@ -52,7 +54,14 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
         }
 
         // Register self with SaveManager as a savable entity
-        StartCoroutine(RegisterWhenReady());
+        if (SaveManager.Instance != null)
+        {
+            SaveManager.Instance.RegisterSaveable(this);
+        }
+        else
+        {
+            StartCoroutine(RegisterWhenReady());
+        }
     }
 
 
@@ -109,6 +118,8 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
     // This is called by the SaveManager when loading a game
     public void LoadFrom(SaveData data)
     {
+        loadingFromSave = true;
+
         // Clear current objectives lists before loading from save data
         activeObjectives.Clear();
         completedObjectives.Clear();
@@ -137,11 +148,15 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
                 activeObjectives.Add(inst);
             }
         }
+
+        loadingFromSave = false;
     }
 
     // Handles logic for activating an objective
     public void ActivateObjective(ObjectiveData objective)
     {
+        if (loadingFromSave) return;
+
         // Early returns if objective is null or already active/completed
         if (objective == null)
         {
@@ -163,7 +178,7 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
         OnObjectiveActivated.Invoke(newObjective);
 
         // Save the game after activating a new objective
-        if (SaveManager.Instance != null)
+        if (SaveManager.Instance != null && !SaveManager.Instance.IsLoading)
         {
             SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
         }
@@ -185,7 +200,7 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
             Debug.LogWarning($"Objective with ID '{objectiveID}' not found in list.");
         }
 
-        if (SaveManager.Instance != null)
+        if (SaveManager.Instance != null && !SaveManager.Instance.IsLoading)
         {
             SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
         }
@@ -218,7 +233,7 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
         }
 
         // Save the game after updating progress
-        if (SaveManager.Instance != null)
+        if (SaveManager.Instance != null && !SaveManager.Instance.IsLoading)
         {
             SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
         }
@@ -261,6 +276,8 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
     // This is primarily called by the SaveManager upon loading a scene
     public void EnsureActiveObjective()
     {
+        if (loadingFromSave) return;
+
         // Move objective to completed list if not already moved there
         if (activeObjectives.Count > 0)
         {
@@ -301,7 +318,7 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
         StartCoroutine(ActivateNextObjectiveAfterDelay());
 
         // Save the game
-        if (SaveManager.Instance != null)
+        if (SaveManager.Instance != null && !SaveManager.Instance.IsLoading)
         {
             SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
         }
@@ -333,11 +350,6 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
     {
         activeObjectives.Clear();
         completedObjectives.Clear();
-
-        if (SceneManager.GetActiveScene().name != "MainMenu")
-        {
-            EnsureActiveObjective();
-        }
     }
 
     // This method is used for testing purposes to skip to a specific objective and mark all previous objectives as completed.
