@@ -17,12 +17,14 @@ public class GrabPointCollisionCheck : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if (other.isTrigger) return; // Ignore trigger colliders, as they shouldn't prevent grabbing
-            
+
+        //Debug.Log($"Grab point started colliding with: {other.gameObject.name}");
         collisions.Add(other);
     }
 
     private void OnTriggerExit(Collider other)
     {
+        //Debug.Log($"Grab point stopped colliding with: {other.gameObject.name}");
         collisions.Remove(other);
     }
 
@@ -31,20 +33,28 @@ public class GrabPointCollisionCheck : MonoBehaviour
         // Check if colliding with anything other than the specified collider
         // Either the collider is in the set and there's more than one collision, or
         // the collider is not in the set and there's still at least one collision
-        if (!GetComponent<Collider>().enabled) return false; // If the collider is disabled, consider it not colliding with anything
+        if (!GetComponent<Collider>().enabled) return false; // If the collider is disabled, consider it not colliding with anything}
+        //}
 
-        for (int i = 0; i < collisions.Count; i++)
+        bool result = (collisions.Contains(collider) && collisions.Count > 1) || (!collisions.Contains(collider) && collisions.Count > 0);
+
+        //if (result)
+        //{
+        //    bool contains = collisions.Contains(collider);
+        //    int count = collisions.Count;
+        //    Debug.Log($"Grab point is colliding with something that isn't the specified collider {collider.gameObject.name}. Contains: {contains}, count: {count}");
+        //    PrintCollisions();
+        //}
+
+        return result;
+    }
+
+    public void PrintCollisions()
+    {
+        Debug.Log("Logging Grab Point collisions");
+        foreach (var col in collisions)
         {
-            if (collisions.Contains(collider))
-            {
-                Debug.Log($"Grab point is colliding with: {collider.gameObject.name}");
-            }
-            else
-            {
-                Debug.Log("Grab point is colliding with something, but not the specified collider.");
-            }
+            Debug.Log($"Currently colliding with: {col.gameObject.name}");
         }
-
-        return (collisions.Contains(collider) && collisions.Count > 1) || (!collisions.Contains(collider) && collisions.Count > 0);
     }
 }

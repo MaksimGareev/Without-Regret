@@ -148,7 +148,7 @@ public class MoveableObject : MonoBehaviour, IInteractable
             // by checking the grab point for collisions.
             if (checkGrabPointCollisions && mover.grabPoint.TryGetComponent<GrabPointCollisionCheck>(out var checker) && checker.CollidingWithSomethingExcept(coll))
             {
-                Debug.Log($"Player tried to grab an object, but their grab point is colliding with another object. {checker.gameObject.name}");
+                Debug.Log($"Player tried to grab an object, but their grab point is colliding with another object");
                 return;
             }
 
