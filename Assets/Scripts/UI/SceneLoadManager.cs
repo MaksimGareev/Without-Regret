@@ -83,7 +83,8 @@ public class SceneLoadManager : MonoBehaviour
 
         yield return new WaitForSecondsRealtime(0.1f);
 
-        OnSceneLoaded?.Invoke();
+        OnSceneLoaded.Invoke();
+
         Physics.SyncTransforms();
 
         yield return StartCoroutine(WaitForStableFrameRate());

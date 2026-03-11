@@ -11,14 +11,17 @@ public class ObjectiveMarker : MonoBehaviour
     [Tooltip("UI indicator for offscreen objectives")]
     public OffscreenObjectiveIndicator ScreenSpaceIndicator;
 
+    [Tooltip("Scenemanager to listen for event from")]
+    public SceneLoadManager sceneManger;
+
     private void OnEnable()
     {
-        SceneLoadManager.Instance.OnSceneLoaded.AddListener(OnSceneLoad);
+        sceneManger.OnSceneLoaded.AddListener(OnSceneLoad);
     }
 
     private void OnDisable()
     {
-        SceneLoadManager.Instance.OnSceneLoaded.RemoveListener(OnSceneLoad);
+        sceneManger.OnSceneLoaded.RemoveListener(OnSceneLoad);
     }
 
     private void Awake()
@@ -82,7 +85,6 @@ public class ObjectiveMarker : MonoBehaviour
         if (objective.data.hasOffScreenMarker)
         {
             ScreenSpaceIndicator.disableIndicator = false;
-            Debug.Log("Offscreen indicator disabled for this objective.");
         }
         else
         {
@@ -93,11 +95,14 @@ public class ObjectiveMarker : MonoBehaviour
     private void OnSceneLoad()
     {
         ObjectiveInstance objective = ObjectiveManager.Instance.GetActiveObjectives().FirstOrDefault();
+        
+
         Refresh(objective, SceneManager.GetActiveScene());
 
-            if (WorldIndicator.GetComponent<ObjectiveMarker>() != null)
+            if (WorldIndicator.GetComponent<ObjectiveSpriteBillboard>() != null)
             {
-                WorldIndicator.GetComponent<ObjectiveMarker>().WorldIndicator.GetComponent<ObjectiveSpriteBillboard>().FindCamera();
+                WorldIndicator.GetComponent<ObjectiveSpriteBillboard>().FindCamera();
+                
             }
 
     }
