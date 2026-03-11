@@ -13,13 +13,13 @@ public class ObjectiveMarker : MonoBehaviour
 
     private void OnEnable()
     {
-        SceneManager.sceneLoaded += OnSceneLoad;
+        SceneLoadManager.Instance.OnSceneLoaded.AddListener(OnSceneLoad);
         
     }
 
     private void OnDisable()
     {
-        SceneManager.sceneLoaded -= OnSceneLoad;
+        SceneLoadManager.Instance.OnSceneLoaded.RemoveListener(OnSceneLoad);
     }
 
     private void Awake()
@@ -79,17 +79,17 @@ public class ObjectiveMarker : MonoBehaviour
         }
     }
 
-    private void OnSceneLoad(Scene scene, LoadSceneMode mode)
+    private void OnSceneLoad()
     {
         
         ObjectiveInstance objective = ObjectiveManager.Instance.GetActiveObjectives().FirstOrDefault();
-        Refresh(objective, scene);
-        if (scene.buildIndex != 0)
-        {
+        Refresh(objective, SceneManager.GetActiveScene());
+        
+
             if (WorldIndicator.GetComponent<ObjectiveMarker>() != null)
             {
                 WorldIndicator.GetComponent<ObjectiveMarker>().WorldIndicator.GetComponent<ObjectiveSpriteBillboard>().FindCamera();
             }
-        }
+
     }
 }
