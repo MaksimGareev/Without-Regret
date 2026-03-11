@@ -305,6 +305,14 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -1
       objectReference: {fileID: 0}
+    - target: {fileID: 139511507770953929, guid: e3b9262b76b69d34b87124d143240539, type: 3}
+      propertyPath: allObjectives.Array.size
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 139511507770953929, guid: e3b9262b76b69d34b87124d143240539, type: 3}
+      propertyPath: 'allObjectives.Array.data[29]'
+      value: 
+      objectReference: {fileID: 11400000, guid: 052419022e50a4d4a87132734dfa2cf2, type: 2}
     - target: {fileID: 1015739059017307417, guid: e3b9262b76b69d34b87124d143240539, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -397,14 +405,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: GameManager
       objectReference: {fileID: 0}
-    - target: {fileID: 4117733968055859606, guid: e3b9262b76b69d34b87124d143240539, type: 3}
-      propertyPath: ScreenSpaceIndicator
-      value: 
-      objectReference: {fileID: 1550450826}
-    - target: {fileID: 4257007363911346019, guid: e3b9262b76b69d34b87124d143240539, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 4003018514918516290, guid: e3b9262b76b69d34b87124d143240539, type: 3}
       propertyPath: m_AnchorMin.y
       value: 1
@@ -416,6 +416,14 @@ PrefabInstance:
     - target: {fileID: 4003018514918516290, guid: e3b9262b76b69d34b87124d143240539, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: -25
+      objectReference: {fileID: 0}
+    - target: {fileID: 4117733968055859606, guid: e3b9262b76b69d34b87124d143240539, type: 3}
+      propertyPath: ScreenSpaceIndicator
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 4257007363911346019, guid: e3b9262b76b69d34b87124d143240539, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4269395408949010603, guid: e3b9262b76b69d34b87124d143240539, type: 3}
       propertyPath: m_IsActive
@@ -574,17 +582,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e3b9262b76b69d34b87124d143240539, type: 3}
---- !u!114 &1550450826 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5819534910230094526, guid: e3b9262b76b69d34b87124d143240539, type: 3}
-  m_PrefabInstance: {fileID: 1365188771}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71a818f1b78907743bda88889cb04d58, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::OffscreenObjectiveIndicator
 --- !u!1001 &3738755080953639949
 PrefabInstance:
   m_ObjectHideFlags: 0
