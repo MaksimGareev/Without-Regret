@@ -5,7 +5,7 @@ public class ForPlayerSeeTroughScript : MonoBehaviour
     public static int PlayerPosID = Shader.PropertyToID("_PlayerPosition");
     public static int SizeID = Shader.PropertyToID("_Size");
 
-    [SerializeField] Material WallMaterial;
+     Material WallMaterial;
     [SerializeField] Camera Cam;
     [SerializeField] LayerMask Mask;
 
@@ -29,7 +29,9 @@ public class ForPlayerSeeTroughScript : MonoBehaviour
         // Check if something blocks the player
         if (!Physics.Raycast(ray, out hit, 3000, Mask)){
           // Debug.Log("there's nothing in obstruction layer");
-           WallMaterial.SetFloat(SizeID, 0f);
+          if(WallMaterial != null)
+            WallMaterial.SetFloat(SizeID, 0f);
+           
            return;
         }
         else
@@ -38,7 +40,7 @@ public class ForPlayerSeeTroughScript : MonoBehaviour
            
            WallMaterial = hit.collider.gameObject.GetComponent<Renderer>().sharedMaterial;
            
-           WallMaterial.SetFloat(SizeID, 1f);
+           WallMaterial.SetFloat(SizeID, 0.75f);
            WallMaterial.SetVector(PlayerPosID, view);
         }
 
