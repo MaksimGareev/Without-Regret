@@ -98,12 +98,12 @@ public class OffscreenObjectiveIndicator : MonoBehaviour
         }
         else if (playerCam == null)
         {
-            Debug.LogError("Player Camera reference is missing in OffscreenObjectiveIndicator script. Please ensure there is a camera in the scene tagged as 'MainCamera'.");
+            Debug.LogWarning("Player Camera reference is missing in OffscreenObjectiveIndicator script. Please ensure there is a camera in the scene tagged as 'MainCamera'.");
             RefreshCameraReference();
         }
         else if (target == null)
         {
-            Debug.LogError("Target reference is missing in OffscreenObjectiveIndicator script. Please ensure the target variable is set to the transform of the objective you want to point towards.");
+            Debug.LogWarning("Target reference is missing in OffscreenObjectiveIndicator script. Please ensure the target variable is set to the transform of the objective you want to point towards.");
         }
 
     }
@@ -117,7 +117,7 @@ public class OffscreenObjectiveIndicator : MonoBehaviour
     {
         if (playerCam == null)
         {
-            Debug.LogError("Player Camera reference is missing in OffscreenObjectiveIndicator script. Please ensure there is a camera in the scene tagged as 'MainCamera'.");
+            Debug.LogWarning("Player Camera reference is missing in OffscreenObjectiveIndicator script. Please ensure there is a camera in the scene tagged as 'MainCamera'.");
             return;
         }
 

@@ -68,9 +68,10 @@ public class SceneLoadManager : MonoBehaviour
 
     private IEnumerator LoadSceneCoroutine(string sceneName)
     {
-        yield return StartCoroutine(FadeInBlackScreen());
-        //Time.timeScale = 0f;
+        Debug.Log("Fading in black screen");
+        yield return FadeInBlackScreen();
 
+        Debug.Log("Starting scene load");
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
         asyncLoad.allowSceneActivation = false;
 
@@ -79,27 +80,42 @@ public class SceneLoadManager : MonoBehaviour
             yield return null;
         }
 
+        Debug.Log("Scene loaded");
         asyncLoad.allowSceneActivation = true;
+
+        yield return new WaitForSecondsRealtime(0.5f);
+
+        Debug.Log("Syncing physics transforms");
+        Physics.SyncTransforms();
 
         yield return new WaitForSecondsRealtime(0.1f);
 
-        OnSceneLoaded.Invoke();
+        Debug.Log("Invoking scene loaded event");
+        StartCoroutine(InvokeSceneLoadedEvent());
 
-        Physics.SyncTransforms();
+        yield return WaitForStableFrameRate();
 
-        yield return StartCoroutine(WaitForStableFrameRate());
+        Debug.Log("Fading out black screen");
+        yield return FadeOutBlackScreen();
+    }
 
-        //Time.timeScale = 1f;
-        yield return StartCoroutine(FadeOutBlackScreen());
+    private IEnumerator InvokeSceneLoadedEvent()
+    {
+        yield return null;
+        OnSceneLoaded?.Invoke();
     }
 
     private IEnumerator WaitForStableFrameRate()
     {
         int stableFrameCount = 0;
         const int requiredStableFrames = 5;
-        const float maxFrameTime = 1f / 25f; // 25 FPS threshold
+        const float maxFrameTime = 1f / 10f; // Variable FPS threshold
 
-        while (stableFrameCount < requiredStableFrames)
+        // Add a timeout to prevent infinite waiting in case of issues
+        float timeOut = 5f;
+        float timer = 0f;
+
+        while (stableFrameCount < requiredStableFrames && timer < timeOut)
         {
             if (Time.unscaledDeltaTime < maxFrameTime)
             {
@@ -110,23 +126,29 @@ public class SceneLoadManager : MonoBehaviour
                 stableFrameCount = 0; // Reset if we get a slow frame
             }
 
+            timer += Time.unscaledDeltaTime;
+
             yield return null;
         }
     }
 
     private IEnumerator FadeInBlackScreen()
     {
-        float elapsedTime = 0f;
+        float startTime = Time.realtimeSinceStartup;
+        float endTime = startTime + fadeDuration;
+
         Color screenColor = blackScreen.color;
         Color textColor = loadingText.color;
 
-        while (elapsedTime < fadeDuration)
+        while (Time.realtimeSinceStartup < endTime)
         {
-            screenColor.a = Mathf.Lerp(0f, 1f, elapsedTime / fadeDuration);
-            textColor.a = Mathf.Lerp(0f, 1f, elapsedTime / fadeDuration);
+            float t = Mathf.InverseLerp(startTime, endTime, Time.realtimeSinceStartup);
+
+            screenColor.a = Mathf.Lerp(0f, 1f, t);
+            textColor.a = Mathf.Lerp(0f, 1f, t);
             blackScreen.color = screenColor;
             loadingText.color = textColor;
-            elapsedTime += Time.unscaledDeltaTime;
+            
             yield return null;
         }
 
@@ -138,17 +160,21 @@ public class SceneLoadManager : MonoBehaviour
 
     private IEnumerator FadeOutBlackScreen()
     {
-        float elapsedTime = 0f;
+        float startTime = Time.realtimeSinceStartup;
+        float endTime = startTime + fadeDuration;
+
         Color screenColor = blackScreen.color;
         Color textColor = loadingText.color;
 
-        while (elapsedTime < fadeDuration)
+        while (Time.realtimeSinceStartup < endTime)
         {
-            screenColor.a = Mathf.Lerp(1f, 0f, elapsedTime / fadeDuration);
-            textColor.a = Mathf.Lerp(1f, 0f, elapsedTime / fadeDuration);
+            float t = Mathf.InverseLerp(startTime, endTime, Time.realtimeSinceStartup);
+
+            screenColor.a = Mathf.Lerp(1f, 0f, t);
+            textColor.a = Mathf.Lerp(1f, 0f, t);
             blackScreen.color = screenColor;
             loadingText.color = textColor;
-            elapsedTime += Time.unscaledDeltaTime;
+            
             yield return null;
         }
 
@@ -157,5 +183,9 @@ public class SceneLoadManager : MonoBehaviour
         loadingText.color = textColor;
         blackScreen.color = screenColor;
     }
-    
+
+    private void OnDestroy()
+    {
+        Debug.Log("SceneLoadManager destroyed");
+    }
 }
