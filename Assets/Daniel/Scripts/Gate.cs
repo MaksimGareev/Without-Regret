@@ -26,22 +26,25 @@ public class Gate : SaveableWithID
         leftDoorAnimator = RotateLeftDoor.GetComponent<Animator>();
     }
 
-    private void OnEnable()
+    private bool CheckIfObjectiveCompleted()
     {
         if (needsObjective && linkedObjective != null)
         {
             if (ObjectiveManager.Instance != null)
             {
-                if (ObjectiveManager.Instance.IsObjectiveCompleted(linkedObjective.objectiveID))
+                foreach (var objective in ObjectiveManager.Instance.GetCompletedObjectives())
                 {
-                    locked = false;
+                    if (objective.data == linkedObjective)
+                    {
+                        locked = false;
+                        return true;
+                    }
                 }
-                else
-                {
-                    ObjectiveManager.Instance.OnObjectiveCompleted.AddListener(SetObjectiveComplete);
-                }
+
+                ObjectiveManager.Instance.OnObjectiveCompleted.AddListener(SetObjectiveComplete);
             }
         }
+        return false;
     }
 
     private void SetObjectiveComplete(ObjectiveInstance objective)
@@ -100,7 +103,7 @@ public class Gate : SaveableWithID
             Debug.Log($"Loading Gate: locked={state.locked}, opened={state.opened}, ID: {GetUniqueID()}");
         }
 
-        locked = state.locked;
+        locked = CheckIfObjectiveCompleted() ? false : state.locked;
         opened = state.opened;
 
         if (opened)
