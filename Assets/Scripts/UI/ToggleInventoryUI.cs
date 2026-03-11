@@ -17,27 +17,16 @@ public class ToggleInventoryUI : MonoBehaviour
     [SerializeField] private Vector2 enabledPosition = new Vector2(-100, 120f);
     [SerializeField] private AnimationCurve slideCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
 
-    [Header("Debugging")]
-    [SerializeField] private bool showDebugLogs = false;
+    // [Header("Debugging")]
+    // [SerializeField] private bool showDebugLogs = false;
 
     public bool isEnabled { get; private set; } = false;
     public bool hasBackpack { get; set; } = false;
-    private RectTransform rectTransform;
+    //private RectTransform rectTransform;
     private Coroutine slideRoutine;
 
     void Awake()
     {
-        // if (inventoryGameObject == null)
-        // {
-        //     inventoryGameObject = GameObject.Find("Inventory");
-        //     if (inventoryGameObject == null)
-        //     {
-        //         Debug.LogError("Inventory GameObject not found in the scene. Please ensure a GameObject named 'Inventory' exists in the scene as a child of the MainCanvas.");
-        //     }
-        // }
-
-        // rectTransform = inventoryGameObject.GetComponent<RectTransform>();
-
         GameManager.Instance.inventoryRectTransform.anchoredPosition = disabledPosition;
         GameManager.Instance.InventoryUI.SetActive(false);
 
@@ -62,7 +51,7 @@ public class ToggleInventoryUI : MonoBehaviour
         }
     }
 
-    private void ToggleInventory()
+    public void ToggleInventory()
     {
         if (slideRoutine != null)
         {
@@ -110,4 +99,5 @@ public class ToggleInventoryUI : MonoBehaviour
             GameManager.Instance.InventoryUI.SetActive(false);
         }
     }
+
 }

@@ -55,6 +55,7 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
         StartCoroutine(RegisterWhenReady());
     }
 
+
     // Wait until SaveManager instance is available before registering, since SaveManager is 
     // also a singleton and may not be initialized yet when ObjectiveManager's Awake is called.
     private IEnumerator RegisterWhenReady()
@@ -160,8 +161,6 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
 
         // Fire event so ObjectiveUI (or other listeners) can react
         OnObjectiveActivated.Invoke(newObjective);
-
-        // Debug.Log($"Objective '{newObjective.data.title}' has been activated");
 
         // Save the game after activating a new objective
         if (SaveManager.Instance != null)

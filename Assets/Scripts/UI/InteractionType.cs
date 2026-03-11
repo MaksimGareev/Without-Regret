@@ -11,6 +11,7 @@ public enum InteractType
     Collectable,
     Float,
     Door,
+    Throwable,
     Possess,
     BossQTE,
     BossAttack,
