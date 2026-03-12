@@ -3,10 +3,12 @@ using UnityEngine.AI;
 
 public class VoidPool : MonoBehaviour
 {
-    private VoidPoolSettings settings;
-    private readonly int amountOfRingsToSubtract = 1;
+    [SerializeField] private VoidPoolSettings settings = new(5f, 1f, 1, 2, 6f);
+    [SerializeField] private readonly int amountOfRingsToSubtract = 1;
+    [SerializeField] private bool showDebugLogs = false;
+
     private ObjectPool enemyPooler;
-    private bool showDebugLogs = false;
+    
 
     // Damage
     private float enterTime = -1;
