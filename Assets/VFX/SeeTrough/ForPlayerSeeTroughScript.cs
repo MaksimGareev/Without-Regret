@@ -36,13 +36,20 @@ public class ForPlayerSeeTroughScript : MonoBehaviour
         }
         else
         {
-          // Debug.Log("This might be a wall! ");
+      // Debug.Log("This might be a wall! ");
+          if (!hit.collider.gameObject.GetComponent<Renderer>())
+          {
+              return;
+          }
+          else
+          {
+              WallMaterial = hit.collider.gameObject.GetComponent<Renderer>().sharedMaterial;
            
-           WallMaterial = hit.collider.gameObject.GetComponent<Renderer>().sharedMaterial;
-           
-           WallMaterial.SetFloat(SizeID, 0.75f);
-           WallMaterial.SetVector(PlayerPosID, view);
-        }
+              WallMaterial.SetFloat(SizeID, 0.75f);
+              WallMaterial.SetVector(PlayerPosID, view);
+          }
+          
+          }
 
         // Send player position to shader in viewport space
         
