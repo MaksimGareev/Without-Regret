@@ -103,7 +103,7 @@ public class DarrysHouseObjective : MonoBehaviour
                 gravestone.isGrabbable = false;
                 other.gameObject.transform.position = lockingPosition.position;
                 other.gameObject.transform.rotation = lockingPosition.rotation;
-                ObjectiveManager.Instance.AddProgress(linkedObjective.objectiveID, 1);
+                //ObjectiveManager.Instance.AddProgress(linkedObjective.objectiveID, 1);
                 rb.constraints = RigidbodyConstraints.FreezeAll;
                 didOnce = true;
 

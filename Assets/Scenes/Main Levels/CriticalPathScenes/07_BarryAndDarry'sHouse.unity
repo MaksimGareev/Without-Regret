@@ -22963,7 +22963,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1375161522}
   - component: {fileID: 1375161521}
-  - component: {fileID: 1375161523}
   m_Layer: 0
   m_Name: GameObject
   m_TagString: door
@@ -23007,21 +23006,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1375161523
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1375161520}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4099ab4e5cc89fd4dba914c734ba9be0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DarrysHouseObjective
-  linkedObjective: {fileID: 11400000, guid: ef4ea093afae3c74d909378f3952fc50, type: 2}
-  needsObjective: 0
-  navMeshSurface: {fileID: 0}
 --- !u!1001 &1409011758
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -34182,7 +34166,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1104601806056575187, guid: 8234364b2d17d5848bc48e63195ea058, type: 3}
       propertyPath: uniqueID
-      value: 403f7c34-d8c5-4331-9f09-cab2f7f493e6
+      value: 1249b1d5-1328-4d90-a800-4b9fb27483fb
       objectReference: {fileID: 0}
     - target: {fileID: 2275537426101191861, guid: 8234364b2d17d5848bc48e63195ea058, type: 3}
       propertyPath: m_LocalPosition.x
@@ -34487,7 +34471,7 @@ MonoBehaviour:
   arrived: 0
   stopDistance: 0.5
   updateRate: 0.2
-  linkedHouseObjective: {fileID: 0}
+  linkedHouseObjective: {fileID: 11400000, guid: ef4ea093afae3c74d909378f3952fc50, type: 2}
   linkedNeighborhoodObjective: {fileID: 0}
 --- !u!54 &3138802798869841173
 Rigidbody:

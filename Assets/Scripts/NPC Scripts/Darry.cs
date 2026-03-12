@@ -171,8 +171,11 @@ public class Darry : MonoBehaviour
         {
             StopWaitCoroutine();
 
+            if (linkedHouseObjective != null)
+            {
+                ObjectiveManager.Instance.AddProgress(linkedHouseObjective.objectiveID, 1);
+            }
             this.gameObject.SetActive(false);
-            //ObjectiveManager.Instance.AddProgress(linkedHouseObjective.objectiveID, 1);
             Debug.Log("Darry has reached the door.");
         }
 
