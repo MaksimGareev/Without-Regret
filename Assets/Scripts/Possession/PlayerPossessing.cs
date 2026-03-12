@@ -26,7 +26,8 @@ public class PlayerPossessing : MonoBehaviour
     private Rigidbody enemyRigidbody;
     private float possessionTimer;
     private float TimeSincePossession;
-    private float rechargeDelay = 1.5f;
+    [Tooltip("The time it takes to recharge between possessions")]
+    [SerializeField] private float rechargeDelay = 1.5f;
     private float rechargeSpeed = .5f;
     private PossessedEnemyResisting target = null;
     
