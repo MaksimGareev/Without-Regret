@@ -17,7 +17,7 @@ public abstract class SaveableWithID : MonoBehaviour, ISaveable
 
     private static bool IsUniqueID(string id)
     {
-        var allSaveables = FindObjectsOfType<SaveableWithID>();
+        var allSaveables = FindObjectsByType<SaveableWithID>(FindObjectsSortMode.None);
         foreach (var saveable in allSaveables)
         {
             if (saveable != null && saveable.GetUniqueID() == id)

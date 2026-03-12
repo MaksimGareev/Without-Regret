@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -47,9 +46,25 @@ public class OffscreenObjectiveIndicator : MonoBehaviour
         }
     }
 
-    private void Start()
+    private void Enable()
+    {
+        SceneLoadManager.Instance.OnSceneLoaded.AddListener(RefreshCameraReference);
+    }
+
+    private void Disable()
+    {
+        SceneLoadManager.Instance.OnSceneLoaded.RemoveListener(RefreshCameraReference);
+    }
+
+    private void RefreshCameraReference()
     {
         playerCam = Camera.main;
+        player = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
+    }
+
+    private void Start()
+    {
+        //playerCam = Camera.main;
         image = indicator.GetComponent<Image>();
 
         var bounds = image.sprite.bounds;
@@ -66,15 +81,27 @@ public class OffscreenObjectiveIndicator : MonoBehaviour
 
     private void LateUpdate()
     {
-        Vector3 targetViewportPos = playerCam.WorldToViewportPoint(target.position);
+        if (target != null && playerCam != null && player != null)
+        {
+            Vector3 targetViewportPos = playerCam.WorldToViewportPoint(target.position);
 
-        if (!TargetIsVisible(targetViewportPos) && !disableIndicator)
-        {
-            UpdateTarget(targetViewportPos);
+            if (!TargetIsVisible(targetViewportPos) && !disableIndicator)
+            {
+                UpdateTarget(targetViewportPos);
+            }
+            else
+            {
+                indicator.SetActive(false);
+            }
         }
-        else
+        else if (playerCam == null)
         {
-            indicator.SetActive(false);
+            Debug.LogWarning("Player Camera reference is missing in OffscreenObjectiveIndicator script. Please ensure there is a camera in the scene tagged as 'MainCamera'.");
+            RefreshCameraReference();
+        }
+        else if (target == null)
+        {
+            Debug.LogWarning("Target reference is missing in OffscreenObjectiveIndicator script. Please ensure the target variable is set to the transform of the objective you want to point towards.");
         }
 
     }
@@ -86,6 +113,12 @@ public class OffscreenObjectiveIndicator : MonoBehaviour
 
     private void UpdateTarget(Vector3 targetViewportPos)
     {
+        if (playerCam == null)
+        {
+            Debug.LogWarning("Player Camera reference is missing in OffscreenObjectiveIndicator script. Please ensure there is a camera in the scene tagged as 'MainCamera'.");
+            return;
+        }
+
         Vector3 indicatorPosition = (playerCam.ViewportToScreenPoint(targetViewportPos) - ScreenCenter) 
             * Mathf.Sign(targetViewportPos.z);
 
@@ -138,7 +171,5 @@ public class OffscreenObjectiveIndicator : MonoBehaviour
         rectTransform.localScale = originalScale * scale;
 
         indicator.SetActive(true);
-
-        
     }
 }

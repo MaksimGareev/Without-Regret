@@ -399,7 +399,7 @@ public class GameOverManager : MonoBehaviour
         isGameOver = false;
         gameOverUI.SetActive(false);
         //EnableOtherCanvases();
-        SceneManager.LoadScene("MainMenu");
+        SceneLoadManager.Instance.LoadScene("MainMenu");
     }
 
     private void Restart()
@@ -408,15 +408,16 @@ public class GameOverManager : MonoBehaviour
         isGameOver = false;
         DisableGameOverUI();
         //EnableOtherCanvases();
+        Debug.Log("Restarting scene: " + SceneManager.GetActiveScene().name);
 
         if (SaveManager.Instance != null)
         {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            SceneLoadManager.Instance.LoadScene(SceneManager.GetActiveScene().name);
             SaveManager.Instance.LoadGame(SaveSystem.activeSaveSlot);
         }
         else
         {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            SceneLoadManager.Instance.LoadScene(SceneManager.GetActiveScene().name);
         }
     }
 

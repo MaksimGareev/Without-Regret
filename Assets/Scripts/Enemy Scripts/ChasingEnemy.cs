@@ -69,6 +69,8 @@ public class ChasingEnemy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (agent == null) return;
+        
         UpdateSpeedFromMorality();
 
         // stop enemy when dialogue is active
@@ -113,7 +115,7 @@ public class ChasingEnemy : MonoBehaviour
 
     public void UpdateSpeedFromMorality()
     {
-        if (playerMorality == null) return;
+        if (playerMorality == null || agent == null) return;
 
         int morality = playerMorality.playerMorality;
 
