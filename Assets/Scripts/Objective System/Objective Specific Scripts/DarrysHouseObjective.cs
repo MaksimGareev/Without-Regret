@@ -86,6 +86,11 @@ public class DarrysHouseObjective : MonoBehaviour
             return;
         }
         */
+        
+        if (other.CompareTag("protectedNPC"))
+        {
+            ObjectiveManager.Instance.AddProgress(linkedObjective.objectiveID, 1);
+        }
 
         if (other.CompareTag("Crates"))
         {
