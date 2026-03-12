@@ -37,10 +37,11 @@ public class Gate : SaveableWithID
                     if (objective.data == linkedObjective)
                     {
                         locked = false;
+                        Debug.Log($"Gate {GetUniqueID()}:Linked objective already completed. Unlocking gate.");
                         return true;
                     }
                 }
-
+                Debug.Log($"Gate {GetUniqueID()}:Linked objective not completed. Gate remains locked. Adding Listener for objective completion.");
                 ObjectiveManager.Instance.OnObjectiveCompleted.AddListener(SetObjectiveComplete);
             }
         }
@@ -51,7 +52,12 @@ public class Gate : SaveableWithID
     {
         if (objective.data == linkedObjective)
         {
+            Debug.Log($"Gate {GetUniqueID()}:Linked objective completed from listener. Unlocking gate.");
             locked = false;
+        }
+        else
+        {
+            Debug.Log($"Gate {GetUniqueID()}: Objective completed, but it does not match the linked objective for this gate.");
         }
     }
     
@@ -96,15 +102,15 @@ public class Gate : SaveableWithID
         if (state == null) 
         {
             Debug.LogWarning("Loading Failed: No save data found for Gate with ID: " + GetUniqueID());
-            return;
         }
         else
         {
             Debug.Log($"Loading Gate: locked={state.locked}, opened={state.opened}, ID: {GetUniqueID()}");
         }
 
-        locked = CheckIfObjectiveCompleted() ? false : state.locked;
-        opened = state.opened;
+        locked = CheckIfObjectiveCompleted() ? false : state?.locked ?? true;
+        Debug.Log($"Locked state for gate with ID {GetUniqueID()} after checking objective: {locked}");
+        opened = state?.opened ?? false;
 
         if (opened)
         {
