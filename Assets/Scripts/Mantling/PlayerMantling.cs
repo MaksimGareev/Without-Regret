@@ -8,7 +8,9 @@ public class PlayerMantling : MonoBehaviour
     
     [Header("Debugging")]
     [SerializeField] private bool showDebugLogs = false;
-    [SerializeField] private bool showGizmos = true;
+
+    [Header("Animator")]
+    public Animator animator;
 
     private CharacterController controller;
     private PlayerController playerController;
@@ -45,6 +47,8 @@ public class PlayerMantling : MonoBehaviour
     public void StartMantle(MantleableObject point)
     {
         isMantling = true;
+        if (animator)
+            animator.SetBool("isMantling", true);
         mantleStartPos = transform.position;
         mantleEndPos = point.GetMantlePosition();
         mantleProgress = 0f;
@@ -105,6 +109,10 @@ public class PlayerMantling : MonoBehaviour
         }
 
         isMantling = false;
+
+        if (animator)
+            animator.SetBool("isMantling", false);
+
 
         if (playerController != null)
         {

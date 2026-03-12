@@ -24,6 +24,8 @@ public class Darry : MonoBehaviour
     private float updateTimer = 0f;
     public float updateRate = 0.2f;
 
+    public GameObject enemy;
+
     // objectives
     [SerializeField] ObjectiveData linkedHouseObjective;
     [SerializeField] ObjectiveData linkedNeighborhoodObjective;
@@ -171,16 +173,25 @@ public class Darry : MonoBehaviour
         {
             StopWaitCoroutine();
 
+            if (linkedHouseObjective != null)
+            {
+                ObjectiveManager.Instance.AddProgress(linkedHouseObjective.objectiveID, 1);
+            }
             this.gameObject.SetActive(false);
-            //ObjectiveManager.Instance.AddProgress(linkedHouseObjective.objectiveID, 1);
             Debug.Log("Darry has reached the door.");
         }
 
         if (other.CompareTag("Finish"))
         {
             StopWaitCoroutine();
-
-            ObjectiveManager.Instance.AddProgress(linkedNeighborhoodObjective.objectiveID, 1);
+            if(enemy != null)
+            {
+                enemy.SetActive(false);
+            }
+            if (linkedNeighborhoodObjective != null)
+            {
+                ObjectiveManager.Instance.AddProgress(linkedNeighborhoodObjective.objectiveID, 1);
+            }
             Debug.Log("Darry has made it to the end.");
         }
     }

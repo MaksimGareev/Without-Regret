@@ -4,11 +4,11 @@ using System.Collections.Generic;
 
 public class PlayerMovingObjects : MonoBehaviour
 {
-    private Animator animator;
     [Header("General Settings")]
     [Tooltip("Where moveable objects will snap to (should already be set)")] public Transform grabPoint;
     [Tooltip("Which layers will be ignored when checking for collisions while a MoveableObject is held.")]
     [SerializeField] private LayerMask ignoreCollisionLayer;
+
     [Header("Debugging")]
     [SerializeField] private bool showDebugLogs = false;
 
@@ -16,6 +16,7 @@ public class PlayerMovingObjects : MonoBehaviour
     private bool isGrabbing;
 
     private PlayerController playerController;
+    private Animator animator;
     private float normalMoveSpeed;
     private float normalSprintSpeed;
     private HashSet<MoveableObject> movedObjects = new HashSet<MoveableObject>();
@@ -115,7 +116,7 @@ public class PlayerMovingObjects : MonoBehaviour
         animator.SetTrigger("placing");
         Debug.Log("Placing down!");
         playerController.DisableInput();
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(1.3f);
         playerController.EnableInput();
         ResetAnimations();
     }
@@ -148,7 +149,7 @@ public class PlayerMovingObjects : MonoBehaviour
             // compute the target bounds after moving player by delta (held object moves with player as it's parented to grab point)
             Bounds b = col.bounds;
             Vector3 targetCenter = b.center + delta;
-            Vector3 extents = b.extents * obj.ExtentsMultiplier;
+            Vector3 extents = b.extents * obj.CollisionCheckSizeFactor; // adjust the size of the box used for checking collisions based on the object's setting
             Quaternion rotation = obj.transform.rotation;
 
             // Query for overlapping colliders at the target location

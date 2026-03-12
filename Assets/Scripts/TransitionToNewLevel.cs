@@ -121,6 +121,14 @@ public class TransitionToNewLevel : MonoBehaviour
             yield break;
         }
 
-        SceneManager.LoadScene(sceneToLoad.GetSceneName());
+        if (GameManager.Instance != null && GameManager.Instance.sceneLoadManager != null)
+        {
+            GameManager.Instance.sceneLoadManager.LoadScene(sceneToLoad.GetSceneName());
+        }
+        else
+        {
+            Debug.LogError("SceneLoadManager reference is missing in the GameManager. Loading scene directly without fade transition.");
+            SceneManager.LoadScene(sceneToLoad.GetSceneName());
+        }
     }
 }

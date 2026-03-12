@@ -59,7 +59,7 @@ Transform:
   m_GameObject: {fileID: 524415181430402353}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0, y: 0, z: 1.5}
+  m_LocalPosition: {x: -0, y: 0.501, z: 1.127}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -504,6 +504,7 @@ GameObject:
   - component: {fileID: 3454833822202369156}
   - component: {fileID: 2374127022973696450}
   - component: {fileID: 239148988480951988}
+  - component: {fileID: 5316654367319254596}
   m_Layer: 3
   m_Name: Player
   m_TagString: Player
@@ -722,7 +723,7 @@ MonoBehaviour:
   chimeAnimator: {fileID: 0}
   chimeActive: 0
   chimeScript: {fileID: 0}
-  normalColor: {r: 0, g: 0.5764706, b: 0.43529412, a: 1}
+  normalColor: {r: 0.69803923, g: 0.52156866, b: 0.80784315, a: 1}
   cooldownColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   SprintDust: {fileID: 82863498991437760}
   staminaFadeDuration: 1.5
@@ -740,6 +741,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   showDebugLogs: 0
+  isThrowing: 0
 --- !u!114 &8123318097379088782
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -753,8 +755,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   possessionDuration: 5
-  possessionRange: 50
-  searchConeAngle: 30
   possessKey: 114
   possessButton: 335
   iconPrefab: {fileID: 7228842916403451623, guid: 8c37cda576505cc45bd7511edf89a1b3, type: 3}
@@ -835,8 +835,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   keyItems: []
   otherItems: []
-  showDebugLogs: 0
   hasBackpack: 1
+  showDebugLogs: 0
   itemToCollect: {fileID: 0}
 --- !u!114 &771315798553256207
 MonoBehaviour:
@@ -892,7 +892,6 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  showDebugLogs: 0
 --- !u!114 &2251472805719034207
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -907,7 +906,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMantling
   mantleSpeed: 3
   showDebugLogs: 1
-  showGizmos: 1
+  animator: {fileID: 1306356219283198842}
   isMantling: 0
 --- !u!114 &8027853323051968566
 MonoBehaviour:
@@ -966,7 +965,7 @@ MonoBehaviour:
   grabPoint: {fileID: 1136661512570076457}
   ignoreCollisionLayer:
     serializedVersion: 2
-    m_Bits: 512
+    m_Bits: 769
   showDebugLogs: 0
 --- !u!114 &6640155716822935536
 MonoBehaviour:
@@ -1134,6 +1133,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FaceExpressionCaller
   showDebugLogs: 0
+--- !u!114 &5316654367319254596
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5675321481151379428}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f60a064eb5168744915cb3198c9409d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ForPlayerSeeTroughScript
+  Cam: {fileID: 0}
+  Mask:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!1 &7826200252848409900
 GameObject:
   m_ObjectHideFlags: 0
