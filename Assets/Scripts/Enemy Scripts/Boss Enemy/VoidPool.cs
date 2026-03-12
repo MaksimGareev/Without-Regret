@@ -3,15 +3,23 @@ using UnityEngine.AI;
 
 public class VoidPool : MonoBehaviour
 {
-    [SerializeField] private VoidPoolSettings settings = new(5f, 1f, 1, 2, 6f);
-    [SerializeField] private readonly int amountOfRingsToSubtract = 1;
+    [Tooltip("How long the player must be in the pool before they take damage")]
+    [SerializeField] private float delayBeforeDamage = 1f;
+
+    [Header("Debugging")]
     [SerializeField] private bool showDebugLogs = false;
 
+    private VoidPoolSettings settings = new(5f, 1f, 1, 2, 6f);
     private ObjectPool enemyPooler;
-    
+    private readonly int amountOfRingsToSubtract = 1;
 
     // Damage
     private float enterTime = -1;
+
+    private void Awake()
+    {
+        settings.delayBeforeDamage = delayBeforeDamage;
+    }
 
     private void OnDisable()
     {
