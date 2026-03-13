@@ -43,7 +43,7 @@ public class ForPlayerSeeTroughScript : MonoBehaviour
           }
           else
           {
-              WallMaterial = hit.collider.gameObject.GetComponent<Renderer>().sharedMaterial;
+              WallMaterial = hit.collider.gameObject.GetComponent<Renderer>().material;
            
               WallMaterial.SetFloat(SizeID, 0.75f);
               WallMaterial.SetVector(PlayerPosID, view);
