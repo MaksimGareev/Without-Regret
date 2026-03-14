@@ -21,47 +21,49 @@ public class ForPlayerSeeTroughScript : MonoBehaviour
 
     void LateUpdate()
     {
-        // Send player position to shader in viewport space
-        var view = Cam.WorldToViewportPoint(transform.position);
-        
-        // Direction from player to camera
-        var dir = Cam.transform.position - transform.position;
-
-        // Ray from player toward camera
-        var ray = new Ray(transform.position, dir.normalized);
-
-        RayArray = Physics.RaycastAll(ray, 3000, Mask);
-
-        if (CurrentObjects != null)
+        if (Cam != null)
         {
-            UnSharedObjects = GetNonSharedValues(CurrentObjects, RayArray);
-        }
+            // Send player position to shader in viewport space
+            var view = Cam.WorldToViewportPoint(transform.position);
 
-        if (UnSharedObjects != null)
-        {
-            for (int i = 0; i < UnSharedObjects.Count; ++i)
+            // Direction from player to camera
+            var dir = Cam.transform.position - transform.position;
+
+            // Ray from player toward camera
+            var ray = new Ray(transform.position, dir.normalized);
+
+            RayArray = Physics.RaycastAll(ray, 3000, Mask);
+
+            if (CurrentObjects != null)
             {
-                if (UnSharedObjects[i].transform.GetComponent<Renderer>() != null)
+                UnSharedObjects = GetNonSharedValues(CurrentObjects, RayArray);
+            }
+
+            if (UnSharedObjects != null)
+            {
+                for (int i = 0; i < UnSharedObjects.Count; ++i)
                 {
-                    UnSharedObjects[i].transform.GetComponent<Renderer>().material.SetFloat(SizeID, 0);
+                    if (UnSharedObjects[i].transform.GetComponent<Renderer>() != null)
+                    {
+                        UnSharedObjects[i].transform.GetComponent<Renderer>().material.SetFloat(SizeID, 0);
+                    }
+                }
+            }
+
+            CurrentObjects = RayArray;
+
+            for (int i = 0; i < CurrentObjects.Length; ++i)
+            {
+                hit = CurrentObjects[i];
+                Renderer rend = hit.transform.GetComponent<Renderer>();
+
+                if (rend)
+                {
+                    rend.material.SetFloat(SizeID, 0.75f);
+                    rend.material.SetVector(PlayerPosID, view);
                 }
             }
         }
-        
-        CurrentObjects = RayArray;
-
-        for(int i = 0; i<CurrentObjects.Length; ++i)
-        {
-            hit = CurrentObjects[i];
-            Renderer rend = hit.transform.GetComponent<Renderer>();
-
-            if (rend)
-            {
-                rend.material.SetFloat(SizeID, 0.75f);
-                rend.material.SetVector(PlayerPosID, view);
-            }
-        }
-        
     }
 
     List<T> GetNonSharedValues<T>(T[] arr1, T[] arr2)
