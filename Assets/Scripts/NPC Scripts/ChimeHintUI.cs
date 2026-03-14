@@ -15,7 +15,7 @@ public class ChimeHintUI : MonoBehaviour
 
     public float displayTime = 3f;
 
-    private bool isShowing = false;
+    //private bool isShowing = false;
     private Coroutine hideRoutine;
 
     [Header("Animation settings")]

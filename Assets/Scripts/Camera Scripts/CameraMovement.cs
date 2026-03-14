@@ -15,54 +15,89 @@ public class CameraMovement : MonoBehaviour
     }
     
     // Not yet implemented, will apply appropriate vfx and movement settings
-    // [Header("General Settings")]
-    // [Tooltip("Set to true if this camera is used in the astral plane for special effects.")]
-    // public bool isAstral = false; 
-    // [Tooltip("Set to true if this camera is used indoors.")]
-    // public bool isIndoors = false;
+    [Header("Astral Post Processing")]
+    [Tooltip("Set to true if this camera is used in the astral plane for special effects. This will enable the post-processing effects for the Astral Plane.")]
+    public bool isAstral = false; 
+    [Tooltip("Reference to the GameObject containing the VFX for the astral plane, which will be toggled on and off based on the isAstral boolean. The object should be a child of the Main Camera Prefab")]
+    [SerializeField] private GameObject astralVFX;
 
     [Header("Input")]
     [Tooltip("Insert a reference to the PlayerControls Input Action Asset")]
     [SerializeField] private InputActionAsset inputActions;
     private InputAction lookAction;
 
-    [Header("Follow Settings")]
+    [Header("Follow Movement Settings")]
+
+    [Tooltip("If true, the camera will follow the player. If false, the camera will remain in the position it is placed in the editor, or the position it is at the time this boolean is set false.")]
+    [SerializeField] private bool followPlayer = true;
+
     [Tooltip("Default offset of the camera from the player (Setting this to (0,0,0) will equal the Player's exact transform). This will be rotated based on the default facing direction below.")]
     public Vector3 defaultOffset = new Vector3(0, 8, 8);
 
     [Tooltip("The offset of the position that the camera will aim at relative to the player (should be set to slightly above the player (y = 3)).")]
     public Vector3 defaultLookAtOffset = Vector3.zero;
 
-    [Tooltip("Speed at which the camera moves to follow the player. Lower numbers are slower and smoother, higher numbers are faster and more rigid.")]
-    public float smoothSpeed = 5f;
-    private Transform target; // Reference the player as the intended target of the camera
+    [Tooltip("The offeset used instead of default when charging a throw")]
+    public Vector3 throwLookAtOffset = new Vector3(3,3,0);
 
-    [Header("Default Facing Direction")]
+    [Tooltip("Speed at which the camera moves to follow the player. Lower numbers are slower and smoother, higher numbers are faster and more rigid.")]
+    [SerializeField] private float smoothSpeed = 5f;
+    private Transform target; // Reference the player as the intended target of the camera
+    
+    [Header("Rotation Settings")]
     [Tooltip("Defines the world-space direction that the camera should face by default.")]
     [SerializeField] private WorldDirection defaultFacingDirection = WorldDirection.North;
 
-    [Header("Camera Control Settings")]
+    [Tooltip("If true, the camera will rotate based on player input. If false, the camera will remain fixed behind the player.")]
+    [SerializeField] private bool rotateCamera = true;
+
     [Tooltip("Speed at which the camera rotates.")]
     [SerializeField] private float rotateSpeed = 120f;
-    [Tooltip("Maximum pitch angle of the camera.")]
-    [SerializeField] private float maxPitch = 45f;
-    private float maxYaw = 120f;
+
     [Tooltip("Speed at which the camera returns to its default position.")]
     [SerializeField] private float returnSpeed = 4f;
+
     [Tooltip("Time in seconds after last mouse input before the camera starts returning to default.")]
     [SerializeField] private float mouseResetTime = 3f;
+
     [Tooltip("Scale factor for mouse rotation sensitivity.")]
     [SerializeField] private float mouseRotateScale = 0.08f;
-    private bool rotateCamera = true;
-    private bool restrictYaw = false;
+
+    [Tooltip("If true, the camera's yaw will be restricted to the maxYaw angle. If false, the camera can rotate freely around the player.")]
+    [SerializeField] private bool restrictYaw = false;
+
+    [Tooltip("Maximum yaw angle of the camera when restrictYaw is enabled.")]
+    [SerializeField, ] private float maxYaw = 120f;
+
+    [Tooltip("Maximum pitch angle of the camera.")]
+    [SerializeField] private float maxPitch = 45f;
 
     [Header("Focus Movement Settings")]
     [Tooltip("Offset applied to the camera when focusing on a pickup object.")]
-    public Vector3 pickupOffset = new Vector3(3f, 2f, -5f);
+    [SerializeField] private Vector3 pickupOffset = new Vector3(3f, 2f, -5f);
+
     [Tooltip("Duration of the zoom effect when focusing on a pickup.")]
-    public float zoomDuration = 2f;
+    [SerializeField] private float zoomDuration = 2f;
+
     [Tooltip("Speed at which the camera transitions during focus movement.")]
-    public float transitionSpeed = 2f;
+    [SerializeField] private float transitionSpeed = 2f;
+
+    // Cache settings for returning after override triggers
+    private Vector3 cachedOffset;
+    private Vector3 cachedLookAtOffset;
+    private bool cachedFollowPlayer;
+    private float cachedSmoothSpeed;
+    private bool cachedRotateCamera;
+    private float cachedRotateSpeed;
+    private bool cachedRestrictYaw;
+    private float cachedMaxYaw;
+    private float cachedMaxPitch;
+
+    // bools to flag if settings were overridden
+    private bool positionOverridden = false;
+    private bool followOverridden = false;
+    private bool rotationOverridden = false;
+
     private bool isZooming = false;
     private Vector3 camPosCache = Vector3.zero;
     private Quaternion camRotCache = Quaternion.identity;
@@ -77,6 +112,7 @@ public class CameraMovement : MonoBehaviour
     private PlayerController pc;
     private float mouseResetTimer;
     private bool lastInputWasMouse = false;
+    private PlayerController playerController;
 
     private void Awake()
     {
@@ -89,6 +125,19 @@ public class CameraMovement : MonoBehaviour
         else
         {
             Debug.LogWarning("InputActionAsset not assigned in CameraMovement.");
+        }
+
+        if (isAstral && astralVFX != null)
+        {
+            astralVFX.SetActive(true);
+        }
+        else if (astralVFX != null)
+        {
+            astralVFX.SetActive(false);
+        }
+        else
+        {
+            Debug.LogWarning("Astral VFX GameObject reference not set in CameraMovement.");
         }
     }
 
@@ -104,12 +153,18 @@ public class CameraMovement : MonoBehaviour
         // Unsubscribe from event and disable input
         lookAction?.Disable();
         SceneManager.sceneLoaded -= OnSceneLoaded;
+        StopAllCoroutines();
     }
 
     private void Start()
     {
         // Find the player and assign to target.
         target = GameObject.FindGameObjectWithTag("Player")?.transform;
+
+        if (playerController == null) // get player controller
+        {
+            playerController = GameObject.FindGameObjectWithTag("Player")?.GetComponent<PlayerController>();
+        }
 
         // Disable self if no player is found
         if (target == null)
@@ -136,8 +191,11 @@ public class CameraMovement : MonoBehaviour
         pitch = 0f;
 
         // Set the initial position and rotation of the camera
-        transform.position = target.position + currentOffset;
-        transform.LookAt(target.position + currentLookAtOffset);
+        if (followPlayer)
+        {
+            transform.position = target.position + currentOffset;
+            transform.LookAt(target.position + currentLookAtOffset);
+        }
 
         // Lock the cursor
         Cursor.lockState = CursorLockMode.Locked;
@@ -148,6 +206,16 @@ public class CameraMovement : MonoBehaviour
         {
             Destroy(this);
         }
+
+        cachedOffset = defaultOffset;
+        cachedLookAtOffset = defaultLookAtOffset;
+        cachedFollowPlayer = followPlayer;
+        cachedSmoothSpeed = smoothSpeed;
+        cachedRotateSpeed = rotateSpeed;
+        cachedRotateCamera = rotateCamera;
+        cachedRestrictYaw = restrictYaw;
+        cachedMaxYaw = maxYaw;
+        cachedMaxPitch = maxPitch;
     }
 
     // Resets camera state when a new scene is loaded to prevent carrying over any state from the previous scene, such as being locked or zooming.
@@ -193,6 +261,18 @@ public class CameraMovement : MonoBehaviour
         
         if (target == null) return;
         if (GameOverManager.Instance != null && GameOverManager.Instance.IsGameOver) return;
+        
+        if (GameManager.Instance.pauseManager != null 
+            && GameManager.Instance.pauseManager.GetComponent<PauseManager>() != null 
+            && GameManager.Instance.pauseManager.GetComponent<PauseManager>().isGamePaused) return;
+
+        if (GameManager.Instance.journalUICanvas != null 
+            && GameManager.Instance.journalUICanvas.GetComponent<Journal>() != null 
+            && GameManager.Instance.journalUICanvas.GetComponent<Journal>().isJournalOpen) return;
+
+        if (GameManager.Instance.LockPickUI != null 
+            && GameManager.Instance.LockPickUI.GetComponent<LockPickUI>() != null 
+            && GameManager.Instance.LockPickUI.GetComponent<LockPickUI>().IsActive) return;
 
         if (pc != null && pc.MovementLocked && pc.enabled)
         {
@@ -250,6 +330,9 @@ public class CameraMovement : MonoBehaviour
                     ReturnRotation();
                 }
             }
+
+            // Early return if the camera is not set to follow the player, allowing it to remain fixed in place
+            if (!followPlayer) return;
             
             // Position of the camera
             Vector3 desiredPosition = target.position + currentOffset;
@@ -260,7 +343,6 @@ public class CameraMovement : MonoBehaviour
 
             // Look at the Player
             transform.LookAt(lookAtPos);
-            
         } 
     }
 
@@ -301,7 +383,15 @@ public class CameraMovement : MonoBehaviour
 
         // Update the current offset and lookAtOffset based on the new rotation
         currentOffset = rotation * defaultOffset;
-        currentLookAtOffset = rotation * defaultLookAtOffset;
+
+        if (!playerController.isThrowing)
+        {
+            currentLookAtOffset = rotation * defaultLookAtOffset;
+        }
+        else
+        {
+            currentLookAtOffset = rotation * throwLookAtOffset;
+        }
     }
     
     // Smoothly returns the camera to its default position and rotation when there is no input for a certain amount of time
@@ -322,7 +412,14 @@ public class CameraMovement : MonoBehaviour
         Quaternion rotation = initialRotation * Quaternion.Euler(pitch, yaw, 0f);
         currentOffset = rotation * defaultOffset;
 
-        currentLookAtOffset = Vector3.Lerp(currentLookAtOffset, initialRotation * defaultLookAtOffset, returnSpeed * Time.deltaTime);
+        if (!playerController.isThrowing)
+        {
+            currentLookAtOffset = Vector3.Lerp(currentLookAtOffset, initialRotation * defaultLookAtOffset, returnSpeed * Time.deltaTime);
+        }
+        else
+        {
+            currentLookAtOffset = Vector3.Lerp(currentLookAtOffset, initialRotation * throwLookAtOffset, returnSpeed * Time.deltaTime);
+        }
     }
 
     // Public function to be called when a dialogue trigger is activated to start the camera zoom effect
@@ -437,4 +534,153 @@ public class CameraMovement : MonoBehaviour
         CameraLocked = locked;
     }
 
+    public void OverrideCameraPosition(WorldDirection worldDirection, Vector3 offset, Vector3 lookAtOffset, float transitionDuration = 1f)
+    {
+        if (!positionOverridden)
+        {
+            cachedOffset = defaultOffset;
+            cachedLookAtOffset = defaultLookAtOffset;
+
+            positionOverridden = true;
+        }
+
+        StartCoroutine(OverrideCameraPositionCoroutine(worldDirection, offset, lookAtOffset, transitionDuration));
+    }
+
+    private IEnumerator OverrideCameraPositionCoroutine(WorldDirection worldDirection, Vector3 overrideOffset, Vector3 overrideLookAtOffset, float transitionDuration)
+    {
+        Vector3 startOffset = defaultOffset;
+        Vector3 startLookAtOffset = defaultLookAtOffset;
+
+        Vector3 facingVector = DirectionToVector(worldDirection);
+        Quaternion rotation = Quaternion.LookRotation(facingVector, Vector3.up);
+
+        Vector3 targetOffset = rotation * overrideOffset;
+        Vector3 targetLookAtOffset = rotation * overrideLookAtOffset;
+
+        float t = 0f;
+        while (t < transitionDuration)
+        {
+            t += Time.deltaTime;
+            defaultOffset = Vector3.Lerp(startOffset, targetOffset, t / transitionDuration);
+            defaultLookAtOffset = Vector3.Lerp(startLookAtOffset, targetLookAtOffset, t / transitionDuration);
+            yield return null;
+        }
+
+        defaultOffset = targetOffset;
+        defaultLookAtOffset = targetLookAtOffset;
+    }
+
+    public void ResetCameraPosition()
+    {
+        StartCoroutine(ResetCameraPositionCoroutine(1f));
+
+        if (positionOverridden)
+        {
+            positionOverridden = false;
+        }
+    }
+
+    private IEnumerator ResetCameraPositionCoroutine(float transitionDuration)
+    {
+        Vector3 startOffset = defaultOffset;
+        Vector3 startLookAtOffset = defaultLookAtOffset;
+        
+        float t = 0f;
+        while (t < transitionDuration)
+        {
+            t += Time.deltaTime;
+            defaultOffset = Vector3.Lerp(startOffset, cachedOffset, t / transitionDuration);
+            defaultLookAtOffset = Vector3.Lerp(startLookAtOffset, cachedLookAtOffset, t / transitionDuration);
+            yield return null;
+        }
+
+        defaultOffset = cachedOffset;
+        defaultLookAtOffset = cachedLookAtOffset;
+    }
+
+    public void OverrideFollowSettings(bool followPlayer = true, float smoothSpeed = -1.0f)
+    {
+        if (!followOverridden)
+        {
+            cachedFollowPlayer = this.followPlayer;
+            cachedSmoothSpeed = this.smoothSpeed;
+
+            followOverridden = true;
+        }
+
+        if (followPlayer != this.followPlayer)
+        {   
+            this.followPlayer = followPlayer;
+        }
+
+        if (smoothSpeed != this.smoothSpeed && smoothSpeed > 0f)
+        {
+            this.smoothSpeed = smoothSpeed;
+        }
+    }
+
+    public void ResetFollowSettings()
+    {
+        followPlayer = cachedFollowPlayer;
+        smoothSpeed = cachedSmoothSpeed;
+
+        if (followOverridden)
+        {
+            followOverridden = false;
+        }
+    }
+
+    public void OverrideRotationSettings(bool rotateCamera = true, float rotateSpeed = -1.0f, bool restrictYaw = false, float maxYaw = -1.0f, float maxPitch = -1.0f)
+    {
+        if (!rotationOverridden)
+        {
+            cachedRotateSpeed = this.rotateSpeed;
+            cachedRotateCamera = this.rotateCamera;
+            cachedRestrictYaw = this.restrictYaw; 
+            cachedMaxYaw = this.maxYaw;
+            cachedMaxPitch = this.maxPitch;
+
+            rotationOverridden = true;
+        }
+
+        if (rotateSpeed != this.rotateSpeed && rotateSpeed > 0f)
+        {
+            this.rotateSpeed = rotateSpeed;
+        }
+
+        if (rotateCamera != this.rotateCamera)
+        {
+            this.rotateCamera = rotateCamera;
+        }
+
+        if (restrictYaw != this.restrictYaw)
+        {
+            this.restrictYaw = restrictYaw;
+        }
+
+        if (maxYaw != this.maxYaw && maxYaw > 0f)
+        {
+            this.maxYaw = maxYaw;
+        }
+
+        if (maxPitch != this.maxPitch && maxPitch > 0f)
+        {
+            this.maxPitch = maxPitch;
+        }
+    }
+
+    public void ResetRotationSettings()
+    {
+        rotateCamera = cachedRotateCamera;
+        rotateSpeed = cachedRotateSpeed;
+        restrictYaw = cachedRestrictYaw;
+        maxYaw = cachedMaxYaw;
+        maxPitch = cachedMaxPitch;
+
+        if (rotationOverridden)
+        {
+            rotationOverridden = false;
+        }
+    }
 }

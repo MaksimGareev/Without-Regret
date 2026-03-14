@@ -167,7 +167,17 @@ public class SaveSlotUI : MonoBehaviour
     {
         SaveManager.Instance.SetActiveSaveSlot(slot);
         SaveManager.Instance.LoadGame(slot);
-        SceneManager.LoadScene(firstScene.GetSceneName());
+
+        if (GameManager.Instance != null && GameManager.Instance.sceneLoadManager != null)
+        {
+            GameManager.Instance.sceneLoadManager.LoadScene(firstScene.GetSceneName());
+        }
+        else
+        {
+            Debug.LogError("SceneLoadManager reference is missing in the GameManager. Loading scene directly without fade transition.");
+            SceneLoadManager.Instance.LoadScene(firstScene.GetSceneName());
+        }
+
         Debug.Log("Starting New Game...");
     }
 
@@ -177,7 +187,17 @@ public class SaveSlotUI : MonoBehaviour
 
         if (data != null && !string.IsNullOrEmpty(data.lastSceneName))
         {
-            SceneManager.LoadScene(data.lastSceneName);
+            
+            if (GameManager.Instance != null && GameManager.Instance.sceneLoadManager != null)
+            {
+                GameManager.Instance.sceneLoadManager.LoadScene(data.lastSceneName);
+            }
+            else
+            {
+                Debug.LogError("SceneLoadManager reference is missing in the GameManager. Loading scene directly without fade transition.");
+                SceneLoadManager.Instance.LoadScene(data.lastSceneName);
+            }
+
             Debug.Log("Continuing Game From Save...");
             return;
         }

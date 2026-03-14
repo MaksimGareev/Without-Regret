@@ -70,9 +70,6 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d57a54117df0de649a2f0b2a2cf90a9b, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 5856550290303840610}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d57a54117df0de649a2f0b2a2cf90a9b, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 7230785986357682447}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d57a54117df0de649a2f0b2a2cf90a9b, type: 3}
       insertIndex: -1
@@ -89,28 +86,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: d57a54117df0de649a2f0b2a2cf90a9b, type: 3}
   m_PrefabInstance: {fileID: 7361236737877993588}
   m_PrefabAsset: {fileID: 0}
---- !u!64 &5856550290303840610
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7703745941597639973}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: -3660275907326674588, guid: d57a54117df0de649a2f0b2a2cf90a9b, type: 3}
 --- !u!54 &7230785986357682447
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -150,9 +125,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1f1ab1a81f3ad7468ec1fe89381d319, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MoveableObject
-  moveSlowdownMultiplier: 3
+  moveSlowdownDivisor: 1.75
+  sprintSlowdownDivisor: 1.5
+  sprintDepletionFactor: 1.05
+  staminaReduction: 0.35
+  dotProductThreshold: 0.4
+  maxGrabDistance: 2.5
+  allowSprint: 1
+  requiredItem: {fileID: 0}
+  collisionCheckSizeFactor: 1
+  checkGrabPointCollisions: 1
+  collisionCheckSizeMultiplier: 0.9
+  heldPositionOffset: {x: 0, y: 0, z: 0}
   isGrabbable: 1
-  iconPrefab: {fileID: 7228842916403451623, guid: 8c37cda576505cc45bd7511edf89a1b3, type: 3}
 --- !u!114 &5428962653008800824
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -167,7 +152,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MantleableObject
   mantleOffset: {x: 0, y: 2, z: 0}
   showGizmos: 1
-  iconPrefab: {fileID: 74127676795608141, guid: e337bf8e8d399f342b62d7ad9b912550, type: 3}
+  maxMantleDistance: 2
 --- !u!65 &5377259135617283748
 BoxCollider:
   m_ObjectHideFlags: 0
