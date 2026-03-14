@@ -47,10 +47,20 @@ public class BossEnemyController : MonoBehaviour
 
     private Rigidbody voidProjectileRigidbody;
 
+    [Header("Arm Sweep Settings")]
+    [Tooltip("The speed at which the boss' arm moves, in degrees per second")]
+    [SerializeField] float sweepingSpeed = 20f;
+    [Tooltip("The duration for how long the arm sweeps across")]
+    [SerializeField] float sweepingDuration = 8f;
+
+    private Vector3 originalArmPosition;
+
     [Header("References")]
     [SerializeField] Transform player;
     [Tooltip("The enemy prefab used for spawning")]
     [SerializeField] GameObject enemyPrefab;
+    [Tooltip("The arm used for the Arm Sweep attack")]
+    [SerializeField] GameObject sweepingArmObject;
     [Tooltip("The projectile prefab used for the void projectile attack")]
     [SerializeField] GameObject voidProjectileObject;
     [Tooltip("A shadow object that appears on the ground to indicate where the void projectile will land")]
@@ -83,6 +93,8 @@ public class BossEnemyController : MonoBehaviour
     private ObjectPool voidPooler;
     private Coroutine phaseStartRoutine;
     private Coroutine actionStartRoutine;
+
+    private Renderer[] renderers;
 
     // Runtime list of sliders used by UI logic (either generated or the fallback `phaseSliders`)
     private readonly List<Slider> healthSliders = new List<Slider>();
@@ -122,6 +134,18 @@ public class BossEnemyController : MonoBehaviour
             voidPoolSettings.healthDropChance = healthDropChance;
         }
 
+        if (sweepingArmObject == null)
+        {
+            Debug.LogError("Sweeping arm object reference is missing.");
+        }
+        else
+        {
+            originalArmPosition = sweepingArmObject.transform.position;
+            sweepingArmObject.SetActive(false);
+        }
+
+        renderers = GetComponentsInChildren<Renderer>();
+
         if (shadowLayerMask == 0)
             shadowLayerMask = LayerMask.GetMask("Target", "Enemy", "Ignore Raycast"); // Used for raycasting the shadow position and detecting projectile collisions
 
@@ -145,6 +169,8 @@ public class BossEnemyController : MonoBehaviour
             Debug.LogError("Boss phases and/or actions are not properly configured.");
         }
     }
+
+    #region Phase and Action Management
 
     // Initiates the first action for the provided phase
     private void StartPhase(Phase phase)
@@ -319,6 +345,10 @@ public class BossEnemyController : MonoBehaviour
             case BossActionType.Random:
                 RandomAction();
                 break;
+            case BossActionType.Idle:
+                if (showDebugLogs) Debug.Log("Performing Idle action (no behavior, just wait for the duration of the action before moving to the next one)");
+                EndAction(); // Just end the action immediately since there's no behavior, the delay until the next action is handled by the BossAction's DelayUntilNextAction value
+                break;
             default:
                 Debug.LogWarning("Attempted to perform undefined boss action: " + actionType);
                 break;
@@ -355,7 +385,7 @@ public class BossEnemyController : MonoBehaviour
         {
             // Reached the final action in the phase, attempt to transition to next phase
             int nextPhaseIndex = currentPhaseNumber; // currentPhase is 1-indexed, so next phase index is the same as currentPhase
-            if (nextPhaseIndex < 0 || nextPhaseIndex >= phases.Length)
+            if (nextPhaseIndex >= phases.Length)
             {
                 if (showDebugLogs) Debug.Log("No more phases or actions to go through.");
                 Die();
@@ -383,7 +413,8 @@ public class BossEnemyController : MonoBehaviour
         currentAction.Initiate(this, showDebugLogs);
     }
 
-    #region Void Projectile
+    #endregion
+
     void VoidProjectile()
     {
         if (voidProjectileObject == null)
@@ -394,7 +425,6 @@ public class BossEnemyController : MonoBehaviour
 
         if (showDebugLogs) Debug.Log("Performing Void Projectile action");
 
-        // Initialize projectile to know which pools to use
         if (!voidProjectileObject.TryGetComponent<VoidProjectile>(out var voidProjectile))
         {
             Debug.LogError("VoidProjectile component missing on projectile prefab.");
@@ -444,11 +474,37 @@ public class BossEnemyController : MonoBehaviour
             Debug.LogError("Player reference is null.");
         }
     }
-    #endregion
 
     void ArmSweep()
     {
+        if (sweepingArmObject == null)
+        {
+            Debug.LogError("Sweeping Arm reference is missing.");
+            return;
+        }
 
+        if (showDebugLogs) Debug.Log("Performing Arm Sweep action");
+
+        sweepingArmObject.SetActive(true);
+
+        StartCoroutine(Sweep());
+    }
+
+    IEnumerator Sweep()
+    {
+        float startTime = Time.time;
+
+        // Rotate the arm around the boss for the duration of the sweep
+        while (Time.time < startTime + sweepingDuration)
+        {
+            // Rotate the arm around the boss at the specified speed
+            sweepingArmObject.transform.RotateAround(transform.position, Vector3.up, sweepingSpeed * Time.deltaTime);
+            yield return null;
+        }
+
+        sweepingArmObject.SetActive(false);
+        sweepingArmObject.transform.position = originalArmPosition; // reset arm position for next time it's used
+        EndAction();
     }
 
     void DropPillars()
@@ -460,6 +516,46 @@ public class BossEnemyController : MonoBehaviour
     {
         Debug.Log("Boss' health has depleted");
         Destroy(gameObject); // Replace with death sequence later
+    }
+
+    private void SetAlpha(float alpha)
+    {
+        // Make the player appear more transparent
+        Renderer[] renderers = GetComponentsInChildren<Renderer>();
+
+        foreach (Renderer renderer in renderers)
+        {
+            foreach (Material mat in renderer.materials)
+            {
+                if (mat.HasProperty("_Color"))
+                {
+                    Color color = mat.color;
+                    color.a = alpha;
+                    mat.color = color;
+
+                    if (alpha < 1f)
+                    {
+                        mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+                        mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+                        mat.SetInt("_ZWrite", 0);
+                        mat.DisableKeyword("_ALPHATEST_ON");
+                        mat.EnableKeyword("_ALPHABLEND_ON");
+                        mat.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+                        mat.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
+                    }
+                    else
+                    {
+                        mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
+                        mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
+                        mat.SetInt("_ZWrite", 1);
+                        mat.DisableKeyword("_ALPHATEST_ON");
+                        mat.DisableKeyword("_ALPHABLEND_ON");
+                        mat.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+                        mat.renderQueue = -1;
+                    }
+                }
+            }
+        }
     }
 
     public void TakeDamage(int value = 1)
