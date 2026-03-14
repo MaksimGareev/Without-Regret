@@ -1,5 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
+
 public class ForPlayerSeeTroughScript : MonoBehaviour
 {
     public static int PlayerPosID = Shader.PropertyToID("_PlayerPosition");
@@ -10,7 +12,9 @@ public class ForPlayerSeeTroughScript : MonoBehaviour
     [SerializeField] LayerMask Mask;
 
     //[SerializeField] Material[] WallMaterials;
-    RaycastHit[] RayList;
+    RaycastHit[] RayArray;
+    RaycastHit[] CurrentObjects;
+    RaycastHit[] UnSharedObjects;
    
 
     private RaycastHit hit; //the raycast hit that returns information about the material
@@ -26,15 +30,23 @@ public class ForPlayerSeeTroughScript : MonoBehaviour
         // Ray from player toward camera
         var ray = new Ray(transform.position, dir.normalized);
 
-        if(RayList.Length != 0)
-        {
-           // for(int i = 0; i<Ray)
-        }
-        RayList = Physics.RaycastAll(ray, 3000, Mask);
+        RayArray = Physics.RaycastAll(ray, 3000, Mask);
+        var unique1 = CurrentObjects.Except(RayArray);
+        //UnSharedObjects = unique1.ToArray();
 
-        for(int i = 0; i<RayList.Length; ++i)
+        if (UnSharedObjects.Length != 0)
         {
-            hit = RayList[i];
+            for (int i = 0; i < UnSharedObjects.Length; ++i)
+            {
+                UnSharedObjects[i].transform.GetComponent<Renderer>().material.SetFloat(SizeID, 0);
+            }
+        }
+        
+        CurrentObjects = RayArray;
+
+        for(int i = 0; i<CurrentObjects.Length; ++i)
+        {
+            hit = CurrentObjects[i];
             Renderer rend = hit.transform.GetComponent<Renderer>();
 
             if (rend)
