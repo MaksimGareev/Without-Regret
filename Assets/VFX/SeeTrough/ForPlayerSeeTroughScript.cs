@@ -1,21 +1,21 @@
 using UnityEngine;
-
+using System.Collections.Generic;
 public class ForPlayerSeeTroughScript : MonoBehaviour
 {
     public static int PlayerPosID = Shader.PropertyToID("_PlayerPosition");
     public static int SizeID = Shader.PropertyToID("_Size");
 
-     Material WallMaterial;
+    
     [SerializeField] Camera Cam;
     [SerializeField] LayerMask Mask;
 
     //[SerializeField] Material[] WallMaterials;
-
+    RaycastHit[] RayList;
    
 
     private RaycastHit hit; //the raycast hit that returns information about the material
 
-    void Update()
+    void LateUpdate()
     {
         // Send player position to shader in viewport space
         var view = Cam.WorldToViewportPoint(transform.position);
@@ -26,37 +26,23 @@ public class ForPlayerSeeTroughScript : MonoBehaviour
         // Ray from player toward camera
         var ray = new Ray(transform.position, dir.normalized);
 
-        // Check if something blocks the player
-        if (!Physics.Raycast(ray, out hit, 3000, Mask)){
-          // Debug.Log("there's nothing in obstruction layer");
-          if(WallMaterial != null)
-            WallMaterial.SetFloat(SizeID, 0f);
-           
-           return;
-        }
-        else
+        if(RayList.Length != 0)
         {
-      // Debug.Log("This might be a wall! ");
-          if (!hit.collider.gameObject.GetComponent<Renderer>())
-          {
-              return;
-          }
-          else
-          {
-              WallMaterial = hit.collider.gameObject.GetComponent<Renderer>().material;
-           
-              WallMaterial.SetFloat(SizeID, 0.75f);
-              WallMaterial.SetVector(PlayerPosID, view);
-          }
-          
-          }
+           // for(int i = 0; i<Ray)
+        }
+        RayList = Physics.RaycastAll(ray, 3000, Mask);
 
-        // Send player position to shader in viewport space
-        
-        //WallMaterial.SetVector(PlayerPosID, view);
-        
-        
-        //WallMaterial.SetVector(PlayerPosID, view);    
+        for(int i = 0; i<RayList.Length; ++i)
+        {
+            hit = RayList[i];
+            Renderer rend = hit.transform.GetComponent<Renderer>();
+
+            if (rend)
+            {
+                rend.material.SetFloat(SizeID, 0.75f);
+                rend.material.SetVector(PlayerPosID, view);
+            }
+        }
         
     }
 }
