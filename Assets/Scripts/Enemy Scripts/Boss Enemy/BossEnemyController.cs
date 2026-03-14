@@ -59,6 +59,8 @@ public class BossEnemyController : MonoBehaviour
     [SerializeField] Transform player;
     [Tooltip("The enemy prefab used for spawning")]
     [SerializeField] GameObject enemyPrefab;
+    [Tooltip("The visual model of the boss")]
+    [SerializeField] GameObject model;
     [Tooltip("The arm used for the Arm Sweep attack")]
     [SerializeField] GameObject sweepingArmObject;
     [Tooltip("The projectile prefab used for the void projectile attack")]
@@ -93,7 +95,8 @@ public class BossEnemyController : MonoBehaviour
     private ObjectPool voidPooler;
     private Coroutine phaseStartRoutine;
     private Coroutine actionStartRoutine;
-
+    private int totalHealth;
+    private int currentHealth;
     private Renderer[] renderers;
 
     // Runtime list of sliders used by UI logic (either generated or the fallback `phaseSliders`)
@@ -144,7 +147,13 @@ public class BossEnemyController : MonoBehaviour
             sweepingArmObject.SetActive(false);
         }
 
-        renderers = GetComponentsInChildren<Renderer>();
+        for (int i = 0; i < phases.Length; i++)
+        {
+            totalHealth += phases[i].Health;
+        }
+        currentHealth = totalHealth;
+
+        renderers = model.GetComponentsInChildren<Renderer>();
 
         if (shadowLayerMask == 0)
             shadowLayerMask = LayerMask.GetMask("Target", "Enemy", "Ignore Raycast"); // Used for raycasting the shadow position and detecting projectile collisions
@@ -518,56 +527,21 @@ public class BossEnemyController : MonoBehaviour
         Destroy(gameObject); // Replace with death sequence later
     }
 
-    private void SetAlpha(float alpha)
-    {
-        // Make the player appear more transparent
-        Renderer[] renderers = GetComponentsInChildren<Renderer>();
-
-        foreach (Renderer renderer in renderers)
-        {
-            foreach (Material mat in renderer.materials)
-            {
-                if (mat.HasProperty("_Color"))
-                {
-                    Color color = mat.color;
-                    color.a = alpha;
-                    mat.color = color;
-
-                    if (alpha < 1f)
-                    {
-                        mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
-                        mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-                        mat.SetInt("_ZWrite", 0);
-                        mat.DisableKeyword("_ALPHATEST_ON");
-                        mat.EnableKeyword("_ALPHABLEND_ON");
-                        mat.DisableKeyword("_ALPHAPREMULTIPLY_ON");
-                        mat.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
-                    }
-                    else
-                    {
-                        mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
-                        mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
-                        mat.SetInt("_ZWrite", 1);
-                        mat.DisableKeyword("_ALPHATEST_ON");
-                        mat.DisableKeyword("_ALPHABLEND_ON");
-                        mat.DisableKeyword("_ALPHAPREMULTIPLY_ON");
-                        mat.renderQueue = -1;
-                    }
-                }
-            }
-        }
-    }
-
     public void TakeDamage(int value = 1)
     {
         // Take damage to the current health part
         Phase currentPhase = phases[currentPhaseNumber - 1];
         currentPhase.Health -= value;
+        currentHealth -= value;
+        float healthRatio = (float)currentHealth / totalHealth;
 
-        if (showDebugLogs) Debug.Log($"Boss took {value} damage. Current phase: {currentPhaseNumber}, Current health: {currentPhase.Health}");
+        if (showDebugLogs) Debug.Log($"Boss took {value} damage. Current phase: {currentPhaseNumber}, Current phase health: {currentPhase.Health}, Total Health Ratio: {healthRatio}");
 
         // Update UI for current phase
         UpdateHealthUIForCurrentPhase();
+
+        // Set transparency of the boss based on total health ratio
+        SetAlpha(healthRatio);
 
         if (currentPhase.Health <= 0)
         {
@@ -580,6 +554,43 @@ public class BossEnemyController : MonoBehaviour
             {
                 // Transition to the next phase
                 StartNextPhase();
+            }
+        }
+    }
+
+    private void SetAlpha(float alpha)
+    {
+        foreach (Renderer renderer in renderers)
+        {
+            foreach (Material mat in renderer.materials)
+            {
+                if (mat.HasProperty("_BaseColor"))
+                {
+                    Color color = mat.color;
+                    color.a = alpha;
+                    mat.SetColor("_BaseColor", color);
+
+                    //if (alpha < 1f)
+                    //{
+                    //    mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+                    //    mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+                    //    mat.SetInt("_ZWrite", 0);
+                    //    mat.DisableKeyword("_ALPHATEST_ON");
+                    //    mat.EnableKeyword("_ALPHABLEND_ON");
+                    //    mat.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+                    //    mat.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
+                    //}
+                    //else
+                    //{
+                    //    mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
+                    //    mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
+                    //    mat.SetInt("_ZWrite", 1);
+                    //    mat.DisableKeyword("_ALPHATEST_ON");
+                    //    mat.DisableKeyword("_ALPHABLEND_ON");
+                    //    mat.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+                    //    mat.renderQueue = -1;
+                    //}
+                }
             }
         }
     }

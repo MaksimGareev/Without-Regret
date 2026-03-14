@@ -30,6 +30,8 @@ public class MoveableObject : MonoBehaviour, IInteractable
 
     [Header("Transform Settings")]
     [SerializeField] private Vector3 heldPositionOffset = Vector3.zero;
+    [SerializeField] private bool applyHeldRotationOffset = false;
+    [SerializeField] private Vector3 heldRotationOffset = Vector3.zero;
 
     private Rigidbody rb;
     private PlayerMovingObjects mover;
@@ -108,6 +110,10 @@ public class MoveableObject : MonoBehaviour, IInteractable
 
         // Apply offsets after parenting (Rotate in world space to maintain rotation at time of grabbing)
         transform.localPosition += heldPositionOffset;
+        if (applyHeldRotationOffset)
+        {
+            transform.Rotate(heldRotationOffset, Space.World);
+        }
 
         // remove Icon
         if (ButtonIcons.Instance != null)
