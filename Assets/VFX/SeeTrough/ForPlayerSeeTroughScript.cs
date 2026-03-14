@@ -13,8 +13,8 @@ public class ForPlayerSeeTroughScript : MonoBehaviour
 
     //[SerializeField] Material[] WallMaterials;
     RaycastHit[] RayArray;
-    RaycastHit[] CurrentObjects;
-    RaycastHit[] UnSharedObjects;
+    [SerializeField] RaycastHit[] CurrentObjects;
+    List<RaycastHit> UnSharedObjects;
    
 
     private RaycastHit hit; //the raycast hit that returns information about the material
@@ -31,14 +31,20 @@ public class ForPlayerSeeTroughScript : MonoBehaviour
         var ray = new Ray(transform.position, dir.normalized);
 
         RayArray = Physics.RaycastAll(ray, 3000, Mask);
-        var unique1 = CurrentObjects.Except(RayArray);
-        //UnSharedObjects = unique1.ToArray();
 
-        if (UnSharedObjects.Length != 0)
+        if (CurrentObjects != null)
         {
-            for (int i = 0; i < UnSharedObjects.Length; ++i)
+            UnSharedObjects = GetNonSharedValues(CurrentObjects, RayArray);
+        }
+
+        if (UnSharedObjects != null)
+        {
+            for (int i = 0; i < UnSharedObjects.Count; ++i)
             {
-                UnSharedObjects[i].transform.GetComponent<Renderer>().material.SetFloat(SizeID, 0);
+                if (UnSharedObjects[i].transform.GetComponent<Renderer>() != null)
+                {
+                    UnSharedObjects[i].transform.GetComponent<Renderer>().material.SetFloat(SizeID, 0);
+                }
             }
         }
         
@@ -57,4 +63,41 @@ public class ForPlayerSeeTroughScript : MonoBehaviour
         }
         
     }
+
+    List<T> GetNonSharedValues<T>(T[] arr1, T[] arr2)
+    {
+        if (arr1.Length != 0)
+        {
+            // Use HashSet for O(1) lookups
+            HashSet<T> set1 = new HashSet<T>(arr1);
+            HashSet<T> set2 = new HashSet<T>(arr2);
+
+            List<T> result = new List<T>();
+
+            // Add items in arr1 not in arr2
+            foreach (T item in arr1)
+            {
+                if (!set2.Contains(item))
+                {
+                    result.Add(item);
+                }
+            }
+
+            // Add items in arr2 not in arr1
+            foreach (T item in arr2)
+            {
+                if (!set1.Contains(item))
+                {
+                    result.Add(item);
+                }
+            }
+
+            return result;
+        }
+        else
+        {
+            return null;
+        }
+    }
+
 }
