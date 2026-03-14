@@ -4,29 +4,17 @@
       "LineID": "Start",
       "Speaker": "Penelope",
       "NPCGender": "female",
-      "text": "Echo! Thank goodness you're here!",
+      "text": "(In between sobs) F*#&! I went and drove my car into the lake!'",
       "lineTone": 0,
       "requiredMorality": 0,
-      "choices": [
-        {
-          "text": "Just glad you're okay.",
-          "moralityChange": 1,
-          "NextLineID": "Listened",
-          "directionString": "Up"
-        },
-        {
-          "text": "You can't park there.",
-          "moralityChange": -1,
-          "NextLineID": "Listened",
-          "directionString": "Down"
-        }
-      ]
+      "NextLineID": "Listened",
+      "choices": []
     },
     {
       "LineID": "Listened",
       "Speaker": "Penelope",
       "NPCGender": "female",
-      "text": "I went and crashed my car into the river...I should've listened to Irene. I'm so stupid!",
+      "text": "I should've listened to Irene. I'm so stupid!",
       "lineTone": 0,
       "requiredMorality": 0,
       "NextLineID": "WhatIf",
@@ -36,7 +24,7 @@
       "LineID": "WhatIf",
       "Speaker": "Penelope",
       "NPCGender": "female",
-      "text": "She was all I could think of, it's like everything was in slow motion. I've gotta apologize to her.",
+      "text": "She was all I could think of, it's like everything was in slow motion...I've gotta apologize to her.",
       "lineTone": 0,
       "requiredMorality": 0,
       "NextLineID": "LetsGo",
@@ -46,7 +34,7 @@
       "LineID": "LetsGo",
       "Speaker": "Penelope",
       "NPCGender": "female",
-      "text": "Come on Echo, let's get out of here.",
+      "text": "I need to get out of here. Going back through the forest on foot is safer than trying to have someone drive in for me.",
       "lineTone": 0,
       "requiredMorality": 0,
       "choices": [],

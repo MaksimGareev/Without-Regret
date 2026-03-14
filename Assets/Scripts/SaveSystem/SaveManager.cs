@@ -33,6 +33,7 @@ public class SaveManager : MonoBehaviour
     private float autoSaveTimer = 0f;  // Timer to track time since last auto-save
     private bool isSaving = false; // Flag to prevent multiple simultaneous save operations
 
+    public bool IsLoading { get; private set; } = false;
     private void Awake()
     {
         // Implementing the singleton pattern to ensure only one instance of SaveManager exists and persists across scenes
@@ -51,17 +52,17 @@ public class SaveManager : MonoBehaviour
     // When the SaveManager is enabled, subscribe to the sceneLoaded event
     private void OnEnable()
     {
-        SceneManager.sceneLoaded += OnSceneLoaded;
+        SceneLoadManager.Instance.OnSceneLoaded.AddListener(OnSceneLoaded);
     }
 
     // Unsubscribe from the sceneLoaded event when the SaveManager is disabled to prevent memory leaks and unintended behavior
     private void OnDisable()
     {
-        SceneManager.sceneLoaded -= OnSceneLoaded;
+        SceneLoadManager.Instance.OnSceneLoaded.RemoveListener(OnSceneLoaded);
     }
 
     // When a new scene is loaded, refresh the list of saveable objects and load the game from the active save slot if any save data exists.
-    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    private void OnSceneLoaded()
     {
         RefreshSaveables();
 
@@ -263,7 +264,7 @@ public class SaveManager : MonoBehaviour
         {
             data.playerSaveData.currentRingState = TimerRingUI.Instance.currentRingState;
         }
-        else if (TimerRingUI.Instance == null && TimerRingUI.Instance.currentRingState == TimerRingUI.RingState.Empty)
+        else if (TimerRingUI.Instance == null || TimerRingUI.Instance.currentRingState == TimerRingUI.RingState.Empty)
         {
             data.playerSaveData.currentRingState = TimerRingUI.RingState.Full;
         }
@@ -310,6 +311,8 @@ public class SaveManager : MonoBehaviour
     // If no save data is found for the specified slot, a warning will be logged and no loading will occur.
     public void LoadGame(int slot)
     {
+        IsLoading = true;
+
         // Try loading from the specified save slot, if no save exists then create a new one in that slot.
         SaveData data = SaveSystem.Load(slot)?? new SaveData(slot);
 
@@ -343,6 +346,11 @@ public class SaveManager : MonoBehaviour
                 break;
             }
         }
+
+        if (ObjectiveManager.Instance != null)
+        {
+            ObjectiveManager.Instance.EnsureActiveObjective();
+        }
         
         // Set the timer ring state to the state in the saved data
         if (TimerRingUI.Instance != null && data.playerSaveData.currentRingState != TimerRingUI.RingState.Empty)
@@ -354,17 +362,13 @@ public class SaveManager : MonoBehaviour
             TimerRingUI.Instance.SetRingState(TimerRingUI.RingState.Full);
         }
 
-        // Call to the objective manager to auto enable an objective, necessary when loading a save to continue where the player left off
-        if (ObjectiveManager.Instance != null)
-        {
-            ObjectiveManager.Instance.EnsureActiveObjective();
-        }
-
         // Ensure the game is not paused after loading, which can happen if the player saves while paused and then reloads that save
         if (PauseManager.Instance != null)
         {
             PauseManager.Instance.ResumeGame();
         }
+
+        IsLoading = false;
     }
 
     // Sets the active save slot number to the specified slot

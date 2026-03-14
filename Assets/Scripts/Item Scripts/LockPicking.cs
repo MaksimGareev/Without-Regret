@@ -76,6 +76,9 @@ public class LockPicking : MonoBehaviour
     private PlayerInput input;
     bool isController;
 
+    [Header("Animation")]
+    public Animator animator;
+
     private bool IsController
     {
         get { return isController; }
@@ -91,20 +94,25 @@ public class LockPicking : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Start()
     {
-        Source.volume = 300f;
+        if (Source != null)
+        {
+            Source.volume = 300f;
+        }
+
         PickCursor.eulerAngles = new Vector3(0, 0, 0);
         StageTwoUI.SetActive(false);
     }
     void Awake()
     {
         updateInputPrompt(IsController);
-        player = GameObject.FindGameObjectWithTag("Player").transform;
-        rb = player.GetComponent<Rigidbody>();
-        Source = FindAnyObjectByType<AudioSource>();
-        if (Source == null)
-        {
-            Debug.LogWarning("No AudioSource found in the scene!");
-        }
+        // player = GameObject.FindGameObjectWithTag("Player").transform;
+        // animator = player.GetComponentInChildren<Animator>();
+        // rb = player.GetComponent<Rigidbody>();
+        //Source = FindAnyObjectByType<AudioSource>();
+        // if (Source == null)
+        // {
+        //     Debug.LogWarning("No AudioSource found in the scene!");
+        // }
 
         if (PickCursor != null)
         {
@@ -135,13 +143,36 @@ public class LockPicking : MonoBehaviour
 
     private void OnEnable()
     {
-        controls.Enable(); 
+        controls?.Enable();
+        if (animator)
+        {
+            animator.SetBool("isLockpicking", true);
+        }
+
+        SceneLoadManager.Instance.OnSceneLoaded.AddListener(ReassignPlayer);
     }
 
     private void OnDisable()
     {
-        controls.Disable();
+        controls?.Disable();
+        if (animator)
+        {
+            animator.SetBool("isLockpicking", false);
+        }
+
+        SceneLoadManager.Instance.OnSceneLoaded.RemoveListener(ReassignPlayer);
     }
+
+    private void ReassignPlayer()
+    {
+        if (player == null || animator == null || rb == null)
+        {
+            player = GameObject.FindGameObjectWithTag("Player").transform;
+            animator = player.GetComponentInChildren<Animator>();
+            rb = player.GetComponent<Rigidbody>();
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -205,7 +236,10 @@ public class LockPicking : MonoBehaviour
                 if (CurrentAngle < UnlockRange.y && CurrentAngle > UnlockRange.x)
                 {
                     // NewLock();
-                    Source?.Stop();
+                    if (Source != null && Source.isPlaying)
+                    {
+                        Source?.Stop();
+                    }
                     for (int i = 0; i < LockPickImages.Count; i++)
                     {
                         Color tempColor = LockPickImages[i].color;
@@ -234,7 +268,7 @@ public class LockPicking : MonoBehaviour
                 {
                     float RandomRotation = Random.insideUnitCircle.x;
                     PickCursor.eulerAngles += new Vector3(0, 0, Random.Range(-RandomRotation, RandomRotation));
-                    if (!Source.isPlaying)
+                    if (Source != null && !Source.isPlaying)
                     {
                         Source?.PlayOneShot(FailSound);
                     }
@@ -361,7 +395,12 @@ public class LockPicking : MonoBehaviour
         SecondStageActive = false;
         StageTwoUI.SetActive(false);
         LockPickUi.SetActive(true);
-        Rigidbody rb = player.GetComponent<Rigidbody>();
+
+        if (player == null || animator == null || rb == null)
+        {
+            ReassignPlayer();
+        }
+        
         PickCursor.eulerAngles = new Vector3(0, 0, 0);
         GenerateSolutions();
         rb.constraints = RigidbodyConstraints.FreezeAll;
@@ -369,7 +408,7 @@ public class LockPicking : MonoBehaviour
 
     public void Unlock()//resets and deactivates Ui
     {
-        if (!Source.isPlaying)
+        if (Source !=  null && !Source.isPlaying)
         {
             Source?.PlayOneShot(UnlockSound);
         }
@@ -404,7 +443,7 @@ public class LockPicking : MonoBehaviour
         {
             ArrowIndex = 0;
             ControlsLocked = true;
-            if (!Source.isPlaying)
+            if (Source != null && !Source.isPlaying)
             {
                 Source?.PlayOneShot(FailSound);
             }

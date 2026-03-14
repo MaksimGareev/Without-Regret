@@ -31,6 +31,8 @@ public class PauseManager : MonoBehaviour
     [SerializeField] private GameObject settingsPanel;
     [SerializeField] private GameObject confirmationPanel;
 
+    [SerializeField, Tooltip("The index for the scene that contains the boss fight to prevent saving on opening the pause menu for checkpoint functionality")] private int bossSceneIndex;
+
     [HideInInspector] public bool isGamePaused = false;
     [HideInInspector] public bool usingController { get; private set; } = false;
 
@@ -273,7 +275,7 @@ public class PauseManager : MonoBehaviour
     private void PauseGame()
     {
         // Save game before pausing
-        if (SaveManager.Instance != null)
+        if (SaveManager.Instance != null && SceneManager.GetActiveScene().buildIndex != bossSceneIndex)
         {
             SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
         }
@@ -525,7 +527,16 @@ public class PauseManager : MonoBehaviour
     private void ReloadSave()
     {
         // Logic to reload the last save
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        if (GameManager.Instance != null && GameManager.Instance.sceneLoadManager != null)
+        {
+            GameManager.Instance.sceneLoadManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
+        else
+        {
+            Debug.LogError("SceneLoadManager reference is missing in the GameManager. Reloading scene directly without fade transition.");
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
+
         ResumeGame();
         //Debug.Log("Reloading Save...");
     }
@@ -553,7 +564,16 @@ public class PauseManager : MonoBehaviour
         DisableOtherCanvases();
 
         // Logic to quit to main menu
-        SceneManager.LoadScene("MainMenu");
+        if (GameManager.Instance != null && GameManager.Instance.sceneLoadManager != null)
+        {
+            GameManager.Instance.sceneLoadManager.LoadScene("MainMenu");
+        }
+        else
+        {
+            Debug.LogError("SceneLoadManager reference is missing in the GameManager. Loading Main Menu scene directly without fade transition.");
+            SceneManager.LoadScene("MainMenu");
+        }
+        
         Time.timeScale = 1f; // Ensure time scale is reset
         isGamePaused = false;
         Cursor.visible = true;

@@ -8,7 +8,6 @@ public class First_Person : MonoBehaviour
     [Header("References")]
     public Rigidbody rb;
     public Transform head;
-    public Camera camera;
 
     [Header("Configurations")]
     public float walkSpeed = 5f;
