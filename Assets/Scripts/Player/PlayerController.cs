@@ -415,6 +415,8 @@ public class PlayerController : MonoBehaviour, ISaveable
                 isSprinting = false;
                 Animator.SetBool("isSprinting", false);
 
+                Animator.SetBool("isExhausted", true);
+
                 canSprint = false;
                 if (GameManager.Instance.staminaFill != null)
                     GameManager.Instance.staminaFill.color = cooldownColor;
@@ -445,6 +447,8 @@ public class PlayerController : MonoBehaviour, ISaveable
             {
                 // Stamina is full, reset values
                 SprintTimer = SprintDuration;
+
+                Animator.SetBool("isExhausted", false);
 
                 if (staminaFadeRoutine == null)
                 {
@@ -623,6 +627,7 @@ public class PlayerController : MonoBehaviour, ISaveable
 
     IEnumerator SprintCooldown()
     {
+
         if (showDebugLogs)
             Debug.Log("Sprint cooldown started.");
         yield return new WaitForSeconds(sprintCooldown);

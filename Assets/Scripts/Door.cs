@@ -16,6 +16,7 @@ public class Door : MonoBehaviour, IInteractable
 
     // Player
     private Transform player;
+    private Animator animator;
     [Header("Objective Settings")]
     [Tooltip("Objective that must be ACTIVE to allow the player to interact with this door. If the player has not ACTIVE the linked objective, they will not be able to interact with the door.")]
     public ObjectiveData linkedObjective;
@@ -43,6 +44,7 @@ public class Door : MonoBehaviour, IInteractable
     private void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player").transform;
+        animator = player.GetComponentInChildren<Animator>();
     }
 
     void Update()
@@ -74,6 +76,7 @@ public class Door : MonoBehaviour, IInteractable
 
     public void OnPlayerInteraction(GameObject player)
     {
+        animator.SetTrigger("DoorOpen");
         if (interactSound != null)
         {
             audioSource.PlayOneShot(interactSound);
