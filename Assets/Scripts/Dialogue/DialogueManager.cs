@@ -4,6 +4,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using UnityEngine.Audio;
+using UnityEditor.Rendering;
 
 [System.Serializable]
 public class NPCPortraitSet
@@ -351,7 +352,7 @@ public class DialogueManager : MonoBehaviour
             dialogueText.text += c;
             PlayTypingSound(c);
 
-            float delay = .035f;
+            float delay = .03f;
 
             switch (c)
             {
