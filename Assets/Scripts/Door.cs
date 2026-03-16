@@ -76,7 +76,10 @@ public class Door : MonoBehaviour, IInteractable
 
     public void OnPlayerInteraction(GameObject player)
     {
-        animator.SetTrigger("DoorOpen");
+        if (animator != null)
+        {
+            animator.SetTrigger("DoorOpen");
+        }
         if (interactSound != null)
         {
             audioSource.PlayOneShot(interactSound);

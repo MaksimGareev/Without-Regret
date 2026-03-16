@@ -24,6 +24,10 @@ public class DeadlyFog : MonoBehaviour
     [Header("Reset Point(auto-assigned if child exists)")]
     public Transform resetPoint;
 
+    [Header("Animator")]
+    public Animator animator;
+
+
     [Header("Debugging")]
     [Tooltip("If true, debug logs will be printed to the console regarding this script. This can be helpful for troubleshooting and ensuring the reset logic is working as intended, but should be left false when not needed.")]
     public bool showDebugLogs = false;
@@ -59,6 +63,12 @@ public class DeadlyFog : MonoBehaviour
     private void OnTriggerStay(Collider other)
     {
         PlayerController player = other.GetComponent<PlayerController>();
+        animator = player.GetComponentInChildren<Animator>();
+
+        if (animator != null)
+        {
+            animator.SetTrigger("FogDamage");
+        }
 
         if (player == null)
         {
