@@ -22,15 +22,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ec564cfdb39babc4c93fb4eb8201a4fe, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 11.122
+      value: 1.662224
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ec564cfdb39babc4c93fb4eb8201a4fe, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.69
+      value: 0.690022
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ec564cfdb39babc4c93fb4eb8201a4fe, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 65.782
+      value: -211.38054
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ec564cfdb39babc4c93fb4eb8201a4fe, type: 3}
       propertyPath: m_LocalRotation.w
@@ -88,7 +88,7 @@ PrefabInstance:
       addedObject: {fileID: 152609648944656381}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: ec564cfdb39babc4c93fb4eb8201a4fe, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 440949033571452515}
+      addedObject: {fileID: 1721175965411996894}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: ec564cfdb39babc4c93fb4eb8201a4fe, type: 3}
       insertIndex: -1
       addedObject: {fileID: 9050450049671758505}
@@ -146,7 +146,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &440949033571452515
+--- !u!114 &1721175965411996894
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -155,21 +155,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 3590891345275627327}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f1f1ab1a81f3ad7468ec1fe89381d319, type: 3}
+  m_Script: {fileID: 11500000, guid: 0b6e6e231d6aa514dbcc6f8154c93bb7, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MoveableObject
-  moveSlowdownDivisor: 3
-  sprintSlowdownDivisor: 3
-  sprintDepletionFactor: 1.05
-  staminaReduction: 0.5
-  allowSprint: 1
-  requiredItem: {fileID: 0}
-  maxGrabDistance: 2.5
-  disableColliderWhileHeld: 0
-  heldPositionOffset: {x: 0, y: 0, z: 0}
-  heldRotationOffset: {x: 0, y: 0, z: 0}
-  isGrabbable: 1
-  navMeshSurface: {fileID: 0}
+  m_EditorClassIdentifier: Assembly-CSharp::PushableObject
+  mashInput: {fileID: -5528296139197480759, guid: f1f4dbfd8c64cd440924988ec4fb6f6a, type: 3}
+  quitInput: {fileID: -8918670899272728616, guid: f1f4dbfd8c64cd440924988ec4fb6f6a, type: 3}
+  referenceTransform: {fileID: 0}
+  disableReferenceObject: 1
+  mashProgressPerPress: 0.12
+  passiveDecay: 0.3
+  freezePlayerDuringMinigame: 1
+  rotationAngle: 90
+  showDebugLogs: 1
 --- !u!114 &9050450049671758505
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -182,4 +179,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ced780c22dcf6ef4bb8e624b32e4787a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SaveableWorldObject
-  uniqueID: 15d89065-7261-4046-8a38-be657b13972f
+  uniqueID: 3d394755-8821-4024-b019-c86acdce8b68
