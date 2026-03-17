@@ -33,14 +33,17 @@ public class MMSettings : MonoBehaviour
     [SerializeField] private GameObject parentMenu;
 
     [Header("Settings References")]
-    // Video Settings
+    // Video Settings 
     [SerializeField] public TMP_Dropdown resolutionDropdown;
     [SerializeField] private Toggle fullscreenToggle;
+    [SerializeField] private Slider astralDistortionSlider;
+    
     // Audio Settings
     [SerializeField] public Slider masterVolumeSlider;
     [SerializeField] private Slider SFXVolumeSlider;
     [SerializeField] private Slider musicVolumeSlider;
     [SerializeField] private Slider dialogueVolumeSlider;
+    
     // Controls Settings
     [SerializeField] public Slider mouseSensitivitySlider;
     [SerializeField] private Slider leftStickSensitivitySlider;
@@ -52,11 +55,14 @@ public class MMSettings : MonoBehaviour
     // Video
     [SerializeField] private TextMeshProUGUI resolutionTitleText;
     [SerializeField] private TextMeshProUGUI fullscreenTitleText;
+    [SerializeField] private TextMeshProUGUI astralDistortionTitleText;
+    
     // Audio
     [SerializeField] private TextMeshProUGUI masterVolumeTitleText;
     [SerializeField] private TextMeshProUGUI SFXVolumeTitleText;
     [SerializeField] private TextMeshProUGUI musicVolumeTitleText;
     [SerializeField] private TextMeshProUGUI dialogueVolumeTitleText;
+    
     // Controls
     [SerializeField] private TextMeshProUGUI mouseSensitivityTitleText;
     [SerializeField] private TextMeshProUGUI leftStickSensitivityTitleText;
@@ -65,11 +71,15 @@ public class MMSettings : MonoBehaviour
     [SerializeField] private TextMeshProUGUI rightStickDeadZoneTitleText;
     
     [Header("Value Text References")]
+    // Video
+    [SerializeField] private TextMeshProUGUI astralDistortionValueText;
+    
     // Audio
     [SerializeField] private TextMeshProUGUI masterVolumeValueText;
     [SerializeField] private TextMeshProUGUI SFXVolumeValueText;
     [SerializeField] private TextMeshProUGUI musicVolumeValueText;
     [SerializeField] private TextMeshProUGUI dialogueVolumeValueText;
+    
     // Controls
     [SerializeField] private TextMeshProUGUI mouseSensitivityValueText;
     [SerializeField] private TextMeshProUGUI leftStickSensitivityValueText;
@@ -78,6 +88,7 @@ public class MMSettings : MonoBehaviour
     [SerializeField] private TextMeshProUGUI rightStickDeadZoneValueText;
 
     [Header("Buttons and UI Panels")]
+    // Images and Groups for control scheme legends
     [SerializeField] public GameObject controllerLegends;
     [SerializeField] public GameObject keyboardLegends;
     [SerializeField] private Image resetButtonImage;
@@ -86,6 +97,8 @@ public class MMSettings : MonoBehaviour
     [SerializeField] private Image resetKeyImage;
     [SerializeField] private Image applyKeyImage;
     [SerializeField] private Image discardKeyImage;
+    
+    // UI Panels and groups
     [SerializeField] private GameObject settingsPanel;
     [SerializeField] private GameObject settingsUI;
     [SerializeField] public GameObject controlSchemeUI;
@@ -94,6 +107,7 @@ public class MMSettings : MonoBehaviour
     [SerializeField] private GameObject controlsSettingsUI;
     [SerializeField] private GameObject confirmationPanel;
 
+    // Buttons
     [SerializeField] private Button controlSchemeUIButton;
     [SerializeField] private Button videoSettingsButton;
     [SerializeField] private Button audioSettingsButton;
@@ -101,7 +115,8 @@ public class MMSettings : MonoBehaviour
     [SerializeField] private Button resetButton;
     [SerializeField] private Button applyButton;
     [SerializeField] private Button discardChangesButton;
-
+    
+    // Flags for script use only
     [HideInInspector] public bool controlSchemeOpen = false;
     [HideInInspector] public bool videoSettingsOpen = false;
     [HideInInspector] public bool audioSettingsOpen = false;
