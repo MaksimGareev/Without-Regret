@@ -27,7 +27,7 @@ public class PauseManager : MonoBehaviour
 
     [Header("UI Panels")]
     [SerializeField] public GameObject pauseMenuPanel;
-    [SerializeField] private MMSettings settingsScript;
+    [SerializeField] private SettingsMenu settingsScript;
     [SerializeField] private GameObject settingsPanel;
     [SerializeField] private GameObject confirmationPanel;
 
