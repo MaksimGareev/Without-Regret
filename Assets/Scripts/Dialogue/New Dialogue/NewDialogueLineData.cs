@@ -17,4 +17,5 @@ public class NewDialogueLineData
     public bool endDialogueAfterLine;
 
     public List<NewDialogueChoiceData> choices;
+    public List<string> objectivesToActivate;
 }
