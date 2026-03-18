@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 using System.Collections;
 using UnityEngine.InputSystem;
 
-public class MMSettings : MonoBehaviour
+public class SettingsMenu : MonoBehaviour
 {
     [Header("Input Settings")]
     [SerializeField] private InputActionAsset inputActions;
