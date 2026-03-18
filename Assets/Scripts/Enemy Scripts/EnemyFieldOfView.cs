@@ -288,6 +288,7 @@ public class EnemyFieldOfView : MonoBehaviour
         {
             transform.SetParent(other.transform);
             m_Agent.Warp(transform.position);
+            m_Agent.updateRotation = false; //comment this out if enemy rotation on platform looks off
             Debug.Log("Became Child of moving platform");
         }
     }
@@ -302,7 +303,8 @@ public class EnemyFieldOfView : MonoBehaviour
 
         if (other.gameObject.CompareTag("MovingPlatform"))
         {
-            transform.SetParent(null);
+            m_Agent.updateRotation = true; //comment this out if enemy rotation on platform looks off
+            transform.SetParent(null); 
         }
     }
 
