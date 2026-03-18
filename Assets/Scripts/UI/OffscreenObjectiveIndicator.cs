@@ -38,8 +38,7 @@ public class OffscreenObjectiveIndicator : MonoBehaviour
 
     Vector3 screenCenter = Vector3.zero;
     Vector3 originalScale;
-    [SerializeField] Vector2 localPoint;
-    [SerializeField] Vector3 targetViewportPos;
+    Vector3 targetViewportPos;
 
     Vector3 ScreenCenter
     {
