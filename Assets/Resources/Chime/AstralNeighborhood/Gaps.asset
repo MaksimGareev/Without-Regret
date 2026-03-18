@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e28c2e20bb6c4240a55d8edffb777ec, type: 3}
+  m_Name: Gaps
+  m_EditorClassIdentifier: Assembly-CSharp::NewDialogueData
+  npcName: Chime
+  dialogueLines:
+  - LineID: Start
+    Speaker: Chime
+    text: I don't think that's enough...we need to help Derry run away.
+    lineTone: 0
+    NPCGender: 
+    NextLineID: Part II
+    endDialogueAfterLine: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Part II
+    Speaker: Chime
+    text: Hurry, we need to find a way to bridge those gaps! You have the ability
+      to float, I should have mentioned it earlier. Press A when you're close to
+      a gap to activate your ability, then press A whenever the indicator is in the
+      green zone to stay in the air.
+    lineTone: 0
+    NPCGender: 
+    NextLineID: Part III
+    endDialogueAfterLine: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Part III
+    Speaker: Chime
+    text: I think you can use those crates to fill the gaps enough for Derry to make
+      it across.
+    lineTone: 0
+    NPCGender: 
+    NextLineID: 
+    endDialogueAfterLine: 1
+    choices: []
+    objectivesToActivate:
+    - guideDarryToSafety
