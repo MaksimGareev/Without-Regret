@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.Collections;
+using UnityEngine.Audio;
 
 public class SceneLoadManager : MonoBehaviour
 {
@@ -22,6 +24,12 @@ public class SceneLoadManager : MonoBehaviour
     [Header("Settings")]
     [Tooltip("The duration of the fade in and fade out animations.")]
     [SerializeField] private float fadeDuration = 1f;
+
+    [SerializeField] private float audioFadeDuration = 0.5f;
+    [SerializeField] private AudioMixer Mixer;
+
+    float startVolume;
+    float currentTime = 0;
 
     [HideInInspector] public UnityEvent OnSceneLoaded = new();
 
@@ -71,6 +79,7 @@ public class SceneLoadManager : MonoBehaviour
         Debug.Log("Fading in black screen");
         yield return FadeInBlackScreen();
 
+        
         Debug.Log("Starting scene load");
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
         asyncLoad.allowSceneActivation = false;
@@ -140,6 +149,8 @@ public class SceneLoadManager : MonoBehaviour
         Color screenColor = blackScreen.color;
         Color textColor = loadingText.color;
 
+        StartCoroutine((FadeOutAudio()));
+
         while (Time.realtimeSinceStartup < endTime)
         {
             float t = Mathf.InverseLerp(startTime, endTime, Time.realtimeSinceStartup);
@@ -166,6 +177,8 @@ public class SceneLoadManager : MonoBehaviour
         Color screenColor = blackScreen.color;
         Color textColor = loadingText.color;
 
+        StartCoroutine((FadeInAudio()));
+
         while (Time.realtimeSinceStartup < endTime)
         {
             float t = Mathf.InverseLerp(startTime, endTime, Time.realtimeSinceStartup);
@@ -187,5 +200,31 @@ public class SceneLoadManager : MonoBehaviour
     private void OnDestroy()
     {
         Debug.Log("SceneLoadManager destroyed");
+    }
+
+    private IEnumerator FadeOutAudio()
+    {
+        Mixer.GetFloat("Master", out startVolume);
+        currentTime = 0;
+        while (currentTime <= fadeDuration)
+        {
+            currentTime += Time.deltaTime;
+            Mixer.SetFloat("Master", Mathf.Lerp(startVolume, -80f, currentTime / fadeDuration));
+            yield return null;
+        }
+
+    }
+
+    private IEnumerator FadeInAudio()
+    {
+        currentTime = 0;
+        while (currentTime <= fadeDuration)
+        {
+            currentTime += Time.deltaTime;
+            Mixer.SetFloat("Master", Mathf.Lerp(-80f, startVolume, currentTime / fadeDuration));
+            yield return null;
+        }
+
+
     }
 }
