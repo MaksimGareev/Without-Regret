@@ -125,6 +125,7 @@ public class MMSettings : MonoBehaviour
     // Temporary variables to hold settings before applying
     private int tempResolutionIndex;
     private bool tempIsFullscreen;
+    private int tempAstralDistortion;
     private int tempMasterVolume;
     private int tempSFXVolume;
     private int tempMusicVolume;
@@ -138,6 +139,7 @@ public class MMSettings : MonoBehaviour
     // Default values for settings
     private int defaultResolutionIndex;
     private const int defaultIsFullscreen = 1;
+    private const int defaultAstralDistortion = 100;
     private const int defaultMasterVolume = 100;
     private const int defaultSFXVolume = 100;
     private const int defaultMusicVolume = 100;
@@ -250,7 +252,7 @@ public class MMSettings : MonoBehaviour
                 discardKeyImage.color = legendsDisabledColor;
             }
 
-            // Dont allow tabbing or other settings actions while confirming
+            // Don't allow tabbing or other settings actions while confirming
             return;
         }
 
@@ -291,36 +293,6 @@ public class MMSettings : MonoBehaviour
             resetButton.interactable = false;
             resetKeyImage.color = legendsDisabledColor;
         }
-
-        // Set apply and discard buttons interactable based on if there are unapplied changes
-        // if (hasUnappliedChanges)
-        // {
-        //     if (!applyButton.interactable)
-        //     {
-        //         applyButton.interactable = true;
-        //         applyKeyImage.color = legendsEnabledColor;
-        //     }
-
-        //     if (!discardChangesButton.interactable)
-        //     {
-        //         discardChangesButton.interactable = true;
-        //         discardKeyImage.color = legendsEnabledColor;
-        //     }
-        // }
-        // else if (!hasUnappliedChanges)
-        // {
-        //     if (applyButton.interactable)
-        //     {
-        //         applyButton.interactable = false;
-        //         applyKeyImage.color = legendsDisabledColor;
-        //     }
-            
-        //     if (discardChangesButton.interactable)
-        //     {
-        //         discardChangesButton.interactable = false;
-        //         discardKeyImage.color = legendsDisabledColor;
-        //     }
-        // }
     }
 
     public void EnableSettingsPanel()
@@ -471,6 +443,7 @@ public class MMSettings : MonoBehaviour
         // Set up listeners for UI elements
         resolutionDropdown.onValueChanged.AddListener(SetResolution);
         fullscreenToggle.onValueChanged.AddListener(SetFullscreen);
+        astralDistortionSlider.onValueChanged.AddListener(SetAstralDistortion);
         masterVolumeSlider.onValueChanged.AddListener(SetMasterVolume);
         SFXVolumeSlider.onValueChanged.AddListener(SetSFXVolume);
         musicVolumeSlider.onValueChanged.AddListener(SetMusicVolume);
@@ -657,6 +630,15 @@ public class MMSettings : MonoBehaviour
         // Set temporary values before actually applying
         tempIsFullscreen = isFullscreen;
 
+        CheckIfHasUnappliedSettings();
+    }
+
+    private void SetAstralDistortion(float distortion)
+    {
+        // Set temporary values before actually applying
+        tempAstralDistortion = Mathf.RoundToInt(distortion);
+        astralDistortionValueText.text = Mathf.RoundToInt(distortion).ToString("F0") + "%";
+        
         CheckIfHasUnappliedSettings();
     }
 
@@ -935,8 +917,19 @@ public class MMSettings : MonoBehaviour
         // Apply video settings
         Resolution resolution = resolutions[tempResolutionIndex];
         Screen.SetResolution(resolution.width, resolution.height, tempIsFullscreen);
-
         Screen.fullScreen = tempIsFullscreen;
+        
+        URP_Distortion_Aberation distortionAberation = FindAnyObjectByType<URP_Distortion_Aberation>();
+        if (distortionAberation)
+        {
+            distortionAberation.UpdateIntensity(tempAstralDistortion);
+        }
+        
+        URP_Distortion_Lens distortionLens = FindAnyObjectByType<URP_Distortion_Lens>();
+        if (distortionLens)
+        {
+            distortionLens.UpdateIntensity(tempAstralDistortion);
+        }
 
         // Apply audio settings
         AudioManager.Instance.SetMasterVolume(tempMasterVolume);
@@ -950,6 +943,7 @@ public class MMSettings : MonoBehaviour
         // Save settings to PlayerPrefs
         PlayerPrefs.SetInt("resolution", tempResolutionIndex);
         PlayerPrefs.SetInt("fullscreen", tempIsFullscreen ? 1 : 0);
+        PlayerPrefs.SetInt("astralDistortion", tempAstralDistortion);
         PlayerPrefs.SetInt("masterVolume", tempMasterVolume);
         PlayerPrefs.SetInt("SFXVolume", tempSFXVolume);
         PlayerPrefs.SetInt("musicVolume", tempMusicVolume);
@@ -963,6 +957,7 @@ public class MMSettings : MonoBehaviour
         // Set texts back to white
         resolutionTitleText.color = defaultColor;
         fullscreenTitleText.color = defaultColor;
+        astralDistortionTitleText.color = defaultColor;
         masterVolumeTitleText.color = defaultColor;
         SFXVolumeTitleText.color = defaultColor;
         musicVolumeTitleText.color = defaultColor;
@@ -972,7 +967,8 @@ public class MMSettings : MonoBehaviour
         rightStickSensitivityTitleText.color = defaultColor;
         leftStickDeadZoneTitleText.color = defaultColor;
         rightStickDeadZoneTitleText.color = defaultColor;
-
+        
+        astralDistortionValueText.color = defaultColor;
         masterVolumeValueText.color = defaultColor;
         SFXVolumeValueText.color = defaultColor;
         musicVolumeValueText.color = defaultColor;
@@ -995,6 +991,7 @@ public class MMSettings : MonoBehaviour
         // Clear PlayerPrefs to reset to default settings
         PlayerPrefs.DeleteKey("resolution");
         PlayerPrefs.DeleteKey("fullscreen");
+        PlayerPrefs.DeleteKey("astralDistortion");
         PlayerPrefs.DeleteKey("masterVolume");
         PlayerPrefs.DeleteKey("SFXVolume");
         PlayerPrefs.DeleteKey("musicVolume");
@@ -1026,6 +1023,7 @@ public class MMSettings : MonoBehaviour
         // Check if current settings differ from default settings, set hasChangedSettings accordingly
         if (PlayerPrefs.GetInt("resolution") != defaultResolutionIndex ||
             PlayerPrefs.GetInt("fullscreen") != defaultIsFullscreen ||
+            PlayerPrefs.GetInt("astralDistortion") != defaultAstralDistortion ||
             PlayerPrefs.GetInt("masterVolume") != defaultMasterVolume ||
             PlayerPrefs.GetInt("SFXVolume") != defaultSFXVolume ||
             PlayerPrefs.GetInt("musicVolume") != defaultMusicVolume ||
@@ -1049,6 +1047,7 @@ public class MMSettings : MonoBehaviour
         // Check if temporary settings differ from currently applied settings
         bool resolutionChanged = tempResolutionIndex != PlayerPrefs.GetInt("resolution", resolutions.Length - 1);
         bool fullscreenChanged = tempIsFullscreen != (PlayerPrefs.GetInt("fullscreen", 1) == 1);
+        bool astralDistortionChanged = tempAstralDistortion != PlayerPrefs.GetInt("astralDistortion", defaultAstralDistortion);
         bool masterVolumeChanged = tempMasterVolume != PlayerPrefs.GetInt("masterVolume", defaultMasterVolume);
         bool SFXVolumeChanged = tempSFXVolume != PlayerPrefs.GetInt("SFXVolume", defaultSFXVolume);
         bool musicVolumeChanged = tempMusicVolume != PlayerPrefs.GetInt("musicVolume", defaultMusicVolume);
@@ -1063,6 +1062,7 @@ public class MMSettings : MonoBehaviour
         hasUnappliedChanges = 
         resolutionChanged 
         || fullscreenChanged 
+        || astralDistortionChanged
         || masterVolumeChanged 
         || SFXVolumeChanged 
         || musicVolumeChanged 
@@ -1105,6 +1105,17 @@ public class MMSettings : MonoBehaviour
         else
         {
             fullscreenTitleText.color = defaultColor;
+        }
+
+        if (astralDistortionChanged)
+        {
+            astralDistortionTitleText.color = pendingChangeColor;
+            astralDistortionValueText.color = pendingChangeColor;
+        }
+        else
+        {
+            astralDistortionTitleText.color = defaultColor;
+            astralDistortionValueText.color = defaultColor;
         }
 
         if (masterVolumeChanged)
@@ -1212,6 +1223,7 @@ public class MMSettings : MonoBehaviour
         // Load settings from PlayerPrefs or set to default values if not found
         tempResolutionIndex = PlayerPrefs.GetInt("resolution", defaultResolutionIndex);
         tempIsFullscreen = PlayerPrefs.GetInt("fullscreen", defaultIsFullscreen) == 1;
+        tempAstralDistortion = PlayerPrefs.GetInt("astralDistortion", defaultAstralDistortion);
         tempMasterVolume = PlayerPrefs.GetInt("masterVolume", defaultMasterVolume);
         tempSFXVolume = PlayerPrefs.GetInt("SFXVolume", defaultSFXVolume);
         tempMusicVolume = PlayerPrefs.GetInt("musicVolume", defaultMusicVolume);
@@ -1225,6 +1237,7 @@ public class MMSettings : MonoBehaviour
         // Update UI elements to reflect loaded settings
         resolutionDropdown.value = tempResolutionIndex;
         fullscreenToggle.isOn = tempIsFullscreen;
+        astralDistortionSlider.value = tempAstralDistortion;
         masterVolumeSlider.value = tempMasterVolume;
         SFXVolumeSlider.value = tempSFXVolume;
         musicVolumeSlider.value = tempMusicVolume;
@@ -1285,6 +1298,7 @@ public class MMSettings : MonoBehaviour
 
         resolutionDropdown.interactable = false;
         fullscreenToggle.interactable = false;
+        astralDistortionSlider.interactable = false;
 
         masterVolumeSlider.interactable = false;
         SFXVolumeSlider.interactable = false;
@@ -1313,6 +1327,7 @@ public class MMSettings : MonoBehaviour
 
         resolutionDropdown.interactable = videoSettingsOpen;
         fullscreenToggle.interactable = videoSettingsOpen;
+        astralDistortionSlider.interactable = videoSettingsOpen;
 
         masterVolumeSlider.interactable = audioSettingsOpen;
         SFXVolumeSlider.interactable = audioSettingsOpen;
@@ -1338,6 +1353,7 @@ public class MMSettings : MonoBehaviour
 
         resolutionDropdown.onValueChanged.RemoveListener(SetResolution);
         fullscreenToggle.onValueChanged.RemoveListener(SetFullscreen);
+        astralDistortionSlider.onValueChanged.RemoveListener(SetAstralDistortion);
 
         masterVolumeSlider.onValueChanged.RemoveListener(SetMasterVolume);
         SFXVolumeSlider.onValueChanged.RemoveListener(SetSFXVolume);
