@@ -6,7 +6,8 @@ public enum BossActionType
     VoidProjectile,
     ArmSweep, 
     DropPillars,
-    Random
+    Random,
+    Idle
 }
 [System.Serializable]
 public class BossAction
