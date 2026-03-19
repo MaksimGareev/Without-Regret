@@ -10,15 +10,15 @@ public class SceneLoadManager : MonoBehaviour
     public static SceneLoadManager Instance { get; private set; }
 
     [Header("References")]
-    [Tooltip("The black screen image that will be faded in and out.")]
-    [SerializeField] private Image blackScreen;
+    [Tooltip("The canvas group found as a child of the SceneLoadManager prefab.")]
+    [SerializeField] private CanvasGroup canvasGroup;
+    
+    [Tooltip("The slider that will be updated to show the loading progress.")]
+    [SerializeField] private Slider loadingProgressSlider;
 
     [Tooltip("Add any images that should be a loading screen. These will be randomly selected on loading.")]
     [SerializeField] private Image[] loadingImages;
-
-    [Tooltip("The text that will be displayed during loading.")]
-    [SerializeField] private TextMeshProUGUI loadingText;
-
+    
     [Header("Settings")]
     [Tooltip("The duration of the fade in and fade out animations.")]
     [SerializeField] private float fadeDuration = 1f;
@@ -37,27 +37,22 @@ public class SceneLoadManager : MonoBehaviour
             Destroy(gameObject);
         }
 
-        if (blackScreen == null)
+        if (canvasGroup == null)
         {
-            Debug.LogError("Black screen image reference is missing in the SceneLoadManager script.");
+            Debug.LogError("Canvas group reference is missing in the SceneLoadManager script.");
         }
         else
         {
-            // Ensure the black screen starts fully transparent
-            Color screenColor = blackScreen.color;
-            screenColor.a = 0f;
-            blackScreen.color = screenColor;
+            canvasGroup.alpha = 0f;
         }
 
-        if (loadingText == null)
+        if (loadingProgressSlider == null)
         {
-            Debug.LogError("Loading text reference is missing in the SceneLoadManager script.");
+            Debug.LogError("Slider reference is missing in the SceneLoadManager script.");
         }
         else
         {
-            Color textColor = loadingText.color;
-            textColor.a = 0f;
-            loadingText.color = textColor;
+            loadingProgressSlider.value = 0f;
         }
     }
 
@@ -68,34 +63,49 @@ public class SceneLoadManager : MonoBehaviour
 
     private IEnumerator LoadSceneCoroutine(string sceneName)
     {
-        Debug.Log("Fading in black screen");
+        loadingProgressSlider.value = 0f;
+        
+        //Debug.Log("Fading in black screen");
         yield return FadeInBlackScreen();
 
-        Debug.Log("Starting scene load");
+        //Debug.Log("Starting scene load");
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
         asyncLoad.allowSceneActivation = false;
-
+        
+        float displayedProgress = 0.0f;
+        
         while (asyncLoad.progress < 0.9f)
         {
+            float targetProgress = asyncLoad.progress / 0.9f;
+            displayedProgress = Mathf.MoveTowards(displayedProgress, targetProgress, Time.unscaledDeltaTime * 2.0f);
+            loadingProgressSlider.value = displayedProgress;
+            
             yield return null;
         }
 
-        Debug.Log("Scene loaded");
+        while (displayedProgress < 1.0f)
+        {
+            displayedProgress = Mathf.MoveTowards(displayedProgress, 1.0f, Time.unscaledDeltaTime * 2.0f);
+            loadingProgressSlider.value = displayedProgress;
+            yield return null;
+        }
+
+        //Debug.Log("Scene loaded");
         asyncLoad.allowSceneActivation = true;
 
         yield return new WaitForSecondsRealtime(0.5f);
 
-        Debug.Log("Syncing physics transforms");
+        //Debug.Log("Syncing physics transforms");
         Physics.SyncTransforms();
 
         yield return new WaitForSecondsRealtime(0.1f);
 
-        Debug.Log("Invoking scene loaded event");
+        //Debug.Log("Invoking scene loaded event");
         StartCoroutine(InvokeSceneLoadedEvent());
 
         yield return WaitForStableFrameRate();
 
-        Debug.Log("Fading out black screen");
+        //Debug.Log("Fading out black screen");
         yield return FadeOutBlackScreen();
     }
 
@@ -136,26 +146,15 @@ public class SceneLoadManager : MonoBehaviour
     {
         float startTime = Time.realtimeSinceStartup;
         float endTime = startTime + fadeDuration;
-
-        Color screenColor = blackScreen.color;
-        Color textColor = loadingText.color;
-
+        
         while (Time.realtimeSinceStartup < endTime)
         {
             float t = Mathf.InverseLerp(startTime, endTime, Time.realtimeSinceStartup);
-
-            screenColor.a = Mathf.Lerp(0f, 1f, t);
-            textColor.a = Mathf.Lerp(0f, 1f, t);
-            blackScreen.color = screenColor;
-            loadingText.color = textColor;
-            
+            canvasGroup.alpha = Mathf.Lerp(0f, 1f, t);
             yield return null;
         }
-
-        screenColor.a = 1f;
-        textColor.a = 1f;
-        loadingText.color = textColor;
-        blackScreen.color = screenColor;
+        
+        canvasGroup.alpha = 1f;
     }
 
     private IEnumerator FadeOutBlackScreen()
@@ -163,25 +162,14 @@ public class SceneLoadManager : MonoBehaviour
         float startTime = Time.realtimeSinceStartup;
         float endTime = startTime + fadeDuration;
 
-        Color screenColor = blackScreen.color;
-        Color textColor = loadingText.color;
-
         while (Time.realtimeSinceStartup < endTime)
         {
             float t = Mathf.InverseLerp(startTime, endTime, Time.realtimeSinceStartup);
-
-            screenColor.a = Mathf.Lerp(1f, 0f, t);
-            textColor.a = Mathf.Lerp(1f, 0f, t);
-            blackScreen.color = screenColor;
-            loadingText.color = textColor;
-            
+            canvasGroup.alpha = Mathf.Lerp(1f, 0f, t);
             yield return null;
         }
-
-        screenColor.a = 0f;
-        textColor.a = 0f;
-        loadingText.color = textColor;
-        blackScreen.color = screenColor;
+        
+        canvasGroup.alpha = 0f;
     }
 
     private void OnDestroy()
