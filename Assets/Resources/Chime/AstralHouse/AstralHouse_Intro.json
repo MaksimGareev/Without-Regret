@@ -8,8 +8,8 @@
       "requiredMorality": 0,
       "choices": [
         {
-          "text": "Why does everything look...different?",
-          "NextLineID": "part 2",
+          "text": "Why does everything look strange?",
+          "NextLineID": "part 1",
           "moralityChange": 1,
           "directionString": "Up"
         },
@@ -20,18 +20,81 @@
           "directionString": "Down"
         },
         {
-          "text": "This is what I get for eating random berries in the forest.",
+          "text": "This is what I get for eating random berries.",
           "NextLineID": "part 2",
           "moralityChange": 1,
           "directionString": "Left"
         },
         {
-          "text": "Can you get away from me? Like, right now?",
+          "text": "Get away from me.",
           "NextLineID": "part 2",
           "moralityChange": -1,
           "directionString": "Right"
         }
       ]
+    },
+    {
+      "LineID": "part 1",
+      "Speaker": "Echo",
+      "lineTone": 0,
+      "text": "Hello weird fairy...thing. Could you tell me why everything looks like I'm seeing it through a purple fishbowl?",
+      "NextLineID": "part 2",
+      "requiredMorality": 0,
+      "choices": []
+    },
+    {
+      "LineID": "part 1 confused",
+      "Speaker": "Echo",
+      "lineTone": 0,
+      "text": "Yeah, I'm awake now. Mind telling me who the f*#% you are?!",
+      "NextLineID": "part 2 confused",
+      "requiredMorality": 0,
+      "choices": []
+    },
+    {
+      "LineID": "part 1 berries",
+      "Speaker": "Echo",
+      "lineTone": 0,
+      "text": "You know, being around a forest my whole life, I should've known better than to eat those berries.",
+      "NextLineID": "part 2 berries",
+      "requiredMorality": 0,
+      "choices": []
+    },
+    {
+      "LineID": "part 1 get away",
+      "Speaker": "Echo",
+      "lineTone": 0,
+      "text": "Where am I? Who are you? Get away from me!",
+      "NextLineID": "part 2 get away",
+      "requiredMorality": 0,
+      "choices": []
+    },
+    {
+      "LineID": "part 2 confused",
+      "Speaker": "Chime",
+      "lineTone": 0,
+      "text": "Hey! There's no need to be rude, we're more familiar than you think.",
+      "NextLineID": "part 2",
+      "requiredMorality": 0,
+      "choices": []
+    },
+    {
+      "LineID": "part 2 berries",
+      "Speaker": "Chime",
+      "lineTone": 0,
+      "text": "This isn't a wild berry hallucination, silly!",
+      "NextLineID": "part 2",
+      "requiredMorality": 0,
+      "choices": []
+    },
+    {
+      "LineID": "part 2 get away",
+      "Speaker": "Chime",
+      "lineTone": 0,
+      "text": "Relax! I promise, I'm not here to hurt you.",
+      "NextLineID": "part 2",
+      "requiredMorality": 0,
+      "choices": []
     },
     {
       "LineID": "part 2",
@@ -122,7 +185,7 @@
       "Speaker": "Chime",
       "lineTone": 1,
       "text": "That's the spirit! Let's get going.",
-      "NextLineID": "part 6",
+      "NextLineID": "end",
       "requiredMorality": 1,
       "choices": []
     },
@@ -131,27 +194,19 @@
       "Speaker": "Chime",
       "lineTone": 2,
       "text": "Helping the others will fix your biggest problem. Just trust me.",
-      "NextLineID": "part 6",
-      "requiredMorality": -1,
-      "choices": []
-    },
-    {
-      "LineID": "part 6",
-      "Speaker": "Chime",
-      "lineTone": 0,
-      "text": "I saw you grab a map before you went to bed last night, do you still have it?",
       "NextLineID": "end",
-      "requiredMorality": 0,
+      "requiredMorality": -1,
       "choices": []
     },
     {
       "LineID": "end",
       "Speaker": "Chime",
       "lineTone": 0,
-      "text": "Looking at the map, it seems we'll have to go through a gate in The Graveyard. Grab what you need, and when you're ready, we'll head out.",
+      "text": "We'll have to go through a gate in The Graveyard. Grab what you need, and when you're ready, we'll head out.",
       "requiredMorality": 0,
       "objectiveToActivate": "grabBackpack",
-      "choices": []
+      "choices": [],
+      "endDialogueAfterLine": true
     }
   ]
 }
