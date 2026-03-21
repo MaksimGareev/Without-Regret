@@ -26,6 +26,7 @@ public class DeadlyFog : MonoBehaviour
 
     [Header("Animator")]
     public Animator animator;
+    private CharacterSwap characterSwap;
 
 
     [Header("Debugging")]
@@ -39,6 +40,15 @@ public class DeadlyFog : MonoBehaviour
 
     private void Awake()
     {
+        characterSwap = FindObjectOfType<CharacterSwap>();
+
+        if (characterSwap != null)
+        {
+            animator = characterSwap.GetAnimator();
+
+            characterSwap.onAnimatorChanged += UpdateAnimator;
+        }
+
         triggerCollider = GetComponent<Collider>();
 
         if (triggerCollider == null)
@@ -283,4 +293,9 @@ public class DeadlyFog : MonoBehaviour
         Gizmos.DrawWireSphere(resetPoint.position, 0.15f);
         Gizmos.DrawLine(transform.position, resetPoint.position);
     }
+    void UpdateAnimator(Animator newAnimator)
+    {
+        animator = newAnimator;
+    }
+
 }
