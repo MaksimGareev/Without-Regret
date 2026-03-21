@@ -53,9 +53,14 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
     [Tooltip("Adds the journal entry to the characters page. If this NPC's name already has an entry, the current description will be overwritten.")]
     [SerializeField] private JournalEntry journalEntry;
 
-    [Header("Looking at player variables")]
+    [Header("Camera Variables")]
     [Tooltip("A bool that is used to identify if a dialogue interaction is a mediation making the NPC not look at the player")]
     public bool IsMediation = false;
+    [Tooltip("Only applicable if IsMediation is true, identifies one of the two NPCs in the mediation")]
+    [SerializeField] Transform mediationTransformA;
+    [Tooltip("Only applicable if IsMediation is true, identifies the other of the two NPCs in the mediation")]
+    [SerializeField] Transform mediationTransformB;
+    public (Transform npcA, Transform npcB) MediationTargets => (mediationTransformA, mediationTransformB);
     [Tooltip("How fast the NPC will look towards the player after engaging in dialogue")]
     public float lookSpeed = 5f;
     public bool isLookingAtPlayer = false;
