@@ -27,8 +27,6 @@ public class PlayerMovingObjects : MonoBehaviour
         playerController = gameObject.GetComponent<PlayerController>();
         normalMoveSpeed = playerController.Speed;
         normalSprintSpeed = playerController.SprintSpeed;
-
-        
     }
 
     public void OnMovingObject(MoveableObject obj)
