@@ -1,6 +1,8 @@
 using System;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.InputSystem;
+using TMPro;
 
 // When the player interacts with this object, a button mash minigame will start
 // Mashing the button quick enough will tilt the object upward until it's fully upright
@@ -28,6 +30,17 @@ public class PushableObject : MonoBehaviour, IInteractable
     [SerializeField] private bool freezePlayerDuringMinigame = true;
     [Tooltip("The angle in degrees the object will rotate around the axis derived from the reference transform.")]
     [SerializeField] private float rotationAngle = 90f;
+    [SerializeField, Tooltip("Pulse scale for button when mashed")] private float pulseScale = 1.18f;
+    [SerializeField, Tooltip("Pulse duration in seconds")] private float pulseDuration = 0.12f;
+
+    [Header("UI Sprite References")]
+    [Tooltip("The sprite for the button prompt on controller")]
+    [SerializeField] private Sprite controllerButtonSprite;
+    [Tooltip("The sprite for the button prompt on keyboard")]
+    [SerializeField] private Sprite keyboardButtonSprite;
+    private GameObject buttonMashUI;
+    private Image buttonImage;
+    private TextMeshProUGUI mashText;
 
     [Header("Debug")]
     [SerializeField] private bool showDebugLogs = false;
@@ -40,10 +53,11 @@ public class PushableObject : MonoBehaviour, IInteractable
     private bool minigameActive;
     private Rigidbody rb;
     private bool complete = false;
+    private Coroutine pulseRoutine;
 
     [HideInInspector] public bool isInteractable = true;
     public float interactionPriority => 1;
-    public InteractType interactType => InteractType.Push;
+    public InteractType interactType => InteractType.Move; // Should be InteractType.Push once the icon for that is made
     public event Action OnSuccess;
 
     // cached player state while minigame runs
@@ -73,6 +87,33 @@ public class PushableObject : MonoBehaviour, IInteractable
 
         rb = GetComponent<Rigidbody>();
 
+        if (GameManager.Instance != null && GameManager.Instance.qteButtonMashUI != null)
+        {
+            buttonMashUI = GameManager.Instance.qteButtonMashUI;
+            buttonImage = buttonMashUI.GetComponentInChildren<Image>();
+            mashText = buttonMashUI.GetComponentInChildren<TextMeshProUGUI>();
+            if (buttonImage != null && controllerButtonSprite != null && keyboardButtonSprite != null)
+            {
+                // Set the appropriate sprite based on the current input device
+                SetButtonSprite();
+            }
+            else
+            {
+                Debug.LogError("Button image or sprites not assigned for PushableObject UI. Check GameManager references");
+            }
+
+            if (mashText != null)
+            {
+                mashText.text = "Mash!";
+            }
+            else
+            {
+                Debug.LogError("Mash text object not assigned for PushableObject UI. Check GameManager references");
+            }
+
+            buttonMashUI.SetActive(false);
+        }
+
         progress = 0f;
         minigameActive = false;
     }
@@ -86,14 +127,12 @@ public class PushableObject : MonoBehaviour, IInteractable
         Vector3 dirProj = Vector3.ProjectOnPlane(worldDir, Vector3.up);
 
         Vector3 axisWorld;
-        const float kEpsilon = 1e-4f;
-
-        if (dirProj.sqrMagnitude > kEpsilon)
+        if (dirProj.sqrMagnitude > Mathf.Epsilon)
         {
             // axis that will produce a "pitch" lifting the object toward the reference direction:
             // cross(up, dirProj) gives an axis that when rotated will pitch the object toward the reference
             axisWorld = Vector3.Cross(Vector3.up, dirProj.normalized);
-            if (axisWorld.sqrMagnitude < kEpsilon)
+            if (axisWorld.sqrMagnitude < Mathf.Epsilon)
             {
                 // degenerate, fall back
                 axisWorld = transform.right;
@@ -101,21 +140,38 @@ public class PushableObject : MonoBehaviour, IInteractable
         }
         else
         {
-            // reference is almost directly above/below or extremely close: fallback to object's local right axis
+            // reference is almost directly above/below or extremely close, default to object's local right axis
             axisWorld = transform.right;
         }
 
         // convert axis to local space and normalize
         Vector3 axisLocal = transform.InverseTransformDirection(axisWorld).normalized;
-        if (axisLocal.sqrMagnitude < kEpsilon)
+        if (axisLocal.sqrMagnitude < Mathf.Epsilon)
         {
             axisLocal = Vector3.right;
         }
 
         // Build upright rotation relative to the lying local rotation
-        uprightLocalRotation = lyingLocalRotation * Quaternion.AngleAxis(90, axisLocal);
+        uprightLocalRotation = lyingLocalRotation * Quaternion.AngleAxis(rotationAngle, axisLocal);
 
         uprightLocalPosition = referenceTransform.localPosition;
+    }
+
+    private void SetButtonSprite()
+    {
+        if (InputDeviceManager.Instance != null)
+        {
+            InputDeviceManager.InputMode inputMode = InputDeviceManager.Instance.CurrentMode;
+
+            if (inputMode == InputDeviceManager.InputMode.Controller && controllerButtonSprite != null)
+            {
+                buttonImage.sprite = controllerButtonSprite;
+            }
+            else if (inputMode == InputDeviceManager.InputMode.KeyboardMouse && keyboardButtonSprite != null)
+            {
+                buttonImage.sprite = keyboardButtonSprite;
+            }
+        }
     }
 
     void OnEnable()
@@ -152,7 +208,13 @@ public class PushableObject : MonoBehaviour, IInteractable
     {
         if (minigameActive && context.action.triggered)
         {
+            SetButtonSprite(); // update sprite in case input device changed since minigame started
             progress += mashProgressPerPress;
+            // pulse the UI button
+            if (buttonImage != null)
+            {
+                StartPulse();
+            }
         }
     }
 
@@ -205,6 +267,23 @@ public class PushableObject : MonoBehaviour, IInteractable
         lyingLocalPosition = transform.localPosition;
         ComputeUprightRotationFromReference();
 
+        // show UI
+        if (buttonMashUI != null)
+        {
+            buttonMashUI.SetActive(true);
+        }
+        if (buttonImage != null)
+        {
+            SetButtonSprite();
+            buttonImage.gameObject.SetActive(true);
+            // ensure scale reset
+            buttonImage.rectTransform.localScale = Vector3.one;
+        }
+        if (mashText != null)
+        {
+            mashText.gameObject.SetActive(true);
+        }
+
         if (freezePlayerDuringMinigame && player != null)
         {
             frozenPlayerController = player.GetComponent<PlayerController>();
@@ -230,6 +309,25 @@ public class PushableObject : MonoBehaviour, IInteractable
     private void EndMinigame(bool succeeded)
     {
         minigameActive = false;
+
+        // hide UI
+        if (buttonMashUI != null)
+        {
+            buttonMashUI.SetActive(false);
+        }
+        if (buttonImage != null)
+            buttonImage.gameObject.SetActive(false);
+        if (mashText != null)
+            mashText.gameObject.SetActive(false);
+
+        // stop any pulse coroutine
+        if (pulseRoutine != null)
+        {
+            StopCoroutine(pulseRoutine);
+            pulseRoutine = null;
+            if (buttonImage != null)
+                buttonImage.rectTransform.localScale = Vector3.one;
+        }
 
         // restore player
         if (freezePlayerDuringMinigame && frozenPlayerController != null)
@@ -262,5 +360,45 @@ public class PushableObject : MonoBehaviour, IInteractable
             progress = 0f;
             transform.SetLocalPositionAndRotation(lyingLocalPosition, lyingLocalRotation);
         }
+    }
+
+    private void StartPulse()
+    {
+        if (buttonImage == null) return;
+        // restart pulse
+        if (pulseRoutine != null) StopCoroutine(pulseRoutine);
+        pulseRoutine = StartCoroutine(PulseButtonRoutine());
+    }
+
+    private System.Collections.IEnumerator PulseButtonRoutine()
+    {
+        RectTransform rt = buttonImage.rectTransform;
+        Vector3 startScale = Vector3.one;
+        Vector3 targetScale = Vector3.one * Mathf.Max(0.01f, pulseScale);
+
+        float half = pulseDuration * 0.5f;
+        float t = 0f;
+
+        // scale up
+        while (t < half)
+        {
+            t += Time.deltaTime;
+            float f = Mathf.SmoothStep(0f, 1f, t / half);
+            rt.localScale = Vector3.Lerp(startScale, targetScale, f);
+            yield return null;
+        }
+
+        // scale down
+        t = 0f;
+        while (t < half)
+        {
+            t += Time.deltaTime;
+            float f = Mathf.SmoothStep(0f, 1f, t / half);
+            rt.localScale = Vector3.Lerp(targetScale, startScale, f);
+            yield return null;
+        }
+
+        rt.localScale = startScale;
+        pulseRoutine = null;
     }
 }

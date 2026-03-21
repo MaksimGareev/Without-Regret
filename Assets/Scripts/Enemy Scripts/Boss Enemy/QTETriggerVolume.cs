@@ -10,11 +10,11 @@ public class QTETriggerVolume : MonoBehaviour, IInteractable
     [SerializeField, Tooltip("The number of inputs required to complete the QTE")] private int numInputs = 4;    
 
     [Header("Arrow UI")]
-    [SerializeField, Tooltip("The QTE Canvas object")] private GameObject qteCanvas;
     [SerializeField, Tooltip("Prefab for a single arrow RawImage (used to duplicate arrows at runtime).")] private RawImage arrowPrefab;
-    [SerializeField, Tooltip("Container RectTransform which will hold generated arrows.")] private RectTransform arrowsContainer;
     [SerializeField, Tooltip("The sprite assets for each arrow. Should have 4 (in order of up->right->down->left)")] private Sprite[] arrowImages;
     [SerializeField, Tooltip("Horizontal spacing (in pixels) between generated arrows")] private float arrowSpacing = 8f;
+    private GameObject qteCanvas;
+    private RectTransform arrowsContainer;
 
     [Header("References")]
     [SerializeField] private BossEnemyController bossEnemy;
@@ -41,7 +41,19 @@ public class QTETriggerVolume : MonoBehaviour, IInteractable
     private void Awake()
     {
         controls = new PlayerControls();
-        qteCanvas.SetActive(false);
+
+        if (GameManager.Instance != null && GameManager.Instance.qteCanvas != null 
+            && GameManager.Instance.qteArrowsContainer != null)
+        {
+            qteCanvas = GameManager.Instance.qteCanvas;
+            arrowsContainer = GameManager.Instance.qteArrowsContainer;
+        }
+        else
+        {
+            Debug.LogError("QTETriggerVolume: Could not find references to QTE canvas or arrows container in GameManager. Please assign them in the inspector.", this);
+        }
+
+        arrowsContainer.gameObject.SetActive(false);
     }
 
     void OnEnable()
@@ -111,6 +123,7 @@ public class QTETriggerVolume : MonoBehaviour, IInteractable
         initiated = true;
 
         qteCanvas.SetActive(true);
+        arrowsContainer.gameObject.SetActive(true);
         if (showDebugLogs) Debug.Log("Starting QTE");
     }
 
@@ -222,7 +235,7 @@ public class QTETriggerVolume : MonoBehaviour, IInteractable
 
     private void EndQTESuccess()
     {
-        qteCanvas.SetActive(false);
+        arrowsContainer.gameObject.SetActive(false);
 
         // Unlock player movement
         Rigidbody rb = playerController.GetComponent<Rigidbody>();
