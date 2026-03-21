@@ -20,6 +20,9 @@ public class PushableObject : MonoBehaviour, IInteractable
     [Tooltip("The target transform used as a reference for what the end goal should be")]
     [SerializeField] private Transform referenceTransform;
     [SerializeField] private bool disableReferenceObject = true;
+    [Tooltip("If true, the player will not be able to interact with this object if they are colliding with the reference transform's collider or renderer (to prevent starting while standing on top of it)")]
+    [SerializeField] private bool checkReferenceCollision = true;
+    private Bounds refBounds;
 
     [Header("Settings")]
     [Tooltip("How much progress one mash step will add.")]
@@ -58,6 +61,7 @@ public class PushableObject : MonoBehaviour, IInteractable
     [HideInInspector] public bool isInteractable = true;
     public float interactionPriority => 1;
     public InteractType interactType => InteractType.Move; // Should be InteractType.Push once the icon for that is made
+    public bool IsComplete => complete;
     public event Action OnSuccess;
 
     // cached player state while minigame runs
@@ -83,6 +87,15 @@ public class PushableObject : MonoBehaviour, IInteractable
         // compute upright rotation using a plausible tilt axis derived from reference position
         ComputeUprightRotationFromReference();
 
+        if (checkReferenceCollision)
+        {
+            // try to get bounds for reference object for interaction checks
+            if (!TryGetBounds(referenceTransform.gameObject, out refBounds))
+            {
+                Debug.LogWarning("PushableObject reference transform does not have a Collider, CharacterController, or Renderer to derive bounds from. Collision checks will be skipped. Consider adding a collider or renderer to the reference object.", referenceTransform.gameObject);
+                checkReferenceCollision = false;
+            }
+        }
         referenceTransform.gameObject.SetActive(!disableReferenceObject);
 
         rb = GetComponent<Rigidbody>();
@@ -249,8 +262,59 @@ public class PushableObject : MonoBehaviour, IInteractable
 
     public bool CanInteract(GameObject player)
     {
-        // allow interaction only when minigame isn't active / not complete
-        return isInteractable && !minigameActive && !complete;
+        // allow interaction only when minigame isn't active / not complete,
+        // and if the player isn't inside of the reference transform
+        if (!isInteractable || minigameActive || complete)
+            return false;
+
+        if (player == null)
+            return false;
+
+        if (checkReferenceCollision)
+        {
+            // If reference transform has any collider and player has a collider, check bounds intersection
+            bool playerHasBounds = TryGetBounds(player, out Bounds playerBounds);
+            if (playerHasBounds)
+            {
+                // If they intersect, treat as colliding -> disallow interaction
+                if (playerBounds.Intersects(refBounds))
+                    return false;
+            }
+        }
+
+        return true;
+    }
+
+    // Helper that attempts to get a world-space bounds for a GameObject (Collider, CharacterController or Renderer)
+    private bool TryGetBounds(GameObject go, out Bounds bounds)
+    {
+        bounds = default;
+
+        if (go == null) return false;
+
+        // Try Collider first
+        if (go.TryGetComponent<Collider>(out var col))
+        {
+            bounds = col.bounds;
+            return true;
+        }
+
+        // Try CharacterController (has bounds)
+        if (go.TryGetComponent<CharacterController>(out var cc))
+        {
+            bounds = cc.bounds;
+            return true;
+        }
+
+        // Try Renderer fallback (may be less accurate for complex hierarchies)
+        var rend = go.GetComponentInChildren<Renderer>();
+        if (rend != null)
+        {
+            bounds = rend.bounds;
+            return true;
+        }
+
+        return false;
     }
 
     public void OnPlayerInteraction(GameObject player)
