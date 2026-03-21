@@ -9,7 +9,7 @@ public class TreeRotater : MonoBehaviour
     {
         rotationValue = Random.Range(30f, 360f);
 
-        this.gameObject.transform.Rotate(0, rotationValue, 0);
+        gameObject.transform.Rotate(transform.rotation.x, transform.rotation.y + rotationValue, transform.rotation.z);
     }
 
     
