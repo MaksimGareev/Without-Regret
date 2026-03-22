@@ -32,32 +32,74 @@
                     "text": "Of course.",
                     "nextIndex": 3,
                     "moralityChange": 1,
-                    "NextLineID": "Good Path",
+                    "NextLineID": "Good Path I",
                     "directionString": "Up"
                 },
                 {
                     "text": "Meh.",
                     "nextIndex": 4,
                     "moralityChange": -1,
-                    "NextLineID": "Bad Path",
+                    "NextLineID": "Bad Path I",
                     "directionString": "Down"
                 },
                 {
-                    "text": "I'm a bit tired, but we're going no matter what.",
+                    "text": "I'm a bit tired, but let's go'.",
                     "nextIndex": 3,
                     "moralityChange": 1,
+                    "NextLineID": "Good Path alt",
                     "directionString": "Left"
                 },
                 {
-                    "text": "Let me snooze for five more minutes...",
+                    "text": "Five more minutes...",
                     "nextIndex": 4,
                     "moralityChange": -1,
+                    "NextLineID": "Bad Path alt",
                     "directionString": "Right"
                 }
             ]
         },
         {
-            "LineID": "Good Path",
+            "LineID": "Good Path I",
+            "Speaker": "Echo",
+            "NPCGender": "female",
+            "text": "Of course! Wouldn't miss it for the world.'",
+            "requiredMorality": 1,
+            "NextLineID": "Good Path II",
+            "lineTone": 1,
+            "choices": [],
+        },
+        {
+            "LineID": "Bad Path I",
+            "Speaker": "Echo",
+            "NPCGender": "female",
+            "text": "I mean, I guess...",
+            "requiredMorality": 1,
+            "NextLineID": "Bad Path II",
+            "lineTone": 1,
+            "choices": [],
+        },
+        {
+            "LineID": "Good Path alt",
+            "Speaker": "Echo",
+            "NPCGender": "female",
+            "text": "I'm a bit tired, but I'm not backing out on our plans.",
+            "requiredMorality": 1,
+            "NextLineID": "Good Path II",
+            "lineTone": 1,
+            "choices": [],
+        },
+        {
+            "LineID": "Bad Path alt",
+            "Speaker": "Echo",
+            "NPCGender": "female",
+            "text": "Sure, yeah, just let me snooze for five more minutes...",
+            "requiredMorality": 1,
+            "NextLineID": "Bad Path III",
+            "lineTone": 1,
+            "choices": [],
+        },
+        {
+            "LineID": "Good Path II",
             "Speaker": "Irene",
             "NPCGender": "female",
             "text": "Yay! Let's go.",
@@ -67,10 +109,20 @@
             "endDialogueAfterLine": true
         },
         {
-            "LineID": "Bad Path",
+            "LineID": "Bad Path II",
             "Speaker": "Irene",
             "NPCGender": "female",
             "text": "Ouch...well, I already walked over so we're going anyways.",
+            "requiredMorality": -1,
+            "lineTone": 2,
+            "choices": [],
+            "endDialogueAfterLine": true
+        },
+        {
+            "LineID": "Bad Path III",
+            "Speaker": "Irene",
+            "NPCGender": "female",
+            "text": "Nope! Not my fault you were up all night playing Animal Crossing. We're going!",
             "requiredMorality": -1,
             "lineTone": 2,
             "choices": [],
