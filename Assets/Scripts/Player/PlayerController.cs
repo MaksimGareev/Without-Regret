@@ -128,6 +128,8 @@ public class PlayerController : MonoBehaviour, ISaveable
             groundCheck = groundCheckObj.transform;
         }
 
+        PlayerComponents.InitializeComponents(gameObject);
+
         // Initialize input actions
         controls = new PlayerControls();
 

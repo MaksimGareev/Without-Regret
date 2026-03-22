@@ -17,6 +17,10 @@ public class ForPlayerSeeTroughScript : MonoBehaviour
 
     void Update()
     {
+        if (Cam == null)
+        {
+            return;
+        }
         // Send player position to shader in viewport space
         var view = Cam.WorldToViewportPoint(transform.position);
         
