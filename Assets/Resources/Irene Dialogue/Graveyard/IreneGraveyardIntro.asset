@@ -1,0 +1,82 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e28c2e20bb6c4240a55d8edffb777ec, type: 3}
+  m_Name: IreneGraveyardIntro
+  m_EditorClassIdentifier: Assembly-CSharp::NewDialogueData
+  npcName: Irene
+  dialogueLines:
+  - LineID: Start
+    Speaker: Irene
+    text: Hey Echo! Slept well, huh? You didn't even fix your hair!
+    lineTone: 0
+    NPCGender: female
+    NextLineID: Go To Graveyard
+    endDialogueAfterLine: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Go To Graveyard
+    Speaker: Irene
+    text: So, we still going to the Graveyard?
+    lineTone: 0
+    NPCGender: female
+    NextLineID: Question
+    endDialogueAfterLine: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Question
+    Speaker: Irene
+    text: You should respond with how you truly feel, just remember that your choices
+      affect the world around you.
+    lineTone: 0
+    NPCGender: female
+    NextLineID: 
+    endDialogueAfterLine: 0
+    choices:
+    - text: Of course.
+      NextLineID: Good
+      moralityChange: 1
+      direction: 0
+      objectiveToActivate: 
+    - text: Meh.
+      NextLineID: Bad
+      moralityChange: -1
+      direction: 1
+      objectiveToActivate: 
+    - text: I'm a bit tired, but we're going no matter what.
+      NextLineID: Good
+      moralityChange: 1
+      direction: 2
+      objectiveToActivate: 
+    - text: Let me snooze for five more minutes...
+      NextLineID: Bad
+      moralityChange: -1
+      direction: 3
+      objectiveToActivate: 
+    objectivesToActivate: []
+  - LineID: Good
+    Speaker: Irene
+    text: Yay!  Let's go.
+    lineTone: 0
+    NPCGender: female
+    NextLineID: 
+    endDialogueAfterLine: 1
+    choices: []
+    objectivesToActivate: []
+  - LineID: Bad
+    Speaker: Irene
+    text: Ouch...well, I already walked over so we're going anyways.
+    lineTone: 0
+    NPCGender: female
+    NextLineID: 
+    endDialogueAfterLine: 1
+    choices: []
+    objectivesToActivate: []

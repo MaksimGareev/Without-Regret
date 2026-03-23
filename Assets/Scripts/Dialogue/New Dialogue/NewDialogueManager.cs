@@ -782,6 +782,20 @@ public class NewDialogueManager : MonoBehaviour
         if (activeDialogueTrigger != null)
         {
             activeDialogueTrigger.OnDialogueComplete();
+
+            // if the dialogue trigger has a reward item, add it to the inventory
+            if (activeDialogueTrigger.RewardItem != null)
+            {
+                Inventory inventory = FindAnyObjectByType<Inventory>();
+                if (inventory != null)
+                {
+                    inventory.AddItem(activeDialogueTrigger.RewardItem);
+                }
+                else
+                {
+                    Debug.LogError("No inventory found in scene to add dialogue reward item to.");
+                }
+            }
         }
 
         // return camera to original position

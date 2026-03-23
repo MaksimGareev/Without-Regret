@@ -21,6 +21,9 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
     private Animator playerAnimator;
     private Coroutine playerTalkRoutine;
 
+    [Header("Face Animation")]
+    public FaceHandler faceHandler;
+
     [Header("Dialogue Files")]
     [Tooltip("Scriptable dialogue object that will be loaded on the players first interaction with a NPC or used for the story dialogue trigger")]
     public NewDialogueData startDialogueFile;
@@ -101,6 +104,8 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
             chimeActive = true;
         }
 
+
+        faceHandler = gameObject.GetComponentInChildren<FaceHandler>();
 
         npcWander = GetComponent<NpcMovement>();
 
