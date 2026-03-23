@@ -20,7 +20,7 @@
           "directionString": "Down"
         },
         {
-          "text": "This is what I get for eating random berries.",
+          "text": "Shouldn't have eaten those berries.",
           "NextLineID": "part 2",
           "moralityChange": 1,
           "directionString": "Left"
@@ -64,7 +64,7 @@
       "LineID": "part 1 get away",
       "Speaker": "Echo",
       "lineTone": 0,
-      "text": "Where am I? Who are you? Get away from me!",
+      "text": "Where am I? Who are you? Get away from me.",
       "NextLineID": "part 2 get away",
       "requiredMorality": 0,
       "choices": []
@@ -110,19 +110,13 @@
           "directionString": "Up"
         },
         {
-          "text": "Respectfully, where the **** am I exactly?",
+          "text": "That doesn't make things any clearer.",
           "NextLineID": "part 3",
-          "moralityChange": 1,
-          "directionString": "Left"
-        },
-        {
-          "text": "Yeah, that doesn't make things any clearer.",
-          "NextLineID": "part 3",
-          "moralityChange": -1,
+          "moralityChange": 0,
           "directionString": "Down"
         },
         {
-          "text": "Should I even bother? Can I go back to sleep?",
+          "text": "Can I go back to sleep?",
           "NextLineID": "part 3",
           "moralityChange": -1,
           "directionString": "Right"
@@ -158,7 +152,7 @@
           "text": "Yes, I can!",
           "NextLineID": "good",
           "moralityChange": 1,
-          "directionString": "Up"
+          "directionString": "Down"
         },
         {
           "text": "I'm not sure, but I'll try.",
@@ -167,13 +161,13 @@
           "directionString": "Left"
         },
         {
-          "text": "Why should I? I've got my own problems.",
+          "text": "I've got my own problems.",
           "NextLineID": "bad",
           "moralityChange": -1,
-          "directionString": "Down"
+          "directionString": "Up"
         },
         {
-          "text": "You know, you're asking a lot of someone who just woke up.",
+          "text": "I JUST woke up.",
           "NextLineID": "bad",
           "moralityChange": -1,
           "directionString": "Right"
