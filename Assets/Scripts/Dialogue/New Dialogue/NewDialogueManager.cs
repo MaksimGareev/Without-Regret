@@ -56,6 +56,11 @@ public class NewDialogueManager : MonoBehaviour
     [SerializeField] AudioMixerGroup maleVoiceGroup;
     [SerializeField] AudioMixerGroup femaleVoiceGroup;
 
+    [Header("Morality Settings")]
+    public int playerMorality;
+    [SerializeField] private int minMorality = -10;
+    [SerializeField] private int maxMorality = 10;
+
     [Header("Choice Selection")]
     [Tooltip("How long the player needs to hold to confirm a selection")]
     [SerializeField] float holdTimeToSelect = 1.2f;
@@ -96,7 +101,6 @@ public class NewDialogueManager : MonoBehaviour
 
     CanvasGroup portraitGroup;
 
-    public int playerMorality;
     int posCount, negCount, neutralCount;
 
     private NewDialogueTrigger activeDialogueTrigger;
@@ -507,6 +511,10 @@ public class NewDialogueManager : MonoBehaviour
     void ApplyMorality(int change)
     {
         playerMorality += change;
+
+        // clamp morality between min and max
+        playerMorality = Mathf.Clamp(playerMorality, minMorality, maxMorality);
+
         PlayerPrefs.SetInt("Morality", playerMorality);
 
         if (change > 0) posCount++;
@@ -784,17 +792,9 @@ public class NewDialogueManager : MonoBehaviour
             activeDialogueTrigger.OnDialogueComplete();
 
             // if the dialogue trigger has a reward item, add it to the inventory
-            if (activeDialogueTrigger.RewardItem != null)
+            if (activeDialogueTrigger != null)
             {
-                Inventory inventory = FindAnyObjectByType<Inventory>();
-                if (inventory != null)
-                {
-                    inventory.AddItem(activeDialogueTrigger.RewardItem);
-                }
-                else
-                {
-                    Debug.LogError("No inventory found in scene to add dialogue reward item to.");
-                }
+                activeDialogueTrigger.GiveReward();
             }
         }
 
