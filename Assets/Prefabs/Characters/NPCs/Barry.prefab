@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 1261743198065681055}
   - component: {fileID: -4167403922123278760}
   - component: {fileID: 4300360015223950064}
+  - component: {fileID: 33584142970360482}
   m_Layer: 0
   m_Name: Barry
   m_TagString: Untagged
@@ -172,7 +173,10 @@ MonoBehaviour:
   ActiveJsonDialogueFile: {fileID: 0}
   objectiveIDYouCareAbout: []
   linkedObjective: {fileID: 11400000, guid: f62de7dd80a2a3148a7321f7071c96d5, type: 2}
+  journalEntry: {fileID: 0}
   IsMediation: 0
+  mediationTransformA: {fileID: 0}
+  mediationTransformB: {fileID: 0}
   lookSpeed: 5
   isLookingAtPlayer: 0
   TalkedAlready: 0
@@ -180,6 +184,42 @@ MonoBehaviour:
   shouldShowIcon: 1
   enemy: {fileID: 0}
   focusCameraOnTrigger: 0
+  RewardItem: {fileID: 0}
+  triggerType: 0
+--- !u!114 &33584142970360482
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1239127344705375727}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb6f976906f2747449b6d75a67a35b9d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NewDialogueTrigger
+  animator: {fileID: 0}
+  isTalking: 0
+  chimeAnimator: {fileID: 0}
+  chimeActive: 0
+  chimeScript: {fileID: 0}
+  faceHandler: {fileID: 0}
+  startDialogueFile: {fileID: 0}
+  talkedDialogueFile: {fileID: 0}
+  taskActiveDialogueFile: {fileID: 0}
+  taskCompleteDialogueFile: {fileID: 0}
+  NPCName: Friendly NPC
+  chatRange: 3
+  objectiveIDsYouCareAbout: []
+  linkedObjective: {fileID: 0}
+  focusCameraOnTrigger: 1
+  playerMovePoint: {fileID: 0}
+  moveSpeed: 2
+  lookSpeed: 6
+  IsMediation: 0
+  hasTalked: 0
+  isLookingAtPlayer: 0
+  enemy: {fileID: 0}
   RewardItem: {fileID: 0}
   triggerType: 0
 --- !u!1001 &5226556515310480028
