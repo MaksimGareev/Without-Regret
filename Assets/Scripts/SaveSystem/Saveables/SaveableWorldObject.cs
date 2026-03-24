@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 public class SaveableWorldObject : SaveableWithID
@@ -27,6 +26,11 @@ public class SaveableWorldObject : SaveableWithID
         {
             state.objectType = ObjectType.LockpickableObject;
             state.hasBeenLockpicked = GetComponent<LockedItem>()?.hasBeenLockpicked ?? false;
+        }
+        else if (GetComponent<OrbitingPlatform>() != null)
+        {
+            state.objectType = ObjectType.OrbitingPlatform;
+            state.reachedLocation = GetComponent<OrbitingPlatform>()?.reachedLocation ?? false;
         }
         else
         {
@@ -69,6 +73,7 @@ public class SaveableWorldObject : SaveableWithID
         if (GetComponent<WorldItem>() != null && state.objectType == ObjectType.InventoryItem)
         {
             GetComponent<WorldItem>().hasBeenCollected = state.hasBeenCollected;
+            GetComponent<WorldItem>().isCollectible = state.isCollectible;
         }
         else if (GetComponent<MoveableObject>() != null && state.objectType == ObjectType.MovableObject)
         {
@@ -77,6 +82,10 @@ public class SaveableWorldObject : SaveableWithID
         else if (GetComponent<LockedItem>() != null && state.objectType == ObjectType.LockpickableObject)
         {
             GetComponent<LockedItem>().hasBeenLockpicked = state.hasBeenLockpicked;
+        }
+        else if (GetComponent<OrbitingPlatform>() != null && state.objectType == ObjectType.OrbitingPlatform)
+        {
+            GetComponent<OrbitingPlatform>().reachedLocation = state.reachedLocation;
         }
 
         Rigidbody rb = GetComponent<Rigidbody>();
