@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e28c2e20bb6c4240a55d8edffb777ec, type: 3}
+  m_Name: RightBeforeEnding
+  m_EditorClassIdentifier: Assembly-CSharp::NewDialogueData
+  npcName: Chime
+  dialogueLines:
+  - LineID: Start
+    Speaker: Chime
+    text: Phew, looks like Darry is going to get away safely.
+    lineTone: 0
+    NPCGender: 
+    NextLineID: Part II
+    endDialogueAfterLine: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Part II
+    Speaker: Chime
+    text: What was that terrifying thing chasing him?
+    lineTone: 0
+    NPCGender: 
+    NextLineID: Part III
+    endDialogueAfterLine: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Part III
+    Speaker: Chime
+    text: Whatever, it's gone now. Good job, Echo! There are others you can help
+      in the Astral Plane, let's go see about them.
+    lineTone: 0
+    NPCGender: 
+    NextLineID: 
+    endDialogueAfterLine: 1
+    choices: []
+    objectivesToActivate: []

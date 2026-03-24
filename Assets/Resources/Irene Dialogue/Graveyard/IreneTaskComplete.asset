@@ -1,0 +1,159 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e28c2e20bb6c4240a55d8edffb777ec, type: 3}
+  m_Name: IreneTaskComplete
+  m_EditorClassIdentifier: Assembly-CSharp::NewDialogueData
+  npcName: Irene
+  dialogueLines:
+  - LineID: Start
+    Speaker: Irene
+    text: You give flowers to our friends yet?
+    lineTone: 0
+    NPCGender: female
+    NextLineID: 
+    endDialogueAfterLine: 0
+    choices:
+    - text: (Nod)
+      NextLineID: Good
+      moralityChange: 1
+      direction: 0
+      objectiveToActivate: 
+    - text: (Shake head)
+      NextLineID: Bad
+      moralityChange: -1
+      direction: 1
+      objectiveToActivate: 
+    objectivesToActivate: []
+  - LineID: Good
+    Speaker: Irene
+    text: Good. I know they appreciate them.
+    lineTone: 0
+    NPCGender: female
+    NextLineID: Story Start
+    endDialogueAfterLine: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Bad
+    Speaker: Irene
+    text: So you just got them for yourself? What's up with you?
+    lineTone: 0
+    NPCGender: female
+    NextLineID: Story Start
+    endDialogueAfterLine: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Story Start
+    Speaker: Irene
+    text: Oh! I almost forgot. Here, I found this in front of your door.
+    lineTone: 0
+    NPCGender: female
+    NextLineID: Story II
+    endDialogueAfterLine: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Story II
+    Speaker: Irene
+    text: ...I'm sorry, I was trying to not bring it up, but I still can't believe
+      Penelope's gone.
+    lineTone: 0
+    NPCGender: female
+    NextLineID: Story III
+    endDialogueAfterLine: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Story III
+    Speaker: Irene
+    text: I tried warning her about going out that night. She didn't listen, but
+      I still can't help but feel that it's my fault.
+    lineTone: 0
+    NPCGender: female
+    NextLineID: 
+    endDialogueAfterLine: 0
+    choices:
+    - text: Irene, you can't blame yourself for what happened.
+      NextLineID: Good II
+      moralityChange: 1
+      direction: 0
+      objectiveToActivate: 
+    - text: That's the last thing Penelope would want you to think.
+      NextLineID: Good II
+      moralityChange: 1
+      direction: 3
+      objectiveToActivate: 
+    - text: If you were so worried, why didn't you go?
+      NextLineID: Bad II
+      moralityChange: -1
+      direction: 1
+      objectiveToActivate: 
+    - text: That's stupid. Why would it be your fault?
+      NextLineID: Bad II
+      moralityChange: -1
+      direction: 2
+      objectiveToActivate: 
+    objectivesToActivate: []
+  - LineID: Good II
+    Speaker: Irene
+    text: I know, I know. It's just hard...but thanks, Echo.
+    lineTone: 0
+    NPCGender: female
+    NextLineID: Story VI
+    endDialogueAfterLine: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Bad II
+    Speaker: Irene
+    text: I ask myself that every day, Echo. If you hate being here with me so much,
+      why'd you even come?
+    lineTone: 0
+    NPCGender: female
+    NextLineID: Story VI
+    endDialogueAfterLine: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Story VI
+    Speaker: Irene
+    text: Sorry. It's just that...I would do anything to change what happened.
+    lineTone: 0
+    NPCGender: female
+    NextLineID: Story V
+    endDialogueAfterLine: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Story V
+    Speaker: Irene
+    text: Oh man, it's getting late. I've gotta head back. I told Stevie I'd fix
+      the gravestones that are tilting, would you be a doll and do it for me?
+    lineTone: 0
+    NPCGender: female
+    NextLineID: Story VI
+    endDialogueAfterLine: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Story VI
+    Speaker: Irene
+    text: Also, Stevie said he has something to give you, so go see him after you're
+      done here.
+    lineTone: 0
+    NPCGender: female
+    NextLineID: End
+    endDialogueAfterLine: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: End
+    Speaker: Irene
+    text: Thanks for coming, Echo. See you tomorrow.
+    lineTone: 0
+    NPCGender: female
+    NextLineID: 
+    endDialogueAfterLine: 1
+    choices: []
+    objectivesToActivate: []

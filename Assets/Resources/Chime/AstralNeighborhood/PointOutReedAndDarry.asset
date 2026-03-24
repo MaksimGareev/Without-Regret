@@ -1,0 +1,64 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e28c2e20bb6c4240a55d8edffb777ec, type: 3}
+  m_Name: PointOutReedAndDarry
+  m_EditorClassIdentifier: Assembly-CSharp::NewDialogueData
+  npcName: Chime
+  dialogueLines:
+  - LineID: Start
+    Speaker: Chime
+    text: Look, there's Reed
+    lineTone: 0
+    NPCGender: 
+    NextLineID: Part II
+    endDialogueAfterLine: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Part II
+    Speaker: Chime
+    text: ...It looks like he's arguing with someone, do you know who that is?
+    lineTone: 0
+    NPCGender: 
+    NextLineID: 
+    endDialogueAfterLine: 0
+    choices:
+    - text: Yeah, that's Darry.
+      NextLineID: Good
+      moralityChange: 1
+      direction: 0
+      objectiveToActivate: 
+    - text: Dunno.  I didn't care much for his story.
+      NextLineID: Bad
+      moralityChange: -1
+      direction: 1
+      objectiveToActivate: 
+    objectivesToActivate: []
+  - LineID: Good
+    Speaker: Chime
+    text: So that's the friend he was mourning in The Graveyard, you should see why
+      they're arguing...
+    lineTone: 0
+    NPCGender: 
+    NextLineID: 
+    endDialogueAfterLine: 1
+    choices: []
+    objectivesToActivate: []
+  - LineID: Bad
+    Speaker: Chime
+    text: That's his friend he was mourning in The Graveyard, Darry. Go figure out
+      why they're arguing with each other.
+    lineTone: 0
+    NPCGender: 
+    NextLineID: 
+    endDialogueAfterLine: 1
+    choices: []
+    objectivesToActivate: []
