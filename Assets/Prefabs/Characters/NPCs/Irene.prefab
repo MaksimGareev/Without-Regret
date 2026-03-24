@@ -233,10 +233,10 @@ GameObject:
   - component: {fileID: 4419574281613640712}
   - component: {fileID: 8589541859818923028}
   - component: {fileID: 9169940238804770612}
-  - component: {fileID: 1311592278050812008}
   - component: {fileID: 7868950883997314987}
   - component: {fileID: 4035302086000222004}
   - component: {fileID: 2785358529065914657}
+  - component: {fileID: 3909000671742844404}
   m_Layer: 8
   m_Name: Irene
   m_TagString: Untagged
@@ -339,7 +339,7 @@ MonoBehaviour:
   BaseSpeed: 3.5
   SprintingSpeed: 6
   IsFollowing: 0
-  dialogueTrigger: {fileID: 1311592278050812008}
+  dialogueTrigger: {fileID: 0}
   targetSpot: {fileID: 0}
   GoBackHomeSpot: {fileID: 0}
   lookAtTarget: {fileID: 0}
@@ -370,44 +370,6 @@ CapsuleCollider:
   m_Height: 2.2811189
   m_Direction: 1
   m_Center: {x: 0.06847668, y: -0.06126952, z: -0.15497565}
---- !u!114 &1311592278050812008
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9028717818022298950}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a40ba9254f066ed499136723990e8a6f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DialogueTrigger
-  animator: {fileID: 349482740540396060}
-  isTalking: 0
-  chimeAnimator: {fileID: 0}
-  chimeActive: 0
-  chimeScript: {fileID: 0}
-  faceHandler: {fileID: 2825850985066082928}
-  NPCName: Irene
-  chatRange: 3
-  playerMovePoint: {fileID: 0}
-  jsonDialogueFile: {fileID: 4900000, guid: 4784a40bd37475b458c97f350302f4f3, type: 3}
-  TalkedJsonDialogueFile: {fileID: 4900000, guid: 9a4e3adf62e696a4d9f3dcc5d6f93c62, type: 3}
-  CompleteJsonDialogueFile: {fileID: 4900000, guid: d07bc5ceb4fd0e04fa015e04d927277d, type: 3}
-  ActiveJsonDialogueFile: {fileID: 4900000, guid: 9a4e3adf62e696a4d9f3dcc5d6f93c62, type: 3}
-  objectiveIDYouCareAbout:
-  - stackLeaves
-  linkedObjective: {fileID: 11400000, guid: a027b5d7ae55ba341a809f88e56a62f2, type: 2}
-  IsMediation: 0
-  lookSpeed: 5
-  isLookingAtPlayer: 0
-  TalkedAlready: 0
-  iconPrefab: {fileID: 4114033263953508203, guid: 48024210bf4a4394fa37015b90b3b410, type: 3}
-  shouldShowIcon: 1
-  enemy: {fileID: 0}
-  focusCameraOnTrigger: 1
-  RewardItem: {fileID: 0}
-  triggerType: 0
 --- !u!114 &7868950883997314987
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -470,6 +432,42 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &3909000671742844404
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9028717818022298950}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb6f976906f2747449b6d75a67a35b9d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NewDialogueTrigger
+  animator: {fileID: 0}
+  isTalking: 0
+  chimeAnimator: {fileID: 0}
+  chimeActive: 0
+  chimeScript: {fileID: 0}
+  faceHandler: {fileID: 0}
+  startDialogueFile: {fileID: 0}
+  talkedDialogueFile: {fileID: 0}
+  taskActiveDialogueFile: {fileID: 0}
+  taskCompleteDialogueFile: {fileID: 0}
+  NPCName: Friendly NPC
+  chatRange: 3
+  objectiveIDsYouCareAbout: []
+  linkedObjective: {fileID: 0}
+  focusCameraOnTrigger: 1
+  playerMovePoint: {fileID: 0}
+  moveSpeed: 2
+  lookSpeed: 6
+  IsMediation: 0
+  hasTalked: 0
+  isLookingAtPlayer: 0
+  enemy: {fileID: 0}
+  RewardItem: {fileID: 0}
+  triggerType: 0
 --- !u!1001 &2605769388952795558
 PrefabInstance:
   m_ObjectHideFlags: 0
