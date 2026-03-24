@@ -1,9 +1,7 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-using UnityEngine.InputSystem;
-using Unity.VisualScripting;
 
 public class PlayerController : MonoBehaviour, ISaveable
 {
@@ -65,6 +63,9 @@ public class PlayerController : MonoBehaviour, ISaveable
     // Special Idle Variables
     private float idleTimer = 0;
     private bool specialIdle = false;
+
+    // stores the last checkpoint reached in each scene
+    private readonly Dictionary<string, (Vector3 position, Vector3 rotation)> checkpointData = new();
 
     // Input System
     private PlayerControls controls;
@@ -139,6 +140,8 @@ public class PlayerController : MonoBehaviour, ISaveable
             groundCheck = groundCheckObj.transform;
         }
 
+        PlayerComponents.InitializeComponents(gameObject);
+
         // Initialize input actions
         controls = new PlayerControls();
 
@@ -156,9 +159,11 @@ public class PlayerController : MonoBehaviour, ISaveable
 
     public void SaveTo(SaveData data)
     {
-        float[] position = new float[] { transform.position.x, transform.position.y, transform.position.z };
-        float[] rotation = new float[] { transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z };
+        GetCheckpoint(SceneManager.GetActiveScene().name, out Vector3 savedPosition, out Vector3 savedRotation);
+        float[] position = new float[] { savedPosition.x, savedPosition.y, savedPosition.z };
+        float[] rotation = new float[] { savedRotation.x, savedRotation.y, savedRotation.z };
         data.playerSaveData.SetPlayerTransform(SceneManager.GetActiveScene().name, position, rotation);
+        data.playerSaveData.checkpoints = checkpointData;
         if (TimerRingUI.Instance != null)
         {
             data.playerSaveData.currentRingState = TimerRingUI.Instance.currentRingState;
@@ -183,6 +188,15 @@ public class PlayerController : MonoBehaviour, ISaveable
             Debug.LogWarning("No saved transform found for player in scene: " + SceneManager.GetActiveScene().name);
         }
 
+        if (data.playerSaveData.checkpoints != null)
+        {
+            checkpointData.Clear();
+            foreach (var kvp in data.playerSaveData.checkpoints)
+            {
+                checkpointData.Add(kvp.Key, kvp.Value);
+            }
+        }
+
         if (TimerRingUI.Instance != null && data.playerSaveData.currentRingState != TimerRingUI.RingState.Empty)
         {
             TimerRingUI.Instance.SetRingState(data.playerSaveData.currentRingState);
@@ -193,6 +207,33 @@ public class PlayerController : MonoBehaviour, ISaveable
             TimerRingUI.Instance.SetRingState(TimerRingUI.RingState.Full);
         }
         
+    }
+
+    public void SetCheckpoint(string sceneName, Vector3 position, Vector3 rotation)
+    {
+        if (checkpointData.ContainsKey(sceneName))
+        {
+            checkpointData[sceneName] = (position, rotation);
+        }
+        else
+        {
+            checkpointData.Add(sceneName, (position, rotation));
+        }
+    }
+
+    public void GetCheckpoint(string sceneName, out Vector3 position, out Vector3 rotation)
+    {
+        if (checkpointData.TryGetValue(sceneName, out var data))
+        {
+            position = data.position;
+            rotation = data.rotation;
+        }
+        else
+        {
+            // If a checkpoint for the scene doesn't exist, return the player's current position and rotation
+            position = transform.position;
+            rotation = transform.eulerAngles;
+        }
     }
 
     private void OnEnable() => controls?.Enable();

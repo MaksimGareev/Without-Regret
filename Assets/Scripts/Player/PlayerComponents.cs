@@ -1,11 +1,6 @@
 using System.Linq;
-using System.Reflection;
 using UnityEngine;
 
-[RequireComponent(typeof(PlayerController), typeof(PlayerFloating), typeof(PlayerMovingObjects))]
-[RequireComponent(typeof(PlayerPossessing), typeof(PlayerThrowing), typeof(ToggleInventoryUI))]
-[RequireComponent(typeof(Rigidbody), typeof(CharacterController), typeof(PlayerFishing))]
-[RequireComponent(typeof(PlayerEquipItem), typeof(PlayerMantling))]
 public class PlayerComponents : MonoBehaviour
 {
     public static bool initialized = false;
@@ -53,18 +48,18 @@ public class PlayerComponents : MonoBehaviour
                 return;
             }
         }
-        playerController = player.GetComponent<PlayerController>();
-        playerFloating = player.GetComponent<PlayerFloating>();
-        playerMovingObjects = player.GetComponent<PlayerMovingObjects>();
-        playerPossessing = player.GetComponent<PlayerPossessing>();
-        playerThrowing = player.GetComponent<PlayerThrowing>();
-        playerFishing = player.GetComponent<PlayerFishing>();
-        playerEquipItem = player.GetComponent<PlayerEquipItem>();
+        player.TryGetComponent<PlayerController>(out playerController);
+        player.TryGetComponent<PlayerFloating>(out playerFloating);
+        player.TryGetComponent<PlayerMovingObjects>(out playerMovingObjects);
+        player.TryGetComponent<PlayerPossessing>(out playerPossessing);
+        player.TryGetComponent<PlayerThrowing>(out playerThrowing);
+        player.TryGetComponent<PlayerFishing>(out playerFishing);
+        player.TryGetComponent<PlayerEquipItem>(out playerEquipItem);
+        player.TryGetComponent<ToggleInventoryUI>(out inventoryToggle);
+        player.TryGetComponent<PlayerMantling>(out playerMantling);
+        player.TryGetComponent<CharacterController>(out characterController);
+        player.TryGetComponent<Rigidbody>(out rb);
         playerCamera = Camera.main;
-        rb = player.GetComponent<Rigidbody>();
-        characterController = player.GetComponent<CharacterController>();
-        inventoryToggle = player.GetComponent<ToggleInventoryUI>();
-        playerMantling = player.GetComponent<PlayerMantling>();
 
         initialized = true;
     }
@@ -75,16 +70,27 @@ public class PlayerComponents : MonoBehaviour
         {
             InitializeComponents(source);
         }
-        playerController.enabled = enable;
-        playerFloating.enabled = enable;
-        playerMovingObjects.enabled = enable;
-        playerPossessing.enabled = enable;
-        playerThrowing.enabled = enable;
-        playerFishing.enabled = enable;
-        inventoryToggle.enabled = enable;
-        characterController.enabled = enable;
-        playerEquipItem.enabled = enable;
-        playerMantling.enabled = enable;
+
+        if (playerController != null)
+            playerController.enabled = enable;
+        if (playerFloating != null)
+            playerFloating.enabled = enable;
+        if (playerMovingObjects != null)
+            playerMovingObjects.enabled = enable;
+        if (playerPossessing != null)
+            playerPossessing.enabled = enable;
+        if (playerThrowing != null)
+            playerThrowing.enabled = enable;
+        if (playerFishing != null)
+            playerFishing.enabled = enable;
+        if (inventoryToggle != null)
+            inventoryToggle.enabled = enable;
+        if (characterController != null)
+            characterController.enabled = enable;
+        if (playerEquipItem != null)
+            playerEquipItem.enabled = enable;
+        if (playerMantling != null)
+            playerMantling.enabled = enable;
     }
 
     public static void SetComponentsExcept(bool enable, GameObject source = null, params Component[] excludeList)
