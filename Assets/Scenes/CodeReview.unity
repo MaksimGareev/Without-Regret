@@ -492,7 +492,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7868950883997314987, guid: 721122af1329d904ea7e30fd7e5eddf2, type: 3}
       propertyPath: uniqueID
-      value: 60201a45-210b-427c-bbdf-e32d0b99849b
+      value: 56efda2e-4b6d-4cc2-b2b3-ad17cfc328ce
       objectReference: {fileID: 0}
     - target: {fileID: 9028717818022298950, guid: 721122af1329d904ea7e30fd7e5eddf2, type: 3}
       propertyPath: m_Name
@@ -1701,7 +1701,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 7860463239587958, guid: 2f3eb3703c32f114e9d3c9238c66a1a7, type: 3}
       propertyPath: uniqueID
-      value: 29cd60dd-98f2-4412-873c-fe4da829693a
+      value: 37e26765-38c3-4952-b647-9a3241eb8f6f
       objectReference: {fileID: 0}
     - target: {fileID: 324648643704248854, guid: 2f3eb3703c32f114e9d3c9238c66a1a7, type: 3}
       propertyPath: m_Name
@@ -3313,7 +3313,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4739791299965162435, guid: 3ec7a33f34fdce245a8693ec96d7d664, type: 3}
       propertyPath: uniqueID
-      value: 50fd2f81-0f95-4b42-b6c4-89b98b6f3c9e
+      value: a64fc12e-c6b1-4c01-84fd-cb5cff255a53
       objectReference: {fileID: 0}
     - target: {fileID: 5598156055868058803, guid: 3ec7a33f34fdce245a8693ec96d7d664, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -3530,7 +3530,7 @@ GameObject:
   - component: {fileID: 1670650278}
   - component: {fileID: 1670650277}
   - component: {fileID: 1670650276}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Wall (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4229,7 +4229,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3096833380224275490, guid: 6d145a8f2933d58498ef6ff2a7d15e98, type: 3}
       propertyPath: uniqueID
-      value: 2091c692-cf14-40f5-a29d-89493f961a94
+      value: d8807cd0-591e-4ca0-b97c-1d4d56b7a6c2
       objectReference: {fileID: 0}
     - target: {fileID: 3108664399994057373, guid: 6d145a8f2933d58498ef6ff2a7d15e98, type: 3}
       propertyPath: m_Name
@@ -4435,7 +4435,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7552097689216225132, guid: 77d3b6026832afd49b357083de1f5c82, type: 3}
       propertyPath: uniqueID
-      value: 7b81d953-1566-4c92-ae14-acc76d2406ac
+      value: 834d12db-5a16-42a0-943d-11704ca4bf38
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -5087,6 +5087,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 859243268267753215, guid: 4e57c5a007cdac149850e9563c72c82c, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7806950774359495090}
+    - targetCorrespondingSourceObject: {fileID: 859243268267753215, guid: 4e57c5a007cdac149850e9563c72c82c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7806950774359495095}
   m_SourcePrefab: {fileID: 100100000, guid: 4e57c5a007cdac149850e9563c72c82c, type: 3}
 --- !u!1 &7806950774359495089 stripped
 GameObject:
@@ -5147,6 +5150,24 @@ Camera:
   m_CorrespondingSourceObject: {fileID: 601201663543343881, guid: 4e57c5a007cdac149850e9563c72c82c, type: 3}
   m_PrefabInstance: {fileID: 7806950774359495088}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &7806950774359495095
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7806950774359495089}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 295a193a77dad8e40a785f4c082012a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraCollider
+  target: {fileID: 1339883343}
+  collisionMask:
+    serializedVersion: 2
+    m_Bits: 131072
+  sphereRadius: 0.2
+  minDistance: 0.3
 --- !u!1001 &8473433248283213580
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5197,7 +5218,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8209122591772879969, guid: 2fb16b61ca03777408a9d2164316e150, type: 3}
       propertyPath: uniqueID
-      value: 1a336448-712e-4077-a800-7bca4eb87a85
+      value: f0579442-e7af-4245-95e4-298e9166a444
       objectReference: {fileID: 0}
     - target: {fileID: 8657645946949767162, guid: 2fb16b61ca03777408a9d2164316e150, type: 3}
       propertyPath: m_Name

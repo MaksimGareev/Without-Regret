@@ -59,6 +59,8 @@ public class MoveableObject : MonoBehaviour, IInteractable
         {
             navMeshObstacle = obstacle;
         }
+
+        PlayerComponents.InitializeComponents(gameObject);
     }
 
     public bool CanInteract(GameObject player)
