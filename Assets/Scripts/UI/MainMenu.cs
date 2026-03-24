@@ -294,11 +294,11 @@ public class MainMenu : MonoBehaviour
     {
         if (saveManager.AnySavesExist())
         {
-            playButtonText.text = "Play Game";
+            playButtonText.text = "Continue";
         }
         else
         {
-            playButtonText.text = "New Game";
+            playButtonText.text = "Play Game";
         }
     }
 
