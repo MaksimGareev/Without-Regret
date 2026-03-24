@@ -1,10 +1,8 @@
 using System.Collections;
-using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using System.Collections;
 using UnityEngine.Audio;
 
 public class SceneLoadManager : MonoBehaviour
@@ -199,7 +197,6 @@ public class SceneLoadManager : MonoBehaviour
             Mixer.SetFloat("Master", Mathf.Lerp(startVolume, -80f, currentTime / fadeDuration));
             yield return null;
         }
-
     }
 
     private IEnumerator FadeInAudio()
@@ -211,7 +208,5 @@ public class SceneLoadManager : MonoBehaviour
             Mixer.SetFloat("Master", Mathf.Lerp(-80f, startVolume, currentTime / fadeDuration));
             yield return null;
         }
-
-
     }
 }
