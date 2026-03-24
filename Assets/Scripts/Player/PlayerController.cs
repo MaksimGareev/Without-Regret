@@ -7,7 +7,11 @@ public class PlayerController : MonoBehaviour, ISaveable
 {
     [HideInInspector] public CharacterController Controller;
     private Camera PlayerCamera;
-    [HideInInspector] public Animator Animator;
+
+    [Header("Animator settings")]
+    public Animator Animator;
+    private CharacterSwap characterSwap;
+
 
     [Header("Chime Animation settings")]
     public Animator chimeAnimator;
@@ -83,7 +87,15 @@ public class PlayerController : MonoBehaviour, ISaveable
     private void Awake()
     {
         Controller = GetComponent<CharacterController>();
-        Animator = GetComponentInChildren<Animator>();
+        //Animator = GetComponentInChildren<Animator>();
+        characterSwap = FindObjectOfType<CharacterSwap>();
+
+        if (characterSwap != null)
+        {
+            Animator = characterSwap.GetAnimator();
+
+            characterSwap.onAnimatorChanged += UpdateAnimator;
+        }
 
         //Finding chime + animator
         GameObject chime = GameObject.FindWithTag("Chime");
@@ -127,6 +139,8 @@ public class PlayerController : MonoBehaviour, ISaveable
             groundCheckObj.transform.localPosition = new Vector3(0f, 0.05f, 0f);
             groundCheck = groundCheckObj.transform;
         }
+
+        PlayerComponents.InitializeComponents(gameObject);
 
         // Initialize input actions
         controls = new PlayerControls();
@@ -454,6 +468,8 @@ public class PlayerController : MonoBehaviour, ISaveable
                 isSprinting = false;
                 Animator.SetBool("isSprinting", false);
 
+                Animator.SetBool("isExhausted", true);
+
                 canSprint = false;
                 if (GameManager.Instance.staminaFill != null)
                     GameManager.Instance.staminaFill.color = cooldownColor;
@@ -484,6 +500,8 @@ public class PlayerController : MonoBehaviour, ISaveable
             {
                 // Stamina is full, reset values
                 SprintTimer = SprintDuration;
+
+                Animator.SetBool("isExhausted", false);
 
                 if (staminaFadeRoutine == null)
                 {
@@ -662,6 +680,7 @@ public class PlayerController : MonoBehaviour, ISaveable
 
     IEnumerator SprintCooldown()
     {
+
         if (showDebugLogs)
             Debug.Log("Sprint cooldown started.");
         yield return new WaitForSeconds(sprintCooldown);
@@ -849,6 +868,11 @@ public class PlayerController : MonoBehaviour, ISaveable
         //Animator.SetBool("isGrabbing", false);
         Animator.SetBool("isFloating", false);
         //Animator.SetBool("isCollecting", false);
+    }
+
+    void UpdateAnimator(Animator newAnimator)
+    {
+        Animator = newAnimator;
     }
 
     public void SetCurrentPlatform(OrbitingPlatform platform)

@@ -12,20 +12,31 @@ public enum ObjectType
     InventoryItem,
     MovableObject,
     LockpickableObject,
+    OrbitingPlatform,
     MiscObject
 }
 
 [System.Serializable]
 public class WorldObjectState
 {
+    // General
+    public ObjectType objectType;
     public string id;
     public float[] position = new float[3];
     public float[] rotation = new float[3];
     public bool isActive;
-    public ObjectType objectType;
+    
+    // Movable Item
     public bool isGrabbable;
     public RigidbodyConstraints rbConstraints;
-    public bool hasBeenCollected;
+    
+    // Locked Item
     public bool hasBeenLockpicked;
+    
+    // Inventory World Item
+    public bool hasBeenCollected;
     public bool isCollectible;
+    
+    // Orbiting platform
+    public bool reachedLocation;
 }

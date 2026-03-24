@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Xml;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -159,7 +160,7 @@ public class BossEnemyController : MonoBehaviour
             shadowLayerMask = LayerMask.GetMask("Target", "Enemy", "Ignore Raycast"); // Used for raycasting the shadow position and detecting projectile collisions
 
         // set up the array of actions the boss can perform
-        actions = new Action[] { VoidProjectile, ArmSweep, DropPillars };
+        actions = new Action[] { VoidProjectile, ArmSweep };
 
         InitializeHealthUI();
     }
@@ -518,7 +519,7 @@ public class BossEnemyController : MonoBehaviour
 
     void DropPillars()
     {
-
+        throw new NotImplementedException();
     }
 
     void Die()
@@ -541,7 +542,7 @@ public class BossEnemyController : MonoBehaviour
         UpdateHealthUIForCurrentPhase();
 
         // Set transparency of the boss based on total health ratio
-        SetAlpha(healthRatio);
+        // SetAlpha(healthRatio);
 
         if (currentPhase.Health <= 0)
         {
@@ -560,6 +561,8 @@ public class BossEnemyController : MonoBehaviour
 
     private void SetAlpha(float alpha)
     {
+        if (renderers == null || renderers.Length == 0) return;
+
         foreach (Renderer renderer in renderers)
         {
             foreach (Material mat in renderer.materials)

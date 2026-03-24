@@ -295,7 +295,7 @@ public class GameOverManager : MonoBehaviour
         
         onGameOver?.Invoke();
 
-        Time.timeScale = 0f; // Pause the game
+        //Time.timeScale = 0f; // Pause the game
 
         EnableGameOverUI();
 

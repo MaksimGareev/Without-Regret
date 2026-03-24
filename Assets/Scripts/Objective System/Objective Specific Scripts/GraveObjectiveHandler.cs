@@ -9,7 +9,6 @@ public class GraveObjectiveHandler : MonoBehaviour
     private GameObject player;
     private bool isObjectiveActive = false;
     private Rigidbody rb;
-    private bool didOnce = false;
     private GameObject[] gravestones;
 
     private void OnEnable()
@@ -41,28 +40,55 @@ public class GraveObjectiveHandler : MonoBehaviour
             }
         }
 
+        // Cache gravestones and wire up initial subscriptions/disable as appropriate
+        gravestones = GameObject.FindGameObjectsWithTag("Gravestone");
+
         if (!isObjectiveActive)
         {
-            GameObject[] gravestones = GameObject.FindGameObjectsWithTag("Gravestone");
+            // For initial inactive state we still want to subscribe to OnSuccess so we catch completion
             foreach (GameObject gravestone in gravestones)
             {
-                gravestone.GetComponent<PushableObject>().OnSuccess += IncrementCount;
+                if (gravestone.TryGetComponent<PushableObject>(out var pushable))
+                {
+                    // Ensure we don't double-subscribe
+                    pushable.OnSuccess -= IncrementCount;
+                    pushable.OnSuccess += IncrementCount;
+                }
+
                 StartCoroutine(WaitToDisableGravestone(gravestone));
             }
         }
-
-        gravestones = GameObject.FindGameObjectsWithTag("Gravestone");
+        else
+        {
+            // If objective already active, ensure gravestones are enabled and subscribed
+            foreach (GameObject gravestone in gravestones)
+            {
+                rb = gravestone.GetComponent<Rigidbody>();
+                if (gravestone.TryGetComponent<PushableObject>(out var pushable))
+                {
+                    pushable.isInteractable = true;
+                    pushable.OnSuccess -= IncrementCount;
+                    pushable.OnSuccess += IncrementCount;
+                }
+                if (rb != null)
+                {
+                    rb.constraints = RigidbodyConstraints.None;
+                }
+            }
+        }
     }
 
     private IEnumerator WaitToDisableGravestone(GameObject gravestone)
     {
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(1f);
+        Debug.Log($"Disabling gravestone interaction for {gravestone.name} at start of scene since objective is not active.");
         PushableObject pushable = gravestone.GetComponent<PushableObject>();
         Rigidbody rb = gravestone.GetComponent<Rigidbody>();
         if (pushable != null)
         {
             pushable.isInteractable = false;
-            rb.constraints = RigidbodyConstraints.FreezeAll;
+            if (rb != null)
+                rb.constraints = RigidbodyConstraints.FreezeAll;
         }
     }
 
@@ -75,15 +101,23 @@ public class GraveObjectiveHandler : MonoBehaviour
 
         isObjectiveActive = true;
 
-        GameObject[] gravestones = GameObject.FindGameObjectsWithTag("Gravestone");
+        gravestones = GameObject.FindGameObjectsWithTag("Gravestone");
         foreach (GameObject gravestone in gravestones)
         {
             PushableObject pushable = gravestone.GetComponent<PushableObject>();
             rb = gravestone.GetComponent<Rigidbody>();
 
-            if (pushable != null)
+            if (pushable != null && !pushable.IsComplete)
             {
+                Debug.Log($"Enabling gravestone interaction for {gravestone.name} since objective is now active.");
                 pushable.isInteractable = true;
+                // ensure subscription once
+                pushable.OnSuccess -= IncrementCount;
+                pushable.OnSuccess += IncrementCount;
+            }
+
+            if (rb != null)
+            {
                 rb.constraints = RigidbodyConstraints.None;
             }
         }
@@ -95,9 +129,24 @@ public class GraveObjectiveHandler : MonoBehaviour
         {
             return;
         }
+
+        // refresh cached gravestones
+        gravestones = GameObject.FindGameObjectsWithTag("Gravestone");
         foreach (GameObject gravestone in gravestones)
         {
-            gravestone.GetComponent<PushableObject>().OnSuccess -= IncrementCount;
+            rb = gravestone.GetComponent<Rigidbody>();
+
+            if (gravestone.TryGetComponent<PushableObject>(out var pushable))
+            {
+                Debug.Log($"Disabling gravestone interaction for {gravestone.name} since objective is now inactive.");
+                pushable.isInteractable = false;
+                pushable.OnSuccess -= IncrementCount;
+            }
+
+            if (rb != null)
+            {
+                rb.constraints = RigidbodyConstraints.FreezeAll;
+            }
         }
 
         isObjectiveActive = false;
@@ -107,10 +156,11 @@ public class GraveObjectiveHandler : MonoBehaviour
     {
         if (Time.timeSinceLevelLoad > 1f) // Prevents adding progress if reloading save and gravestone is already placed in the correct position from previous session.
         {
+            Debug.Log("Gravestone placed in correct position, adding progress to objective.");
             ObjectiveManager.Instance.AddProgress(linkedObjective.objectiveID, 1);
         }
-        didOnce = true;
 
-        SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
+        if (SaveManager.Instance != null)
+            SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
     }
 }

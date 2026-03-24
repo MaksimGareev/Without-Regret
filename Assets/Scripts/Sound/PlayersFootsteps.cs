@@ -27,24 +27,29 @@ public class PlayersFootsteps : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Controller.isGrounded && Controller.velocity.magnitude > 0.2f)
-        {
-            StepTimer += Time.deltaTime;
-            if (StepTimer >= StepInterval)
-            {
-                PlayFootStep();
-                StepTimer = 0f;
-            }
-        }   
+        //if (Controller.isGrounded && Controller.velocity.magnitude > 0.2f)
+        //{
+        //    StepTimer += Time.deltaTime;
+        //    if (StepTimer >= StepInterval)
+        //    {
+        //        PlayFootStep();
+        //        StepTimer = 0f;
+        //    }
+        //}   
     }
 
-    void PlayFootStep()
+    public void PlayFootStep()
     {
         SurfaceType surface = GetSurfaceType();
         AudioClip Clip = GetRandomClip(surface);
         if (Clip != null)
         {
             audioSource.PlayOneShot(Clip);
+            Debug.Log("Step");
+        }
+        if (Clip == null)
+        {
+            Debug.Log("Step");
         }
     }
 

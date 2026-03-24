@@ -283,7 +283,7 @@ public class Inventory : MonoBehaviour, ISaveable
     {
         while (!inventoryLoaded)
         {
-            Debug.LogWarning("Inventory not loaded yet, waiting...");
+            //Debug.LogWarning("Inventory not loaded yet, waiting...");
             yield return null;
         }
 

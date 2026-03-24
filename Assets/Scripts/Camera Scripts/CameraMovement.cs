@@ -423,11 +423,14 @@ public class CameraMovement : MonoBehaviour
     }
 
     // Public function to be called when a dialogue trigger is activated to start the camera zoom effect
-    public void TriggerDialogueCamera(Transform dialogueTrigger)
+    public void TriggerDialogueCamera(Transform dialogueTrigger, Transform secondTransform = null)
     {
         if (!isZooming)
         {
-            StartCoroutine(StartCameraZoom(dialogueTrigger, true));
+            if (secondTransform == null)
+                StartCoroutine(StartCameraZoom(dialogueTrigger, true));
+            else
+                StartCoroutine(StartCameraZoomMidpoint(dialogueTrigger, secondTransform));
         }
     }
 
@@ -514,6 +517,63 @@ public class CameraMovement : MonoBehaviour
         Quaternion targetRot = Quaternion.LookRotation(zoomTarget.position - targetPos);
 
         lookAtCache = zoomTarget.position;
+
+        // Smoothly move and rotate the camera to the target position and rotation
+        float t = 0f;
+        while (t < zoomDuration)
+        {
+            t += Time.deltaTime * transitionSpeed;
+            transform.position = Vector3.Lerp(camPosCache, targetPos, t);
+            transform.rotation = Quaternion.Slerp(camRotCache, targetRot, t);
+            yield return null;
+        }
+
+        transform.SetPositionAndRotation(targetPos, targetRot);
+    }
+
+    // move camera to the midpoint between two transforms and look at that midpoint
+    public IEnumerator StartCameraZoomMidpoint(Transform transformA, Transform transformB)
+    {
+        CameraLocked = true;
+        isZooming = true;
+
+        // Cache current camera transform
+        camPosCache = transform.position;
+        camRotCache = transform.rotation;
+
+        // Midpoint between the two targets
+        Vector3 midpoint = (transformA.position + transformB.position) * 0.5f;
+
+        // Separation and a sensible distance for the camera
+        float separation = Vector3.Distance(transformA.position, transformB.position);
+        float distance = Mathf.Clamp(separation * 1.2f, 3f, 12f);
+
+        // Compute a horizontal baseline between the two targets
+        Vector3 baseline = transformB.position - transformA.position;
+        Vector3 dir = Vector3.ProjectOnPlane(baseline, Vector3.up).normalized;
+
+        // Build a perpendicular direction on the horizontal plane so the camera sits between the two targets
+        Vector3 perpendicularDirection = Vector3.Cross(dir, Vector3.up).normalized; // perpendicular to baseline
+
+        // choose side so camera faces the participants from the same side as the player (keeps framing natural)
+        float sideSign = Mathf.Sign(Vector3.Dot(perpendicularDirection, target.position - midpoint));
+        if (Mathf.Approximately(sideSign, 0f)) sideSign = 1f;
+
+        // Choose an offset that sits perpendicular to the baseline (between them) and slightly above midpoint.
+        float upFactor = Mathf.Clamp(distance * 0.12f, 0.5f, 1.5f);
+        Vector3 offset = distance * sideSign * perpendicularDirection + Vector3.up * upFactor;
+
+        // Compute average height of the two targets and aim the camera to look at that height (straight on)
+        float avgHeight = (transformA.position.y + transformB.position.y) * 0.5f;
+
+        // Target position and rotation (ensure camera Y is near avgHeight + small lift)
+        Vector3 targetPos = midpoint + offset;
+        targetPos.y = avgHeight + upFactor * 0.25f; // position slightly above the avg height
+
+        Vector3 lookAtPoint = new Vector3(midpoint.x, avgHeight, midpoint.z);
+        Quaternion targetRot = Quaternion.LookRotation(lookAtPoint - targetPos);
+
+        lookAtCache = lookAtPoint;
 
         // Smoothly move and rotate the camera to the target position and rotation
         float t = 0f;
@@ -668,6 +728,15 @@ public class CameraMovement : MonoBehaviour
         {
             this.maxPitch = maxPitch;
         }
+    }
+
+    public void SetTarget(Transform newTarget)
+    {
+        target = newTarget;
+
+        playerController = newTarget.GetComponent<PlayerController>();
+        pc = playerController;
+        toggleInventoryUI = newTarget.GetComponent<ToggleInventoryUI>();
     }
 
     public void ResetRotationSettings()

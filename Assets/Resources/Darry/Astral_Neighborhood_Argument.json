@@ -9,13 +9,13 @@
         "requiredMorality": 0,
         "choices": [
             {
-                "text": "Ask for honesty while trying to be patient.",
+                "text": "Tell me what really happened.",
                 "NextLineID": "Reed good 1",
                 "moralityChange": 1,
                 "directionString": "Up"
             },
             {
-                "text": "Demand an answer.",
+                "text": "Cut the crap.",
                 "NextLineID": "Reed bad 1",
                 "moralityChange": -1,
                 "directionString": "Down"
@@ -36,7 +36,7 @@
         "LineID": "Reed bad 1",
         "Speaker": "Reed",
         "NPCGender": "male",
-        "text": "Pissed doesn't even begin to cover it Derry. Cut the crap.",
+        "text": "Pissed doesn't even begin to cover it Darry. Cut the crap.",
         "lineTone": 0,
         "NextLineID": "Darry bad response",
         "requiredMorality": 0,
@@ -51,16 +51,16 @@
         "requiredMorality": 0,
         "choices": [
             {
-                "text": "Plead with him to get to the point.",
+                "text": "Please, get to the point.",
                 "NextLineID": "Reed good 2",
                 "moralityChange": 1,
-                "directionString": "Up"
+                "directionString": "Down"
             },
             {
-                "text": "Accost him and affirm your suspicions.",
+                "text": "No more excuses. Just admit it.",
                 "NextLineID": "Reed bad 2",
                 "moralityChange": -1,
-                "directionString": "Down"
+                "directionString": "Up"
             }
         ]
     },
@@ -73,13 +73,13 @@
         "requiredMorality": 0,
         "choices": [
             {
-                "text": "Plead with him to get to the point.",
+                "text": "Please, get to the point.",
                 "NextLineID": "Reed good 2",
                 "moralityChange": 1,
                 "directionString": "Up"
             },
             {
-                "text": "Accost him and affirm your suspicions.",
+                "text": "No more excuses. Just admit it.",
                 "NextLineID": "Reed bad 2",
                 "moralityChange": -1,
                 "directionString": "Down"
@@ -115,14 +115,14 @@
         "requiredMorality": 0,
         "choices": [
             {
-                "text": "Ask him what he means.",
-                "NextLineID": "Reed good 3",
+                "text": "You think I shouldn't be so upset?.",
+                "NextLineID": "Reed good 4",
                 "moralityChange": 1,
                 "directionString": "Up"
             },
             {
-                "text": "Demand he take responsibility.",
-                "NextLineID": "Reed bad 3",
+                "text": "Take responsibility!",
+                "NextLineID": "Reed bad 4",
                 "moralityChange": -1,
                 "directionString": "Down"
             }
@@ -137,21 +137,21 @@
         "requiredMorality": 0,
         "choices": [
             {
-                "text": "Try to make him see your point of view.",
+                "text": "Look at it from my perspective.",
                 "NextLineID": "Reed good 3",
                 "moralityChange": 1,
-                "directionString": "Up"
+                "directionString": "Down"
             },
             {
-                "text": "Tell him that bringing it back doesn't mean it wasn't stolen.",
+                "text": "You still stole it.",
                 "NextLineID": "Reed bad 3",
                 "moralityChange": -1,
-                "directionString": "Down"
+                "directionString": "Up"
             }
         ]
     },
     {
-        "LineID": "Reed good 3",
+        "LineID": "Reed bad 3",
         "Speaker": "Reed",
         "NPCGender": "male",
         "text": "Just because you brought it back doesn't mean you didn't steal it. You'll say or do anything except take responsibility!",
@@ -161,7 +161,7 @@
         "choices": []
     },
     {
-        "LineID": "Reed bad 3",
+        "LineID": "Reed good 3",
         "Speaker": "Reed",
         "NPCGender": "male",
         "text": "Sure, but I woke up to a broken TV and my car missing, and no word from you. I'm allowed to be upset.",
@@ -199,13 +199,13 @@
         "requiredMorality": 0,
         "choices": [
             {
-                "text": "Try to see his side.",
+                "text": "Maybe I was too harsh.",
                 "NextLineID": "Reed good 5",
                 "moralityChange": 1,
                 "directionString": "Up"
             },
             {
-                "text": "Don't back down.",
+                "text": "Going too far?!",
                 "NextLineID": "Reed bad 5",
                 "moralityChange": -1,
                 "directionString": "Down"
@@ -221,13 +221,13 @@
         "requiredMorality": 0,
         "choices": [
             {
-                "text": "Tell him that maybe you are over the top.",
+                "text": "Maybe I am over the top.",
                 "NextLineID": "Reed good 6",
                 "moralityChange": 1,
                 "directionString": "Up"
             },
             {
-                "text": "Affirm that you're not over the top.",
+                "text": "You need to be chewed out more.",
                 "NextLineID": "Reed bad 6",
                 "moralityChange": -1,
                 "directionString": "Down"
@@ -283,16 +283,22 @@
         "requiredMorality": 0,
         "choices": [
             {
-                "text": "Tell him that you believe him.",
+                "text": "I believe you.",
                 "NextLineID": "Reed good 7",
                 "moralityChange": 1,
+                "directionString": "Down"
+            },
+            {
+                "text": "I can't forgive you'.",
+                "NextLineID": "Reed bad 7",
+                "moralityChange": -1,
                 "directionString": "Up"
             },
             {
-                "text": "Maintain that you can't forgive him.",
-                "NextLineID": "Reed bad 7",
-                "moralityChange": -1,
-                "directionString": "Down"
+                "text": "I believe, but can't forgive you.",
+                "NextLineID": "Reed neutral",
+                "moralityChange": 0,
+                "directionString": "Left"
             }
         ]
     },
@@ -305,16 +311,22 @@
         "requiredMorality": 0,
         "choices": [
             {
-                "text": "Tell him that you believe him.",
+                "text": "I believe you.",
                 "NextLineID": "Reed good 7",
                 "moralityChange": 1,
                 "directionString": "Up"
             },
             {
-                "text": "Maintain that you can't forgive him.",
+                "text": "I can't forgive you.",
                 "NextLineID": "Reed bad 7",
                 "moralityChange": -1,
                 "directionString": "Down"
+            },
+            {
+                "text": "I believe, but can't forgive you.",
+                "NextLineID": "Reed neutral",
+                "moralityChange": 0,
+                "directionString": "Left"
             }
         ]
     },
@@ -332,9 +344,19 @@
         "LineID": "Reed bad 7",
         "Speaker": "Reed",
         "NPCGender": "male",
-        "text": "You always do dumb stuff like this Derry! You can't ever be straightforward. I don't think I can forgive you this time.",
+        "text": "You always do dumb stuff like this Darry! You can't ever be straightforward. I don't think I can forgive you this time.",
         "lineTone": 0,
         "NextLineID": "bad end",
+        "requiredMorality": 0,
+        "choices": []
+    },
+    {
+        "LineID": "Reed neutral",
+        "Speaker": "Reed",
+        "NPCGender": "male",
+        "text": "I trust that you're telling the truth, but this whole thing really stressed me out. I'm not sure I can forgive you quite yet, Darry.",
+        "lineTone": 0,
+        "NextLineID": "neutral end",
         "requiredMorality": 0,
         "choices": []
     },
@@ -354,6 +376,17 @@
         "Speaker": "Darry",
         "NPCGender": "male",
         "text": "Then I guess this can't be fixed. Not right now, anyways.",
+        "lineTone": 0,
+        "requiredMorality": 0,
+        "choices": [],
+        "objectivesToActivate": [ "talkToTownfolk" ],
+        "endDialogueAfterLine": true
+    },
+    {
+        "LineID": "neutral end",
+        "Speaker": "Darry",
+        "NPCGender": "male",
+        "text": "Well, at least you don't think I'm lying. I'll give you some space.",
         "lineTone": 0,
         "requiredMorality": 0,
         "choices": [],
