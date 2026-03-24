@@ -15,5 +15,6 @@ public enum InteractType
     Possess,
     BossQTE,
     BossAttack,
-    Remove
+    Remove,
+    Push
 }
