@@ -3574,7 +3574,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ced780c22dcf6ef4bb8e624b32e4787a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SaveableWorldObject
-  uniqueID: fee66fe4-2f99-4aa0-bf95-df3d9c424c9f
+  uniqueID: 7d2374dd-0ce6-4aed-b8f9-8535fda45c6f
 --- !u!1001 &328425881
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -19432,6 +19432,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 990233a54baf92e4c9cb3fe5f5e18048, type: 3}
+--- !u!20 &1524320708 stripped
+Camera:
+  m_CorrespondingSourceObject: {fileID: 6037889125726364855, guid: 990233a54baf92e4c9cb3fe5f5e18048, type: 3}
+  m_PrefabInstance: {fileID: 1524320707}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1527973288
 GameObject:
   m_ObjectHideFlags: 0
@@ -22731,6 +22736,14 @@ PrefabInstance:
     - target: {fileID: 878993099091267819, guid: dc60125b78695de43a450852f8101d10, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5316654367319254596, guid: dc60125b78695de43a450852f8101d10, type: 3}
+      propertyPath: Cam
+      value: 
+      objectReference: {fileID: 1524320708}
+    - target: {fileID: 5316654367319254596, guid: dc60125b78695de43a450852f8101d10, type: 3}
+      propertyPath: Mask.m_Bits
+      value: 128
       objectReference: {fileID: 0}
     - target: {fileID: 5675321481151379428, guid: dc60125b78695de43a450852f8101d10, type: 3}
       propertyPath: m_Name
