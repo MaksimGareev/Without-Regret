@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e28c2e20bb6c4240a55d8edffb777ec, type: 3}
+  m_Name: EchoAstralGraveyardDialogue
+  m_EditorClassIdentifier: Assembly-CSharp::NewDialogueData
+  npcName: Echo
+  dialogueLines:
+  - LineID: Start
+    Speaker: Echo
+    text: Chime...Is that you?
+    lineTone: 0
+    NPCGender: 
+    NextLineID: 
+    endDialogueAfterLine: 0
+    choices:
+    - text: We need to leave.
+      NextLineID: Chime Good Response I
+      moralityChange: 0
+      direction: 0
+      objectiveToActivate: 
+    - text: No, I'm not real.
+      NextLineID: Chime Bad Response I
+      moralityChange: -1
+      direction: 1
+      objectiveToActivate: 
+    objectivesToActivate: []
+  - LineID: Chime Good Response I
+    Speaker: Echo
+    text: I can't leave...This is what I deserve...For what happened to you
+    lineTone: 0
+    NPCGender: 
+    NextLineID: 
+    endDialogueAfterLine: 1
+    choices: []
+    objectivesToActivate: []
+  - LineID: Chime Bad Response I
+    Speaker: Echo
+    text: If you're not real, then am I also not real!
+    lineTone: 0
+    NPCGender: 
+    NextLineID: 
+    endDialogueAfterLine: 1
+    choices: []
+    objectivesToActivate: []

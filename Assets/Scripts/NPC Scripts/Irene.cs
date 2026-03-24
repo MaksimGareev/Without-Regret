@@ -17,7 +17,7 @@ public class Irene : MonoBehaviour
     private bool isMoving = false; //detects whether or not Irene is moving for animator purposes
     private Vector3 lastPosition;
 
-    public DialogueTrigger dialogueTrigger; // dialogue trigger script reference
+    public NewDialogueTrigger dialogueTrigger; // dialogue trigger script reference
 
     public Transform targetSpot;
     public Transform GoBackHomeSpot;

@@ -1,0 +1,346 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e28c2e20bb6c4240a55d8edffb777ec, type: 3}
+  m_Name: AstralNeighborhoodArgument
+  m_EditorClassIdentifier: Assembly-CSharp::NewDialogueData
+  npcName: Chime
+  dialogueLines:
+  - LineID: Start
+    Speaker: Darry
+    text: Reed, I understand that you're pissed, but I need you to listen to me right
+      now.
+    lineTone: 0
+    NPCGender: male
+    NextLineID: 
+    endDialogueAfterLine: 0
+    choices:
+    - text: Ask for honesty while trying to be patient.
+      NextLineID: Reed Good I
+      moralityChange: 1
+      direction: 0
+      objectiveToActivate: 
+    - text: Demand an answer.
+      NextLineID: Reed Bad I
+      moralityChange: -1
+      direction: 1
+      objectiveToActivate: 
+    objectivesToActivate: []
+  - LineID: Reed Good I
+    Speaker: Reed
+    text: Darry. Stop trying to run away and make excuses. Tell me what really happened.
+    lineTone: 0
+    NPCGender: male
+    NextLineID: Darry Good Respoonse I
+    endDialogueAfterLine: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Reed Bad I
+    Speaker: Reed
+    text: Pissed doesn't even begin to cover it Derry. Cut the crap.
+    lineTone: 0
+    NPCGender: male
+    NextLineID: Darry Bad Respoonse I
+    endDialogueAfterLine: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Darry Good Response I
+    Speaker: Darry
+    text: I'm being honest with you, but you're not letting me talk.
+    lineTone: 0
+    NPCGender: male
+    NextLineID: 
+    endDialogueAfterLine: 0
+    choices:
+    - text: Plead with him to get to the point.
+      NextLineID: Reed Good II
+      moralityChange: 1
+      direction: 0
+      objectiveToActivate: 
+    - text: Accost him and affirm your suspicions.
+      NextLineID: Reed Bad II
+      moralityChange: -1
+      direction: 1
+      objectiveToActivate: 
+    objectivesToActivate: []
+  - LineID: Darry Bad Response I
+    Speaker: Darry
+    text: Can you just give me a chance to talk?!
+    lineTone: 0
+    NPCGender: male
+    NextLineID: 
+    endDialogueAfterLine: 0
+    choices:
+    - text: Plead with him to get to the point.
+      NextLineID: Reed Good II
+      moralityChange: 1
+      direction: 0
+      objectiveToActivate: 
+    - text: Accost him and affirm your suspicions.
+      NextLineID: Reed Bad II
+      moralityChange: -1
+      direction: 1
+      objectiveToActivate: 
+    objectivesToActivate: []
+  - LineID: Reed Good II
+    Speaker: Reed
+    text: I'm really trying to hear you out. How much more do you need to say?
+    lineTone: 0
+    NPCGender: male
+    NextLineID: Darry Good Response II
+    endDialogueAfterLine: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Reed Bad II
+    Speaker: Reed
+    text: It's hard to listen when you keep trying to come up with something. Just
+      admit it, you broke the TV I bought and stole my car!
+    lineTone: 0
+    NPCGender: male
+    NextLineID: Darry Bad Response II
+    endDialogueAfterLine: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Darry Good Response II
+    Speaker: Darry
+    text: You've never gotten this mad about anything before, Reed! Can we even talk
+      at this point?
+    lineTone: 0
+    NPCGender: male
+    NextLineID: 
+    endDialogueAfterLine: 0
+    choices:
+    - text: Ask him what he means.
+      NextLineID: Reed Good III
+      moralityChange: 1
+      direction: 0
+      objectiveToActivate: 
+    - text: Demand he take responsibility.
+      NextLineID: Reed Bad III
+      moralityChange: -1
+      direction: 1
+      objectiveToActivate: 
+    objectivesToActivate: []
+  - LineID: Darry Bad Response II
+    Speaker: Darry
+    text: Your car isn't even stolen, it's right there!
+    lineTone: 0
+    NPCGender: male
+    NextLineID: 
+    endDialogueAfterLine: 0
+    choices:
+    - text: Try to make him see your point of view.
+      NextLineID: Reed Good III
+      moralityChange: 1
+      direction: 0
+      objectiveToActivate: 
+    - text: Tell him that bringing it back doesn't mean it wasn't stolen.
+      NextLineID: Reed Bad III
+      moralityChange: -1
+      direction: 1
+      objectiveToActivate: 
+    objectivesToActivate: []
+  - LineID: Reed Good III
+    Speaker: Reed
+    text: Just because you brought it back doesn't mean you didn't steal it. You'll
+      say or do anything except take responsibility!
+    lineTone: 0
+    NPCGender: male
+    NextLineID: Reed Good VI
+    endDialogueAfterLine: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Reed Bad III
+    Speaker: Reed
+    text: Sure, but I woke up to a broken TV and my car missing, and no word from
+      you. I'm allowed to be upset.
+    lineTone: 0
+    NPCGender: male
+    NextLineID: Reed Bad VI
+    endDialogueAfterLine: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Reed Good VI
+    Speaker: Reed
+    text: Are you trying to say that I really shouldn't be as upset as I am?
+    lineTone: 0
+    NPCGender: male
+    NextLineID: Darry Good Response III
+    endDialogueAfterLine: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Reed Bad VI
+    Speaker: Reed
+    text: Can you even take responsibility at this point?!
+    lineTone: 0
+    NPCGender: male
+    NextLineID: Darry Bad Response III
+    endDialogueAfterLine: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Darry Good Response III
+    Speaker: Darry
+    text: Of course, you're allowed to be upset. I broke the TV by accident, and
+      wanted to make it up to you, but I think you're going too far now.
+    lineTone: 0
+    NPCGender: male
+    NextLineID: 
+    endDialogueAfterLine: 0
+    choices:
+    - text: Try to see his side.
+      NextLineID: Reed Good V
+      moralityChange: 1
+      direction: 0
+      objectiveToActivate: 
+    - text: Don't back down.
+      NextLineID: Reed Bad V
+      moralityChange: -1
+      direction: 1
+      objectiveToActivate: 
+    objectivesToActivate: []
+  - LineID: Darry Bad Response III
+    Speaker: Darry
+    text: Take responsibility? Okay sure, I could own up to it more, but I still
+      can't understand why you're so upset. This whole thing was blown way out of
+      proportion.
+    lineTone: 0
+    NPCGender: male
+    NextLineID: 
+    endDialogueAfterLine: 0
+    choices:
+    - text: Tell him that maybe you are over the top.
+      NextLineID: Reed Good VI
+      moralityChange: 1
+      direction: 0
+      objectiveToActivate: 
+    - text: Affirm that you're not over the top.
+      NextLineID: Reed Bad VI
+      moralityChange: -1
+      direction: 1
+      objectiveToActivate: 
+    objectivesToActivate: []
+  - LineID: Reed Good V
+    Speaker: Reed
+    text: Yeah, maybe I grilled you a bit too harshly...
+    lineTone: 0
+    NPCGender: male
+    NextLineID: Darry Good Response VI
+    endDialogueAfterLine: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Reed Bad V
+    Speaker: Reed
+    text: I'm going too far?! You broke the TV and took my car without telling me
+      anything, but I'm the one going too far?!
+    lineTone: 0
+    NPCGender: male
+    NextLineID: Darry Bad Response VI
+    endDialogueAfterLine: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Reed Good VI
+    Speaker: Reed
+    text: Maybe I am a little over the top now...
+    lineTone: 0
+    NPCGender: male
+    NextLineID: Darry Good Response VI
+    endDialogueAfterLine: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Reed Bad VI
+    Speaker: Reed
+    text: I don't think I've chewed you out enough yet, to be honest.
+    lineTone: 0
+    NPCGender: male
+    NextLineID: Darry Bad Response VI
+    endDialogueAfterLine: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Darry Good Response VI
+    Speaker: Darry
+    text: Honestly, I could have been a lot better myself. I wanted to sweep the
+      broken TV under the rug, so I went behind your back and took your car, but
+      I promise I only had good intentions.
+    lineTone: 0
+    NPCGender: male
+    NextLineID: 
+    endDialogueAfterLine: 0
+    choices:
+    - text: Tell him that you believe him.
+      NextLineID: Reed Good VII
+      moralityChange: 1
+      direction: 0
+      objectiveToActivate: 
+    - text: Maintain that you can't forgive him.
+      NextLineID: Reed Bad VII
+      moralityChange: -1
+      direction: 1
+      objectiveToActivate: 
+    objectivesToActivate: []
+  - LineID: Darry Bad Response VI
+    Speaker: Darry
+    text: Reed. You're actually freaking me out now. Are you hearing yourself? Are
+      you really willing to blow things up between us because of this?
+    lineTone: 0
+    NPCGender: male
+    NextLineID: 
+    endDialogueAfterLine: 0
+    choices:
+    - text: Tell him that you believe him.
+      NextLineID: Reed Good VII
+      moralityChange: 1
+      direction: 0
+      objectiveToActivate: 
+    - text: Maintain that you can't forgive him.
+      NextLineID: Reed Bad VII
+      moralityChange: -1
+      direction: 1
+      objectiveToActivate: 
+    objectivesToActivate: []
+  - LineID: Reed Good VII
+    Speaker: Reed
+    text: Okay. I believe you, and I'm sorry for overreacting.
+    lineTone: 0
+    NPCGender: male
+    NextLineID: Good End
+    endDialogueAfterLine: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Reed Bad VII
+    Speaker: Reed
+    text: You always do dumb stuff like this Derry! You can't ever be straightforward.
+      I don't think I can forgive you this time.
+    lineTone: 0
+    NPCGender: male
+    NextLineID: Bad End
+    endDialogueAfterLine: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Good End
+    Speaker: Darry
+    text: Okay. Let's take some time to cool off, then maybe watch the game later.
+    lineTone: 0
+    NPCGender: male
+    NextLineID: 
+    endDialogueAfterLine: 1
+    choices: []
+    objectivesToActivate:
+    - talkToTownfolk
+  - LineID: Bad End
+    Speaker: Darry
+    text: Then I guess this can't be fixed. Not right now, anyways.
+    lineTone: 0
+    NPCGender: male
+    NextLineID: 
+    endDialogueAfterLine: 1
+    choices: []
+    objectivesToActivate:
+    - talkToTownfolk

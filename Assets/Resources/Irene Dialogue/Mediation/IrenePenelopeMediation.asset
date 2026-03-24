@@ -1,0 +1,270 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e28c2e20bb6c4240a55d8edffb777ec, type: 3}
+  m_Name: IrenePenelopeMediation
+  m_EditorClassIdentifier: Assembly-CSharp::NewDialogueData
+  npcName: Penelope
+  dialogueLines:
+  - LineID: Start
+    Speaker: Penelope
+    text: Come on Irene! Who cares if the fog is thick, think of the memories we'll
+      make!
+    lineTone: 0
+    NPCGender: female
+    NextLineID: 
+    endDialogueAfterLine: 0
+    choices:
+    - text: Try to sympathize but advise caution.
+      NextLineID: Good
+      moralityChange: 1
+      direction: 0
+      objectiveToActivate: 
+    - text: Give a stern NO.
+      NextLineID: Bad
+      moralityChange: -1
+      direction: 1
+      objectiveToActivate: 
+    objectivesToActivate: []
+  - LineID: Good
+    Speaker: Irene
+    text: Penny, I think it'd be fun, but this fog is too dense. We could get lost,
+      or worse...
+    lineTone: 0
+    NPCGender: female
+    NextLineID: Adventurous
+    endDialogueAfterLine: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Bad
+    Speaker: Irene
+    text: Penelope, no. You can't see five feet in front of you with this fog, it's
+      too dangerous. There'll be other parties.
+    lineTone: 0
+    NPCGender: female
+    NextLineID: Buzzkill
+    endDialogueAfterLine: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Adventurous
+    Speaker: Penelope
+    text: We could get lost...OR we could have the night of our lives! Come on, Irene,
+      ta-loo-rye-aye, come on, Irene...
+    lineTone: 0
+    NPCGender: female
+    NextLineID: 
+    endDialogueAfterLine: 0
+    choices:
+    - text: Double down on safety.
+      NextLineID: Safety
+      moralityChange: 1
+      direction: 0
+      objectiveToActivate: 
+    - text: Tell her to give it up.
+      NextLineID: Impatience
+      moralityChange: -1
+      direction: 1
+      objectiveToActivate: 
+    - text: Acknowledge the joke as stupid but funny.
+      NextLineID: Joke
+      moralityChange: 1
+      direction: 2
+      objectiveToActivate: 
+    objectivesToActivate: []
+  - LineID: Buzzkill
+    Speaker: Penelope
+    text: Ughhh you're such a buzzkill sometimes Irene! You've always got some excuse
+      to not go when you get invited to something fun.
+    lineTone: 0
+    NPCGender: female
+    NextLineID: 
+    endDialogueAfterLine: 0
+    choices:
+    - text: Maintain that you just want to be safe.
+      NextLineID: Safety
+      moralityChange: 1
+      direction: 0
+      objectiveToActivate: 
+    - text: Tell her to give it up.
+      NextLineID: Impatience
+      moralityChange: -1
+      direction: 1
+      objectiveToActivate: 
+    - text: Brush off the insult.
+      NextLineID: Turn The Cheek
+      moralityChange: 1
+      direction: 2
+      objectiveToActivate: 
+    - text: Insult her back.
+      NextLineID: Ditz
+      moralityChange: -1
+      direction: 3
+      objectiveToActivate: 
+    objectivesToActivate: []
+  - LineID: Joke
+    Speaker: Irene
+    text: Okay, that was kinda funny in a stupid way...but I'm Irene, not Eileen,
+      and I'm not going through that fog.
+    lineTone: 0
+    NPCGender: female
+    NextLineID: Safety
+    endDialogueAfterLine: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Turn The Cheek
+    Speaker: Irene
+    text: Do you really need to be so mean Penny?
+    lineTone: 0
+    NPCGender: female
+    NextLineID: Safety
+    endDialogueAfterLine: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Safety
+    Speaker: Irene
+    text: Listen, I just want us to be safe, okay? Why don't we just stay in and
+      play Animal Crossing, or maybe watch a movie.
+    lineTone: 0
+    NPCGender: female
+    NextLineID: PenelopeParty
+    endDialogueAfterLine: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Impatience
+    Speaker: Irene
+    text: Penelope, can you listen to someone other than yourself for once? It's
+      not a good idea.
+    lineTone: 0
+    NPCGender: female
+    NextLineID: Penelope Upset
+    endDialogueAfterLine: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Ditz
+    Speaker: Irene
+    text: I'd rather be a buzzkill than a ditz. I mean seriously, you can be so stupid
+      sometimes. Do I really have to tell you that it's a bad idea to go into a dark,
+      foggy forest?
+    lineTone: 0
+    NPCGender: female
+    NextLineID: Penelope Upset
+    endDialogueAfterLine: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Penelope Upset
+    Speaker: Penelope
+    text: Wow! It's cool if you're too scared to ever have fun, but you don't need
+      to take it out on me Irene!
+    lineTone: 0
+    NPCGender: female
+    NextLineID: 
+    endDialogueAfterLine: 0
+    choices:
+    - text: Apologize for your impatience.
+      NextLineID: Apologize
+      moralityChange: 1
+      direction: 0
+      objectiveToActivate: 
+    - text: Tell her that having fun and being stupid aren't the same.
+      NextLineID: Don't Be Dumb
+      moralityChange: -1
+      direction: 1
+      objectiveToActivate: 
+    objectivesToActivate: []
+  - LineID: Penelope Party
+    Speaker: Penelope
+    text: Our neighborhoods will be there tomorrow, this party might never happen
+      again!
+    lineTone: 0
+    NPCGender: female
+    NextLineID: 
+    endDialogueAfterLine: 0
+    choices:
+    - text: Tell her she can go if she wants, but you're staying back.
+      NextLineID: Go Your Own Way
+      moralityChange: 1
+      direction: 0
+      objectiveToActivate: 
+    - text: Tell her that you don't care what she does.
+      NextLineID: I Don't Care Anymore
+      moralityChange: -1
+      direction: 1
+      objectiveToActivate: 
+    objectivesToActivate: []
+  - LineID: Apologize
+    Speaker: Irene
+    text: Penny...I'm sorry I lost my patience, okay?
+    lineTone: 0
+    NPCGender: female
+    NextLineID: Go Your Own Way
+    endDialogueAfterLine: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Go Your Own Way
+    Speaker: Irene
+    text: Look, if you really don't wanna miss the party, go. I don't think it's
+      safe, so I'll stay back okay?
+    lineTone: 0
+    NPCGender: female
+    NextLineID: Go Your Own Way II
+    endDialogueAfterLine: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Don't Be Dumb
+    Speaker: Irene
+    text: You can have fun without doing things that are dumb and potentially dangerous.
+      I'm trying to offer alternatives but you aren't hearing it.
+    lineTone: 0
+    NPCGender: female
+    NextLineID: Don't Be Dumb II
+    endDialogueAfterLine: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: I Don't Care Anymore
+    Speaker: Irene
+    text: Do whatever you want Penelope. If you really think the FOMO will kill you
+      before crashing into a tree because of the fog does, just go.
+    lineTone: 0
+    NPCGender: female
+    NextLineID: I Don't Care Anymore II
+    endDialogueAfterLine: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Go Your Own Way II
+    Speaker: Penelope
+    text: Alright. I'll miss you, but I'm sure you'll miss me even more! Later!
+    lineTone: 0
+    NPCGender: female
+    NextLineID: 
+    endDialogueAfterLine: 1
+    choices: []
+    objectivesToActivate: []
+  - LineID: Don't Be Dumb II
+    Speaker: Penelope
+    text: I guess I'm not. Or maybe I'm tired of hearing it after so many times!
+      If you don't want to spend time with me, just say that. Enjoy staying inside
+      for the millionth time!
+    lineTone: 0
+    NPCGender: female
+    NextLineID: 
+    endDialogueAfterLine: 1
+    choices: []
+    objectivesToActivate: []
+  - LineID: I Don't Care Anymore II
+    Speaker: Penelope
+    text: What a nice thing to say Irene! Since you're convinced I'm gonna wrap myself
+      around a tree, I'll go do just that on my way to the party! B*%#!.
+    lineTone: 0
+    NPCGender: female
+    NextLineID: 
+    endDialogueAfterLine: 1
+    choices: []
+    objectivesToActivate: []
