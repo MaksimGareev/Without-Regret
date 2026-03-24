@@ -31,8 +31,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0.33, z: 0.602}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 248612666634540349}
+  m_Children: []
   m_Father: {fileID: 7298141654338863716}
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!33 &7047860427567931702
@@ -141,13 +140,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8429446406292676175}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0.13905334, y: -1.06, z: -0.23}
-  m_LocalScale: {x: 0.009614966, y: 0.009614964, z: 0.009614964}
+  m_LocalRotation: {x: 0.711741, y: -0.70237637, z: -0.0068822517, w: 0.0067129894}
+  m_LocalPosition: {x: 0.006, y: -0.002, z: -0.208}
+  m_LocalScale: {x: 0.0032247577, y: 0.003224758, z: 0.0032247577}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1700388863833468433}
-  m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
+  m_Father: {fileID: 4457124451695644629}
+  m_LocalEulerAnglesHint: {x: -179.994, y: 1.102005, z: 89.241}
 --- !u!33 &2195511831328867590
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -337,6 +336,8 @@ MonoBehaviour:
   FollowDistance: 1
   FollowSpeed: 2.25
   RotationSpeed: 2.25
+  BaseSpeed: 3.5
+  SprintingSpeed: 6
   IsFollowing: 0
   dialogueTrigger: {fileID: 1311592278050812008}
   targetSpot: {fileID: 0}
@@ -609,12 +610,20 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 4851352496530017046, guid: a95f9603f40846d4491a3e0f60a3654c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 248612666634540349}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: a95f9603f40846d4491a3e0f60a3654c, type: 3}
       insertIndex: -1
       addedObject: {fileID: 349482740540396060}
   m_SourcePrefab: {fileID: 100100000, guid: a95f9603f40846d4491a3e0f60a3654c, type: 3}
+--- !u!4 &4457124451695644629 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4851352496530017046, guid: a95f9603f40846d4491a3e0f60a3654c, type: 3}
+  m_PrefabInstance: {fileID: 9117982158150337731}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &8235110813705943442 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: a95f9603f40846d4491a3e0f60a3654c, type: 3}

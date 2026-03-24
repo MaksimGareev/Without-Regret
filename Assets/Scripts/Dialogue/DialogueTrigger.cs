@@ -19,6 +19,8 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
     public FaceHandler faceHandler;
 
     private Animator playerAnimator;
+    private CharacterSwap characterSwap;
+
     private Coroutine playerTalkRoutine;
     public float interactionPriority => 10f;
     public InteractType interactType => InteractType.Dialogue;
@@ -97,13 +99,22 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
 
     private void Awake()
     {
+        characterSwap = FindObjectOfType<CharacterSwap>();
+
+        if (characterSwap != null)
+        {
+            playerAnimator = characterSwap.GetAnimator();
+
+            characterSwap.onAnimatorChanged += UpdateAnimator;
+        }
+
         //controls = new PlayerControls();
 
-       // controls.Player.Interact.performed += ctx => TryInteract();
+        // controls.Player.Interact.performed += ctx => TryInteract();
     }
 
-   // private void OnEnable() => controls.Enable();
-   // private void OnDisable() => controls.Disable();
+    // private void OnEnable() => controls.Enable();
+    // private void OnDisable() => controls.Disable();
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -620,6 +631,12 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
             animator.SetBool(parameter, value);
         */
     }
+
+    void UpdateAnimator(Animator newAnimator)
+    {
+        playerAnimator = newAnimator;
+    }
+
 
     private bool HasParameter(string paramName)
     {

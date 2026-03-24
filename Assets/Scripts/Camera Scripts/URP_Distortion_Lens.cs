@@ -7,14 +7,14 @@ public class URP_Distortion_Lens : MonoBehaviour
 {
     [Header("Wobble Settings")]
     // WOBBLYWIGGLYWOBBYWIGGILYWOBILLYWIGGILY OOOOOOOOOOOOOOOOoooooo WOAH WOAH SWUUBLE THAT WOBBILYWIGGILYWOBBILYWOBBILYWOBBILYWIGGILY🥀😭💀😭🥀😭💀😭🥀😭😭💀😭😭🥀😭😭
-    
-    [SerializeField] private float frequency = 1f;      // how often intensity changes
-    [SerializeField] private float rigidness = 5f;      // how smoothly it moves
-    [SerializeField] private float maxIntensity = 30f;  // max distortion amount
-    [SerializeField] private Volume globalVolume;       // select global volume
+    [SerializeField] private float frequency = 1.0f;        // how often intensity changes
+    [SerializeField] private float rigidness = 5.0f;        // how smoothly it moves
+    [SerializeField] private float maxIntensity = 0.42f;    // max distortion amount
+    [SerializeField] private Volume globalVolume;           // select global volume
+    private float initialIntensity;                         // Save the initial value of the intensity for updating at runtime.
 
     private LensDistortion lens;
-    private bool stop = false;
+    private bool stop = true;
 
     void Start()
     {
@@ -35,9 +35,12 @@ public class URP_Distortion_Lens : MonoBehaviour
 
         if (lens.intensity.value == 0)
             lens.intensity.value = -10f;
-
-        // start the wobble 🥀😭💀😭🥀😭💀😭🥀😭😭💀😭😭🥀😭😭 effect
-        TriggerWobble();
+        
+        // Save the initial intensity value for later updates
+        initialIntensity = maxIntensity;
+        
+        // Apply the intensity multiplier from settings and start the wobble 🥀😭💀😭🥀😭💀😭🥀😭😭💀😭😭🥀😭😭 effect
+        UpdateIntensity(PlayerPrefs.GetInt("astralDistortion"));
     }
 
     public void StopWobble()
@@ -80,5 +83,20 @@ public class URP_Distortion_Lens : MonoBehaviour
         }
 
         lens.intensity.value = 0f;
+    }
+
+    // Update max intensity based on the initial value and the new multiplier
+    public void UpdateIntensity(int intensityMultiplier)
+    {
+        maxIntensity = initialIntensity * (intensityMultiplier /  100.0f);
+        
+        if (Mathf.Approximately(maxIntensity, 0f))
+        {
+            StopWobble();
+        }
+        else if (stop && !Mathf.Approximately(maxIntensity, 0f))
+        {
+            TriggerWobble();
+        }
     }
 }
