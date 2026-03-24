@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e28c2e20bb6c4240a55d8edffb777ec, type: 3}
+  m_Name: SteveyComplete
+  m_EditorClassIdentifier: Assembly-CSharp::NewDialogueData
+  npcName: Stevey
+  dialogueLines:
+  - LineID: Complete
+    Speaker: Stevey
+    text: There ya go, you're a natural! Heck I'd say you've practiced this before.
+    lineTone: 1
+    NPCGender: male
+    NextLineID: II
+    endDialogueAfterLine: 0
+    choices: []
+  - LineID: Answer 1
+    Speaker: Irene
+    text: Now, get out there and get into trouble. Gotta do it while you're young!
+    lineTone: 0
+    NPCGender: female
+    NextLineID: 
+    endDialogueAfterLine: 1
+    choices: []

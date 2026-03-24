@@ -76,7 +76,17 @@ public class RemoveableObject : MonoBehaviour, IInteractable
 
     public bool CanInteract(GameObject player)
     {
-        return interactable;
+        if (!interactable) return false;
+
+        // if no item required allow interaction
+        if (requiredItem == null) return true;
+
+        if (player.TryGetComponent<Inventory>(out var items))
+        {
+            return items.KeyItems.Contains(requiredItem);
+        }
+
+        return false;
     }
 
     public void SetInteractable(bool state)

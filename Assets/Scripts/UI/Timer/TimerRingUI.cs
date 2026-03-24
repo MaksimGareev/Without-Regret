@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
 
 public class TimerRingUI : MonoBehaviour
 {
@@ -27,12 +28,25 @@ public class TimerRingUI : MonoBehaviour
     [SerializeField] private Sprite portraitOneThird;
     [SerializeField] private Sprite portraitEmpty;
 
+    [Header("Animation")]
+    public Animator animator;
+    private CharacterSwap characterSwap;
+
     public RingState currentRingState;
     public static TimerRingUI Instance { get; private set; }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Awake()
     {
+        characterSwap = FindObjectOfType<CharacterSwap>();
+
+        if (characterSwap != null)
+        {
+            animator = characterSwap.GetAnimator();
+
+            characterSwap.onAnimatorChanged += UpdateAnimator;
+        }
+
         SetRingState(RingState.Full);
 
         if (Instance == null)
@@ -42,6 +56,14 @@ public class TimerRingUI : MonoBehaviour
         else
         {
             Destroy(gameObject);
+        }
+    }
+
+    public void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            SubtractRingSection(1);
         }
     }
 
@@ -96,6 +118,7 @@ public class TimerRingUI : MonoBehaviour
         {
             Debug.Log("Timer has run out! Triggering end game sequence.");
             GameOverManager.Instance.TriggerGameOver();
+            animator.SetBool("GameOver", true);
         }
         else
         {
@@ -111,6 +134,8 @@ public class TimerRingUI : MonoBehaviour
                 ringImage.sprite = ringFull;
                 portraitImage.sprite = portraitFull;
                 currentRingState = RingState.Full;
+                //animator.SetBool("GameOver", false);
+                //animator.SetBool("GameOverLoop", false);
                 break;
             case RingState.TwoThirds:
                 ringImage.sprite = ringTwoThirds;
@@ -129,4 +154,15 @@ public class TimerRingUI : MonoBehaviour
                 break;
         }
     }
+    void UpdateAnimator(Animator newAnimator)
+    {
+        animator = newAnimator;
+    }
+
+    IEnumerator wait()
+    {
+        yield return new WaitForSeconds(1);
+        animator.SetBool("GameOverLoop", true);
+    }
+
 }
