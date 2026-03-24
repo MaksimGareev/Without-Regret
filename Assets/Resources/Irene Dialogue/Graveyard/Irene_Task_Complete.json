@@ -71,32 +71,72 @@
             "requiredMorality": 0,
             "choices": [
                 {
-                    "text": "Irene, you can't blame yourself for what happened.",
+                    "text": "You can't blame yourself.",
                     "moralityChange": 1,
                     "directionString": "Up",
-                    "NextLineID": "Good response 2"
+                    "NextLineID": "Good response 1"
                 },
                 {
-                    "text": "That's the last thing Penelope would want you to think.",
+                    "text": "That's the last thing she'd think.",
                     "nextIndex": 6,
                     "moralityChange": 1,
                     "directionString": "Right",
-                    "NextLineID": "Good response 2"
+                    "NextLineID": "Good response 1b"
                 },
                 {
-                    "text": "If you were so worried, why didn't you go?",
+                    "text": "Why didn't you go?",
                     "moralityChange": -1,
                     "directionString": "Down",
-                    "NextLineID": "Bad response 2"
+                    "NextLineID": "Bad response 1"
                 },
                 {
-                    "text": "That's stupid. Why would it be your fault?",
+                    "text": "That's stupid, how's it your fault?",
                     "nextIndex": 7,
                     "moralityChange": -1,
                     "directionString": "Left",
-                    "NextLineID": "Bad response 2"
+                    "NextLineID": "Bad response 1b"
                 }
             ]
+        },
+        {
+            "LineID": "Good response 1",
+            "Speaker": "Echo",
+            "NPCGender": "female",
+            "text": "Irene...you can't blame yourself for what happened.",
+            "lineTone": 0,
+            "requiredMorality": 1,
+            "NextLineID": "Good response 2",
+            "choices": []
+        },
+        {
+            "LineID": "Good response 1b",
+            "Speaker": "Echo",
+            "NPCGender": "female",
+            "text": "The LAST thing Penelope would think is that it was your fault, Irene. When she was set on something, she was set.",
+            "lineTone": 0,
+            "requiredMorality": 1,
+            "NextLineID": "Good response 2",
+            "choices": []
+        },
+        {
+            "LineID": "Bad response 1",
+            "Speaker": "Echo",
+            "NPCGender": "female",
+            "text": "If you were so worried, why didn't you go, Irene?",
+            "lineTone": 0,
+            "requiredMorality": 1,
+            "NextLineID": "Bad response 2",
+            "choices": []
+        },
+        {
+            "LineID": "Bad response 1b",
+            "Speaker": "Echo",
+            "NPCGender": "female",
+            "text": "Irene, that's stupid. Think about it, how could it have possibly been your fault?",
+            "lineTone": 0,
+            "requiredMorality": 1,
+            "NextLineID": "Bad response 2",
+            "choices": []
         },
         {
             "LineID": "Good response 2",

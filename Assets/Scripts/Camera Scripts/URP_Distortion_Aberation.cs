@@ -9,12 +9,15 @@ public class URP_Distortion_Aberation : MonoBehaviour
     [SerializeField] private float speed = 1f; 
     [SerializeField, UnityEngine.Min(0)] private float minIntensity = 0f;
     [SerializeField, UnityEngine.Min(0)] private float maxIntensity = 1f;
+    private float initialMaxIntensity; // Store the initial max intensity for updates
+    private float initialMinIntensity; // Store the initial min intensity for updates
+    private float intensityMultiplier = 1f;
 
     [Header("Volume Reference")]
     [SerializeField] private Volume globalVolume; // Global Volume here
 
     private ChromaticAberration chromaticAberration; 
-    private bool stop = false; 
+    private bool stop = true;
 
     void Start()
     {
@@ -29,12 +32,16 @@ public class URP_Distortion_Aberation : MonoBehaviour
         {
             chromaticAberration = globalVolume.profile.Add<ChromaticAberration>(true);
         }
+        
+        // Save initial settings for later updates
+        initialMaxIntensity = maxIntensity;
+        initialMinIntensity = minIntensity;
 
         // make sure intensity override is enabled
         chromaticAberration.intensity.overrideState = true;
-
-        // start the wobble/dizzyness effect
-        TriggerDizzyness();
+        
+        // Apply distortion intensity from settings
+        UpdateIntensity(PlayerPrefs.GetInt("astralDistortion"));
     }
 
     public void StopDizzyness()
@@ -54,7 +61,7 @@ public class URP_Distortion_Aberation : MonoBehaviour
 
         while (!stop || (stop && chromaticAberration.intensity.value > minIntensity))
         {
-            chromaticAberration.intensity.value += direction * speed * Time.deltaTime;
+            chromaticAberration.intensity.value += direction * intensityMultiplier * speed * Time.deltaTime;
 
             if (chromaticAberration.intensity.value <= minIntensity)
             {
@@ -67,6 +74,24 @@ public class URP_Distortion_Aberation : MonoBehaviour
                 direction = -1; 
             }
             yield return null;
+        }
+    }
+
+    // Update max intensity based on the initial value and the new multiplier
+    public void UpdateIntensity(int newIntensityMultiplier)
+    {
+        intensityMultiplier = newIntensityMultiplier / 100.0f;
+        
+        maxIntensity = initialMaxIntensity * intensityMultiplier;
+        minIntensity = initialMinIntensity * intensityMultiplier;
+        
+        if (Mathf.Approximately(intensityMultiplier, 0f))
+        {
+            StopDizzyness();
+        }
+        else if (stop && !Mathf.Approximately(intensityMultiplier, 0f))
+        {
+            TriggerDizzyness();
         }
     }
 }
