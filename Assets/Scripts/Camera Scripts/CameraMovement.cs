@@ -730,6 +730,15 @@ public class CameraMovement : MonoBehaviour
         }
     }
 
+    public void SetTarget(Transform newTarget)
+    {
+        target = newTarget;
+
+        playerController = newTarget.GetComponent<PlayerController>();
+        pc = playerController;
+        toggleInventoryUI = newTarget.GetComponent<ToggleInventoryUI>();
+    }
+
     public void ResetRotationSettings()
     {
         rotateCamera = cachedRotateCamera;

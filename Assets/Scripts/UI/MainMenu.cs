@@ -18,7 +18,7 @@ public class MainMenu : MonoBehaviour
 
     [Header("UI Panels")]
     [SerializeField] public GameObject mainMenuPanel;
-    [SerializeField] private MMSettings settingsScript;
+    [SerializeField] private SettingsMenu settingsScript;
     [SerializeField] private GameObject settingsPanel;
     [SerializeField] private GameObject creditsPanel;
     [SerializeField] private GameObject saveSlotsPanel;
@@ -294,7 +294,7 @@ public class MainMenu : MonoBehaviour
     {
         if (saveManager.AnySavesExist())
         {
-            playButtonText.text = "Continue";
+            playButtonText.text = "Play Game";
         }
         else
         {
