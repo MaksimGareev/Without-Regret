@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using UnityEngine.AI;
 
 [RequireComponent(typeof(Rigidbody), typeof(Collider))]
 public class MoveableObject : MonoBehaviour, IInteractable
@@ -29,9 +30,12 @@ public class MoveableObject : MonoBehaviour, IInteractable
 
     [Header("Transform Settings")]
     [SerializeField] private Vector3 heldPositionOffset = Vector3.zero;
+    [SerializeField] private bool applyHeldRotationOffset = false;
+    [SerializeField] private Vector3 heldRotationOffset = Vector3.zero;
 
     private Rigidbody rb;
     private PlayerMovingObjects mover;
+    private NavMeshObstacle navMeshObstacle;
 
     public bool IsGrabbed { get; private set; } = false;
     public bool isGrabbable = true;
@@ -51,6 +55,12 @@ public class MoveableObject : MonoBehaviour, IInteractable
         coll = GetComponent<Collider>();
 
         trigger = coll.isTrigger;
+        if (TryGetComponent<NavMeshObstacle>(out var obstacle))
+        {
+            navMeshObstacle = obstacle;
+        }
+
+        PlayerComponents.InitializeComponents(gameObject);
     }
 
     public bool CanInteract(GameObject player)
@@ -94,10 +104,18 @@ public class MoveableObject : MonoBehaviour, IInteractable
         rb.constraints = RigidbodyConstraints.FreezeAll;
         rb.isKinematic = true;
 
-       coll.isTrigger = true;
+        coll.isTrigger = true;
+        if (navMeshObstacle != null)
+        {
+            navMeshObstacle.enabled = false;
+        }
 
         // Apply offsets after parenting (Rotate in world space to maintain rotation at time of grabbing)
         transform.localPosition += heldPositionOffset;
+        if (applyHeldRotationOffset)
+        {
+            transform.Rotate(heldRotationOffset, Space.World);
+        }
 
         // remove Icon
         if (ButtonIcons.Instance != null)
@@ -115,6 +133,10 @@ public class MoveableObject : MonoBehaviour, IInteractable
         rb.WakeUp();
 
         coll.isTrigger = trigger;
+        if (navMeshObstacle != null)
+        {
+            navMeshObstacle.enabled = true;
+        }
     }
 
     public void OnPlayerInteraction(GameObject player)

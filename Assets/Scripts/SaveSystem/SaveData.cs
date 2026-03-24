@@ -10,6 +10,7 @@ public class SaveData
     public GateListSaveData gateListSaveData;
     public FriendlyNPCListSaveData friendlyNPCListSaveData;
     public EnemyNPCListSaveData enemyNPCListSaveData;
+    public JournalSaveData journalSaveData;
     public int slot = 1;
 
     public SaveData(int slot)
@@ -22,5 +23,6 @@ public class SaveData
         gateListSaveData = new GateListSaveData();
         friendlyNPCListSaveData = new FriendlyNPCListSaveData();
         enemyNPCListSaveData = new EnemyNPCListSaveData();
+        journalSaveData = new JournalSaveData();
     }
 }

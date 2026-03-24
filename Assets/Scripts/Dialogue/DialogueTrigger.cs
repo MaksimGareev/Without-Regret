@@ -49,6 +49,10 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
     [Tooltip("Objective data that will be progressed when talking to the NPC such as talking to Irene to complete the meet irene objective")]
     public ObjectiveData linkedObjective;
 
+    [Header("Entry to add to the journal (if applicable)")]
+    [Tooltip("Adds the journal entry to the characters page. If this NPC's name already has an entry, the current description will be overwritten.")]
+    [SerializeField] private JournalEntry journalEntry;
+
     [Header("Looking at player variables")]
     [Tooltip("A bool that is used to identify if a dialogue interaction is a mediation making the NPC not look at the player")]
     public bool IsMediation = false;
@@ -270,6 +274,12 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
 
         // PlayerController.DialogueActive = true;
         DisablePopupIcon();
+
+        // Add character to the journal if possible
+        if (journalEntry != null && Journal.Instance != null)
+        {
+            Journal.Instance.AddCharacterEntry(journalEntry.name, journalEntry.entryDescription);
+        }
 
         isLookingAtPlayer = true;
         if (IsMediation)
