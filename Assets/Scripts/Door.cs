@@ -16,6 +16,8 @@ public class Door : MonoBehaviour, IInteractable
 
     // Player
     private Transform player;
+    private Animator animator;
+    private CharacterSwap characterSwap;
     [Header("Objective Settings")]
     [Tooltip("Objective that must be ACTIVE to allow the player to interact with this door. If the player has not ACTIVE the linked objective, they will not be able to interact with the door.")]
     public ObjectiveData linkedObjective;
@@ -36,6 +38,15 @@ public class Door : MonoBehaviour, IInteractable
 
     private void Awake()
     {
+        characterSwap = FindObjectOfType<CharacterSwap>();
+
+        if (characterSwap != null)
+        {
+            animator = characterSwap.GetAnimator();
+
+            characterSwap.onAnimatorChanged += UpdateAnimator;
+        }
+
         audioSource = gameObject.AddComponent<AudioSource>();
         audioSource.playOnAwake = false;
     }
@@ -43,6 +54,7 @@ public class Door : MonoBehaviour, IInteractable
     private void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player").transform;
+        animator = player.GetComponentInChildren<Animator>();
     }
 
     void Update()
@@ -74,6 +86,10 @@ public class Door : MonoBehaviour, IInteractable
 
     public void OnPlayerInteraction(GameObject player)
     {
+        if (animator != null)
+        {
+            animator.SetTrigger("DoorOpen");
+        }
         if (interactSound != null)
         {
             audioSource.PlayOneShot(interactSound);
@@ -135,5 +151,11 @@ public class Door : MonoBehaviour, IInteractable
             SceneManager.LoadScene(sceneToLoad.GetSceneName());
         }        
     }
+
+    void UpdateAnimator(Animator newAnimator)
+    {
+        animator = newAnimator;
+    }
+
 }
 
