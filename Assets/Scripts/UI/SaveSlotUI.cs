@@ -166,7 +166,6 @@ public class SaveSlotUI : MonoBehaviour
     private void NewGame(int slot = 1)
     {
         SaveManager.Instance.SetActiveSaveSlot(slot);
-        SaveManager.Instance.LoadGame(slot);
 
         if (GameManager.Instance != null && GameManager.Instance.sceneLoadManager != null)
         {
@@ -177,6 +176,8 @@ public class SaveSlotUI : MonoBehaviour
             Debug.LogError("SceneLoadManager reference is missing in the GameManager. Loading scene directly without fade transition.");
             SceneLoadManager.Instance.LoadScene(firstScene.GetSceneName());
         }
+        
+        SaveManager.Instance.LoadGame(slot);
 
         Debug.Log("Starting New Game...");
     }
