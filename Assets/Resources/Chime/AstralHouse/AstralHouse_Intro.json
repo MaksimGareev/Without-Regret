@@ -8,30 +8,93 @@
       "requiredMorality": 0,
       "choices": [
         {
-          "text": "Why does everything look...different?",
-          "NextLineID": "part 2",
+          "text": "Why does everything look strange?",
+          "NextLineID": "part 1",
           "moralityChange": 1,
-          "directionString": "Up"
+          "directionString": "Right"
         },
         {
           "text": "Who the **** are you?!",
-          "NextLineID": "part 2",
+          "NextLineID": "part 1 confused",
           "moralityChange": -1,
           "directionString": "Down"
         },
         {
-          "text": "This is what I get for eating random berries in the forest.",
-          "NextLineID": "part 2",
+          "text": "Shouldn't have eaten those berries.",
+          "NextLineID": "part 1 berries",
           "moralityChange": 1,
           "directionString": "Left"
         },
         {
-          "text": "Can you get away from me? Like, right now?",
-          "NextLineID": "part 2",
+          "text": "Get away from me.",
+          "NextLineID": "part 1 get away",
           "moralityChange": -1,
-          "directionString": "Right"
+          "directionString": "Up"
         }
       ]
+    },
+    {
+      "LineID": "part 1",
+      "Speaker": "Echo",
+      "lineTone": 0,
+      "text": "Hello weird fairy...thing. Could you tell me why everything looks like I'm seeing it through a purple fishbowl?",
+      "NextLineID": "part 2",
+      "requiredMorality": 0,
+      "choices": []
+    },
+    {
+      "LineID": "part 1 confused",
+      "Speaker": "Echo",
+      "lineTone": 0,
+      "text": "Yeah, I'm awake now. Mind telling me who the f*#% you are?!",
+      "NextLineID": "part 2 confused",
+      "requiredMorality": 0,
+      "choices": []
+    },
+    {
+      "LineID": "part 1 berries",
+      "Speaker": "Echo",
+      "lineTone": 0,
+      "text": "You know, being around a forest my whole life, I should've known better than to eat those berries.",
+      "NextLineID": "part 2 berries",
+      "requiredMorality": 0,
+      "choices": []
+    },
+    {
+      "LineID": "part 1 get away",
+      "Speaker": "Echo",
+      "lineTone": 0,
+      "text": "Where am I? Who are you? Get away from me.",
+      "NextLineID": "part 2 get away",
+      "requiredMorality": 0,
+      "choices": []
+    },
+    {
+      "LineID": "part 2 confused",
+      "Speaker": "Chime",
+      "lineTone": 0,
+      "text": "Hey! There's no need to be rude, we're more familiar than you think.",
+      "NextLineID": "part 2",
+      "requiredMorality": 0,
+      "choices": []
+    },
+    {
+      "LineID": "part 2 berries",
+      "Speaker": "Chime",
+      "lineTone": 0,
+      "text": "This isn't a wild berry hallucination, silly!",
+      "NextLineID": "part 2",
+      "requiredMorality": 0,
+      "choices": []
+    },
+    {
+      "LineID": "part 2 get away",
+      "Speaker": "Chime",
+      "lineTone": 0,
+      "text": "Relax! I promise, I'm not here to hurt you.",
+      "NextLineID": "part 2",
+      "requiredMorality": 0,
+      "choices": []
     },
     {
       "LineID": "part 2",
@@ -41,30 +104,60 @@
       "requiredMorality": 0,
       "choices": [
         {
-          "text": "What is the 'astral plane?",
-          "NextLineID": "part 3",
+          "text": "What is the 'astral plane'?",
+          "NextLineID": "part 2 what",
           "moralityChange": 1,
-          "directionString": "Up"
-        },
-        {
-          "text": "Respectfully, where the **** am I exactly?",
-          "NextLineID": "part 3",
-          "moralityChange": 1,
-          "directionString": "Left"
-        },
-        {
-          "text": "Yeah, that doesn't make things any clearer.",
-          "NextLineID": "part 3",
-          "moralityChange": -1,
           "directionString": "Down"
         },
         {
-          "text": "Should I even bother? Can I go back to sleep?",
-          "NextLineID": "part 3",
+          "text": "That doesn't make things any clearer.",
+          "NextLineID": "part 2 unclear",
+          "moralityChange": 0,
+          "directionString": "Up"
+        },
+        {
+          "text": "Can I go back to sleep?",
+          "NextLineID": "part 2 sleep",
           "moralityChange": -1,
           "directionString": "Right"
         }
       ]
+    },
+    {
+      "LineID": "part 2 what",
+      "Speaker": "Echo",
+      "lineTone": 0,
+      "text": "Okay...what exactly is this 'Astral Plane' that I'm in now?",
+      "NextLineID": "part 3",
+      "requiredMorality": 0,
+      "choices": []
+    },
+    {
+      "LineID": "part 2 unclear",
+      "Speaker": "Echo",
+      "lineTone": 0,
+      "text": "Yeah...that doesn't make things any clearer, really.",
+      "NextLineID": "part 3",
+      "requiredMorality": 0,
+      "choices": []
+    },
+    {
+      "LineID": "part 2 sleep",
+      "Speaker": "Echo",
+      "lineTone": 0,
+      "text": "Uh-huh. Cool. Can I go back to sleep now?",
+      "NextLineID": "part 3 sleep",
+      "requiredMorality": 0,
+      "choices": []
+    },
+    {
+      "LineID": "part 3 sleep",
+      "Speaker": "Chime",
+      "lineTone": 0,
+      "text": "Are you serious?! You can take a nap later, pay attention!",
+      "NextLineID": "part 3",
+      "requiredMorality": 0,
+      "choices": []
     },
     {
       "LineID": "part 3",
@@ -93,36 +186,72 @@
       "choices": [
         {
           "text": "Yes, I can!",
-          "NextLineID": "good",
+          "NextLineID": "good 1",
           "moralityChange": 1,
-          "directionString": "Up"
+          "directionString": "Down"
         },
         {
           "text": "I'm not sure, but I'll try.",
-          "NextLineID": "good",
+          "NextLineID": "good 1b",
           "moralityChange": 1,
           "directionString": "Left"
         },
         {
-          "text": "Why should I? I've got my own problems.",
-          "NextLineID": "bad",
+          "text": "I've got my own problems.",
+          "NextLineID": "bad 1",
           "moralityChange": -1,
-          "directionString": "Down"
+          "directionString": "Up"
         },
         {
-          "text": "You know, you're asking a lot of someone who just woke up.",
-          "NextLineID": "bad",
+          "text": "I JUST woke up.",
+          "NextLineID": "bad 1b",
           "moralityChange": -1,
           "directionString": "Right"
         }
       ]
     },
     {
+      "LineID": "good 1",
+      "Speaker": "Echo",
+      "lineTone": 0,
+      "text": "If it's for my friends, then yes, I absolutely can!",
+      "NextLineID": "good",
+      "requiredMorality": 0,
+      "choices": []
+    },
+    {
+      "LineID": "good 1b",
+      "Speaker": "Echo",
+      "lineTone": 0,
+      "text": "I can't confidently say I'll succeed, but I'll give it my best shot.",
+      "NextLineID": "good",
+      "requiredMorality": 0,
+      "choices": []
+    },
+    {
+      "LineID": "bad 1",
+      "Speaker": "Echo",
+      "lineTone": 0,
+      "text": "Man...I've got my own problems. Does it have to be me?",
+      "NextLineID": "bad",
+      "requiredMorality": 0,
+      "choices": []
+    },
+    {
+      "LineID": "bad 1b",
+      "Speaker": "Echo",
+      "lineTone": 0,
+      "text": "You know...you're asking a lot of someone who just woke up. I still haven't wrapped my head around where I am...",
+      "NextLineID": "bad",
+      "requiredMorality": 0,
+      "choices": []
+    },
+    {
       "LineID": "good",
       "Speaker": "Chime",
       "lineTone": 1,
       "text": "That's the spirit! Let's get going.",
-      "NextLineID": "part 6",
+      "NextLineID": "end",
       "requiredMorality": 1,
       "choices": []
     },
@@ -131,27 +260,19 @@
       "Speaker": "Chime",
       "lineTone": 2,
       "text": "Helping the others will fix your biggest problem. Just trust me.",
-      "NextLineID": "part 6",
-      "requiredMorality": -1,
-      "choices": []
-    },
-    {
-      "LineID": "part 6",
-      "Speaker": "Chime",
-      "lineTone": 0,
-      "text": "I saw you grab a map before you went to bed last night, do you still have it?",
       "NextLineID": "end",
-      "requiredMorality": 0,
+      "requiredMorality": -1,
       "choices": []
     },
     {
       "LineID": "end",
       "Speaker": "Chime",
       "lineTone": 0,
-      "text": "Looking at the map, it seems we'll have to go through a gate in The Graveyard. Grab what you need, and when you're ready, we'll head out.",
+      "text": "We'll have to go through a gate in The Graveyard. Grab what you need, and when you're ready, we'll head out.",
       "requiredMorality": 0,
       "objectiveToActivate": "grabBackpack",
-      "choices": []
+      "choices": [],
+      "endDialogueAfterLine": true
     }
   ]
 }

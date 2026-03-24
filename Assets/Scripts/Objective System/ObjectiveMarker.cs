@@ -28,19 +28,9 @@ public class ObjectiveMarker : MonoBehaviour
     {
         if (ScreenSpaceIndicator != null && WorldIndicator != null)
         {
-            ScreenSpaceIndicator.target = gameObject.transform;
+            ScreenSpaceIndicator.target = WorldIndicator.transform;
         }
         ObjectiveManager.Instance.OnObjectiveActivated.AddListener(ObjectiveCompleted);
-    }
-
-    private void DisableIndicator()
-    {
-        WorldIndicator.SetActive(false);
-    }
-
-    private void EnableIndicator()
-    {
-        WorldIndicator.SetActive(true);
     }
 
     private void ObjectiveCompleted(ObjectiveInstance objective)
@@ -61,35 +51,31 @@ public class ObjectiveMarker : MonoBehaviour
                 }
                 else
                 {
-                    WorldIndicator.SetActive(false);
                     ScreenSpaceIndicator.disableIndicator = true;
+                    ScreenSpaceIndicator.disableOnScreenIndicator = true;
                     Debug.Log("No vector value given");
                     return;
                 }
                 
                 if (objective.data.hasMarker)
                 {
-                    WorldIndicator.SetActive(true);
+                    ScreenSpaceIndicator.disableOnScreenIndicator = false;
+                }
+                
+                if (objective.data.hasOffScreenMarker)
+                {
+                    ScreenSpaceIndicator.disableIndicator = false;
                 }
             }
             else
             {
                 Debug.Log("Scenes don't match");
-                WorldIndicator.SetActive(false);
+                ScreenSpaceIndicator.disableIndicator = true;
+                ScreenSpaceIndicator.disableOnScreenIndicator = true;
+                return;
             }
         }
-        else
-        {
-            WorldIndicator.SetActive(false);
-        }
-        if (objective.data.hasOffScreenMarker)
-        {
-            ScreenSpaceIndicator.disableIndicator = false;
-        }
-        else
-        {
-            ScreenSpaceIndicator.disableIndicator = true;
-        }
+        
     }
 
     private void OnSceneLoad()
