@@ -2455,7 +2455,7 @@ PrefabInstance:
       addedObject: {fileID: 1534229579}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: c276f54ebae9ae0408b8140505cce7c0, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1534229572}
+      addedObject: {fileID: 1534229581}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: c276f54ebae9ae0408b8140505cce7c0, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1534229577}
@@ -7761,43 +7761,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: c276f54ebae9ae0408b8140505cce7c0, type: 3}
   m_PrefabInstance: {fileID: 454224885}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1534229572
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1534229567}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a40ba9254f066ed499136723990e8a6f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DialogueTrigger
-  animator: {fileID: 0}
-  isTalking: 0
-  chimeAnimator: {fileID: 0}
-  chimeActive: 0
-  chimeScript: {fileID: 0}
-  faceHandler: {fileID: 0}
-  NPCName: Penelope
-  chatRange: 3
-  playerMovePoint: {fileID: 0}
-  jsonDialogueFile: {fileID: 4900000, guid: 6c267f884924df1408d72ac08c8dd417, type: 3}
-  TalkedJsonDialogueFile: {fileID: 4900000, guid: 9f7e54a860f1775448eed7dd2da92be1, type: 3}
-  CompleteJsonDialogueFile: {fileID: 0}
-  ActiveJsonDialogueFile: {fileID: 0}
-  objectiveIDYouCareAbout: []
-  linkedObjective: {fileID: 11400000, guid: 83f29f5bcb282b3418b708829347b808, type: 2}
-  IsMediation: 0
-  lookSpeed: 5
-  isLookingAtPlayer: 0
-  TalkedAlready: 0
-  iconPrefab: {fileID: 4114033263953508203, guid: 48024210bf4a4394fa37015b90b3b410, type: 3}
-  shouldShowIcon: 1
-  enemy: {fileID: 0}
-  focusCameraOnTrigger: 1
-  RewardItem: {fileID: 0}
-  triggerType: 0
 --- !u!195 &1534229577
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -7861,7 +7824,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Barry
   Speed: 3
   RotationSpeed: 3
-  dialogueTrigger: {fileID: 1534229572}
+  dialogueTrigger: {fileID: 1534229581}
   targetSpot: {fileID: 1740988977}
   lookAtTarget: {fileID: 0}
   isTraveling: 0
@@ -7892,6 +7855,42 @@ CapsuleCollider:
   m_Height: 51.885075
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1534229581
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1534229567}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb6f976906f2747449b6d75a67a35b9d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NewDialogueTrigger
+  animator: {fileID: 0}
+  isTalking: 0
+  chimeAnimator: {fileID: 0}
+  chimeActive: 0
+  chimeScript: {fileID: 0}
+  faceHandler: {fileID: 0}
+  startDialogueFile: {fileID: 11400000, guid: 2f65c114e955f89409cd41807852ffc1, type: 2}
+  talkedDialogueFile: {fileID: 0}
+  taskActiveDialogueFile: {fileID: 0}
+  taskCompleteDialogueFile: {fileID: 0}
+  NPCName: Penelope
+  chatRange: 3
+  objectiveIDsYouCareAbout: []
+  linkedObjective: {fileID: 11400000, guid: 83f29f5bcb282b3418b708829347b808, type: 2}
+  focusCameraOnTrigger: 1
+  playerMovePoint: {fileID: 0}
+  moveSpeed: 2
+  lookSpeed: 6
+  IsMediation: 0
+  hasTalked: 0
+  isLookingAtPlayer: 0
+  enemy: {fileID: 0}
+  RewardItem: {fileID: 0}
+  triggerType: 0
 --- !u!1001 &1568415573
 PrefabInstance:
   m_ObjectHideFlags: 0

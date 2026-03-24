@@ -24,6 +24,11 @@ public class DeadlyFog : MonoBehaviour
     [Header("Reset Point(auto-assigned if child exists)")]
     public Transform resetPoint;
 
+    [Header("Animator")]
+    public Animator animator;
+    private CharacterSwap characterSwap;
+
+
     [Header("Debugging")]
     [Tooltip("If true, debug logs will be printed to the console regarding this script. This can be helpful for troubleshooting and ensuring the reset logic is working as intended, but should be left false when not needed.")]
     public bool showDebugLogs = false;
@@ -35,6 +40,15 @@ public class DeadlyFog : MonoBehaviour
 
     private void Awake()
     {
+        characterSwap = FindObjectOfType<CharacterSwap>();
+
+        if (characterSwap != null)
+        {
+            animator = characterSwap.GetAnimator();
+
+            characterSwap.onAnimatorChanged += UpdateAnimator;
+        }
+
         triggerCollider = GetComponent<Collider>();
 
         if (triggerCollider == null)
@@ -59,6 +73,12 @@ public class DeadlyFog : MonoBehaviour
     private void OnTriggerStay(Collider other)
     {
         PlayerController player = other.GetComponent<PlayerController>();
+        animator = player.GetComponentInChildren<Animator>();
+
+        if (animator != null)
+        {
+            animator.SetTrigger("FogDamage");
+        }
 
         if (player == null)
         {
@@ -273,4 +293,9 @@ public class DeadlyFog : MonoBehaviour
         Gizmos.DrawWireSphere(resetPoint.position, 0.15f);
         Gizmos.DrawLine(transform.position, resetPoint.position);
     }
+    void UpdateAnimator(Animator newAnimator)
+    {
+        animator = newAnimator;
+    }
+
 }

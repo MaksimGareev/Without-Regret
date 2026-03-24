@@ -1,0 +1,67 @@
+{
+    "dialogueLines": [
+        {
+            "LineID": "start",
+            "Speaker": "Irene",
+            "NPCGender": "female",
+            "text": "Thanks for spending the day with me Echo. It really means a lot.",
+            "lineTone": 0,
+            "requiredMorality": 0,
+            "choices": [
+                {
+                    "text": "I'm glad we went together.",
+                    "moralityChange": 1,
+                    "directionString": "Down",
+                    "NextLineID": "Glad I"
+                },
+                {
+                    "text": "Can I go to bed now?",
+                    "nextIndex": 1,
+                    "moralityChange": -1,
+                    "directionString": "Up",
+                    "NextLineID": "Bed I"
+                }
+            ]
+        },
+        {
+            "LineID": "Glad I",
+            "Speaker": "Echo",
+            "NPCGender": "female",
+            "text": "I'm glad I dragged myself out of bed to go with you. I really enjoyed our time together.",
+            "lineTone": 0,
+            "requiredMorality": 0,
+            "NextLineID": "Glad II",
+            "choices": []
+        },
+        {
+            "LineID": "Bed I",
+            "Speaker": "Irene",
+            "NPCGender": "female",
+            "text": "Cool. Can I go sleep now? I was having a really cool dream I want to pick back up.",
+            "lineTone": 0,
+            "requiredMorality": 0,
+            "NextLineID": "Bed II",
+            "choices": []
+        },
+        {
+            "LineID": "Bed II",
+            "Speaker": "Irene",
+            "NPCGender": "female",
+            "text": "Ugh, yes I'll leave you alone now. See you when I see you, Echo.",
+            "lineTone": 0,
+            "requiredMorality": 0,
+            "choices": [],
+            "endDialogueAfterLine": true
+        },
+        {
+            "LineID": "Glad II",
+            "Speaker": "Irene",
+            "NPCGender": "female",
+            "text": "Hee hee. Well, see you tomorrow, Echo!",
+            "lineTone": 0,
+            "requiredMorality": 0,
+            "choices": [],
+            "endDialogueAfterLine": true
+        }
+    ]
+}

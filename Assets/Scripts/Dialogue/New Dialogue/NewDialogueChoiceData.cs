@@ -9,4 +9,5 @@ public class NewDialogueChoiceData
     public string NextLineID;
     public int moralityChange;
     public ChoiceDirection direction;
+    public string objectiveToActivate;
 }
