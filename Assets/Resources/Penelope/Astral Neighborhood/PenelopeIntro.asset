@@ -1,0 +1,54 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e28c2e20bb6c4240a55d8edffb777ec, type: 3}
+  m_Name: PenelopeIntro
+  m_EditorClassIdentifier: Assembly-CSharp::NewDialogueData
+  npcName: Penelope
+  dialogueLines:
+  - LineID: Start
+    Speaker: Penelope
+    text: (In between sobs) F*#&! I went and drove my car into the lake!
+    lineTone: 0
+    NPCGender: female
+    NextLineID: Listended
+    endDialogueAfterLine: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Listened
+    Speaker: Penelope
+    text: I should've listened to Irene. I'm so stupid!
+    lineTone: 0
+    NPCGender: female
+    NextLineID: What If
+    endDialogueAfterLine: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: What If
+    Speaker: Penelope
+    text: She was all I could think of, it's like everything was in slow motion...I've
+      gotta apologize to her.
+    lineTone: 0
+    NPCGender: female
+    NextLineID: Lets Go
+    endDialogueAfterLine: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Lets Go
+    Speaker: Penelope
+    text: I need to get out of here. Going back through the forest on foot is safer
+      than trying to have someone drive in for me.
+    lineTone: 0
+    NPCGender: female
+    NextLineID: 
+    endDialogueAfterLine: 1
+    choices: []
+    objectivesToActivate: []

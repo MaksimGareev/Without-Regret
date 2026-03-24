@@ -3,7 +3,7 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class OrbitingPlatform : MonoBehaviour
 {
-    public enum OrbitDirection 
+    private enum OrbitDirection 
     { 
         Clockwise, 
         CounterClockwise 
@@ -27,19 +27,15 @@ public class OrbitingPlatform : MonoBehaviour
     [Tooltip("Objective that, when completed, will stop the platform from orbiting.")]
     [SerializeField] private ObjectiveData linkedObjective;
 
-    [SerializeField, Tooltip("Vector position of where the Platform should stop once its marked as objective completed")] private Vector3 stopLocation;
+    [Tooltip("Vector position of where the Platform should stop once its marked as objective completed")]
+    [SerializeField] private Vector3 stopLocation;
     
     [Tooltip("Used to adjust the angle used in calculating position so that multiple islands don't start in the same place. Set between 0 and 360.")]
     [SerializeField] private float offset;
 
-    [Tooltip("Used to adjust the starting y-position of the island")]
-    [SerializeField] private float height;
-
-   
-
     private float currentAngle = 0f;
     private bool objectiveComplete = false;
-    private bool reachedLocation = false;
+    [HideInInspector] public bool reachedLocation;
     private float range = 5f;
     private Rigidbody rb;
     private Vector3 lastPosition;
@@ -117,8 +113,8 @@ public class OrbitingPlatform : MonoBehaviour
 
         if (objectiveComplete)
         {
-            Vector3 offset = newPosition - stopLocation;
-            float squareLength = offset.sqrMagnitude;
+            Vector3 distOffset = newPosition - stopLocation;
+            float squareLength = distOffset.sqrMagnitude;
             float squareRange = range * range;
             if (squareLength <= squareRange)
             {
@@ -144,7 +140,7 @@ public class OrbitingPlatform : MonoBehaviour
         }
         else
         {
-            Debug.Log("Platform is currently set to need a linked objective to be stoped.");
+            Debug.Log("Platform is currently set to need a linked objective to be stopped.");
         }
     }
 

@@ -16,14 +16,24 @@ public class PlayerMovingObjects : MonoBehaviour
     private bool isGrabbing;
 
     private PlayerController playerController;
-    private Animator animator;
     private float normalMoveSpeed;
     private float normalSprintSpeed;
     private HashSet<MoveableObject> movedObjects = new HashSet<MoveableObject>();
 
+    private Animator animator;
+    private CharacterSwap characterSwap;
+
+
     private void Awake()
     {
-        animator = GetComponentInChildren<Animator>();
+        characterSwap = FindObjectOfType<CharacterSwap>();
+
+        if (characterSwap != null)
+        {
+            animator = characterSwap.GetAnimator();
+
+            characterSwap.onAnimatorChanged += UpdateAnimator;
+        }
         playerController = gameObject.GetComponent<PlayerController>();
         normalMoveSpeed = playerController.Speed;
         normalSprintSpeed = playerController.SprintSpeed;
@@ -131,6 +141,12 @@ public class PlayerMovingObjects : MonoBehaviour
         animator.SetBool("isGrabbing", false);
         animator.SetBool("isFloating", false);
     }
+
+    void UpdateAnimator(Animator newAnimator)
+    {
+        animator = newAnimator;
+    }
+
 
     // Returns true if any objects are currently held
     public bool IsOccupied() => movedObjects.Count > 0;

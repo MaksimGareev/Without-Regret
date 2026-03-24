@@ -19,6 +19,8 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
     public FaceHandler faceHandler;
 
     private Animator playerAnimator;
+    private CharacterSwap characterSwap;
+
     private Coroutine playerTalkRoutine;
     public float interactionPriority => 10f;
     public InteractType interactType => InteractType.Dialogue;
@@ -49,9 +51,18 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
     [Tooltip("Objective data that will be progressed when talking to the NPC such as talking to Irene to complete the meet irene objective")]
     public ObjectiveData linkedObjective;
 
-    [Header("Looking at player variables")]
+    [Header("Entry to add to the journal (if applicable)")]
+    [Tooltip("Adds the journal entry to the characters page. If this NPC's name already has an entry, the current description will be overwritten.")]
+    [SerializeField] private JournalEntry journalEntry;
+
+    [Header("Camera Variables")]
     [Tooltip("A bool that is used to identify if a dialogue interaction is a mediation making the NPC not look at the player")]
     public bool IsMediation = false;
+    [Tooltip("Only applicable if IsMediation is true, identifies one of the two NPCs in the mediation")]
+    [SerializeField] Transform mediationTransformA;
+    [Tooltip("Only applicable if IsMediation is true, identifies the other of the two NPCs in the mediation")]
+    [SerializeField] Transform mediationTransformB;
+    public (Transform npcA, Transform npcB) MediationTargets => (mediationTransformA, mediationTransformB);
     [Tooltip("How fast the NPC will look towards the player after engaging in dialogue")]
     public float lookSpeed = 5f;
     public bool isLookingAtPlayer = false;
@@ -88,13 +99,22 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
 
     private void Awake()
     {
+        characterSwap = FindObjectOfType<CharacterSwap>();
+
+        if (characterSwap != null)
+        {
+            playerAnimator = characterSwap.GetAnimator();
+
+            characterSwap.onAnimatorChanged += UpdateAnimator;
+        }
+
         //controls = new PlayerControls();
 
-       // controls.Player.Interact.performed += ctx => TryInteract();
+        // controls.Player.Interact.performed += ctx => TryInteract();
     }
 
-   // private void OnEnable() => controls.Enable();
-   // private void OnDisable() => controls.Disable();
+    // private void OnEnable() => controls.Enable();
+    // private void OnDisable() => controls.Disable();
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -270,6 +290,12 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
 
         // PlayerController.DialogueActive = true;
         DisablePopupIcon();
+
+        // Add character to the journal if possible
+        if (journalEntry != null && Journal.Instance != null)
+        {
+            Journal.Instance.AddCharacterEntry(journalEntry.name, journalEntry.entryDescription);
+        }
 
         isLookingAtPlayer = true;
         if (IsMediation)
@@ -605,6 +631,12 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
             animator.SetBool(parameter, value);
         */
     }
+
+    void UpdateAnimator(Animator newAnimator)
+    {
+        playerAnimator = newAnimator;
+    }
+
 
     private bool HasParameter(string paramName)
     {

@@ -5,7 +5,7 @@ public class Barry : MonoBehaviour
 {
     public float Speed = 3f;      // movement speed
     public float RotationSpeed = 3f;    // how fast the NPC rotates
-    public DialogueTrigger dialogueTrigger;
+    public NewDialogueTrigger dialogueTrigger;
     public Transform targetSpot;
     public Transform lookAtTarget;
     public bool isTraveling = false;

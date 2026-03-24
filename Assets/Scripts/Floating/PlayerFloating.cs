@@ -52,11 +52,16 @@ public class PlayerFloating : MonoBehaviour
     private CharacterController charController;
     private Camera playerCamera;
     private ToggleInventoryUI toggleInventoryUI;
-    private Animator animator;
     private RectTransform floatTargetArea;
     private Slider floatingSlider;
     private Slider timerSlider;
     private Slider cooldownSlider;
+
+    [Header("Animator Settings")]
+    private Animator animator;
+    private CharacterSwap characterSwap;
+
+
 
     [Header("Chime Animation settings")]
     public Animator chimeAnimator;
@@ -82,6 +87,7 @@ public class PlayerFloating : MonoBehaviour
     // randomized window (normalized 0..1)
     private float windowStartNormalized = 0f;
     private float windowWidthNormalized = 0f;
+
 
     void OnEnable()
     {
@@ -110,6 +116,16 @@ public class PlayerFloating : MonoBehaviour
         toggleInventoryUI = GetComponent<ToggleInventoryUI>();
         playerCamera = Camera.main;
         controls = new PlayerControls();
+
+        characterSwap = FindObjectOfType<CharacterSwap>();
+
+        if (characterSwap != null)
+        {
+            animator = characterSwap.GetAnimator();
+
+            characterSwap.onAnimatorChanged += UpdateAnimator;
+        }
+
 
         if (animator == null)
         {
@@ -554,4 +570,9 @@ public class PlayerFloating : MonoBehaviour
         animator.SetBool("isGrabbing", false);
         animator.SetBool("isFloating", false);
     }
+    void UpdateAnimator(Animator newAnimator)
+    {
+        animator = newAnimator;
+    }
+
 }

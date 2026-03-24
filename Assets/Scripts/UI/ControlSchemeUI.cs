@@ -117,13 +117,13 @@ public class ControlSchemeUI : MonoBehaviour
             // If nothing is selected, set a default based on the active panel
             if (es.currentSelectedGameObject == null)
             {
-                if (GetComponentInParent<MMSettings>()?.GetComponentInParent<MainMenu>() != null)
+                if (GetComponentInParent<SettingsMenu>()?.GetComponentInParent<MainMenu>() != null)
                 {
-                    es.SetSelectedGameObject(GetComponentInParent<MMSettings>()?.GetComponentInParent<MainMenu>()?.backButton.gameObject);
+                    es.SetSelectedGameObject(GetComponentInParent<SettingsMenu>()?.GetComponentInParent<MainMenu>()?.backButton.gameObject);
                 }
-                else if (GetComponentInParent<MMSettings>()?.GetComponentInParent<PauseManager>() != null)
+                else if (GetComponentInParent<SettingsMenu>()?.GetComponentInParent<PauseManager>() != null)
                 {
-                    es.SetSelectedGameObject(GetComponentInParent<MMSettings>()?.GetComponentInParent<PauseManager>()?.backButton.gameObject);
+                    es.SetSelectedGameObject(GetComponentInParent<SettingsMenu>()?.GetComponentInParent<PauseManager>()?.backButton.gameObject);
                 }
             }
 
