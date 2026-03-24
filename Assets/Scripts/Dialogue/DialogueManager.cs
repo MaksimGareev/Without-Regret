@@ -489,7 +489,7 @@ public class DialogueManager : MonoBehaviour
         if (npc == "IreneStory" && ireneNPC != null)
         {
             ireneNPC.StartTravel();
-            ireneNPC.dialogueTrigger.TalkedAlready = true;
+            ireneNPC.dialogueTrigger.hasTalked = true;
         }
 
         // Irene move after talked
