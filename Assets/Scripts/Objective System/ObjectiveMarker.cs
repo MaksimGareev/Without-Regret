@@ -40,6 +40,8 @@ public class ObjectiveMarker : MonoBehaviour
 
     private void Refresh(ObjectiveInstance objective, Scene scene)
     {
+        if (!objective.data) return;
+        
         if (objective.data.markerTransform != null)
         {
             if (int.Equals(scene.buildIndex, objective.data.sceneIndex))

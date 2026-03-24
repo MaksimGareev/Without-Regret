@@ -25,18 +25,18 @@ public class PlayersFootsteps : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
-    {
-        //if (Controller.isGrounded && Controller.velocity.magnitude > 0.2f)
-        //{
-        //    StepTimer += Time.deltaTime;
-        //    if (StepTimer >= StepInterval)
-        //    {
-        //        PlayFootStep();
-        //        StepTimer = 0f;
-        //    }
-        //}   
-    }
+    // void Update()
+    // {
+    //     if (Controller.isGrounded && Controller.velocity.magnitude > 0.2f)
+    //     {
+    //         StepTimer += Time.deltaTime;
+    //         if (StepTimer >= StepInterval)
+    //         {
+    //             PlayFootStep();
+    //             StepTimer = 0f;
+    //         }
+    //     }   
+    // }
 
     public void PlayFootStep()
     {

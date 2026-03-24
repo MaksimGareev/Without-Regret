@@ -108,12 +108,12 @@ public class SaveManager : MonoBehaviour
         
         foreach (var mb in monoBehaviours)
         {
-            if (mb == null)
-            {
-                continue;
-            }
+            if (!mb) continue;
 
             var go = mb.gameObject;
+
+            if (!go) continue;
+            
             var scene = go.scene;
 
             bool isInScene = scene == activeScene;
@@ -124,8 +124,8 @@ public class SaveManager : MonoBehaviour
                 continue;
             }
 
-             // Ensure the saveable has a valid unique ID and exists in the currently loaded scene
-             // if not then do not add it to saveables list
+            // Ensure the saveable has a valid unique ID and exists in the currently loaded scene
+            // if not then do not add it to saveables list
             if (mb is ISaveable saveable)
             {
                 if (mb.gameObject.scene.isLoaded)
