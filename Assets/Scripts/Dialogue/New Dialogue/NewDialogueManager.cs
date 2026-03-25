@@ -105,6 +105,7 @@ public class NewDialogueManager : MonoBehaviour
 
     private NewDialogueTrigger activeDialogueTrigger;
     public bool DialogueIsActive { get; private set; }
+    bool justStartedDialogue = false;
 
     private PlayerController playerController;
     private CameraMovement cam;
@@ -173,6 +174,9 @@ public class NewDialogueManager : MonoBehaviour
     // Load dialogue based on the intended Scriptable object dialogue 
     public void StartDialogue(NewDialogueData dialogueSO, NewDialogueTrigger trigger)
     {
+        justStartedDialogue = true;
+        StartCoroutine(ClearStartFlag());
+
         // check if scriptable object is present
         if (dialogueSO == null || dialogueSO.dialogueLines.Count == 0)
         {
@@ -221,6 +225,12 @@ public class NewDialogueManager : MonoBehaviour
         ShowLine();
     }
 
+    IEnumerator ClearStartFlag()
+    {
+        yield return null;
+        justStartedDialogue = false;
+    }
+
     // Show the current line
     private void ShowLine()
     {
@@ -230,6 +240,13 @@ public class NewDialogueManager : MonoBehaviour
             EndDialogue();
             return;
         }
+
+        if (typingRoutine != null)
+        {
+            StopCoroutine(typingRoutine);
+        }
+
+        typing = false;
 
         currentLine = lineLookup[currentLineID];
         dialogueText.text = "";
@@ -298,6 +315,8 @@ public class NewDialogueManager : MonoBehaviour
 
     void OnConfirmPressed()
     {
+        if (justStartedDialogue) return;
+
         // don't allow player to skip anything durring pauses in dialogue
         if (!DialogueIsActive) return;
         if (currentLine == null) return;
@@ -354,10 +373,11 @@ public class NewDialogueManager : MonoBehaviour
 
         string npcName = activeDialogueTrigger.NPCName;
 
+        Irene irene = FindObjectOfType<Irene>();
+
         switch (npcName)
         {
             case "Irene":
-                Irene irene = FindObjectOfType<Irene>();
                 if (irene != null)
                 {
                     if (!irene.IsFollowing && activeDialogueTrigger.IsMediation == false)
@@ -366,16 +386,26 @@ public class NewDialogueManager : MonoBehaviour
                         irene.Follow();
                     }
                     
-                    if (irene.targetSpot != null)
+                   /* if (irene.targetSpot != null)
                     {
+                        irene.IsFollowing = false;
                         irene.StartTravel();
                     }
-                    
+                    */
+
                     if (activeDialogueTrigger.hasTalked && irene.GoBackHomeSpot != null && irene.arrived == true)
                     {
                         irene.targetSpot = irene.GoBackHomeSpot;
                         irene.StartTravel();
                     }
+                }
+                break;
+
+            case "Irene Story":
+
+                if (irene != null && irene.targetSpot != null)
+                {
+                    irene.StartTravel();
                 }
                 break;
 
