@@ -6,6 +6,7 @@ public class TreeVoidSequence : MonoBehaviour
     [Header("References")]
     public Transform player; // Player
     public GameObject voidPoolPrefab; //Void Pool Prefab
+    private GameObject voidPoolPrefab_instance; //holds the instance 
 
     [Header("Distance")]
     public float triggerDistance = 8f; // Distance to trigger the voidpool pull //set to 20 on inspector
@@ -60,7 +61,7 @@ public class TreeVoidSequence : MonoBehaviour
             player.position.z
         );
 
-        Instantiate(voidPoolPrefab, poolPos, Quaternion.identity); // Disables Player movement 
+        voidPoolPrefab_instance = Instantiate(voidPoolPrefab, poolPos, Quaternion.identity); // Disables Player movement 
 
         if (playerControllerScript != null)
             playerControllerScript.enabled = false;
@@ -83,7 +84,12 @@ public class TreeVoidSequence : MonoBehaviour
         yield return new WaitForSeconds(blackScreenDuration);
 
         if (pull != null)
-            Destroy(pull); 
+            Destroy(pull);
+
+        if (voidPoolPrefab_instance)
+        {
+            Destroy(voidPoolPrefab_instance);
+        }
 
         if (characterController != null) // Re-enable player controller 
             characterController.enabled = true;
