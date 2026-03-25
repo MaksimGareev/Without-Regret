@@ -43,9 +43,7 @@ public class Journal : MonoBehaviour, ISaveable
     [SerializeField] private TextMeshProUGUI characterDescriptionText;
     [SerializeField] private Image npcPortrait;
     [SerializeField] private List<CharacterPortrait> characterPortraits;
-
-    //[Header("Canvases")]
-    //[SerializeField] private Canvas[] canvasesToDisable;
+    
     [HideInInspector] public bool isJournalOpen = false;
 
     private List<ObjectiveInstance> objectivesList;
