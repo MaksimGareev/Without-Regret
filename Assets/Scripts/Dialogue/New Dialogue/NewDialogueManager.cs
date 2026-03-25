@@ -708,7 +708,8 @@ public class NewDialogueManager : MonoBehaviour
             LineTone.Upset => set.upset,
             _ => set.neutral
         };
-
+        
+        npcPortrait.SetNativeSize();
         npcPortrait.gameObject.SetActive(true);
     }
 
