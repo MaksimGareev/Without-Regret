@@ -42,6 +42,10 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
     public string NPCName = "Friendly NPC";
     [Tooltip("How far away the player must be to interact with the NPC")]
     public float chatRange = 3f;
+    
+    [Header("Entry to add to the journal (if applicable)")]
+    [Tooltip("Adds the journal entry to the characters page. If this NPC's name already has an entry, the current description will be overwritten.")]
+    [SerializeField] private JournalEntry journalEntry;
 
     [Header("Objectives")]
     public List<string> objectiveIDsYouCareAbout = new List<string>();
@@ -254,7 +258,6 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
     // start the dialogue interaction
     private void TryStartDialogue()
     {
-
         NewDialogueData selectedDialogue = SelectDialogue();
 
         if (selectedDialogue == null)
@@ -337,7 +340,6 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
     // when the dialogue interaction is complete
     public void OnDialogueComplete()
     {
-
         isLookingAtPlayer = false;
 
         if (linkedObjective != null)
@@ -346,6 +348,12 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
             {
                 ObjectiveManager.Instance.AddProgress(linkedObjective.objectiveID, 1);
             }
+        }
+        
+        // Add character to the journal if possible
+        if (journalEntry != null && Journal.Instance != null)
+        {
+            Journal.Instance.AddCharacterEntry(journalEntry.name, journalEntry.entryDescription);
         }
 
         // have npc resume wandering if they are a wondering npc
