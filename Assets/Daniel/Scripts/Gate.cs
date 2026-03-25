@@ -28,23 +28,20 @@ public class Gate : SaveableWithID
 
     private bool CheckIfObjectiveCompleted()
     {
-        if (needsObjective && linkedObjective != null)
+        if (!needsObjective || !linkedObjective || !ObjectiveManager.Instance) return false;
+        
+        foreach (var objective in ObjectiveManager.Instance.GetCompletedObjectives())
         {
-            if (ObjectiveManager.Instance != null)
+            if (objective.data == linkedObjective)
             {
-                foreach (var objective in ObjectiveManager.Instance.GetCompletedObjectives())
-                {
-                    if (objective.data == linkedObjective)
-                    {
-                        locked = false;
-                        Debug.Log($"Gate {GetUniqueID()}:Linked objective already completed. Unlocking gate.");
-                        return true;
-                    }
-                }
-                Debug.Log($"Gate {GetUniqueID()}:Linked objective not completed. Gate remains locked. Adding Listener for objective completion.");
-                ObjectiveManager.Instance.OnObjectiveCompleted.AddListener(SetObjectiveComplete);
+                locked = false;
+                Debug.Log($"Gate {GetUniqueID()}:Linked objective already completed. Unlocking gate.");
+                return true;
             }
         }
+            
+        Debug.Log($"Gate {GetUniqueID()}:Linked objective not completed. Gate remains locked. Adding Listener for objective completion.");
+        ObjectiveManager.Instance.OnObjectiveCompleted.AddListener(SetObjectiveComplete);
         return false;
     }
 
@@ -108,8 +105,17 @@ public class Gate : SaveableWithID
             Debug.Log($"Loading Gate: locked={state.locked}, opened={state.opened}, ID: {GetUniqueID()}");
         }
 
-        locked = CheckIfObjectiveCompleted() ? false : state?.locked ?? true;
+        if (CheckIfObjectiveCompleted())
+        {
+            locked = false;
+        }
+        else
+        {
+            locked = state == null || state.locked;
+        }
+        
         Debug.Log($"Locked state for gate with ID {GetUniqueID()} after checking objective: {locked}");
+        
         opened = state?.opened ?? false;
 
         if (opened)
