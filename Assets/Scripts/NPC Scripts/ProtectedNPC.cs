@@ -18,17 +18,13 @@ public class ProtectedNPC : MonoBehaviour
         // If agent reached its destination
         if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
         {
-            if(CheckPoints[point+1].isTraversable)
-                if(point >= CheckPoints.Length) //checks to see if there are no more points to go to
+            if(point+1 < CheckPoints.Length) //checks to see if next point doesn't exist
                 {
-                    return;
-                }
-                else
-                {
+                    if(CheckPoints[point+1].isTraversable)
+                
                     point++;
                     agent.SetDestination(CheckPoints[point].transform.position);
-                }
-                
+                }      
         }
     }
 }
