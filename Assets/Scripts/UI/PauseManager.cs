@@ -91,7 +91,7 @@ public class PauseManager : MonoBehaviour
         
         if ((playerPauseAction.triggered || UIPauseAction.triggered) 
         && !Journal.Instance.isJournalOpen 
-        && !DialogueManager.DialogueIsActive 
+        && !NewDialogueManager.Instance.DialogueIsActive 
         && !confirmationPanel.activeSelf 
         && !(GameOverManager.Instance != null && GameOverManager.Instance.IsGameOver))
         {
@@ -424,6 +424,7 @@ public class PauseManager : MonoBehaviour
         {
             GameManager.Instance.objectivePanel.SetActive(GameManager.Instance.objectiveCanvas.IsVisible());
         }
+
     }
 
     private void DisableOtherCanvases()
