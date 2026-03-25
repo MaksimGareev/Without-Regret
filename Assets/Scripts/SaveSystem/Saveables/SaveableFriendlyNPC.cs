@@ -52,12 +52,19 @@ public class SaveableFriendlyNPC : SaveableWithID
             Debug.LogWarning("SaveableFriendlyNPC attached to an unknown NPC type.");
         }
 
-        if (GetComponent<DialogueTrigger>() != null)
+        if (GetComponent<DialogueTrigger>())
         {
             DialogueTrigger dialogueTrigger = GetComponent<DialogueTrigger>();
             state.isLookingAtPlayer = dialogueTrigger.isLookingAtPlayer;
             state.talkedAlready = dialogueTrigger.TalkedAlready;
             Debug.Log($"Saving DialogueTrigger: isLookingAtPlayer={state.isLookingAtPlayer}, talkedAlready={state.talkedAlready}, ID: {GetUniqueID()}");
+        }
+        else if (GetComponent<NewDialogueTrigger>())
+        {
+            NewDialogueTrigger newDialogueTrigger = GetComponent<NewDialogueTrigger>();
+            state.isLookingAtPlayer = newDialogueTrigger.isLookingAtPlayer;
+            state.talkedAlready = newDialogueTrigger.hasTalked;
+            Debug.Log($"Saving NewDialogueTrigger: isLookingAtPlayer={state.isLookingAtPlayer}, talkedAlready={state.talkedAlready}, ID: {GetUniqueID()}");
         }
 
         if (data.friendlyNPCListSaveData.friendlyNPCs.Exists(npc => npc.id == GetUniqueID()))

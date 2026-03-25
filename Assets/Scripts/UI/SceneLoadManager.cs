@@ -150,10 +150,10 @@ public class SceneLoadManager : MonoBehaviour
 
     private IEnumerator FadeInBlackScreen()
     {
+        StartCoroutine(FadeOutAudio());
+        
         float startTime = Time.realtimeSinceStartup;
         float endTime = startTime + fadeDuration;
-
-        StartCoroutine((FadeOutAudio()));
 
         while (Time.realtimeSinceStartup < endTime)
         {
@@ -167,10 +167,10 @@ public class SceneLoadManager : MonoBehaviour
 
     private IEnumerator FadeOutBlackScreen()
     {
+        StartCoroutine(FadeInAudio());
+        
         float startTime = Time.realtimeSinceStartup;
         float endTime = startTime + fadeDuration;
-
-        StartCoroutine((FadeInAudio()));
 
         while (Time.realtimeSinceStartup < endTime)
         {
@@ -189,12 +189,16 @@ public class SceneLoadManager : MonoBehaviour
 
     private IEnumerator FadeOutAudio()
     {
-        Mixer.GetFloat("Master", out startVolume);
+        startVolume = PlayerPrefs.GetInt("masterVolume", 100);
         currentTime = 0;
+        
         while (currentTime <= fadeDuration)
         {
             currentTime += Time.deltaTime;
-            Mixer.SetFloat("Master", Mathf.Lerp(startVolume, -80f, currentTime / fadeDuration));
+            
+            float newVolume = Mathf.Lerp(startVolume, 0, currentTime / fadeDuration);
+            AudioManager.Instance.SetMasterVolume(Mathf.RoundToInt(newVolume));
+            
             yield return null;
         }
     }
@@ -202,10 +206,14 @@ public class SceneLoadManager : MonoBehaviour
     private IEnumerator FadeInAudio()
     {
         currentTime = 0;
+        
         while (currentTime <= fadeDuration)
         {
             currentTime += Time.deltaTime;
-            Mixer.SetFloat("Master", Mathf.Lerp(-80f, startVolume, currentTime / fadeDuration));
+            
+            float newVolume = Mathf.Lerp(0, startVolume, currentTime / fadeDuration);
+            AudioManager.Instance.SetMasterVolume(Mathf.RoundToInt(newVolume));
+            
             yield return null;
         }
     }
