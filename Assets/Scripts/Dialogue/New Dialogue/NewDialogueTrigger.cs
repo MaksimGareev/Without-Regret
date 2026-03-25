@@ -333,7 +333,7 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
             return talkedDialogueFile;
         }
 
-        // dialogue selected for firts interaction
+        // dialogue selected for first interaction
         return startDialogueFile;
     }
 
