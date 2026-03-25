@@ -121,7 +121,10 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
         agent = GetComponent<NavMeshAgent>();
         if (agent == null)
         {
-            Debug.LogError("NavMeshAgent missing on NPC");
+            if (triggerType != DialogueTriggerType.Story)
+            {
+                Debug.LogError("NavMeshAgent missing on NPC");
+            }
         }
 
         faceHandler = gameObject.GetComponentInChildren<FaceHandler>();
