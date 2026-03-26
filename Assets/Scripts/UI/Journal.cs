@@ -43,6 +43,7 @@ public class Journal : MonoBehaviour, ISaveable
     [SerializeField] private TextMeshProUGUI characterDescriptionText;
     [SerializeField] private Image npcPortrait;
     [SerializeField] private List<CharacterPortrait> characterPortraits;
+    [SerializeField] private JournalEntry echoJournalEntry;
     
     [HideInInspector] public bool isJournalOpen = false;
 
@@ -87,6 +88,11 @@ public class Journal : MonoBehaviour, ISaveable
         journalUI.SetActive(false);
 
         DisableJournalInput();
+
+        if (echoJournalEntry)
+        {
+            AddCharacterEntry(echoJournalEntry.entryTitle, echoJournalEntry.entryDescription);
+        }
     }
 
     // Update is called once per frame
@@ -338,6 +344,7 @@ public class Journal : MonoBehaviour, ISaveable
                 if (portrait != null)
                 {
                     npcPortrait.sprite = portrait.portrait;
+                    npcPortrait.SetNativeSize();
                     npcPortrait.enabled = true;
                 }
                 else
