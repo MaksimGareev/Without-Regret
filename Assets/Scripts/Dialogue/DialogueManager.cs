@@ -230,9 +230,20 @@ public class DialogueManager : MonoBehaviour
         playerController.SetDialogueActive(true);
         cam.SetCameraLocked(true);
 
-        if (trigger != null && trigger.focusCameraOnTrigger)
+        if (trigger == null || !trigger.focusCameraOnTrigger) return;
+
+        if (!trigger.IsMediation)
         {
             cam.TriggerDialogueCamera(trigger.transform);
+        }
+        else
+        {
+            if (trigger.MediationTargets.npcA == null || trigger.MediationTargets.npcB == null)
+            {
+                Debug.LogError("Mediation trigger is missing one or both NPC targets for camera focus. Defaulting to regular camera");
+                cam.TriggerDialogueCamera(trigger.transform);
+            }
+            cam.TriggerDialogueCamera(trigger.MediationTargets.npcA, trigger.MediationTargets.npcB);
         }
 
         ShowLine();
@@ -351,7 +362,7 @@ public class DialogueManager : MonoBehaviour
             dialogueText.text += c;
             PlayTypingSound(c);
 
-            float delay = .035f;
+            float delay = .03f;
 
             switch (c)
             {
@@ -478,7 +489,7 @@ public class DialogueManager : MonoBehaviour
         if (npc == "IreneStory" && ireneNPC != null)
         {
             ireneNPC.StartTravel();
-            ireneNPC.dialogueTrigger.TalkedAlready = true;
+            ireneNPC.dialogueTrigger.hasTalked = true;
         }
 
         // Irene move after talked

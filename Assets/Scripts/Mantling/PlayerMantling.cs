@@ -11,6 +11,7 @@ public class PlayerMantling : MonoBehaviour
 
     [Header("Animator")]
     public Animator animator;
+    private CharacterSwap characterSwap;
 
     private CharacterController controller;
     private PlayerController playerController;
@@ -26,6 +27,15 @@ public class PlayerMantling : MonoBehaviour
 
     private void Awake()
     {
+        characterSwap = FindObjectOfType<CharacterSwap>();
+
+        if (characterSwap != null)
+        {
+            animator = characterSwap.GetAnimator();
+
+            characterSwap.onAnimatorChanged += UpdateAnimator;
+        }
+
         controller = GetComponent<CharacterController>();
         playerController = GetComponent<PlayerController>();
         playerFloating = GetComponent<PlayerFloating>();
@@ -144,4 +154,10 @@ public class PlayerMantling : MonoBehaviour
             controller.enabled = true;
         }
     }
+
+    void UpdateAnimator(Animator newAnimator)
+    {
+        animator = newAnimator;
+    }
+
 }

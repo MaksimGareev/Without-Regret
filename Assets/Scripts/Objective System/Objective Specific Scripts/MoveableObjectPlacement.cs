@@ -27,7 +27,7 @@ public class MoveableObjectPlacement : MonoBehaviour
     
     [Tooltip("Whether to rebuild the NavMesh after placing the moveable object in this slot. Leave this unchecked if the moveable object is not an obstacle that NPCs need to navigate around or on, to save on performance.")]
     [SerializeField] private bool rebuildNavMesh = false;
-
+    
     private NavMeshSurface[] navMeshSurfaces;
     private GameObject player;
     private PlayerMovingObjects playerMovingObjects;

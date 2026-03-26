@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -5,7 +6,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class Journal : MonoBehaviour
+public class Journal : MonoBehaviour, ISaveable
 {
     [Header("Singleton")]
     public static Journal Instance { get; private set; }
@@ -25,7 +26,7 @@ public class Journal : MonoBehaviour
 
     [Header("Tabs")]
     [SerializeField] private Button objectivesTab;
-    // [SerializeField] private Button charactersTab;
+    [SerializeField] private Button charactersTab;
 
     [Header("Objectives")]
     [SerializeField] private GameObject objectivesPage;
@@ -36,15 +37,20 @@ public class Journal : MonoBehaviour
     [SerializeField] private Color highlightedColor = Color.yellow;
     [SerializeField] private Color originalColor = Color.white;
 
-    //[Header("Characters")]
-    //[SerializeField] private GameObject charactersPage;
-
-    //[Header("Canvases")]
-    //[SerializeField] private Canvas[] canvasesToDisable;
+    [Header("Characters")]
+    [SerializeField] private GameObject charactersPage;
+    [SerializeField] private Button[] characterButtons;
+    [SerializeField] private TextMeshProUGUI characterDescriptionText;
+    [SerializeField] private Image npcPortrait;
+    [SerializeField] private List<CharacterPortrait> characterPortraits;
+    [SerializeField] private JournalEntry echoJournalEntry;
+    
     [HideInInspector] public bool isJournalOpen = false;
 
     private List<ObjectiveInstance> objectivesList;
     private int currentObjectiveIndex = 0;
+    private readonly List<string> characterNamesList = new(); // List to maintain the order of character entries
+    private readonly Dictionary<string, string> characterDictionary = new();
 
     private void Awake()
     {
@@ -77,11 +83,16 @@ public class Journal : MonoBehaviour
     void Start()
     {
         InitializeButtons();
-        RefreshObjectives();
-        OnObjectiveSelect(0);
+        RefreshCharacters();
+        OpenObjectivesPage();
         journalUI.SetActive(false);
 
         DisableJournalInput();
+
+        if (echoJournalEntry)
+        {
+            AddCharacterEntry(echoJournalEntry.entryTitle, echoJournalEntry.entryDescription);
+        }
     }
 
     // Update is called once per frame
@@ -115,16 +126,44 @@ public class Journal : MonoBehaviour
         HandleControllerNavigation();
     }
 
+    // Save and load information for the character page
+    public void SaveTo(SaveData data)
+    {
+        data.journalSaveData.characterEntryList.Clear();
+        foreach (var entry in characterDictionary)
+        {
+            // Add each entry from the dictionary to the save data list
+            data.journalSaveData.characterEntryList.Add(new CharacterEntry(entry.Key, entry.Value));
+        }
+    }
+
+    public void LoadFrom(SaveData data)
+    {
+        characterDictionary.Clear();
+        characterNamesList.Clear();
+        foreach (var entry in data.journalSaveData.characterEntryList)
+        {
+            AddCharacterEntry(entry.characterName, entry.description);
+        }
+        RefreshCharacters();
+    }
+
     private void InitializeButtons()
     {
         for (int i = 0; i < objectiveButtons.Length; i++)
         {
-            int index = i;
+            int index = i; // Capture the current value of i for the lambda
             objectiveButtons[i].onClick.AddListener(() => OnObjectiveSelect(index));
         }
 
+        for (int j = 0; j < characterButtons.Length; j++)
+        {
+            int index = j; // Capture the current value of j for the lambda
+            characterButtons[j].onClick.AddListener(() => OnCharacterSelect(index));
+        }
+
         objectivesTab.onClick.AddListener(() => OpenObjectivesPage());
-        // charactersTab.onClick.AddListener(() => OpenCharactersPage());
+        charactersTab.onClick.AddListener(() => OpenCharactersPage());
     }
 
     private void ToggleJournalUI()
@@ -150,12 +189,6 @@ public class Journal : MonoBehaviour
             DisableJournalInput();
             EnableOtherCanvases();
         }
-
-        // foreach (Canvas canvas in canvasesToDisable)
-        // {
-        //     if (canvas != null)
-        //         canvas.enabled = !isJournalOpen;
-        // }
     }
 
     private void EnableOtherCanvases()
@@ -223,15 +256,17 @@ public class Journal : MonoBehaviour
     private void OpenObjectivesPage()
     {
         objectivesPage.SetActive(true);
-        //charactersPage.SetActive(false);
+        charactersPage.SetActive(false);
         RefreshObjectives();
         OnObjectiveSelect(0);
     }
 
     private void OpenCharactersPage()
     {
-        //charactersPage.SetActive(true);
+        charactersPage.SetActive(true);
         objectivesPage.SetActive(false);
+        RefreshCharacters();
+        OnCharacterSelect(0);
     }
 
     private void HandleControllerNavigation()
@@ -260,6 +295,22 @@ public class Journal : MonoBehaviour
 
     public void OnObjectiveSelect(int index)
     {
+        Debug.Log($"Objective Select called with index : {index}");
+        
+        if (index < 0) return;
+        
+        if (index >= objectiveButtons.Length)
+        {
+            Debug.LogWarning($"Character index {index} is out of bounds for character buttons.");
+            return;
+        }
+        
+        if (index >= objectivesList.Count)
+        {
+            Debug.LogWarning($"Character index {index} is out of bounds for character entries.");
+            return;
+        }
+        
         currentObjectiveIndex = index;
 
         if (objectivesList.Count > index)
@@ -289,6 +340,58 @@ public class Journal : MonoBehaviour
             if (i != index)
             {
                 objectiveButtons[i].GetComponentInChildren<TextMeshProUGUI>().color = originalColor;
+            }
+        }
+    }
+
+    private void OnCharacterSelect(int index)
+    {
+        Debug.Log($"Character Select called with index : {index}");
+        
+        if (index < 0) return;
+        
+        if (index >= characterButtons.Length)
+        {
+            Debug.LogWarning($"Character index {index} is out of bounds for character buttons.");
+            return;
+        }
+        
+        if (index >= characterDictionary.Count)
+        {
+            Debug.LogWarning($"Character index {index} is out of bounds for character entries.");
+            return;
+        }
+        
+        if (characterDictionary.Count > index)
+        {
+            characterDescriptionText.text = characterDictionary[characterNamesList[index]];
+
+            if (npcPortrait != null)
+            {
+                var portrait = characterPortraits.Find(p => p.name == characterNamesList[index]);
+                if (portrait != null)
+                {
+                    npcPortrait.sprite = portrait.portrait;
+                    npcPortrait.SetNativeSize();
+                    npcPortrait.enabled = true;
+                }
+                else
+                {
+                    npcPortrait.enabled = false;
+                }
+            }
+        }
+        else
+        {
+            characterDescriptionText.text = "";
+        }
+        
+        characterButtons[index].GetComponentInChildren<TextMeshProUGUI>().color = highlightedColor;
+        for (int i = 0; i < characterButtons.Length; i++)
+        {
+            if (i != index)
+            {
+                characterButtons[i].GetComponentInChildren<TextMeshProUGUI>().color = originalColor;
             }
         }
     }
@@ -348,6 +451,40 @@ public class Journal : MonoBehaviour
         }
     }
 
+    public void AddCharacterEntry(string name, string description)
+    {
+        if (characterDictionary.ContainsKey(name))
+        {
+            // Character is already in the list, so update the description
+            characterDictionary[name] = description;
+        }
+        else
+        {
+            // Add character entry to the names list and dictionary
+            characterNamesList.Add(name);
+            characterDictionary.Add(name, description);
+        }
+    }
+
+    private void RefreshCharacters()
+    {
+        for (int i = 0; i < characterButtons.Length; ++i)
+        {
+            if (characterNamesList.Count > i)
+            {
+                TextMeshProUGUI buttonText = characterButtons[i].GetComponentInChildren<TextMeshProUGUI>();
+                buttonText.text = characterNamesList[i];
+                characterButtons[i].interactable = true;
+            }
+            else
+            {
+                TextMeshProUGUI buttonText = characterButtons[i].GetComponentInChildren<TextMeshProUGUI>();
+                buttonText.text = "";
+                characterButtons[i].interactable = false;
+            }
+        }
+    }
+
     private void OnDisable()
     {
         DisableJournalInput();
@@ -363,5 +500,12 @@ public class Journal : MonoBehaviour
     {
         inputActions.FindActionMap("UI").Disable();
         inputActions.FindActionMap("Player").Enable();
+    }
+
+    [Serializable]
+    private class CharacterPortrait
+    {
+        public string name;
+        public Sprite portrait;
     }
 }

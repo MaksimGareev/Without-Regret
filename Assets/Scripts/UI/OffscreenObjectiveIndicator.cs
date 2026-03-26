@@ -8,6 +8,8 @@ public class OffscreenObjectiveIndicator : MonoBehaviour
     public Transform target;
     [Tooltip("Simply the reference for the arrow indicator")]
     [SerializeField] private GameObject indicator;
+    [Tooltip("Reference to the indicator when the objective is on screen")]
+    [SerializeField] private GameObject onScreenIndicator;
     [Tooltip("Main Canvas which should have the arrow on it")]
     [SerializeField] private Canvas mainCanvas;
     [Tooltip("Margin of how far away the indicator will stay from the edges of the screen")]
@@ -18,13 +20,16 @@ public class OffscreenObjectiveIndicator : MonoBehaviour
     [SerializeField] private float minSizeDistance = 20f;
     [Tooltip("Minimum size the arrow will shrink to.")]
     [SerializeField] private float minImageScale = 0.2f;
-    [Tooltip("Public Variable accessible by any script, simply state whether or not you want this to be true at any given moment.")]
+    [Tooltip("controlls whether the offscreen arrow appears or not.")]
     public bool disableIndicator = false;
+    [Tooltip("controls whether the onscreen diamond appears or not.")]
+    public bool disableOnScreenIndicator = false;
+
 
     private Image image;
     private float spriteWidth;
     private float spriteHeight;
-    private RectTransform canvasRect, rectTransform;
+    private RectTransform canvasRect, rectTransform, onScreenRectTransform;
     
     private PlayerController player;
     private float lerpAmount = 1f;
@@ -33,6 +38,7 @@ public class OffscreenObjectiveIndicator : MonoBehaviour
 
     Vector3 screenCenter = Vector3.zero;
     Vector3 originalScale;
+    Vector3 targetViewportPos;
 
     Vector3 ScreenCenter
     {
@@ -71,9 +77,11 @@ public class OffscreenObjectiveIndicator : MonoBehaviour
         spriteHeight = bounds.size.y / 2f;
         spriteWidth = bounds.size.x / 2f;
         indicator.SetActive(false);
+        onScreenIndicator.SetActive(false);
         canvasRect = mainCanvas.GetComponent<RectTransform>();
 
-        rectTransform = GetComponent<RectTransform>();
+        rectTransform = indicator.GetComponent<RectTransform>();
+        onScreenRectTransform = onScreenIndicator.GetComponent<RectTransform>();
         originalScale = rectTransform.localScale;
 
         player = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
@@ -83,16 +91,27 @@ public class OffscreenObjectiveIndicator : MonoBehaviour
     {
         if (target != null && playerCam != null && player != null)
         {
-            Vector3 targetViewportPos = playerCam.WorldToViewportPoint(target.position);
+            targetViewportPos = playerCam.WorldToViewportPoint(target.position);
 
             if (!TargetIsVisible(targetViewportPos) && !disableIndicator)
             {
-                UpdateTarget(targetViewportPos);
+                UpdateOffscreenTarget(targetViewportPos);
+                onScreenIndicator.SetActive(false);
             }
-            else
+            else if(TargetIsVisible(targetViewportPos) && !disableOnScreenIndicator)
+            {
+                UpdateOnScreenPos(targetViewportPos);
+                indicator.SetActive(false);
+            }
+            if (disableIndicator)
             {
                 indicator.SetActive(false);
             }
+            if (disableOnScreenIndicator)
+            {
+                onScreenIndicator.SetActive(false);
+            }
+            
         }
         else if (playerCam == null)
         {
@@ -111,7 +130,7 @@ public class OffscreenObjectiveIndicator : MonoBehaviour
         return (targetViewportPos.x >= 0 && targetViewportPos.x <= 1 && targetViewportPos.y >= 0 && targetViewportPos.y <= 1 && targetViewportPos.z >= 0);
     }
 
-    private void UpdateTarget(Vector3 targetViewportPos)
+    private void UpdateOffscreenTarget(Vector3 targetViewportPos)
     {
         if (playerCam == null)
         {
@@ -169,7 +188,20 @@ public class OffscreenObjectiveIndicator : MonoBehaviour
         float scale = Mathf.Lerp(minImageScale, 1, lerpAmount);
 
         rectTransform.localScale = originalScale * scale;
-
         indicator.SetActive(true);
+
+    }
+
+    private void UpdateOnScreenPos(Vector3 targetViewportPos)
+    {
+        if (playerCam == null)
+        {
+            Debug.LogWarning("Player Camera reference is missing in OffscreenObjectiveIndicator script. Please ensure there is a camera in the scene tagged as 'MainCamera'.");
+            return;
+        }
+
+        onScreenIndicator.transform.position = playerCam.WorldToScreenPoint(target.position);
+        onScreenIndicator.SetActive(true);
+        //float distance = Vector3.Distance(player.gameObject.transform.position, target.transform.position);
     }
 }

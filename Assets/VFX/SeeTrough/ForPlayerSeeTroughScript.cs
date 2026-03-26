@@ -6,10 +6,12 @@ public class ForPlayerSeeTroughScript : MonoBehaviour
 {
     public static int PlayerPosID = Shader.PropertyToID("_PlayerPosition");
     public static int SizeID = Shader.PropertyToID("_Size");
-
     
     [SerializeField] Camera Cam;
     [SerializeField] LayerMask Mask;
+
+    private float LeafSizeValue = 1.25f;
+    private float OtherSizeValue = 0.75f;
 
     //[SerializeField] Material[] WallMaterials;
     RaycastHit[] RayArray;
@@ -28,11 +30,14 @@ public class ForPlayerSeeTroughScript : MonoBehaviour
 
             // Direction from player to camera
             var dir = Cam.transform.position - transform.position;
+            
+            // Offset starting point to account for a sphere cast instead of raycast
+            Vector3 rayOrigin = transform.position + (dir.normalized * 2.0f);
 
             // Ray from player toward camera
-            var ray = new Ray(transform.position, dir.normalized);
+            var ray = new Ray(rayOrigin, dir.normalized);
 
-            RayArray = Physics.RaycastAll(ray, 3000, Mask);
+            RayArray = Physics.SphereCastAll(ray,1.1f, 3000, Mask);
 
             if (CurrentObjects != null)
             {
@@ -59,7 +64,15 @@ public class ForPlayerSeeTroughScript : MonoBehaviour
 
                 if (rend)
                 {
-                    rend.material.SetFloat(SizeID, 0.75f);
+                    if (rend.material.shader == Shader.Find("Shader Graphs/LeavesSeeTrough 1"))
+                    {
+                        rend.material.SetFloat(SizeID, LeafSizeValue);
+                    }
+                    else
+                    {
+                        rend.material.SetFloat(SizeID, OtherSizeValue);
+                    }
+                    
                     rend.material.SetVector(PlayerPosID, view);
                 }
             }

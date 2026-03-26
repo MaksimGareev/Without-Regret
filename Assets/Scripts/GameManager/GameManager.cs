@@ -47,6 +47,9 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public GameObject objectiveManager;
     public ObjectiveCanvas objectiveCanvas;
     public GameObject objectivePanel;
+    public GameObject qteCanvas;
+    public RectTransform qteArrowsContainer;
+    public GameObject qteButtonMashUI;
     [HideInInspector] public GameObject eventSystem;
     public SceneLoadManager sceneLoadManager;
 

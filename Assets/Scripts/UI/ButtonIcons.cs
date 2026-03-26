@@ -50,11 +50,13 @@ public class ButtonIcons : MonoBehaviour
         }
     }
 
-    public void HighlightBest(IInteractable interactable)
+    public void HighlightBest(IInteractable interactable, GameObject player)
     {
         Clear();
 
         if (interactable == null) return;
+
+        if (!interactable.CanInteract(player)) return;
 
         Highlight(interactable.interactType);
     }
@@ -83,13 +85,16 @@ public class ButtonIcons : MonoBehaviour
     }
     
 
-    public void HighlightMultiple(List<IInteractable> interactables)
+    public void HighlightMultiple(List<IInteractable> interactables, GameObject player)
     {
         //Clear();
 
         foreach (var interactable in interactables)
         {
-            Highlight(interactable.interactType);
+            if (interactable.CanInteract(player))
+            {
+                Highlight(interactable.interactType);
+            }
         }
     }
 

@@ -1,0 +1,268 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &8613650104285093061
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6600059486282402636}
+  - component: {fileID: 7014002075272759330}
+  - component: {fileID: 4173310139411507158}
+  - component: {fileID: 6739142888903478039}
+  - component: {fileID: 3161186285495237164}
+  - component: {fileID: 7195596798554383349}
+  - component: {fileID: 8032618679538032127}
+  - component: {fileID: -7093563939775377807}
+  m_Layer: 0
+  m_Name: Darry
+  m_TagString: protectedNPC
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6600059486282402636
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8613650104285093061}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0.56451946, z: -0, w: 0.8254197}
+  m_LocalPosition: {x: -46.75, y: 1.195, z: 211.48}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1735018252759095059}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -68.738, z: 0}
+--- !u!114 &7014002075272759330
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8613650104285093061}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a40ba9254f066ed499136723990e8a6f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DialogueTrigger
+  animator: {fileID: 0}
+  isTalking: 0
+  chimeAnimator: {fileID: 0}
+  chimeActive: 0
+  chimeScript: {fileID: 0}
+  faceHandler: {fileID: 0}
+  NPCName: Darry
+  chatRange: 3
+  playerMovePoint: {fileID: 0}
+  jsonDialogueFile: {fileID: 4900000, guid: deb273e5dd7992e4e9a436c59ed417f3, type: 3}
+  TalkedJsonDialogueFile: {fileID: 0}
+  CompleteJsonDialogueFile: {fileID: 0}
+  ActiveJsonDialogueFile: {fileID: 0}
+  objectiveIDYouCareAbout: []
+  linkedObjective: {fileID: 11400000, guid: 7d82ab5253af7744cbcff50ae65e37a4, type: 2}
+  journalEntry: {fileID: 0}
+  IsMediation: 1
+  mediationTransformA: {fileID: 0}
+  mediationTransformB: {fileID: 0}
+  lookSpeed: 5
+  isLookingAtPlayer: 0
+  TalkedAlready: 0
+  iconPrefab: {fileID: 4114033263953508203, guid: 48024210bf4a4394fa37015b90b3b410, type: 3}
+  shouldShowIcon: 1
+  enemy: {fileID: 0}
+  focusCameraOnTrigger: 0
+  RewardItem: {fileID: 0}
+  triggerType: 0
+--- !u!114 &4173310139411507158
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8613650104285093061}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3841e1f0d208804eb5dd0057bd9ac59, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Darry
+  agent: {fileID: 0}
+  targets: []
+  currentTarget: {fileID: 0}
+  Speed: 3
+  RotationSpeed: 3
+  targetSpot: {fileID: 0}
+  lookAtTarget: {fileID: 0}
+  isTraveling: 0
+  arrived: 0
+  stopDistance: 0.5
+  updateRate: 0.2
+  enemy: {fileID: 0}
+  linkedHouseObjective: {fileID: 0}
+  linkedNeighborhoodObjective: {fileID: 0}
+--- !u!114 &6739142888903478039
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8613650104285093061}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5811fd91db252614fa41dcc77146359e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DarryNeighborhood
+  Speed: 3
+  RotationSpeed: 3
+  agent: {fileID: 0}
+  targetSpot: {fileID: 0}
+  lookAtTarget: {fileID: 0}
+  isTraveling: 0
+  arrived: 0
+  stopDistance: 0.5
+  IntruderTrigger: {fileID: 0}
+  npcName: Darry
+  linkedHouseObjective: {fileID: 0}
+  linkedNeighborhoodObjective: {fileID: 0}
+--- !u!54 &3161186285495237164
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8613650104285093061}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 112
+  m_CollisionDetection: 0
+--- !u!136 &7195596798554383349
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8613650104285093061}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Height: 2.939731
+  m_Direction: 1
+  m_Center: {x: 0, y: -0.20049512, z: 0}
+--- !u!114 &8032618679538032127
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8613650104285093061}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b93d8170e88d8e34684424c0750fb15a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SaveableFriendlyNPC
+  uniqueID: 48b15334-8f2d-431f-b9e8-5e793a40cdf4
+--- !u!114 &-7093563939775377807
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8613650104285093061}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0445f3bbf8d3fd64c8af937f38910d51, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ResettableObject
+--- !u!1001 &2278465813729718520
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 6600059486282402636}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: af92f9b628054044893d73316d519abd, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: af92f9b628054044893d73316d519abd, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: af92f9b628054044893d73316d519abd, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: af92f9b628054044893d73316d519abd, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: af92f9b628054044893d73316d519abd, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: af92f9b628054044893d73316d519abd, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: af92f9b628054044893d73316d519abd, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: af92f9b628054044893d73316d519abd, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: af92f9b628054044893d73316d519abd, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: af92f9b628054044893d73316d519abd, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: af92f9b628054044893d73316d519abd, type: 3}
+      propertyPath: m_Name
+      value: Darry
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: af92f9b628054044893d73316d519abd, type: 3}
+--- !u!4 &1735018252759095059 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: af92f9b628054044893d73316d519abd, type: 3}
+  m_PrefabInstance: {fileID: 2278465813729718520}
+  m_PrefabAsset: {fileID: 0}

@@ -18,7 +18,7 @@ public class MainMenu : MonoBehaviour
 
     [Header("UI Panels")]
     [SerializeField] public GameObject mainMenuPanel;
-    [SerializeField] private MMSettings settingsScript;
+    [SerializeField] private SettingsMenu settingsScript;
     [SerializeField] private GameObject settingsPanel;
     [SerializeField] private GameObject creditsPanel;
     [SerializeField] private GameObject saveSlotsPanel;
@@ -298,7 +298,7 @@ public class MainMenu : MonoBehaviour
         }
         else
         {
-            playButtonText.text = "New Game";
+            playButtonText.text = "Play Game";
         }
     }
 

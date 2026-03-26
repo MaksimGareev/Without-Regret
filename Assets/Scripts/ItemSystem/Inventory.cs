@@ -180,7 +180,11 @@ public class Inventory : MonoBehaviour, ISaveable
 
             if (!System.Array.Exists(scenesWOPickupEffect, scene => scene == SceneManager.GetActiveScene().name))
             {
-                cameraMovement?.TriggerPickupCameraEffect(itemToCollect.transform);
+                if (cameraMovement)
+                {
+                    cameraMovement.TriggerPickupCameraEffect(itemToCollect.transform);
+                }
+                
                 StartCoroutine(WaitForCameraTransition());
             }
             
@@ -283,7 +287,7 @@ public class Inventory : MonoBehaviour, ISaveable
     {
         while (!inventoryLoaded)
         {
-            Debug.LogWarning("Inventory not loaded yet, waiting...");
+            //Debug.LogWarning("Inventory not loaded yet, waiting...");
             yield return null;
         }
 

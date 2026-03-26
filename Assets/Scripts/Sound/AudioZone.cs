@@ -21,7 +21,7 @@ public class AudioZone : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            AudioManager.Instance.PlayAreaMusic(BackgroundSound, FadeDuration);
+            //AudioManager.Instance.PlayAreaMusic(BackgroundSound, FadeDuration);
         }
     }
 }
