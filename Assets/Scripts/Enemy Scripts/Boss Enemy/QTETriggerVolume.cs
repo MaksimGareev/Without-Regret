@@ -261,7 +261,7 @@ public class QTETriggerVolume : MonoBehaviour, IInteractable
         for (int i = 0; i < platforms.Count; i++)
         {
             platforms[i].SetQTEComplete();
-            platforms[i].orbitSpeed *= 2;
+           // platforms[i].orbitSpeed *= 2;
         }
 
         // cleanup runtime arrows
