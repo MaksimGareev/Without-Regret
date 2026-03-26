@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class TreeVoidSequence : MonoBehaviour
+public class SacredTreeSequence : MonoBehaviour
 {
     [Header("References")]
     public Transform player; // Player
@@ -79,6 +79,16 @@ public class TreeVoidSequence : MonoBehaviour
             instantBlackScreen.alpha = 1f; // Black screen for a second 
             instantBlackScreen.interactable = true;
             instantBlackScreen.blocksRaycasts = true;
+        }
+        
+        CharacterSwap swapScript = playerControllerScript.gameObject.GetComponent<CharacterSwap>();
+        if (swapScript != null)
+        {
+            swapScript.SwapCharacters();
+        }
+        else
+        {
+            Debug.LogError("CharacterSwap script not found on player controller object. Could not swap characters");
         }
 
         yield return new WaitForSeconds(blackScreenDuration);
