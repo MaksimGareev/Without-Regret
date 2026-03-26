@@ -237,6 +237,8 @@ GameObject:
   - component: {fileID: 4035302086000222004}
   - component: {fileID: 2785358529065914657}
   - component: {fileID: 3909000671742844404}
+  - component: {fileID: 1811394265443030933}
+  - component: {fileID: -1541110369733951107}
   m_Layer: 8
   m_Name: Irene
   m_TagString: Untagged
@@ -456,6 +458,7 @@ MonoBehaviour:
   taskCompleteDialogueFile: {fileID: 0}
   NPCName: Friendly NPC
   chatRange: 3
+  journalEntry: {fileID: 0}
   objectiveIDsYouCareAbout: []
   linkedObjective: {fileID: 0}
   focusCameraOnTrigger: 1
@@ -468,6 +471,33 @@ MonoBehaviour:
   enemy: {fileID: 0}
   RewardItem: {fileID: 0}
   triggerType: 0
+--- !u!114 &1811394265443030933
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9028717818022298950}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0445f3bbf8d3fd64c8af937f38910d51, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ResettableObject
+--- !u!114 &-1541110369733951107
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9028717818022298950}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c816b79715e89c84a9478dfd80fcc532, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractableProximity
+  range: 3
+  player: {fileID: 0}
+  uiFade: {fileID: 0}
 --- !u!1001 &2605769388952795558
 PrefabInstance:
   m_ObjectHideFlags: 0

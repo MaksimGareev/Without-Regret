@@ -14,8 +14,9 @@ GameObject:
   - component: {fileID: 5757002758716536703}
   - component: {fileID: 1261743198065681055}
   - component: {fileID: -4167403922123278760}
-  - component: {fileID: 4300360015223950064}
   - component: {fileID: 33584142970360482}
+  - component: {fileID: 7272062635568098858}
+  - component: {fileID: 2218548058499907805}
   m_Layer: 0
   m_Name: Barry
   m_TagString: Untagged
@@ -146,46 +147,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SaveableFriendlyNPC
   uniqueID: 0f68128a-d07c-4ae8-8754-033ecc87c08e
---- !u!114 &4300360015223950064
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1239127344705375727}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a40ba9254f066ed499136723990e8a6f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DialogueTrigger
-  animator: {fileID: 0}
-  isTalking: 0
-  chimeAnimator: {fileID: 0}
-  chimeActive: 0
-  chimeScript: {fileID: 0}
-  faceHandler: {fileID: 0}
-  NPCName: Friendly NPC
-  chatRange: 3
-  playerMovePoint: {fileID: 0}
-  jsonDialogueFile: {fileID: 4900000, guid: 53de4cd9b666c5f4797ff938a0c700e7, type: 3}
-  TalkedJsonDialogueFile: {fileID: 0}
-  CompleteJsonDialogueFile: {fileID: 0}
-  ActiveJsonDialogueFile: {fileID: 0}
-  objectiveIDYouCareAbout: []
-  linkedObjective: {fileID: 11400000, guid: f62de7dd80a2a3148a7321f7071c96d5, type: 2}
-  journalEntry: {fileID: 0}
-  IsMediation: 0
-  mediationTransformA: {fileID: 0}
-  mediationTransformB: {fileID: 0}
-  lookSpeed: 5
-  isLookingAtPlayer: 0
-  TalkedAlready: 0
-  iconPrefab: {fileID: 4114033263953508203, guid: 48024210bf4a4394fa37015b90b3b410, type: 3}
-  shouldShowIcon: 1
-  enemy: {fileID: 0}
-  focusCameraOnTrigger: 0
-  RewardItem: {fileID: 0}
-  triggerType: 0
 --- !u!114 &33584142970360482
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -210,6 +171,7 @@ MonoBehaviour:
   taskCompleteDialogueFile: {fileID: 0}
   NPCName: Friendly NPC
   chatRange: 3
+  journalEntry: {fileID: 0}
   objectiveIDsYouCareAbout: []
   linkedObjective: {fileID: 0}
   focusCameraOnTrigger: 1
@@ -222,6 +184,33 @@ MonoBehaviour:
   enemy: {fileID: 0}
   RewardItem: {fileID: 0}
   triggerType: 0
+--- !u!114 &7272062635568098858
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1239127344705375727}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0445f3bbf8d3fd64c8af937f38910d51, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ResettableObject
+--- !u!114 &2218548058499907805
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1239127344705375727}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c816b79715e89c84a9478dfd80fcc532, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractableProximity
+  range: 3
+  player: {fileID: 0}
+  uiFade: {fileID: 0}
 --- !u!1001 &5226556515310480028
 PrefabInstance:
   m_ObjectHideFlags: 0

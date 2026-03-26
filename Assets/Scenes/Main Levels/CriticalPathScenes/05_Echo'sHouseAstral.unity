@@ -11986,8 +11986,31 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 100116498308603696, guid: 558083b16e4ca884ea05b07a66ae7af2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 752424931}
   m_SourcePrefab: {fileID: 100100000, guid: 558083b16e4ca884ea05b07a66ae7af2, type: 3}
+--- !u!1 &752424930 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 100116498308603696, guid: 558083b16e4ca884ea05b07a66ae7af2, type: 3}
+  m_PrefabInstance: {fileID: 752424929}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &752424931
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 752424930}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c816b79715e89c84a9478dfd80fcc532, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractableProximity
+  range: 3
+  player: {fileID: 1311844012}
+  uiFade: {fileID: 0}
 --- !u!43 &754418245
 Mesh:
   m_ObjectHideFlags: 0

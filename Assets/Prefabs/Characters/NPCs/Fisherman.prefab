@@ -289,6 +289,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 4e70d770756030d488da787fb52c327a, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1340488875273866479}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 4e70d770756030d488da787fb52c327a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -8317127086711724980}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 4e70d770756030d488da787fb52c327a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -7591241952873912440}
   m_SourcePrefab: {fileID: 100100000, guid: 4e70d770756030d488da787fb52c327a, type: 3}
 --- !u!4 &3369659892418938816 stripped
 Transform:
@@ -377,7 +383,10 @@ MonoBehaviour:
   ActiveJsonDialogueFile: {fileID: 0}
   objectiveIDYouCareAbout: []
   linkedObjective: {fileID: 11400000, guid: 7ac4e8fc13c12f540829dc3bd2d3b92e, type: 2}
+  journalEntry: {fileID: 0}
   IsMediation: 0
+  mediationTransformA: {fileID: 0}
+  mediationTransformB: {fileID: 0}
   lookSpeed: 5
   isLookingAtPlayer: 0
   TalkedAlready: 0
@@ -400,6 +409,33 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SaveableFriendlyNPC
   uniqueID: 4f32141b-eea9-402d-be15-2fa4e539fef6
+--- !u!114 &-8317127086711724980
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6024886389812598591}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0445f3bbf8d3fd64c8af937f38910d51, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ResettableObject
+--- !u!114 &-7591241952873912440
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6024886389812598591}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c816b79715e89c84a9478dfd80fcc532, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractableProximity
+  range: 3
+  player: {fileID: 0}
+  uiFade: {fileID: 0}
 --- !u!4 &6401694163471814021 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 4e70d770756030d488da787fb52c327a, type: 3}

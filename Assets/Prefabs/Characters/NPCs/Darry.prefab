@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 3161186285495237164}
   - component: {fileID: 7195596798554383349}
   - component: {fileID: 8032618679538032127}
+  - component: {fileID: -7093563939775377807}
   m_Layer: 0
   m_Name: Darry
   m_TagString: protectedNPC
@@ -65,7 +66,10 @@ MonoBehaviour:
   ActiveJsonDialogueFile: {fileID: 0}
   objectiveIDYouCareAbout: []
   linkedObjective: {fileID: 11400000, guid: 7d82ab5253af7744cbcff50ae65e37a4, type: 2}
+  journalEntry: {fileID: 0}
   IsMediation: 1
+  mediationTransformA: {fileID: 0}
+  mediationTransformB: {fileID: 0}
   lookSpeed: 5
   isLookingAtPlayer: 0
   TalkedAlready: 0
@@ -188,6 +192,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SaveableFriendlyNPC
   uniqueID: 48b15334-8f2d-431f-b9e8-5e793a40cdf4
+--- !u!114 &-7093563939775377807
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8613650104285093061}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0445f3bbf8d3fd64c8af937f38910d51, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ResettableObject
 --- !u!1001 &2278465813729718520
 PrefabInstance:
   m_ObjectHideFlags: 0
