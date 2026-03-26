@@ -190,6 +190,7 @@ GameObject:
   - component: {fileID: 1454991729624789680}
   - component: {fileID: 2940017306057692744}
   - component: {fileID: 1857675662239280356}
+  - component: {fileID: 6075640116359577214}
   m_Layer: 11
   m_Name: ObjectiveLeaves
   m_TagString: Leaves
@@ -213,6 +214,7 @@ Transform:
   - {fileID: 3941271374887990899}
   - {fileID: 937484135827801111}
   - {fileID: 5129164664500862333}
+  - {fileID: 3920529830265282353}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &1454991729624789680
@@ -264,6 +266,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SaveableWorldObject
   uniqueID: 2cafd309-8f89-4c20-958c-7a4e18356226
+--- !u!114 &6075640116359577214
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 606298470149412685}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c816b79715e89c84a9478dfd80fcc532, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractableProximity
+  range: 3
+  player: {fileID: 0}
+  uiFade: {fileID: 0}
 --- !u!1 &819466705063230454
 GameObject:
   m_ObjectHideFlags: 0

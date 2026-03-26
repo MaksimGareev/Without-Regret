@@ -202,9 +202,9 @@ GameObject:
   - component: {fileID: 2807253959955764097}
   - component: {fileID: 193420249962566702}
   - component: {fileID: 5147423432256284129}
-  - component: {fileID: 6625594364772789633}
   - component: {fileID: -3710363329669676532}
   - component: {fileID: 2455976820801887992}
+  - component: {fileID: -7834324135975345218}
   m_Layer: 0
   m_Name: Friendly NPC
   m_TagString: Untagged
@@ -346,42 +346,6 @@ MonoBehaviour:
   centrePoint: {fileID: 0}
   range: 2
   waitTime: 2
---- !u!114 &6625594364772789633
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5575190084026342562}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a40ba9254f066ed499136723990e8a6f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DialogueTrigger
-  animator: {fileID: 0}
-  isTalking: 0
-  chimeAnimator: {fileID: 0}
-  chimeActive: 0
-  chimeScript: {fileID: 0}
-  NPCName: Friendly NPC
-  chatRange: 3
-  playerMovePoint: {fileID: 0}
-  jsonDialogueFile: {fileID: 4900000, guid: b08ec039a12449f43922ab9ad0ca5db0, type: 3}
-  TalkedJsonDialogueFile: {fileID: 4900000, guid: ee0c8cc1c0e49c74eb182d939b56af22, type: 3}
-  CompleteJsonDialogueFile: {fileID: 0}
-  ActiveJsonDialogueFile: {fileID: 0}
-  objectiveIDYouCareAbout: []
-  linkedObjective: {fileID: 0}
-  IsMediation: 0
-  lookSpeed: 5
-  isLookingAtPlayer: 0
-  TalkedAlready: 0
-  iconPrefab: {fileID: 4114033263953508203, guid: 48024210bf4a4394fa37015b90b3b410, type: 3}
-  shouldShowIcon: 1
-  enemy: {fileID: 0}
-  focusCameraOnTrigger: 1
-  RewardItem: {fileID: 0}
-  triggerType: 0
 --- !u!95 &-3710363329669676532
 Animator:
   serializedVersion: 7
@@ -425,6 +389,18 @@ MonoBehaviour:
   minWidth: 100
   minHeight: 50
   maxWidth: 1000
+--- !u!114 &-7834324135975345218
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5575190084026342562}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0445f3bbf8d3fd64c8af937f38910d51, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ResettableObject
 --- !u!1 &8502622949037986501
 GameObject:
   m_ObjectHideFlags: 0
