@@ -40,6 +40,7 @@ public class OrbitingPlatform : MonoBehaviour
     private Rigidbody rb;
     private Vector3 lastPosition;
     public Vector3 platformVelocity { get; private set; }
+    private bool lockedOnce = false;
 
     private void Awake()
     {
@@ -76,7 +77,17 @@ public class OrbitingPlatform : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (centerPoint == null || reachedLocation) return;
+        if (centerPoint == null || reachedLocation)
+        {
+            if (!lockedOnce)
+            {
+                LockPlatform();
+                lockedOnce = true;
+            }
+            
+            return;
+        }
+            
 
         // Calculate the new angle based on the orbit direction and speed
         if (orbitDirection == OrbitDirection.CounterClockwise)
@@ -121,6 +132,11 @@ public class OrbitingPlatform : MonoBehaviour
                 reachedLocation = true;
             }
         }
+    }
+
+    private void LockPlatform()
+    {
+        rb.constraints = RigidbodyConstraints.FreezeAll;
     }
 
     private void SetObjectiveComplete(ObjectiveInstance objective)
