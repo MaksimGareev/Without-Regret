@@ -125,10 +125,8 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
         agent = GetComponent<NavMeshAgent>();
         if (agent == null)
         {
-            if (triggerType != DialogueTriggerType.Story)
-            {
+            if (triggerType == DialogueTriggerType.Story || triggerType == DialogueTriggerType.Spawn) return;
                 Debug.LogError("NavMeshAgent missing on NPC");
-            }
         }
 
         faceHandler = gameObject.GetComponentInChildren<FaceHandler>();
@@ -585,10 +583,20 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
             return;
         }
 
-        // only try to start dialogue if the trigger has not talked already
-        if (!hasTalked && startDialogueFile != null)
+        if (other.CompareTag("Player") && !hasTalked)
+        {
+            if (this.CompareTag("Spawner"))
+            {
+                enemy.SetActive(true);
+            }
+        }
+
+            // only try to start dialogue if the trigger has not talked already
+            if (!hasTalked && startDialogueFile != null)
         {
             TryStartDialogue();
         }
+
+
     }
 }
