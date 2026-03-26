@@ -27,11 +27,9 @@ public class PauseManager : MonoBehaviour
 
     [Header("UI Panels")]
     [SerializeField] public GameObject pauseMenuPanel;
-    [SerializeField] private MMSettings settingsScript;
+    [SerializeField] private SettingsMenu settingsScript;
     [SerializeField] private GameObject settingsPanel;
     [SerializeField] private GameObject confirmationPanel;
-
-    [SerializeField, Tooltip("The index for the scene that contains the boss fight to prevent saving on opening the pause menu for checkpoint functionality")] private int bossSceneIndex;
 
     [HideInInspector] public bool isGamePaused = false;
     [HideInInspector] public bool usingController { get; private set; } = false;
@@ -88,14 +86,12 @@ public class PauseManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (SceneManager.GetActiveScene().name == "MainMenu")
-        {
-            return; // Do not allow pausing in the main menu
-        }
+        // Do not allow pausing in the main menu
+        if (SceneManager.GetActiveScene().name == "MainMenu") return;
         
         if ((playerPauseAction.triggered || UIPauseAction.triggered) 
         && !Journal.Instance.isJournalOpen 
-        && !DialogueManager.DialogueIsActive 
+        && !NewDialogueManager.Instance.DialogueIsActive 
         && !confirmationPanel.activeSelf 
         && !(GameOverManager.Instance != null && GameOverManager.Instance.IsGameOver))
         {
@@ -274,12 +270,6 @@ public class PauseManager : MonoBehaviour
 
     private void PauseGame()
     {
-        // Save game before pausing
-        if (SaveManager.Instance != null && SceneManager.GetActiveScene().buildIndex != bossSceneIndex)
-        {
-            SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
-        }
-
         SetUpListeners();
 
         // Logic to pause the game
@@ -312,8 +302,6 @@ public class PauseManager : MonoBehaviour
 
         // Set initial selected button
         EventSystem.current.SetSelectedGameObject(resumeButton.gameObject);
-
-        //Debug.Log("Game Paused");
     }
 
     private void SetUpListeners()
@@ -436,6 +424,7 @@ public class PauseManager : MonoBehaviour
         {
             GameManager.Instance.objectivePanel.SetActive(GameManager.Instance.objectiveCanvas.IsVisible());
         }
+
     }
 
     private void DisableOtherCanvases()
@@ -517,7 +506,7 @@ public class PauseManager : MonoBehaviour
             },
             () => 
             {
-                // Do nothing if cancelled
+                // Do nothing if canceled
                 confirmationPanel.SetActive(false);
                 EnableAllButtons();
                 EventSystem.current.SetSelectedGameObject(reloadSaveButton.gameObject);

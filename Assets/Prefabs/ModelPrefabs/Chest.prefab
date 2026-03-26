@@ -74,6 +74,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 34f018798b831f24c81de6b30b158e45, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4201257943459240787}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 34f018798b831f24c81de6b30b158e45, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -8979501180810993744}
     - targetCorrespondingSourceObject: {fileID: 6413246915250847400, guid: 34f018798b831f24c81de6b30b158e45, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5058299569042091337}
@@ -109,18 +112,30 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LockedItem
   LockpickRange: 2
-  promptUI: {fileID: 0}
-  isDoor: 0
   isChest: 1
   UnlockSound: {fileID: 0}
   UnlockTop: {fileID: 8938247370147623796}
-  hasBeenLockpicked: 0
-  isInRange: 0
-  iconPrefab: {fileID: 8946699342974086247, guid: 8b6446bb21be2404a9445c204128e276, type: 3}
-  shouldShowIcon: 1
   linkedObjective: {fileID: 11400000, guid: 5d42f56f5aded984986bcd1cc47d2c2f, type: 2}
   needsObjective: 1
+  addProgress: 1
   RewardItem: {fileID: 11400000, guid: efa8a2f0539bbef4f9b7b2ce0f8f0598, type: 2}
+  hasBeenLockpicked: 0
+  isInRange: 0
+--- !u!114 &-8979501180810993744
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1290307065367479050}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c816b79715e89c84a9478dfd80fcc532, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractableProximity
+  range: 3
+  player: {fileID: 0}
+  uiFade: {fileID: 0}
 --- !u!1 &4911475244072403187 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6413246915250847400, guid: 34f018798b831f24c81de6b30b158e45, type: 3}

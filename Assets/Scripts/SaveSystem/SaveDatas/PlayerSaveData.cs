@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 [Serializable]
 public class PlayerTransformEntry
@@ -13,7 +14,9 @@ public class PlayerTransformEntry
 public class PlayerSaveData
 {
     public List<PlayerTransformEntry> playerTransforms = new List<PlayerTransformEntry>();
+    public Dictionary<string, (Vector3 position, Vector3 rotation)> checkpoints = new();
     public TimerRingUI.RingState currentRingState = TimerRingUI.RingState.Full;
+    public PlayerModel currentPlayerModel = PlayerModel.Echo;
 
     public void SetPlayerTransform(string scene, float[] pos, float[] rot)
     {

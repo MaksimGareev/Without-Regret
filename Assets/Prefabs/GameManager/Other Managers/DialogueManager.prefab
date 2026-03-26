@@ -17,7 +17,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &144017172174780438
 RectTransform:
   m_ObjectHideFlags: 0
@@ -28,7 +28,7 @@ RectTransform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 2.3, y: 2.3, z: 2.3}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 7375470167523943712}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -85,8 +85,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1909011670422841878}
   - component: {fileID: 1940466084136260643}
-  - component: {fileID: 6859165905719255502}
   - component: {fileID: 5574770712420840591}
+  - component: {fileID: 7458049309487684072}
   m_Layer: 0
   m_Name: DialogueManager
   m_TagString: Untagged
@@ -207,7 +207,7 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &6859165905719255502
+--- !u!114 &5574770712420840591
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -216,14 +216,27 @@ MonoBehaviour:
   m_GameObject: {fileID: 7723209263034436145}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fd385acb2d332ac4591924260df61634, type: 3}
+  m_Script: {fileID: 11500000, guid: 757ed2ab9148ce049bdd296b48cacc5e, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DialogueManager1
-  DialoguePanel: {fileID: 8171222631887880235}
-  npcNameText: {fileID: 4313524867468115530}
+  m_EditorClassIdentifier: Assembly-CSharp::SingletonManager
+  singletonType: 4
+--- !u!114 &7458049309487684072
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7723209263034436145}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea0ec7bdcdfd3304eab2d770601c5277, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NewDialogueManager
+  dialoguePanel: {fileID: 8171222631887880235}
   dialogueText: {fileID: 5080320216834278344}
-  choicesContainer: {fileID: 7550158242401418718}
-  DirectionalImage: {fileID: 8129308088968347502}
+  npcNameText: {fileID: 4313524867468115530}
+  choiceContainer: {fileID: 7550158242401418718}
+  directionalImage: {fileID: 8129308088968347502}
   choicePrefab: {fileID: 1939377319681533935, guid: c0bcf03c9221ad94ba740b5fd1572722, type: 3}
   continueArrow: {fileID: 159517934221287011}
   scrollRect: {fileID: 7871861633870878448}
@@ -233,17 +246,17 @@ MonoBehaviour:
   - direction: 0
     image: {fileID: 6253936200083480949}
     offset: {x: 0, y: 0}
-  - direction: 1
-    image: {fileID: 1228863693610725341}
+  - direction: 3
+    image: {fileID: 7243418458103759699}
     offset: {x: 0, y: 0}
   - direction: 2
     image: {fileID: 5446458515711615717}
     offset: {x: 0, y: 0}
-  - direction: 3
-    image: {fileID: 7243418458103759699}
+  - direction: 1
+    image: {fileID: 1228863693610725341}
     offset: {x: 0, y: 0}
   playerPortrait: {fileID: 1402949276230912126}
-  defaultPortrait: {fileID: -9653950, guid: e2ccdccbeb2923f46a2b46b751c3c81a, type: 3}
+  defaultPortrait: {fileID: -1521356264, guid: e2ccdccbeb2923f46a2b46b751c3c81a, type: 3}
   positivePortrait: {fileID: -1481874976, guid: e2ccdccbeb2923f46a2b46b751c3c81a, type: 3}
   negativePortrait: {fileID: -1899959237, guid: e2ccdccbeb2923f46a2b46b751c3c81a, type: 3}
   neutralPortrait: {fileID: -1521356264, guid: e2ccdccbeb2923f46a2b46b751c3c81a, type: 3}
@@ -251,28 +264,36 @@ MonoBehaviour:
   portraitHoldTime: 0.75
   npcPortrait: {fileID: 2837737046373137981}
   npcPortraitSets:
-  - npcName: Irene
-    neutral: {fileID: -423630908, guid: 097113541d712e5408ef089f175699f0, type: 3}
-    happy: {fileID: -2070005638, guid: 097113541d712e5408ef089f175699f0, type: 3}
-    upset: {fileID: -481534714, guid: 097113541d712e5408ef089f175699f0, type: 3}
   - npcName: Chime
     neutral: {fileID: -1666672821, guid: 7b3aa29ab2fda00418b13ce756a188dd, type: 3}
     happy: {fileID: 1396444695, guid: 7b3aa29ab2fda00418b13ce756a188dd, type: 3}
     upset: {fileID: -1314866224, guid: 7b3aa29ab2fda00418b13ce756a188dd, type: 3}
-  - npcName: Echo
-    neutral: {fileID: 703206046, guid: 884a73d613290114fb2f0f817c13fdf1, type: 3}
-    happy: {fileID: 2020796204, guid: 884a73d613290114fb2f0f817c13fdf1, type: 3}
-    upset: {fileID: -76903906, guid: 884a73d613290114fb2f0f817c13fdf1, type: 3}
   - npcName: Darry
     neutral: {fileID: 1895367221, guid: 90ef362251daa0e48b7d83874a0dda8c, type: 3}
     happy: {fileID: -908110269, guid: 90ef362251daa0e48b7d83874a0dda8c, type: 3}
     upset: {fileID: -1202337478, guid: 90ef362251daa0e48b7d83874a0dda8c, type: 3}
+  - npcName: Irene
+    neutral: {fileID: -423630908, guid: 097113541d712e5408ef089f175699f0, type: 3}
+    happy: {fileID: -2070005638, guid: 097113541d712e5408ef089f175699f0, type: 3}
+    upset: {fileID: 79435542, guid: 097113541d712e5408ef089f175699f0, type: 3}
+  - npcName: Lucy
+    neutral: {fileID: 766100833, guid: ec737a130fac5e440b69601daf3d820c, type: 3}
+    happy: {fileID: -1051384984, guid: ec737a130fac5e440b69601daf3d820c, type: 3}
+    upset: {fileID: 74931945, guid: ec737a130fac5e440b69601daf3d820c, type: 3}
+  - npcName: Mike
+    neutral: {fileID: -1876655196, guid: b76c2655b4c34c349ba94dc8c74df8cd, type: 3}
+    happy: {fileID: -580687758, guid: b76c2655b4c34c349ba94dc8c74df8cd, type: 3}
+    upset: {fileID: 934851828, guid: b76c2655b4c34c349ba94dc8c74df8cd, type: 3}
+  - npcName: Penelope
+    neutral: {fileID: -1806613369, guid: c066819c3bbac70458601a3de4657f86, type: 3}
+    happy: {fileID: 1996741543, guid: c066819c3bbac70458601a3de4657f86, type: 3}
+    upset: {fileID: -332085921, guid: c066819c3bbac70458601a3de4657f86, type: 3}
   - npcName: Reed
-    neutral: {fileID: -889186437, guid: ba2c9f3c58fec534c882248c997b57c9, type: 3}
+    neutral: {fileID: 419494799, guid: ba2c9f3c58fec534c882248c997b57c9, type: 3}
     happy: {fileID: 2060027682, guid: ba2c9f3c58fec534c882248c997b57c9, type: 3}
     upset: {fileID: 1483945121, guid: ba2c9f3c58fec534c882248c997b57c9, type: 3}
   - npcName: Stevey
-    neutral: {fileID: 1697246888, guid: 02bc60ce3b6afde48a46326743f15184, type: 3}
+    neutral: {fileID: 408944013, guid: 02bc60ce3b6afde48a46326743f15184, type: 3}
     happy: {fileID: 1279597814, guid: 02bc60ce3b6afde48a46326743f15184, type: 3}
     upset: {fileID: -866444227, guid: 02bc60ce3b6afde48a46326743f15184, type: 3}
   typingSource: {fileID: 1940466084136260643}
@@ -303,27 +324,16 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 8ed2059ad466229498e7818dec6cd21e, type: 3}
   - {fileID: 8300000, guid: 727dfede81bdee44d9228ba063291c4d, type: 3}
   - {fileID: 8300000, guid: 2ac35b0aca60abd40a465433a835605f, type: 3}
-  maleVoiceGroup: {fileID: -847131646458509449, guid: f09a44cefc8eb4247a0cbc3396985638, type: 2}
+  maleVoiceGroup: {fileID: 7607269124124976959, guid: f09a44cefc8eb4247a0cbc3396985638, type: 2}
   femaleVoiceGroup: {fileID: -6820833206628879798, guid: f09a44cefc8eb4247a0cbc3396985638, type: 2}
+  playerMorality: 0
+  minMorality: -10
+  maxMorality: 10
   holdTimeToSelect: 1.2
   choiceTimeLimit: 15
   choiceDistance: 250
   ireneDestinationTransform: {fileID: 0}
   IntruderTrigger: {fileID: 0}
-  playerMorality: 0
---- !u!114 &5574770712420840591
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7723209263034436145}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 757ed2ab9148ce049bdd296b48cacc5e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SingletonManager
-  singletonType: 4
 --- !u!1001 &8093223419389299315
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -334,11 +344,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 36588943033546013, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 87508348762393176, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1772002878412601261, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
       propertyPath: m_AnchoredPosition.x
@@ -348,21 +358,29 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 104
       objectReference: {fileID: 0}
+    - target: {fileID: 2811328435168536644, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2811328435168536644, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4081335531108956419, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4081335531108956419, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4081335531108956419, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 4081335531108956419, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -25
       objectReference: {fileID: 0}
     - target: {fileID: 5273993982251385165, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
       propertyPath: m_Pivot.x
@@ -444,13 +462,41 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5729236850218533164, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5863519157395408590, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
       propertyPath: m_SortingOrder
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 8015587243267833162, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
+      propertyPath: m_Color.b
+      value: 0.654902
+      objectReference: {fileID: 0}
+    - target: {fileID: 8015587243267833162, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
+      propertyPath: m_Color.g
+      value: 0.6745098
+      objectReference: {fileID: 0}
+    - target: {fileID: 8015587243267833162, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
+      propertyPath: m_Color.r
+      value: 0.43137258
+      objectReference: {fileID: 0}
     - target: {fileID: 8044630181632857385, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8197391379286094440, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -381
+      objectReference: {fileID: 0}
+    - target: {fileID: 8197391379286094440, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -68
+      objectReference: {fileID: 0}
+    - target: {fileID: 8286097193454699295, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8335060418343020279, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
       propertyPath: m_LocalPosition.z

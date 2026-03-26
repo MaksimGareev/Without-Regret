@@ -253,6 +253,7 @@ public class EnemyFieldOfView : MonoBehaviour
         }
     }
 
+
     // Function for killing the player
     void OnTriggerEnter(Collider other)
     {
@@ -281,6 +282,15 @@ public class EnemyFieldOfView : MonoBehaviour
                 Debug.Log("Hit with throwable");
             }
         }
+
+        //if enemy steps onto platform, become a child object of it
+        if (other.gameObject.CompareTag("MovingPlatform"))
+        {
+            transform.SetParent(other.transform);
+            m_Agent.Warp(transform.position);
+            m_Agent.updateRotation = false; //comment this out if enemy rotation on platform looks off
+            Debug.Log("Became Child of moving platform");
+        }
     }
 
     // check to see if the player is alive
@@ -289,6 +299,12 @@ public class EnemyFieldOfView : MonoBehaviour
         if (other.name == "Player")
         {
             Debug.Log("Player is alive");
+        }
+
+        if (other.gameObject.CompareTag("MovingPlatform"))
+        {
+            m_Agent.updateRotation = true; //comment this out if enemy rotation on platform looks off
+            transform.SetParent(null); 
         }
     }
 
