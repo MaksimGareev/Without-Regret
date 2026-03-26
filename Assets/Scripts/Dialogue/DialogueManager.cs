@@ -4,7 +4,6 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using UnityEngine.Audio;
-using UnityEditor.Rendering;
 
 [System.Serializable]
 public class NPCPortraitSet
