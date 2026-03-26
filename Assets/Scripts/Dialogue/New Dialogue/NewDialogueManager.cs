@@ -56,6 +56,11 @@ public class NewDialogueManager : MonoBehaviour
     [SerializeField] AudioMixerGroup maleVoiceGroup;
     [SerializeField] AudioMixerGroup femaleVoiceGroup;
 
+    [Header("Morality Settings")]
+    public int playerMorality;
+    [SerializeField] private int minMorality = -10;
+    [SerializeField] private int maxMorality = 10;
+
     [Header("Choice Selection")]
     [Tooltip("How long the player needs to hold to confirm a selection")]
     [SerializeField] float holdTimeToSelect = 1.2f;
@@ -96,11 +101,11 @@ public class NewDialogueManager : MonoBehaviour
 
     CanvasGroup portraitGroup;
 
-    public int playerMorality;
     int posCount, negCount, neutralCount;
 
     private NewDialogueTrigger activeDialogueTrigger;
     public bool DialogueIsActive { get; private set; }
+    bool justStartedDialogue = false;
 
     private PlayerController playerController;
     private CameraMovement cam;
@@ -169,6 +174,9 @@ public class NewDialogueManager : MonoBehaviour
     // Load dialogue based on the intended Scriptable object dialogue 
     public void StartDialogue(NewDialogueData dialogueSO, NewDialogueTrigger trigger)
     {
+        justStartedDialogue = true;
+        StartCoroutine(ClearStartFlag());
+
         // check if scriptable object is present
         if (dialogueSO == null || dialogueSO.dialogueLines.Count == 0)
         {
@@ -217,6 +225,12 @@ public class NewDialogueManager : MonoBehaviour
         ShowLine();
     }
 
+    IEnumerator ClearStartFlag()
+    {
+        yield return null;
+        justStartedDialogue = false;
+    }
+
     // Show the current line
     private void ShowLine()
     {
@@ -226,6 +240,13 @@ public class NewDialogueManager : MonoBehaviour
             EndDialogue();
             return;
         }
+
+        if (typingRoutine != null)
+        {
+            StopCoroutine(typingRoutine);
+        }
+
+        typing = false;
 
         currentLine = lineLookup[currentLineID];
         dialogueText.text = "";
@@ -294,6 +315,8 @@ public class NewDialogueManager : MonoBehaviour
 
     void OnConfirmPressed()
     {
+        if (justStartedDialogue) return;
+
         // don't allow player to skip anything durring pauses in dialogue
         if (!DialogueIsActive) return;
         if (currentLine == null) return;
@@ -350,10 +373,11 @@ public class NewDialogueManager : MonoBehaviour
 
         string npcName = activeDialogueTrigger.NPCName;
 
+        Irene irene = FindObjectOfType<Irene>();
+
         switch (npcName)
         {
             case "Irene":
-                Irene irene = FindObjectOfType<Irene>();
                 if (irene != null)
                 {
                     if (!irene.IsFollowing && activeDialogueTrigger.IsMediation == false)
@@ -362,16 +386,26 @@ public class NewDialogueManager : MonoBehaviour
                         irene.Follow();
                     }
                     
-                    if (irene.targetSpot != null)
+                   /* if (irene.targetSpot != null)
                     {
+                        irene.IsFollowing = false;
                         irene.StartTravel();
                     }
-                    
+                    */
+
                     if (activeDialogueTrigger.hasTalked && irene.GoBackHomeSpot != null && irene.arrived == true)
                     {
                         irene.targetSpot = irene.GoBackHomeSpot;
                         irene.StartTravel();
                     }
+                }
+                break;
+
+            case "Irene Story":
+
+                if (irene != null && irene.targetSpot != null)
+                {
+                    irene.StartTravel();
                 }
                 break;
 
@@ -395,6 +429,14 @@ public class NewDialogueManager : MonoBehaviour
                 if (penelope != null)
                 {
                     penelope.StartTravel();
+                }
+                break;
+            
+            case "Echo":
+                Barry echo = FindObjectOfType<Barry>();
+                if (echo != null)
+                {
+                    echo.StartTravel();
                 }
                 break;
         }
@@ -507,6 +549,10 @@ public class NewDialogueManager : MonoBehaviour
     void ApplyMorality(int change)
     {
         playerMorality += change;
+
+        // clamp morality between min and max
+        playerMorality = Mathf.Clamp(playerMorality, minMorality, maxMorality);
+
         PlayerPrefs.SetInt("Morality", playerMorality);
 
         if (change > 0) posCount++;
@@ -700,7 +746,8 @@ public class NewDialogueManager : MonoBehaviour
             LineTone.Upset => set.upset,
             _ => set.neutral
         };
-
+        
+        npcPortrait.SetNativeSize();
         npcPortrait.gameObject.SetActive(true);
     }
 
@@ -782,6 +829,12 @@ public class NewDialogueManager : MonoBehaviour
         if (activeDialogueTrigger != null)
         {
             activeDialogueTrigger.OnDialogueComplete();
+
+            // if the dialogue trigger has a reward item, add it to the inventory
+            if (activeDialogueTrigger != null)
+            {
+                activeDialogueTrigger.GiveReward();
+            }
         }
 
         // return camera to original position

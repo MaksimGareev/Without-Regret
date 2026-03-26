@@ -1,0 +1,131 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e28c2e20bb6c4240a55d8edffb777ec, type: 3}
+  m_Name: PenelopePassingOn
+  m_EditorClassIdentifier: Assembly-CSharp::NewDialogueData
+  npcName: Penelope
+  dialogueLines:
+  - LineID: Start
+    Speaker: Penelope
+    text: (Panting) I'm finally out of the forest...I can finally tell Irene...
+    lineTone: 0
+    NPCGender: female
+    NextLineID: Part II
+    endDialogueAfterLine: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Part II
+    Speaker: Penelope
+    text: Wait, what's going on? Who are y-...Echo? What're you doing here?
+    lineTone: 0
+    NPCGender: female
+    NextLineID: Part III
+    endDialogueAfterLine: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Part III
+    Speaker: Penelope
+    text: I feel strange...like I could float away. Please, what's going on??
+    lineTone: 0
+    NPCGender: female
+    NextLineID: 
+    endDialogueAfterLine: 0
+    choices:
+    - text: Breathe, you're okay.
+      NextLineID: Breathe
+      moralityChange: 1
+      direction: 0
+      objectiveToActivate: 
+    - text: Calm down.
+      NextLineID: Calm Down
+      moralityChange: -1
+      direction: 1
+      objectiveToActivate: 
+    objectivesToActivate: []
+  - LineID: Breathe
+    Speaker: Echo
+    text: Breathe, Penelope. I know it's scary, but you're okay. Give me a minute,
+      I'll explain.
+    lineTone: 0
+    NPCGender: female
+    NextLineID: Trust
+    endDialogueAfterLine: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Calm Down
+    Speaker: Echo
+    text: Calm down. I can't hear myself think. If you give me 2 seconds, I'll tell
+      you what's going on.
+    lineTone: 0
+    NPCGender: female
+    NextLineID: Sorry
+    endDialogueAfterLine: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Trust
+    Speaker: Penelope
+    text: Okay, I'm trusting you Echo. Where are we, what's going on?
+    lineTone: 0
+    NPCGender: female
+    NextLineID: 
+    endDialogueAfterLine: 0
+    choices:
+    - text: I'm sorry, but you've already died...
+      NextLineID: Nice
+      moralityChange: 1
+      direction: 0
+      objectiveToActivate: 
+    - text: This might take a while...
+      NextLineID: Nice II
+      moralityChange: -1
+      direction: 0
+      objectiveToActivate: 
+    objectivesToActivate: []
+  - LineID: Sorry
+    Speaker: Penelope
+    text: I'm sorry. I'm just really scared. Please, what's happening?
+    lineTone: 0
+    NPCGender: female
+    NextLineID: 
+    endDialogueAfterLine: 0
+    choices:
+    - text: I'm sorry, but you've already died...
+      NextLineID: Nice
+      moralityChange: 1
+      direction: 0
+      objectiveToActivate: 
+    - text: This might take a while...
+      NextLineID: Nice II
+      moralityChange: -1
+      direction: 0
+      objectiveToActivate: 
+    objectivesToActivate: []
+  - LineID: Nice
+    Speaker: Echo
+    text: I'm sorry Penelope, but you've passed away. You've been dead for some time
+      now...
+    lineTone: 0
+    NPCGender: female
+    NextLineID: Nice II
+    endDialogueAfterLine: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Nice II
+    Speaker: Echo
+    text: This place we're in, while it looks just like back home, it's actually
+      an 'afterlife' of sorts, called The Astral Plane.
+    lineTone: 0
+    NPCGender: female
+    NextLineID: 
+    endDialogueAfterLine: 1
+    choices: []
+    objectivesToActivate: []

@@ -44,6 +44,7 @@ public class PlayerThrowing : MonoBehaviour
     private float waitBeforeCharging = .75f;
 
     public Animator animator;
+    private CharacterSwap characterSwap;
 
     private void Start()
     {
@@ -61,6 +62,15 @@ public class PlayerThrowing : MonoBehaviour
     }
     private void Awake()
     {
+        characterSwap = FindObjectOfType<CharacterSwap>();
+
+        if (characterSwap != null)
+        {
+            animator = characterSwap.GetAnimator();
+
+            characterSwap.onAnimatorChanged += UpdateAnimator;
+        }
+
         if (animator == null)
         {
             //animator = GetComponentInChildren<Animator>();
@@ -325,6 +335,12 @@ public class PlayerThrowing : MonoBehaviour
         animator.SetBool("isGrabbing", false);
 
     }
+
+    void UpdateAnimator(Animator newAnimator)
+    {
+        animator = newAnimator;
+    }
+
 
     private void StartCharging(bool Controller) // handles starting the charging of a throw across both control types
     {

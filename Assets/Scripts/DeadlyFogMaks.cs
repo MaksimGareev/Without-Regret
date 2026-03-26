@@ -30,8 +30,6 @@ public class DeadlyFogMaks : MonoBehaviour
 
     // from maks: ColorAdjustments override from the assigned Volume 
     private ColorAdjustments colorAdjustments;
-
-    // from maks: how fast exposure interpolates between 0 and -10
     private float exposureLerpSpeed = 2f;
 
     // from maks: true = darken screen, false = return exposure to 0
@@ -64,7 +62,7 @@ public class DeadlyFogMaks : MonoBehaviour
             localVolume = GetComponent<Volume>();
         }
 
-        // from maks: retrieve ColorAdjustments override so we can modify Post Exposure
+        // from maks: retrieve ColorAdjustments override so  can modify Post Exposure
         if (localVolume != null && localVolume.profile != null)
         {
             localVolume.profile.TryGet(out colorAdjustments);
@@ -76,21 +74,16 @@ public class DeadlyFogMaks : MonoBehaviour
         // from maks: if no ColorAdjustments exists, do nothing
         if (colorAdjustments == null) return;
 
-        // from maks: smoothly interpolate exposure between 0 and -10
-        if (shouldDarken)
+        // from maks: smoothly build exposure based on time spent in fog 
+        float targetExposure = 0f;
+
+        if (timeSinceEnter > 0f && timeTillDamage > 0f)
         {
-            colorAdjustments.postExposure.value = Mathf.Lerp(
-                colorAdjustments.postExposure.value,
-                -10f,
-                Time.deltaTime * exposureLerpSpeed);
+            float normalized = Mathf.Clamp01(timeSinceEnter / timeTillDamage);
+            targetExposure = Mathf.Lerp(0f, -10f, normalized);
         }
-        else
-        {
-            colorAdjustments.postExposure.value = Mathf.Lerp(
-                colorAdjustments.postExposure.value,
-                0f,
-                Time.deltaTime * exposureLerpSpeed);
-        }
+
+        colorAdjustments.postExposure.value = targetExposure;
     }
 
     private void OnTriggerStay(Collider other)
@@ -106,7 +99,7 @@ public class DeadlyFogMaks : MonoBehaviour
         if (timeSinceEnter >= timeTillDamage)
         {
             // from maks: stop darkening when damage happens
-            shouldDarken = false;
+            shouldDarken = true;
 
             if (TimerRingUI.Instance != null)
             {
@@ -132,7 +125,10 @@ public class DeadlyFogMaks : MonoBehaviour
         timeSinceEnter = 0;
 
         // from maks: restore brightness when leaving fog
-        shouldDarken = false;
+        if (!isResetting)
+        {
+            shouldDarken = false;
+        }
     }
 
     private IEnumerator HandleReset(PlayerController player)
@@ -148,6 +144,8 @@ public class DeadlyFogMaks : MonoBehaviour
         yield return new WaitForSeconds(delayBeforeReset);
         yield return StartCoroutine(LerpPlayerToPoint(player, resetPoint));
         yield return new WaitForSeconds(0.15f);
+
+        shouldDarken = false;
 
         player.SetResetLock(false);
 
