@@ -152,12 +152,14 @@ public class Journal : MonoBehaviour, ISaveable
     {
         for (int i = 0; i < objectiveButtons.Length; i++)
         {
-            objectiveButtons[i].onClick.AddListener(() => OnObjectiveSelect(i));
+            int index = i; // Capture the current value of i for the lambda
+            objectiveButtons[i].onClick.AddListener(() => OnObjectiveSelect(index));
         }
 
-        for (int i = 0; i < characterButtons.Length; i++)
+        for (int j = 0; j < characterButtons.Length; j++)
         {
-            characterButtons[i].onClick.AddListener(() => OnCharacterSelect(i));
+            int index = j; // Capture the current value of j for the lambda
+            characterButtons[j].onClick.AddListener(() => OnCharacterSelect(index));
         }
 
         objectivesTab.onClick.AddListener(() => OpenObjectivesPage());
@@ -187,12 +189,6 @@ public class Journal : MonoBehaviour, ISaveable
             DisableJournalInput();
             EnableOtherCanvases();
         }
-
-        //foreach (Canvas canvas in canvasesToDisable)
-        //{
-        //    if (canvas != null)
-        //        canvas.enabled = !isJournalOpen;
-        //}
     }
 
     private void EnableOtherCanvases()
@@ -299,6 +295,22 @@ public class Journal : MonoBehaviour, ISaveable
 
     public void OnObjectiveSelect(int index)
     {
+        Debug.Log($"Objective Select called with index : {index}");
+        
+        if (index < 0) return;
+        
+        if (index >= objectiveButtons.Length)
+        {
+            Debug.LogWarning($"Character index {index} is out of bounds for character buttons.");
+            return;
+        }
+        
+        if (index >= objectivesList.Count)
+        {
+            Debug.LogWarning($"Character index {index} is out of bounds for character entries.");
+            return;
+        }
+        
         currentObjectiveIndex = index;
 
         if (objectivesList.Count > index)
@@ -334,6 +346,22 @@ public class Journal : MonoBehaviour, ISaveable
 
     private void OnCharacterSelect(int index)
     {
+        Debug.Log($"Character Select called with index : {index}");
+        
+        if (index < 0) return;
+        
+        if (index >= characterButtons.Length)
+        {
+            Debug.LogWarning($"Character index {index} is out of bounds for character buttons.");
+            return;
+        }
+        
+        if (index >= characterDictionary.Count)
+        {
+            Debug.LogWarning($"Character index {index} is out of bounds for character entries.");
+            return;
+        }
+        
         if (characterDictionary.Count > index)
         {
             characterDescriptionText.text = characterDictionary[characterNamesList[index]];
@@ -357,6 +385,7 @@ public class Journal : MonoBehaviour, ISaveable
         {
             characterDescriptionText.text = "";
         }
+        
         characterButtons[index].GetComponentInChildren<TextMeshProUGUI>().color = highlightedColor;
         for (int i = 0; i < characterButtons.Length; i++)
         {
