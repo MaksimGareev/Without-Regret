@@ -120,6 +120,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 2631745081361529090, guid: 3ac8601b2e82da84cb7e5035740972b1, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3908049679318066942}
+    - targetCorrespondingSourceObject: {fileID: 2631745081361529090, guid: 3ac8601b2e82da84cb7e5035740972b1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8030294295917542464}
   m_SourcePrefab: {fileID: 100100000, guid: 3ac8601b2e82da84cb7e5035740972b1, type: 3}
 --- !u!1 &791018928165738838 stripped
 GameObject:
@@ -169,9 +172,11 @@ MonoBehaviour:
   orbitSpeed: 0.3
   radius: 53
   centerPoint: {fileID: 0}
+  needsObjective: 0
   linkedObjective: {fileID: 0}
+  stopLocation: {x: 0, y: 0, z: 0}
   offset: 0
-  height: 0
+  reachedLocation: 0
 --- !u!65 &440679574144781773
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -205,3 +210,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cfca083332efcf24a9e6f983eb5578a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlatformCollision
+--- !u!114 &8030294295917542464
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 791018928165738838}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ced780c22dcf6ef4bb8e624b32e4787a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SaveableWorldObject
+  uniqueID: 74859db5-b155-41d4-b0c2-ed6eb25eb173

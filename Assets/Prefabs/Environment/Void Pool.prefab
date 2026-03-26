@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 4975798139508277634}
   - component: {fileID: 2940660143510956685}
   - component: {fileID: -3141215545000172221}
+  - component: {fileID: -6766280954010676369}
   m_Layer: 14
   m_Name: Void Pool
   m_TagString: Untagged
@@ -124,3 +125,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23fcb27a40c4c1b439071775bf8d2dbe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VoidPool
+  delayBeforeDamage: 1
+  showDebugLogs: 0
+--- !u!114 &-6766280954010676369
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6094352196004457944}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c816b79715e89c84a9478dfd80fcc532, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractableProximity
+  range: 3
+  player: {fileID: 0}
+  uiFade: {fileID: 0}

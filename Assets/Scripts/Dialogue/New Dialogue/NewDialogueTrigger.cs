@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.AI;
 
 public class NewDialogueTrigger : MonoBehaviour, IInteractable
 {
@@ -21,6 +22,9 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
     private Animator playerAnimator;
     private Coroutine playerTalkRoutine;
 
+    [Header("Face Animation")]
+    public FaceHandler faceHandler;
+
     [Header("Dialogue Files")]
     [Tooltip("Scriptable dialogue object that will be loaded on the players first interaction with a NPC or used for the story dialogue trigger")]
     public NewDialogueData startDialogueFile;
@@ -38,6 +42,10 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
     public string NPCName = "Friendly NPC";
     [Tooltip("How far away the player must be to interact with the NPC")]
     public float chatRange = 3f;
+    
+    [Header("Entry to add to the journal (if applicable)")]
+    [Tooltip("Adds the journal entry to the characters page. If this NPC's name already has an entry, the current description will be overwritten.")]
+    [SerializeField] private JournalEntry journalEntry;
 
     [Header("Objectives")]
     public List<string> objectiveIDsYouCareAbout = new List<string>();
@@ -56,7 +64,7 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
 
     // wandering
     private NpcMovement npcWander;
-
+    private NavMeshAgent agent;
     public bool hasTalked;
     public bool isLookingAtPlayer;
     private Transform player;
@@ -65,9 +73,13 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
 
     public GameObject enemy;
 
+    private PlayerController playerController;
+
     [Header("Reward ItemData")]
     [Tooltip("Optional item to give the player upon completing the dialogue. Will only be given once.")]
     public ItemData RewardItem;
+    private bool rewardGiven = false;
+
     public enum DialogueTriggerType
     {
         NPC,
@@ -82,6 +94,15 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
     private void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
+
+        if (player != null)
+        {
+            playerController = player.GetComponent<PlayerController>();
+        }
+        else
+        {
+            Debug.LogError("Player not found in Scene");
+        }
 
         if (playerAnimator == null)
         {
@@ -101,6 +122,14 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
             chimeActive = true;
         }
 
+        agent = GetComponent<NavMeshAgent>();
+        if (agent == null)
+        {
+            if (triggerType == DialogueTriggerType.Story || triggerType == DialogueTriggerType.Spawn) return;
+                Debug.LogError("NavMeshAgent missing on NPC");
+        }
+
+        faceHandler = gameObject.GetComponentInChildren<FaceHandler>();
 
         npcWander = GetComponent<NpcMovement>();
 
@@ -163,21 +192,40 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
 
         npcWander?.StopWandering();
 
+        if (agent == null || player == null) yield break;
+
+        agent.isStopped = false;
+        agent.SetDestination(player.position);
+
         float stopDistance = 2f;
+
+        // freeze player
+        if (playerController != null)
+        {
+            playerController.SetDialogueActive(true);
+        }
 
         while (Vector3.Distance(transform.position, player.position) > stopDistance)
         {
-            Vector3 direction = (player.position - transform.position).normalized;
+            // walk towards player
+            agent.SetDestination(player.position);
 
-            Vector3 targetPosition = player.position - direction * stopDistance;
+            Vector3 direction = (player.position - transform.position);
+            direction.y = 0f;
 
-            transform.position = Vector3.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
-
-            Quaternion targetRotation = Quaternion.LookRotation(direction);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, lookSpeed * Time.deltaTime);
+            // look towards player when walking 
+            if (direction.sqrMagnitude > 0.01f)
+            {
+                Quaternion targetRotation = Quaternion.LookRotation(direction);
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, lookSpeed * Time.deltaTime);
+            }
 
             yield return null;
         }
+
+        // stop movement
+        agent.isStopped = true;
+        agent.ResetPath();
 
         LookAtPlayer();
 
@@ -208,7 +256,6 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
     // start the dialogue interaction
     private void TryStartDialogue()
     {
-
         NewDialogueData selectedDialogue = SelectDialogue();
 
         if (selectedDialogue == null)
@@ -224,11 +271,25 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
             StartCoroutine(MovePlayerToPosition());
         }
 
+        FaceTarget(player, transform);
+
         isLookingAtPlayer = true;
 
         NewDialogueManager.Instance.StartDialogue(selectedDialogue, this);
 
         hasTalked = true;
+    }
+
+    // make the player look at the target
+    private void FaceTarget(Transform from, Transform to)
+    {
+        Vector3 direction = to.position - from.position;
+        direction.y = 0f;
+
+        if (direction.sqrMagnitude < 0.01f) return;
+
+        Quaternion lookRotation = Quaternion.LookRotation(direction);
+        from.rotation = lookRotation;
     }
 
     // select the dialogue intended for the interaction
@@ -270,14 +331,13 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
             return talkedDialogueFile;
         }
 
-        // dialogue selected for firts interaction
+        // dialogue selected for first interaction
         return startDialogueFile;
     }
 
     // when the dialogue interaction is complete
     public void OnDialogueComplete()
     {
-
         isLookingAtPlayer = false;
 
         if (linkedObjective != null)
@@ -287,9 +347,34 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
                 ObjectiveManager.Instance.AddProgress(linkedObjective.objectiveID, 1);
             }
         }
+        
+        // Add character to the journal if possible
+        if (journalEntry != null && Journal.Instance != null)
+        {
+            Journal.Instance.AddCharacterEntry(journalEntry.name, journalEntry.entryDescription);
+        }
 
         // have npc resume wandering if they are a wondering npc
         npcWander?.ResumeWandering();
+    }
+
+    public void GiveReward()
+    {
+        if (rewardGiven) return;
+
+        if (RewardItem == null) return;
+
+        Inventory inventory = FindAnyObjectByType<Inventory>();
+
+        if (inventory != null)
+        {
+            inventory.AddItem(RewardItem);
+            rewardGiven = true;
+        }
+        else
+        {
+            Debug.LogError("No inventory found to give reward");
+        }
     }
 
     private IEnumerator MovePlayerToPosition()
@@ -498,10 +583,20 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
             return;
         }
 
-        // only try to start dialogue if the trigger has not talked already
-        if (!hasTalked && startDialogueFile != null)
+        if (other.CompareTag("Player") && !hasTalked)
+        {
+            if (this.CompareTag("Spawner"))
+            {
+                enemy.SetActive(true);
+            }
+        }
+
+            // only try to start dialogue if the trigger has not talked already
+            if (!hasTalked && startDialogueFile != null)
         {
             TryStartDialogue();
         }
+
+
     }
 }

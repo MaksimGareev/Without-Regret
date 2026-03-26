@@ -78,6 +78,7 @@ public class LockPicking : MonoBehaviour
 
     [Header("Animation")]
     public Animator animator;
+    private CharacterSwap characterSwap;
 
     private bool IsController
     {
@@ -104,6 +105,15 @@ public class LockPicking : MonoBehaviour
     }
     void Awake()
     {
+        characterSwap = FindObjectOfType<CharacterSwap>();
+
+        if (characterSwap != null)
+        {
+            animator = characterSwap.GetAnimator();
+
+            characterSwap.onAnimatorChanged += UpdateAnimator;
+        }
+
         updateInputPrompt(IsController);
         // player = GameObject.FindGameObjectWithTag("Player").transform;
         // animator = player.GetComponentInChildren<Animator>();
@@ -570,4 +580,10 @@ public class LockPicking : MonoBehaviour
             }
         }
     }
+
+    void UpdateAnimator(Animator newAnimator)
+    {
+        animator = newAnimator;
+    }
+
 }

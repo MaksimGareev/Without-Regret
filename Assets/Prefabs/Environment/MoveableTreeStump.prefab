@@ -65,6 +65,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 4a1bd3788316f8e40b3287e8f307268f, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4385680128941548736}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 4a1bd3788316f8e40b3287e8f307268f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -5590509310704070638}
   m_SourcePrefab: {fileID: 100100000, guid: 4a1bd3788316f8e40b3287e8f307268f, type: 3}
 --- !u!1 &2658410550477587531 stripped
 GameObject:
@@ -135,14 +138,26 @@ MonoBehaviour:
   sprintSlowdownDivisor: 3
   sprintDepletionFactor: 1.05
   staminaReduction: 0.5
+  dotProductThreshold: 0.4
+  maxGrabDistance: 2.5
   allowSprint: 1
   requiredItem: {fileID: 0}
-  maxGrabDistance: 2.5
-  disableColliderWhileHeld: 0
+  collisionCheckSizeFactor: 1
+  checkGrabPointCollisions: 1
+  collisionCheckSizeMultiplier: 0.9
   heldPositionOffset: {x: 0, y: 0, z: 0}
+  applyHeldRotationOffset: 0
   heldRotationOffset: {x: 0, y: 0, z: 0}
   isGrabbable: 1
-  iconDistance: 3
-  iconPrefab: {fileID: 0}
-  shouldShowIcon: 1
-  navMeshSurface: {fileID: 0}
+--- !u!114 &-5590509310704070638
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2658410550477587531}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0445f3bbf8d3fd64c8af937f38910d51, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ResettableObject

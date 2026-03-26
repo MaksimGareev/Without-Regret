@@ -10,28 +10,30 @@ using TMPro;
 // It acts as an intermediary between the saveable objects in the scene and the SaveSystem, allowing the object's relevant data to be saved and loaded appropriately.
 public class SaveManager : MonoBehaviour
 {
-    public static SaveManager Instance { get; private set; }  // Singleton instance of Savemanager for other scripts to access
+    public static SaveManager Instance { get; private set; }  // Singleton instance of SaveManager for other scripts to access
 
     [Header("References")]
     [Tooltip("Reference to the TextMeshProUGUI component that will display saving status messages to the player. This should be a child of the SaveManager GameObject.")]
     [SerializeField] private TextMeshProUGUI savingText;
 
     [Tooltip("Reference to the InputActionAsset that contains the player's input actions. There should only be one InputActionAsset that exists in the project (PlayerControls)")]
-    public InputActionAsset inputActions;
+    [SerializeField] private InputActionAsset inputActions;
 
     [Header("Settings")]
     [Tooltip("If true, the game will automatically save at regular intervals. Auto-saving will only occur when the player is in a scene other than the Main Menu.")]
     public bool shouldAutoSave = true;
 
+    [SerializeField] private SceneReference[] noAutoSaveScenes;
+
     [Tooltip("If true, the SaveManager will log detailed debug information about saveables and save/load operations to the console. This is used for debugging save/load issues during development, but should be set to false when not needed.")]
-    public bool showDebugLogs = true;
+    [SerializeField] private bool showDebugLogs = true;
 
-    private List<ISaveable> saveables = new List<ISaveable>(); // List of all saveable objects in the current scene that will be saved and loaded by the SaveManager
-    private List<ISaveable> persistentSaveables = new List<ISaveable>(); // List of saveables that are marked as Dont Destroy on Load and should persist across scene loads
+    private List<ISaveable> saveables = new List<ISaveable>();              // List of all saveable objects in the current scene that will be saved and loaded by the SaveManager
+    private List<ISaveable> persistentSaveables = new List<ISaveable>();    // List of saveables that are marked as Don't Destroy on Load and should persist across scene loads
 
-    private float autoSaveInterval = 300f; // Auto-save every 5 minutes
-    private float autoSaveTimer = 0f;  // Timer to track time since last auto-save
-    private bool isSaving = false; // Flag to prevent multiple simultaneous save operations
+    private float autoSaveInterval = 300f;  // Auto-save every 5 minutes
+    //private float autoSaveTimer = 0f;       // Timer to track time since last auto-save
+    private bool isSaving = false;          // Flag to prevent multiple simultaneous save operations
 
     public bool IsLoading { get; private set; } = false;
     private void Awake()
@@ -45,7 +47,6 @@ public class SaveManager : MonoBehaviour
         else
         {
             Destroy(gameObject);
-            return;
         }
     }
 
@@ -53,6 +54,8 @@ public class SaveManager : MonoBehaviour
     private void OnEnable()
     {
         SceneLoadManager.Instance.OnSceneLoaded.AddListener(OnSceneLoaded);
+        
+        InvokeRepeating(nameof(HandleAutoSave), autoSaveInterval, autoSaveInterval);
     }
 
     // Unsubscribe from the sceneLoaded event when the SaveManager is disabled to prevent memory leaks and unintended behavior
@@ -105,12 +108,12 @@ public class SaveManager : MonoBehaviour
         
         foreach (var mb in monoBehaviours)
         {
-            if (mb == null)
-            {
-                continue;
-            }
+            if (!mb) continue;
 
             var go = mb.gameObject;
+
+            if (!go) continue;
+            
             var scene = go.scene;
 
             bool isInScene = scene == activeScene;
@@ -121,8 +124,8 @@ public class SaveManager : MonoBehaviour
                 continue;
             }
 
-             // Ensure the saveable has a valid unique ID and exists in the currently loaded scene
-             // if not then do not add it to saveables list
+            // Ensure the saveable has a valid unique ID and exists in the currently loaded scene
+            // if not then do not add it to saveables list
             if (mb is ISaveable saveable)
             {
                 if (mb.gameObject.scene.isLoaded)
@@ -211,40 +214,33 @@ public class SaveManager : MonoBehaviour
         }
     }
 
-    private void Update()
-    {
-        HandleAutoSave();
-
-        // Debug key to clear save data (for testing purposes only)
-        // if (Input.GetKeyDown(KeyCode.F5) && SceneManager.GetActiveScene().name == "MainMenu")
-        // {
-        //     ClearSaveData();
-        //     Debug.Log("Save data cleared via F5 key.");
-        //     SceneManager.LoadScene("MainMenu");
-        // }
-    }
+    // private void Update()
+    // {
+    //     Debug key to clear save data (for testing purposes only)
+    //     if (Input.GetKeyDown(KeyCode.F5) && SceneManager.GetActiveScene().name == "MainMenu")
+    //     {
+    //         ClearSaveData();
+    //         Debug.Log("Save data cleared via F5 key.");
+    //         SceneManager.LoadScene("MainMenu");
+    //     }
+    // }
 
     private void HandleAutoSave()
     {
-        // Early return if auto-saving is disabled or if the player is in the Main Menu, and reset the auto-save timer to prevent unintended auto-saves when leaving the Main Menu
-        if (!shouldAutoSave || SceneManager.GetActiveScene().name == "MainMenu")
+        // Early return if auto-saving is disabled or if the player is in a Scene that should not have Auto-Saving enabled
+        if (!shouldAutoSave) return;
+        
+        // Get current scene and check if it is in the array to exclude from auto saving, return before saving if so.
+        string currentScene = SceneManager.GetActiveScene().name;
+        if (System.Array.Exists(noAutoSaveScenes, scene => scene.GetSceneName() == currentScene))
         {
-            if (autoSaveTimer != 0f)
-            {
-                autoSaveTimer = 0f;
-            }
+            if (showDebugLogs) Debug.Log($"Auto-saving skipped in scene: {currentScene}");
             return;
         }
         
-        autoSaveTimer += Time.deltaTime;
-
-        // Auto-save the game at regular intervals and reset the timer for the next auto-save
-        if (autoSaveTimer >= autoSaveInterval)
-        {
-            SaveGame(SaveSystem.activeSaveSlot);
-            if (showDebugLogs) Debug.Log("Game auto-saved.");
-            autoSaveTimer = 0f;
-        }
+        SaveGame(SaveSystem.activeSaveSlot);
+        
+        if (showDebugLogs) Debug.Log("Game auto-saved.");
     }
 
     // Saves the game by calling the SaveTo method on all registered ISaveable objects and writing the resulting SaveData to a file in the specified save slot.
@@ -316,13 +312,6 @@ public class SaveManager : MonoBehaviour
         // Try loading from the specified save slot, if no save exists then create a new one in that slot.
         SaveData data = SaveSystem.Load(slot)?? new SaveData(slot);
 
-        // Early return if no save data is found (if above line fails to create a new save data)
-        if (data == null)
-        {
-            if (showDebugLogs) Debug.LogWarning("No save data found to load.");
-            return;
-        }
-
         RefreshSaveables();
 
         // Loop through the saveables list and call each object's LoadFrom method, passing in the loaded SaveData. 
@@ -382,7 +371,7 @@ public class SaveManager : MonoBehaviour
     {
         for (int slot = 1; slot <= 3; slot++)
         {
-            if (SaveSystem.SaveExists(SaveSystem.GetSavePath(slot)))
+            if (SaveExists(slot))
             {
                 return true;
             }
@@ -391,7 +380,7 @@ public class SaveManager : MonoBehaviour
     }
 
     // Searches for a save file in the specified slot and returns true if it exists, false otherwise
-    public bool SaveExists(int slot)
+    private bool SaveExists(int slot)
     {
         return SaveSystem.SaveExists(SaveSystem.GetSavePath(slot));
     }
