@@ -431,7 +431,7 @@ public class NewDialogueManager : MonoBehaviour
                     penelope.StartTravel();
                 }
                 break;
-
+            
             case "Echo":
                 Barry echo = FindObjectOfType<Barry>();
                 if (echo != null)
