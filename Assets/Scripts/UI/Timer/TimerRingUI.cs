@@ -35,11 +35,13 @@ public class TimerRingUI : MonoBehaviour
     public RingState currentRingState;
     public static TimerRingUI Instance { get; private set; }
 
+    public UIFadeConrtoller uiFade;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Awake()
     {
         characterSwap = FindObjectOfType<CharacterSwap>();
-
+        uiFade = FindFirstObjectByType<UIFadeConrtoller>();
         if (characterSwap != null)
         {
             animator = characterSwap.GetAnimator();
@@ -75,12 +77,15 @@ public class TimerRingUI : MonoBehaviour
             {
                 case RingState.Full:
                     SetRingState(RingState.TwoThirds);
+                    uiFade.ShowUI();
                     break;
                 case RingState.TwoThirds:
                     SetRingState(RingState.OneThird);
+                    uiFade.ShowUI();
                     break;
                 case RingState.OneThird:
                     SetRingState(RingState.Empty);
+                    uiFade.ShowUI();
                     EndGame();
                     break;
                 case RingState.Empty:

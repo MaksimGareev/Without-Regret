@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1182922261873424783}
   - component: {fileID: 8295676605947000843}
   - component: {fileID: 8142303333665659823}
+  - component: {fileID: 4527426442616916902}
   m_Layer: 2
   m_Name: Floating Trigger Volume
   m_TagString: Untagged
@@ -67,3 +68,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FloatingTriggerVolume
   player: {fileID: 0}
+--- !u!114 &4527426442616916902
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6144944872327617809}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c816b79715e89c84a9478dfd80fcc532, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractableProximity
+  range: 3
+  player: {fileID: 0}
+  uiFade: {fileID: 0}
