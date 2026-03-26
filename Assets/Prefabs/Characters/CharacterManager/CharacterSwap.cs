@@ -10,12 +10,12 @@ public enum PlayerModel
 public class CharacterSwap : MonoBehaviour
 {
     [Tooltip("The character that the model should be when starting the game.")]
-    [SerializeField] private PlayerModel startingPlayerModel = PlayerModel.Echo;
+    public PlayerModel startingPlayerModel = PlayerModel.Echo;
     public System.Action<Animator> onAnimatorChanged;
     public GameObject Echo;
     public GameObject Chime;
-    private bool isEcho;
-    private bool isChime;
+    [HideInInspector] public bool isEcho;
+    [HideInInspector] public bool isChime;
 
     public Animator currentAnimator;
 
@@ -74,7 +74,7 @@ public class CharacterSwap : MonoBehaviour
         }
     }
 
-    private void SwitchToEcho()
+    public void SwitchToEcho()
     {
         if (isEcho) return;
         
@@ -87,7 +87,7 @@ public class CharacterSwap : MonoBehaviour
         SetCurrentAnimator(Echo);
     }
 
-    private void SwitchToChime()
+    public void SwitchToChime()
     {
         if (isChime) return;
         

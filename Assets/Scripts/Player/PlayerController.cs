@@ -172,7 +172,18 @@ public class PlayerController : MonoBehaviour, ISaveable
         {
             Debug.Log("TimerRingUI.Instance == null! cannot save current ring state");
         }
+
+        CharacterSwap characterSwap = GetComponent<CharacterSwap>();
+        if (!characterSwap) return;
         
+        if (characterSwap.isEcho)
+        {
+            data.playerSaveData.currentPlayerModel = PlayerModel.Echo;
+        }
+        else if (characterSwap.isChime)
+        {
+            data.playerSaveData.currentPlayerModel = PlayerModel.Chime;
+        }
     }
 
     public void LoadFrom(SaveData data)
@@ -207,6 +218,17 @@ public class PlayerController : MonoBehaviour, ISaveable
             TimerRingUI.Instance.SetRingState(TimerRingUI.RingState.Full);
         }
         
+        CharacterSwap characterSwap = GetComponent<CharacterSwap>();
+        if (!characterSwap) return;
+
+        if (data.playerSaveData.currentPlayerModel == PlayerModel.Echo)
+        {
+            characterSwap.SwitchToEcho();
+        }
+        else if (data.playerSaveData.currentPlayerModel == PlayerModel.Chime)
+        {
+            characterSwap.SwitchToChime();
+        }
     }
 
     public void SetCheckpoint(string sceneName, Vector3 position, Vector3 rotation)
