@@ -34,9 +34,9 @@ public class OrbitingPlatform : MonoBehaviour
     [SerializeField] private float offset;
 
     private float currentAngle = 0f;
-    private bool objectiveComplete = false;
+    [SerializeField] private bool objectiveComplete = false;
     [HideInInspector] public bool reachedLocation;
-    private float range = 5f;
+    [SerializeField] private float range = 5f;
     private Rigidbody rb;
     private Vector3 lastPosition;
     public Vector3 platformVelocity { get; private set; }
@@ -124,12 +124,14 @@ public class OrbitingPlatform : MonoBehaviour
 
         if (objectiveComplete)
         {
+            
             Vector3 distOffset = newPosition - stopLocation;
             float squareLength = distOffset.sqrMagnitude;
+           // Debug.Log(squareLength);
             float squareRange = range * range;
             if (squareLength <= squareRange)
             {
-                reachedLocation = true;
+                reachedLocation = true; Debug.Log("the island has reached its destination");
             }
         }
     }
