@@ -664,6 +664,75 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 02b2e063793a7aa498c201741c5eb23b, type: 3}
   m_PrefabInstance: {fileID: 14454862}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &34652456
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 227538569860559182, guid: f1fdcc10caf6729499bf2c56016dfc42, type: 3}
+      propertyPath: m_Name
+      value: Safety Net
+      objectReference: {fileID: 0}
+    - target: {fileID: 5457277075676721224, guid: f1fdcc10caf6729499bf2c56016dfc42, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 39.498
+      objectReference: {fileID: 0}
+    - target: {fileID: 5457277075676721224, guid: f1fdcc10caf6729499bf2c56016dfc42, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.8786
+      objectReference: {fileID: 0}
+    - target: {fileID: 5457277075676721224, guid: f1fdcc10caf6729499bf2c56016dfc42, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 40.841
+      objectReference: {fileID: 0}
+    - target: {fileID: 5457277075676721224, guid: f1fdcc10caf6729499bf2c56016dfc42, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 62.12248
+      objectReference: {fileID: 0}
+    - target: {fileID: 5457277075676721224, guid: f1fdcc10caf6729499bf2c56016dfc42, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -4.14
+      objectReference: {fileID: 0}
+    - target: {fileID: 5457277075676721224, guid: f1fdcc10caf6729499bf2c56016dfc42, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 98.69
+      objectReference: {fileID: 0}
+    - target: {fileID: 5457277075676721224, guid: f1fdcc10caf6729499bf2c56016dfc42, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5457277075676721224, guid: f1fdcc10caf6729499bf2c56016dfc42, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5457277075676721224, guid: f1fdcc10caf6729499bf2c56016dfc42, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5457277075676721224, guid: f1fdcc10caf6729499bf2c56016dfc42, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5457277075676721224, guid: f1fdcc10caf6729499bf2c56016dfc42, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5457277075676721224, guid: f1fdcc10caf6729499bf2c56016dfc42, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5457277075676721224, guid: f1fdcc10caf6729499bf2c56016dfc42, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: f1fdcc10caf6729499bf2c56016dfc42, type: 3}
 --- !u!1001 &41479494
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6158,6 +6227,8 @@ MonoBehaviour:
   checkGrabPointCollisions: 1
   collisionCheckSizeMultiplier: 0.9
   heldPositionOffset: {x: 0, y: 0, z: 0}
+  applyHeldRotationOffset: 0
+  heldRotationOffset: {x: 0, y: 0, z: 0}
   isGrabbable: 1
 --- !u!1 &404919749
 GameObject:
@@ -28599,6 +28670,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: GameManager
       objectReference: {fileID: 0}
+    - target: {fileID: 4003018514918516290, guid: e3b9262b76b69d34b87124d143240539, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4003018514918516290, guid: e3b9262b76b69d34b87124d143240539, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4003018514918516290, guid: e3b9262b76b69d34b87124d143240539, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4003018514918516290, guid: e3b9262b76b69d34b87124d143240539, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4862476256218424271, guid: e3b9262b76b69d34b87124d143240539, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -32667,6 +32754,8 @@ MonoBehaviour:
   checkGrabPointCollisions: 1
   collisionCheckSizeMultiplier: 0.8
   heldPositionOffset: {x: 0, y: 0, z: 0}
+  applyHeldRotationOffset: 0
+  heldRotationOffset: {x: 0, y: 0, z: 0}
   isGrabbable: 1
 --- !u!1001 &2020298943
 PrefabInstance:
@@ -34954,3 +35043,4 @@ SceneRoots:
   - {fileID: 1252206334}
   - {fileID: 1632048001}
   - {fileID: 1737004728}
+  - {fileID: 34652456}
