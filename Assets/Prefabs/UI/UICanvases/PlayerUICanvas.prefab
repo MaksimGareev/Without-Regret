@@ -645,6 +645,7 @@ GameObject:
   - component: {fileID: 5728538408542387315}
   - component: {fileID: 4421687017123965208}
   - component: {fileID: 5208288192059911399}
+  - component: {fileID: 300988802027125415}
   m_Layer: 5
   m_Name: PlayerUICanvas
   m_TagString: Untagged
@@ -773,6 +774,7 @@ MonoBehaviour:
   portraitEmpty: {fileID: -1899959237, guid: e2ccdccbeb2923f46a2b46b751c3c81a, type: 3}
   animator: {fileID: 0}
   currentRingState: 0
+  uiFade: {fileID: 0}
 --- !u!114 &6699416454780374162
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -876,6 +878,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UIFadeConrtoller
   fadeSpeed: 3
   idleDelay: 2
+--- !u!225 &300988802027125415
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 565190579125525281}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &626333383474887898
 GameObject:
   m_ObjectHideFlags: 0
