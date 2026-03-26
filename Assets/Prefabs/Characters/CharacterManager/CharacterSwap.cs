@@ -1,62 +1,103 @@
 using UnityEngine;
 
+[System.Serializable]
+public enum PlayerModel
+{
+    Echo,
+    Chime
+}
+
 public class CharacterSwap : MonoBehaviour
 {
+    [Tooltip("The character that the model should be when starting the game.")]
+    [SerializeField] private PlayerModel startingPlayerModel = PlayerModel.Echo;
     public System.Action<Animator> onAnimatorChanged;
     public GameObject Echo;
     public GameObject Chime;
-    public bool isPlayingEcho;
-    public bool isPlayingChime;
+    private bool isEcho;
+    private bool isChime;
 
     public Animator currentAnimator;
 
     void Awake()
     {
-        isPlayingEcho = true;
-        isPlayingChime = false;
+        if (Echo == null)
+        {
+            Debug.LogError("Reference to Echo gameobject is null in CharacterSwap script.");
+        }
 
+        if (Chime == null)
+        {
+            Debug.LogError("Reference to Chime gameobject is null in CharacterSwap script.");
+        }
+        
+        if (startingPlayerModel == PlayerModel.Echo)
+        {
+            SwitchToEcho();
+        }
+        else
+        {
+            SwitchToChime();
+        }
+    }
+    
+    void Start()
+    {
+        if (startingPlayerModel == PlayerModel.Echo)
+        {
+            SwitchToEcho();
+        }
+        else
+        {
+            SwitchToChime();
+        }
+    }
+
+    // Update is called once per frame
+    // void Update()
+    // {
+    //     if (Input.GetKeyDown(KeyCode.C))
+    //     {
+    //         SwapCharacters();
+    //     }
+    // }
+
+    public void SwapCharacters()
+    {
+        if (isEcho)
+        {
+            SwitchToChime();
+        }
+        else if (isChime)
+        {
+            SwitchToEcho();
+        }
+    }
+
+    private void SwitchToEcho()
+    {
+        if (isEcho) return;
+        
+        //Debug.Log("Swapped to Echo");
+        isEcho = true;
+        isChime = false;
         Echo.SetActive(true);
         Chime.SetActive(false);
 
         SetCurrentAnimator(Echo);
-    }    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        SetCurrentAnimator(Echo);
-        Chime.SetActive(false);
     }
 
-    // Update is called once per frame
-    void Update()
+    private void SwitchToChime()
     {
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-            SwapCharacters();
-        }
-    }
+        if (isChime) return;
+        
+        Debug.Log("Swapped to Chime");
+        isChime = true;
+        isEcho = false;
+        Chime.SetActive(true);
+        Echo.SetActive(false);
 
-    public void SwapCharacters()
-    {
-        if (isPlayingEcho)
-        {
-            Debug.Log("Swapped to Chime");
-            isPlayingChime = true;
-            isPlayingEcho = false;
-            Chime.SetActive(true);
-            Echo.SetActive(false);
-
-            SetCurrentAnimator(Chime);
-        }
-        else if (isPlayingChime)
-        {
-            Debug.Log("Swapped to Echo");
-            isPlayingEcho = true;
-            isPlayingChime = false;
-            Echo.SetActive(true);
-            Chime.SetActive(false);
-
-            SetCurrentAnimator(Echo);
-        }
+        SetCurrentAnimator(Chime);
     }
 
     public void SetCurrentAnimator(GameObject model)
