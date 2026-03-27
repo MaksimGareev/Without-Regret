@@ -27,6 +27,7 @@ public class Journal : MonoBehaviour, ISaveable
     [Header("Tabs")]
     [SerializeField] private Button objectivesTab;
     [SerializeField] private Button charactersTab;
+    [SerializeField] private bool rememberLastTab = true;
 
     [Header("Objectives")]
     [SerializeField] private GameObject objectivesPage;
@@ -51,6 +52,7 @@ public class Journal : MonoBehaviour, ISaveable
     private int currentObjectiveIndex = 0;
     private readonly List<string> characterNamesList = new(); // List to maintain the order of character entries
     private readonly Dictionary<string, string> characterDictionary = new();
+    private int currentCharacterIndex = 0;
 
     private void Awake()
     {
@@ -349,43 +351,31 @@ public class Journal : MonoBehaviour, ISaveable
         Debug.Log($"Character Select called with index : {index}");
         
         if (index < 0) return;
-        
+
         if (index >= characterButtons.Length)
         {
             Debug.LogWarning($"Character index {index} is out of bounds for character buttons.");
             return;
         }
-        
+
         if (index >= characterDictionary.Count)
         {
             Debug.LogWarning($"Character index {index} is out of bounds for character entries.");
+            characterDescriptionText.text = "";
             return;
         }
-        
+
         if (characterDictionary.Count > index)
         {
-            characterDescriptionText.text = characterDictionary[characterNamesList[index]];
-
-            if (npcPortrait != null)
-            {
-                var portrait = characterPortraits.Find(p => p.name == characterNamesList[index]);
-                if (portrait != null)
-                {
-                    npcPortrait.sprite = portrait.portrait;
-                    npcPortrait.SetNativeSize();
-                    npcPortrait.enabled = true;
-                }
-                else
-                {
-                    npcPortrait.enabled = false;
-                }
-            }
+            SetCharacterPageInfo(index);
         }
         else
         {
             characterDescriptionText.text = "";
         }
-        
+
+        currentCharacterIndex = index;
+
         characterButtons[index].GetComponentInChildren<TextMeshProUGUI>().color = highlightedColor;
         for (int i = 0; i < characterButtons.Length; i++)
         {
@@ -457,13 +447,17 @@ public class Journal : MonoBehaviour, ISaveable
         {
             // Character is already in the list, so update the description
             characterDictionary[name] = description;
+            Debug.Log($"Updated character entry for {name} in the journal with description \"{description}.\"");
         }
         else
         {
             // Add character entry to the names list and dictionary
             characterNamesList.Add(name);
             characterDictionary.Add(name, description);
+            Debug.Log($"Added character entry for {name} in the journal with description \"{description}.\"");
         }
+
+        RefreshCharacters();
     }
 
     private void RefreshCharacters()
@@ -475,12 +469,41 @@ public class Journal : MonoBehaviour, ISaveable
                 TextMeshProUGUI buttonText = characterButtons[i].GetComponentInChildren<TextMeshProUGUI>();
                 buttonText.text = characterNamesList[i];
                 characterButtons[i].interactable = true;
+
+                if (i == currentCharacterIndex)
+                {
+                    SetCharacterPageInfo(i);
+                }
             }
             else
             {
                 TextMeshProUGUI buttonText = characterButtons[i].GetComponentInChildren<TextMeshProUGUI>();
                 buttonText.text = "";
                 characterButtons[i].interactable = false;
+            }
+        }
+    }
+
+    private void SetCharacterPageInfo(int index)
+    {
+        if (characterDictionary.Count > index)
+        {
+            characterDescriptionText.text = characterDictionary[characterNamesList[index]];
+        }
+        if (npcPortrait != null)
+        {
+            var portrait = characterPortraits.Find(p => p.name == characterNamesList[index]);
+            if (portrait != null)
+            {
+                npcPortrait.sprite = portrait.portrait;
+                npcPortrait.SetNativeSize();
+                npcPortrait.gameObject.SetActive(true);
+                npcPortrait.enabled = true;
+            }
+            else
+            {
+                npcPortrait.gameObject.SetActive(false);
+                npcPortrait.enabled = false;
             }
         }
     }

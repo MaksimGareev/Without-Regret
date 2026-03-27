@@ -55,6 +55,7 @@ public class BossEnemyController : MonoBehaviour
     [SerializeField] float sweepingDuration = 8f;
 
     private Vector3 originalArmPosition;
+    private Quaternion originalArmRotation;
 
     [Header("References")]
     [SerializeField] Transform player;
@@ -145,6 +146,7 @@ public class BossEnemyController : MonoBehaviour
         else
         {
             originalArmPosition = sweepingArmObject.transform.position;
+            originalArmRotation = sweepingArmObject.transform.rotation;
             sweepingArmObject.SetActive(false);
         }
 
@@ -514,6 +516,7 @@ public class BossEnemyController : MonoBehaviour
 
         sweepingArmObject.SetActive(false);
         sweepingArmObject.transform.position = originalArmPosition; // reset arm position for next time it's used
+        sweepingArmObject.transform.rotation = originalArmRotation;
         EndAction();
     }
 
