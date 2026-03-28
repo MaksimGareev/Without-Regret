@@ -27,8 +27,8 @@ public class InventoryUIController : MonoBehaviour
 
     [Header("Input Settings")]
     [SerializeField] private InputActionAsset inputActions;
+    [SerializeField] private InputActionReference inventoryMoveAction;
     
-    private InputAction navigateAction;
     private InputAction tabLeftButton;
     private InputAction tabRightButton;
     
@@ -58,21 +58,19 @@ public class InventoryUIController : MonoBehaviour
 
         playerEquipItem = player?.GetComponent<PlayerEquipItem>();
         inventory = player?.GetComponent<Inventory>();
-
+        
         InitializeInputActions();
     }
-
-
-
-    private void OnSceneLoaded(UnityEngine.SceneManagement.Scene scene, LoadSceneMode mode)
+    
+    private void OnSceneLoaded()
     {
         Setup();
     }
 
     private void OnEnable()
     {
-        SceneManager.sceneLoaded += OnSceneLoaded;
-
+        SceneLoadManager.Instance.OnSceneLoaded.AddListener(OnSceneLoaded);
+        
         Setup();
     }
 
@@ -81,7 +79,6 @@ public class InventoryUIController : MonoBehaviour
         InitializeSlots();
         RefreshInventoryUI();
         EnableInventoryInput();
-        EventSystem.current.SetSelectedGameObject(slotButtons[0, 0].gameObject);
         SwitchTabs(currentTab);
     }
 
@@ -97,14 +94,18 @@ public class InventoryUIController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //HandleControllerInput();
+        GameObject selectedGameObject = EventSystem.current.currentSelectedGameObject;
         
-        GameObject selectedSlot = EventSystem.current.currentSelectedGameObject;
-        
-        if (selectedSlot == currentSelectedSlot) return;
-            
-        currentSelectedSlot = selectedSlot;
-        OnSelectionChanged(selectedSlot);
+        if (selectedGameObject && slotLookup.ContainsKey(selectedGameObject) && selectedGameObject != currentSelectedSlot)
+        {
+            currentSelectedSlot = selectedGameObject;
+            OnSelectionChanged(currentSelectedSlot);
+        }
+        else if (selectedGameObject && selectedGameObject != currentSelectedSlot)
+        {
+            currentSelectedSlot = slotButtons[0, 0].gameObject;
+            OnSelectionChanged(currentSelectedSlot);
+        }
         
         // Switch tabs on input action triggered
         if (tabLeftButton.triggered || tabRightButton.triggered)
@@ -116,10 +117,8 @@ public class InventoryUIController : MonoBehaviour
     private void InitializeInputActions()
     {
         // Initialize input actions
-        navigateAction = inputActions.FindAction("Inventory/Navigate", true);
         tabLeftButton = inputActions.FindAction("Inventory/TabLeft", true);
         tabRightButton = inputActions.FindAction("Inventory/TabRight", true);
-        //confirmButton = inputActions.FindAction("Inventory/Confirm", true);
     }
 
     private void InitializeSlots()
@@ -157,17 +156,6 @@ public class InventoryUIController : MonoBehaviour
                     // Add Listener to on click
                     slotButtons[row, col].onClick.AddListener(() => OnSlotClicked(capturedRow, capturedCol, index));
                     
-                    // Set explicit navigation for each slot
-                    Navigation nav = new  Navigation();
-                    nav.mode = Navigation.Mode.Explicit;
-                    
-                    nav.selectOnUp = (row > 0) ? slotButtons[row - 1, col] : null;
-                    nav.selectOnDown = (row < rows - 1) ? slotButtons[row + 1, col] : null;
-                    nav.selectOnLeft = (col > 0) ? slotButtons[row, col - 1] : null;
-                    nav.selectOnRight = (col < columns - 1) ? slotButtons[row, col + 1] : null;
-                    
-                    slotButtons[row, col].navigation = nav;
-                    
                     // Fill into slot look up dictionary
                     slotLookup[slotButtons[row, col].gameObject] = (row, col);
                     
@@ -179,7 +167,7 @@ public class InventoryUIController : MonoBehaviour
                     }
 
                     EventTrigger.Entry entryEnter = new EventTrigger.Entry { eventID = EventTriggerType.PointerEnter };
-                    entryEnter.callback.AddListener((_) => OnSlotHoverEnter(capturedRow, capturedCol));
+                    entryEnter.callback.AddListener((_) => OnSelectionChanged(slotButtons[capturedRow, capturedCol].gameObject));
                     trigger.triggers.Add(entryEnter);
 
                     EventTrigger.Entry entryExit = new EventTrigger.Entry { eventID = EventTriggerType.PointerExit };
@@ -256,79 +244,7 @@ public class InventoryUIController : MonoBehaviour
                 index++;
             }
         }
-
-        OnSelectionChanged(EventSystem.current.currentSelectedGameObject);
     }
-
-    // private void HandleControllerInput()
-    // {
-    //     if (tabLeftButton.WasPressedThisFrame() || tabRightButton.WasPressedThisFrame())
-    //     {
-    //         if (currentTab == InventoryTab.KeyItems)
-    //         {
-    //             SwitchTabs(InventoryTab.OtherItems);
-    //         }
-    //         else
-    //         {
-    //             SwitchTabs(InventoryTab.KeyItems);
-    //         }
-    //     }
-    //     
-    //     moveTimer -= Time.unscaledDeltaTime;
-    //     
-    //     float horizontalInput = navigateAction.ReadValue<Vector2>().x;
-    //     float verticalInput = navigateAction.ReadValue<Vector2>().y;
-    //     
-    //     bool moved = false;
-    //     
-    //     if (moveTimer <= 0f)
-    //     {
-    //         if (Mathf.Abs(verticalInput) > Mathf.Abs(horizontalInput))
-    //         {
-    //             if (verticalInput > moveThreshold)
-    //             {
-    //                 MoveSelection(-1, 0);
-    //                 moved = true;
-    //             }
-    //             else if (verticalInput < -moveThreshold)
-    //             {
-    //                 MoveSelection(1, 0);
-    //                 moved = true;
-    //             }
-    //         }
-    //     
-    //         else if (Mathf.Abs(horizontalInput) > Mathf.Abs(verticalInput))
-    //         {
-    //             if (horizontalInput > moveThreshold)
-    //             {
-    //                 MoveSelection(0, 1);
-    //                 moved = true;
-    //             }
-    //             else if (horizontalInput < -moveThreshold)
-    //             {
-    //                 MoveSelection(0, -1);
-    //                 moved = true;
-    //             }
-    //         }
-    //     }
-    //     
-    //     if (moved)
-    //     {
-    //         moveTimer = moveCooldown;
-    //     }
-    //     
-    //     if (confirmButton.WasPressedThisFrame())
-    //     {
-    //         OnSlotClicked(selectedRow, selectedColumn, selectedRow * columns + selectedColumn);
-    //     }
-    // }
-    
-    // private void MoveSelection(int rowChange, int columnChange)
-    // {
-    //     // selectedRow = Mathf.Clamp(selectedRow + rowChange, 0, rows - 1);
-    //     // selectedColumn = Mathf.Clamp(selectedColumn + columnChange, 0, columns - 1);
-    //     HighlightSelectedSlot();
-    // }
 
     private void OnSlotClicked(int row, int column, int index)
     {
@@ -414,9 +330,6 @@ public class InventoryUIController : MonoBehaviour
 
     public void OnSlotPointerEnter(int row, int col)
     {
-        // hoveredSlot = (row, col);
-        // HighlightSelectedSlot();
-        
         currentSelectedSlot = slotButtons[row, col].gameObject;
         EventSystem.current.SetSelectedGameObject(currentSelectedSlot);
         OnSelectionChanged(currentSelectedSlot);
@@ -424,30 +337,9 @@ public class InventoryUIController : MonoBehaviour
 
     public void OnSlotPointerExit()
     {
-        // hoveredSlot = null;
-        // HighlightSelectedSlot();
-        
         currentSelectedSlot = null;
         EventSystem.current.SetSelectedGameObject(null);
         OnSelectionChanged(null);
-    }
-
-    private void OnSlotHoverEnter(int row, int column)
-    {
-        if (tooltipUI == null || slotItems == null)
-        {
-            return;
-        }
-
-        ItemData item = slotItems[row, column];
-        if (item != null)
-        {
-            tooltipUI.Show(item);
-            if (showDebugLogs)
-            {
-                Debug.Log($"Hovering over item: {item.ItemName}");
-            }
-        }
     }
 
     private void OnSlotHoverExit()
@@ -484,11 +376,13 @@ public class InventoryUIController : MonoBehaviour
                 // keyItemsTabButton.GetComponent<SelectableHighlighting>()?.RemoveHighlight(true);
             }
         }
+        
+        OnSelectionChanged(currentSelectedSlot);
     }
 
     private void OnDisable()
     {
-        SceneManager.sceneLoaded -= OnSceneLoaded;
+        SceneLoadManager.Instance.OnSceneLoaded.RemoveListener(OnSceneLoaded);
 
         DisableInventoryInput();
     }
@@ -496,6 +390,7 @@ public class InventoryUIController : MonoBehaviour
     private void EnableInventoryInput()
     {
         inputActions.FindActionMap("Inventory").Enable();
+        inputActions.FindActionMap("UI").Enable();
         inputActions.FindAction("Player/Look").Disable();
         inputActions.FindAction("Player/Jump").Disable();
 
@@ -505,25 +400,24 @@ public class InventoryUIController : MonoBehaviour
             if (!uiInputModule)
             {
                 Debug.LogWarning("UIInputModule not found on UIInputModule!");
+                return;
             }
         }
         
         if (!defaultUIMoveAction)
         {
-            defaultUIMoveAction = ScriptableObject.CreateInstance<InputActionReference>();
-            if (!defaultUIMoveAction)
-            {
-                Debug.LogWarning("Failed to create defaultUIMoveAction reference!");
-            }
+            defaultUIMoveAction = uiInputModule.move;
         }
         
-        defaultUIMoveAction = uiInputModule.move;
-        uiInputModule.move = InputActionReference.Create(navigateAction);
+        uiInputModule.move = inventoryMoveAction;
+        
+        EventSystem.current.SetSelectedGameObject(slotButtons[0, 0].gameObject);
     }
 
     private void DisableInventoryInput()
     {
         inputActions.FindActionMap("Inventory").Disable();
+        inputActions.FindActionMap("UI").Disable();
         inputActions.FindAction("Player/Look").Enable();
         inputActions.FindAction("Player/Jump").Enable();
 
@@ -531,5 +425,7 @@ public class InventoryUIController : MonoBehaviour
         {
             uiInputModule.move = defaultUIMoveAction;
         }
+        
+        EventSystem.current.SetSelectedGameObject(null);
     }
 }
