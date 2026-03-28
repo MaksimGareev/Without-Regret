@@ -67,6 +67,11 @@ public class MainMenu : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
 
         // Initialize input actions
+        if (inputActions && !inputActions.FindActionMap("UI").enabled)
+        {
+            inputActions.FindActionMap("UI").Enable();
+        }
+        
         confirmAction = inputActions.FindActionMap("UI").FindAction("Submit");
         if (confirmAction == null)
         {
@@ -459,7 +464,8 @@ public class MainMenu : MonoBehaviour
         quitButton.onClick.RemoveListener(ConfirmBeforeQuit);
         backButton.onClick.RemoveListener(HandleUIBackButton);
         feedbackSurveyButton.onClick.RemoveListener(ConfirmBeforeFeedbackSurvey);
-
+        
+        inputActions.FindActionMap("UI").Disable();
         TabLeftAction?.Disable();
         TabRightAction?.Disable();
         confirmAction?.Disable();
@@ -474,7 +480,8 @@ public class MainMenu : MonoBehaviour
         quitButton.onClick.RemoveListener(ConfirmBeforeQuit);
         backButton.onClick.RemoveListener(HandleUIBackButton);
         feedbackSurveyButton.onClick.RemoveListener(ConfirmBeforeFeedbackSurvey);
-
+        
+        inputActions.FindActionMap("UI").Disable();
         TabLeftAction?.Disable();
         TabRightAction?.Disable();
         confirmAction?.Disable();
