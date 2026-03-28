@@ -7,9 +7,15 @@ using UnityEngine.SceneManagement;
 
 public class InventoryUIController : MonoBehaviour
 {
+    private enum InventoryTab { KeyItems, OtherItems }
+    
     [Header("Grid Settings")]
     [SerializeField] private int rows = 4;
     [SerializeField] private int columns = 3;
+    [SerializeField] private Color highlightColor = new Color(0.70f, 0.70f, 0.70f, 0.70f);
+    //[SerializeField] private Color hoverColor = new Color(0.80f, 0.80f, 0.80f, 0.80f);
+    
+    [Header("References")]
     [SerializeField] private Button[] buttons;
     [SerializeField] private Sprite emptySlotSprite;
     [SerializeField] private InventoryTooltipUI tooltipUI;
@@ -18,10 +24,6 @@ public class InventoryUIController : MonoBehaviour
     [SerializeField] private Sprite leftTabSprite;
     [SerializeField] private Button keyItemsTabButton;
     [SerializeField] private Button otherItemsTabButton;
-    [SerializeField] private Color highlightColor = new Color(0.70f, 0.70f, 0.70f, 0.70f);
-    [SerializeField] private Color hoverColor = new Color(0.80f, 0.80f, 0.80f, 0.80f);
-    public enum InventoryTab { KeyItems, OtherItems }
-    private InventoryTab currentTab = InventoryTab.OtherItems;
 
     [Header("Input Settings")]
     [SerializeField] private InputActionAsset inputActions;
@@ -35,6 +37,8 @@ public class InventoryUIController : MonoBehaviour
     [Header("Debugging")]
     [SerializeField] private bool showDebugLogs = false;
 
+    private InventoryTab currentTab = InventoryTab.OtherItems;
+    
     private Button[,] slotButtons;
     private Image[,] slotIcons;
     private ItemData[,] slotItems;
@@ -162,7 +166,7 @@ public class InventoryUIController : MonoBehaviour
             InitializeSlots();
             if (slotButtons == null)
             {
-                Debug.LogWarning("Couldnt InitializeSlots!");
+                if (showDebugLogs) Debug.LogWarning("Couldn't InitializeSlots!");
                 return;
             }
         }
@@ -172,7 +176,7 @@ public class InventoryUIController : MonoBehaviour
             inventory = GameObject.FindGameObjectWithTag("Player")?.GetComponent<Inventory>();
             if (inventory == null)
             {
-                Debug.LogWarning("InventoryUIController.RefreshInventoryUI: No inventory found!");
+                if (showDebugLogs) Debug.LogWarning("InventoryUIController.RefreshInventoryUI: No inventory found!");
                 return;
             }
         }
@@ -193,7 +197,7 @@ public class InventoryUIController : MonoBehaviour
                     }
                     else
                     {
-                        Debug.LogWarning($"Item {itemsList[index].ItemName} is missing an inventory icon!");
+                        if (showDebugLogs) Debug.LogWarning($"Item {itemsList[index].ItemName} is missing an inventory icon!");
                         if (emptySlotSprite != null)
                         {
                             slotIcons[row, col].sprite = emptySlotSprite;
@@ -302,7 +306,7 @@ public class InventoryUIController : MonoBehaviour
 
             if (playerEquipItem == null)
             {
-                Debug.LogWarning("PlayerEquipItem still missing, cannot equip.");
+                if (showDebugLogs) Debug.LogWarning("PlayerEquipItem still missing, cannot equip.");
                 return;
             }
         }
