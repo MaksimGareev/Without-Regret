@@ -644,7 +644,6 @@ GameObject:
   - component: {fileID: 6699416454780374162}
   - component: {fileID: 5728538408542387315}
   - component: {fileID: 4421687017123965208}
-  - component: {fileID: 6669674007093084256}
   m_Layer: 5
   m_Name: PlayerUICanvas
   m_TagString: Untagged
@@ -773,7 +772,7 @@ MonoBehaviour:
   portraitEmpty: {fileID: -1899959237, guid: e2ccdccbeb2923f46a2b46b751c3c81a, type: 3}
   animator: {fileID: 0}
   currentRingState: 0
-  uiFade: {fileID: 6669674007093084256}
+  uiFade: {fileID: 0}
 --- !u!114 &6699416454780374162
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -863,20 +862,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SingletonManager
   singletonType: 2
---- !u!114 &6669674007093084256
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 565190579125525281}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 66cfd849ee134d1468a9415d4cf366d9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::UIFadeConrtoller
-  fadeSpeed: 3
-  idleDelay: 2
 --- !u!1 &626333383474887898
 GameObject:
   m_ObjectHideFlags: 0

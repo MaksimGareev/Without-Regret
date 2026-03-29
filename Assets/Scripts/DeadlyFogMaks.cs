@@ -101,12 +101,14 @@ public class DeadlyFogMaks : MonoBehaviour
             // from maks: stop darkening when damage happens
             shouldDarken = true;
 
+            
+
+            StartCoroutine(HandleReset(player));
+
             if (TimerRingUI.Instance != null)
             {
                 TimerRingUI.Instance.SubtractRingSection(amountOfRingsToSubtract);
             }
-
-            StartCoroutine(HandleReset(player));
         }
         else
         {
@@ -145,7 +147,7 @@ public class DeadlyFogMaks : MonoBehaviour
         yield return StartCoroutine(LerpPlayerToPoint(player, resetPoint));
         yield return new WaitForSeconds(0.15f);
 
-        shouldDarken = false;
+       
 
         player.SetResetLock(false);
 
@@ -166,6 +168,7 @@ public class DeadlyFogMaks : MonoBehaviour
 
         timeSinceEnter = 0;
         isResetting = false;
+        shouldDarken = false;
     }
 
     private IEnumerator LerpPlayerToPoint(PlayerController player, Transform target)
