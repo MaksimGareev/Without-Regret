@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class PlayerMantling : MonoBehaviour
@@ -24,6 +25,7 @@ public class PlayerMantling : MonoBehaviour
     private Vector3 mantleStartPos;
     private Vector3 mantleEndPos;
     private float mantleProgress = 0f;
+    private Action mantleCompleteCallback; // Tells the mantleable object that the mantle ended
 
     private void Awake()
     {
@@ -54,7 +56,7 @@ public class PlayerMantling : MonoBehaviour
         }   
     }
 
-    public void StartMantle(MantleableObject point)
+    public void StartMantle(MantleableObject point, Action completionCallback = null)
     {
         isMantling = true;
         if (animator)
@@ -62,6 +64,7 @@ public class PlayerMantling : MonoBehaviour
         mantleStartPos = transform.position;
         mantleEndPos = point.GetMantlePosition();
         mantleProgress = 0f;
+        mantleCompleteCallback = completionCallback;
 
         if (playerController != null)
         {
@@ -119,6 +122,8 @@ public class PlayerMantling : MonoBehaviour
         }
 
         isMantling = false;
+
+        mantleCompleteCallback?.Invoke();
 
         if (animator)
             animator.SetBool("isMantling", false);
