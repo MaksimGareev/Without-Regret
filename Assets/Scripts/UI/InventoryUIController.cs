@@ -389,12 +389,12 @@ public class InventoryUIController : MonoBehaviour
 
     private void EnableInventoryInput()
     {
-        inputActions.FindActionMap("Inventory").Enable();
-        inputActions.FindActionMap("UI").Enable();
-        inputActions.FindAction("Player/Look").Disable();
-        inputActions.FindAction("Player/Jump").Disable();
-        inputActions.FindAction("Player/ChimeHint").Disable();
-        inputActions.FindAction("Player/Posession").Disable();
+        inputActions.FindActionMap("Inventory")?.Enable();
+        inputActions.FindActionMap("UI")?.Enable();
+        inputActions.FindAction("Player/Look")?.Disable();
+        inputActions.FindAction("Player/Jump")?.Disable();
+        inputActions.FindAction("Player/ChimeHint")?.Disable();
+        inputActions.FindAction("Player/Possession")?.Disable();
 
         if (!uiInputModule)
         {
@@ -418,12 +418,12 @@ public class InventoryUIController : MonoBehaviour
 
     private void DisableInventoryInput()
     {
-        inputActions.FindActionMap("Inventory").Disable();
-        inputActions.FindActionMap("UI").Disable();
-        inputActions.FindAction("Player/Look").Enable();
-        inputActions.FindAction("Player/Jump").Enable();
-        inputActions.FindAction("Player/ChimeHint").Enable();
-        inputActions.FindAction("Player/Posession").Enable();
+        inputActions.FindActionMap("Inventory")?.Disable();
+        inputActions.FindActionMap("UI")?.Disable();
+        inputActions.FindAction("Player/Look")?.Enable();
+        inputActions.FindAction("Player/Jump")?.Enable();
+        inputActions.FindAction("Player/ChimeHint")?.Enable();
+        inputActions.FindAction("Player/Possession")?.Enable();
 
 
         if (defaultUIMoveAction && uiInputModule)
