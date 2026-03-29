@@ -829,9 +829,7 @@ public class NewDialogueManager : MonoBehaviour
         if (activeDialogueTrigger != null)
         {
             activeDialogueTrigger.OnDialogueComplete();
-
-            // if the dialogue trigger has a reward item, add it to the inventory
-            if (activeDialogueTrigger != null)
+            if (currentLine.GiveItem)
             {
                 activeDialogueTrigger.GiveReward();
             }
