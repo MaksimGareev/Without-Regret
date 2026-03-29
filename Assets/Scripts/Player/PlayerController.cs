@@ -56,7 +56,7 @@ public class PlayerController : MonoBehaviour, ISaveable
     [SerializeField] Transform groundCheck;
     [SerializeField] float groundCheckRadius = 0.2f;
     [SerializeField] LayerMask groundMask;
-    private bool isGrounded;
+    [SerializeField] private bool isGrounded;
 
     public static bool DialogueActive = false;
 
