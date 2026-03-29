@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 8150201949450731833}
   - component: {fileID: 2070983694141613236}
   - component: {fileID: 3131401873780414967}
+  - component: {fileID: 4126514545646348245}
   m_Layer: 2
   m_Name: Fade Canvas
   m_TagString: Untagged
@@ -115,6 +116,20 @@ CanvasGroup:
   m_Interactable: 0
   m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0
+--- !u!114 &4126514545646348245
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 331399860375641684}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66cfd849ee134d1468a9415d4cf366d9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIFadeConrtoller
+  fadeSpeed: 3
+  idleDelay: 2
 --- !u!1 &2024000422682297063
 GameObject:
   m_ObjectHideFlags: 0
