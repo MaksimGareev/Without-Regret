@@ -47,6 +47,8 @@ public class PlayerController : MonoBehaviour, ISaveable
     private Coroutine sprintCooldownRoutine;
 
     // Gravity / Ground settings
+    [Tooltip("The strength of gravity applied to the player. Higher values will cause the player to fall faster")]
+    [SerializeField, Range(20.0f, 100.0f)] private float gravityScale = 50.0f;
     private float yVelocity = 0f;
     private readonly float gravity = -9.81f;
     private bool gravityEnabled = true;
@@ -315,7 +317,7 @@ public class PlayerController : MonoBehaviour, ISaveable
         {
             if (gravityEnabled)
             {
-                yVelocity += gravity * Time.deltaTime;
+                yVelocity += gravity * gravityScale * Time.deltaTime;
             }
 
             Controller.Move(new Vector3(0, yVelocity, 0) * Time.deltaTime);
@@ -329,7 +331,7 @@ public class PlayerController : MonoBehaviour, ISaveable
             moveInput = Vector2.zero;
             if (gravityEnabled)
             {
-                yVelocity += gravity * Time.deltaTime;
+                yVelocity += gravity * gravityScale * Time.deltaTime;
             }
 
             Controller.Move(new Vector3(0, yVelocity, 0) * Time.deltaTime);
@@ -557,7 +559,7 @@ public class PlayerController : MonoBehaviour, ISaveable
         }
 
         if (gravityEnabled)
-            yVelocity += gravity * Time.deltaTime;
+            yVelocity += gravity * gravityScale * Time.deltaTime;
 
         // Build movement vectors
         Vector3 horizontalMove = (move.normalized * currentSpeed) * Time.deltaTime;
