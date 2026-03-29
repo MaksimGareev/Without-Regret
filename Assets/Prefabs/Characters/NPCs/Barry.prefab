@@ -62,6 +62,7 @@ MonoBehaviour:
   arrived: 0
   stopDistance: 0.5
   agent: {fileID: 1261743198065681055}
+  animator: {fileID: 678820722783402197}
   npcName: Barry
 --- !u!54 &3980699319312927126
 Rigidbody:
@@ -160,7 +161,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb6f976906f2747449b6d75a67a35b9d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NewDialogueTrigger
-  animator: {fileID: 0}
+  animator: {fileID: 678820722783402197}
   isTalking: 0
   chimeAnimator: {fileID: 0}
   chimeActive: 0
@@ -485,6 +486,11 @@ PrefabInstance:
       addedObject: {fileID: 8495111283631280347}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4bfd765bb474a5344a50b74f6056d0dc, type: 3}
+--- !u!95 &678820722783402197 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: 4bfd765bb474a5344a50b74f6056d0dc, type: 3}
+  m_PrefabInstance: {fileID: 6341405207811654980}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &2749632241223509320 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 9090961720171274252, guid: 4bfd765bb474a5344a50b74f6056d0dc, type: 3}

@@ -13,6 +13,8 @@ public class Barry : MonoBehaviour
     public float stopDistance = 0.5f;
     public NavMeshAgent agent;
 
+    public Animator animator;
+
     public string npcName = "Barry";
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -27,6 +29,10 @@ public class Barry : MonoBehaviour
         if (isTraveling)
         {
             TravelToTarget();
+            bool isMoving = agent.velocity.sqrMagnitude > 0.05f;
+            animator.SetBool("isWalking", isMoving);
+            animator.SetBool("isIdle", !isMoving);
+
         }
         /*else if (arrived && lookAtTarget != null)
         {
@@ -35,6 +41,7 @@ public class Barry : MonoBehaviour
     }
     public void StartTravel()
     {
+        animator.SetBool("isTalking", false);
         //IsFollowing = false;
         isTraveling = true;
         arrived = false;
