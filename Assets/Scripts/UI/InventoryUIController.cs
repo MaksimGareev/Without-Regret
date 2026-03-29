@@ -393,6 +393,8 @@ public class InventoryUIController : MonoBehaviour
         inputActions.FindActionMap("UI").Enable();
         inputActions.FindAction("Player/Look").Disable();
         inputActions.FindAction("Player/Jump").Disable();
+        inputActions.FindAction("Player/ChimeHint").Disable();
+        inputActions.FindAction("Player/Posession").Disable();
 
         if (!uiInputModule)
         {
@@ -420,6 +422,9 @@ public class InventoryUIController : MonoBehaviour
         inputActions.FindActionMap("UI").Disable();
         inputActions.FindAction("Player/Look").Enable();
         inputActions.FindAction("Player/Jump").Enable();
+        inputActions.FindAction("Player/ChimeHint").Enable();
+        inputActions.FindAction("Player/Posession").Enable();
+
 
         if (defaultUIMoveAction && uiInputModule)
         {
