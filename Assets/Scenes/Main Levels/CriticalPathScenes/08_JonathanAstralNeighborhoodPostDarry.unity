@@ -37883,7 +37883,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b93d8170e88d8e34684424c0750fb15a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SaveableFriendlyNPC
-  uniqueID: 8728e5a6-8bc9-4072-ae49-a3db10d1080e
+  uniqueID: a66ba705-1048-4888-aa3e-ed8441c90067
 --- !u!54 &173612830
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -41576,8 +41576,16 @@ PrefabInstance:
       value: Darry
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: af92f9b628054044893d73316d519abd, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: af92f9b628054044893d73316d519abd, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: af92f9b628054044893d73316d519abd, type: 3}
+      propertyPath: m_TagString
+      value: protectedNPC
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -61134,7 +61142,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b93d8170e88d8e34684424c0750fb15a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SaveableFriendlyNPC
-  uniqueID: 4263e875-e2c0-451a-b081-3c3ccb6f1d1f
+  uniqueID: 09b33c21-a6a3-4ddc-93e3-d2a16e92f29b
 --- !u!114 &319326110
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -109430,7 +109438,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b93d8170e88d8e34684424c0750fb15a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SaveableFriendlyNPC
-  uniqueID: 81735f70-5a76-4f9c-8209-b67295e7ff0b
+  uniqueID: 9e384452-b351-4111-bbbe-838f244c19c2
 --- !u!114 &561113287
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -222519,13 +222527,62 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 43755293103271873, guid: c15e4d30c466cad44b39e753409ff254, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1010963089}
   m_SourcePrefab: {fileID: 100100000, guid: c15e4d30c466cad44b39e753409ff254, type: 3}
 --- !u!1 &1010963088 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 43755293103271873, guid: c15e4d30c466cad44b39e753409ff254, type: 3}
   m_PrefabInstance: {fileID: 1010963087}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1010963089
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1010963088}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: efdca141980251c48b810cfcd47385c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyFieldOfView
+  minRadius: 4
+  maxRadius: 8
+  minAngle: 50
+  maxAngle: 130
+  moralityEffect: 0.5
+  obstacleMask:
+    serializedVersion: 2
+    m_Bits: 129
+  playerMask:
+    serializedVersion: 2
+    m_Bits: 8
+  playerRef: {fileID: 0}
+  dialogueManager: {fileID: 0}
+  animator: {fileID: 0}
+  smoothFOV: 1
+  fovSmoothSpeed: 2
+  radius: 0
+  aggroRadius: 0
+  angle: 0
+  playerObj: {fileID: 0}
+  targetMask:
+    serializedVersion: 2
+    m_Bits: 0
+  obstructionMask:
+    serializedVersion: 2
+    m_Bits: 0
+  canSeePlayer: 0
+  chaseDuration: 1
+  maxChaseDuration: 1
+  detectionRadius: 4
+  attackRadius: 3
+  attackCooldown: 1
+  isAttacking: 0
+  normalMovement: {fileID: 0}
 --- !u!1 &1011417225
 GameObject:
   m_ObjectHideFlags: 0
@@ -268658,7 +268715,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b93d8170e88d8e34684424c0750fb15a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SaveableFriendlyNPC
-  uniqueID: b904f813-0366-4e6e-8e37-6cbe21724439
+  uniqueID: 9f0d9c6a-6328-4c6a-b596-ebaed9ae52fc
 --- !u!114 &1232623905
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -346176,7 +346233,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b93d8170e88d8e34684424c0750fb15a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SaveableFriendlyNPC
-  uniqueID: 725af299-07d3-4e46-88f2-5e0a569f14c6
+  uniqueID: 057e7b95-849a-4cba-a242-ff7721d71418
 --- !u!114 &1580363110
 MonoBehaviour:
   m_ObjectHideFlags: 0

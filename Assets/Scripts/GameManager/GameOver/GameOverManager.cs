@@ -315,7 +315,7 @@ public class GameOverManager : MonoBehaviour
 
         EnableGameOverUI();
 
-        if (SaveManager.Instance != null)
+        if (SaveManager.Instance)
         {
             SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
         }

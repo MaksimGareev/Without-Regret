@@ -5081,6 +5081,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 16a217fec0209484e99537fe962f8b81, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1958979919}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 16a217fec0209484e99537fe962f8b81, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1958979924}
   m_SourcePrefab: {fileID: 100100000, guid: 16a217fec0209484e99537fe962f8b81, type: 3}
 --- !u!1001 &278836877
 PrefabInstance:
@@ -22564,7 +22567,7 @@ GameObject:
   - component: {fileID: 1337069507}
   m_Layer: 0
   m_Name: First Enemy Point
-  m_TagString: protectedNPC
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -23752,7 +23755,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: f5c463ab78505d54685741243530eb4d, type: 3}
       propertyPath: m_TagString
-      value: protectedNPC
+      value: Untagged
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -32313,7 +32316,7 @@ NavMeshAgent:
   m_GameObject: {fileID: 1958979918}
   m_Enabled: 1
   m_AgentTypeID: 0
-  m_Radius: 0.5
+  m_Radius: 0.4
   m_Speed: 2.5
   m_Acceleration: 8
   avoidancePriority: 50
@@ -32381,6 +32384,52 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 16a217fec0209484e99537fe962f8b81, type: 3}
   m_PrefabInstance: {fileID: 278284858}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1958979924
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1958979918}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: efdca141980251c48b810cfcd47385c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyFieldOfView
+  minRadius: 4
+  maxRadius: 8
+  minAngle: 50
+  maxAngle: 130
+  moralityEffect: 0.5
+  obstacleMask:
+    serializedVersion: 2
+    m_Bits: 129
+  playerMask:
+    serializedVersion: 2
+    m_Bits: 8
+  playerRef: {fileID: 0}
+  dialogueManager: {fileID: 0}
+  animator: {fileID: 0}
+  smoothFOV: 1
+  fovSmoothSpeed: 2
+  radius: 0
+  aggroRadius: 0
+  angle: 0
+  playerObj: {fileID: 0}
+  targetMask:
+    serializedVersion: 2
+    m_Bits: 0
+  obstructionMask:
+    serializedVersion: 2
+    m_Bits: 0
+  canSeePlayer: 0
+  chaseDuration: 1
+  maxChaseDuration: 1
+  detectionRadius: 4
+  attackRadius: 3
+  attackCooldown: 1
+  isAttacking: 0
+  normalMovement: {fileID: 0}
 --- !u!1 &1981775246
 GameObject:
   m_ObjectHideFlags: 0
@@ -34555,7 +34604,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1104601806056575187, guid: 8234364b2d17d5848bc48e63195ea058, type: 3}
       propertyPath: uniqueID
-      value: 49c37305-e52b-4133-8521-dfda5cb53eec
+      value: 528ce313-4ebc-4e53-a938-795a94b662bd
       objectReference: {fileID: 0}
     - target: {fileID: 2275537426101191861, guid: 8234364b2d17d5848bc48e63195ea058, type: 3}
       propertyPath: m_LocalPosition.x
@@ -34692,7 +34741,7 @@ GameObject:
   - component: {fileID: 3138802798869841171}
   - component: {fileID: 3138802798869841170}
   - component: {fileID: 3138802798869841173}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Darry
   m_TagString: protectedNPC
   m_Icon: {fileID: 0}
@@ -34812,7 +34861,7 @@ NavMeshAgent:
   m_GameObject: {fileID: 1687530146369425422}
   m_Enabled: 1
   m_AgentTypeID: 0
-  m_Radius: 24.372805
+  m_Radius: 21
   m_Speed: 2.5
   m_Acceleration: 8
   avoidancePriority: 50
