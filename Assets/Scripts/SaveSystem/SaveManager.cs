@@ -244,11 +244,11 @@ public class SaveManager : MonoBehaviour
 
         data.lastSceneName = SceneManager.GetActiveScene().name;
 
-        if (TimerRingUI.Instance && TimerRingUI.Instance.currentRingState != TimerRingUI.RingState.Empty)
+        if (TimerRingUI.Instance && TimerRingUI.Instance.currentRingState != TimerRingUI.RingState.Empty && !GameOverManager.Instance.IsGameOver)
         {
             data.playerSaveData.currentRingState = TimerRingUI.Instance.currentRingState;
         }
-        else if (TimerRingUI.Instance || TimerRingUI.Instance.currentRingState == TimerRingUI.RingState.Empty)
+        else if (TimerRingUI.Instance || TimerRingUI.Instance.currentRingState == TimerRingUI.RingState.Empty || GameOverManager.Instance.IsGameOver)
         {
             data.playerSaveData.currentRingState = TimerRingUI.RingState.Full;
         }
