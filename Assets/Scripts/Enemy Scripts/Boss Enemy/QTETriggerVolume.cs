@@ -107,6 +107,12 @@ public class QTETriggerVolume : MonoBehaviour, IInteractable
 
     public void OnPlayerInteraction(GameObject player)
     {
+        if (!playerController)
+        {
+            Debug.LogError("player controller reference is null, can't interact");
+            return;
+        }
+        
         // Prepare UI and sequence
         SetupArrowUI();
 
