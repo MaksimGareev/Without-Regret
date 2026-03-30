@@ -24,10 +24,6 @@ public class MoveableObject : MonoBehaviour, IInteractable
     [SerializeField] private float collisionCheckSizeFactor = 1f;
     [SerializeField] private bool checkGrabPointCollisions = true;
 
-    [Header("Collision Settings")]
-    [Tooltip("Modifies the size of the collider used to check for collisions with walls when the player is moving this object. A smaller size will make the check more lenient (and can cause some clipping)")]
-    [SerializeField] private float collisionCheckSizeMultiplier = 0.9f;
-
     [Header("Transform Settings")]
     [SerializeField] private Vector3 heldPositionOffset = Vector3.zero;
     [SerializeField] private bool setHeldRotation = false;

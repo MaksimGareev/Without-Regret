@@ -3,6 +3,9 @@ using System.Collections;
 
 public class CollectableItem : MonoBehaviour, IInteractable
 {
+    [Tooltip("The journal entry associated with this collectable item. If empty, no entry is added")]
+    [SerializeField] JournalEntry journalEntry;
+
     public float interactionPriority => 2f;
     public InteractType interactType => InteractType.Collectable;
 
@@ -46,8 +49,13 @@ public class CollectableItem : MonoBehaviour, IInteractable
 
         hasBeenCollected = true;
 
-        collectCoroutine = StartCoroutine(collectAnimationDelay());
+        // Add journal entry when collected (if provided)
+        if (journalEntry != null && Journal.Instance != null)
+        {
+            Journal.Instance.AddCollectibleEntry(journalEntry.entryTitle, journalEntry.entryDescription);
+        }
 
+        collectCoroutine = StartCoroutine(collectAnimationDelay());
 
         ButtonIcons.Instance?.Clear();
     }
