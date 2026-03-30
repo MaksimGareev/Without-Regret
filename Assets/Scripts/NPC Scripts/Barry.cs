@@ -20,7 +20,7 @@ public class Barry : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        agent.updateRotation = false;
+        //agent.updateRotation = false;
     }
 
     // Update is called once per frame
