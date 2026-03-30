@@ -32,7 +32,6 @@ public class SaveManager : MonoBehaviour
     private List<ISaveable> persistentSaveables = new List<ISaveable>();    // List of saveables that are marked as Don't Destroy on Load and should persist across scene loads
 
     private float autoSaveInterval = 300f;  // Auto-save every 5 minutes
-    //private float autoSaveTimer = 0f;       // Timer to track time since last auto-save
     private bool isSaving = false;          // Flag to prevent multiple simultaneous save operations
 
     public bool IsLoading { get; private set; } = false;
@@ -214,17 +213,6 @@ public class SaveManager : MonoBehaviour
         }
     }
 
-    // private void Update()
-    // {
-    //     Debug key to clear save data (for testing purposes only)
-    //     if (Input.GetKeyDown(KeyCode.F5) && SceneManager.GetActiveScene().name == "MainMenu")
-    //     {
-    //         ClearSaveData();
-    //         Debug.Log("Save data cleared via F5 key.");
-    //         SceneManager.LoadScene("MainMenu");
-    //     }
-    // }
-
     private void HandleAutoSave()
     {
         // Early return if auto-saving is disabled or if the player is in a Scene that should not have Auto-Saving enabled
@@ -256,13 +244,17 @@ public class SaveManager : MonoBehaviour
 
         data.lastSceneName = SceneManager.GetActiveScene().name;
 
-        if (TimerRingUI.Instance != null && TimerRingUI.Instance.currentRingState != TimerRingUI.RingState.Empty)
+        if (TimerRingUI.Instance && TimerRingUI.Instance.currentRingState != TimerRingUI.RingState.Empty)
         {
             data.playerSaveData.currentRingState = TimerRingUI.Instance.currentRingState;
         }
-        else if (TimerRingUI.Instance == null || TimerRingUI.Instance.currentRingState == TimerRingUI.RingState.Empty)
+        else if (TimerRingUI.Instance || TimerRingUI.Instance.currentRingState == TimerRingUI.RingState.Empty)
         {
             data.playerSaveData.currentRingState = TimerRingUI.RingState.Full;
+        }
+        else if (!TimerRingUI.Instance)
+        {
+            Debug.Log("[SaveManager.LoadGame] TimerRingUI instance not found in scene! Cannot save timer ring state.");
         }
 
         RefreshSaveables();
@@ -336,23 +328,29 @@ public class SaveManager : MonoBehaviour
             }
         }
 
-        if (ObjectiveManager.Instance != null)
+        if (ObjectiveManager.Instance)
         {
             ObjectiveManager.Instance.EnsureActiveObjective();
         }
         
         // Set the timer ring state to the state in the saved data
-        if (TimerRingUI.Instance != null && data.playerSaveData.currentRingState != TimerRingUI.RingState.Empty)
+        if (TimerRingUI.Instance && data.playerSaveData.currentRingState != TimerRingUI.RingState.Empty)
         {
+            Debug.Log("[SaveManager.LoadGame] Setting timer ring state to saved state: " + data.playerSaveData.currentRingState);
             TimerRingUI.Instance.SetRingState(data.playerSaveData.currentRingState);
         }
-        else if (TimerRingUI.Instance != null && data.playerSaveData.currentRingState == TimerRingUI.RingState.Empty)
+        else if (TimerRingUI.Instance && data.playerSaveData.currentRingState == TimerRingUI.RingState.Empty)
         {
+            Debug.Log("[SaveManager.LoadGame] Loaded save data has empty timer ring state, setting to full by default.");
             TimerRingUI.Instance.SetRingState(TimerRingUI.RingState.Full);
+        }
+        else if (!TimerRingUI.Instance)
+        {
+            Debug.LogError("[SaveManager.LoadGame] TimerRingUI instance not found in scene! Cannot set timer ring state on load.");
         }
 
         // Ensure the game is not paused after loading, which can happen if the player saves while paused and then reloads that save
-        if (PauseManager.Instance != null)
+        if (PauseManager.Instance)
         {
             PauseManager.Instance.ResumeGame();
         }
