@@ -31,7 +31,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8613650104285093061}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0.56451946, z: -0, w: 0.8254197}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -46.75, y: 1.195, z: 211.48}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -39,7 +39,7 @@ Transform:
   - {fileID: 1735018252759095059}
   - {fileID: 751782001312072366}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: -68.738, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &7014002075272759330
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -52,7 +52,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a40ba9254f066ed499136723990e8a6f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DialogueTrigger
-  animator: {fileID: 0}
+  animator: {fileID: 6669533543363827924}
   isTalking: 0
   chimeAnimator: {fileID: 0}
   chimeActive: 0
@@ -104,6 +104,7 @@ MonoBehaviour:
   stopDistance: 0.5
   updateRate: 0.2
   enemy: {fileID: 0}
+  animator: {fileID: 6669533543363827924}
   linkedHouseObjective: {fileID: 0}
   linkedNeighborhoodObjective: {fileID: 0}
 --- !u!114 &6739142888903478039
@@ -127,6 +128,7 @@ MonoBehaviour:
   arrived: 0
   stopDistance: 0.5
   IntruderTrigger: {fileID: 0}
+  animator: {fileID: 6669533543363827924}
   npcName: Darry
   linkedHouseObjective: {fileID: 0}
   linkedNeighborhoodObjective: {fileID: 0}
@@ -281,6 +283,11 @@ PrefabInstance:
 --- !u!4 &751782001312072366 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 5aaf15fb7268f5e4aac7f5750a94292d, type: 3}
+  m_PrefabInstance: {fileID: 1001035802609739077}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &6669533543363827924 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: 5aaf15fb7268f5e4aac7f5750a94292d, type: 3}
   m_PrefabInstance: {fileID: 1001035802609739077}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &2278465813729718520
