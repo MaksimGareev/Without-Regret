@@ -21,6 +21,7 @@ MonoBehaviour:
     NPCGender: female
     NextLineID: 
     endDialogueAfterLine: 0
+    GiveItem: 0
     choices:
     - text: (Shows Flowers)
       NextLineID: Good
@@ -28,7 +29,7 @@ MonoBehaviour:
       direction: 0
       objectiveToActivate: 
     - text: Flowers?
-      NextLineID: Bad
+      NextLineID: Bad E  1
       moralityChange: -1
       direction: 1
       objectiveToActivate: 
@@ -40,6 +41,7 @@ MonoBehaviour:
     NPCGender: female
     NextLineID: Good II
     endDialogueAfterLine: 0
+    GiveItem: 0
     choices: []
     objectivesToActivate: []
   - LineID: Good II
@@ -49,6 +51,7 @@ MonoBehaviour:
     NPCGender: female
     NextLineID: Check On Reed
     endDialogueAfterLine: 0
+    GiveItem: 0
     choices: []
     objectivesToActivate: []
   - LineID: Bad
@@ -58,24 +61,37 @@ MonoBehaviour:
     NPCGender: female
     NextLineID: Bad II
     endDialogueAfterLine: 0
+    GiveItem: 0
     choices: []
     objectivesToActivate: []
   - LineID: Bad II
     Speaker: Irene
-    text: Ugh, I can't believe you Echo.
-    lineTone: 2
+    text: They're in your bag! Ugh, I can't believe you Echo.
+    lineTone: 0
     NPCGender: female
     NextLineID: Check On Reed
     endDialogueAfterLine: 0
+    GiveItem: 0
     choices: []
     objectivesToActivate: []
   - LineID: Check On Reed
     Speaker: Irene
     text: While we're here, why don't you chat with Reed over there and see what's
       going on? I'll be by the Shed if you need me.
-    lineTone: 2
+    lineTone: 0
     NPCGender: female
     NextLineID: 
     endDialogueAfterLine: 1
+    GiveItem: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Bad E 1
+    Speaker: Echo
+    text: Flowers? Was that something I was supposed to bring?
+    lineTone: 0
+    NPCGender: female
+    NextLineID: Bad
+    endDialogueAfterLine: 0
+    GiveItem: 0
     choices: []
     objectivesToActivate: []

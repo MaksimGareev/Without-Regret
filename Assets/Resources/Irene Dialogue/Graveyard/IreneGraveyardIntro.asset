@@ -17,19 +17,21 @@ MonoBehaviour:
   - LineID: Start
     Speaker: Irene
     text: Hey Echo! Slept well, huh? You didn't even fix your hair!
-    lineTone: 0
+    lineTone: 1
     NPCGender: female
     NextLineID: Go To Graveyard
     endDialogueAfterLine: 0
+    GiveItem: 0
     choices: []
     objectivesToActivate: []
   - LineID: Go To Graveyard
     Speaker: Irene
     text: So, we still going to the Graveyard?
-    lineTone: 0
+    lineTone: 1
     NPCGender: female
     NextLineID: Question
     endDialogueAfterLine: 0
+    GiveItem: 0
     choices: []
     objectivesToActivate: []
   - LineID: Question
@@ -40,24 +42,25 @@ MonoBehaviour:
     NPCGender: female
     NextLineID: 
     endDialogueAfterLine: 0
+    GiveItem: 0
     choices:
     - text: Of course.
-      NextLineID: Good
+      NextLineID: Good E 1
       moralityChange: 1
       direction: 0
       objectiveToActivate: 
     - text: Meh.
-      NextLineID: Bad
+      NextLineID: Bad E 1
       moralityChange: -1
       direction: 1
       objectiveToActivate: 
-    - text: I'm a bit tired, but we're going no matter what.
-      NextLineID: Good
+    - text: I'm tired...but let's go.
+      NextLineID: Good E 2
       moralityChange: 1
       direction: 2
       objectiveToActivate: 
-    - text: Let me snooze for five more minutes...
-      NextLineID: Bad
+    - text: Five more minutes...
+      NextLineID: Bad E 2
       moralityChange: -1
       direction: 3
       objectiveToActivate: 
@@ -65,10 +68,11 @@ MonoBehaviour:
   - LineID: Good
     Speaker: Irene
     text: Yay!  Let's go.
-    lineTone: 0
+    lineTone: 1
     NPCGender: female
     NextLineID: 
     endDialogueAfterLine: 1
+    GiveItem: 0
     choices: []
     objectivesToActivate: []
   - LineID: Bad
@@ -78,5 +82,46 @@ MonoBehaviour:
     NPCGender: female
     NextLineID: 
     endDialogueAfterLine: 1
+    GiveItem: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Good E 1
+    Speaker: Echo
+    text: Of course! I wouldn't miss it for the world.
+    lineTone: 1
+    NPCGender: female
+    NextLineID: Good
+    endDialogueAfterLine: 0
+    GiveItem: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Good E 2
+    Speaker: Echo
+    text: I'm a bit tired, but I'm not backing out on our plans.
+    lineTone: 1
+    NPCGender: female
+    NextLineID: Good
+    endDialogueAfterLine: 0
+    GiveItem: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Bad E 1
+    Speaker: Echo
+    text: I mean, I guess...
+    lineTone: 0
+    NPCGender: female
+    NextLineID: Bad
+    endDialogueAfterLine: 0
+    GiveItem: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Bad E 2
+    Speaker: Echo
+    text: Sure, yeah, just let me snooze for five more minutes...
+    lineTone: 0
+    NPCGender: female
+    NextLineID: Bad
+    endDialogueAfterLine: 0
+    GiveItem: 0
     choices: []
     objectivesToActivate: []
