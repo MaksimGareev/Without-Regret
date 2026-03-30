@@ -4,12 +4,11 @@ public class InteractableProximity : MonoBehaviour
 {
     public float range = 3f;
     public Transform player;
-    public UIFadeConrtoller uiFade;
+
+    public float DistanceToPlayer { get; private set; }
 
     private void Start()
     {
-        uiFade = FindFirstObjectByType<UIFadeConrtoller>();
-
         GameObject playerObj = GameObject.FindWithTag("Player");
         if (playerObj != null)
         {
@@ -24,11 +23,13 @@ public class InteractableProximity : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (uiFade == null || player == null) return;
+        if (player == null) return;
 
-        if (Vector3.Distance(transform.position, player.position) <= range)
+        DistanceToPlayer = Vector3.Distance(transform.position, player.position);
+
+        if (DistanceToPlayer <= range)
         {
-            uiFade.ShowUI();
+            InteractionManager.Instance?.RegisterInteractable(this);
         }
     }
 }

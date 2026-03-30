@@ -16,5 +16,6 @@ public enum InteractType
     BossQTE,
     BossAttack,
     Remove,
-    Push
+    Push,
+    Sleep
 }

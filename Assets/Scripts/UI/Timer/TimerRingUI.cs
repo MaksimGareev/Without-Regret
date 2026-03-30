@@ -35,13 +35,13 @@ public class TimerRingUI : MonoBehaviour
     public RingState currentRingState;
     public static TimerRingUI Instance { get; private set; }
 
-    public UIFadeConrtoller uiFade;
+    public UIFadeController uiFade;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Awake()
     {
         characterSwap = FindObjectOfType<CharacterSwap>();
-        uiFade = FindFirstObjectByType<UIFadeConrtoller>();
+        uiFade = FindFirstObjectByType<UIFadeController>();
         if (characterSwap != null)
         {
             animator = characterSwap.GetAnimator();
