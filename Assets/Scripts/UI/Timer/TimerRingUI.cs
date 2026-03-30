@@ -123,7 +123,15 @@ public class TimerRingUI : MonoBehaviour
         {
             Debug.Log("Timer has run out! Triggering end game sequence.");
             GameOverManager.Instance.TriggerGameOver();
-            animator.SetBool("GameOver", true);
+            
+            if (animator)
+            {
+                animator.SetBool("GameOver", true);
+            }
+            else if (characterSwap)
+            {
+                animator = characterSwap.GetAnimator();
+            }
         }
         else
         {

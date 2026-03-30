@@ -84,10 +84,8 @@ public class SaveableFriendlyNPC : SaveableWithID
             Debug.LogWarning($"Loading Failed: No saved state found for Friendly NPC with ID: {GetUniqueID()}");
             return;
         }
-        else
-        {
-            Debug.Log($"Loading Friendly NPC with ID: {GetUniqueID()}");
-        }
+        
+        Debug.Log($"Loading Friendly NPC with ID: {GetUniqueID()}");
 
         transform.position = new Vector3(state.position[0], state.position[1], state.position[2]);
         transform.eulerAngles = new Vector3(state.rotation[0], state.rotation[1], state.rotation[2]);

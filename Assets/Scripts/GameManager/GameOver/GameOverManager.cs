@@ -52,7 +52,7 @@ public class GameOverManager : MonoBehaviour
             Debug.LogWarning("Confirmation panel reference is missing in GameOverManager.");
         }
 
-        SceneManager.sceneLoaded += OnSceneLoaded;
+        SceneLoadManager.Instance.OnSceneLoaded.AddListener(OnSceneLoaded);
     }
     
     private void OnEnable()
@@ -276,7 +276,7 @@ public class GameOverManager : MonoBehaviour
         }
     }
 
-    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    private void OnSceneLoaded()
     {
         if (TimerRingUI.Instance != null && TimerRingUI.Instance.currentRingState != TimerRingUI.RingState.Empty)
         {
@@ -407,17 +407,15 @@ public class GameOverManager : MonoBehaviour
         Time.timeScale = 1f; // Resume the game
         isGameOver = false;
         DisableGameOverUI();
-        //EnableOtherCanvases();
         Debug.Log("Restarting scene: " + SceneManager.GetActiveScene().name);
 
-        if (SaveManager.Instance != null)
+        if (SceneLoadManager.Instance)
         {
             SceneLoadManager.Instance.LoadScene(SceneManager.GetActiveScene().name);
-            SaveManager.Instance.LoadGame(SaveSystem.activeSaveSlot);
         }
         else
         {
-            SceneLoadManager.Instance.LoadScene(SceneManager.GetActiveScene().name);
+            Debug.Log("SceneLoadManager instance not found, using SceneManager to reload scene.");
         }
     }
 
@@ -455,7 +453,7 @@ public class GameOverManager : MonoBehaviour
 
     private void OnDestroy()
     {
-        SceneManager.sceneLoaded -= OnSceneLoaded;
+        SceneLoadManager.Instance.OnSceneLoaded.RemoveListener(OnSceneLoaded);
         DisableInputActions();
         RemoveListeners();
     }
