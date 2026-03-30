@@ -254,6 +254,10 @@ public class NewDialogueManager : MonoBehaviour
 
         // set portrait and voice of speaker
         SetNPCPortrait(currentLine.lineTone);
+        if (activeDialogueTrigger != null && activeDialogueTrigger.faceHandler != null) //Calls the faceHandler to display same expression as the NPC Portrait
+        {
+            activeDialogueTrigger.faceHandler.SetExpression(currentLine.lineTone);
+        }
         SetVoiceGender(currentLine.NPCGender);
 
         // hide continue arrow and choices
@@ -449,6 +453,9 @@ public class NewDialogueManager : MonoBehaviour
         canChoose = true;
         directionalChoices.Clear();
         choiceTimerSlider.gameObject.SetActive(true);
+
+        if (activeDialogueTrigger != null)
+            activeDialogueTrigger.StartPlayerThinking(); //Call NPC to start playing Player thinking animations while the player is making a choice
 
         // spawn directional arrow to show which direction to hold to select answer
         if (directionalImage != null)
@@ -719,6 +726,9 @@ public class NewDialogueManager : MonoBehaviour
     // select the choice
     private void SelectChoice(NewDialogueChoiceData c)
     {
+        if (activeDialogueTrigger != null)
+            activeDialogueTrigger.StopPlayerThinking(); //Call NPC to stop the Player thinking animation when a decision is made
+
         resolvingChoice = true;
         canChoose = false;
 
@@ -814,6 +824,9 @@ public class NewDialogueManager : MonoBehaviour
     // end the current dialogue instance
     public void EndDialogue()
     {
+        if (activeDialogueTrigger != null)
+            activeDialogueTrigger.StopLookingAtPlayer(); //Call NPC to stop looking at player to end dialogue animations
+
         DialogueIsActive = false;
 
         // deactivate dialogue UI
