@@ -77,15 +77,15 @@ public class TimerRingUI : MonoBehaviour
             {
                 case RingState.Full:
                     SetRingState(RingState.TwoThirds);
-                    uiFade.ShowUI();
+                    if (uiFade != null) uiFade.ShowUI();
                     break;
                 case RingState.TwoThirds:
                     SetRingState(RingState.OneThird);
-                    uiFade.ShowUI();
+                    if (uiFade != null) uiFade.ShowUI();
                     break;
                 case RingState.OneThird:
                     SetRingState(RingState.Empty);
-                    uiFade.ShowUI();
+                    if (uiFade != null) uiFade.ShowUI();
                     EndGame();
                     break;
                 case RingState.Empty:
