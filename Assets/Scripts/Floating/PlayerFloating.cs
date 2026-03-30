@@ -68,6 +68,9 @@ public class PlayerFloating : MonoBehaviour
     public bool chimeActive = false;
     public Chime chimeScript;
 
+    [Header("VFX")]
+    [SerializeField] private GameObject FloatingVfx;
+
 
     public bool IsFloating { get; private set; } = false;
     private bool canFloat = false;
@@ -116,6 +119,7 @@ public class PlayerFloating : MonoBehaviour
         toggleInventoryUI = GetComponent<ToggleInventoryUI>();
         playerCamera = Camera.main;
         controls = new PlayerControls();
+        FloatingVfx.SetActive(false);
 
         characterSwap = FindObjectOfType<CharacterSwap>();
 
@@ -303,6 +307,7 @@ public class PlayerFloating : MonoBehaviour
         animator.SetBool("isFloating", false);
         animator.SetTrigger("floatStart");
         StartCoroutine(FloatAnimationHandler());
+        FloatingVfx.SetActive(true);
 
         if (chimeActive)
         {
@@ -351,6 +356,7 @@ public class PlayerFloating : MonoBehaviour
     {
         animator.SetTrigger("isLanding");
         animator.SetBool("isFloating", false);
+        FloatingVfx.SetActive(false);
 
         if (chimeActive)
             chimeScript.ResetChimeAnimations();

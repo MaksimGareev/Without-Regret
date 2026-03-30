@@ -353,6 +353,10 @@ public class NewDialogueManager : MonoBehaviour
         // if end dialogue after line is true and player presses confirm end the dialogue
         if (currentLine.endDialogueAfterLine)
         {
+            if (currentLine.movingOn)
+            {
+                activeDialogueTrigger.MovingOn();
+            }
             HandleNPCMovementsAfterLine();
             EndDialogue();
             return;
