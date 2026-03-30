@@ -311,6 +311,9 @@ public class PlayerFloating : MonoBehaviour
 
         floatingSlider.gameObject.SetActive(true);
         timerSlider.gameObject.SetActive(true);
+        
+        GetComponent<PlayerController>().SetCurrentPlatform(null);
+        
         IsFloating = true;
         floatTimer = 0f;
         rhythmTimer = 0f;
