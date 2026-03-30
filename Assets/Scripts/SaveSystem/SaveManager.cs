@@ -244,11 +244,11 @@ public class SaveManager : MonoBehaviour
 
         data.lastSceneName = SceneManager.GetActiveScene().name;
 
-        if (TimerRingUI.Instance && TimerRingUI.Instance.currentRingState != TimerRingUI.RingState.Empty)
+        if (TimerRingUI.Instance && TimerRingUI.Instance.currentRingState != TimerRingUI.RingState.Empty && !GameOverManager.Instance.IsGameOver)
         {
             data.playerSaveData.currentRingState = TimerRingUI.Instance.currentRingState;
         }
-        else if (TimerRingUI.Instance || TimerRingUI.Instance.currentRingState == TimerRingUI.RingState.Empty)
+        else if (TimerRingUI.Instance || TimerRingUI.Instance.currentRingState == TimerRingUI.RingState.Empty || GameOverManager.Instance.IsGameOver)
         {
             data.playerSaveData.currentRingState = TimerRingUI.RingState.Full;
         }
@@ -264,12 +264,6 @@ public class SaveManager : MonoBehaviour
         // Loop through the saveables list and call each object's SaveTo method, passing in the SaveData to be written to.
         foreach (ISaveable saveable in saveables)
         {
-            if (data.playerSaveData.currentRingState == TimerRingUI.RingState.Empty 
-                && (saveable is PlayerController || saveable is SaveableEnemyNPC || saveable is SaveableFriendlyNPC))
-            {
-                continue;
-            }
-            
             if (showDebugLogs) Debug.Log($"[SaveManager.SaveGame] calling SaveTo on {saveable.GetType().Name}");
             saveable.SaveTo(data);
         }
