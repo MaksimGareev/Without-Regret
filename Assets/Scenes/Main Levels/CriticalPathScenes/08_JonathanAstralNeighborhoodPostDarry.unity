@@ -9862,6 +9862,10 @@ PrefabInstance:
       value: Modular Road Straight (7)
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: b745712c1b8872a4a81e22dc30a8a64f, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: b745712c1b8872a4a81e22dc30a8a64f, type: 3}
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
@@ -15956,6 +15960,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 6815fd49f524d374a80d157dfb4383cd, type: 3}
       propertyPath: m_Name
       value: Modular Road Circle
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 6815fd49f524d374a80d157dfb4383cd, type: 3}
+      propertyPath: m_Layer
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 6815fd49f524d374a80d157dfb4383cd, type: 3}
       propertyPath: m_IsActive
@@ -36016,7 +36024,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b93d8170e88d8e34684424c0750fb15a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SaveableFriendlyNPC
-  uniqueID: 5fdac80e-83f7-421a-9eff-600a9a63b84b
+  uniqueID: 8980ed1e-1f97-4362-99ab-3b739d076b44
 --- !u!54 &173612830
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -71035,7 +71043,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b93d8170e88d8e34684424c0750fb15a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SaveableFriendlyNPC
-  uniqueID: 791eaa43-55bc-460b-8431-47dc49d33c45
+  uniqueID: 82350980-5c82-402f-9f26-d2c15683eb21
 --- !u!114 &319326110
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -71065,6 +71073,7 @@ MonoBehaviour:
   stopDistance: 0.5
   updateRate: 0.2
   enemy: {fileID: 1010963088}
+  animator: {fileID: 0}
   linkedHouseObjective: {fileID: 11400000, guid: ef4ea093afae3c74d909378f3952fc50, type: 2}
   linkedNeighborhoodObjective: {fileID: 11400000, guid: 11566baeb701f5543b1fc43f37ee953e, type: 2}
 --- !u!195 &319326111
@@ -77260,6 +77269,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: b745712c1b8872a4a81e22dc30a8a64f, type: 3}
       propertyPath: m_Name
       value: Modular Road Straight (19)
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: b745712c1b8872a4a81e22dc30a8a64f, type: 3}
+      propertyPath: m_Layer
+      value: 9
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -123755,7 +123768,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b93d8170e88d8e34684424c0750fb15a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SaveableFriendlyNPC
-  uniqueID: 5d9ffb66-4a32-47a0-83c6-5b90c1af564c
+  uniqueID: ded7e04e-c882-47a3-a8dd-d03a9fb94003
 --- !u!114 &561113287
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -139344,6 +139357,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 7ca9dbc5d56b915488944c75090b5c59, type: 3}
       propertyPath: m_Name
       value: Modular Road 3 Intersection (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 7ca9dbc5d56b915488944c75090b5c59, type: 3}
+      propertyPath: m_Layer
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 7ca9dbc5d56b915488944c75090b5c59, type: 3}
       propertyPath: m_IsActive
@@ -163128,6 +163145,10 @@ PrefabInstance:
       propertyPath: player
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 4433528681887401554, guid: e3989e175549c844a939632f89b1edbe, type: 3}
+      propertyPath: uniqueID
+      value: f83bd55d-0fff-4ac4-81d0-be7ae8c62a22
+      objectReference: {fileID: 0}
     - target: {fileID: 5428962653008800824, guid: e3989e175549c844a939632f89b1edbe, type: 3}
       propertyPath: m_Enabled
       value: 0
@@ -163245,13 +163266,30 @@ PrefabInstance:
     - {fileID: 0}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7703745941597639973, guid: e3989e175549c844a939632f89b1edbe, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 728424950}
   m_SourcePrefab: {fileID: 100100000, guid: e3989e175549c844a939632f89b1edbe, type: 3}
 --- !u!1 &728424949 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7703745941597639973, guid: e3989e175549c844a939632f89b1edbe, type: 3}
   m_PrefabInstance: {fileID: 728424948}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &728424950
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 728424949}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c816b79715e89c84a9478dfd80fcc532, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractableProximity
+  range: 3
+  player: {fileID: 0}
 --- !u!1001 &729158889
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -180327,6 +180365,10 @@ PrefabInstance:
       propertyPath: player
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 4433528681887401554, guid: e3989e175549c844a939632f89b1edbe, type: 3}
+      propertyPath: uniqueID
+      value: 15559746-aede-49be-9488-c6773a0250ab
+      objectReference: {fileID: 0}
     - target: {fileID: 5428962653008800824, guid: e3989e175549c844a939632f89b1edbe, type: 3}
       propertyPath: m_Enabled
       value: 0
@@ -180447,13 +180489,30 @@ PrefabInstance:
     - {fileID: 5428962653008800824, guid: e3989e175549c844a939632f89b1edbe, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7703745941597639973, guid: e3989e175549c844a939632f89b1edbe, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 822963661}
   m_SourcePrefab: {fileID: 100100000, guid: e3989e175549c844a939632f89b1edbe, type: 3}
 --- !u!1 &822963660 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7703745941597639973, guid: e3989e175549c844a939632f89b1edbe, type: 3}
   m_PrefabInstance: {fileID: 822963659}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &822963661
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 822963660}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c816b79715e89c84a9478dfd80fcc532, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractableProximity
+  range: 3
+  player: {fileID: 0}
 --- !u!1001 &823019504
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -210375,6 +210434,10 @@ PrefabInstance:
       value: Modular Road 3 Intersection (3)
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 7ca9dbc5d56b915488944c75090b5c59, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 7ca9dbc5d56b915488944c75090b5c59, type: 3}
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
@@ -210701,6 +210764,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -8068073526183931155, guid: e0edae08a9efc63429b7586cb9fbdfdc, type: 3}
       insertIndex: -1
       addedObject: {fileID: 970031815}
+    - targetCorrespondingSourceObject: {fileID: -8068073526183931155, guid: e0edae08a9efc63429b7586cb9fbdfdc, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 970031816}
     - targetCorrespondingSourceObject: {fileID: -2122869631173029199, guid: e0edae08a9efc63429b7586cb9fbdfdc, type: 3}
       insertIndex: -1
       addedObject: {fileID: 970031813}
@@ -210785,6 +210851,20 @@ MonoBehaviour:
   RewardItem: {fileID: 0}
   hasBeenLockpicked: 0
   isInRange: 0
+--- !u!114 &970031816
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 970031812}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c816b79715e89c84a9478dfd80fcc532, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractableProximity
+  range: 3
+  player: {fileID: 0}
 --- !u!43 &970791154
 Mesh:
   m_ObjectHideFlags: 0
@@ -212962,6 +213042,10 @@ PrefabInstance:
       propertyPath: player
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 4433528681887401554, guid: e3989e175549c844a939632f89b1edbe, type: 3}
+      propertyPath: uniqueID
+      value: 6d815beb-ad00-479c-9d9c-8d75709d3e37
+      objectReference: {fileID: 0}
     - target: {fileID: 5428962653008800824, guid: e3989e175549c844a939632f89b1edbe, type: 3}
       propertyPath: m_Enabled
       value: 0
@@ -213083,7 +213167,10 @@ PrefabInstance:
     - {fileID: 5856550290303840610, guid: e3989e175549c844a939632f89b1edbe, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7703745941597639973, guid: e3989e175549c844a939632f89b1edbe, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1285517132}
   m_SourcePrefab: {fileID: 100100000, guid: e3989e175549c844a939632f89b1edbe, type: 3}
 --- !u!1 &982992998 stripped
 GameObject:
@@ -265421,7 +265508,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b93d8170e88d8e34684424c0750fb15a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SaveableFriendlyNPC
-  uniqueID: 359316c3-ca2e-4786-acd4-8808502ba705
+  uniqueID: 441cb8ad-ef51-42e8-a8de-1551150b959f
 --- !u!114 &1232623905
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -275899,6 +275986,10 @@ PrefabInstance:
       value: Modular Road Straight (8)
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: b745712c1b8872a4a81e22dc30a8a64f, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: b745712c1b8872a4a81e22dc30a8a64f, type: 3}
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
@@ -278542,6 +278633,20 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7035437024189910943, guid: e3989e175549c844a939632f89b1edbe, type: 3}
   m_PrefabInstance: {fileID: 982992997}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1285517132
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 982992998}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c816b79715e89c84a9478dfd80fcc532, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractableProximity
+  range: 3
+  player: {fileID: 0}
 --- !u!1001 &1286960876
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -291094,6 +291199,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: b745712c1b8872a4a81e22dc30a8a64f, type: 3}
       propertyPath: m_Name
       value: Modular Road Straight (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: b745712c1b8872a4a81e22dc30a8a64f, type: 3}
+      propertyPath: m_Layer
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: b745712c1b8872a4a81e22dc30a8a64f, type: 3}
       propertyPath: m_IsActive
@@ -340935,7 +341044,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b93d8170e88d8e34684424c0750fb15a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SaveableFriendlyNPC
-  uniqueID: 8325dfb1-6b24-4002-97ac-72efa655d41f
+  uniqueID: 667c720a-4133-4ddb-ae44-f1793e6576dc
 --- !u!114 &1580363110
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -373604,7 +373713,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5457277075676721224, guid: f1fdcc10caf6729499bf2c56016dfc42, type: 3}
       propertyPath: m_LocalScale.y
-      value: 2.4101
+      value: 12.809672
       objectReference: {fileID: 0}
     - target: {fileID: 5457277075676721224, guid: f1fdcc10caf6729499bf2c56016dfc42, type: 3}
       propertyPath: m_LocalScale.z
@@ -373616,7 +373725,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5457277075676721224, guid: f1fdcc10caf6729499bf2c56016dfc42, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -6.5
+      value: -11.24
       objectReference: {fileID: 0}
     - target: {fileID: 5457277075676721224, guid: f1fdcc10caf6729499bf2c56016dfc42, type: 3}
       propertyPath: m_LocalPosition.z
@@ -395280,6 +395389,10 @@ PrefabInstance:
       propertyPath: player
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 4433528681887401554, guid: e3989e175549c844a939632f89b1edbe, type: 3}
+      propertyPath: uniqueID
+      value: 1bc97d69-1f22-4e42-be61-09f6eea916ec
+      objectReference: {fileID: 0}
     - target: {fileID: 5428962653008800824, guid: e3989e175549c844a939632f89b1edbe, type: 3}
       propertyPath: m_Enabled
       value: 0
@@ -395397,13 +395510,30 @@ PrefabInstance:
     - {fileID: 5856550290303840610, guid: e3989e175549c844a939632f89b1edbe, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7703745941597639973, guid: e3989e175549c844a939632f89b1edbe, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1841777924}
   m_SourcePrefab: {fileID: 100100000, guid: e3989e175549c844a939632f89b1edbe, type: 3}
 --- !u!1 &1841777923 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7703745941597639973, guid: e3989e175549c844a939632f89b1edbe, type: 3}
   m_PrefabInstance: {fileID: 1841777922}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1841777924
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1841777923}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c816b79715e89c84a9478dfd80fcc532, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractableProximity
+  range: 3
+  player: {fileID: 0}
 --- !u!1001 &1843154481
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -412480,6 +412610,10 @@ PrefabInstance:
       value: Modular Road Straight (2)
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: b745712c1b8872a4a81e22dc30a8a64f, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: b745712c1b8872a4a81e22dc30a8a64f, type: 3}
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
@@ -422010,6 +422144,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: b745712c1b8872a4a81e22dc30a8a64f, type: 3}
       propertyPath: m_Name
       value: Modular Road Straight (17)
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: b745712c1b8872a4a81e22dc30a8a64f, type: 3}
+      propertyPath: m_Layer
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: b745712c1b8872a4a81e22dc30a8a64f, type: 3}
       propertyPath: m_IsActive
@@ -455691,6 +455829,7 @@ GameObject:
   - component: {fileID: 2140597930}
   - component: {fileID: 2140597929}
   - component: {fileID: 2140597932}
+  - component: {fileID: 2140597933}
   m_Layer: 0
   m_Name: Door (1)
   m_TagString: Untagged
@@ -455810,6 +455949,20 @@ MonoBehaviour:
   needsObjective: 1
   addProgress: 0
   interactSound: {fileID: 0}
+--- !u!114 &2140597933
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2140597927}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c816b79715e89c84a9478dfd80fcc532, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractableProximity
+  range: 3
+  player: {fileID: 0}
 --- !u!1001 &2143183426
 PrefabInstance:
   m_ObjectHideFlags: 0
