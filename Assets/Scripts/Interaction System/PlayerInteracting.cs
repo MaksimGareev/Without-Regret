@@ -9,6 +9,8 @@ public class PlayerInteracting : MonoBehaviour
     [SerializeField] private InputActionAsset InputActions;
     [SerializeField] private float interactionRange = 3f;
 
+    
+
     private InputAction Interact;
     private InputAction Mantle;
 
