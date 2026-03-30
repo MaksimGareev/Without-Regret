@@ -64,6 +64,9 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
     [Tooltip("A bool that is used to identify if a dialogue interaction is a mediation making the NPC not look at the player")]
     public bool IsMediation = false;
 
+    [Header("MovingOnVfx")]
+    [SerializeField] private MovingOn movingOn;
+
     // wandering
     private NpcMovement npcWander;
     private NavMeshAgent agent;
@@ -666,5 +669,17 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
         }
 
 
+    }
+
+    public void MovingOn()
+    {
+        if (movingOn != null)
+        {
+            movingOn.StartMoving();
+        }
+        else
+        {
+            Debug.Log("Trying to start moving on effect but no moving on script was provided");
+        }
     }
 }
