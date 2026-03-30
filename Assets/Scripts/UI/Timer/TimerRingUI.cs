@@ -35,13 +35,13 @@ public class TimerRingUI : MonoBehaviour
     public RingState currentRingState;
     public static TimerRingUI Instance { get; private set; }
 
-    public UIFadeConrtoller uiFade;
+    public UIFadeController uiFade;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Awake()
     {
         characterSwap = FindObjectOfType<CharacterSwap>();
-        uiFade = FindFirstObjectByType<UIFadeConrtoller>();
+        uiFade = FindFirstObjectByType<UIFadeController>();
         if (characterSwap != null)
         {
             animator = characterSwap.GetAnimator();
@@ -123,7 +123,16 @@ public class TimerRingUI : MonoBehaviour
         {
             Debug.Log("Timer has run out! Triggering end game sequence.");
             GameOverManager.Instance.TriggerGameOver();
-            animator.SetBool("GameOver", true);
+            
+            if (animator)
+            {
+                animator.SetBool("GameOver", true);
+            }
+            else if (characterSwap)
+            {
+                animator = characterSwap.GetAnimator();
+                animator.SetBool("GameOver", true);
+            }
         }
         else
         {

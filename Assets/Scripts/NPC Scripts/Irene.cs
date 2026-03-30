@@ -28,6 +28,17 @@ public class Irene : MonoBehaviour
     public bool CanFollowPlayer = true;
     public float stopDistance = 0.5f;
 
+    private InteractableProximity proximityScript;
+    private Collider proximityCollider;
+
+    private void Awake()
+    {
+        proximityScript = GetComponent<InteractableProximity>();
+        if (proximityScript != null)
+        {
+            proximityCollider = proximityScript.GetComponent<Collider>();
+        }
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -59,12 +70,36 @@ public class Irene : MonoBehaviour
                 }
                 Debug.Log("Irene's dialogue trigger has been deactivated.");
             }
+
+            if (proximityScript != null && proximityScript.enabled)
+            {
+                proximityScript.enabled = false;
+
+                if (proximityCollider != null)
+                {
+                    proximityCollider.enabled = false;
+                }
+            }
+
         }
-        else if (isTraveling)
+        else
+        {
+            if (proximityScript != null && !proximityScript.enabled)
+            {
+                proximityScript.enabled = true;
+
+                if (proximityCollider != null)
+                {
+                    proximityCollider.enabled = true;
+                }
+            }
+        }
+
+        if (isTraveling)
         {
             TravelToTarget();
         }
-        else if (arrived && lookAtTarget != null)
+        if (arrived && lookAtTarget != null)
         {
             LookAtObject();
         }
