@@ -1150,10 +1150,33 @@ PrefabInstance:
       propertyPath: player
       value: 
       objectReference: {fileID: 1311844012}
+    - target: {fileID: 5755904961483268722, guid: 060d1994ce174a34196d13cf86d99581, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5755904961483268722, guid: 060d1994ce174a34196d13cf86d99581, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 204ec1b91d7c9ff4698dd7598a347cc1, type: 2}
+    - target: {fileID: 6894069862992694722, guid: 060d1994ce174a34196d13cf86d99581, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6894069862992694722, guid: 060d1994ce174a34196d13cf86d99581, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 204ec1b91d7c9ff4698dd7598a347cc1, type: 2}
+    - target: {fileID: 6894069862992694722, guid: 060d1994ce174a34196d13cf86d99581, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 204ec1b91d7c9ff4698dd7598a347cc1, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1959752084292775934, guid: 060d1994ce174a34196d13cf86d99581, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 159720791}
   m_SourcePrefab: {fileID: 100100000, guid: 060d1994ce174a34196d13cf86d99581, type: 3}
 --- !u!1001 &111319570
 PrefabInstance:
@@ -1628,6 +1651,24 @@ Mesh:
       - serializedVersion: 1
         m_IndexStart: 0
         m_IndexCount: 0
+--- !u!1 &159720789 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1959752084292775934, guid: 060d1994ce174a34196d13cf86d99581, type: 3}
+  m_PrefabInstance: {fileID: 111191503}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &159720791
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 159720789}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d57f17aa12468f4aafb1d841b70bd27, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::spawn_test
+  duration: 1
 --- !u!1001 &190689551
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8182,7 +8223,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1104601806056575187, guid: 8234364b2d17d5848bc48e63195ea058, type: 3}
       propertyPath: uniqueID
-      value: a1b921af-1026-4387-8429-d89d9af3fe8b
+      value: 4f381f0c-b8e7-44cf-b697-dec61ffb1e15
       objectReference: {fileID: 0}
     - target: {fileID: 2275537426101191861, guid: 8234364b2d17d5848bc48e63195ea058, type: 3}
       propertyPath: m_LocalPosition.x

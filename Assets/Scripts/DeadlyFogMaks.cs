@@ -187,6 +187,7 @@ public class DeadlyFogMaks : MonoBehaviour
 
         playerTransform.position = endPosition;
         playerTransform.rotation = endRotation;
+        player.gameObject.GetComponent<Echo_Spawn_Test>().respawned = true;
 
         if (controller != null)
             controller.enabled = true;
