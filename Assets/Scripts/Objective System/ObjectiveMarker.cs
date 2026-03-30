@@ -14,6 +14,8 @@ public class ObjectiveMarker : MonoBehaviour
     [Tooltip("Scenemanager to listen for event from")]
     public SceneLoadManager sceneManger;
 
+    private int objectiveTransformIndex;
+
     private void OnEnable()
     {
         sceneManger.OnSceneLoaded.AddListener(OnSceneLoad);
@@ -31,10 +33,12 @@ public class ObjectiveMarker : MonoBehaviour
             ScreenSpaceIndicator.target = WorldIndicator.transform;
         }
         ObjectiveManager.Instance.OnObjectiveActivated.AddListener(ObjectiveCompleted);
+        ObjectiveManager.Instance.OnObjectiveProgressUpdated.AddListener(ObjectiveProgressed);
     }
 
     private void ObjectiveCompleted(ObjectiveInstance objective)
     {
+        objectiveTransformIndex = 0;
         Refresh(objective, SceneManager.GetActiveScene());
     }
 
@@ -42,14 +46,14 @@ public class ObjectiveMarker : MonoBehaviour
     {
         if (!objective.data) return;
         
-        if (objective.data.markerTransform != null)
+        if (objective.data.markerTransforms != null)
         {
             if (int.Equals(scene.buildIndex, objective.data.sceneIndex))
             {
-                if (objective.data.markerTransform != new Vector3(0, 0, 0))
+                if (objective.data.markerTransforms[objectiveTransformIndex] != new Vector3(0, 0, 0))
                 {
                     Debug.Log("moving Marker");
-                    gameObject.transform.position = objective.data.markerTransform;
+                    gameObject.transform.position = objective.data.markerTransforms[objectiveTransformIndex];
                 }
                 else
                 {
@@ -78,6 +82,15 @@ public class ObjectiveMarker : MonoBehaviour
             }
         }
         
+    }
+
+    private void ObjectiveProgressed(ObjectiveInstance instance)
+    {
+        objectiveTransformIndex++;
+        if(instance.data.hasMultiplepositions && objectiveTransformIndex<= instance.data.markerTransforms.Count)
+        {
+            gameObject.transform.position = instance.data.markerTransforms[objectiveTransformIndex];
+        }
     }
 
     private void OnSceneLoad()
