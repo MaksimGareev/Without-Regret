@@ -2100,8 +2100,30 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 100116498308603696, guid: 558083b16e4ca884ea05b07a66ae7af2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 121174861}
   m_SourcePrefab: {fileID: 100100000, guid: 558083b16e4ca884ea05b07a66ae7af2, type: 3}
+--- !u!1 &121174860 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 100116498308603696, guid: 558083b16e4ca884ea05b07a66ae7af2, type: 3}
+  m_PrefabInstance: {fileID: 121174859}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &121174861
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 121174860}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c816b79715e89c84a9478dfd80fcc532, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractableProximity
+  range: 3
+  player: {fileID: 0}
 --- !u!1 &131542465
 GameObject:
   m_ObjectHideFlags: 0
@@ -6130,6 +6152,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 02b2e063793a7aa498c201741c5eb23b, type: 3}
       insertIndex: -1
       addedObject: {fileID: 390557199}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 02b2e063793a7aa498c201741c5eb23b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 390557200}
   m_SourcePrefab: {fileID: 100100000, guid: 02b2e063793a7aa498c201741c5eb23b, type: 3}
 --- !u!1 &390557191 stripped
 GameObject:
@@ -6229,6 +6254,20 @@ MonoBehaviour:
   applyHeldRotationOffset: 0
   heldRotationOffset: {x: 0, y: 0, z: 0}
   isGrabbable: 1
+--- !u!114 &390557200
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 390557191}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c816b79715e89c84a9478dfd80fcc532, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractableProximity
+  range: 3
+  player: {fileID: 0}
 --- !u!1 &404919749
 GameObject:
   m_ObjectHideFlags: 0
@@ -20048,6 +20087,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 20cc4a866a6c80548b0be708f726e55f, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1996365507}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 20cc4a866a6c80548b0be708f726e55f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1996365508}
   m_SourcePrefab: {fileID: 100100000, guid: 20cc4a866a6c80548b0be708f726e55f, type: 3}
 --- !u!1 &1169078202
 GameObject:
@@ -32644,6 +32686,20 @@ MonoBehaviour:
   applyHeldRotationOffset: 0
   heldRotationOffset: {x: 0, y: 0, z: 0}
   isGrabbable: 1
+--- !u!114 &1996365508
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1996365495}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c816b79715e89c84a9478dfd80fcc532, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractableProximity
+  range: 3
+  player: {fileID: 0}
 --- !u!1001 &2020298943
 PrefabInstance:
   m_ObjectHideFlags: 0
