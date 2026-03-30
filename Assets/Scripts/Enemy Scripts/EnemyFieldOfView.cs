@@ -85,8 +85,14 @@ public class EnemyFieldOfView : MonoBehaviour
     private bool isStunned = false;
     private float stunDuration;
     private float timeSinceStunned = 0f;
+    private Transform initialTransform;
 
     [SerializeField] private PatrollingEnemy normalMovement;
+
+    private void Awake()
+    {
+        initialTransform = transform;
+    }
 
     private void Start()
     {
@@ -264,11 +270,16 @@ public class EnemyFieldOfView : MonoBehaviour
 
         if (other.gameObject.CompareTag("protectedNPC"))
         {
-            if (TimerRingUI.Instance != null)
+            //if enemy attacks NPC, trigger game over screen
+            if (TimerRingUI.Instance != null && Time.timeSinceLevelLoad > 0.1f)
             {
                 TimerRingUI.Instance.SubtractRingSection(3);
             }
-            //if enemy attacks NPC, trigger game over screen
+            else if (Time.timeSinceLevelLoad < 0.1f)
+            {
+                transform.position = initialTransform.position;
+                m_Agent.Warp(transform.position);
+            }
         }
 
         if (other.gameObject.CompareTag("Throwable"))
