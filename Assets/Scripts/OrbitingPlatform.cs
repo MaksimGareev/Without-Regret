@@ -146,14 +146,6 @@ public class OrbitingPlatform : MonoBehaviour
         if (objective.data == linkedObjective)
         {
             objectiveComplete = true;
-            if (orbitDirection == OrbitDirection.Clockwise)
-            {
-                orbitDirection = OrbitDirection.CounterClockwise;
-            }
-            else if (orbitDirection == OrbitDirection.CounterClockwise)
-            {
-                orbitDirection = OrbitDirection.Clockwise;
-            }
         }
     }
 
@@ -168,6 +160,7 @@ public class OrbitingPlatform : MonoBehaviour
         {
             Debug.Log("Platform is currently set to need a linked objective to be stopped.");
         }
+        
     }
 
     private void OnDisable()
