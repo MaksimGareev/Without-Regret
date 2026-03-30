@@ -131,6 +131,7 @@ public class TimerRingUI : MonoBehaviour
             else if (characterSwap)
             {
                 animator = characterSwap.GetAnimator();
+                animator.SetBool("GameOver", true);
             }
         }
         else
