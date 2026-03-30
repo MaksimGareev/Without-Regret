@@ -20,7 +20,12 @@ public class Barry : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        //agent.updateRotation = false;
+        // agent.updateRotation = false;
+
+        if (!animator)
+        {
+            Debug.LogError($"{this.name} has no animator assigned to the Barry script");
+        }
     }
 
     // Update is called once per frame
@@ -30,9 +35,12 @@ public class Barry : MonoBehaviour
         {
             TravelToTarget();
             bool isMoving = agent.velocity.sqrMagnitude > 0.05f;
-            animator.SetBool("isWalking", isMoving);
-            animator.SetBool("isIdle", !isMoving);
-
+            
+            if (animator)
+            {
+                animator.SetBool("isWalking", isMoving);
+                animator.SetBool("isIdle", !isMoving);
+            }
         }
         /*else if (arrived && lookAtTarget != null)
         {
@@ -41,7 +49,11 @@ public class Barry : MonoBehaviour
     }
     public void StartTravel()
     {
-        animator.SetBool("isTalking", false);
+        if (animator)
+        {
+            animator.SetBool("isTalking", false);
+        }
+        
         //IsFollowing = false;
         isTraveling = true;
         arrived = false;
