@@ -51,6 +51,9 @@ public class InventoryUIController : MonoBehaviour
     private Inventory inventory;
     
     private bool slotsInitialized = false;
+    
+    private bool inventoryOpen = false;
+    public bool InventoryOpen() => inventoryOpen;
 
     private void Awake()
     {
@@ -70,6 +73,7 @@ public class InventoryUIController : MonoBehaviour
     private void OnEnable()
     {
         SceneLoadManager.Instance.OnSceneLoaded.AddListener(OnSceneLoaded);
+        inventoryOpen = true;
         
         Setup();
     }
@@ -383,6 +387,7 @@ public class InventoryUIController : MonoBehaviour
     private void OnDisable()
     {
         SceneLoadManager.Instance.OnSceneLoaded.RemoveListener(OnSceneLoaded);
+        inventoryOpen = false;
 
         DisableInventoryInput();
     }
