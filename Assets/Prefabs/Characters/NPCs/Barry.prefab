@@ -181,6 +181,7 @@ MonoBehaviour:
   moveSpeed: 2
   lookSpeed: 6
   IsMediation: 0
+  movingOn: {fileID: 0}
   hasTalked: 0
   isLookingAtPlayer: 0
   enemy: {fileID: 0}
@@ -212,7 +213,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InteractableProximity
   range: 3
   player: {fileID: 0}
-  uiFade: {fileID: 0}
 --- !u!1 &3581786419329211152
 GameObject:
   m_ObjectHideFlags: 0
@@ -224,6 +224,7 @@ GameObject:
   - component: {fileID: 300840583711653621}
   - component: {fileID: 2843325881757150518}
   - component: {fileID: 5253166501664649254}
+  - component: {fileID: 6815980247102483508}
   m_Layer: 0
   m_Name: Eyes
   m_TagString: Untagged
@@ -302,6 +303,23 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &6815980247102483508
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3581786419329211152}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c799f236d9c38c34384cd262e6e3b199, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FaceHandler
+  NeutralFace: {fileID: 2100000, guid: e19e37a9c95fe894c9112dfc5d8b4a09, type: 2}
+  HappyFace: {fileID: 2100000, guid: 86f5b80dfe8227244aecb7805de045e1, type: 2}
+  SadFace: {fileID: 2100000, guid: 73f743161a62ee94bb09dac65d65837e, type: 2}
+  AngryFace: {fileID: 2100000, guid: 32e5f0f87d60dd6469c56c0bef8dcc92, type: 2}
+  faceRender: {fileID: 5253166501664649254}
 --- !u!1001 &2761223661973166617
 PrefabInstance:
   m_ObjectHideFlags: 0
