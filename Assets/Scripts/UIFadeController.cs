@@ -93,4 +93,9 @@ public class UIFadeController : MonoBehaviour
         lastActiveTime = Time.time;
         isActive = true;
     }
+
+    private void OnDisable()
+    {
+        SceneLoadManager.Instance.OnSceneLoaded.RemoveListener(OnSceneLoaded);
+    }
 }
