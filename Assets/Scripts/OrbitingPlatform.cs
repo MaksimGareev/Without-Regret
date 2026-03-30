@@ -146,6 +146,14 @@ public class OrbitingPlatform : MonoBehaviour
         if (objective.data == linkedObjective)
         {
             objectiveComplete = true;
+            if (orbitDirection == OrbitDirection.Clockwise)
+            {
+                orbitDirection = OrbitDirection.CounterClockwise;
+            }
+            else if (orbitDirection == OrbitDirection.CounterClockwise)
+            {
+                orbitDirection = OrbitDirection.Clockwise;
+            }
         }
     }
 
