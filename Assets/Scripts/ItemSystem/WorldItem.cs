@@ -21,6 +21,9 @@ public class WorldItem : MonoBehaviour, IInteractable
     [Header("Objective Settings")]
     public List<string> requiredObjectives = new List<string>();
 
+    [SerializeField] private ObjectiveData LinkedObjective;
+    [SerializeField] private bool ObjectiveNeeded;
+
     [Header("Player Animation")]
     public float animationDuration = 1.5f; // Duration of the collect animation in seconds
     [HideInInspector] public bool hasBeenCollected = false;
@@ -70,6 +73,24 @@ public class WorldItem : MonoBehaviour, IInteractable
     public void OnPlayerInteraction(GameObject player)
     {
         if (!isCollectible || hasBeenCollected) return;
+
+        if (ObjectiveNeeded)
+        {
+            if (LinkedObjective != null && ObjectiveManager.Instance != null)
+            {
+                var activeObjectives = ObjectiveManager.Instance.GetActiveObjectives();
+            
+                // If the linked objective is currently active, add progress to it
+                foreach (var obj in activeObjectives)
+                {
+                    if (obj.data == LinkedObjective)
+                    {
+                        ObjectiveManager.Instance.AddProgress(LinkedObjective.objectiveID, 1);
+                        
+                    }
+                }
+            }
+        }
         
         Inventory inventory = player.GetComponent<Inventory>();
         if (inventory == null) return;
