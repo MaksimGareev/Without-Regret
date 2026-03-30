@@ -329,15 +329,15 @@ public class PlayerFloating : MonoBehaviour
         rb.angularVelocity = Vector3.zero;
         rb.linearVelocity = Vector3.zero;
 
-        // Apply lift force
-        rb.AddForce(Vector3.up * floatLift, ForceMode.VelocityChange);
-
         // pick target hover height (from current world position)
         hoverTargetY = transform.position.y + floatHeightOffset;
 
         // disable controller systems
         if (playerController != null) playerController.enabled = false;
         if (charController != null) charController.enabled = false;
+        
+        // Apply lift force
+        rb.AddForce(Vector3.up * floatLift, ForceMode.VelocityChange);
 
         // reset movement smoothing state
         currentMove = Vector3.zero;
