@@ -26,6 +26,8 @@ public class Darry : MonoBehaviour
 
     public GameObject enemy;
 
+    public Animator animator;
+
     // objectives
     [SerializeField] ObjectiveData linkedHouseObjective;
     [SerializeField] ObjectiveData linkedNeighborhoodObjective;
@@ -49,6 +51,14 @@ public class Darry : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        bool isMoving = agent.velocity.sqrMagnitude > 0.05f;
+
+        if (animator)
+        {
+            animator.SetBool("isWalking", isMoving);
+            animator.SetBool("isIdle", !isMoving);
+        }
+
         // stop enemy when dialogue is active
         if (DialogueManager.DialogueIsActive)
         {
