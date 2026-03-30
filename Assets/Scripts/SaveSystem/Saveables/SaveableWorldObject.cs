@@ -32,6 +32,11 @@ public class SaveableWorldObject : SaveableWithID
             state.objectType = ObjectType.OrbitingPlatform;
             state.reachedLocation = GetComponent<OrbitingPlatform>()?.reachedLocation ?? false;
         }
+        else if (GetComponent<RemoveableObject>())
+        {
+            state.objectType = ObjectType.RemoveableObject;
+            state.interactable = GetComponent<RemoveableObject>()?.GetInteractable() ?? false;
+        }
         else
         {
             state.objectType = ObjectType.MiscObject;
@@ -72,8 +77,9 @@ public class SaveableWorldObject : SaveableWithID
 
         if (GetComponent<WorldItem>() != null && state.objectType == ObjectType.InventoryItem)
         {
-            GetComponent<WorldItem>().hasBeenCollected = state.hasBeenCollected;
-            GetComponent<WorldItem>().isCollectible = state.isCollectible;
+            WorldItem worldItem = GetComponent<WorldItem>();
+            worldItem.hasBeenCollected = state.hasBeenCollected;
+            worldItem.isCollectible = state.isCollectible;
         }
         else if (GetComponent<MoveableObject>() != null && state.objectType == ObjectType.MovableObject)
         {
@@ -86,6 +92,10 @@ public class SaveableWorldObject : SaveableWithID
         else if (GetComponent<OrbitingPlatform>() != null && state.objectType == ObjectType.OrbitingPlatform)
         {
             GetComponent<OrbitingPlatform>().reachedLocation = state.reachedLocation;
+        }
+        else if (GetComponent<RemoveableObject>() != null && state.objectType == ObjectType.RemoveableObject)
+        {
+            GetComponent<RemoveableObject>().SetInteractable(state.interactable);
         }
 
         Rigidbody rb = GetComponent<Rigidbody>();

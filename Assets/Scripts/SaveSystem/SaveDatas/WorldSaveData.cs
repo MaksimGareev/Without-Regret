@@ -13,6 +13,7 @@ public enum ObjectType
     MovableObject,
     LockpickableObject,
     OrbitingPlatform,
+    RemoveableObject,
     MiscObject
 }
 
@@ -39,4 +40,7 @@ public class WorldObjectState
     
     // Orbiting platform
     public bool reachedLocation;
+    
+    // Removeable Object
+    public bool interactable;
 }

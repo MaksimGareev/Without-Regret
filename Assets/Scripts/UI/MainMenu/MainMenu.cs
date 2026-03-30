@@ -121,6 +121,13 @@ public class MainMenu : MonoBehaviour
         {
             backButton.gameObject.SetActive(true);
         }
+
+        if (usingController && !EventSystem.current.currentSelectedGameObject)
+        {
+            usingController = false;
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+        }
     }
 
     private void DeleteSavesDebug()

@@ -42,12 +42,12 @@ public class GameOverManager : MonoBehaviour
             DontDestroyOnLoad(this.gameObject);
         }
 
-        if (gameOverUI != null)
+        if (gameOverUI)
         {
             gameOverUI.SetActive(false);
         }
 
-        if (confirmationPanel == null)
+        if (!confirmationPanel)
         {
             Debug.LogWarning("Confirmation panel reference is missing in GameOverManager.");
         }
@@ -57,11 +57,11 @@ public class GameOverManager : MonoBehaviour
     
     private void OnEnable()
     {
-        EnableInputActions();
+        InitializeInputActions();
         AddListeners();
     }
 
-    private void EnableInputActions()
+    private void InitializeInputActions()
     {
         if (inputActions == null)
         {
@@ -74,13 +74,21 @@ public class GameOverManager : MonoBehaviour
         if (cancelAction == null)
         {
             Debug.LogError("Cancel action not found in InputActionAsset.");
-            return;
         }
+    }
+
+    private void EnableInputActions()
+    {
+        inputActions.FindActionMap("UI").Enable();
+        inputActions.FindActionMap("Player").Disable();
+        cancelAction?.Enable();
     }
 
     private void DisableInputActions()
     {
-        if (cancelAction != null) cancelAction.Disable();
+        inputActions.FindActionMap("UI").Disable();
+        inputActions.FindActionMap("Player").Enable();
+        cancelAction?.Disable();
     }
 
     private void AddListeners()
@@ -118,6 +126,13 @@ public class GameOverManager : MonoBehaviour
 
         CheckMouseInput();
         CheckControllerInput();
+
+        if (usingController && !EventSystem.current.currentSelectedGameObject)
+        {
+            usingController = false;
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+        }
     }
 
     private void CheckMouseInput()
@@ -139,7 +154,7 @@ public class GameOverManager : MonoBehaviour
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
 
-            if (EventSystem.current.currentSelectedGameObject != null)
+            if (EventSystem.current.currentSelectedGameObject)
             {
                 EventSystem.current.SetSelectedGameObject(null);
             }
@@ -155,7 +170,8 @@ public class GameOverManager : MonoBehaviour
 
         bool controllerMoved = 
             Gamepad.current.leftStick.ReadValue().sqrMagnitude > 0.1f 
-            || Gamepad.current.dpad.ReadValue().sqrMagnitude > 0.1f;
+            || Gamepad.current.dpad.ReadValue().sqrMagnitude > 0.1f
+            || Gamepad.current.rightStick.ReadValue().sqrMagnitude > 0.1f;
         
         if (!controllerMoved)
         {
@@ -190,7 +206,7 @@ public class GameOverManager : MonoBehaviour
             }
 
             // If nothing is selected, set a default based on the active panel
-            if (es.currentSelectedGameObject == null)
+            if (!es.currentSelectedGameObject)
             {
                 if (confirmationPanel.activeSelf)
                 {
@@ -198,7 +214,7 @@ public class GameOverManager : MonoBehaviour
                 }
                 else if (gameOverUI.activeSelf)
                 {
-                    es.SetSelectedGameObject(quitButton.gameObject);
+                    es.SetSelectedGameObject(retryButton.gameObject);
                 }
             }
         } 
@@ -311,6 +327,9 @@ public class GameOverManager : MonoBehaviour
         {
             return;
         }
+        
+        EnableInputActions();
+        EnableUIButtons();
 
         gameOverUI.SetActive(true);
         Cursor.visible = true;
@@ -318,6 +337,7 @@ public class GameOverManager : MonoBehaviour
 
         DisableOtherCanvases();
 
+        EventSystem.current.SetSelectedGameObject(null);
         EventSystem.current.SetSelectedGameObject(retryButton.gameObject);
 
         // Lock camera when game over UI is active
@@ -341,12 +361,16 @@ public class GameOverManager : MonoBehaviour
         {
             return;
         }
+        
+        DisableInputActions();
 
         gameOverUI.SetActive(false);
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
 
         EnableOtherCanvases();
+
+        EventSystem.current.SetSelectedGameObject(null);
 
         // Unlock camera when game over UI is disabled
         CameraMovement cam = FindFirstObjectByType<CameraMovement>();
@@ -398,7 +422,6 @@ public class GameOverManager : MonoBehaviour
         Time.timeScale = 1f; // Resume the game before quitting
         isGameOver = false;
         gameOverUI.SetActive(false);
-        //EnableOtherCanvases();
         SceneLoadManager.Instance.LoadScene("MainMenu");
     }
 
