@@ -60,7 +60,7 @@ public class Darry : MonoBehaviour
         }
 
         // stop enemy when dialogue is active
-        if (DialogueManager.DialogueIsActive)
+        if (NewDialogueManager.Instance.DialogueIsActive)
         {
             agent.isStopped = true;
             return;

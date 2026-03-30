@@ -349,13 +349,13 @@ public class EnemyFieldOfView : MonoBehaviour
         {
             if (isMoving)
             {
-                animator.SetBool("isWalking", true);
-                animator.SetBool("isIdle", false);
+                animator?.SetBool("isWalking", true);
+                animator?.SetBool("isIdle", false);
             }
             else if (!isMoving)
             {
-                animator.SetBool("isIdle", true);
-                animator.SetBool("isWalking", false);
+                animator?.SetBool("isIdle", true);
+                animator?.SetBool("isWalking", false);
             }
         }
     }
@@ -367,16 +367,17 @@ public class EnemyFieldOfView : MonoBehaviour
             resetanimations();
         }
         isAttacking = true;
-        animator.SetTrigger("Attack");
+        animator?.SetTrigger("Attack");
         Debug.Log("Attacked");
+        TimerRingUI.Instance.SubtractRingSection(1);
         yield return new WaitForSeconds(2f);
         isAttacking = false;
     }
 
     private void resetanimations()
     {
-        animator.SetBool("isIdle", false);
-        animator.SetBool("isWalking", false);
+        animator?.SetBool("isIdle", false);
+        animator?.SetBool("isWalking", false);
 
     }
 
