@@ -105,7 +105,11 @@ public class Journal : MonoBehaviour, ISaveable
             return; // Do not allow pausing in the main menu
         }
 
-        if ((playerJournalAction.triggered || UIJournalAction.triggered) && !PauseManager.Instance.isGamePaused && !DialogueManager.DialogueIsActive && !GameOverManager.Instance.IsGameOver)
+        if ((playerJournalAction.triggered || UIJournalAction.triggered) 
+            && !PauseManager.Instance.isGamePaused 
+            && !DialogueManager.DialogueIsActive 
+            && !GameOverManager.Instance.IsGameOver
+            && !GameManager.Instance.inventoryInteractingScript.InventoryOpen())
         {
             ToggleJournalUI();
         }
