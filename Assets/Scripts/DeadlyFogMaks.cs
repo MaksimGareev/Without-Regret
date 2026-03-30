@@ -102,15 +102,12 @@ public class DeadlyFogMaks : MonoBehaviour
             // from maks: stop darkening when damage happens
             shouldDarken = true;
 
-            if (TimerRingUI.Instance != null)
+            if (TimerRingUI.Instance != null && canDamage)
             {
                 TimerRingUI.Instance.SubtractRingSection(amountOfRingsToSubtract);
             }
-            if (canDamage)
-            {
                 StartCoroutine(HandleReset(player));
                 canDamage = false;
-            }
         }
         else
         {
