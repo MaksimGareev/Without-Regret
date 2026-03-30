@@ -119,23 +119,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &247215844 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3766332721213988871, guid: e3b9262b76b69d34b87124d143240539, type: 3}
-  m_PrefabInstance: {fileID: 1365188771}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &247215847
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 247215844}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 27f9da1b2020f3f478381aff87e054c9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::InteractionManager
 --- !u!1 &474172191
 GameObject:
   m_ObjectHideFlags: 0
@@ -462,6 +445,10 @@ PrefabInstance:
       propertyPath: echoJournalEntry
       value: 
       objectReference: {fileID: 11400000, guid: 7f9453d469f9cd44a926c214af17e0e1, type: 2}
+    - target: {fileID: 2120158447473521255, guid: e3b9262b76b69d34b87124d143240539, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2895143286451123973, guid: e3b9262b76b69d34b87124d143240539, type: 3}
       propertyPath: m_AnchorMax.x
       value: 1
@@ -653,10 +640,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 3766332721213988871, guid: e3b9262b76b69d34b87124d143240539, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 247215847}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e3b9262b76b69d34b87124d143240539, type: 3}
 --- !u!1001 &3738755080953639949
 PrefabInstance:
