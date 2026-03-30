@@ -83,6 +83,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d57a54117df0de649a2f0b2a2cf90a9b, type: 3}
       insertIndex: -1
       addedObject: {fileID: -8283603713141649773}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d57a54117df0de649a2f0b2a2cf90a9b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4433528681887401554}
   m_SourcePrefab: {fileID: 100100000, guid: d57a54117df0de649a2f0b2a2cf90a9b, type: 3}
 --- !u!1 &7703745941597639973 stripped
 GameObject:
@@ -140,6 +143,8 @@ MonoBehaviour:
   checkGrabPointCollisions: 1
   collisionCheckSizeMultiplier: 0.9
   heldPositionOffset: {x: 0, y: 0, z: 0}
+  setHeldRotation: 0
+  heldRotation: {x: 0, y: 0, z: 0}
   applyHeldRotationOffset: 0
   heldRotationOffset: {x: 0, y: 0, z: 0}
   isGrabbable: 1
@@ -156,6 +161,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MantleableObject
   mantleOffset: {x: 0, y: 2, z: 0}
+  lockPosition: 1
   showGizmos: 1
   maxMantleDistance: 2
 --- !u!65 &5377259135617283748
@@ -191,3 +197,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0445f3bbf8d3fd64c8af937f38910d51, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ResettableObject
+--- !u!114 &4433528681887401554
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7703745941597639973}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ced780c22dcf6ef4bb8e624b32e4787a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SaveableWorldObject
+  uniqueID: ecde4084-46b5-43ca-af73-17a4265390c6

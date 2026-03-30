@@ -185,45 +185,13 @@ public class DeadlyFogMaks : MonoBehaviour
         Vector3 endPosition = target.position;
         Quaternion endRotation = target.rotation;
 
-        SetPlayerAlpha(player, fadedAlpha);
-
-        float elapsedTime = 0f;
-
-        while (elapsedTime < moveDuration)
-        {
-            float t = elapsedTime / moveDuration;
-            playerTransform.position = Vector3.Lerp(startPosition, endPosition, t);
-            playerTransform.rotation = Quaternion.Slerp(startRotation, endRotation, t);
-
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }
-
         playerTransform.position = endPosition;
         playerTransform.rotation = endRotation;
 
-        SetPlayerAlpha(player, 1f);
-
         if (controller != null)
             controller.enabled = true;
-    }
 
-    private void SetPlayerAlpha(PlayerController player, float alpha)
-    {
-        Renderer[] renderers = player.GetComponentsInChildren<Renderer>();
-
-        foreach (Renderer renderer in renderers)
-        {
-            foreach (Material mat in renderer.materials)
-            {
-                if (mat.HasProperty("_Color"))
-                {
-                    Color color = mat.color;
-                    color.a = alpha;
-                    mat.color = color;
-                }
-            }
-        }
+        yield return null;
     }
 
     private bool PlayerInsideTrigger(PlayerController player)
