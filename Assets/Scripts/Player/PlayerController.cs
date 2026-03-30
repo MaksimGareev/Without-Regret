@@ -60,6 +60,8 @@ public class PlayerController : MonoBehaviour, ISaveable
     [SerializeField] LayerMask groundMask;
     [SerializeField] private bool isGrounded;
 
+    [SerializeField] private PlayerFloating playerFloating;
+
     public static bool DialogueActive = false;
 
     // Special Idle Variables
@@ -85,6 +87,8 @@ public class PlayerController : MonoBehaviour, ISaveable
     private readonly float moveCheckDelay = 0.1f;
     private float lastStoppedCheck = -1f;
     private OrbitingPlatform currentPlatform;
+
+    
 
     private void Awake()
     {
@@ -581,7 +585,7 @@ public class PlayerController : MonoBehaviour, ISaveable
         Vector3 combined = horizontalMove + verticalMove;
 
         Vector3 platformVelocity = Vector3.zero;
-        if (currentPlatform != null)
+        if (currentPlatform != null && !playerFloating.IsFloating)
         {
             platformVelocity = currentPlatform.platformVelocity;
             combined += platformVelocity * Time.deltaTime;
