@@ -122,8 +122,7 @@ public class TimerRingUI : MonoBehaviour
         if (GameOverManager.Instance != null)
         {
             Debug.Log("Timer has run out! Triggering end game sequence.");
-            GameOverManager.Instance.TriggerGameOver();
-            animator.SetBool("GameOver", true);
+            StartCoroutine(GameOverAnimation());
         }
         else
         {
@@ -164,10 +163,13 @@ public class TimerRingUI : MonoBehaviour
         animator = newAnimator;
     }
 
-    IEnumerator wait()
+    IEnumerator GameOverAnimation()
     {
-        yield return new WaitForSeconds(1);
+        Debug.Log("Started Game Over Animation");
+        animator.SetBool("GameOver", true);
+        yield return new WaitForSecondsRealtime(0.5f);
         animator.SetBool("GameOverLoop", true);
+        GameOverManager.Instance.TriggerGameOver();
     }
 
 }
