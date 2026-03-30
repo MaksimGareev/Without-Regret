@@ -21,7 +21,8 @@ public class ProtectedNPC : MonoBehaviour
             if(point+1 < CheckPoints.Length) //checks to see if next point doesn't exist
                 {
                     if(CheckPoints[point+1].isTraversable)
-                
+
+                    
                     point++;
                     agent.SetDestination(CheckPoints[point].transform.position);
                 }      

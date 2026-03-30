@@ -20,6 +20,8 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
     public Chime chimeScript;
 
     private Animator playerAnimator;
+    private CharacterSwap characterSwap;
+
     private Coroutine playerTalkRoutine;
 
     [Header("Face Animation")]
@@ -90,6 +92,22 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
 
     [SerializeField]
     private DialogueTriggerType triggerType = DialogueTriggerType.NPC;
+
+    private void Awake()
+    {
+        characterSwap = FindObjectOfType<CharacterSwap>();
+
+        if (characterSwap != null)
+        {
+            playerAnimator = characterSwap.GetAnimator();
+
+            characterSwap.onAnimatorChanged += UpdateAnimator;
+        }
+
+        //controls = new PlayerControls();
+
+        // controls.Player.Interact.performed += ctx => TryInteract();
+    }
 
     private void Start()
     {
@@ -274,6 +292,14 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
         FaceTarget(player, transform);
 
         isLookingAtPlayer = true;
+        if (IsMediation)
+        {
+            StartPlayerMediation();
+        }
+        else if (triggerType == DialogueTriggerType.NPC)
+        {
+            StartPlayerTalking();
+        }
 
         NewDialogueManager.Instance.StartDialogue(selectedDialogue, this);
 
@@ -438,6 +464,28 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
         isLookingAtPlayer = false;
     }
 
+    private void StartPlayerMediation()
+    {
+        if (playerAnimator == null)
+            return;
+        Debug.Log("Started Mediating");
+
+        if (playerTalkRoutine != null)
+        {
+            StopCoroutine(playerTalkRoutine);
+            playerTalkRoutine = null;
+        }
+        //if (chimeActive)
+        //{
+        //    chimeAnimator.SetBool("isTalking", true);
+        //}
+        playerAnimator.SetBool("isTalking", false);
+        playerAnimator.SetBool("Talk1", false);
+        playerAnimator.SetBool("Talk2", false);
+
+        playerAnimator.SetBool("isMediating", true);
+    }
+
     private void StartPlayerTalking()
     {
         if (playerAnimator == null)
@@ -480,7 +528,10 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
         }
 
         playerAnimator.SetBool("Think", false);
-        StartPlayerTalking();
+        if (!IsMediation)
+        {
+            StartPlayerTalking();
+        }
     }
 
     private void StopPlayerTalking()
@@ -491,6 +542,7 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
         playerAnimator.SetBool("isTalking", false);
         playerAnimator.SetBool("Talk1", false);
         playerAnimator.SetBool("Talk2", false);
+        playerAnimator.SetBool("isMediating", false);
         if (chimeActive)
         {
             chimeAnimator.SetBool("isTalking", false);
@@ -557,6 +609,11 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
         if (animator != null)
             animator.SetBool(parameter, value);
         */
+    }
+
+    void UpdateAnimator(Animator newAnimator)
+    {
+        playerAnimator = newAnimator;
     }
 
     private bool HasParameter(string paramName)
