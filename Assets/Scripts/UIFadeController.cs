@@ -1,9 +1,11 @@
 using UnityEngine;
 
-public class UIFadeConrtoller : MonoBehaviour
+public class UIFadeController : MonoBehaviour
 {
     public float fadeSpeed = 3f;
     public float idleDelay = 2f;
+
+    public static UIFadeController Instance;
 
     private CanvasGroup canvasGroup;
     private float lastActiveTime;
@@ -11,7 +13,20 @@ public class UIFadeConrtoller : MonoBehaviour
 
     private void Awake()
     {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        Instance = this;
+        
         canvasGroup = GetComponent<CanvasGroup>();
+        if (canvasGroup == null)
+        {
+            Debug.LogError("CanvasGroup missing on UIFadeController!");
+        }
+
         lastActiveTime = Time.time;
     }
 
@@ -27,7 +42,7 @@ public class UIFadeConrtoller : MonoBehaviour
         float targetAlpha = isActive ? 1f : 0f;
 
         // smooth fade
-        canvasGroup.alpha = Mathf.Lerp(canvasGroup.alpha, targetAlpha, Time.deltaTime * fadeSpeed);
+        canvasGroup.alpha = Mathf.MoveTowards(canvasGroup.alpha, targetAlpha, Time.deltaTime * fadeSpeed);
 
         canvasGroup.interactable = canvasGroup.alpha > 0.5f;
         canvasGroup.blocksRaycasts = canvasGroup.alpha > 0.5f;

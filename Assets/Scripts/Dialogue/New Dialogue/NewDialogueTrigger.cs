@@ -196,17 +196,28 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
         if (NewDialogueManager.Instance.DialogueIsActive) return;
 
         float distance = Vector3.Distance(player.position, transform.position);
+        bool allCompleted = true;
 
         if (distance <= chatRange)
         {
-            npcInitiationStarted = true;
-            StartCoroutine(NPCWalkToPlayerAndTalk());
+            foreach (string id in objectiveIDsYouCareAbout)
+            {
+                if (!ObjectiveManager.Instance.IsObjectiveCompleted(id))
+                {
+                    allCompleted = false;
+                }
+            }
+
+            if (allCompleted)
+            {
+                npcInitiationStarted = true;
+                StartCoroutine(NPCWalkToPlayerAndTalk());
+            }
         }
     }
 
     private IEnumerator NPCWalkToPlayerAndTalk()
     {
-        hasTalked = true;
 
         npcWander?.StopWandering();
 
@@ -334,7 +345,7 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
         }
 
         // dialogue selected if the player has completed all the objectives connected to the NPC
-        if (allCompleted && taskCompleteDialogueFile != null && hasTalked)
+        if (allCompleted && taskCompleteDialogueFile != null && objectiveIDsYouCareAbout != null)
         {
             return taskCompleteDialogueFile;
         }
@@ -351,7 +362,7 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
             }
         }
 
-        // dialogue selected if the player has talked to the NPC and has no task active or complete connected to the NPC
+        // dialogue selected if the player has talked to the NPC and has no task active or completed the first interaction with the NPC
         if (hasTalked && talkedDialogueFile != null)
         {
             return talkedDialogueFile;

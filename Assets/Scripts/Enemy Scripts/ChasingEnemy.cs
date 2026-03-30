@@ -20,7 +20,7 @@ public class ChasingEnemy : MonoBehaviour
     public float minSpeed = 1.5f;
     public float maxSpeed = 6.5f;
     public float moralitySpeedMultiplier = 0.15f;
-    public DialogueManager playerMorality;
+    public NewDialogueManager playerMorality;
 
     // cleaver pickup
     public GameObject CleaverTrig;
@@ -49,7 +49,7 @@ public class ChasingEnemy : MonoBehaviour
     {
         if (playerMorality == null)
         {
-            playerMorality = FindObjectOfType<DialogueManager>();
+            playerMorality = FindObjectOfType<NewDialogueManager>();
         }
 
         agent.speed = baseSpeed;
@@ -76,7 +76,7 @@ public class ChasingEnemy : MonoBehaviour
         UpdateSpeedFromMorality();
 
         // stop enemy when dialogue is active
-        if (DialogueManager.DialogueIsActive)
+        if (NewDialogueManager.Instance.DialogueIsActive)
         {
             agent.isStopped = true;
             return;
