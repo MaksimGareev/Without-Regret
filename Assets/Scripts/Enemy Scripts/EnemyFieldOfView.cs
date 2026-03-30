@@ -369,6 +369,7 @@ public class EnemyFieldOfView : MonoBehaviour
         isAttacking = true;
         animator.SetTrigger("Attack");
         Debug.Log("Attacked");
+        TimerRingUI.Instance.SubtractRingSection(1);
         yield return new WaitForSeconds(2f);
         isAttacking = false;
     }

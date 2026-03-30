@@ -20,7 +20,7 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
 
     private Animator playerAnimator;
     private CharacterSwap characterSwap;
-
+    
     private Coroutine playerTalkRoutine;
     public float interactionPriority => 10f;
     public InteractType interactType => InteractType.Dialogue;

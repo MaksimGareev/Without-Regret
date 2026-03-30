@@ -22,6 +22,9 @@ public class PatrollingEnemy : MonoBehaviour
 
     public bool chasing;
 
+    // Damaging player
+    public float damageTimer;
+
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
@@ -101,5 +104,19 @@ public class PatrollingEnemy : MonoBehaviour
         // Debug.Log("search for point failed");
         return false;
 
+    }
+
+    public void OnTriggerEnter(Collider other)
+    {/*
+        if (other.CompareTag("Player"))
+        {
+           // damageTimer = 2f;
+           // damageTimer -= Time.deltaTime;
+
+            if (TimerRingUI.Instance != null && damageTimer == 0)
+            {
+                TimerRingUI.Instance.SubtractRingSection(1);
+            }
+        }*/
     }
 }
