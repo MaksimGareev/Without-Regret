@@ -45,7 +45,8 @@ public class ToggleInventoryUI : MonoBehaviour
             && hasBackpack 
             && !PauseManager.Instance.isGamePaused 
             && !Journal.Instance.isJournalOpen
-            && !DialogueManager.DialogueIsActive)
+            && !DialogueManager.DialogueIsActive
+            && !GameOverManager.Instance.IsGameOver)
         {
             ToggleInventory();
         }
