@@ -124,6 +124,13 @@ public class PauseManager : MonoBehaviour
 
         CheckMouseInput();
         CheckControllerInput();
+        
+        if (usingController && !EventSystem.current.currentSelectedGameObject)
+        {
+            usingController = false;
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+        }
     }
 
     private void HandleControllerCancelInput()

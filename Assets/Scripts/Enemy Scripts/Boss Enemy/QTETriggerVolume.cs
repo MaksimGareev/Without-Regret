@@ -131,6 +131,9 @@ public class QTETriggerVolume : MonoBehaviour, IInteractable
         qteCanvas.SetActive(true);
         arrowsContainer.gameObject.SetActive(true);
         if (showDebugLogs) Debug.Log("Starting QTE");
+        
+        // Pause game
+        Time.timeScale = 0.0f;
     }
 
     private void SetupArrowUI()
@@ -229,7 +232,7 @@ public class QTETriggerVolume : MonoBehaviour, IInteractable
                 runtimeArrows[i].color = Color.red;
         }
 
-        yield return new WaitForSeconds(.25f);
+        yield return new WaitForSecondsRealtime(.25f);
 
         for (int i = 0; i < runtimeArrows.Count; i++)
         {
@@ -284,6 +287,9 @@ public class QTETriggerVolume : MonoBehaviour, IInteractable
         }
 
         gameObject.SetActive(false);
+        
+        // Unpause Game
+        Time.timeScale = 1.0f;
     }
 
     public void OnDrawGizmos()

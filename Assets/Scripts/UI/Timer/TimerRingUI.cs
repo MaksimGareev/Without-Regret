@@ -63,6 +63,11 @@ public class TimerRingUI : MonoBehaviour
 
     public void Update()
     {
+        if (Time.timeSinceLevelLoad < 0.1 && currentRingState ==  RingState.Empty)
+        {
+            SetRingState(RingState.Full);
+        }
+        
         if (Input.GetKeyDown(KeyCode.L))
         {
             SubtractRingSection(1);
