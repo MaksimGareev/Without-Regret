@@ -13039,7 +13039,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b93d8170e88d8e34684424c0750fb15a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SaveableFriendlyNPC
-  uniqueID: b1871c9f-3bdd-4e12-998d-d6e79d8bb1bd
+  uniqueID: da490f8a-cbf9-433c-848a-8f099be9f918
 --- !u!114 &80592411
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -48649,7 +48649,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b93d8170e88d8e34684424c0750fb15a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SaveableFriendlyNPC
-  uniqueID: cb10f93e-4785-45f4-ba43-f4b7eca195e7
+  uniqueID: fda47fe5-0ba0-40ff-b9d0-23c2316968b1
 --- !u!114 &255123086
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -283201,7 +283201,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b93d8170e88d8e34684424c0750fb15a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SaveableFriendlyNPC
-  uniqueID: c6cc8e01-9d1e-4035-9787-cea962659b80
+  uniqueID: b6973453-0241-4585-bd63-3b42fa540684
 --- !u!114 &1204913358
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -366981,13 +366981,35 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2123283981657469699, guid: 24b1af199190ebd43b320df7e3478168, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1743214078}
   m_SourcePrefab: {fileID: 100100000, guid: 24b1af199190ebd43b320df7e3478168, type: 3}
 --- !u!4 &1743214076 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4508442117770918431, guid: 24b1af199190ebd43b320df7e3478168, type: 3}
   m_PrefabInstance: {fileID: 1743214075}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1743214077 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2123283981657469699, guid: 24b1af199190ebd43b320df7e3478168, type: 3}
+  m_PrefabInstance: {fileID: 1743214075}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1743214078
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1743214077}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c816b79715e89c84a9478dfd80fcc532, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractableProximity
+  range: 3
+  player: {fileID: 0}
 --- !u!1 &1744936258
 GameObject:
   m_ObjectHideFlags: 0
