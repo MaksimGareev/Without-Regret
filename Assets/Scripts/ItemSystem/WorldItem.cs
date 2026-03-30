@@ -9,6 +9,9 @@ public class WorldItem : MonoBehaviour, IInteractable
     [Tooltip("ItemData that should be associated with this prefab. This is used to determine the name, description, and other properties of the item when collected.")]
     [SerializeField] private ItemData itemData;
 
+    [Tooltip("The journal entry associated with this item (only relevant if collectible). If empty, no entry is added")]
+    [SerializeField] JournalEntry journalEntry;
+
     [Tooltip("Priority of this item's interaction. Lower priority items will be interacted with first if multiple items are in range.")]
     public float interactionPriority => 5f;
 
@@ -57,6 +60,12 @@ public class WorldItem : MonoBehaviour, IInteractable
         inventory.itemToCollect = this;
 
         hasBeenCollected = true;
+
+        // Add journal entry when collected (if provided)
+        if (journalEntry != null && Journal.Instance != null)
+        {
+            Journal.Instance.AddCollectibleEntry(journalEntry.entryTitle, journalEntry.entryDescription);
+        }
 
         ButtonIcons.Instance?.Clear();
     }
