@@ -74,6 +74,17 @@ public class WorldItem : MonoBehaviour, IInteractable
     {
         if (!isCollectible || hasBeenCollected) return;
 
+        
+        Inventory inventory = player.GetComponent<Inventory>();
+        if (inventory == null) return;
+        inventory.itemToCollect = this;
+
+        hasBeenCollected = true;
+
+        ButtonIcons.Instance?.Clear();
+
+
+        
         if (ObjectiveNeeded)
         {
             if (LinkedObjective != null && ObjectiveManager.Instance != null)
@@ -91,13 +102,5 @@ public class WorldItem : MonoBehaviour, IInteractable
                 }
             }
         }
-        
-        Inventory inventory = player.GetComponent<Inventory>();
-        if (inventory == null) return;
-        inventory.itemToCollect = this;
-
-        hasBeenCollected = true;
-
-        ButtonIcons.Instance?.Clear();
     }
 }
