@@ -27,6 +27,7 @@ public class DeadlyFogMaks : MonoBehaviour
     private float lastResetTime = -Mathf.Infinity;
     private Collider triggerCollider;
     [SerializeField] private float timeSinceEnter = 0;
+    private bool canDamage = true;
 
     // from maks: ColorAdjustments override from the assigned Volume 
     private ColorAdjustments colorAdjustments;
@@ -105,8 +106,11 @@ public class DeadlyFogMaks : MonoBehaviour
             {
                 TimerRingUI.Instance.SubtractRingSection(amountOfRingsToSubtract);
             }
-
-            StartCoroutine(HandleReset(player));
+            if (canDamage)
+            {
+                StartCoroutine(HandleReset(player));
+                canDamage = false;
+            }
         }
         else
         {
@@ -166,6 +170,7 @@ public class DeadlyFogMaks : MonoBehaviour
 
         timeSinceEnter = 0;
         isResetting = false;
+        canDamage = true;
     }
 
     private IEnumerator LerpPlayerToPoint(PlayerController player, Transform target)
