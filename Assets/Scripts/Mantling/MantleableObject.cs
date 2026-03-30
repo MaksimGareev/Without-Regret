@@ -1,4 +1,3 @@
-using System.Collections;
 using UnityEngine;
 
 [DisallowMultipleComponent]
@@ -7,7 +6,9 @@ public class MantleableObject : MonoBehaviour, IInteractable
     [Header("Mantle Settings")]
     [Tooltip("Offset applied to the mantle target position. This determines where the player will be positioned when they mantle onto this object. This is visibly represented in editor as a green sphere and line.")]
     [SerializeField] private Vector3 mantleOffset = new Vector3(0f, 2.0f, 0.5f);
-    
+    [Tooltip("Whether to lock the object's position and rotation during mantling.")]
+    [SerializeField] private bool lockPosition = true;
+
     [Tooltip("Whether to show gizmos for the mantle target position in the editor. This can help with adjusting the mantle offset to get the desired mantle position on this object.")]
     [SerializeField] private bool showGizmos = true;
 
@@ -18,6 +19,10 @@ public class MantleableObject : MonoBehaviour, IInteractable
 
     [Tooltip("Maximum horizontal distance the player can be from the mantle target position to initiate a mantle. This is used to prevent mantling from too far away.")]
     [SerializeField] private float maxMantleDistance = 2f;
+
+    private bool shouldLock = false;
+    private Vector3 pos;
+    private Quaternion rot;
 
     // [Tooltip("Minimum height difference between the player and the mantle target position to allow mantling. This is used to prevent mantling onto objects that are too low to the ground.")]
     // [SerializeField] private float minHeight = 0.8f;
@@ -52,11 +57,36 @@ public class MantleableObject : MonoBehaviour, IInteractable
 
     public void OnPlayerInteraction(GameObject player)
     {
-        PlayerMantling playerMantling = player.GetComponent<PlayerMantling>();
-        if (playerMantling == null) return;
+        if (!player.TryGetComponent<PlayerMantling>(out var playerMantling)) return;
 
-        ButtonIcons.Instance?.Clear();
-        playerMantling.StartMantle(this);
+        ButtonIcons.Instance.Clear();
+        
+        playerMantling.StartMantle(this, UnlockTransform);
+
+        if (lockPosition)
+        {
+            Debug.Log("Locking mantleable object position and rotation during mantle.");
+            pos = transform.position;
+            rot = transform.rotation;
+            shouldLock = true;
+        }
+    }
+
+    private void UnlockTransform()
+    {
+        if (lockPosition)
+        {
+            Debug.Log("Unlocking mantleable object position and rotation after mantle.");
+            shouldLock = false;
+        }
+    }
+
+    void Update()
+    {
+        if (shouldLock && lockPosition)
+        {
+            transform.SetPositionAndRotation(pos, rot);
+        }
     }
 
     public Vector3 GetMantlePosition()

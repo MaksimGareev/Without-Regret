@@ -146,7 +146,7 @@ public class DeadlyFogMaks : MonoBehaviour
         yield return StartCoroutine(LerpPlayerToPoint(player, resetPoint));
         yield return new WaitForSeconds(0.15f);
 
-        shouldDarken = false;
+       
 
         player.SetResetLock(false);
 

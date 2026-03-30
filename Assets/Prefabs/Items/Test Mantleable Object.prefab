@@ -30,7 +30,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -6.36, y: 0.59, z: -3.93}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.4635, y: 5.1495, z: 2.3802}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -68,7 +68,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 78add277b6d573149b8631a64b8d6730, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -124,6 +124,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f49c7f5692189b44806d9531a0a3c8a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MantleableObject
-  mantleOffset: {x: 0, y: 2, z: 0}
+  mantleOffset: {x: 0, y: 3.44, z: 0}
+  lockPosition: 1
   showGizmos: 1
-  iconPrefab: {fileID: 74127676795608141, guid: e337bf8e8d399f342b62d7ad9b912550, type: 3}
+  maxMantleDistance: 2
