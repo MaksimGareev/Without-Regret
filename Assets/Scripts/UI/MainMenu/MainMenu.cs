@@ -128,6 +128,12 @@ public class MainMenu : MonoBehaviour
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
         }
+
+        if (!inputActions.FindActionMap("UI").enabled)
+        {
+            Debug.LogError("UI action map not enabled. Enabling now");
+            inputActions.FindActionMap("UI").Enable();
+        }
     }
 
     private void DeleteSavesDebug()

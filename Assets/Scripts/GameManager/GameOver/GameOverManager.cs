@@ -315,10 +315,10 @@ public class GameOverManager : MonoBehaviour
 
         EnableGameOverUI();
 
-        if (SaveManager.Instance != null)
-        {
-            SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
-        }
+        // if (SaveManager.Instance)
+        // {
+        //     SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
+        // }
     }
 
     private void EnableGameOverUI()

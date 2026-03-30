@@ -6716,7 +6716,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5457277075676721224, guid: f1fdcc10caf6729499bf2c56016dfc42, type: 3}
       propertyPath: m_LocalScale.y
-      value: 10.669387
+      value: 43.043507
       objectReference: {fileID: 0}
     - target: {fileID: 5457277075676721224, guid: f1fdcc10caf6729499bf2c56016dfc42, type: 3}
       propertyPath: m_LocalScale.z
@@ -6728,7 +6728,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5457277075676721224, guid: f1fdcc10caf6729499bf2c56016dfc42, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 75.6
+      value: 49.6
       objectReference: {fileID: 0}
     - target: {fileID: 5457277075676721224, guid: f1fdcc10caf6729499bf2c56016dfc42, type: 3}
       propertyPath: m_LocalPosition.z
@@ -16114,7 +16114,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 43755293103271873, guid: c15e4d30c466cad44b39e753409ff254, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 273037606}
   m_SourcePrefab: {fileID: 100100000, guid: c15e4d30c466cad44b39e753409ff254, type: 3}
 --- !u!1 &273037604 stripped
 GameObject:
@@ -16126,6 +16129,52 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5097125487249138290, guid: c15e4d30c466cad44b39e753409ff254, type: 3}
   m_PrefabInstance: {fileID: 273037603}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &273037606
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 273037604}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: efdca141980251c48b810cfcd47385c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyFieldOfView
+  minRadius: 4
+  maxRadius: 8
+  minAngle: 50
+  maxAngle: 130
+  moralityEffect: 0.5
+  obstacleMask:
+    serializedVersion: 2
+    m_Bits: 129
+  playerMask:
+    serializedVersion: 2
+    m_Bits: 8
+  playerRef: {fileID: 0}
+  dialogueManager: {fileID: 0}
+  animator: {fileID: 0}
+  smoothFOV: 1
+  fovSmoothSpeed: 2
+  radius: 0
+  aggroRadius: 0
+  angle: 0
+  playerObj: {fileID: 0}
+  targetMask:
+    serializedVersion: 2
+    m_Bits: 0
+  obstructionMask:
+    serializedVersion: 2
+    m_Bits: 0
+  canSeePlayer: 0
+  chaseDuration: 1
+  maxChaseDuration: 1
+  detectionRadius: 4
+  attackRadius: 3
+  attackCooldown: 1
+  isAttacking: 0
+  normalMovement: {fileID: 0}
 --- !u!1 &273577278
 GameObject:
   m_ObjectHideFlags: 0
@@ -32668,6 +32717,14 @@ PrefabInstance:
     - target: {fileID: 1380278693743089735, guid: 50418b5f2ca51554fb6c711361357d5e, type: 3}
       propertyPath: target
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1380278693743089735, guid: 50418b5f2ca51554fb6c711361357d5e, type: 3}
+      propertyPath: playerMask.m_Bits
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 1380278693743089735, guid: 50418b5f2ca51554fb6c711361357d5e, type: 3}
+      propertyPath: obstacleMask.m_Bits
+      value: 129
       objectReference: {fileID: 0}
     - target: {fileID: 3086140246574635878, guid: 50418b5f2ca51554fb6c711361357d5e, type: 3}
       propertyPath: m_Name
@@ -52815,6 +52872,14 @@ PrefabInstance:
       propertyPath: target
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1380278693743089735, guid: 50418b5f2ca51554fb6c711361357d5e, type: 3}
+      propertyPath: playerMask.m_Bits
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 1380278693743089735, guid: 50418b5f2ca51554fb6c711361357d5e, type: 3}
+      propertyPath: obstacleMask.m_Bits
+      value: 129
+      objectReference: {fileID: 0}
     - target: {fileID: 3086140246574635878, guid: 50418b5f2ca51554fb6c711361357d5e, type: 3}
       propertyPath: m_Name
       value: Enemy (1)
@@ -57919,6 +57984,14 @@ PrefabInstance:
     - target: {fileID: 1380278693743089735, guid: 50418b5f2ca51554fb6c711361357d5e, type: 3}
       propertyPath: target
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1380278693743089735, guid: 50418b5f2ca51554fb6c711361357d5e, type: 3}
+      propertyPath: playerMask.m_Bits
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 1380278693743089735, guid: 50418b5f2ca51554fb6c711361357d5e, type: 3}
+      propertyPath: obstacleMask.m_Bits
+      value: 129
       objectReference: {fileID: 0}
     - target: {fileID: 3086140246574635878, guid: 50418b5f2ca51554fb6c711361357d5e, type: 3}
       propertyPath: m_Name
@@ -68467,6 +68540,14 @@ PrefabInstance:
     - target: {fileID: 1380278693743089735, guid: 50418b5f2ca51554fb6c711361357d5e, type: 3}
       propertyPath: target
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1380278693743089735, guid: 50418b5f2ca51554fb6c711361357d5e, type: 3}
+      propertyPath: playerMask.m_Bits
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 1380278693743089735, guid: 50418b5f2ca51554fb6c711361357d5e, type: 3}
+      propertyPath: obstacleMask.m_Bits
+      value: 129
       objectReference: {fileID: 0}
     - target: {fileID: 3086140246574635878, guid: 50418b5f2ca51554fb6c711361357d5e, type: 3}
       propertyPath: m_Name
@@ -124464,6 +124545,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: e40b43c9792e771498f43e36f3106ac3, type: 3}
+      propertyPath: m_TagString
+      value: protectedNPC
+      objectReference: {fileID: 0}
     - target: {fileID: 4605096493598840403, guid: e40b43c9792e771498f43e36f3106ac3, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
@@ -127808,6 +127893,14 @@ PrefabInstance:
       propertyPath: target
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1380278693743089735, guid: 50418b5f2ca51554fb6c711361357d5e, type: 3}
+      propertyPath: playerMask.m_Bits
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 1380278693743089735, guid: 50418b5f2ca51554fb6c711361357d5e, type: 3}
+      propertyPath: obstacleMask.m_Bits
+      value: 129
+      objectReference: {fileID: 0}
     - target: {fileID: 3086140246574635878, guid: 50418b5f2ca51554fb6c711361357d5e, type: 3}
       propertyPath: m_Name
       value: Enemy (5)
@@ -127963,6 +128056,14 @@ PrefabInstance:
     - target: {fileID: 1380278693743089735, guid: 50418b5f2ca51554fb6c711361357d5e, type: 3}
       propertyPath: target
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1380278693743089735, guid: 50418b5f2ca51554fb6c711361357d5e, type: 3}
+      propertyPath: playerMask.m_Bits
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 1380278693743089735, guid: 50418b5f2ca51554fb6c711361357d5e, type: 3}
+      propertyPath: obstacleMask.m_Bits
+      value: 129
       objectReference: {fileID: 0}
     - target: {fileID: 3086140246574635878, guid: 50418b5f2ca51554fb6c711361357d5e, type: 3}
       propertyPath: m_Name
