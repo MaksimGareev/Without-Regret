@@ -46,7 +46,7 @@ public class Irene : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player").transform;
         agent = GetComponent<NavMeshAgent>();
         agent.stoppingDistance = FollowDistance;
-        agent.updateRotation = false;
+        //agent.updateRotation = false;
     }
 
     // Update is called once per frame
@@ -152,6 +152,7 @@ public class Irene : MonoBehaviour
             Quaternion targetRotation = Quaternion.LookRotation(LookDirection);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, RotationSpeed * Time.deltaTime);
         }
+       
     }
 
     public void TravelToTarget()
@@ -175,14 +176,14 @@ public class Irene : MonoBehaviour
         }
 
         // Rotate towards target
-        Vector3 direction = targetSpot.position - transform.position;
+        /*Vector3 direction = targetSpot.position - transform.position;
         direction.y = 0f;
 
         if (direction.sqrMagnitude > 0.001f)
         {
             Quaternion targetRot = Quaternion.LookRotation(direction);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, RotationSpeed * Time.deltaTime);
-        }
+        }*/
 
         // Stop when close to target destination
         if (!agent.pathPending && agent.remainingDistance <= stopDistance)
