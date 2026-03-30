@@ -71,6 +71,8 @@ public class Journal : MonoBehaviour, ISaveable
     private readonly Dictionary<string, string> collectibleDictionary = new();
     private int currentCollectibleIndex = 0;
 
+    private CameraMovement cam;
+
     private enum JournalPage
     {
         Objectives = 0,
@@ -92,6 +94,8 @@ public class Journal : MonoBehaviour, ISaveable
         {
             Destroy(gameObject);
         }
+
+        cam = Camera.main.GetComponent<CameraMovement>();
 
         // Initialize input actions
         playerJournalAction = inputActions.FindAction("Player/Journal");
@@ -823,12 +827,43 @@ public class Journal : MonoBehaviour, ISaveable
     {
         inputActions.FindActionMap("UI").Enable();
         inputActions.FindActionMap("Player").Disable();
+
+        // Also disable player and camera input
+        SetPlayerInputEnabled(false);
+        if (cam != null)
+        {
+            cam.SetCameraLocked(true);
+        }
     }
 
     private void DisableJournalInput()
     {
         inputActions.FindActionMap("UI").Disable();
         inputActions.FindActionMap("Player").Enable();
+
+        // Re-enable the player's input handling when closing the journal.
+        SetPlayerInputEnabled(true);
+        if (cam != null)
+        {
+            cam.SetCameraLocked(false);
+        }
+    }
+
+    private void SetPlayerInputEnabled(bool enabled)
+    {
+        var player = GameObject.FindGameObjectWithTag("Player");
+        if (player == null) return;
+
+        if (!player.TryGetComponent<PlayerController>(out var pc)) return;
+
+        if (enabled)
+        {
+            pc.EnableInput();
+        }
+        else
+        {
+            pc.DisableInput();
+        }
     }
 
     [Serializable]
