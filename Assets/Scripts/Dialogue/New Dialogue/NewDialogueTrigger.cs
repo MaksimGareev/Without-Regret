@@ -20,6 +20,8 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
     public Chime chimeScript;
 
     private Animator playerAnimator;
+    private CharacterSwap characterSwap;
+
     private Coroutine playerTalkRoutine;
 
     [Header("Face Animation")]
@@ -62,6 +64,9 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
     [Tooltip("A bool that is used to identify if a dialogue interaction is a mediation making the NPC not look at the player")]
     public bool IsMediation = false;
 
+    [Header("MovingOnVfx")]
+    [SerializeField] private MovingOn movingOn;
+
     // wandering
     private NpcMovement npcWander;
     private NavMeshAgent agent;
@@ -90,6 +95,22 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
 
     [SerializeField]
     private DialogueTriggerType triggerType = DialogueTriggerType.NPC;
+
+    private void Awake()
+    {
+        characterSwap = FindObjectOfType<CharacterSwap>();
+
+        if (characterSwap != null)
+        {
+            playerAnimator = characterSwap.GetAnimator();
+
+            characterSwap.onAnimatorChanged += UpdateAnimator;
+        }
+
+        //controls = new PlayerControls();
+
+        // controls.Player.Interact.performed += ctx => TryInteract();
+    }
 
     private void Start()
     {
@@ -178,17 +199,28 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
         if (NewDialogueManager.Instance.DialogueIsActive) return;
 
         float distance = Vector3.Distance(player.position, transform.position);
+        bool allCompleted = true;
 
         if (distance <= chatRange)
         {
-            npcInitiationStarted = true;
-            StartCoroutine(NPCWalkToPlayerAndTalk());
+            foreach (string id in objectiveIDsYouCareAbout)
+            {
+                if (!ObjectiveManager.Instance.IsObjectiveCompleted(id))
+                {
+                    allCompleted = false;
+                }
+            }
+
+            if (allCompleted)
+            {
+                npcInitiationStarted = true;
+                StartCoroutine(NPCWalkToPlayerAndTalk());
+            }
         }
     }
 
     private IEnumerator NPCWalkToPlayerAndTalk()
     {
-        hasTalked = true;
 
         npcWander?.StopWandering();
 
@@ -274,6 +306,14 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
         FaceTarget(player, transform);
 
         isLookingAtPlayer = true;
+        if (IsMediation)
+        {
+            StartPlayerMediation();
+        }
+        else if (triggerType == DialogueTriggerType.NPC)
+        {
+            StartPlayerTalking();
+        }
 
         NewDialogueManager.Instance.StartDialogue(selectedDialogue, this);
 
@@ -308,7 +348,7 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
         }
 
         // dialogue selected if the player has completed all the objectives connected to the NPC
-        if (allCompleted && taskCompleteDialogueFile != null && hasTalked)
+        if (allCompleted && taskCompleteDialogueFile != null && objectiveIDsYouCareAbout != null)
         {
             return taskCompleteDialogueFile;
         }
@@ -325,7 +365,7 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
             }
         }
 
-        // dialogue selected if the player has talked to the NPC and has no task active or complete connected to the NPC
+        // dialogue selected if the player has talked to the NPC and has no task active or completed the first interaction with the NPC
         if (hasTalked && talkedDialogueFile != null)
         {
             return talkedDialogueFile;
@@ -438,6 +478,28 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
         isLookingAtPlayer = false;
     }
 
+    private void StartPlayerMediation()
+    {
+        if (playerAnimator == null)
+            return;
+        Debug.Log("Started Mediating");
+
+        if (playerTalkRoutine != null)
+        {
+            StopCoroutine(playerTalkRoutine);
+            playerTalkRoutine = null;
+        }
+        //if (chimeActive)
+        //{
+        //    chimeAnimator.SetBool("isTalking", true);
+        //}
+        playerAnimator.SetBool("isTalking", false);
+        playerAnimator.SetBool("Talk1", false);
+        playerAnimator.SetBool("Talk2", false);
+
+        playerAnimator.SetBool("isMediating", true);
+    }
+
     private void StartPlayerTalking()
     {
         if (playerAnimator == null)
@@ -480,7 +542,10 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
         }
 
         playerAnimator.SetBool("Think", false);
-        StartPlayerTalking();
+        if (!IsMediation)
+        {
+            StartPlayerTalking();
+        }
     }
 
     private void StopPlayerTalking()
@@ -491,6 +556,7 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
         playerAnimator.SetBool("isTalking", false);
         playerAnimator.SetBool("Talk1", false);
         playerAnimator.SetBool("Talk2", false);
+        playerAnimator.SetBool("isMediating", false);
         if (chimeActive)
         {
             chimeAnimator.SetBool("isTalking", false);
@@ -559,6 +625,11 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
         */
     }
 
+    void UpdateAnimator(Animator newAnimator)
+    {
+        playerAnimator = newAnimator;
+    }
+
     private bool HasParameter(string paramName)
     {
         foreach (var param in animator.parameters)
@@ -598,5 +669,17 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
         }
 
 
+    }
+
+    public void MovingOn()
+    {
+        if (movingOn != null)
+        {
+            movingOn.StartMoving();
+        }
+        else
+        {
+            Debug.Log("Trying to start moving on effect but no moving on script was provided");
+        }
     }
 }

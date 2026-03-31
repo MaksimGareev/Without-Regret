@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class Echo_Spawn_Test : MonoBehaviour
 {
@@ -9,11 +10,12 @@ public class Echo_Spawn_Test : MonoBehaviour
     private float timer = 0f;
     private bool isAnimating = false;
     private bool outlinePhase = true;
+    private bool initialPhase = true;
+    [SerializeField] List<SkinnedMeshRenderer> echoRenderers;
+    [HideInInspector] public bool respawned = false;
 
     void Start()
     {
-        Renderer renderer = GetComponent<Renderer>();
-        materialInstance = renderer.material;
 
         // start at 0
         materialInstance.SetFloat("_NoiseAmnt", 0f);
@@ -22,42 +24,46 @@ public class Echo_Spawn_Test : MonoBehaviour
 
     void Update()
     {
-        // press 9 key to start animation
-        if (Input.GetKeyDown(KeyCode.Alpha9))
+        if (respawned)
         {
-            timer = 0f;
-            isAnimating = true;
-            outlinePhase = true;
-
-            materialInstance.SetFloat("_NoiseAmnt", 0f);
-            materialInstance.SetFloat("_Outline", 0f);
-        }
-
-        // update shader value over time
-        if (isAnimating)
-        {
-            timer += Time.deltaTime;
-            float value = Mathf.Clamp01(timer / duration);
-
-            if (outlinePhase)
+            // initial set up
+            if (initialPhase)
             {
-                materialInstance.SetFloat("_Outline", value);
-
-                // once outline reaches 1, switch to noise phase
-                if (value >= 1f)
+                timer = 0f;
+                isAnimating = true;
+                outlinePhase = true;
+                for (int i = 0; i < echoRenderers.Count; i++)
                 {
-                    outlinePhase = false;
-                    timer = 0f; // reset timer for noise
+                    materialInstance = echoRenderers[i].materials[1];
+                    materialInstance.SetFloat("_NoiseAmnt", 0);
+                    materialInstance.SetFloat("_Outline", 1f);
                 }
+                initialPhase = false;
             }
-            else
-            {
-                materialInstance.SetFloat("_NoiseAmnt", value);
 
-                // stop animating once noise reaches 1
-                if (value >= 1f)
+            // update shader value over time
+            if (isAnimating)
+            {
+                timer += Time.deltaTime;
+                float value = Mathf.Clamp01(timer / duration);
+
+                if (outlinePhase)
                 {
-                    isAnimating = false;
+                    for (int i = 0; i < echoRenderers.Count; i++)
+                    {
+                        materialInstance = echoRenderers[i].materials[1];
+                        materialInstance.SetFloat("_Outline", 1 - value);
+                    }
+
+                    // once outline reaches 1, switch to noise phase
+                    if (value >= 1f)
+                    {
+                        outlinePhase = false;
+                        timer = 0f; // reset timer for noise
+                        isAnimating = false;
+                        respawned = false;
+                        initialPhase = true;
+                    }
                 }
             }
         }

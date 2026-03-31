@@ -1,9 +1,10 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class MovingOn : MonoBehaviour
 {
-    public float startValue = 16.5f;
-    public float endValue = -2f;
+    public float startValue = 3f;
+    public float endValue = -0.02f;
     public float duration = 2f;
 
     public ParticleSystem targetParticle;
@@ -11,12 +12,11 @@ public class MovingOn : MonoBehaviour
     public float particleEndY = -23f;
 
     float timeElapsed = 0f;
-    Material material;
+    public List<Renderer> material;
     bool isMoving = false;
 
     void Start()
     {
-        material = GetComponent<Renderer>().material;
 
         if (targetParticle != null)
         {
@@ -30,11 +30,6 @@ public class MovingOn : MonoBehaviour
 
     void Update()
     {
-        // Trigger animation on pressing '9'
-        if (Input.GetKeyDown(KeyCode.Alpha9))
-        {
-            StartMoving();
-        }
 
         if (!isMoving) return;
 
@@ -45,14 +40,17 @@ public class MovingOn : MonoBehaviour
 
             // Update shader float
             float value = Mathf.Lerp(startValue, endValue, t);
-            material.SetFloat("_MovingOn", value);
+            for (int i = 0; i < material.Count; i++)
+            {
+                material[i].material.SetFloat("_MovingOn", value);
+            }
 
             // Move particle system
             if (targetParticle != null)
             {
-                Vector3 pos = targetParticle.transform.position;
+                Vector3 pos = targetParticle.transform.localPosition;
                 pos.y = Mathf.Lerp(particleStartY, particleEndY, t);
-                targetParticle.transform.position = pos;
+                targetParticle.transform.localPosition = pos;
 
                 // Deactivate when done
                 if (t >= 1f)
@@ -60,6 +58,7 @@ public class MovingOn : MonoBehaviour
                     targetParticle.Stop();
                     targetParticle.gameObject.SetActive(false);
                     isMoving = false;
+                    gameObject.SetActive(false);
                 }
             }
         }
@@ -71,9 +70,9 @@ public class MovingOn : MonoBehaviour
         {
             targetParticle.gameObject.SetActive(true);
             targetParticle.Play(); // <-- Make sure it actually starts
-            Vector3 pos = targetParticle.transform.position;
+            Vector3 pos = targetParticle.transform.localPosition;
             pos.y = particleStartY;
-            targetParticle.transform.position = pos;
+            targetParticle.transform.localPosition = pos;
         }
 
         timeElapsed = 0f;
