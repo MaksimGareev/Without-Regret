@@ -27,6 +27,7 @@ public class DeadlyFogMaks : MonoBehaviour
     private float lastResetTime = -Mathf.Infinity;
     private Collider triggerCollider;
     [SerializeField] private float timeSinceEnter = 0;
+    private bool canDamage = true;
 
     // from maks: ColorAdjustments override from the assigned Volume 
     private ColorAdjustments colorAdjustments;
@@ -101,12 +102,12 @@ public class DeadlyFogMaks : MonoBehaviour
             // from maks: stop darkening when damage happens
             shouldDarken = true;
 
-            if (TimerRingUI.Instance != null)
+            if (TimerRingUI.Instance != null && canDamage)
             {
                 TimerRingUI.Instance.SubtractRingSection(amountOfRingsToSubtract);
             }
-
-            StartCoroutine(HandleReset(player));
+                StartCoroutine(HandleReset(player));
+                canDamage = false;
         }
         else
         {
@@ -145,7 +146,7 @@ public class DeadlyFogMaks : MonoBehaviour
         yield return StartCoroutine(LerpPlayerToPoint(player, resetPoint));
         yield return new WaitForSeconds(0.15f);
 
-        shouldDarken = false;
+       
 
         player.SetResetLock(false);
 
@@ -166,6 +167,7 @@ public class DeadlyFogMaks : MonoBehaviour
 
         timeSinceEnter = 0;
         isResetting = false;
+        canDamage = true;
     }
 
     private IEnumerator LerpPlayerToPoint(PlayerController player, Transform target)
@@ -183,45 +185,14 @@ public class DeadlyFogMaks : MonoBehaviour
         Vector3 endPosition = target.position;
         Quaternion endRotation = target.rotation;
 
-        SetPlayerAlpha(player, fadedAlpha);
-
-        float elapsedTime = 0f;
-
-        while (elapsedTime < moveDuration)
-        {
-            float t = elapsedTime / moveDuration;
-            playerTransform.position = Vector3.Lerp(startPosition, endPosition, t);
-            playerTransform.rotation = Quaternion.Slerp(startRotation, endRotation, t);
-
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }
-
         playerTransform.position = endPosition;
         playerTransform.rotation = endRotation;
-
-        SetPlayerAlpha(player, 1f);
+        player.gameObject.GetComponent<Echo_Spawn_Test>().respawned = true;
 
         if (controller != null)
             controller.enabled = true;
-    }
 
-    private void SetPlayerAlpha(PlayerController player, float alpha)
-    {
-        Renderer[] renderers = player.GetComponentsInChildren<Renderer>();
-
-        foreach (Renderer renderer in renderers)
-        {
-            foreach (Material mat in renderer.materials)
-            {
-                if (mat.HasProperty("_Color"))
-                {
-                    Color color = mat.color;
-                    color.a = alpha;
-                    mat.color = color;
-                }
-            }
-        }
+        yield return null;
     }
 
     private bool PlayerInsideTrigger(PlayerController player)

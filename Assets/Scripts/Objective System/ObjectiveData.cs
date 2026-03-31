@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 // This scriptable object holds the data for an objective, which can be used by the Objective Manager to track progress and completion of objectives. 
 // It also contains information for display purposes in the Journal UI and the Objective Popup UI, as well as dialogue for Chime's Hint UI.
@@ -30,8 +31,8 @@ public class ObjectiveData : ScriptableObject
     public int sceneIndex; // build index of the scene where the objective takes place
 
     [Header("Objective Location")]
-    [Tooltip("The ObjectiveMarker's position in the world for this objective.")]
-    public Vector3 markerTransform; // Object that the objective indicator points to that also handles the on-screen quest marker
+    [Tooltip("The ObjectiveMarker's positions in the world for this objective.")]
+    public List<Vector3> markerTransforms; // Object that the objective indicator points to that also handles the on-screen quest marker
 
     [Header("Objective Display")]
     [Tooltip("Turn off if you don't want the objective to have an in-world indicator.")]
@@ -39,5 +40,8 @@ public class ObjectiveData : ScriptableObject
 
     [Tooltip("Turn off if you don't want the objctive to have an off-screen indicator.")]
     public bool hasOffScreenMarker = true; // Whether or not the objective has an off-screen marker
+
+    [Tooltip("mark this as true if you want the marker to progress to multiple spots when an objective is progressed I.E. the boss fight damage orbs.")]
+    public bool hasMultiplepositions;
 
 }

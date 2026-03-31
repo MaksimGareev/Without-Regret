@@ -93,4 +93,9 @@ public class RemoveableObject : MonoBehaviour, IInteractable
     {
         interactable = state;
     }
+
+    public bool GetInteractable()
+    {
+        return interactable;
+    }
 }
