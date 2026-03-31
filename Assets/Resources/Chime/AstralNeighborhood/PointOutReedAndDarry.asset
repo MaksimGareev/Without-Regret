@@ -16,11 +16,13 @@ MonoBehaviour:
   dialogueLines:
   - LineID: Start
     Speaker: Chime
-    text: Look, there's Reed
+    text: Look, there's Reed!
     lineTone: 0
     NPCGender: 
     NextLineID: Part II
     endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
     choices: []
     objectivesToActivate: []
   - LineID: Part II
@@ -30,14 +32,16 @@ MonoBehaviour:
     NPCGender: 
     NextLineID: 
     endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
     choices:
     - text: Yeah, that's Darry.
-      NextLineID: Good
+      NextLineID: E Good I
       moralityChange: 1
       direction: 0
       objectiveToActivate: 
-    - text: Dunno.  I didn't care much for his story.
-      NextLineID: Bad
+    - text: Dunno. Wasn't listening.
+      NextLineID: E Bad I
       moralityChange: -1
       direction: 1
       objectiveToActivate: 
@@ -50,6 +54,8 @@ MonoBehaviour:
     NPCGender: 
     NextLineID: 
     endDialogueAfterLine: 1
+    movingOn: 0
+    GiveItem: 0
     choices: []
     objectivesToActivate: []
   - LineID: Bad
@@ -60,5 +66,31 @@ MonoBehaviour:
     NPCGender: 
     NextLineID: 
     endDialogueAfterLine: 1
+    movingOn: 0
+    GiveItem: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: E Good I
+    Speaker: Echo
+    text: That's Darry, his roommate that he was visiting in the graveyard. Is he
+      alive again here in the Astral Plane?
+    lineTone: 0
+    NPCGender: female
+    NextLineID: Good
+    endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: E Bad I
+    Speaker: Echo
+    text: I dunno. I think he was telling me about a friend of his in the Graveyard,
+      but I was fighting the urge to fall asleep.
+    lineTone: 0
+    NPCGender: female
+    NextLineID: Bad
+    endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
     choices: []
     objectivesToActivate: []
