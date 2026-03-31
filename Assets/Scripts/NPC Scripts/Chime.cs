@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Chime : MonoBehaviour
 {
+    [SerializeField] private bool followPlayer = true;
     [SerializeField] private Transform player;
     [SerializeField] private bool facePlayer = true;
     [SerializeField] private float lookSmooth = 8f;
@@ -28,6 +29,13 @@ public class Chime : MonoBehaviour
     [Tooltip("Minimum horizontal speed to consider the player as 'moving'")]
     [SerializeField] private float moveThreshold = 0.1f;
 
+    private bool followPlayerCached = false;
+    private bool isInObjectiveMarkerMode = false;
+    public bool IsGuiding => isInObjectiveMarkerMode;
+
+    // When guiding, objectiveTargetPosition stores the world position Chime should move to
+    private Vector3 objectiveTargetPosition = Vector3.zero;
+
     private float orbitAngle;
     //private Transform OrbitPivot;
     //private Transform BobObject;
@@ -37,13 +45,43 @@ public class Chime : MonoBehaviour
     [Header("Animator")]
     public Animator animator;
 
+    private void Start()
+    {
+        followPlayerCached = followPlayer;
+    }
+
     void LateUpdate()
     {
-        if (player == null) return;
+        if (player == null && !isInObjectiveMarkerMode) return;
 
-        Vector3 targetPos;
+        Vector3 targetPos = transform.position;
 
-        if (!isInDialogue)
+        if (isInObjectiveMarkerMode)
+        {
+            // When in objective marker mode, Chime goes to the objective's position (with bobbing)
+            Vector3 bob = new Vector3(0f, Mathf.Sin(Time.time * bobSpeed) * bobHeight, 0f);
+            targetPos = objectiveTargetPosition + bob;
+
+            // Keep smoothing to avoid teleportation
+            transform.position = Vector3.Lerp(transform.position, targetPos, Time.deltaTime * followSmooth);
+
+            // Optionally still face the player while at the objective
+            if (facePlayer && player != null)
+            {
+                Vector3 lookPoint = player.position;
+                lookPoint.y = transform.position.y; // keep chime level
+                Vector3 dir = lookPoint - transform.position;
+                if (dir.sqrMagnitude > 0.001f)
+                {
+                    Quaternion lookRot = Quaternion.LookRotation(dir, Vector3.up);
+                    transform.rotation = Quaternion.Slerp(transform.rotation, lookRot, Time.deltaTime * lookSmooth);
+                }
+            }
+
+            return;
+        }
+
+        if (followPlayer && !isInDialogue)
         {
             if (orbitPlayer)
             {
@@ -54,7 +92,6 @@ public class Chime : MonoBehaviour
                 // Calculate orbit position relative to player
                 Vector3 offset = new Vector3(Mathf.Cos(orbitAngle) * orbitRadius, Mathf.Sin(Time.time * bobSpeed) * bobHeight + 1f, Mathf.Sin(orbitAngle) * orbitRadius);
 
-                // Smoothly rotate toward player
                 targetPos = player.position + offset;
             }
             else
@@ -64,14 +101,17 @@ public class Chime : MonoBehaviour
                 // otherwise try Rigidbody velocity, then otherwise use player's forward.
                 Vector3 playerVelocity = Vector3.zero;
 
-                if (player.TryGetComponent<PlayerController>(out var pc) && pc.Controller != null)
+                if (player != null)
                 {
-                    playerVelocity = pc.Controller.velocity;
-                }
-                else
-                {
-                    if (player.TryGetComponent<Rigidbody>(out var rb))
-                        playerVelocity = rb.linearVelocity;
+                    if (player.TryGetComponent<PlayerController>(out var pc) && pc.Controller != null)
+                    {
+                        playerVelocity = pc.Controller.velocity;
+                    }
+                    else
+                    {
+                        if (player.TryGetComponent<Rigidbody>(out var rb))
+                            playerVelocity = rb.linearVelocity;
+                    }
                 }
 
                 // Vertical bob
@@ -107,7 +147,7 @@ public class Chime : MonoBehaviour
                 }
             }
         }
-        else
+        else if (isInDialogue)
         {
             // Dialogue Mode
             Vector3 dialogueOffset = player.right * 1.2f + new Vector3(0f, 1f, 0f);
@@ -134,6 +174,30 @@ public class Chime : MonoBehaviour
                 transform.rotation = Quaternion.Slerp(transform.rotation, lookRot, Time.deltaTime * lookSmooth);
             }
         }
+    }
+
+    // Called by ObjectiveMarker when an objective with chimeMovesToMarker is activated.
+    // Chime will move to the supplied world position and remain there until ReturnToPlayer() is called.
+    public void GoToMarker(Vector3 newPosition)
+    {
+        isInObjectiveMarkerMode = true;
+        objectiveTargetPosition = newPosition;
+            
+        // temporarily stop following the player while guiding    
+        followPlayer = false;
+    }
+
+    // Return Chime to normal following behavior
+    public void ReturnToPlayer()
+    {
+        isInObjectiveMarkerMode = false;
+        followPlayer = followPlayerCached;
+    }
+
+    public void SetFollow(bool shouldFollow)
+    {
+        followPlayer = shouldFollow;
+        followPlayerCached = shouldFollow;
     }
 
     //Chime's Animation functions
