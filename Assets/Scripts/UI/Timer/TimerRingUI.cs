@@ -95,6 +95,10 @@ public class TimerRingUI : MonoBehaviour
                     break;
                 case RingState.Empty:
                     // Already empty, do nothing
+                    if (GameOverManager.Instance && !GameOverManager.Instance.IsGameOver)
+                    {
+                        EndGame();
+                    }
                     break;
             }
         }
@@ -137,6 +141,8 @@ public class TimerRingUI : MonoBehaviour
                 animator = characterSwap.GetAnimator();
                 StartCoroutine(GameOverAnimation());
             }
+            
+            GameOverManager.Instance.TriggerGameOver();
         }
         else
         {
@@ -180,10 +186,9 @@ public class TimerRingUI : MonoBehaviour
     IEnumerator GameOverAnimation()
     {
         Debug.Log("Started Game Over Animation");
-        animator.SetBool("GameOver", true);
+        animator?.SetBool("GameOver", true);
         yield return new WaitForSecondsRealtime(0.5f);
         animator.SetBool("GameOverLoop", true);
-        GameOverManager.Instance.TriggerGameOver();
     }
 
 }
