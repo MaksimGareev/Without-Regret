@@ -31,6 +31,11 @@ public class CameraMovement : MonoBehaviour
     [Tooltip("If true, the camera will follow the player. If false, the camera will remain in the position it is placed in the editor, or the position it is at the time this boolean is set false.")]
     [SerializeField] private bool followPlayer = true;
 
+    [SerializeField] private bool checkCollisions = false;
+
+    [Tooltip("Which layers will be ignored when checking for collisions.")]
+    [SerializeField] private LayerMask ignoreCollisionLayer;
+
     [Tooltip("Default offset of the camera from the player (Setting this to (0,0,0) will equal the Player's exact transform). This will be rotated based on the default facing direction below.")]
     public Vector3 defaultOffset = new Vector3(0, 8, 8);
 
@@ -138,6 +143,12 @@ public class CameraMovement : MonoBehaviour
         else
         {
             Debug.LogWarning("Astral VFX GameObject reference not set in CameraMovement.");
+        }
+
+        if (checkCollisions && !TryGetComponent<Collider>(out _))
+        {
+            Debug.LogWarning("Check Collisions is enabled but no Collider component found on the camera. Disabling collision checking.");
+            checkCollisions = false;
         }
     }
 
@@ -338,7 +349,19 @@ public class CameraMovement : MonoBehaviour
             Vector3 desiredPosition = target.position + currentOffset;
 
             // Smooth following of the player
-            transform.position = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed * Time.deltaTime);
+            Vector3 movePosition = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed * Time.deltaTime);
+            if (checkCollisions)
+            {
+                if (CanMoveBy(movePosition - transform.position))
+                {
+                    transform.position = movePosition;
+                }
+            }
+            else
+            {
+                transform.position = movePosition;
+            }
+
             Vector3 lookAtPos = target.position + currentLookAtOffset;
 
             // Look at the Player
@@ -420,6 +443,35 @@ public class CameraMovement : MonoBehaviour
         {
             currentLookAtOffset = Vector3.Lerp(currentLookAtOffset, initialRotation * throwLookAtOffset, returnSpeed * Time.deltaTime);
         }
+    }
+
+    // Predict whether moving the camera by 'delta' (world-space) would cause an overlap with environment colliders
+    private bool CanMoveBy(Vector3 delta)
+    {
+        if (!TryGetComponent<Collider>(out var col)) return true;
+
+        // compute the target bounds after moving camera by delta
+        Bounds b = col.bounds;
+        Vector3 targetCenter = b.center + delta;
+        Vector3 extents = b.extents;
+        Quaternion rotation = transform.rotation;
+
+        // Query for overlapping colliders at the target location
+        Collider[] hits = Physics.OverlapBox(targetCenter, extents, rotation, ~ignoreCollisionLayer, QueryTriggerInteraction.Ignore);
+        foreach (var hit in hits)
+        {
+            if (hit == col) return true; // ignore self
+            
+            // ignore any colliders that belong to the camera
+            if (hit.transform.IsChildOf(transform)) return true;
+
+            // Any other hit means we'd clip into something
+            Debug.Log($"CanMoveBy: Camera movement blocked by {hit.name}");
+
+            return false;
+        }
+
+        return true;
     }
 
     // Public function to be called when a dialogue trigger is activated to start the camera zoom effect
