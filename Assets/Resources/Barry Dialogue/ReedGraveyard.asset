@@ -22,24 +22,26 @@ MonoBehaviour:
     NPCGender: male
     NextLineID: 
     endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
     choices:
     - text: Sure.
-      NextLineID: Nice
+      NextLineID: E Good 1
       moralityChange: 1
       direction: 0
       objectiveToActivate: 
     - text: Not really, but go ahead
-      NextLineID: Mean
+      NextLineID: E Bad 1
       moralityChange: -1
       direction: 1
       objectiveToActivate: 
     - text: I mean, might be awkward, but why not?
-      NextLineID: Nice
+      NextLineID: E Good 2
       moralityChange: 1
       direction: 2
       objectiveToActivate: 
     - text: I need to go walk my hamster...
-      NextLineID: Mean
+      NextLineID: E Bad 2
       moralityChange: -1
       direction: 3
       objectiveToActivate: 
@@ -51,6 +53,8 @@ MonoBehaviour:
     NPCGender: male
     NextLineID: Part I
     endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
     choices: []
     objectivesToActivate: []
   - LineID: Mean
@@ -60,6 +64,8 @@ MonoBehaviour:
     NPCGender: male
     NextLineID: Part I
     endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
     choices: []
     objectivesToActivate: []
   - LineID: Part I
@@ -72,6 +78,8 @@ MonoBehaviour:
     NPCGender: male
     NextLineID: 
     endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
     choices:
     - text: (Stay focused.)
       NextLineID: Part II
@@ -94,6 +102,8 @@ MonoBehaviour:
     NPCGender: male
     NextLineID: Part III
     endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
     choices: []
     objectivesToActivate: []
   - LineID: Part III
@@ -105,6 +115,8 @@ MonoBehaviour:
     NPCGender: male
     NextLineID: Part IV
     endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
     choices: []
     objectivesToActivate: []
   - LineID: Part IV
@@ -116,6 +128,8 @@ MonoBehaviour:
     NPCGender: male
     NextLineID: Part V
     endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
     choices: []
     objectivesToActivate: []
   - LineID: Part V
@@ -125,6 +139,8 @@ MonoBehaviour:
     NPCGender: male
     NextLineID: Part VII
     endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
     choices: []
     objectivesToActivate: []
   - LineID: Part VI
@@ -134,6 +150,8 @@ MonoBehaviour:
     NPCGender: male
     NextLineID: Part VII
     endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
     choices: []
     objectivesToActivate: []
   - LineID: Part VII
@@ -144,6 +162,8 @@ MonoBehaviour:
     NPCGender: male
     NextLineID: Part VIII
     endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
     choices: []
     objectivesToActivate: []
   - LineID: Part VIII
@@ -154,6 +174,8 @@ MonoBehaviour:
     NPCGender: male
     NextLineID: 
     endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
     choices:
     - text: Don't worry about it, go home.
       NextLineID: Part IX
@@ -175,6 +197,8 @@ MonoBehaviour:
     NPCGender: male
     NextLineID: 
     endDialogueAfterLine: 1
+    movingOn: 0
+    GiveItem: 0
     choices: []
     objectivesToActivate:
     - stackLeaves
@@ -187,6 +211,58 @@ MonoBehaviour:
     NPCGender: male
     NextLineID: 
     endDialogueAfterLine: 1
+    movingOn: 0
+    GiveItem: 0
+    choices: []
+    objectivesToActivate:
+    - stackLeaves
+  - LineID: E Good 1
+    Speaker: Echo
+    text: Sure, Reed! What's on your mind?
+    lineTone: 1
+    NPCGender: female
+    NextLineID: Nice
+    endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
+    choices: []
+    objectivesToActivate:
+    - stackLeaves
+  - LineID: E Good 2
+    Speaker: Echo
+    text: Aw Reed, well I might be a bit awkward, but I'm happy to lend an ear.
+    lineTone: 1
+    NPCGender: female
+    NextLineID: Nice
+    endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
+    choices: []
+    objectivesToActivate:
+    - stackLeaves
+  - LineID: E Bad 1
+    Speaker: Echo
+    text: I mean, not really, I'm here with Irene. She does need some alone time
+      though, so I guess I'll hear you out.
+    lineTone: 2
+    NPCGender: female
+    NextLineID: Mean
+    endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
+    choices: []
+    objectivesToActivate:
+    - stackLeaves
+  - LineID: E Bad 2
+    Speaker: Echo
+    text: You caught me at a bad time man, I've gotta go walk my...hamster...ugh.
+      What's on your mind, Reed?
+    lineTone: 0
+    NPCGender: female
+    NextLineID: Mean
+    endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
     choices: []
     objectivesToActivate:
     - stackLeaves

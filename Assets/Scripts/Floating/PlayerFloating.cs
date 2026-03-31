@@ -68,6 +68,9 @@ public class PlayerFloating : MonoBehaviour
     public bool chimeActive = false;
     public Chime chimeScript;
 
+    [Header("VFX")]
+    [SerializeField] private GameObject FloatingVfx;
+
 
     public bool IsFloating { get; private set; } = false;
     private bool canFloat = false;
@@ -116,6 +119,7 @@ public class PlayerFloating : MonoBehaviour
         toggleInventoryUI = GetComponent<ToggleInventoryUI>();
         playerCamera = Camera.main;
         controls = new PlayerControls();
+        FloatingVfx.SetActive(false);
 
         characterSwap = FindObjectOfType<CharacterSwap>();
 
@@ -303,6 +307,7 @@ public class PlayerFloating : MonoBehaviour
         animator.SetBool("isFloating", false);
         animator.SetTrigger("floatStart");
         StartCoroutine(FloatAnimationHandler());
+        FloatingVfx.SetActive(true);
 
         if (chimeActive)
         {
@@ -311,6 +316,9 @@ public class PlayerFloating : MonoBehaviour
 
         floatingSlider.gameObject.SetActive(true);
         timerSlider.gameObject.SetActive(true);
+        
+        GetComponent<PlayerController>().SetCurrentPlatform(null);
+        
         IsFloating = true;
         floatTimer = 0f;
         rhythmTimer = 0f;
@@ -329,15 +337,15 @@ public class PlayerFloating : MonoBehaviour
         rb.angularVelocity = Vector3.zero;
         rb.linearVelocity = Vector3.zero;
 
-        // Apply lift force
-        rb.AddForce(Vector3.up * floatLift, ForceMode.VelocityChange);
-
         // pick target hover height (from current world position)
         hoverTargetY = transform.position.y + floatHeightOffset;
 
         // disable controller systems
         if (playerController != null) playerController.enabled = false;
         if (charController != null) charController.enabled = false;
+        
+        // Apply lift force
+        rb.AddForce(Vector3.up * floatLift, ForceMode.VelocityChange);
 
         // reset movement smoothing state
         currentMove = Vector3.zero;
@@ -348,6 +356,7 @@ public class PlayerFloating : MonoBehaviour
     {
         animator.SetTrigger("isLanding");
         animator.SetBool("isFloating", false);
+        FloatingVfx.SetActive(false);
 
         if (chimeActive)
             chimeScript.ResetChimeAnimations();

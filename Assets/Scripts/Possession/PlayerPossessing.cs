@@ -35,8 +35,22 @@ public class PlayerPossessing : MonoBehaviour
     private bool posessing = false;
     public bool shouldShowIcon = true;
 
+    [Header("Animator")]
+    public Animator animator;
+    private CharacterSwap characterSwap;
+
+
     private void Awake()
     {
+        characterSwap = FindObjectOfType<CharacterSwap>();
+
+        if (characterSwap != null)
+        {
+            animator = characterSwap.GetAnimator();
+
+            characterSwap.onAnimatorChanged += UpdateAnimator;
+        }
+
         playerController = GetComponent<PlayerController>();
         playerRigidbody = GetComponent<Rigidbody>();
         possessionTimer = possessionDuration;
@@ -147,6 +161,8 @@ public class PlayerPossessing : MonoBehaviour
         }
 
         posessing = true;
+
+        animator.SetBool("isPosessing", true);
         GameManager.Instance.possessionSlider.gameObject.SetActive(true);
         normalEnemyMovement = target.GetComponent<PatrollingEnemy>();
         enemyRigidbody = target.GetComponent<Rigidbody>();
@@ -200,6 +216,7 @@ public class PlayerPossessing : MonoBehaviour
                 normalEnemyMovement.enabled = true;
             }
         }
+        animator.SetBool("isPosessing", false);
 
         GameManager.Instance.possessionSlider.gameObject.SetActive(false);
 
@@ -247,4 +264,10 @@ public class PlayerPossessing : MonoBehaviour
             shouldShowIcon = false;
         }
     }
+
+    void UpdateAnimator(Animator newAnimator)
+    {
+        animator = newAnimator;
+    }
+
 }

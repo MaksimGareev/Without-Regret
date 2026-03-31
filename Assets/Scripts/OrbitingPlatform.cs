@@ -1,3 +1,4 @@
+
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
@@ -17,7 +18,7 @@ public class OrbitingPlatform : MonoBehaviour
     public float orbitSpeed = 1f;
 
     [Tooltip("Radius of the circular path the platform follows around the center point.")]
-    [SerializeField] private float radius = 5f;
+    [SerializeField] private float radius = 10f;
 
     [Tooltip("The central point around which the platform will rotate.")]
     [SerializeField] private Transform centerPoint;
@@ -42,6 +43,8 @@ public class OrbitingPlatform : MonoBehaviour
     public Vector3 platformVelocity { get; private set; }
     private bool lockedOnce = false;
 
+   // private PlatformCollision PlatformCollisionRef;
+
     private void Awake()
     {
         if (centerPoint == null)
@@ -58,6 +61,8 @@ public class OrbitingPlatform : MonoBehaviour
         rb.constraints = RigidbodyConstraints.FreezeRotation | RigidbodyConstraints.FreezePositionY;
 
         lastPosition = transform.position;
+        
+     //   PlatformCollisionRef = gameObject.GetComponent<PlatformCollision>();
     }
 
     private void OnEnable()
@@ -138,7 +143,9 @@ public class OrbitingPlatform : MonoBehaviour
 
     private void LockPlatform()
     {
-        rb.constraints = RigidbodyConstraints.FreezeAll;
+      //  rb.constraints = RigidbodyConstraints.FreezeAll;
+        rb.isKinematic = true;
+        
     }
 
     private void SetObjectiveComplete(ObjectiveInstance objective)
@@ -160,6 +167,7 @@ public class OrbitingPlatform : MonoBehaviour
         {
             Debug.Log("Platform is currently set to need a linked objective to be stopped.");
         }
+        orbitSpeed = 1;
     }
 
     private void OnDisable()

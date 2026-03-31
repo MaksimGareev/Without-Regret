@@ -20,7 +20,239 @@ MonoBehaviour:
       on?
     lineTone: 0
     NPCGender: male
+    NextLineID: II
+    endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: II
+    Speaker: Darry
+    text: I feel...awful. Where's Reed, and who are you?!
+    lineTone: 0
+    NPCGender: male
+    NextLineID: III
+    endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
+    choices:
+    - text: I'm Echo, this is the Astral Plane.
+      NextLineID: Echo Good I
+      moralityChange: 1
+      direction: 1
+      objectiveToActivate: 
+    - text: Doesn't matter, what're you feeling?
+      NextLineID: Echo Bad I
+      moralityChange: -1
+      direction: 0
+      objectiveToActivate: 
+    objectivesToActivate: []
+  - LineID: Echo Good I
+    Speaker: Echo
+    text: 'Uh...hi, Darry. I''m Echo, and we''re in the Astral Plane, an ''after''life''
+      of sorts. '
+    lineTone: 0
+    NPCGender: female
+    NextLineID: III Good
+    endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Echo Bad I
+    Speaker: Echo
+    text: Who I am doesn't matter. You're dead and have been for some time now, us
+      being in the Astral Plane is reflective of that. I'm curious, how, or what,
+      are you feeling right now?
+    lineTone: 0
+    NPCGender: female
+    NextLineID: III Bad
+    endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: III Good
+    Speaker: Darry
+    text: The Astral Plane? What're you talking about, my house is right over...oh.
+      I...see...
+    lineTone: 0
+    NPCGender: male
+    NextLineID: IV
+    endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: III Bad
+    Speaker: Darry
+    text: Watch the attitude, kid! Also, what're you talking about 'I'm dead and
+      this is the Astral plane'? Are you out of your...oh. I...uh...
+    lineTone: 2
+    NPCGender: male
+    NextLineID: IV
+    endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: IV
+    Speaker: Darry
+    text: I remember now...it was the night Reed and I were fighting. He went off
+      on his own and I...so I'm...
+    lineTone: 0
+    NPCGender: male
+    NextLineID: V
+    endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: V
+    Speaker: Echo
+    text: I'm not entirely sure on what happened to you on that night, but your death
+      left you with some lingering regrets. Just now, I intervened and changed your
+      trajectory. Now, you're free to move on from here.
+    lineTone: 0
+    NPCGender: female
+    NextLineID: VI
+    endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: VI
+    Speaker: Darry
+    text: At what point did I forget all of my regrets and just start living here?
+      Have I been living like normal, has it been the same day every day? Reed...we
+      parted on such sh*$#y terms...what do I do now?
+    lineTone: 0
+    NPCGender: male
+    NextLineID: 
+    endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
+    choices:
+    - text: Reed still visits you, every day.
+      NextLineID: Echo Good II
+      moralityChange: 1
+      direction: 3
+      objectiveToActivate: 
+    - text: Saving you was hard, you know.
+      NextLineID: Echo Bad II
+      moralityChange: -1
+      direction: 0
+      objectiveToActivate: 
+    - text: I don't know what to say...
+      NextLineID: Echo Neutral I
+      moralityChange: -1
+      direction: 1
+      objectiveToActivate: 
+    objectivesToActivate: []
+  - LineID: Echo Good II
+    Speaker: Echo
+    text: Listen. In the 'overworld', the original one we're from, Reed visits your
+      grave every day. He misses you and cared about you deeply, just as you cared
+      for him. I can't say what'll happen with that Reed, as I'm here in this plane
+      with you. Here, though, you can let go of your regrets, and know that eventually,
+      Reed will find you. Wherever you go.
+    lineTone: 1
+    NPCGender: female
+    NextLineID: VII Good
+    endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Echo Bad II
+    Speaker: Echo
+    text: That's crazy, listen. I worked my a$* off ensuring that you'd get out of
+      that situation. Without me, you wouldn't be able to move on from here, or whatever
+      it is you're about to do. I've afforded you something I'm not even sure is
+      guaranteed for myself. All of this in mind, got something cool you can give
+      me?
+    lineTone: 2
+    NPCGender: female
+    NextLineID: VII Bad
+    endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Echo Neutral I
+    Speaker: Echo
+    text: Darry, I'm sorry...I don't know what to say? I'm still getting my bearings.
+      I really don't know what's next for you, or if I can even offer helpful words...
+    lineTone: 0
+    NPCGender: female
+    NextLineID: VII Neutral
+    endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: VII Good
+    Speaker: Darry
+    text: ...You said your name was Echo, right? Not bad, kid. Maybe we ran into
+      each other a few times back there, I hope I was always nice to you. Thank you,
+      Echo, from the bottom of my 'heart'. I was blind, and knew only regret. Now,
+      wherever I go, I know it'll be brighter there.
+    lineTone: 1
+    NPCGender: male
+    NextLineID: VIII fine
+    endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: VII Bad
+    Speaker: Darry
+    text: ...You said your name was Echo, right? F*#&. You. Whatever the reason you're
+      here, I hope you're stuck. Still, thanks for changing my outcome. Now, I get
+      to leave your miserable a$* here. I don't have anything cool for you, and even
+      if I did, I'm not sure I'd hand it over. You should try to turn over a new
+      leaf while you're here. Maybe there's hope.
+    lineTone: 2
+    NPCGender: male
+    NextLineID: VIII bad
+    endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: VII Neutral
+    Speaker: Darry
+    text: ...You said your name was Echo, right? You know what, that was probably
+      the most human response you could've given me. Ha! Thank you, Echo. I hope
+      things clear up for you in time.
+    lineTone: 1
+    NPCGender: male
+    NextLineID: VIII fine
+    endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: VIII fine
+    Speaker: Darry
+    text: I think it's time...I feel weightless, but safe. I'm in control. Take care,
+      Echo!
+    lineTone: 1
+    NPCGender: male
     NextLineID: 
     endDialogueAfterLine: 1
+    movingOn: 1
+    GiveItem: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: VIII bad
+    Speaker: Darry
+    text: I think it's time...later, kid! Enjoy being stuck here!
+    lineTone: 1
+    NPCGender: male
+    NextLineID: VIII
+    endDialogueAfterLine: 1
+    movingOn: 1
+    GiveItem: 0
     choices: []
     objectivesToActivate: []
