@@ -4891,7 +4891,6 @@ GameObject:
   - component: {fileID: 2774413853831147891}
   - component: {fileID: 7441966102985826961}
   - component: {fileID: 7872790047243463844}
-  - component: {fileID: 6003733126357125353}
   - component: {fileID: 4739791299965162435}
   m_Layer: 14
   m_Name: Boss Enemy
@@ -5087,34 +5086,14 @@ MonoBehaviour:
   voidPoolPrefab: {fileID: 6094352196004457944, guid: ced700967aa47a24b9321aa50e25ebed, type: 3}
   projectileSpawn: {fileID: 3124144539760143426}
   healthPickup: {fileID: 1914410868309050336, guid: 5c30dd6d25372d14080c60411dd29b2e, type: 3}
+  animator: {fileID: 5641583712873450880}
   baseSliderPrefab: {fileID: 5423844392208258101, guid: 715582a152650ea45aa52e427a36e639, type: 3}
   slidersContainer: {fileID: 5598156055868058803}
   sliderSpacing: 4
   activeFillColor: {r: 0.2971698, g: 1, b: 0.32686532, a: 1}
   inactiveFillColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.6}
   showDebugLogs: 0
---- !u!95 &6003733126357125353
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7790211378159208611}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 7e599fe245c19994e89cef1753df6f5d, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
+  GameEnding: {fileID: 0}
 --- !u!114 &4739791299965162435
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6214,7 +6193,7 @@ Animator:
   m_GameObject: {fileID: 8663894400251891107}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 8135666d6946df443bf487c5ff01e2c3, type: 3}
-  m_Controller: {fileID: 9100000, guid: 7e599fe245c19994e89cef1753df6f5d, type: 2}
+  m_Controller: {fileID: 9100000, guid: 1f00afe6b038e514b9bf9d830fb09247, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0

@@ -15,6 +15,8 @@ public class NewDialogueLineData
 
     public string NextLineID;
     public bool endDialogueAfterLine;
+    public bool movingOn;
+    public bool GiveItem;
 
     public List<NewDialogueChoiceData> choices;
     public List<string> objectivesToActivate;

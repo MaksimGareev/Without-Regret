@@ -21,15 +21,19 @@ MonoBehaviour:
     NPCGender: female
     NextLineID: Part II
     endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
     choices: []
     objectivesToActivate: []
   - LineID: Part II
     Speaker: Penelope
-    text: Wait, what's going on? Who are y-...Echo? What're you doing here?
+    text: Wait, what's going on? Who are y-...Echo?! What're you doing here?
     lineTone: 0
     NPCGender: female
     NextLineID: Part III
     endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
     choices: []
     objectivesToActivate: []
   - LineID: Part III
@@ -39,6 +43,8 @@ MonoBehaviour:
     NPCGender: female
     NextLineID: 
     endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
     choices:
     - text: Breathe, you're okay.
       NextLineID: Breathe
@@ -59,6 +65,8 @@ MonoBehaviour:
     NPCGender: female
     NextLineID: Trust
     endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
     choices: []
     objectivesToActivate: []
   - LineID: Calm Down
@@ -69,6 +77,8 @@ MonoBehaviour:
     NPCGender: female
     NextLineID: Sorry
     endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
     choices: []
     objectivesToActivate: []
   - LineID: Trust
@@ -78,6 +88,8 @@ MonoBehaviour:
     NPCGender: female
     NextLineID: 
     endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
     choices:
     - text: I'm sorry, but you've already died...
       NextLineID: Nice
@@ -97,6 +109,8 @@ MonoBehaviour:
     NPCGender: female
     NextLineID: 
     endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
     choices:
     - text: I'm sorry, but you've already died...
       NextLineID: Nice
@@ -117,6 +131,8 @@ MonoBehaviour:
     NPCGender: female
     NextLineID: Nice II
     endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
     choices: []
     objectivesToActivate: []
   - LineID: Nice II
@@ -125,7 +141,132 @@ MonoBehaviour:
       an 'afterlife' of sorts, called The Astral Plane.
     lineTone: 0
     NPCGender: female
+    NextLineID: Nice III
+    endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Nice III
+    Speaker: Penelope
+    text: Afterlife? So I'm...you're right...I remember now. I was hurting after
+      the accident, I could barely see...I couldn't get out of the forest.
+    lineTone: 0
+    NPCGender: female
+    NextLineID: Next
+    endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Next
+    Speaker: Penelope
+    text: Echo. I'm not ready. I have so many questions! Why am I just seeing you
+      now?! Can I say sorry to Irene?! What's going to happen?!
+    lineTone: 2
+    NPCGender: female
+    NextLineID: 
+    endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
+    choices:
+    - text: Irene misses you every day.
+      NextLineID: E Good I
+      moralityChange: 1
+      direction: 0
+      objectiveToActivate: 
+    - text: Getting you out was tough.
+      NextLineID: E Bad I
+      moralityChange: -1
+      direction: 3
+      objectiveToActivate: 
+    - text: I'm not very good at this...
+      NextLineID: E Neutral I
+      moralityChange: 0
+      direction: 1
+      objectiveToActivate: 
+    objectivesToActivate: []
+  - LineID: E Good I
+    Speaker: Echo
+    text: If you're wondering if Irene grew to hate you...you never had anything
+      to worry about. She visits your grave every day, and cries every time. You
+      didn't make it through the forest in our original world, but it's different
+      now. You can move on from here.
+    lineTone: 1
+    NPCGender: female
+    NextLineID: Happy End
+    endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: E Neutral I
+    Speaker: Echo
+    text: You know, this isn't the first time I try to help someone through this
+      process. You'd think I'd get better at it, but clearly, I haven't. I'm sorry
+      Penelope, I really don't know what to say. I'm sure what's next for you, wherever
+      it is, will be good...hopefully...
+    lineTone: 1
+    NPCGender: female
+    NextLineID: Neutral End
+    endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: E Bad I
+    Speaker: Echo
+    text: Penelope, I'm so happy to see you again. With that said, it was quite difficult
+      getting you through the Astral Forest in one piece. I've secured your way out
+      of here, something I'm not even sure I'll be able to do. Do you have anything
+      useful on you, as a thanks for my hard work?
+    lineTone: 2
+    NPCGender: female
+    NextLineID: Negative End
+    endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Happy End
+    Speaker: Penelope
+    text: Echo, you're so sweet. I still don't fully undertand what's going on, but
+      I know you're not lying, I know you're right. I feel it. Hopefully, Irene can
+      find me on the other side when it's her time, and I'll be able to tell her
+      everything I couldn't. Till then, thank you, Echo. My hero.
+    lineTone: 1
+    NPCGender: female
     NextLineID: 
     endDialogueAfterLine: 1
+    movingOn: 1
+    GiveItem: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Neutral End
+    Speaker: Penelope
+    text: Aw, Echo. It's okay, I appreciate you trying. I'm sure this is just as
+      confusing for you as it is for me, so I appreciate your kind words. I don't
+      know what's next for me, but I hope to see Irene, and eventually, you there
+      too. Thank you, Echo. Take care!
+    lineTone: 1
+    NPCGender: female
+    NextLineID: 
+    endDialogueAfterLine: 1
+    movingOn: 1
+    GiveItem: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Negative End
+    Speaker: Penelope
+    text: Echo...are you serious? I appreciate that you've been watching over me,
+      but I'm about to go some place neither of us can even fathom, and you're asking
+      for some kind of payment? You're definitely not the Echo I used to know...thanks
+      for helping, I guess.
+    lineTone: 2
+    NPCGender: female
+    NextLineID: 
+    endDialogueAfterLine: 1
+    movingOn: 1
+    GiveItem: 0
     choices: []
     objectivesToActivate: []

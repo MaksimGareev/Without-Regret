@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 5700156925590152242}
   - component: {fileID: 6463794586995985251}
   - component: {fileID: 3838490299525547321}
+  - component: {fileID: 7532842007454346782}
   m_Layer: 2
   m_Name: QTE Trigger Volume
   m_TagString: Untagged
@@ -68,9 +69,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::QTETriggerVolume
   damage: 1
   numInputs: 4
-  qteCanvas: {fileID: 0}
   arrowPrefab: {fileID: 5391696319492486959, guid: 188fec07895eecf449c9ccfc8c3e3ddc, type: 3}
-  arrowsContainer: {fileID: 0}
   arrowImages:
   - {fileID: 2143948765, guid: 4fbef39cc15d3bf42823262b4a1b9565, type: 3}
   - {fileID: -854419584, guid: 0335ff179afef484791a69994e6aa56f, type: 3}
@@ -79,4 +78,19 @@ MonoBehaviour:
   arrowSpacing: 8
   bossEnemy: {fileID: 0}
   playerController: {fileID: 0}
+  platforms: []
   showDebugLogs: 0
+--- !u!114 &7532842007454346782
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4030976284111038603}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c816b79715e89c84a9478dfd80fcc532, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractableProximity
+  range: 3
+  player: {fileID: 0}

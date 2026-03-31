@@ -6,7 +6,6 @@ using System.Collections;
 
 public class PlayerThrowing : MonoBehaviour
 {
-    
     private Inventory inventory;
     private Transform throwOrigin;
     private Camera playerCamera;
@@ -33,7 +32,7 @@ public class PlayerThrowing : MonoBehaviour
 
     [Header("Input")]
     [SerializeField] private MouseButton chargeKey = MouseButton.Right;
-    [SerializeField] private string chargeButton = "Xbox RightStick Click";
+    [SerializeField] private string chargeButton = "XboxRightTrigger";
 
     private int chargeKeyInt;
     private bool isCharging = false;
@@ -175,6 +174,11 @@ public class PlayerThrowing : MonoBehaviour
 
         if (isCharging)
         {
+            if (usingController)
+            {
+                Debug.Log($"Charge Button Value: {Input.GetAxis(chargeButton)}");
+            }
+            
             if (TimeSinceChargingStart >= waitBeforeCharging)
             {
                 if (currentCharge < 1f) // increases charge amount with time
@@ -217,6 +221,7 @@ public class PlayerThrowing : MonoBehaviour
                     if (Input.GetAxis(chargeButton) < 0.1f)
                     {
                         ThrowItem(currentCharge);
+                        Debug.Log($"Charge Button Value: {Input.GetAxis(chargeButton)}");
                     }
                 }
                 else
@@ -238,10 +243,12 @@ public class PlayerThrowing : MonoBehaviour
 
     private void ThrowItem(float charge)// throws the item
     {
+        Debug.Log("Throwing Item");
         TimeSinceChargingStart = 0;
         ItemData itemToThrow = inventory.GetFirstThrowable();
         if (itemToThrow == null)
         {
+            Debug.Log("No throwable item found in inventory to throw.");
             return;
         }
 
