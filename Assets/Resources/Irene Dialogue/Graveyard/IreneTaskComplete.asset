@@ -59,17 +59,6 @@ MonoBehaviour:
     objectivesToActivate: []
   - LineID: Story Start
     Speaker: Irene
-    text: Oh! I almost forgot. Here, I found this in front of your door.
-    lineTone: 0
-    NPCGender: female
-    NextLineID: Story II
-    endDialogueAfterLine: 0
-    movingOn: 0
-    GiveItem: 0
-    choices: []
-    objectivesToActivate: []
-  - LineID: Story II
-    Speaker: Irene
     text: ...I'm sorry, I was trying to not bring it up, but I still can't believe
       Penelope's gone.
     lineTone: 0
@@ -91,23 +80,23 @@ MonoBehaviour:
     movingOn: 0
     GiveItem: 0
     choices:
-    - text: Irene, you can't blame yourself for what happened.
-      NextLineID: Good II
+    - text: You can't blame yourself for what happened.
+      NextLineID: Good E 1
       moralityChange: 1
       direction: 0
       objectiveToActivate: 
-    - text: That's the last thing Penelope would want you to think.
-      NextLineID: Good II
+    - text: That's the last thing she'd think.
+      NextLineID: Good E 2
       moralityChange: 1
       direction: 3
       objectiveToActivate: 
-    - text: If you were so worried, why didn't you go?
-      NextLineID: Bad II
+    - text: Why didn't you go?
+      NextLineID: Bad E 1
       moralityChange: -1
       direction: 1
       objectiveToActivate: 
-    - text: That's stupid. Why would it be your fault?
-      NextLineID: Bad II
+    - text: That's silly.
+      NextLineID: Bad E 2
       moralityChange: -1
       direction: 2
       objectiveToActivate: 
@@ -159,9 +148,10 @@ MonoBehaviour:
     objectivesToActivate: []
   - LineID: Story VI
     Speaker: Irene
-    text: 'Also, I want to give you this, you deserve some fun after helping Reed
-      with the leaves. There''s a chest in the shed over there for to use it in. '
-    lineTone: 0
+    text: Also, I found this and wanted to give it to you, you deserve some fun after
+      helping Reed with the leaves. If I remember correctly, there should be a chest
+      in the shed you can use it on.
+    lineTone: 1
     NPCGender: female
     NextLineID: End
     endDialogueAfterLine: 0
@@ -172,11 +162,57 @@ MonoBehaviour:
   - LineID: End
     Speaker: Irene
     text: Thanks for coming, Echo. See you tomorrow.
-    lineTone: 0
+    lineTone: 1
     NPCGender: female
     NextLineID: 
     endDialogueAfterLine: 1
     movingOn: 0
     GiveItem: 1
+    choices: []
+    objectivesToActivate: []
+  - LineID: Good E 1
+    Speaker: Echo
+    text: Irene...you can't blame yourself for what happened.
+    lineTone: 0
+    NPCGender: female
+    NextLineID: Good II
+    endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Good E 2
+    Speaker: Echo
+    text: The LAST thing Penelope would think is that it was your fault, Irene. When
+      she was set on something, she was set.
+    lineTone: 0
+    NPCGender: female
+    NextLineID: Good II
+    endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Bad E 1
+    Speaker: Echo
+    text: If you were so worried, why didn't you go, Irene?
+    lineTone: 0
+    NPCGender: female
+    NextLineID: Bad II
+    endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Bad E 2
+    Speaker: Echo
+    text: Irene, that's silly. Think about it, how could it have possibly been your
+      fault?
+    lineTone: 0
+    NPCGender: female
+    NextLineID: Bad II
+    endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
     choices: []
     objectivesToActivate: []
