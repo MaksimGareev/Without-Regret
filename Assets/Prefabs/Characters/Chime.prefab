@@ -128,13 +128,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 0}
-  OrbitRadius: 1
-  OrbitSpeed: 1
-  BobHeight: 0.5
-  BobSpeed: 2
   facePlayer: 1
   lookSmooth: 8
-  model: {fileID: 0}
+  bobHeight: 0.5
+  bobSpeed: 2
+  followSmooth: 10
+  orbitPlayer: 1
+  orbitRadius: 2
+  orbitSpeed: 2
+  leadDistance: 2
+  leadStationaryDistance: 1.5
+  leadVerticalOffset: 1
+  moveThreshold: 0.1
   animator: {fileID: 7086453675518121099}
 --- !u!114 &4882477681072992440
 MonoBehaviour:
