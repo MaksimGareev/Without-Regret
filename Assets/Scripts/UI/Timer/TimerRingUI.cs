@@ -68,10 +68,10 @@ public class TimerRingUI : MonoBehaviour
             SetRingState(RingState.Full);
         }
         
-        if (Input.GetKeyDown(KeyCode.L))
+        /*if (Input.GetKeyDown(KeyCode.L))
         {
             SubtractRingSection(1);
-        }
+        }*/
     }
 
     public void SubtractRingSection(int sections)
