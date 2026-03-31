@@ -217,6 +217,18 @@ public class Darry : MonoBehaviour
                 ObjectiveManager.Instance.AddProgress(linkedNeighborhoodObjective.objectiveID, 1);
             }
             Debug.Log("Darry has made it to the end.");
+
+            if (dialogueTrigger != null && !dialogueTrigger.enabled)
+            {
+                dialogueTrigger.enabled = true;
+
+                Collider col = dialogueTrigger.GetComponent<Collider>();
+                if (col != null)
+                {
+                    col.enabled = true;
+                }
+                Debug.Log("Irene's dialogue trigger has been deactivated.");
+            }
         }
     }
 
