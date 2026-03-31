@@ -14,6 +14,7 @@ public class FollowChimeObjective : MonoBehaviour
     private int currentWaypointIndex = 0;
     private bool isObjectiveActive = false;
     private Transform chimeTransform;
+    private bool completed = false;
 
     private void OnEnable()
     {
@@ -63,7 +64,7 @@ public class FollowChimeObjective : MonoBehaviour
 
     private void Update()
     {
-        if (!isObjectiveActive) return;
+        if (!isObjectiveActive || completed) return;
 
         // If no waypoints, nothing to do
         if (waypoints == null || waypoints.Length == 0)
@@ -129,14 +130,15 @@ public class FollowChimeObjective : MonoBehaviour
         if (instance == null || instance.data == null) return;
         if (instance.data != linkedObjective) return;
 
-        // If the objective was completed elsewhere, ensure we stop guiding and reset state.
+        completed = true;
+        // Stop Guiding and restore Chime
         EndGuiding();
         isObjectiveActive = false;
     }
 
     private void StartGuidingIfNeeded()
     {
-        if (!isObjectiveActive) return;
+        if (!isObjectiveActive || completed) return;
         if (waypoints == null || waypoints.Length == 0) return;
         if (chime == null) return;
 
@@ -149,15 +151,14 @@ public class FollowChimeObjective : MonoBehaviour
 
     private void AdvanceWaypoint()
     {
+        ObjectiveManager.Instance.AddProgress(linkedObjective.objectiveID, 1);
+
+        if (completed) return;
+
         // Move to next index
         currentWaypointIndex++;
 
-        if (currentWaypointIndex >= waypoints.Length)
-        {
-            // Reached final waypoint -> complete objective
-            CompleteObjective();
-        }
-        else
+        if (currentWaypointIndex < waypoints.Length)
         {
             // Instruct Chime to move to the next waypoint
             if (chime != null)
@@ -171,33 +172,11 @@ public class FollowChimeObjective : MonoBehaviour
         }
     }
 
-    private void CompleteObjective()
-    {
-        if (linkedObjective == null)
-        {
-            Debug.LogWarning("FollowChimeObjective: linkedObjective is null on completion.");
-            EndGuiding();
-            isObjectiveActive = false;
-            return;
-        }
-
-        // Mark objective complete by adding required progress (this uses the existing ObjectiveManager API)
-        int amount = Mathf.Max(1, linkedObjective.requiredProgress);
-        ObjectiveManager.Instance.AddProgress(linkedObjective.objectiveID, amount);
-
-        // Stop guiding and restore Chime
-        EndGuiding();
-        isObjectiveActive = false;
-    }
-
     private void EndGuiding()
     {
         if (chime != null)
         {
             chime.ReturnToPlayer();
         }
-
-        // reset index so re-activation starts from beginning
-        currentWaypointIndex = 0;
     }
 }
