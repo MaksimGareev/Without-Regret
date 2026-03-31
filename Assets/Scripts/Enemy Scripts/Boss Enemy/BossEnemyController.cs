@@ -21,6 +21,7 @@ public class BossEnemyController : MonoBehaviour
 
         public BossAction GetNextAction(int currentIndex)
         {
+            Debug.Log($"Getting next action for phase {Name}, current index is {currentIndex}, total actions: {Actions.Length}, LoopActions is {LoopActions}");
             // Return null if current index is the last one and we're not looping, otherwise return the action at the current index (looping if necessary)
             if (!LoopActions && (currentIndex < 0 || currentIndex >= Actions.Length - 1))
             {
@@ -83,8 +84,10 @@ public class BossEnemyController : MonoBehaviour
     [SerializeField] private RectTransform slidersContainer;
     [Tooltip("Spacing in pixels between generated sliders.")]
     [SerializeField] private float sliderSpacing = 4f;
-    [SerializeField] private Color activeFillColor = Color.white;
+    [Tooltip("The color of the fill area of inactive (future) phases in the boss health UI")]
     [SerializeField] private Color inactiveFillColor = new Color(0.5f, 0.5f, 0.5f, 0.6f);
+    private Color activeFillColor = Color.white;
+
 
     [Header("Debugging")]
     [SerializeField] bool showDebugLogs = false;
@@ -102,6 +105,7 @@ public class BossEnemyController : MonoBehaviour
     private int currentHealth;
     private Renderer[] renderers;
 
+    private bool phaseChanging = false;
     public GameObject GameEnding;
 
     // Runtime list of sliders used by UI logic (either generated or the fallback `phaseSliders`)
@@ -159,6 +163,12 @@ public class BossEnemyController : MonoBehaviour
             sweepingArmObject.SetActive(false);
         }
 
+        if (baseSliderPrefab != null)
+        {
+            // active fill color is taken from the base prefab's fill rect image color
+            activeFillColor = baseSliderPrefab.fillRect.GetComponent<Image>().color;
+        }
+
         for (int i = 0; i < phases.Length; i++)
         {
             totalHealth += phases[i].Health;
@@ -187,6 +197,8 @@ public class BossEnemyController : MonoBehaviour
         {
             currentPhaseNumber = 1;
             currentActionIndex = 0;
+            phaseChanging = true;
+            if (showDebugLogs) Debug.Log("Initiating phase change (via Start).");
             phaseStartRoutine = StartCoroutine(StartPhaseAfterDelay(phases[0]));
         }
         else
@@ -205,6 +217,9 @@ public class BossEnemyController : MonoBehaviour
             Debug.LogError("Attempted to start a boss phase that is not properly configured.");
             return;
         }
+
+        phaseChanging = false;
+        if (showDebugLogs) Debug.Log("Ending phase change. (via StartPhase)");
 
         currentActionIndex = 0;
         currentAction = phase.Actions[currentActionIndex];
@@ -250,6 +265,10 @@ public class BossEnemyController : MonoBehaviour
         ActivateNextPhaseUI(nextPhaseIndex - 1, nextPhaseIndex);
 
         if (showDebugLogs) Debug.Log("Transitioning to phase " + currentPhaseNumber);
+
+        phaseChanging = true;
+        if (showDebugLogs) Debug.Log("Initiating phase change. (via StartNextPhase)");
+
         phaseStartRoutine = StartCoroutine(StartPhaseAfterDelay(phases[nextPhaseIndex]));
     }
 
@@ -399,6 +418,12 @@ public class BossEnemyController : MonoBehaviour
         // Call the current action's FinishAction to trigger any events tied to the end of the action
         currentAction?.FinishAction(showDebugLogs);
 
+        if (phaseChanging)
+        {
+            if (showDebugLogs) Debug.Log("Changing phases after action end. Not getting next action.");
+            return;
+        }
+
         // Get the next action for the current phase, if there is one, and initiate it
         BossAction nextAction = phases[currentPhaseNumber - 1].GetNextAction(currentActionIndex);
         if (nextAction != null)
@@ -425,6 +450,7 @@ public class BossEnemyController : MonoBehaviour
     {
         yield return new WaitForSeconds(phase.DelayBeforeStarting);
 
+        if (showDebugLogs) Debug.Log($"Starting phase {currentPhaseNumber} after initial delay of {phase.DelayBeforeStarting} seconds. Initiating first action: {phase.Actions[0].Name}");
         StartPhase(phase);
     }
 
