@@ -678,7 +678,21 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 303.13013, y: 890.7672, z: 351.47476}
   m_Center: {x: 8.9889345, y: 62.771152, z: 158.15791}
---- !u!114 &89653559
+--- !u!114 &89653560
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 89653556}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c816b79715e89c84a9478dfd80fcc532, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractableProximity
+  range: 3
+  player: {fileID: 0}
+--- !u!114 &89653561
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -697,21 +711,7 @@ MonoBehaviour:
   linkedObjective: {fileID: 11400000, guid: e8e042ada4182f947b293528972d83ee, type: 2}
   needsObjective: 1
   addProgress: 1
-  interactSound: {fileID: 8300000, guid: f95ad4e0a74d23243a8dcd2a7e337ca2, type: 3}
---- !u!114 &89653560
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 89653556}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c816b79715e89c84a9478dfd80fcc532, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::InteractableProximity
-  range: 3
-  player: {fileID: 0}
+  interactSound: {fileID: 0}
 --- !u!1001 &111191503
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -12296,7 +12296,7 @@ PrefabInstance:
       addedObject: {fileID: 89653558}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 78f63799d8b7b5e4e881db1b70fab2f9, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 89653559}
+      addedObject: {fileID: 89653561}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 78f63799d8b7b5e4e881db1b70fab2f9, type: 3}
       insertIndex: -1
       addedObject: {fileID: 89653560}
