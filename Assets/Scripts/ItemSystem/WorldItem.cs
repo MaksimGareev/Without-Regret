@@ -18,6 +18,12 @@ public class WorldItem : MonoBehaviour, IInteractable
     [Tooltip("Whether this item can be collected by the player. Setting this to false will make the item non-interactable and it will not show an interaction prompt.")]
     public bool isCollectible = true;
 
+    [Header("Objective Settings")]
+    public List<string> requiredObjectives = new List<string>();
+
+    [SerializeField] private ObjectiveData LinkedObjective;
+    [SerializeField] private bool ObjectiveNeeded;
+
     [Header("Player Animation")]
     public float animationDuration = 1.5f; // Duration of the collect animation in seconds
     [HideInInspector] public bool hasBeenCollected = false;
@@ -41,6 +47,22 @@ public class WorldItem : MonoBehaviour, IInteractable
         if (!isCollectible || hasBeenCollected || player == null)
             return false;
 
+        bool allCompleted = true;
+
+        if (requiredObjectives != null)
+        {
+            // check if all required objectives are completed if needed
+            foreach (string id in requiredObjectives)
+            {
+                // if all required objectives are not completed set bool to false
+                if (!ObjectiveManager.Instance.IsObjectiveCompleted(id))
+                {
+                    allCompleted = false;
+                    return false;
+                }
+            }
+        }
+
         PlayerMantling mantling = player.GetComponent<PlayerMantling>();
         if (mantling != null && mantling.isMantling)
             return false;
@@ -51,6 +73,7 @@ public class WorldItem : MonoBehaviour, IInteractable
     public void OnPlayerInteraction(GameObject player)
     {
         if (!isCollectible || hasBeenCollected) return;
+
         
         Inventory inventory = player.GetComponent<Inventory>();
         if (inventory == null) return;
@@ -59,5 +82,25 @@ public class WorldItem : MonoBehaviour, IInteractable
         hasBeenCollected = true;
 
         ButtonIcons.Instance?.Clear();
+
+
+        
+        if (ObjectiveNeeded)
+        {
+            if (LinkedObjective != null && ObjectiveManager.Instance != null)
+            {
+                var activeObjectives = ObjectiveManager.Instance.GetActiveObjectives();
+            
+                // If the linked objective is currently active, add progress to it
+                foreach (var obj in activeObjectives)
+                {
+                    if (obj.data == LinkedObjective)
+                    {
+                        ObjectiveManager.Instance.AddProgress(LinkedObjective.objectiveID, 1);
+                        
+                    }
+                }
+            }
+        }
     }
 }

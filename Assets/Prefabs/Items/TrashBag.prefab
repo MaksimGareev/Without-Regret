@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 8264757115707251146}
   - component: {fileID: 1556365187001750866}
   - component: {fileID: 2364963460107912933}
+  - component: {fileID: 5462971694208242959}
   m_Layer: 0
   m_Name: TrashBag
   m_TagString: Untagged
@@ -70,6 +71,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WorldItem
   itemData: {fileID: 11400000, guid: 3302c2daae4e8a54398e9865d1455df2, type: 2}
   isCollectible: 1
+  requiredObjectives: []
+  LinkedObjective: {fileID: 0}
+  ObjectiveNeeded: 0
   animationDuration: 1.5
   hasBeenCollected: 0
 --- !u!114 &2364963460107912933
@@ -85,6 +89,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SaveableWorldObject
   uniqueID: 20282845-6f3a-4d76-8cfb-b691ed8890ea
+--- !u!114 &5462971694208242959
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6738939303365400429}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c816b79715e89c84a9478dfd80fcc532, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractableProximity
+  range: 3
+  player: {fileID: 0}
 --- !u!1 &9064537826423964494
 GameObject:
   m_ObjectHideFlags: 0

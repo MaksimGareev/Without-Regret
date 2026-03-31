@@ -53,6 +53,7 @@ public class PossessedEnemyResisting : MonoBehaviour
     public void BeginPossession()
     {
         isPossessed = true;
+        //gameObject.GetComponent<MeshRenderer>().material.SetColor("BorderColor", new Color(255, 255, 255, 255));
     }
 
     public void UpdatePossession(Vector3 input)
@@ -64,5 +65,7 @@ public class PossessedEnemyResisting : MonoBehaviour
     {
         isPossessed = false;
         playerInput = Vector3.zero;
+        //gameObject.GetComponent<MeshRenderer>().material.SetColor("BorderColor", new Color(255, 0, 0, 255));
     }
 }
+
