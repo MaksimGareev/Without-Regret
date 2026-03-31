@@ -167,6 +167,7 @@ public class OrbitingPlatform : MonoBehaviour
         {
             Debug.Log("Platform is currently set to need a linked objective to be stopped.");
         }
+        orbitSpeed = 1;
     }
 
     private void OnDisable()

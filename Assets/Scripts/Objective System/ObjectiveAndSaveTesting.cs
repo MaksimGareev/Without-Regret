@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -174,6 +175,9 @@ public class ObjectiveAndSaveTesting : MonoBehaviour
     {
         AddListeners();
         debugUI.SetActive(true);
+        
+        EventSystem.current.SetSelectedGameObject(null);
+        
         Time.timeScale = 0f;
 
         Cursor.lockState = CursorLockMode.None;
@@ -184,6 +188,9 @@ public class ObjectiveAndSaveTesting : MonoBehaviour
     {
         RemoveListeners();
         debugUI.SetActive(false);
+        
+        EventSystem.current.SetSelectedGameObject(null);
+        
         Time.timeScale = 1f;
 
         Cursor.lockState = CursorLockMode.Locked;

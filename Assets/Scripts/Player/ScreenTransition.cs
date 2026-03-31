@@ -4,7 +4,7 @@ using System.Collections;
 
 public class ScreenTransition : MonoBehaviour
 {
-    public RawImage fadeImage;
+    public Image fadeImage;
     public RectTransform creditsPanel;
     public float fadeDuration = 2f;
     public float scrollSpeed = 20f;

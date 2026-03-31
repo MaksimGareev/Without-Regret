@@ -35,13 +35,13 @@ public class TimerRingUI : MonoBehaviour
     public RingState currentRingState;
     public static TimerRingUI Instance { get; private set; }
 
-    public UIFadeConrtoller uiFade;
+    public UIFadeController uiFade;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Awake()
     {
         characterSwap = FindObjectOfType<CharacterSwap>();
-        uiFade = FindFirstObjectByType<UIFadeConrtoller>();
+        uiFade = FindFirstObjectByType<UIFadeController>();
         if (characterSwap != null)
         {
             animator = characterSwap.GetAnimator();
@@ -63,10 +63,15 @@ public class TimerRingUI : MonoBehaviour
 
     public void Update()
     {
-        if (Input.GetKeyDown(KeyCode.L))
+        if (Time.timeSinceLevelLoad < 0.1 && currentRingState ==  RingState.Empty)
+        {
+            SetRingState(RingState.Full);
+        }
+        
+        /*if (Input.GetKeyDown(KeyCode.L))
         {
             SubtractRingSection(1);
-        }
+        }*/
     }
 
     public void SubtractRingSection(int sections)
@@ -90,6 +95,10 @@ public class TimerRingUI : MonoBehaviour
                     break;
                 case RingState.Empty:
                     // Already empty, do nothing
+                    if (GameOverManager.Instance && !GameOverManager.Instance.IsGameOver)
+                    {
+                        EndGame();
+                    }
                     break;
             }
         }
@@ -122,8 +131,18 @@ public class TimerRingUI : MonoBehaviour
         if (GameOverManager.Instance != null)
         {
             Debug.Log("Timer has run out! Triggering end game sequence.");
+            
+            if (animator)
+            {
+                StartCoroutine(GameOverAnimation());
+            }
+            else if (characterSwap)
+            {
+                animator = characterSwap.GetAnimator();
+                StartCoroutine(GameOverAnimation());
+            }
+            
             GameOverManager.Instance.TriggerGameOver();
-            animator.SetBool("GameOver", true);
         }
         else
         {
@@ -164,9 +183,11 @@ public class TimerRingUI : MonoBehaviour
         animator = newAnimator;
     }
 
-    IEnumerator wait()
+    IEnumerator GameOverAnimation()
     {
-        yield return new WaitForSeconds(1);
+        Debug.Log("Started Game Over Animation");
+        animator?.SetBool("GameOver", true);
+        yield return new WaitForSecondsRealtime(0.5f);
         animator.SetBool("GameOverLoop", true);
     }
 
