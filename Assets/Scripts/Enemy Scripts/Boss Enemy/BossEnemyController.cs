@@ -74,6 +74,7 @@ public class BossEnemyController : MonoBehaviour
     [Tooltip("The transform from which the void projectile will be launched. Position is used, rotation is ignored.")]
     [SerializeField] Transform projectileSpawn;
     [SerializeField] GameObject healthPickup;
+    [SerializeField] Animator animator;
 
     [Header("Boss Health UI")]
     [Tooltip("Base slider prefab used to create one slider per phase at runtime.")]
@@ -112,6 +113,12 @@ public class BossEnemyController : MonoBehaviour
         {
             player = FindAnyObjectByType<PlayerController>().transform;
             Debug.LogWarning("Player reference for Boss Enemy is null, had to Find manually");
+        }
+
+        if (animator == null)
+        {
+            animator = FindAnyObjectByType<Animator>();
+            Debug.LogWarning("Animator found manually");
         }
 
         if (voidProjectileObject != null)
@@ -171,6 +178,10 @@ public class BossEnemyController : MonoBehaviour
 
     private void Start()
     {
+        if (animator != null)
+        {
+            animator.SetBool("isIdle", true);
+        }
         // Start the first phase after an initial delay
         if (phases != null && phases.Length > 0 && phases[0].Actions != null && phases[0].Actions.Length > 0)
         {
@@ -496,6 +507,7 @@ public class BossEnemyController : MonoBehaviour
             Debug.LogError("Sweeping Arm reference is missing.");
             return;
         }
+        animator.SetTrigger("Attack");
 
         if (showDebugLogs) Debug.Log("Performing Arm Sweep action");
 
