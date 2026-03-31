@@ -14,6 +14,7 @@ public class DarryNeighborhood : MonoBehaviour
     public bool arrived = false;
     public float stopDistance = 0.5f;
     public GameObject IntruderTrigger;
+    public Animator animator;
 
     public string npcName = "Darry";
 
@@ -33,6 +34,14 @@ public class DarryNeighborhood : MonoBehaviour
         if (isTraveling)
         {
             TravelToTarget();
+            bool isMoving = agent.velocity.sqrMagnitude > 0.05f;
+
+            if (animator)
+            {
+                animator.SetBool("isWalking", isMoving);
+                animator.SetBool("isIdle", !isMoving);
+            }
+
 
             if (IntruderTrigger != null)
             {

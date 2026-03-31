@@ -1,9 +1,10 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Ending : MonoBehaviour
 {
     public ScreenTransition transition;
-    public GameObject PlayerUI;
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
@@ -16,7 +17,7 @@ public class Ending : MonoBehaviour
             }
 
             transition.StartTransition(); // fade to credits
-            PlayerUI.SetActive(false);
+            //PlayerUI.SetActive(false);
         }
     }
 }
