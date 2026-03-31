@@ -26,11 +26,24 @@ public class Darry : MonoBehaviour
 
     public GameObject enemy;
 
+    public Animator animator;
+    public NewDialogueTrigger dialogueTrigger; // dialogue trigger script reference
+    private InteractableProximity proximityScript;
+    private Collider proximityCollider;
+
     // objectives
     [SerializeField] ObjectiveData linkedHouseObjective;
     [SerializeField] ObjectiveData linkedNeighborhoodObjective;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    private void Awake()
+    {
+        proximityScript = GetComponent<InteractableProximity>();
+        if (proximityScript != null)
+        {
+            proximityCollider = proximityScript.GetComponent<Collider>();
+        }
+    }
+
     void Start()
     {
         if (targets.Length > 0)
@@ -49,8 +62,16 @@ public class Darry : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        bool isMoving = agent.velocity.sqrMagnitude > 0.05f;
+
+        if (animator)
+        {
+            animator.SetBool("isWalking", isMoving);
+            animator.SetBool("isIdle", !isMoving);
+        }
+
         // stop enemy when dialogue is active
-        if (DialogueManager.DialogueIsActive)
+        if (NewDialogueManager.Instance.DialogueIsActive)
         {
             agent.isStopped = true;
             return;
@@ -128,7 +149,7 @@ public class Darry : MonoBehaviour
         {
             isTraveling = false;
             arrived = true;
-            Debug.Log("Irene reached the destination.");
+            Debug.Log("Darry reached the destination.");
         }
     }
 
@@ -165,6 +186,9 @@ public class Darry : MonoBehaviour
         {
             agent.SetDestination(currentTarget.position);
         }
+
+
+
     }
 
     private void OnTriggerEnter(Collider other)
@@ -193,6 +217,18 @@ public class Darry : MonoBehaviour
                 ObjectiveManager.Instance.AddProgress(linkedNeighborhoodObjective.objectiveID, 1);
             }
             Debug.Log("Darry has made it to the end.");
+
+            if (dialogueTrigger != null && !dialogueTrigger.enabled)
+            {
+                dialogueTrigger.enabled = true;
+
+                Collider col = dialogueTrigger.GetComponent<Collider>();
+                if (col != null)
+                {
+                    col.enabled = true;
+                }
+                Debug.Log("Irene's dialogue trigger has been deactivated.");
+            }
         }
     }
 

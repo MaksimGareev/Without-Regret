@@ -21,57 +21,54 @@ MonoBehaviour:
     NPCGender: 
     NextLineID: 
     endDialogueAfterLine: 0
+    GiveItem: 0
     choices:
-    - text: Why does everything look...different?
-      NextLineID: Part II
+    - text: Why does everything look strange?
+      NextLineID: Good E 1
       moralityChange: 1
-      direction: 0
+      direction: 3
       objectiveToActivate: 
     - text: Who the **** are you?!
-      NextLineID: Part II
+      NextLineID: Bad E 1
       moralityChange: -1
       direction: 1
       objectiveToActivate: 
-    - text: This is what I get for eating random berries in the forest.
-      NextLineID: Part II
+    - text: Shouldn't have eaten those berries.
+      NextLineID: Good E 2
       moralityChange: 1
       direction: 2
       objectiveToActivate: 
-    - text: Can you get away from me? Like, right now?
-      NextLineID: Part II
+    - text: Get away from me.
+      NextLineID: Bad E 2
       moralityChange: -1
-      direction: 3
+      direction: 0
       objectiveToActivate: 
     objectivesToActivate: []
   - LineID: Part II
     Speaker: Chime
     text: I'm sure you have many questions, I'll do my best to explain. My name is
-      Chime, your guiding fairy, and we're in the astral plane now. This is the astral
+      Chime, your guiding fairy, and we're in the Astral Plane now. This is the Astral
       form of your house.
     lineTone: 0
     NPCGender: 
     NextLineID: 
     endDialogueAfterLine: 0
+    GiveItem: 0
     choices:
-    - text: What is the 'astral plane?
-      NextLineID: Part III
+    - text: What is the 'Astral Plane?
+      NextLineID: Good E I
       moralityChange: 1
-      direction: 0
+      direction: 3
       objectiveToActivate: 
-    - text: Respectfully, where the **** am I exactly?
-      NextLineID: Part III
-      moralityChange: 1
-      direction: 2
-      objectiveToActivate: 
-    - text: Yeah, that doesn't make things any clearer.
-      NextLineID: Part III
-      moralityChange: -1
+    - text: Doesn't make things any clearer.
+      NextLineID: Neutral E I
+      moralityChange: 0
       direction: 1
       objectiveToActivate: 
-    - text: Should I even bother? Can I go back to sleep?
-      NextLineID: Part III
+    - text: Can I go back to sleep?
+      NextLineID: Bad E I
       moralityChange: -1
-      direction: 3
+      direction: 0
       objectiveToActivate: 
     objectivesToActivate: []
   - LineID: Part III
@@ -83,6 +80,7 @@ MonoBehaviour:
     NPCGender: 
     NextLineID: Part IV
     endDialogueAfterLine: 0
+    GiveItem: 0
     choices: []
     objectivesToActivate: []
   - LineID: Part IV
@@ -94,6 +92,7 @@ MonoBehaviour:
     NPCGender: 
     NextLineID: Part V
     endDialogueAfterLine: 0
+    GiveItem: 0
     choices: []
     objectivesToActivate: []
   - LineID: Part V
@@ -103,24 +102,25 @@ MonoBehaviour:
     NPCGender: 
     NextLineID: 
     endDialogueAfterLine: 0
+    GiveItem: 0
     choices:
     - text: Yes, I can!
-      NextLineID: Good
+      NextLineID: Good E One
       moralityChange: 1
       direction: 0
       objectiveToActivate: 
     - text: I'm not sure, but I'll try.
-      NextLineID: Good
+      NextLineID: Good E Two
       moralityChange: 1
       direction: 2
       objectiveToActivate: 
-    - text: Why should I? I've got my own problems.
-      NextLineID: Bad
+    - text: I've got my own problems.
+      NextLineID: Bad E One
       moralityChange: -1
       direction: 1
       objectiveToActivate: 
-    - text: You know, you're asking a lot of someone who just woke up.
-      NextLineID: Bad
+    - text: I JUST woke up.
+      NextLineID: Bad E Two
       moralityChange: -1
       direction: 3
       objectiveToActivate: 
@@ -128,10 +128,11 @@ MonoBehaviour:
   - LineID: Good
     Speaker: Chime
     text: That's the spirit! Let's get going.
-    lineTone: 0
+    lineTone: 1
     NPCGender: 
-    NextLineID: Part VI
+    NextLineID: End
     endDialogueAfterLine: 0
+    GiveItem: 0
     choices: []
     objectivesToActivate: []
   - LineID: Bad
@@ -139,27 +140,173 @@ MonoBehaviour:
     text: Helping the others will fix your biggest problem. Just trust me.
     lineTone: 0
     NPCGender: 
-    NextLineID: Part VI
-    endDialogueAfterLine: 0
-    choices: []
-    objectivesToActivate: []
-  - LineID: Part VI
-    Speaker: Chime
-    text: I saw you grab a map before you went to bed last night, do you still have
-      it?
-    lineTone: 0
-    NPCGender: 
     NextLineID: End
     endDialogueAfterLine: 0
+    GiveItem: 0
     choices: []
     objectivesToActivate: []
   - LineID: End
     Speaker: Chime
-    text: Looking at the map, it seems we'll have to go through a gate in The Graveyard.
-      Grab what you need, and when you're ready, we'll head out.
+    text: We'll have to go through a gate in The Graveyard. Grab what you need, and
+      when you're ready, we'll head out.
     lineTone: 0
     NPCGender: 
     NextLineID: 
     endDialogueAfterLine: 1
+    GiveItem: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Good E 1
+    Speaker: Echo
+    text: Hello, weird fairy...moth...thing? Could you tell me why everything looks
+      as if I'm seeing it through a fishbowl?
+    lineTone: 0
+    NPCGender: female
+    NextLineID: Part II
+    endDialogueAfterLine: 0
+    GiveItem: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Good E 2
+    Speaker: Echo
+    text: You know, being around a forest my whole life, I should've known better
+      than to eat those berries.
+    lineTone: 0
+    NPCGender: female
+    NextLineID: Part II berries
+    endDialogueAfterLine: 0
+    GiveItem: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Bad E 1
+    Speaker: Echo
+    text: Yeah, I'm awake now. Mind telling me who the f*#% you are?!
+    lineTone: 2
+    NPCGender: female
+    NextLineID: Part II confused
+    endDialogueAfterLine: 0
+    GiveItem: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Bad E 2
+    Speaker: Echo
+    text: Where am I? Who are you? Get away from me.
+    lineTone: 0
+    NPCGender: female
+    NextLineID: Part II get away
+    endDialogueAfterLine: 0
+    GiveItem: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Part II berries
+    Speaker: Chime
+    text: This isn't a wild berry hallucination, silly!
+    lineTone: 1
+    NPCGender: female
+    NextLineID: Part II
+    endDialogueAfterLine: 0
+    GiveItem: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Part II confused
+    Speaker: Chime
+    text: Hey! There's no need to be rude...we're more acquainted than you think.
+    lineTone: 2
+    NPCGender: female
+    NextLineID: Part II
+    endDialogueAfterLine: 0
+    GiveItem: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Part II get away
+    Speaker: Chime
+    text: Relax! I promise, I'm not here to hurt you.
+    lineTone: 0
+    NPCGender: female
+    NextLineID: Part II
+    endDialogueAfterLine: 0
+    GiveItem: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Good E I
+    Speaker: Echo
+    text: Okay...what exactly is this 'Astral Plane' that I'm in now?
+    lineTone: 0
+    NPCGender: female
+    NextLineID: Part III
+    endDialogueAfterLine: 0
+    GiveItem: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Bad E I
+    Speaker: Echo
+    text: Uh-huh. Cool. Can I go back to sleep now? Was having this really awesome
+      dream where-
+    lineTone: 1
+    NPCGender: female
+    NextLineID: Part III sleep
+    endDialogueAfterLine: 0
+    GiveItem: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Neutral E I
+    Speaker: Echo
+    text: Yeah...that doesn't make things any clearer, really.
+    lineTone: 0
+    NPCGender: female
+    NextLineID: Part III
+    endDialogueAfterLine: 0
+    GiveItem: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Part III sleep
+    Speaker: Chime
+    text: Are you serious?! You can take a nap later, pay attention!
+    lineTone: 2
+    NPCGender: female
+    NextLineID: Part III
+    endDialogueAfterLine: 0
+    GiveItem: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Good E One
+    Speaker: Echo
+    text: If it's for my friends, then yes, I absolutely can!
+    lineTone: 1
+    NPCGender: female
+    NextLineID: Good
+    endDialogueAfterLine: 0
+    GiveItem: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Good E Two
+    Speaker: Echo
+    text: I can't confidently say I'll succeed, but I'll give it my best shot.
+    lineTone: 1
+    NPCGender: female
+    NextLineID: Good
+    endDialogueAfterLine: 0
+    GiveItem: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Bad E One
+    Speaker: Echo
+    text: Man...I've got my own problems. Does it have to be me?
+    lineTone: 2
+    NPCGender: female
+    NextLineID: Bad
+    endDialogueAfterLine: 0
+    GiveItem: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Bad E Two
+    Speaker: Echo
+    text: You know...you're asking a lot of someone who just woke up. I still haven't
+      wrapped my head around where I am...
+    lineTone: 2
+    NPCGender: female
+    NextLineID: Bad
+    endDialogueAfterLine: 0
+    GiveItem: 0
     choices: []
     objectivesToActivate: []

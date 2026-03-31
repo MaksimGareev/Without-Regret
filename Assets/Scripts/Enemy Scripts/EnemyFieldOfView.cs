@@ -85,8 +85,14 @@ public class EnemyFieldOfView : MonoBehaviour
     private bool isStunned = false;
     private float stunDuration;
     private float timeSinceStunned = 0f;
+    private Transform initialTransform;
 
     [SerializeField] private PatrollingEnemy normalMovement;
+
+    private void Awake()
+    {
+        initialTransform = transform;
+    }
 
     private void Start()
     {
@@ -264,11 +270,16 @@ public class EnemyFieldOfView : MonoBehaviour
 
         if (other.gameObject.CompareTag("protectedNPC"))
         {
-            if (TimerRingUI.Instance != null)
+            //if enemy attacks NPC, trigger game over screen
+            if (TimerRingUI.Instance != null && Time.timeSinceLevelLoad > 0.1f)
             {
                 TimerRingUI.Instance.SubtractRingSection(3);
             }
-            //if enemy attacks NPC, trigger game over screen
+            else if (Time.timeSinceLevelLoad < 0.1f)
+            {
+                transform.position = initialTransform.position;
+                m_Agent.Warp(transform.position);
+            }
         }
 
         if (other.gameObject.CompareTag("Throwable"))
@@ -349,13 +360,13 @@ public class EnemyFieldOfView : MonoBehaviour
         {
             if (isMoving)
             {
-                animator.SetBool("isWalking", true);
-                animator.SetBool("isIdle", false);
+                animator?.SetBool("isWalking", true);
+                animator?.SetBool("isIdle", false);
             }
             else if (!isMoving)
             {
-                animator.SetBool("isIdle", true);
-                animator.SetBool("isWalking", false);
+                animator?.SetBool("isIdle", true);
+                animator?.SetBool("isWalking", false);
             }
         }
     }
@@ -367,16 +378,17 @@ public class EnemyFieldOfView : MonoBehaviour
             resetanimations();
         }
         isAttacking = true;
-        animator.SetTrigger("Attack");
+        animator?.SetTrigger("Attack");
         Debug.Log("Attacked");
+        TimerRingUI.Instance.SubtractRingSection(1);
         yield return new WaitForSeconds(2f);
         isAttacking = false;
     }
 
     private void resetanimations()
     {
-        animator.SetBool("isIdle", false);
-        animator.SetBool("isWalking", false);
+        animator?.SetBool("isIdle", false);
+        animator?.SetBool("isWalking", false);
 
     }
 

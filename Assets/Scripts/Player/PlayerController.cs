@@ -47,6 +47,8 @@ public class PlayerController : MonoBehaviour, ISaveable
     private Coroutine sprintCooldownRoutine;
 
     // Gravity / Ground settings
+    [Tooltip("The strength of gravity applied to the player. Higher values will cause the player to fall faster")]
+    [SerializeField, Range(20.0f, 100.0f)] private float gravityScale = 50.0f;
     private float yVelocity = 0f;
     private readonly float gravity = -9.81f;
     private bool gravityEnabled = true;
@@ -56,7 +58,9 @@ public class PlayerController : MonoBehaviour, ISaveable
     [SerializeField] Transform groundCheck;
     [SerializeField] float groundCheckRadius = 0.2f;
     [SerializeField] LayerMask groundMask;
-    private bool isGrounded;
+    [SerializeField] private bool isGrounded;
+
+    [SerializeField] private PlayerFloating playerFloating;
 
     public static bool DialogueActive = false;
 
@@ -83,6 +87,8 @@ public class PlayerController : MonoBehaviour, ISaveable
     private readonly float moveCheckDelay = 0.1f;
     private float lastStoppedCheck = -1f;
     private OrbitingPlatform currentPlatform;
+
+    
 
     private void Awake()
     {
@@ -315,7 +321,7 @@ public class PlayerController : MonoBehaviour, ISaveable
         {
             if (gravityEnabled)
             {
-                yVelocity += gravity * Time.deltaTime;
+                yVelocity += gravity * gravityScale * Time.deltaTime;
             }
 
             Controller.Move(new Vector3(0, yVelocity, 0) * Time.deltaTime);
@@ -329,7 +335,7 @@ public class PlayerController : MonoBehaviour, ISaveable
             moveInput = Vector2.zero;
             if (gravityEnabled)
             {
-                yVelocity += gravity * Time.deltaTime;
+                yVelocity += gravity * gravityScale * Time.deltaTime;
             }
 
             Controller.Move(new Vector3(0, yVelocity, 0) * Time.deltaTime);
@@ -557,7 +563,7 @@ public class PlayerController : MonoBehaviour, ISaveable
         }
 
         if (gravityEnabled)
-            yVelocity += gravity * Time.deltaTime;
+            yVelocity += gravity * gravityScale * Time.deltaTime;
 
         // Build movement vectors
         Vector3 horizontalMove = (move.normalized * currentSpeed) * Time.deltaTime;
@@ -579,7 +585,7 @@ public class PlayerController : MonoBehaviour, ISaveable
         Vector3 combined = horizontalMove + verticalMove;
 
         Vector3 platformVelocity = Vector3.zero;
-        if (currentPlatform != null)
+        if (currentPlatform != null && !playerFloating.IsFloating)
         {
             platformVelocity = currentPlatform.platformVelocity;
             combined += platformVelocity * Time.deltaTime;
