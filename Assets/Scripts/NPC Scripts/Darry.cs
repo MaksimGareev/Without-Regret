@@ -27,12 +27,23 @@ public class Darry : MonoBehaviour
     public GameObject enemy;
 
     public Animator animator;
+    public NewDialogueTrigger dialogueTrigger; // dialogue trigger script reference
+    private InteractableProximity proximityScript;
+    private Collider proximityCollider;
 
     // objectives
     [SerializeField] ObjectiveData linkedHouseObjective;
     [SerializeField] ObjectiveData linkedNeighborhoodObjective;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    private void Awake()
+    {
+        proximityScript = GetComponent<InteractableProximity>();
+        if (proximityScript != null)
+        {
+            proximityCollider = proximityScript.GetComponent<Collider>();
+        }
+    }
+
     void Start()
     {
         if (targets.Length > 0)
@@ -138,7 +149,7 @@ public class Darry : MonoBehaviour
         {
             isTraveling = false;
             arrived = true;
-            Debug.Log("Irene reached the destination.");
+            Debug.Log("Darry reached the destination.");
         }
     }
 
@@ -175,6 +186,9 @@ public class Darry : MonoBehaviour
         {
             agent.SetDestination(currentTarget.position);
         }
+
+
+
     }
 
     private void OnTriggerEnter(Collider other)
