@@ -78,6 +78,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: dc10b53fa8d81fe47b40586f6b361951, type: 3}
       insertIndex: -1
       addedObject: {fileID: 484709053262815458}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: dc10b53fa8d81fe47b40586f6b361951, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -8779279301205504777}
   m_SourcePrefab: {fileID: 100100000, guid: dc10b53fa8d81fe47b40586f6b361951, type: 3}
 --- !u!1 &462077719618289031 stripped
 GameObject:
@@ -118,9 +121,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WorldItem
   itemData: {fileID: 11400000, guid: 2e9bab4e363e12b40a5f85d33aaa3819, type: 2}
-  icondDistance: 3
   isCollectible: 1
-  animator: {fileID: 0}
-  collectAnimation: 1.6
-  playerController: {fileID: 0}
+  requiredObjectives: []
+  LinkedObjective: {fileID: 0}
+  ObjectiveNeeded: 0
+  animationDuration: 1.5
   hasBeenCollected: 0
+--- !u!114 &-8779279301205504777
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 462077719618289031}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c816b79715e89c84a9478dfd80fcc532, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractableProximity
+  range: 3
+  player: {fileID: 0}

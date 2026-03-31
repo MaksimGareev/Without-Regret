@@ -1,0 +1,78 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e28c2e20bb6c4240a55d8edffb777ec, type: 3}
+  m_Name: IreneGoodnight
+  m_EditorClassIdentifier: Assembly-CSharp::NewDialogueData
+  npcName: Irene
+  dialogueLines:
+  - LineID: Start
+    Speaker: Irene
+    text: Thanks for spending the day with me Echo. It really means a lot.
+    lineTone: 1
+    NPCGender: female
+    NextLineID: 
+    endDialogueAfterLine: 0
+    GiveItem: 0
+    choices:
+    - text: I'm glad we went together.
+      NextLineID: E Good I
+      moralityChange: 1
+      direction: 1
+      objectiveToActivate: 
+    - text: Can I go to bed now?
+      NextLineID: E Bad I
+      moralityChange: -1
+      direction: 0
+      objectiveToActivate: 
+    objectivesToActivate: []
+  - LineID: E Good I
+    Speaker: Echo
+    text: I'm glad I dragged myself out of bed to go with you. I really enjoyed our
+      time together.
+    lineTone: 1
+    NPCGender: female
+    NextLineID: Good End
+    endDialogueAfterLine: 0
+    GiveItem: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: E Bad I
+    Speaker: Echo
+    text: Cool. Can I go sleep now? I was having a really cool dream I want to pick
+      back up.
+    lineTone: 0
+    NPCGender: female
+    NextLineID: Bad End
+    endDialogueAfterLine: 0
+    GiveItem: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Good End
+    Speaker: Irene
+    text: Hee hee. Well, see you tomorrow, Echo!
+    lineTone: 1
+    NPCGender: female
+    NextLineID: 
+    endDialogueAfterLine: 1
+    GiveItem: 0
+    choices: []
+    objectivesToActivate: []
+  - LineID: Bad End
+    Speaker: Irene
+    text: Ugh, yes I'll leave you alone now. See you when I see you, Echo.
+    lineTone: 2
+    NPCGender: female
+    NextLineID: 
+    endDialogueAfterLine: 1
+    GiveItem: 0
+    choices: []
+    objectivesToActivate: []

@@ -5,7 +5,7 @@ public class ArmSweepHitbox : MonoBehaviour
 {
     [SerializeField] int damage = 1;
     [Tooltip("The player won't take damage from the arm for this duration after getting hit once")]
-    [SerializeField] float invincibilityDuration = 1f;
+    [SerializeField] float invincibilityDuration = 2f;
 
     private bool canDamage = true;
 
@@ -13,7 +13,7 @@ public class ArmSweepHitbox : MonoBehaviour
     {
         if (!canDamage) return;
 
-        if (other.CompareTag("Target"))
+        if (other.CompareTag("Player"))
         {
             if (TimerRingUI.Instance != null)
             {
