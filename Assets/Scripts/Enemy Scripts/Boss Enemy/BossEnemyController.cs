@@ -101,6 +101,8 @@ public class BossEnemyController : MonoBehaviour
     private int currentHealth;
     private Renderer[] renderers;
 
+    public GameObject GameEnding;
+
     // Runtime list of sliders used by UI logic (either generated or the fallback `phaseSliders`)
     private readonly List<Slider> healthSliders = new List<Slider>();
 
@@ -529,6 +531,7 @@ public class BossEnemyController : MonoBehaviour
     {
         Debug.Log("Boss' health has depleted");
         Destroy(gameObject); // Replace with death sequence later
+        GameEnding.SetActive(true);
     }
 
     public void TakeDamage(int value = 1)
