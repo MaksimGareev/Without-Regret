@@ -146,7 +146,8 @@ public class ObjectiveAndSaveTesting : MonoBehaviour
             Debug.LogWarning("InputActionAsset reference is missing");
         }
     }
-
+    
+#if UNITY_EDITOR
     private void Update()
     {
         // Early returns to avoid unnecessary checks when conditions are not met
@@ -170,6 +171,7 @@ public class ObjectiveAndSaveTesting : MonoBehaviour
             SkipObjective();
         }
     }
+#endif
 
     private void OpenDebugUI()
     {
