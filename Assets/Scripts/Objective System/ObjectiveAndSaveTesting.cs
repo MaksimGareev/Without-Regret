@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -52,6 +53,8 @@ public class ObjectiveAndSaveTesting : MonoBehaviour
     [SerializeField] private GameObject debugUI;
     [SerializeField] private Button[] LevelSelectButtons;
     [SerializeField] private Button CloseUIButton;
+
+    private bool usingController = false;
 
     private void Awake()
     {
@@ -170,8 +173,93 @@ public class ObjectiveAndSaveTesting : MonoBehaviour
         {
             SkipObjective();
         }
+        
+        CheckControllerInput();
+        CheckMouseInput();
+        
+        if (usingController && !EventSystem.current.currentSelectedGameObject && debugUI.activeSelf)
+        {
+            EventSystem.current.SetSelectedGameObject(LevelSelectButtons[0].gameObject);
+        }
     }
 #endif
+    
+    private void CheckMouseInput()
+    {
+        if (Mouse.current == null)
+        {
+            return;
+        }
+
+        Vector2 mouseDelta = Mouse.current.delta.ReadValue();
+
+        bool mouseKeysMoved = mouseDelta.sqrMagnitude > 0.1f || Keyboard.current.anyKey.isPressed;
+
+        if (!mouseKeysMoved) return;
+
+        if (usingController)
+        {
+            usingController = false;
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+            
+            if (EventSystem.current.currentSelectedGameObject)
+            {
+                EventSystem.current.SetSelectedGameObject(null);
+            }
+        }
+    }
+
+    private void CheckControllerInput()
+    {
+        if (Gamepad.current == null)
+        {
+            return;
+        }
+
+        // Check if the controller has moved either the left stick or dpad
+        bool controllerMoved = 
+            Gamepad.current.leftStick.ReadValue().sqrMagnitude > 0.1f 
+            || Gamepad.current.dpad.ReadValue().sqrMagnitude > 0.1f 
+            || ((Gamepad.current.leftShoulder.IsPressed() || Gamepad.current.rightShoulder.IsPressed()) && debugUI.activeSelf);
+        
+        if (!controllerMoved) return;
+
+        if (!usingController)
+        {
+            usingController = true;
+            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
+
+            var es = EventSystem.current;
+
+            // Clear selected GameObject if mouse was hovering over something
+            if (es.IsPointerOverGameObject())
+            {
+                var ped = new PointerEventData(es)
+                {
+                    position = new Vector2(-99999f, -99999f)
+                };
+
+                es.RaycastAll(ped, new System.Collections.Generic.List<RaycastResult>());
+
+                InputSystemUIInputModule inputModule = es.currentInputModule as InputSystemUIInputModule;
+                if (inputModule != null)
+                {
+                    inputModule.enabled = false;
+                    inputModule.enabled = true;
+                }
+
+                es.SetSelectedGameObject(null);
+            }
+
+            // If nothing is selected, set a default based on the active panel
+            if (!es.currentSelectedGameObject && debugUI.activeSelf)
+            {
+                es.SetSelectedGameObject(LevelSelectButtons[0].gameObject);
+            }
+        }
+    }
 
     private void OpenDebugUI()
     {
@@ -184,6 +272,8 @@ public class ObjectiveAndSaveTesting : MonoBehaviour
 
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
+        
+        usingController = false;
     }
 
     private void CloseDebugUI()
@@ -271,9 +361,9 @@ public class ObjectiveAndSaveTesting : MonoBehaviour
         }
 
         // Load the selected scene and close the debug UI
-        if (sceneObjectiveMap.ContainsKey(sceneName))
+        if (sceneObjectiveMap.ContainsKey(sceneName) && SceneLoadManager.Instance)
         {
-            SceneManager.LoadScene(sceneName);
+            SceneLoadManager.Instance.LoadScene(sceneName);
             CloseDebugUI();
         }
 
