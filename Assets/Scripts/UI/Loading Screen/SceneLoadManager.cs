@@ -113,6 +113,9 @@ public class SceneLoadManager : MonoBehaviour
 
         //Debug.Log("Fading out black screen");
         yield return FadeOutBlackScreen();
+        
+        // Ensure game is not started paused
+        Time.timeScale = 1f;
     }
 
     private IEnumerator InvokeSceneLoadedEvent()

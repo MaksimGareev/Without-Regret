@@ -149,6 +149,11 @@ public class GameOverManager : MonoBehaviour
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
         }
+
+        if (Time.timeSinceLevelLoad < 0.1f && gameOverUI.activeSelf && !IsGameOver)
+        {
+            DisableGameOverUI();
+        }
     }
 
     private void CheckMouseInput()

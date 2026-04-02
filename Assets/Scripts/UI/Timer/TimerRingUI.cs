@@ -76,36 +76,18 @@ public class TimerRingUI : MonoBehaviour
             switch (currentRingState)
             {
                 case RingState.Full:
-                    if (uiFade && !uiFade.inExcludedScene)
-                    {
-                        StartCoroutine(WaitForUIFade(RingState.TwoThirds));
-                    }
-                    else
-                    {
-                        SetRingState(RingState.TwoThirds);
-                    }
+                    if (uiFade && !uiFade.inExcludedScene) uiFade.ShowUI();
+                    SetRingState(RingState.TwoThirds);
                     break;
                 
                 case RingState.TwoThirds:
-                    if (uiFade && !uiFade.inExcludedScene)
-                    {
-                        StartCoroutine(WaitForUIFade(RingState.OneThird));
-                    }
-                    else
-                    {
-                        SetRingState(RingState.OneThird);
-                    }
+                    if (uiFade && !uiFade.inExcludedScene) uiFade.ShowUI();
+                    SetRingState(RingState.OneThird);
                     break;
                 
                 case RingState.OneThird:
-                    if (uiFade && !uiFade.inExcludedScene)
-                    {
-                        StartCoroutine(WaitForUIFade(RingState.Empty));
-                    }
-                    else
-                    {
-                        SetRingState(RingState.Empty);
-                    }
+                    if (uiFade && !uiFade.inExcludedScene) uiFade.ShowUI();
+                    SetRingState(RingState.Empty);
                     EndGame();
                     break;
                 
@@ -127,36 +109,18 @@ public class TimerRingUI : MonoBehaviour
             switch (currentRingState)
             {
                 case RingState.Empty:
-                    if (uiFade && !uiFade.inExcludedScene)
-                    {
-                        StartCoroutine(WaitForUIFade(RingState.OneThird));
-                    }
-                    else
-                    {
-                        SetRingState(RingState.OneThird);
-                    }
+                    if (uiFade && !uiFade.inExcludedScene) uiFade.ShowUI();
+                    SetRingState(RingState.OneThird);
                     break;
                 
                 case RingState.OneThird:
-                    if (uiFade && !uiFade.inExcludedScene)
-                    {
-                        StartCoroutine(WaitForUIFade(RingState.TwoThirds));
-                    }
-                    else
-                    {
-                        SetRingState(RingState.TwoThirds);
-                    }
+                    if (uiFade && !uiFade.inExcludedScene) uiFade.ShowUI();
+                    SetRingState(RingState.TwoThirds);
                     break;
                 
                 case RingState.TwoThirds:
-                    if (uiFade && !uiFade.inExcludedScene)
-                    {
-                        StartCoroutine(WaitForUIFade(RingState.Full));
-                    }
-                    else
-                    {
-                        SetRingState(RingState.Full);
-                    }
+                    if (uiFade && !uiFade.inExcludedScene) uiFade.ShowUI();
+                    SetRingState(RingState.Full);
                     break;
                 
                 case RingState.Full:
@@ -164,13 +128,6 @@ public class TimerRingUI : MonoBehaviour
                     break;
             }
         }
-    }
-
-    private IEnumerator WaitForUIFade(RingState newState)
-    {
-        uiFade.ShowUI();
-        yield return new WaitForSecondsRealtime(uiFade.fadeSpeed);
-        SetRingState(newState);
     }
     
     private void EndGame()
