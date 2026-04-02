@@ -13,7 +13,7 @@ public class UIFadeController : MonoBehaviour
     private CanvasGroup canvasGroup;
     private float lastActiveTime;
     private bool isActive = true;
-    private bool inExcludedScene = false;
+    [HideInInspector] public bool inExcludedScene = false;
 
     private void Awake()
     {
