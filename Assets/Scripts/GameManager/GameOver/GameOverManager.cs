@@ -27,8 +27,9 @@ public class GameOverManager : MonoBehaviour
     [HideInInspector] public UnityEvent onGameOver;
 
     private bool usingController = false;
+    private ConfirmationUI confirmationUI;
 
-    public bool isGameOverUIActive() => gameOverUI != null && gameOverUI.activeSelf;
+    public bool isGameOverUIActive() => gameOverUI && gameOverUI.activeSelf;
 
     private void Awake()
     {
@@ -46,13 +47,28 @@ public class GameOverManager : MonoBehaviour
         {
             gameOverUI.SetActive(false);
         }
-
+        
         if (!confirmationPanel)
         {
             Debug.LogWarning("Confirmation panel reference is missing in GameOverManager.");
         }
+        
+        confirmationUI = confirmationPanel.GetComponent<ConfirmationUI>();
+        
+        if (!confirmationUI)
+        {
+            Debug.Log("Confirmation panel cannot be found  in GameOverManager.");
+        }
 
-        SceneLoadManager.Instance.OnSceneLoaded.AddListener(OnSceneLoaded);
+        if (SceneLoadManager.Instance)
+        {
+            SceneLoadManager.Instance.OnSceneLoaded.AddListener(OnSceneLoaded);
+        }
+        else
+        {
+            Debug.Log("SceneLoadManager instance not found, cannot subscribe to scene loaded event.");
+        }
+        
     }
     
     private void OnEnable()
@@ -133,6 +149,11 @@ public class GameOverManager : MonoBehaviour
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
         }
+
+        if (Time.timeSinceLevelLoad < 0.1f && gameOverUI.activeSelf && !IsGameOver)
+        {
+            DisableGameOverUI();
+        }
     }
 
     private void CheckMouseInput()
@@ -198,7 +219,7 @@ public class GameOverManager : MonoBehaviour
                 es.SetSelectedGameObject(null);
 
                 InputSystemUIInputModule inputModule = es.currentInputModule as InputSystemUIInputModule;
-                if (inputModule != null)
+                if (inputModule)
                 {
                     inputModule.enabled = false;
                     inputModule.enabled = true;
@@ -210,7 +231,7 @@ public class GameOverManager : MonoBehaviour
             {
                 if (confirmationPanel.activeSelf)
                 {
-                    es.SetSelectedGameObject(confirmationPanel.GetComponent<ConfirmationUI>().cancelButton.gameObject);
+                    es.SetSelectedGameObject(confirmationUI.cancelButton.gameObject);
                 }
                 else if (gameOverUI.activeSelf)
                 {
@@ -222,35 +243,35 @@ public class GameOverManager : MonoBehaviour
 
     private void EnableOtherCanvases()
     {
-        Debug.Log("Enabling other canvases from GameOverManager");
-        if (GameManager.Instance == null || SceneManager.GetActiveScene().name == "MainMenu") return;
+        // Debug.Log("Enabling other canvases from GameOverManager");
+        if (!GameManager.Instance || SceneManager.GetActiveScene().name == "MainMenu") return;
 
-        if (GameManager.Instance.mainCanvas != null && !GameManager.Instance.mainCanvas.activeSelf)
+        if (GameManager.Instance.mainCanvas && !GameManager.Instance.mainCanvas.activeSelf)
         {
             GameManager.Instance.mainCanvas.SetActive(true);
         }
 
-        if (GameManager.Instance.interactionIconsCanvas != null && !GameManager.Instance.interactionIconsCanvas.activeSelf)
+        if (GameManager.Instance.interactionIconsCanvas && !GameManager.Instance.interactionIconsCanvas.activeSelf)
         {
             GameManager.Instance.interactionIconsCanvas.SetActive(true);
         }
 
-        if (GameManager.Instance.playerUICanvas != null && !GameManager.Instance.playerUICanvas.activeSelf)
+        if (GameManager.Instance.playerUICanvas && !GameManager.Instance.playerUICanvas.activeSelf)
         {
             GameManager.Instance.playerUICanvas.SetActive(true);
         }
 
-        if (GameManager.Instance.pauseMenu != null && !GameManager.Instance.pauseMenu.activeSelf)
+        if (GameManager.Instance.pauseMenu && !GameManager.Instance.pauseMenu.activeSelf)
         {
             GameManager.Instance.pauseMenu.SetActive(PauseManager.Instance.isGamePaused);
         }
 
-        if (GameManager.Instance.journalUI != null && !GameManager.Instance.journalUI.activeSelf)
+        if (GameManager.Instance.journalUI && !GameManager.Instance.journalUI.activeSelf)
         {
             GameManager.Instance.journalUI.SetActive(Journal.Instance.isJournalOpen);
         }
 
-        if (GameManager.Instance.objectivePanel != null && !GameManager.Instance.objectivePanel.activeSelf)
+        if (GameManager.Instance.objectivePanel && !GameManager.Instance.objectivePanel.activeSelf)
         {
             GameManager.Instance.objectivePanel.SetActive(GameManager.Instance.objectiveCanvas.IsVisible());
         }
@@ -258,35 +279,35 @@ public class GameOverManager : MonoBehaviour
 
     private void DisableOtherCanvases()
     {
-        Debug.Log("Disabling other canvases from GameOverManager");
-        if (GameManager.Instance == null || SceneManager.GetActiveScene().name == "MainMenu") return;
+        // Debug.Log("Disabling other canvases from GameOverManager");
+        if (!GameManager.Instance || SceneManager.GetActiveScene().name == "MainMenu") return;
 
-        if (GameManager.Instance.mainCanvas != null && GameManager.Instance.mainCanvas.activeSelf)
+        if (GameManager.Instance.mainCanvas && GameManager.Instance.mainCanvas.activeSelf)
         {
             GameManager.Instance.mainCanvas.SetActive(false);
         }
 
-        if (GameManager.Instance.interactionIconsCanvas != null && GameManager.Instance.interactionIconsCanvas.activeSelf)
+        if (GameManager.Instance.interactionIconsCanvas && GameManager.Instance.interactionIconsCanvas.activeSelf)
         {
             GameManager.Instance.interactionIconsCanvas.SetActive(false);
         }
 
-        if (GameManager.Instance.playerUICanvas != null && GameManager.Instance.playerUICanvas.activeSelf)
+        if (GameManager.Instance.playerUICanvas && GameManager.Instance.playerUICanvas.activeSelf)
         {
             GameManager.Instance.playerUICanvas.SetActive(false);
         }
 
-        if (GameManager.Instance.pauseMenu != null && GameManager.Instance.pauseMenu.activeSelf)
+        if (GameManager.Instance.pauseMenu && GameManager.Instance.pauseMenu.activeSelf)
         {
             GameManager.Instance.pauseMenu.SetActive(false);
         }
 
-        if (GameManager.Instance.journalUI != null && GameManager.Instance.journalUI.activeSelf)
+        if (GameManager.Instance.journalUI && GameManager.Instance.journalUI.activeSelf)
         {
             GameManager.Instance.journalUI.SetActive(false);
         }
 
-        if (GameManager.Instance.objectivePanel != null && GameManager.Instance.objectivePanel.activeSelf)
+        if (GameManager.Instance.objectivePanel && GameManager.Instance.objectivePanel.activeSelf)
         {
             GameManager.Instance.objectivePanel.SetActive(false);
         }
@@ -311,19 +332,14 @@ public class GameOverManager : MonoBehaviour
         
         onGameOver?.Invoke();
 
-        //Time.timeScale = 0f; // Pause the game
+        Time.timeScale = 0f; // Pause the game
 
         EnableGameOverUI();
-
-        // if (SaveManager.Instance)
-        // {
-        //     SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
-        // }
     }
 
     private void EnableGameOverUI()
     {
-        if (gameOverUI == null)
+        if (!gameOverUI)
         {
             return;
         }
@@ -342,14 +358,14 @@ public class GameOverManager : MonoBehaviour
 
         // Lock camera when game over UI is active
         CameraMovement cam = FindFirstObjectByType<CameraMovement>();
-        if (cam != null)
+        if (cam)
         {
             cam.SetCameraLocked(true);
         }
 
         // Disable player input when game over UI is active
         PlayerController playerController = FindFirstObjectByType<PlayerController>();
-        if (playerController != null)
+        if (playerController)
         {
             playerController.DisableInput();
         }
@@ -389,7 +405,7 @@ public class GameOverManager : MonoBehaviour
 
     private void ConfirmBeforeQuit()
     {
-        if (confirmationPanel == null)
+        if (!confirmationPanel)
         {
             Quit();
             return;
@@ -399,7 +415,13 @@ public class GameOverManager : MonoBehaviour
         DisableUIButtons();
         EventSystem.current.SetSelectedGameObject(null);
 
-        ConfirmationUI confirmationUI = confirmationPanel.GetComponent<ConfirmationUI>();
+        if (!confirmationUI)
+        {
+            Debug.Log("ConfirmationUI component not found on confirmation panel, quitting without confirmation.");
+            Quit();
+            return;
+        }
+
         confirmationUI.ConfirmTask(ConfirmationType.QuitToMainMenu, 
             () => 
             {
@@ -422,7 +444,17 @@ public class GameOverManager : MonoBehaviour
         Time.timeScale = 1f; // Resume the game before quitting
         isGameOver = false;
         gameOverUI.SetActive(false);
-        SceneLoadManager.Instance.LoadScene("MainMenu");
+        
+        if (SceneLoadManager.Instance)
+        {
+            SceneLoadManager.Instance.LoadScene("MainMenu");
+        }
+        else
+        {
+            Debug.Log("SceneLoadManager instance not found, using SceneManager to load MainMenu.");
+            SceneManager.LoadScene("MainMenu");
+        }
+        
     }
 
     private void Restart()
@@ -439,17 +471,18 @@ public class GameOverManager : MonoBehaviour
         else
         {
             Debug.Log("SceneLoadManager instance not found, using SceneManager to reload scene.");
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
     }
 
     private void DisableUIButtons()
     {
-        if (retryButton != null)
+        if (retryButton)
         {
             retryButton.interactable = false;
         }
 
-        if (quitButton != null)
+        if (quitButton)
         {
             quitButton.interactable = false;
         }
@@ -457,12 +490,12 @@ public class GameOverManager : MonoBehaviour
 
     private void EnableUIButtons()
     {
-        if (retryButton != null)
+        if (retryButton)
         {
             retryButton.interactable = true;
         }
 
-        if (quitButton != null)
+        if (quitButton)
         {
             quitButton.interactable = true;
         }

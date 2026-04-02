@@ -40,7 +40,16 @@ public class TimerRingUI : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Awake()
     {
-        characterSwap = FindObjectOfType<CharacterSwap>();
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+        
+        characterSwap = FindFirstObjectByType<CharacterSwap>();
         uiFade = FindFirstObjectByType<UIFadeController>();
         if (characterSwap != null)
         {
@@ -50,15 +59,6 @@ public class TimerRingUI : MonoBehaviour
         }
 
         SetRingState(RingState.Full);
-
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
     }
 
     public void Update()
@@ -67,11 +67,6 @@ public class TimerRingUI : MonoBehaviour
         {
             SetRingState(RingState.Full);
         }
-        
-        /*if (Input.GetKeyDown(KeyCode.L))
-        {
-            SubtractRingSection(1);
-        }*/
     }
 
     public void SubtractRingSection(int sections)
@@ -81,20 +76,23 @@ public class TimerRingUI : MonoBehaviour
             switch (currentRingState)
             {
                 case RingState.Full:
+                    if (uiFade && !uiFade.inExcludedScene) uiFade.ShowUI();
                     SetRingState(RingState.TwoThirds);
-                    if (uiFade != null) uiFade.ShowUI();
                     break;
+                
                 case RingState.TwoThirds:
+                    if (uiFade && !uiFade.inExcludedScene) uiFade.ShowUI();
                     SetRingState(RingState.OneThird);
-                    if (uiFade != null) uiFade.ShowUI();
                     break;
+                
                 case RingState.OneThird:
+                    if (uiFade && !uiFade.inExcludedScene) uiFade.ShowUI();
                     SetRingState(RingState.Empty);
-                    if (uiFade != null) uiFade.ShowUI();
                     EndGame();
                     break;
+                
                 case RingState.Empty:
-                    // Already empty, do nothing
+                    // Already empty, try ending game again if not already
                     if (GameOverManager.Instance && !GameOverManager.Instance.IsGameOver)
                     {
                         EndGame();
@@ -111,24 +109,30 @@ public class TimerRingUI : MonoBehaviour
             switch (currentRingState)
             {
                 case RingState.Empty:
+                    if (uiFade && !uiFade.inExcludedScene) uiFade.ShowUI();
                     SetRingState(RingState.OneThird);
                     break;
+                
                 case RingState.OneThird:
+                    if (uiFade && !uiFade.inExcludedScene) uiFade.ShowUI();
                     SetRingState(RingState.TwoThirds);
                     break;
+                
                 case RingState.TwoThirds:
+                    if (uiFade && !uiFade.inExcludedScene) uiFade.ShowUI();
                     SetRingState(RingState.Full);
                     break;
+                
                 case RingState.Full:
+                    if (uiFade) uiFade.ShowUI();
                     break;
             }
         }
     }
-
-
+    
     private void EndGame()
     {   
-        if (GameOverManager.Instance != null)
+        if (GameOverManager.Instance)
         {
             Debug.Log("Timer has run out! Triggering end game sequence.");
             
@@ -158,19 +162,20 @@ public class TimerRingUI : MonoBehaviour
                 ringImage.sprite = ringFull;
                 portraitImage.sprite = portraitFull;
                 currentRingState = RingState.Full;
-                //animator.SetBool("GameOver", false);
-                //animator.SetBool("GameOverLoop", false);
                 break;
+            
             case RingState.TwoThirds:
                 ringImage.sprite = ringTwoThirds;
                 portraitImage.sprite = portraitTwoThirds;
                 currentRingState = RingState.TwoThirds;
                 break;
+            
             case RingState.OneThird:
                 ringImage.sprite = ringOneThird;
                 portraitImage.sprite = portraitOneThird;
                 currentRingState = RingState.OneThird;
                 break;
+            
             case RingState.Empty:
                 ringImage.sprite = ringEmpty;
                 portraitImage.sprite = portraitEmpty;
@@ -178,6 +183,7 @@ public class TimerRingUI : MonoBehaviour
                 break;
         }
     }
+    
     void UpdateAnimator(Animator newAnimator)
     {
         animator = newAnimator;
@@ -188,7 +194,7 @@ public class TimerRingUI : MonoBehaviour
         Debug.Log("Started Game Over Animation");
         animator?.SetBool("GameOver", true);
         yield return new WaitForSecondsRealtime(0.5f);
-        animator.SetBool("GameOverLoop", true);
+        animator?.SetBool("GameOverLoop", true);
     }
 
 }
