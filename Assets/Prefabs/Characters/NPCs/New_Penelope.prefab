@@ -117,6 +117,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: e40b43c9792e771498f43e36f3106ac3, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2284685556079065533}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: e40b43c9792e771498f43e36f3106ac3, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1620355018659582118}
   m_SourcePrefab: {fileID: 100100000, guid: e40b43c9792e771498f43e36f3106ac3, type: 3}
 --- !u!4 &1623780519984519591 stripped
 Transform:
@@ -243,7 +246,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2144561605727224605}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 755b62f406ee01a4e9f32c0887eaf051, type: 3}
   m_Name: 
@@ -322,6 +325,29 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InteractableProximity
   range: 3
   player: {fileID: 0}
+--- !u!114 &1620355018659582118
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2144561605727224605}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2b1a057ded40c524fb25930c6121994a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Penelope
+  Speed: 3
+  RotationSpeed: 3
+  dialogueTrigger: {fileID: 5785709738987249152}
+  targetSpot: {fileID: 0}
+  lookAtTarget: {fileID: 0}
+  isTraveling: 0
+  arrived: 0
+  stopDistance: 0.5
+  agent: {fileID: 2800810733366397663}
+  animator: {fileID: 8740143108691262306}
+  npcName: Penelope
 --- !u!1001 &1786121623637168684
 PrefabInstance:
   m_ObjectHideFlags: 0
