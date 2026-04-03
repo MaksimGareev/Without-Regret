@@ -576,6 +576,10 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2780979306161759470, guid: e3b9262b76b69d34b87124d143240539, type: 3}
+      propertyPath: iFrameDuration
+      value: 1.5
+      objectReference: {fileID: 0}
     - target: {fileID: 2903636719963248282, guid: e3b9262b76b69d34b87124d143240539, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
@@ -676,6 +680,18 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4994103760067351278, guid: e3b9262b76b69d34b87124d143240539, type: 3}
+      propertyPath: excludedScenes.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4994103760067351278, guid: e3b9262b76b69d34b87124d143240539, type: 3}
+      propertyPath: excludedScenes.Array.data[3].scenePath
+      value: Assets/Scenes/CodeTest_Jay.unity
+      objectReference: {fileID: 0}
+    - target: {fileID: 4994103760067351278, guid: e3b9262b76b69d34b87124d143240539, type: 3}
+      propertyPath: excludedScenes.Array.data[3].sceneAsset
+      value: 
+      objectReference: {fileID: 102900000, guid: e0156dad19c80b5448bceff43f7256d6, type: 3}
     - target: {fileID: 5091116841123441282, guid: e3b9262b76b69d34b87124d143240539, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -2995,7 +3011,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4739791299965162435, guid: 3ec7a33f34fdce245a8693ec96d7d664, type: 3}
       propertyPath: uniqueID
-      value: 71cb3dd5-21f7-4437-8cab-adba1335b0b6
+      value: ca655a70-2cbd-41de-929a-4f303a3cd889
       objectReference: {fileID: 0}
     - target: {fileID: 6583842094603749823, guid: 3ec7a33f34fdce245a8693ec96d7d664, type: 3}
       propertyPath: m_LocalPosition.x
@@ -3043,7 +3059,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7790211378159208611, guid: 3ec7a33f34fdce245a8693ec96d7d664, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7872790047243463844, guid: 3ec7a33f34fdce245a8693ec96d7d664, type: 3}
       propertyPath: player
@@ -3147,7 +3163,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7872790047243463844, guid: 3ec7a33f34fdce245a8693ec96d7d664, type: 3}
       propertyPath: phases.Array.data[0].Actions.Array.data[0].ActionType
-      value: 4
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7872790047243463844, guid: 3ec7a33f34fdce245a8693ec96d7d664, type: 3}
       propertyPath: phases.Array.data[3].Actions.Array.data[0].ActionType
@@ -3155,7 +3171,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7872790047243463844, guid: 3ec7a33f34fdce245a8693ec96d7d664, type: 3}
       propertyPath: phases.Array.data[0].Actions.Array.data[0].DelayUntilNextAction
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 7872790047243463844, guid: 3ec7a33f34fdce245a8693ec96d7d664, type: 3}
       propertyPath: phases.Array.data[1].Actions.Array.data[1].DelayUntilNextAction

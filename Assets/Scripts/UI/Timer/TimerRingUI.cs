@@ -12,6 +12,9 @@ public class TimerRingUI : MonoBehaviour
         Empty
     }
 
+    [Header("Invincibility Frame Length")]
+    [SerializeField] private float invincibilityFrameDuration = 1.5f;
+
     [Header("References")]
     [SerializeField] private Image ringImage;
     [SerializeField] private Image portraitImage;
@@ -37,7 +40,8 @@ public class TimerRingUI : MonoBehaviour
 
     public UIFadeController uiFade;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    private bool isInvincible = false;
+
     private void Awake()
     {
         if (Instance == null)
@@ -71,6 +75,8 @@ public class TimerRingUI : MonoBehaviour
 
     public void SubtractRingSection(int sections)
     {
+        if (isInvincible) return;
+
         for (int i = 0; i < sections; i++)
         {
             switch (currentRingState)
@@ -100,6 +106,9 @@ public class TimerRingUI : MonoBehaviour
                     break;
             }
         }
+
+        isInvincible = true;
+        StartCoroutine(InvincibilityCoroutine());
     }
 
     public void AddRingSection(int sections)
@@ -195,6 +204,13 @@ public class TimerRingUI : MonoBehaviour
         animator?.SetBool("GameOver", true);
         yield return new WaitForSecondsRealtime(0.5f);
         animator?.SetBool("GameOverLoop", true);
+    }
+
+    IEnumerator InvincibilityCoroutine()
+    {
+        isInvincible = true;
+        yield return new WaitForSeconds(invincibilityFrameDuration);
+        isInvincible = false;
     }
 
 }

@@ -8,6 +8,7 @@ public class FollowChimeObjective : MonoBehaviour
     [SerializeField] private Transform[] waypoints;
     [Tooltip("How close the player must get to Chime to trigger Chime moving to the next waypoint")]
     [SerializeField] private float playerReachDistance = 2f;
+    [SerializeField] private float chimeMoveSpeed = 5f;
     [SerializeField] private Chime chime;
     [SerializeField] private Transform player;
 
@@ -146,7 +147,7 @@ public class FollowChimeObjective : MonoBehaviour
         if (chime.IsGuiding) return;
 
         // Send chime to the current waypoint
-        chime.GoToMarker(waypoints[currentWaypointIndex].position);
+        chime.GoToMarker(waypoints[currentWaypointIndex].position, chimeMoveSpeed);
     }
 
     private void AdvanceWaypoint()
@@ -163,7 +164,7 @@ public class FollowChimeObjective : MonoBehaviour
             // Instruct Chime to move to the next waypoint
             if (chime != null)
             {
-                chime.GoToMarker(waypoints[currentWaypointIndex].position);
+                chime.GoToMarker(waypoints[currentWaypointIndex].position, chimeMoveSpeed);
             }
             else
             {
