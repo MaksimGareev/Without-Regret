@@ -6,6 +6,9 @@ using System.Collections;
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerFloating : MonoBehaviour
 {
+    [Header("If true, the player can float even outside of floating trigger volumes.")]
+    [SerializeField] private bool canAlwaysFloat = false;
+
     [Header("Float Settings")]
     [SerializeField, Tooltip("How powerful the instant upward boost on floating start is")] 
     private float floatLift = 3f;
@@ -61,16 +64,13 @@ public class PlayerFloating : MonoBehaviour
     private Animator animator;
     private CharacterSwap characterSwap;
 
-
-
     [Header("Chime Animation settings")]
     public Animator chimeAnimator;
     public bool chimeActive = false;
     public Chime chimeScript;
 
     [Header("VFX")]
-    [SerializeField] private GameObject FloatingVfx;
-
+    [SerializeField] private GameObject floatingVfx;
 
     public bool IsFloating { get; private set; } = false;
     private bool canFloat = false;
@@ -119,9 +119,10 @@ public class PlayerFloating : MonoBehaviour
         toggleInventoryUI = GetComponent<ToggleInventoryUI>();
         playerCamera = Camera.main;
         controls = new PlayerControls();
-        FloatingVfx.SetActive(false);
+        if (floatingVfx != null)
+            floatingVfx.SetActive(false);
 
-        characterSwap = FindObjectOfType<CharacterSwap>();
+        characterSwap = FindFirstObjectByType<CharacterSwap>();
 
         if (characterSwap != null)
         {
@@ -185,6 +186,8 @@ public class PlayerFloating : MonoBehaviour
         {
             Debug.LogError("PlayerFloating: Float Input Action Reference is not assigned.");
         }
+
+        canFloat = canAlwaysFloat;
     }
 
     public void ReadSubmit(InputAction.CallbackContext context)
@@ -201,7 +204,7 @@ public class PlayerFloating : MonoBehaviour
     {
         moveInput = context.ReadValue<Vector2>();
 
-        //if (showDebugLogs && isFloating)
+        //if (showDebugLogs && IsFloating)
         //{
         //    Debug.Log("PlayerFloating - Move Input: " + moveInput);
         //}
@@ -271,6 +274,21 @@ public class PlayerFloating : MonoBehaviour
 
     private void Update()
     {
+        if (canAlwaysFloat && !IsFloating && !IsCoolingDown)
+        {
+            if (canFloat && ButtonIcons.Instance != null)
+            {
+                if (!toggleInventoryUI.isEnabled)
+                {
+                    ButtonIcons.Instance.Highlight(InteractType.Float);
+                }
+                else
+                {
+                    ButtonIcons.Instance.Clear();
+                }
+            }
+        }
+
         if (Time.timeScale != 0f) 
         {
             HandleCooldown();
@@ -307,7 +325,7 @@ public class PlayerFloating : MonoBehaviour
         animator.SetBool("isFloating", false);
         animator.SetTrigger("floatStart");
         StartCoroutine(FloatAnimationHandler());
-        FloatingVfx.SetActive(true);
+        floatingVfx.SetActive(true);
 
         if (chimeActive)
         {
@@ -356,7 +374,7 @@ public class PlayerFloating : MonoBehaviour
     {
         animator.SetTrigger("isLanding");
         animator.SetBool("isFloating", false);
-        FloatingVfx.SetActive(false);
+        floatingVfx.SetActive(false);
 
         if (chimeActive)
             chimeScript.ResetChimeAnimations();
@@ -383,7 +401,8 @@ public class PlayerFloating : MonoBehaviour
         if (charController != null) charController.enabled = true;
         if (playerController != null) playerController.enabled = true;
 
-        canFloat = false;
+        if (!canAlwaysFloat)
+            canFloat = false;
     }
 
     private void HandleRhythmInput()
@@ -558,7 +577,12 @@ public class PlayerFloating : MonoBehaviour
 
     public void SetCanFloat (bool newCanfloat)
     {
+        if (canAlwaysFloat)
+        {
+            newCanfloat = true;
+        }
         canFloat = newCanfloat;
+        Debug.Log("PlayerFloating: canFloat set to " + canFloat);
     }
 
     IEnumerator FloatAnimationHandler()
