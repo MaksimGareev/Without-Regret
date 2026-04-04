@@ -265,7 +265,7 @@ public class EnemyFieldOfView : MonoBehaviour
     {
         if (other.name == "Player")
         {
-            Debug.Log("Player is killed");
+            //Debug.Log("Player is killed");
         }
 
         if (other.gameObject.CompareTag("protectedNPC"))
@@ -309,7 +309,7 @@ public class EnemyFieldOfView : MonoBehaviour
     {
         if (other.name == "Player")
         {
-            Debug.Log("Player is alive");
+            //Debug.Log("Player is alive");
         }
 
         if (other.gameObject.CompareTag("MovingPlatform"))
