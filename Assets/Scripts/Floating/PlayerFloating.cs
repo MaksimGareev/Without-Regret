@@ -69,6 +69,13 @@ public class PlayerFloating : MonoBehaviour
     public bool chimeActive = false;
     public Chime chimeScript;
 
+    [Header("Shadow")]
+    [Tooltip("Whether or not to show the player's shadow while floating.")]
+    [SerializeField] private bool showShadow = true;
+    [Tooltip("Layer mask used for raycasting the position player's shadow. Should include any layers that shouldn't obstruct the shadow's position on the ground (e.g. Target, Enemy)")]
+    [SerializeField] LayerMask shadowLayerMask;
+    [SerializeField] private GameObject shadowObject;
+
     [Header("VFX")]
     [SerializeField] private GameObject floatingVfx;
 
@@ -185,6 +192,16 @@ public class PlayerFloating : MonoBehaviour
         if (floatAction == null)
         {
             Debug.LogError("PlayerFloating: Float Input Action Reference is not assigned.");
+        }
+
+        if (showShadow && shadowObject != null)
+        {
+            shadowObject.SetActive(false);
+        }
+        else if (showShadow && shadowObject == null)
+        {
+            Debug.LogWarning("PlayerFloating: showShadow is true but shadowObject reference is not assigned. Shadow will not be shown.");
+            showShadow = false;
         }
 
         canFloat = canAlwaysFloat;
@@ -307,6 +324,20 @@ public class PlayerFloating : MonoBehaviour
             {
                 HandleRhythmInput();
                 UpdateRhythmUI();
+
+                if (showShadow && shadowObject != null)
+                {
+                    // Position the shadow on the ground below the player
+                    if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 20f, ~shadowLayerMask) && !hit.collider.isTrigger)
+                    {
+                        shadowObject.transform.position = hit.point + Vector3.up * 0.001f; // Slightly above ground to avoid z-fighting
+                        shadowObject.SetActive(true);
+                    }
+                    else
+                    {
+                        shadowObject.SetActive(false);
+                    }
+                }
             }
         }
     }
@@ -365,6 +396,11 @@ public class PlayerFloating : MonoBehaviour
         // Apply lift force
         rb.AddForce(Vector3.up * floatLift, ForceMode.VelocityChange);
 
+        if (showShadow && shadowObject != null)
+        {
+            shadowObject.SetActive(true);
+        }
+
         // reset movement smoothing state
         currentMove = Vector3.zero;
         targetMove = Vector3.zero;
@@ -400,6 +436,11 @@ public class PlayerFloating : MonoBehaviour
         // ensure character/ player controllers see the current transform position
         if (charController != null) charController.enabled = true;
         if (playerController != null) playerController.enabled = true;
+
+        if (showShadow && shadowObject != null)
+        {
+            shadowObject.SetActive(false);
+        }
 
         if (!canAlwaysFloat)
             canFloat = false;
