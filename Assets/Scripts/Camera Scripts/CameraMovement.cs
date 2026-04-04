@@ -119,6 +119,10 @@ public class CameraMovement : MonoBehaviour
     private bool lastInputWasMouse = false;
     private PlayerController playerController;
 
+    // Camera shake state
+    private Vector3 shakeOffset = Vector3.zero;
+    private Coroutine shakeRoutine = null;
+
     private void Awake()
     {
         // Set up input action references
@@ -354,12 +358,14 @@ public class CameraMovement : MonoBehaviour
             {
                 if (CanMoveBy(movePosition - transform.position))
                 {
-                    transform.position = movePosition;
+                    // apply procedural shake offset on top of the computed follow position
+                    transform.position = movePosition + shakeOffset;
                 }
             }
             else
             {
-                transform.position = movePosition;
+                // apply procedural shake offset on top of the computed follow position
+                transform.position = movePosition + shakeOffset;
             }
 
             Vector3 lookAtPos = target.position + currentLookAtOffset;
@@ -367,6 +373,86 @@ public class CameraMovement : MonoBehaviour
             // Look at the Player
             transform.LookAt(lookAtPos);
         } 
+    }
+
+    // Camera Shake function
+    // duration: seconds the shake runs
+    // magnitude: maximum displacement in world units
+    // frequency: how many shakes per second
+    public void Shake(float duration, float magnitude, float frequency = 30f)
+    {
+        // stop any existing shake then start new
+        if (shakeRoutine != null)
+        {
+            StopCoroutine(shakeRoutine);
+            shakeRoutine = null;
+            shakeOffset = Vector3.zero;
+        }
+
+        if (duration <= 0f || magnitude <= 0f)
+        {
+            return;
+        }
+
+        shakeRoutine = StartCoroutine(ShakeRoutine(duration, magnitude, frequency));
+    }
+
+    // Immediately stop any ongoing shake and clear offset
+    public void StopShake()
+    {
+        if (shakeRoutine != null)
+        {
+            StopCoroutine(shakeRoutine);
+            shakeRoutine = null;
+        }
+        shakeOffset = Vector3.zero;
+    }
+
+    private IEnumerator ShakeRoutine(float duration, float magnitude, float frequency)
+    {
+        float elapsed = 0f;
+        float interval = 1f / Mathf.Max(1f, frequency);
+
+        // lerp the random offsets to make the shake smoother
+        Vector3 prev = Vector3.zero;
+        Vector3 target = Vector3.zero;
+        float t = 1f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+
+            // advance interpolation between random targets
+            t += Time.deltaTime / interval;
+            if (t >= 1f)
+            {
+                // pick new random target (bias to horizontal plane, small vertical)
+                prev = target;
+                Vector2 rand = Random.insideUnitCircle;
+                target = new Vector3(rand.x, rand.y * 0.35f, 0f) * magnitude;
+                t = 0f;
+            }
+
+            // smoothstep interpolation for nicer feel
+            float s = Mathf.SmoothStep(0f, 1f, t);
+            shakeOffset = Vector3.Lerp(prev, target, s);
+
+            yield return null;
+        }
+
+        // decay to zero smoothly
+        float decayTime = 0.15f;
+        float dec = 0f;
+        Vector3 start = shakeOffset;
+        while (dec < decayTime)
+        {
+            dec += Time.deltaTime;
+            shakeOffset = Vector3.Lerp(start, Vector3.zero, dec / decayTime);
+            yield return null;
+        }
+
+        shakeOffset = Vector3.zero;
+        shakeRoutine = null;
     }
 
     // Handles camera rotation based on input, with separate handling for mouse and controller input. 
