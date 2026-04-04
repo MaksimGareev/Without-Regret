@@ -1,6 +1,5 @@
 using UnityEngine;
 
-[RequireComponent(typeof(CharacterController))]
 public class PlayersFootsteps : MonoBehaviour
 {
     public AudioSource audioSource;
@@ -11,12 +10,11 @@ public class PlayersFootsteps : MonoBehaviour
     public AudioClip[] GrassSteps;
     public AudioClip[] HardwoodSteps;
 
-    private CharacterController Controller;
+    public CharacterController Controller;
     private float StepTimer;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        Controller = GetComponent<CharacterController>();
         if (audioSource == null)
         {
             audioSource = gameObject.AddComponent<AudioSource>();
@@ -40,6 +38,13 @@ public class PlayersFootsteps : MonoBehaviour
 
     public void PlayFootStep()
     {
+        if (Controller != null)
+        {
+            if (!Controller.isGrounded || Controller.velocity.magnitude < 0.01f)
+                return;
+        }
+
+
         SurfaceType surface = GetSurfaceType();
         AudioClip Clip = GetRandomClip(surface);
         if (Clip != null)
