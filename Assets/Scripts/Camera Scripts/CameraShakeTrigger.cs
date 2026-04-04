@@ -16,11 +16,14 @@ public class CameraShakeTrigger : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        cam.Shake(shakeDuration, shakeMagnitude, shakeFrequency);
-
-        if (onlyTriggerOnce)
+        if (other.CompareTag("Player"))
         {
-            GetComponent<Collider>().enabled = false;
+            cam.Shake(shakeDuration, shakeMagnitude, shakeFrequency);
+
+            if (onlyTriggerOnce)
+            {
+                GetComponent<Collider>().enabled = false;
+            }
         }
     }
 }
