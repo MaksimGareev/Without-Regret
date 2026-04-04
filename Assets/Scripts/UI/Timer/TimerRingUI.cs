@@ -12,6 +12,12 @@ public class TimerRingUI : MonoBehaviour
         Empty
     }
 
+    public enum PlayerPortrait
+    {
+        Echo,
+        Chime
+    }
+
     [Header("References")]
     [SerializeField] private Image ringImage;
     [SerializeField] private Image portraitImage;
@@ -23,15 +29,22 @@ public class TimerRingUI : MonoBehaviour
     [SerializeField] private Sprite ringEmpty;
 
     [Header("Portrait Textures")]
-    [SerializeField] private Sprite portraitFull;
-    [SerializeField] private Sprite portraitTwoThirds;
-    [SerializeField] private Sprite portraitOneThird;
-    [SerializeField] private Sprite portraitEmpty;
+    [SerializeField] private Sprite EchoPortraitFull;
+    [SerializeField] private Sprite EchoPortraitTwoThirds;
+    [SerializeField] private Sprite EchoPortraitOneThird;
+    [SerializeField] private Sprite EchoPortraitEmpty;
+    
+    [SerializeField] private Sprite ChimePortraitFull;
+    [SerializeField] private Sprite ChimePortraitTwoThirds;
+    [SerializeField] private Sprite ChimePortraitOneThird;
+    [SerializeField] private Sprite ChimePortraitEmpty;
+    
+    public PlayerPortrait currentPortrait =  PlayerPortrait.Echo;
 
     [Header("Animation")]
     public Animator animator;
     private CharacterSwap characterSwap;
-
+    
     public RingState currentRingState;
     public static TimerRingUI Instance { get; private set; }
 
@@ -49,16 +62,25 @@ public class TimerRingUI : MonoBehaviour
             Destroy(gameObject);
         }
         
-        characterSwap = FindFirstObjectByType<CharacterSwap>();
         uiFade = FindFirstObjectByType<UIFadeController>();
+        
+        SetRingState(RingState.Full);
+    }
+
+    private void OnEnable()
+    {
+        characterSwap = FindFirstObjectByType<CharacterSwap>();
+        
         if (characterSwap != null)
         {
             animator = characterSwap.GetAnimator();
 
             characterSwap.onAnimatorChanged += UpdateAnimator;
         }
-
-        SetRingState(RingState.Full);
+        else
+        {
+            Debug.LogError("No CharacterSwap found!");
+        }
     }
 
     public void Update()
@@ -160,25 +182,25 @@ public class TimerRingUI : MonoBehaviour
         {
             case RingState.Full:
                 ringImage.sprite = ringFull;
-                portraitImage.sprite = portraitFull;
+                portraitImage.sprite = currentPortrait == PlayerPortrait.Echo ? EchoPortraitFull : ChimePortraitFull;
                 currentRingState = RingState.Full;
                 break;
             
             case RingState.TwoThirds:
                 ringImage.sprite = ringTwoThirds;
-                portraitImage.sprite = portraitTwoThirds;
+                portraitImage.sprite = currentPortrait == PlayerPortrait.Echo ? EchoPortraitTwoThirds : ChimePortraitTwoThirds;
                 currentRingState = RingState.TwoThirds;
                 break;
             
             case RingState.OneThird:
                 ringImage.sprite = ringOneThird;
-                portraitImage.sprite = portraitOneThird;
+                portraitImage.sprite = currentPortrait == PlayerPortrait.Echo ? EchoPortraitOneThird : ChimePortraitOneThird;
                 currentRingState = RingState.OneThird;
                 break;
             
             case RingState.Empty:
                 ringImage.sprite = ringEmpty;
-                portraitImage.sprite = portraitEmpty;
+                portraitImage.sprite = currentPortrait == PlayerPortrait.Echo ? EchoPortraitEmpty : ChimePortraitEmpty;
                 currentRingState = RingState.Empty;
                 break;
         }
@@ -187,6 +209,19 @@ public class TimerRingUI : MonoBehaviour
     void UpdateAnimator(Animator newAnimator)
     {
         animator = newAnimator;
+
+        if (characterSwap.isEcho && currentPortrait != PlayerPortrait.Echo)
+        {
+            currentPortrait = PlayerPortrait.Echo;
+            SetRingState(currentRingState);
+            Debug.Log("Updated portrait to  " + currentPortrait);
+        }
+        else if (characterSwap.isChime && currentPortrait != PlayerPortrait.Chime)
+        {
+            currentPortrait = PlayerPortrait.Chime;
+            SetRingState(currentRingState);
+            Debug.Log("Updated portrait to  " + currentPortrait);
+        }
     }
 
     IEnumerator GameOverAnimation()
