@@ -71,6 +71,7 @@ public class LockPicking : MonoBehaviour
     [SerializeField] GameObject ControllerInputUIStageTwo;
     [SerializeField] GameObject KeyboardInputUI;
     [SerializeField] GameObject KeyboardInputUIStageTwo;
+    [SerializeField] GameObject OffscreenMarker, OnScreenMarker;
     private bool Tut1Active = false;
     private bool Tut2Active = false;
     private PlayerInput input;
@@ -362,6 +363,8 @@ public class LockPicking : MonoBehaviour
         
         LockPickUi.SetActive(false);
         Rigidbody rb = player.GetComponent<Rigidbody>();
+        OnScreenMarker.SetActive(true);
+        OffscreenMarker.SetActive(true);
 
         // Unlock player movement
         PlayerController pc = player.GetComponent<PlayerController>();
@@ -405,6 +408,8 @@ public class LockPicking : MonoBehaviour
         SecondStageActive = false;
         StageTwoUI.SetActive(false);
         LockPickUi.SetActive(true);
+        OnScreenMarker.SetActive(false);
+        OffscreenMarker.SetActive(false);
 
         if (player == null || animator == null || rb == null)
         {
@@ -530,6 +535,8 @@ public class LockPicking : MonoBehaviour
 
         // Unlock player movement
         PlayerController pc = player.GetComponent<PlayerController>();
+        OnScreenMarker.SetActive(true);
+        OffscreenMarker.SetActive(true);
         if (pc != null)
         {
             pc.MovementLocked = false;
