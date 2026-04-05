@@ -71,14 +71,16 @@ public class TimerRingUI : MonoBehaviour
     [Header("Damage Cooldown Settings")]
     [Tooltip("The time in seconds that the player will be invincible for before being able to take damage again")]
     [SerializeField, Range(0.0f, 5.0f)] private float damageCooldown = 1.0f;
-    public bool canTakeDamage = true;
+    private bool canTakeDamage = true;
     private float damageAvailableTime = 0f;
     
     private Animator animator;
     private CharacterSwap characterSwap;
     
-    public RingState currentRingState;
+    [HideInInspector] public RingState currentRingState;
     private UIFadeController uiFade;
+
+    [HideInInspector] public bool hasDied;
     
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -127,11 +129,11 @@ public class TimerRingUI : MonoBehaviour
 
     public void Update()
     {
-        if (Time.timeSinceLevelLoad < 0.1 && currentRingState == RingState.Empty)
+        if (Time.timeSinceLevelLoad < 0.1)
         {
-            if (currentRingState == RingState.Empty)
+            if (hasDied)
             {
-                SetRingState(RingState.Full);
+                RefillHealthOnDeath();
             }
 
             if (!canTakeDamage)
@@ -239,6 +241,7 @@ public class TimerRingUI : MonoBehaviour
             }
             
             GameOverManager.Instance.TriggerGameOver();
+            hasDied = true;
         }
         else
         {
@@ -302,4 +305,9 @@ public class TimerRingUI : MonoBehaviour
         animator?.SetBool("GameOverLoop", true);
     }
 
+    public void RefillHealthOnDeath()
+    {
+        hasDied = false;
+        SetRingState(RingState.Full);
+    }
 }
