@@ -13,6 +13,7 @@ public class SaveData
     public JournalSaveData journalSaveData;
     public BossEnemySaveData bossEnemySaveData;
     public int slot = 1;
+    public int playerMorality;
 
     public SaveData(int slot)
     {
