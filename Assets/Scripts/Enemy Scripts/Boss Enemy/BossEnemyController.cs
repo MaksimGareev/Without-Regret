@@ -5,6 +5,7 @@ using System.Xml;
 using UnityEngine;
 using UnityEngine.UI;
 
+[RequireComponent(typeof(SaveableBossEnemy))]
 public class BossEnemyController : MonoBehaviour
 {
     #region Phase Data Structure
@@ -647,6 +648,16 @@ public class BossEnemyController : MonoBehaviour
     {
         voidPoolSettings.minEnemiesToSpawn = minValue;
         voidPoolSettings.maxEnemiesToSpawn = maxValue;
+    }
+
+    public int GetCurrentPhase()
+    {
+        return currentPhaseNumber;
+    }
+
+    public void LoadIntoPhase(int phase)
+    {
+        
     }
 }
 
