@@ -5,7 +5,7 @@ using System.Collections;
 using UnityEngine.UI;
 using UnityEngine.Audio;
 
-public class NewDialogueManager : MonoBehaviour
+public class NewDialogueManager : MonoBehaviour, ISaveable
 {
     public static NewDialogueManager Instance;
 
@@ -858,4 +858,14 @@ public class NewDialogueManager : MonoBehaviour
         npcPortrait.gameObject.SetActive(false);
     }
 
+    public void SaveTo(SaveData data)
+    {
+        data.playerMorality = PlayerPrefs.GetInt("Morality");
+    }
+
+    public void LoadFrom(SaveData data)
+    {
+        PlayerPrefs.SetInt("Morality", data.playerMorality);
+        playerMorality = Mathf.Clamp(data.playerMorality, minMorality, maxMorality);
+    }
 }
