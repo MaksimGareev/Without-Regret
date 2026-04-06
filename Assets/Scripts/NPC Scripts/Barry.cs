@@ -116,6 +116,11 @@ public class Barry : MonoBehaviour
         }
     }
 
+    public void StartDissolve(float duration)
+    {
+        StartCoroutine(DissolveOut(duration));
+    }
+
     IEnumerator DissolveOut(float duration)
     {
         Renderer[] renderers = GetComponentsInChildren<Renderer>();

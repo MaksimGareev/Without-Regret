@@ -6558,7 +6558,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ced780c22dcf6ef4bb8e624b32e4787a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SaveableWorldObject
-  uniqueID: 30349a86-3e54-4249-a282-ca9eb676a4ed
+  uniqueID: 7a671c68-5958-4d2c-a735-7b59aeac9691
 --- !u!65 &308758238
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -12733,6 +12733,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1026643195241772877, guid: 11cdf36332c7d2243a57514c65abda98, type: 3}
       insertIndex: -1
       addedObject: {fileID: 593190974}
+    - targetCorrespondingSourceObject: {fileID: 1026643195241772877, guid: 11cdf36332c7d2243a57514c65abda98, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 593190975}
   m_SourcePrefab: {fileID: 100100000, guid: 11cdf36332c7d2243a57514c65abda98, type: 3}
 --- !u!1 &593190973 stripped
 GameObject:
@@ -12760,6 +12763,20 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1.6393509, y: 2.5085492, z: 0.6316139}
   m_Center: {x: 0.034756243, y: 1.4498241, z: -0.10399404}
+--- !u!114 &593190975
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 593190973}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c816b79715e89c84a9478dfd80fcc532, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractableProximity
+  range: 5
+  player: {fileID: 0}
 --- !u!65 &595888036
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -29986,7 +30003,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ced780c22dcf6ef4bb8e624b32e4787a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SaveableWorldObject
-  uniqueID: e4e96c9b-46ef-42cc-8c48-b1e8b73461d3
+  uniqueID: 3aed2c5a-1ca2-4b57-afb9-9b04b49fe137
 --- !u!1 &1225826353 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7350985859917267219, guid: f148b723247956048b4531af01de9adc, type: 3}
