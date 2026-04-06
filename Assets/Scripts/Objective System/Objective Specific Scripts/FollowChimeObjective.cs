@@ -61,6 +61,41 @@ public class FollowChimeObjective : MonoBehaviour
                 return;
             }
         }
+
+        if (linkedObjective == null)
+        {
+            Debug.LogWarning("Follow Chime Objective has no linked objective!", this);
+            return;
+        }
+        else if (!linkedObjective.chimeWayfinding)
+        {
+            Debug.LogWarning("Follow Chime Objective's linked objective data has Chime Wayfinding turned off. It will be turned on automatically now, so make sure this is intended.", this);
+            linkedObjective.chimeWayfinding = true;
+        }
+
+        if (ObjectiveManager.Instance != null && ObjectiveManager.Instance.IsObjectiveActive(linkedObjective.objectiveID))
+        {
+            // Objective is already active
+            var activeObjectives = ObjectiveManager.Instance.GetActiveObjectives();
+            ObjectiveInstance objective = null;
+            foreach (var activeObjective in activeObjectives)
+            {
+                if (activeObjective.data == linkedObjective)
+                {
+                    objective = activeObjective;
+                }
+            }
+
+            if (objective == null)
+            {
+                Debug.LogError("Linked Objective not found in active objectives", this);
+                return;
+            }
+            else
+            {
+                OnObjectiveActivated(objective);
+            }
+        }
     }
 
     private void Update()
@@ -96,6 +131,16 @@ public class FollowChimeObjective : MonoBehaviour
     {
         if (instance == null || instance.data == null) return;
         if (instance.data != linkedObjective) return;
+        if (!instance.data.chimeWayfinding)
+        {
+            Debug.LogWarning($"Chime Wayfinding is false for objective {instance.data.title}. Fix in order to have chime wayfinding activate");
+            return;
+        }
+        if (isObjectiveActive)
+        {
+            Debug.LogWarning("OnObjectiveActivated called while wayfinding is already active", this);
+            return;
+        }
 
         // Begin objective
         isObjectiveActive = true;
@@ -152,7 +197,8 @@ public class FollowChimeObjective : MonoBehaviour
 
     private void AdvanceWaypoint()
     {
-        ObjectiveManager.Instance.AddProgress(linkedObjective.objectiveID, 1);
+        if (linkedObjective.chimeProgressesObjective)
+                ObjectiveManager.Instance.AddProgress(linkedObjective.objectiveID, 1);
 
         if (completed) return;
 
@@ -171,6 +217,10 @@ public class FollowChimeObjective : MonoBehaviour
                 Debug.LogWarning("FollowChimeObjective: chimeComp missing when advancing waypoint.");
             }
         }
+        else if (!linkedObjective.chimeProgressesObjective)
+        {
+            EndGuiding();
+        }
     }
 
     private void EndGuiding()
@@ -179,5 +229,7 @@ public class FollowChimeObjective : MonoBehaviour
         {
             chime.ReturnToPlayer();
         }
+
+        completed = true;
     }
 }
