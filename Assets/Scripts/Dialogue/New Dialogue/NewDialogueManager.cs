@@ -5,6 +5,16 @@ using System.Collections;
 using UnityEngine.UI;
 using UnityEngine.Audio;
 
+[System.Serializable]
+public class NPCColorSet
+{
+    public string npcName;
+
+    public Color dialogueBoxColor;
+    public Color nameBGColor;
+    public Color portraitBGColor;
+}
+
 public class NewDialogueManager : MonoBehaviour
 {
     public static NewDialogueManager Instance;
@@ -33,6 +43,12 @@ public class NewDialogueManager : MonoBehaviour
     [SerializeField] GameObject popupBackground;
     [Tooltip("The visual feedback of the players dialogue choice input")]
     [SerializeField] List<HoldDirectionVisual> holdVisuals;
+
+    [Header("NPC Colors")]
+    [SerializeField] private List<NPCColorSet> npcColorSets;
+    public Image dialogueBoxBG;
+    public Image NPCNameBG;
+    public Image NPCPortraitBG;
 
     [Header("Player Portrait")]
     [Tooltip("Copy image of the players UI")]
@@ -172,6 +188,29 @@ public class NewDialogueManager : MonoBehaviour
         HandleDirectionalSelection();
     }
 
+    public void SetNPCColors(string speaker)
+    {
+        NPCColorSet set = npcColorSets.Find(c => c.npcName == speaker);
+
+        if (set == null)
+        {
+            Debug.LogWarning($"No color set found for {speaker}");
+        }
+
+        if (dialogueBoxBG != null)
+        {
+            dialogueBoxBG.color = set.dialogueBoxColor;
+        }
+        if (NPCNameBG != null)
+        {
+            NPCNameBG.color = set.nameBGColor;
+        }
+        if (NPCPortraitBG != null)
+        {
+            NPCPortraitBG.color = set.portraitBGColor;
+        }
+    }
+
     // Load dialogue based on the intended Scriptable object dialogue 
     public void StartDialogue(NewDialogueData dialogueSO, NewDialogueTrigger trigger)
     {
@@ -252,6 +291,8 @@ public class NewDialogueManager : MonoBehaviour
         currentLine = lineLookup[currentLineID];
         dialogueText.text = "";
         npcNameText.text = currentLine.Speaker;
+
+        SetNPCColors(currentLine.Speaker);
 
         // set portrait and voice of speaker
         SetNPCPortrait(currentLine.lineTone);
