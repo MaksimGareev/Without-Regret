@@ -12,6 +12,7 @@ public class PlayersFootsteps : MonoBehaviour
 
     public CharacterController Controller;
     private float StepTimer;
+    public bool footstepsActive = true;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -38,23 +39,26 @@ public class PlayersFootsteps : MonoBehaviour
 
     public void PlayFootStep()
     {
-        if (Controller != null)
+        if (footstepsActive)
         {
-            if (!Controller.isGrounded || Controller.velocity.magnitude < 0.01f)
-                return;
-        }
+            if (Controller != null)
+            {
+                if (!Controller.isGrounded || Controller.velocity.magnitude < 0.01f)
+                    return;
+            }
 
 
-        SurfaceType surface = GetSurfaceType();
-        AudioClip Clip = GetRandomClip(surface);
-        if (Clip != null)
-        {
-            audioSource.PlayOneShot(Clip);
-            //Debug.Log("Step");
-        }
-        if (Clip == null)
-        {
-            //Debug.Log("Step");
+            SurfaceType surface = GetSurfaceType();
+            AudioClip Clip = GetRandomClip(surface);
+            if (Clip != null)
+            {
+                audioSource.PlayOneShot(Clip);
+                //Debug.Log("Step");
+            }
+            if (Clip == null)
+            {
+                //Debug.Log("Step");
+            }
         }
     }
 
@@ -86,4 +90,21 @@ public class PlayersFootsteps : MonoBehaviour
         }
         return Clips[Random.Range(0, Clips.Length)];
     }
+
+    private void enableFootsteps()
+    {
+        if (!footstepsActive)
+        {
+            footstepsActive = true;
+        }
+    }
+
+    private void disableFootsteps()
+    {
+        if (footstepsActive)
+        {
+            footstepsActive = false;
+        }
+    }
+
 }
