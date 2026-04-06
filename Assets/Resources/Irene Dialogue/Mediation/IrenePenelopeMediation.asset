@@ -22,8 +22,10 @@ MonoBehaviour:
     NPCGender: female
     NextLineID: 
     endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
     choices:
-    - text: Try to sympathize but advise caution.
+    - text: Advise caution.
       NextLineID: Good
       moralityChange: 1
       direction: 0
@@ -42,6 +44,8 @@ MonoBehaviour:
     NPCGender: female
     NextLineID: Adventurous
     endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
     choices: []
     objectivesToActivate: []
   - LineID: Bad
@@ -52,6 +56,8 @@ MonoBehaviour:
     NPCGender: female
     NextLineID: Buzzkill
     endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
     choices: []
     objectivesToActivate: []
   - LineID: Adventurous
@@ -62,6 +68,8 @@ MonoBehaviour:
     NPCGender: female
     NextLineID: 
     endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
     choices:
     - text: Double down on safety.
       NextLineID: Safety
@@ -73,7 +81,7 @@ MonoBehaviour:
       moralityChange: -1
       direction: 1
       objectiveToActivate: 
-    - text: Acknowledge the joke as stupid but funny.
+    - text: That was stupid, but funny.
       NextLineID: Joke
       moralityChange: 1
       direction: 2
@@ -87,8 +95,10 @@ MonoBehaviour:
     NPCGender: female
     NextLineID: 
     endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
     choices:
-    - text: Maintain that you just want to be safe.
+    - text: You just want to be safe.
       NextLineID: Safety
       moralityChange: 1
       direction: 0
@@ -117,6 +127,8 @@ MonoBehaviour:
     NPCGender: female
     NextLineID: Safety
     endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
     choices: []
     objectivesToActivate: []
   - LineID: Turn The Cheek
@@ -126,6 +138,8 @@ MonoBehaviour:
     NPCGender: female
     NextLineID: Safety
     endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
     choices: []
     objectivesToActivate: []
   - LineID: Safety
@@ -136,6 +150,8 @@ MonoBehaviour:
     NPCGender: female
     NextLineID: Penelope Party
     endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
     choices: []
     objectivesToActivate: []
   - LineID: Impatience
@@ -146,6 +162,8 @@ MonoBehaviour:
     NPCGender: female
     NextLineID: Penelope Upset
     endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
     choices: []
     objectivesToActivate: []
   - LineID: Ditz
@@ -157,6 +175,8 @@ MonoBehaviour:
     NPCGender: female
     NextLineID: Penelope Upset
     endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
     choices: []
     objectivesToActivate: []
   - LineID: Penelope Upset
@@ -167,13 +187,15 @@ MonoBehaviour:
     NPCGender: female
     NextLineID: 
     endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
     choices:
     - text: Apologize for your impatience.
       NextLineID: Apologize
       moralityChange: 1
       direction: 0
       objectiveToActivate: 
-    - text: Tell her that having fun and being stupid aren't the same.
+    - text: That's dumb, not fun.
       NextLineID: Don't Be Dumb
       moralityChange: -1
       direction: 1
@@ -187,13 +209,15 @@ MonoBehaviour:
     NPCGender: female
     NextLineID: 
     endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
     choices:
-    - text: Tell her she can go if she wants, but you're staying back.
+    - text: Go if you want, I'll stay.
       NextLineID: Go Your Own Way
       moralityChange: 1
       direction: 0
       objectiveToActivate: 
-    - text: Tell her that you don't care what she does.
+    - text: Don't care what you do.
       NextLineID: I Don't Care Anymore
       moralityChange: -1
       direction: 1
@@ -206,6 +230,8 @@ MonoBehaviour:
     NPCGender: female
     NextLineID: Go Your Own Way
     endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
     choices: []
     objectivesToActivate: []
   - LineID: Go Your Own Way
@@ -216,6 +242,8 @@ MonoBehaviour:
     NPCGender: female
     NextLineID: Go Your Own Way II
     endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
     choices: []
     objectivesToActivate: []
   - LineID: Don't Be Dumb
@@ -226,6 +254,8 @@ MonoBehaviour:
     NPCGender: female
     NextLineID: Don't Be Dumb II
     endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
     choices: []
     objectivesToActivate: []
   - LineID: I Don't Care Anymore
@@ -236,6 +266,8 @@ MonoBehaviour:
     NPCGender: female
     NextLineID: I Don't Care Anymore II
     endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
     choices: []
     objectivesToActivate: []
   - LineID: Go Your Own Way II
@@ -245,6 +277,8 @@ MonoBehaviour:
     NPCGender: female
     NextLineID: 
     endDialogueAfterLine: 1
+    movingOn: 0
+    GiveItem: 0
     choices: []
     objectivesToActivate: []
   - LineID: Don't Be Dumb II
@@ -256,6 +290,8 @@ MonoBehaviour:
     NPCGender: female
     NextLineID: 
     endDialogueAfterLine: 1
+    movingOn: 0
+    GiveItem: 0
     choices: []
     objectivesToActivate: []
   - LineID: I Don't Care Anymore II
@@ -266,5 +302,7 @@ MonoBehaviour:
     NPCGender: female
     NextLineID: 
     endDialogueAfterLine: 1
+    movingOn: 0
+    GiveItem: 0
     choices: []
     objectivesToActivate: []
