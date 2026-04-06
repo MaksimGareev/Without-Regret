@@ -20,6 +20,8 @@ public class QTETriggerVolume : MonoBehaviour, IInteractable
     [SerializeField] private BossEnemyController bossEnemy;
     [SerializeField] private PlayerController playerController;
     [SerializeField, Tooltip("The platforms that this qte controls.")] private List<OrbitingPlatform> platforms;
+    [SerializeField] ObjectiveData linkedObjective;
+    public bool hasObjective = false;
 
     [Header("Debug")]
     [SerializeField] bool showDebugLogs = false;
@@ -284,6 +286,26 @@ public class QTETriggerVolume : MonoBehaviour, IInteractable
         if (SaveManager.Instance != null)
         {
             SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
+        }
+
+        if (linkedObjective != null && ObjectiveManager.Instance != null && hasObjective)
+        {
+            bool objectiveActive = false;
+
+            var activeObjectives = ObjectiveManager.Instance.GetActiveObjectives();
+            foreach (var obj in activeObjectives)
+            {
+                if (obj.data == linkedObjective)
+                {
+                    objectiveActive = true;
+                    break;
+                }
+            }
+
+            if (objectiveActive)
+            {
+                ObjectiveManager.Instance.AddProgress(linkedObjective.objectiveID, 1);
+            }
         }
 
         gameObject.SetActive(false);
