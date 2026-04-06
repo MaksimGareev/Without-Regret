@@ -30,6 +30,7 @@ public class NewDialogueManager : MonoBehaviour
     [SerializeField] Slider choiceTimerSlider;
     [Tooltip("Pop up text showing the players change in morality and current total morality")]
     [SerializeField] TextMeshProUGUI popupText;
+    [SerializeField] GameObject popupBackground;
     [Tooltip("The visual feedback of the players dialogue choice input")]
     [SerializeField] List<HoldDirectionVisual> holdVisuals;
 
@@ -806,6 +807,17 @@ public class NewDialogueManager : MonoBehaviour
         popupText.text = msg;
         popupText.alpha = 1f;
         popupText.gameObject.SetActive(true);
+
+        if (popupBackground != null)
+        {
+            CanvasGroup bgGroup = popupBackground.GetComponent<CanvasGroup>();
+            if (!bgGroup)
+            {
+                bgGroup = popupBackground.AddComponent<CanvasGroup>();
+            }
+            bgGroup.alpha = 1f;
+            popupBackground.SetActive(true);
+        }
         StartCoroutine(FadePopup());
     }
 
@@ -814,15 +826,28 @@ public class NewDialogueManager : MonoBehaviour
     {
         yield return new WaitForSeconds(1f);
 
+        CanvasGroup bgGroup = popupBackground.GetComponent<CanvasGroup>();
         float t = 0;
-        while (t < 1f)
+        float fadeDuration = 1f;
+        while (t < fadeDuration)
         {
             t += Time.deltaTime;
-            popupText.alpha = 1 - t;
+            float alpha = Mathf.Lerp(1f, 0f, t / fadeDuration);
+            popupText.alpha = alpha;
+
+            if (bgGroup != null)
+            {
+                bgGroup.alpha = alpha;
+            }
+
             yield return null;
         }
 
         popupText.gameObject.SetActive(false);
+        if (popupBackground != null)
+        {
+            popupBackground.SetActive(false);
+        }
     }
 
     // end the current dialogue instance
