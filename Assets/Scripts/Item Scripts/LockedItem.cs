@@ -134,7 +134,7 @@ public class LockedItem : MonoBehaviour, IInteractable
         {
             turorialShown = true;
 
-            InteractionTutorialUI.Instance.ShowTutorial(
+            InteractionTutorialUI.Instance.ShowTutorial(InteractType.Lockpick,
                 "Rotate the lockpick into the correct position and match the correct inputs to open the locked item.",
                 StartLockPick
                 );
