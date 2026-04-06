@@ -106,7 +106,7 @@ public class GameManager : MonoBehaviour
         instanceReady = true;
 
         // Load game data if not in main menu
-        if (SaveManager.Instance != null && SceneManager.GetActiveScene().name != "MainMenu")
+        if (SaveManager.Instance && !SaveManager.Instance.IsLoading && SceneManager.GetActiveScene().name != "MainMenu")
         {
             SaveManager.Instance.LoadGame(SaveSystem.activeSaveSlot);
         }

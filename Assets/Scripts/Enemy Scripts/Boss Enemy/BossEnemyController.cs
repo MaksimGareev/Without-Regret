@@ -569,7 +569,7 @@ public class BossEnemyController : MonoBehaviour
     void Die()
     {
         Debug.Log("Boss' health has depleted");
-        Destroy(gameObject); // Replace with death sequence later
+        gameObject.SetActive(false);
         GameEnding.SetActive(true);
     }
 
@@ -657,7 +657,7 @@ public class BossEnemyController : MonoBehaviour
 
     public void LoadIntoPhase(int phase)
     {
-        
+        Debug.Log("Loading boss into phase " + phase);
     }
 }
 
