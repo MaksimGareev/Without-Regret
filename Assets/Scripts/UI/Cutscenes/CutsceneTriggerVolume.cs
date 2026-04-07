@@ -27,7 +27,6 @@ public class CutsceneTriggerVolume : MonoBehaviour
 
         if (!shouldPlay) return;
         
-        CutsceneManager.Instance.StartCutscene(cutsceneToPlay);
-        playedOnce = true;
+        playedOnce = CutsceneManager.Instance.StartCutscene(cutsceneToPlay);
     }
 }

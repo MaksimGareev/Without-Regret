@@ -13,12 +13,17 @@ public class CutsceneManager : MonoBehaviour
     
     [Header("UI References")]
     [SerializeField] private GameObject cutscenePanel;
+    [SerializeField] private GameObject dialoguePanel;
     [SerializeField] private Button continueButton;
     [SerializeField] private Image backgroundImage;
+    [SerializeField] private Image blackScreenImage;
     [SerializeField] private Image dialogueBackgroundImage;
     [SerializeField] private Image speakerNameBackgroundImage;
     [SerializeField] private GameObject holdToSkipPanel;
     [SerializeField] private Slider holdToSkipSlider;
+    [SerializeField] private TextMeshProUGUI holdText;
+    [SerializeField] private Image  holdKeyImage;
+    [SerializeField] private TextMeshProUGUI toSkipText;
     [SerializeField] private TextMeshProUGUI dialogueText;
     [SerializeField] private TextMeshProUGUI speakerNameText;
     
@@ -214,20 +219,22 @@ public class CutsceneManager : MonoBehaviour
         skipTimer = 0.0f;
     }
 
-    public void StartCutscene(CutsceneData cutscene)
+    public bool StartCutscene(CutsceneData cutscene)
     {
         // Do nothing if cutscene is null or if a cutscene is already playing to prevent overlapping cutscenes and null reference errors
         if (!cutscene)
         {
             Debug.LogWarning("No cutscene selected");
-            return;
+            return false;
         }
 
         if (isCutscenePlaying)
         {
             Debug.LogWarning("Cutscene is already playing, ignoring second call to start cutscene");
-            return;
+            return false;
         }
+        
+        Time.timeScale = 0f; // Pause the game while the cutscene is playing
         
         currentCutscene = cutscene;
 
@@ -249,6 +256,8 @@ public class CutsceneManager : MonoBehaviour
         {
             StartCoroutine(WaitToSkipEntireCutscene());
         }
+
+        return true;
     }
 
     private void StartBackgroundMusic()
@@ -444,12 +453,14 @@ public class CutsceneManager : MonoBehaviour
         
         EndBackgroundMusic();
         
-        // Invoke event on completion
-        currentCutscene.onCutsceneCompleted?.Invoke();
-        
-        currentCutscene = null;
         backgroundImage.sprite = null;
         
         isCutscenePlaying = false;
+        
+        Time.timeScale = 1.0f; // Unpause Game
+        
+        // Invoke event on completion
+        currentCutscene.onCutsceneCompleted?.Invoke();
+        currentCutscene = null;
     }
 }
