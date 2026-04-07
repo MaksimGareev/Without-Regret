@@ -1,4 +1,4 @@
-using UnityEngine;
+using UnityEngine; 
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.Rendering;
@@ -35,7 +35,8 @@ public class TODManager : MonoBehaviour
     public Volume eveningVolume;
     public Volume nightVolume;
 
-    
+    public Light todDirectionalLight;
+
     [SerializeField] private List<ObjectiveTODPair<ObjectiveData, TOD>> objectiveTODList;
 
     private Dictionary<ObjectiveData, TOD> objectiveTODRuntime = new Dictionary<ObjectiveData, TOD>();
@@ -75,7 +76,7 @@ public class TODManager : MonoBehaviour
         }
     }
 
-    // switch time after pressing l key for testing
+    // switch time after pressing L key for testing
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.L))
@@ -115,6 +116,7 @@ public class TODManager : MonoBehaviour
     void ApplyTODImmediate()
     {
         SetVolumeWeightsInstant();
+        SetDirectionalLightRotationInstant();
 
         // update spot lights for night-only lighting
         UpdateNightSpotLights();
@@ -135,6 +137,31 @@ public class TODManager : MonoBehaviour
         if (nightVolume != null)
             nightVolume.weight = (currentTime == TOD.Night) ? 1f : 0f;
     }
+    // sets the directional light rotation to the current time of day
+    void SetDirectionalLightRotationInstant()
+    {
+        if (todDirectionalLight == null)
+            return;
+
+        todDirectionalLight.transform.rotation = Quaternion.Euler(GetTargetRotation(currentTime));
+    }
+
+    Vector3 GetTargetRotation(TOD timeOfDay)
+    {
+        switch (timeOfDay)
+        {
+            case TOD.Morning:
+                return new Vector3(39f, 0f, 0f);
+
+            case TOD.Evening:
+                return new Vector3(13f, 0f, 0f);
+
+            case TOD.Night:
+                return new Vector3(0f, 0f, 0f);
+        }
+
+        return Vector3.zero;
+    }
 
     IEnumerator BlendTOD()
     {
@@ -145,6 +172,15 @@ public class TODManager : MonoBehaviour
         float targetMorning = (currentTime == TOD.Morning) ? 1f : 0f;
         float targetEvening = (currentTime == TOD.Evening) ? 1f : 0f;
         float targetNight = (currentTime == TOD.Night) ? 1f : 0f;
+
+        Quaternion startRotation = Quaternion.identity;
+        Quaternion targetRotation = Quaternion.identity;
+
+        if (todDirectionalLight != null)
+        {
+            startRotation = todDirectionalLight.transform.rotation;
+            targetRotation = Quaternion.Euler(GetTargetRotation(currentTime));
+        }
 
         // update spot lights for night-only lighting
         UpdateNightSpotLights();
@@ -168,10 +204,14 @@ public class TODManager : MonoBehaviour
             if (nightVolume != null)
                 nightVolume.weight = Mathf.Lerp(startNight, targetNight, t);
 
+            if (todDirectionalLight != null)
+                todDirectionalLight.transform.rotation = Quaternion.Slerp(startRotation, targetRotation, t);
+
             yield return null;
         }
 
         SetVolumeWeightsInstant();
+        SetDirectionalLightRotationInstant();
         blendCoroutine = null;
     }
 
