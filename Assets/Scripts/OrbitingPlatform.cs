@@ -1,7 +1,7 @@
 
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(Rigidbody), typeof(SaveableWorldObject))]
 public class OrbitingPlatform : MonoBehaviour
 {
     private enum OrbitDirection 

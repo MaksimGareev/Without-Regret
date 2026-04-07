@@ -238,18 +238,21 @@ public class SettingsMenu : MonoBehaviour
             {
                 resetButton.interactable = false;
                 resetKeyImage.color = legendsDisabledColor;
+                resetButtonImage.color = legendsDisabledColor;
             }
 
             if (applyButton.interactable)
             {
                 applyButton.interactable = false;
                 applyKeyImage.color = legendsDisabledColor;
+                applyButtonImage.color = legendsDisabledColor;
             }
 
             if (discardChangesButton.interactable)
             {
                 discardChangesButton.interactable = false;
                 discardKeyImage.color = legendsDisabledColor;
+                discardButtonImage.color = legendsDisabledColor;
             }
 
             // Don't allow tabbing or other settings actions while confirming
@@ -286,12 +289,14 @@ public class SettingsMenu : MonoBehaviour
         {
             resetButton.interactable = true;
             resetKeyImage.color = legendsEnabledColor;
+            resetButtonImage.color = legendsEnabledColor;
 
         }
         else if (!hasChangedSettings && resetButton.interactable)
         {
             resetButton.interactable = false;
             resetKeyImage.color = legendsDisabledColor;
+            resetButtonImage.color = legendsDisabledColor;
         }
     }
 
@@ -1077,15 +1082,21 @@ public class SettingsMenu : MonoBehaviour
         {
             applyButton.interactable = true;
             applyKeyImage.color = legendsEnabledColor;
+            applyButtonImage.color = legendsEnabledColor;
+            
             discardChangesButton.interactable = true;
             discardKeyImage.color = legendsEnabledColor;
+            discardButtonImage.color = legendsEnabledColor;
         }
         else
         {
             applyButton.interactable = false;
             applyKeyImage.color = legendsDisabledColor;
+            applyButtonImage.color = legendsDisabledColor;
+            
             discardChangesButton.interactable = false;
             discardKeyImage.color = legendsDisabledColor;
+            discardButtonImage.color = legendsDisabledColor;
         }
 
         // Set text colors to indicate which settings have unapplied changes
