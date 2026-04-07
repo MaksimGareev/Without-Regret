@@ -10,8 +10,8 @@ public class ForPlayerSeeTroughScript : MonoBehaviour
     [SerializeField] Camera Cam;
     [SerializeField] LayerMask Mask;
 
-    private float LeafSizeValue = 1.25f;
-    private float OtherSizeValue = 0.75f;
+    private float LeafSizeValue = 1.93f;
+    private float OtherSizeValue = 1.15f;
 
     //[SerializeField] Material[] WallMaterials;
     RaycastHit[] RayArray;
