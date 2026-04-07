@@ -774,6 +774,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d64b772b840b4d439952d8b0cafd708, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  canAlwaysFloat: 0
   floatLift: 10
   floatHeightOffset: 0.5
   horizontalSpeed: 5
@@ -793,7 +794,12 @@ MonoBehaviour:
   chimeAnimator: {fileID: 0}
   chimeActive: 0
   chimeScript: {fileID: 0}
-  FloatingVfx: {fileID: 5675799287217744296}
+  showShadow: 1
+  shadowLayerMask:
+    serializedVersion: 2
+    m_Bits: 410920
+  shadowObject: {fileID: 0}
+  floatingVfx: {fileID: 5675799287217744296}
 --- !u!114 &7147037502482933178
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -30,6 +30,12 @@ public class ObjectiveData : ScriptableObject
     [Tooltip("Build index of the scene where the objective takes place.")]
     public int sceneIndex; // build index of the scene where the objective takes place
 
+    [Header("Chime Wayfinding")]
+    [Tooltip("If on and there's an object with the FollowChimeObjective component that's linked to this objective, Chime will move between the transforms provided to the FollowChimeObjective component.")]
+    public bool chimeWayfinding = false;
+    [Tooltip("If on and Chime is wayfinding, will increment objective progress each time the player reaches chime at a waypoint.")]
+    public bool chimeProgressesObjective = false;
+
     [Header("Objective Location")]
     [Tooltip("The ObjectiveMarker's positions in the world for this objective.")]
     public List<Vector3> markerTransforms; // Object that the objective indicator points to that also handles the on-screen quest marker
