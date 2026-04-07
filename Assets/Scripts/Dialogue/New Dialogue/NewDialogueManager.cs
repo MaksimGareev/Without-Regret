@@ -302,6 +302,11 @@ public class NewDialogueManager : MonoBehaviour
         }
         SetVoiceGender(currentLine.NPCGender);
 
+        if (currentLine.ShakeCamera && cam != null)
+        {
+            cam.Shake(0.4f, 0.5f);
+        }
+
         // hide continue arrow and choices
         continueArrow.SetActive(false);
         ClearChoices();
