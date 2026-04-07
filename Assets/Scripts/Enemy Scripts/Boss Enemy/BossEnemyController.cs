@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Xml;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -93,7 +92,7 @@ public class BossEnemyController : MonoBehaviour
     [Header("Debugging")]
     [SerializeField] bool showDebugLogs = false;
 
-    private int currentPhaseNumber = 1;
+    private int currentPhaseIndex = 0;
     private int currentActionIndex = 0;
     private Vector3 projectileSpawnPoint;
     private Action[] actions;
@@ -104,9 +103,10 @@ public class BossEnemyController : MonoBehaviour
     private Coroutine actionStartRoutine;
     private int totalHealth;
     private int currentHealth;
-    private Renderer[] renderers;
-
+    private int currentPhaseHealth = -1; // When loading data, should be set to the saved phase health
+    private bool phaseSkip = false;
     private bool phaseChanging = false;
+    private bool started = false;
     public GameObject GameEnding;
 
     // Runtime list of sliders used by UI logic (either generated or the fallback `phaseSliders`)
@@ -175,8 +175,7 @@ public class BossEnemyController : MonoBehaviour
             totalHealth += phases[i].Health;
         }
         currentHealth = totalHealth;
-
-        renderers = model.GetComponentsInChildren<Renderer>();
+        currentPhaseHealth = phases[0].Health;
 
         if (shadowLayerMask == 0)
             shadowLayerMask = LayerMask.GetMask("Target", "Enemy", "Ignore Raycast"); // Used for raycasting the shadow position and detecting projectile collisions
@@ -189,6 +188,8 @@ public class BossEnemyController : MonoBehaviour
 
     private void Start()
     {
+        if (started) return;
+
         if (animator != null)
         {
             animator.SetBool("isIdle", true);
@@ -196,11 +197,13 @@ public class BossEnemyController : MonoBehaviour
         // Start the first phase after an initial delay
         if (phases != null && phases.Length > 0 && phases[0].Actions != null && phases[0].Actions.Length > 0)
         {
-            currentPhaseNumber = 1;
+            currentPhaseIndex = 0;
             currentActionIndex = 0;
             phaseChanging = true;
             if (showDebugLogs) Debug.Log("Initiating phase change (via Start).");
             phaseStartRoutine = StartCoroutine(StartPhaseAfterDelay(phases[0]));
+
+            started = true;
         }
         else
         {
@@ -209,6 +212,40 @@ public class BossEnemyController : MonoBehaviour
     }
 
     #region Phase and Action Management
+
+    // Sets the phase to the one in the given index, skipping any previous phases
+    public void SetPhase(int index)
+    {
+        phaseChanging = true;
+        phaseSkip = true;
+
+        for (int i = 0; i < phases.Length; ++i) 
+        {
+            if (i == index)
+            {
+                currentPhaseIndex = i;
+                SetSliderActiveVisual(i, true);
+                // For loading current phase health
+                if (currentPhaseHealth > -1)
+                {
+                    int damage = Math.Max(phases[i].Health - currentPhaseHealth, 0);
+                    Debug.Log($"Found intended phase. Dealing {damage} damage.");
+                    TakeDamage(damage);
+                }
+                break;
+            }
+            else
+            {
+                // Take damage equal to the current phase's health
+                // This should also transition to the next phase's health
+                TakeDamage(phases[i].Health);
+            }
+        }
+
+        started = true;
+        phaseSkip = false;
+        phaseStartRoutine = StartCoroutine(StartPhaseAfterDelay(phases[index]));
+    }
 
     // Initiates the first action for the provided phase
     private void StartPhase(Phase phase)
@@ -226,7 +263,7 @@ public class BossEnemyController : MonoBehaviour
         currentAction = phase.Actions[currentActionIndex];
         currentAction.Initiate(this, showDebugLogs);
 
-        if (showDebugLogs) Debug.Log($"Started phase {currentPhaseNumber} and initiated action {currentAction.Name}");
+        if (showDebugLogs) Debug.Log($"Started phase {currentPhaseIndex + 1} and initiated action {currentAction.Name}");
     }
 
     // Sets up the next phase by activating the appropriate UI and starting the first action of the next phase
@@ -243,8 +280,8 @@ public class BossEnemyController : MonoBehaviour
             actionStartRoutine = null;
         }
 
-        int nextPhaseIndex = currentPhaseNumber; // currentPhaseNumber is 1-indexed, so next phase index is the same as currentPhaseNumber
-        currentPhaseNumber++;
+        int nextPhaseIndex = currentPhaseIndex + 1;
+        currentPhaseIndex++;
         if (nextPhaseIndex < 0 || nextPhaseIndex >= phases.Length)
         {
             Debug.LogError("Attempted to start a boss phase that is out of range.");
@@ -265,7 +302,7 @@ public class BossEnemyController : MonoBehaviour
         // Update visuals: previous greyed out, new active
         ActivateNextPhaseUI(nextPhaseIndex - 1, nextPhaseIndex);
 
-        if (showDebugLogs) Debug.Log("Transitioning to phase " + currentPhaseNumber);
+        if (showDebugLogs) Debug.Log("Transitioning to phase " + currentPhaseIndex + 1);
 
         phaseChanging = true;
         if (showDebugLogs) Debug.Log("Initiating phase change. (via StartNextPhase)");
@@ -333,7 +370,7 @@ public class BossEnemyController : MonoBehaviour
                 healthSliders.Add(slider);
 
                 // Set visual active state for the current phase only
-                SetSliderActiveVisual(i, i == (currentPhaseNumber - 1));
+                SetSliderActiveVisual(i, i == currentPhaseIndex);
             }
         }
         else
@@ -357,12 +394,11 @@ public class BossEnemyController : MonoBehaviour
 
     private void UpdateHealthUIForCurrentPhase()
     {
-        int phaseIndex = currentPhaseNumber - 1;
-        if (phaseIndex < 0 || phaseIndex >= healthSliders.Count) return;
-        Slider slider = healthSliders[phaseIndex];
+        if (currentPhaseIndex < 0 || currentPhaseIndex >= healthSliders.Count) return;
+        Slider slider = healthSliders[currentPhaseIndex];
         if (slider == null) return;
 
-        slider.value = phases[phaseIndex].Health;
+        slider.value = phases[currentPhaseIndex].Health;
     }
 
     private void ActivateNextPhaseUI(int previousPhaseIndex, int newPhaseIndex)
@@ -426,23 +462,23 @@ public class BossEnemyController : MonoBehaviour
         }
 
         // Get the next action for the current phase, if there is one, and initiate it
-        BossAction nextAction = phases[currentPhaseNumber - 1].GetNextAction(currentActionIndex);
+        BossAction nextAction = phases[currentPhaseIndex].GetNextAction(currentActionIndex);
         if (nextAction != null)
         {
-            if (showDebugLogs) Debug.Log("Next action in phase " + currentPhaseNumber + " is " + nextAction.Name + ". Initiating after delay of " + nextAction.DelayUntilNextAction + " seconds.");
+            if (showDebugLogs) Debug.Log("Next action in phase " + (currentPhaseIndex + 1) + " is " + nextAction.Name + ". Initiating after delay of " + nextAction.DelayUntilNextAction + " seconds.");
             actionStartRoutine = StartCoroutine(InitiateActionAfterDelay(nextAction));
         }
         else 
         {
             // Reached the final action in the phase, attempt to transition to next phase
-            int nextPhaseIndex = currentPhaseNumber; // currentPhase is 1-indexed, so next phase index is the same as currentPhase
+            int nextPhaseIndex = currentPhaseIndex + 1;
             if (nextPhaseIndex >= phases.Length)
             {
                 if (showDebugLogs) Debug.Log("No more phases or actions to go through.");
                 Die();
                 return;
             }
-            if (showDebugLogs) Debug.Log("Phase " + currentPhaseNumber + " has no more actions remaining. Transitioning to phase " + (currentPhaseNumber + 1));
+            if (showDebugLogs) Debug.Log("Phase " + (currentPhaseIndex + 1) + " has no more actions remaining. Transitioning to phase " + (currentPhaseIndex + 2));
             StartNextPhase();
         }
     }
@@ -451,7 +487,7 @@ public class BossEnemyController : MonoBehaviour
     {
         yield return new WaitForSeconds(phase.DelayBeforeStarting);
 
-        if (showDebugLogs) Debug.Log($"Starting phase {currentPhaseNumber} after initial delay of {phase.DelayBeforeStarting} seconds. Initiating first action: {phase.Actions[0].Name}");
+        if (showDebugLogs) Debug.Log($"Starting phase {currentPhaseIndex + 1} after initial delay of {phase.DelayBeforeStarting} seconds. Initiating first action: {phase.Actions[0].Name}");
         StartPhase(phase);
     }
 
@@ -459,7 +495,7 @@ public class BossEnemyController : MonoBehaviour
     {
         yield return new WaitForSeconds(currentAction.DelayUntilNextAction);
 
-        if (showDebugLogs) Debug.Log($"Initiating action {nextAction.Name} of Phase {currentPhaseNumber}");
+        if (showDebugLogs) Debug.Log($"Initiating action {nextAction.Name} of Phase {currentPhaseIndex + 1}");
         currentActionIndex++;
         currentAction = nextAction;
         currentAction.Initiate(this, showDebugLogs);
@@ -556,8 +592,7 @@ public class BossEnemyController : MonoBehaviour
         }
 
         sweepingArmObject.SetActive(false);
-        sweepingArmObject.transform.position = originalArmPosition; // reset arm position for next time it's used
-        sweepingArmObject.transform.rotation = originalArmRotation;
+        sweepingArmObject.transform.SetPositionAndRotation(originalArmPosition, originalArmRotation);
         EndAction();
     }
 
@@ -576,12 +611,13 @@ public class BossEnemyController : MonoBehaviour
     public void TakeDamage(int value = 1)
     {
         // Take damage to the current health part
-        Phase currentPhase = phases[currentPhaseNumber - 1];
+        Phase currentPhase = phases[currentPhaseIndex];
         currentPhase.Health -= value;
         currentHealth -= value;
+        if (!phaseSkip) currentPhaseHealth = currentPhase.Health;
         float healthRatio = (float)currentHealth / totalHealth;
 
-        if (showDebugLogs) Debug.Log($"Boss took {value} damage. Current phase: {currentPhaseNumber}, Current phase health: {currentPhase.Health}, Total Health Ratio: {healthRatio}");
+        if (showDebugLogs) Debug.Log($"Boss took {value} damage. Current phase: {currentPhaseIndex + 1}, Current phase health: {currentPhase.Health}, Total Health Ratio: {healthRatio}");
 
         // Update UI for current phase
         UpdateHealthUIForCurrentPhase();
@@ -591,54 +627,15 @@ public class BossEnemyController : MonoBehaviour
 
         if (currentPhase.Health <= 0)
         {
-            if (currentPhaseNumber >= phases.Length)
+            if (currentPhaseIndex >= phases.Length - 1)
             {
                 // Final part has been depleted
                 Die();
             }
-            else
+            else if (!phaseChanging)
             {
                 // Transition to the next phase
                 StartNextPhase();
-            }
-        }
-    }
-
-    private void SetAlpha(float alpha)
-    {
-        if (renderers == null || renderers.Length == 0) return;
-
-        foreach (Renderer renderer in renderers)
-        {
-            foreach (Material mat in renderer.materials)
-            {
-                if (mat.HasProperty("_BaseColor"))
-                {
-                    Color color = mat.color;
-                    color.a = alpha;
-                    mat.SetColor("_BaseColor", color);
-
-                    //if (alpha < 1f)
-                    //{
-                    //    mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
-                    //    mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-                    //    mat.SetInt("_ZWrite", 0);
-                    //    mat.DisableKeyword("_ALPHATEST_ON");
-                    //    mat.EnableKeyword("_ALPHABLEND_ON");
-                    //    mat.DisableKeyword("_ALPHAPREMULTIPLY_ON");
-                    //    mat.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
-                    //}
-                    //else
-                    //{
-                    //    mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
-                    //    mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
-                    //    mat.SetInt("_ZWrite", 1);
-                    //    mat.DisableKeyword("_ALPHATEST_ON");
-                    //    mat.DisableKeyword("_ALPHABLEND_ON");
-                    //    mat.DisableKeyword("_ALPHAPREMULTIPLY_ON");
-                    //    mat.renderQueue = -1;
-                    //}
-                }
             }
         }
     }

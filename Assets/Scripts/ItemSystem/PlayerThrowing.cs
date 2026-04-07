@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using System.Collections;
+using UnityEngine.Events;
 
 public class PlayerThrowing : MonoBehaviour
 {
@@ -44,6 +45,8 @@ public class PlayerThrowing : MonoBehaviour
 
     public Animator animator;
     private CharacterSwap characterSwap;
+
+    [HideInInspector] public UnityEvent<bool> OnStartThrowing = new();
 
     private void Start()
     {
@@ -359,5 +362,6 @@ public class PlayerThrowing : MonoBehaviour
         isCharging = true;
         currentCharge = 0f;
         usingController = Controller;
+        OnStartThrowing.Invoke(true);
     }
 }

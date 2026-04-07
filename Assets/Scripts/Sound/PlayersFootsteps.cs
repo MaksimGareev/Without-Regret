@@ -1,6 +1,5 @@
 using UnityEngine;
 
-[RequireComponent(typeof(CharacterController))]
 public class PlayersFootsteps : MonoBehaviour
 {
     public AudioSource audioSource;
@@ -11,12 +10,12 @@ public class PlayersFootsteps : MonoBehaviour
     public AudioClip[] GrassSteps;
     public AudioClip[] HardwoodSteps;
 
-    private CharacterController Controller;
+    public CharacterController Controller;
     private float StepTimer;
+    public bool footstepsActive = true;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        Controller = GetComponent<CharacterController>();
         if (audioSource == null)
         {
             audioSource = gameObject.AddComponent<AudioSource>();
@@ -40,16 +39,26 @@ public class PlayersFootsteps : MonoBehaviour
 
     public void PlayFootStep()
     {
-        SurfaceType surface = GetSurfaceType();
-        AudioClip Clip = GetRandomClip(surface);
-        if (Clip != null)
+        if (footstepsActive)
         {
-            audioSource.PlayOneShot(Clip);
-            //Debug.Log("Step");
-        }
-        if (Clip == null)
-        {
-            //Debug.Log("Step");
+            if (Controller != null)
+            {
+                if (!Controller.isGrounded || Controller.velocity.magnitude < 0.01f)
+                    return;
+            }
+
+
+            SurfaceType surface = GetSurfaceType();
+            AudioClip Clip = GetRandomClip(surface);
+            if (Clip != null)
+            {
+                audioSource.PlayOneShot(Clip);
+                //Debug.Log("Step");
+            }
+            if (Clip == null)
+            {
+                //Debug.Log("Step");
+            }
         }
     }
 
@@ -81,4 +90,21 @@ public class PlayersFootsteps : MonoBehaviour
         }
         return Clips[Random.Range(0, Clips.Length)];
     }
+
+    private void enableFootsteps()
+    {
+        if (!footstepsActive)
+        {
+            footstepsActive = true;
+        }
+    }
+
+    private void disableFootsteps()
+    {
+        if (footstepsActive)
+        {
+            footstepsActive = false;
+        }
+    }
+
 }
