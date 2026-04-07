@@ -6558,7 +6558,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ced780c22dcf6ef4bb8e624b32e4787a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SaveableWorldObject
-  uniqueID: 30349a86-3e54-4249-a282-ca9eb676a4ed
+  uniqueID: 6f088cea-2dea-4128-9e73-21e8e3421017
 --- !u!65 &308758238
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -9707,7 +9707,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomRevealTrigger
   darknessRenderer: {fileID: 1620628900}
-  fadeTime: 1
+  timeToFade: 2
 --- !u!1001 &444208559
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -13101,7 +13101,7 @@ PrefabInstance:
       objectReference: {fileID: 11400000, guid: 0f21f0b7a0ba3e24d8277bcf5126069d, type: 2}
     - target: {fileID: 7552097689216225132, guid: 77d3b6026832afd49b357083de1f5c82, type: 3}
       propertyPath: uniqueID
-      value: 04ba59c1-2b1f-43b2-9592-0414aed87f57
+      value: ad912ff2-581d-4451-92cf-b81f354e3fcb
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -16410,7 +16410,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomRevealTrigger
   darknessRenderer: {fileID: 1499686142}
-  fadeTime: 1
+  timeToFade: 2
 --- !u!65 &786455868
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -29986,7 +29986,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ced780c22dcf6ef4bb8e624b32e4787a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SaveableWorldObject
-  uniqueID: e4e96c9b-46ef-42cc-8c48-b1e8b73461d3
+  uniqueID: 8ff8da3c-ab87-4638-8cdf-dc91acc554a1
 --- !u!1 &1225826353 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7350985859917267219, guid: f148b723247956048b4531af01de9adc, type: 3}
@@ -30054,8 +30054,6 @@ Transform:
   - {fileID: 445441778}
   - {fileID: 440853324}
   - {fileID: 786455869}
-  - {fileID: 1620628902}
-  - {fileID: 1499686144}
   - {fileID: 1326412762}
   - {fileID: 603597418}
   - {fileID: 91829559}
@@ -34000,6 +33998,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::hideandshow
   ObjectToToggle: {fileID: 1227507341}
+  DarknessZones:
+  - {fileID: 440853325}
+  - {fileID: 786455867}
 --- !u!65 &1442872489
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -34975,11 +34976,11 @@ Transform:
   m_GameObject: {fileID: 1499686141}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 61.65735, y: 5.45, z: -13.980861}
+  m_LocalPosition: {x: 43.519997, y: 5.23, z: -15.6}
   m_LocalScale: {x: 7.853953, y: 3.5725918, z: 8.465013}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1227507342}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1502640111 stripped
 GameObject:
@@ -37542,11 +37543,11 @@ Transform:
   m_GameObject: {fileID: 1620628898}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 53.297348, y: 5.45, z: -13.980861}
+  m_LocalPosition: {x: 35.159996, y: 5.23, z: -15.6}
   m_LocalScale: {x: 7.853953, y: 3.5725918, z: 8.465013}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1227507342}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1621743385 stripped
 GameObject:
@@ -52159,6 +52160,8 @@ SceneRoots:
   - {fileID: 915058273}
   - {fileID: 958347513}
   - {fileID: 1688666061}
+  - {fileID: 1620628902}
+  - {fileID: 1499686144}
   - {fileID: 1227507342}
   - {fileID: 281615739}
   - {fileID: 1838476684}

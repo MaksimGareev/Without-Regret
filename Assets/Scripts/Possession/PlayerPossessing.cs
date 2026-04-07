@@ -29,11 +29,14 @@ public class PlayerPossessing : MonoBehaviour
     [Tooltip("The time it takes to recharge between possessions")]
     [SerializeField] private float rechargeDelay = 1.5f;
     private float rechargeSpeed = .5f;
-    private PossessedEnemyResisting target = null;
+    [SerializeField] private PossessedEnemyResisting target = null;
     
-    RaycastHit hit;
+    RaycastHit[] hit = new RaycastHit[20];
     private bool posessing = false;
     public bool shouldShowIcon = true;
+
+    int fov = 15;
+    int numRays = 15;
 
     [Header("Animator")]
     public Animator animator;
@@ -62,7 +65,7 @@ public class PlayerPossessing : MonoBehaviour
         }
     }
 
-    private void Update()
+    private void LateUpdate()
     {
         if (Time.timeScale == 0) return;
         
@@ -77,20 +80,55 @@ public class PlayerPossessing : MonoBehaviour
             Debug.Log("Tried Possessing Controller");
         }
 
-        Debug.DrawRay(gameObject.transform.position, gameObject.transform.forward*15f, Color.red);
-        if (Physics.Raycast(gameObject.transform.position, gameObject.transform.forward, out hit, 15f, mask))
+        //get directions around player
+        var start = gameObject.transform.position;
+        var forward = gameObject.transform.forward;
+        var right = gameObject.transform.right;
+
+        //get ray bounds
+        float halfWidth = Mathf.Tan(fov / 2f * Mathf.Deg2Rad);
+        float fullWidth = halfWidth * 2f;
+        float rayStepSize = fullWidth / (float)(numRays);
+
+        var rayStep = right * rayStepSize;
+
+        var rayDir = forward - right * (halfWidth - rayStepSize * 0.5f);
+
+        //goes from one angle to another and does a cast
+        for (int i = 0; i < numRays; i++)
         {
-            if (hit.collider.GetComponent<PossessedEnemyResisting>() != null)
+            Debug.DrawRay(gameObject.transform.position, rayDir * 15f, Color.red);
+            if (Physics.Raycast(gameObject.transform.position, rayDir, out hit[i], 15f, mask))
             {
-                normalEnemyMovement = hit.collider.GetComponent<PatrollingEnemy>();
-                target = hit.collider.GetComponent<PossessedEnemyResisting>();
-                EnablePopupIcon();
+                
+                if (hit[i].collider.GetComponent<PossessedEnemyResisting>() != null)
+                {
+                    if (target != null)
+                    {
+                        //check if new enemy hit is closer than current target or if there is a target to begin with
+                        if (Vector3.Distance(gameObject.transform.position, hit[i].collider.gameObject.transform.position) >
+                            Vector3.Distance(gameObject.transform.position, target.gameObject.transform.position))
+                        {
+                            //if yes, set the target to the closer enemy
+                            target = hit[i].collider.GetComponent<PossessedEnemyResisting>();
+                            EnablePopupIcon();
+                        }
+                    }
+                    else
+                    {
+                        target = hit[i].collider.GetComponent<PossessedEnemyResisting>();
+                        EnablePopupIcon();
+                    }
+
+                }
+
+                
             }
+            rayDir += rayStep;
         }
-        else if (posessing != true && target != null)
+        if (posessing != true && target != null)
         {
-            ClearTargetInfo();
-            DisablePopupIcon();
+            CheckForClear();
         }
 
         if (possessedEnemyMovement != null)
@@ -123,6 +161,8 @@ public class PlayerPossessing : MonoBehaviour
         {
             GameManager.Instance.possessionSlider.gameObject.SetActive(false);
         }
+
+        
     }
 
     private void TryStartPossession()
@@ -270,4 +310,16 @@ public class PlayerPossessing : MonoBehaviour
         animator = newAnimator;
     }
 
+    private void CheckForClear()
+    {
+        for (int c = 0; c < hit.Length; c++)
+        {
+            if (hit[c].collider != null)
+            {
+                return;
+            }
+        }
+        ClearTargetInfo();
+        DisablePopupIcon();
+    }
 }
