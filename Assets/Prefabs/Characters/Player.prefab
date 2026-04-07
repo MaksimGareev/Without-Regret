@@ -1025,7 +1025,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5675321481151379428}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a5b52f44c9cf3744abce96558cf7000f, type: 3}
   m_Name: 
@@ -1047,6 +1047,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 0aa111465076fae49b947883c758defe, type: 3}
   - {fileID: 8300000, guid: d82dba2114d26c74590321272e2c2bd5, type: 3}
   - {fileID: 8300000, guid: 446e4bc6fb22748419c5d109053a4cb1, type: 3}
+  Controller: {fileID: 0}
 --- !u!82 &1148485824787618765
 AudioSource:
   m_ObjectHideFlags: 0
@@ -1394,6 +1395,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 0aa111465076fae49b947883c758defe, type: 3}
   - {fileID: 8300000, guid: d82dba2114d26c74590321272e2c2bd5, type: 3}
   - {fileID: 8300000, guid: 446e4bc6fb22748419c5d109053a4cb1, type: 3}
+  Controller: {fileID: 0}
 --- !u!1001 &4849120772465094379
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1550,9 +1552,6 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 8135666d6946df443bf487c5ff01e2c3, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1216228327550707288}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 8135666d6946df443bf487c5ff01e2c3, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 5035508460003437639}
   m_SourcePrefab: {fileID: 100100000, guid: 8135666d6946df443bf487c5ff01e2c3, type: 3}
 --- !u!4 &320745761591167661 stripped
@@ -1590,31 +1589,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 8135666d6946df443bf487c5ff01e2c3, type: 3}
   m_PrefabInstance: {fileID: 4849120772465094379}
   m_PrefabAsset: {fileID: 0}
---- !u!143 &1216228327550707288
-CharacterController:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5731640279630533562}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Height: 1.67
-  m_Radius: 0.5
-  m_SlopeLimit: 45
-  m_StepOffset: 0.3
-  m_SkinWidth: 0.08
-  m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 0.66, z: 0}
 --- !u!114 &5035508460003437639
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1644,6 +1618,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 0aa111465076fae49b947883c758defe, type: 3}
   - {fileID: 8300000, guid: d82dba2114d26c74590321272e2c2bd5, type: 3}
   - {fileID: 8300000, guid: 446e4bc6fb22748419c5d109053a4cb1, type: 3}
+  Controller: {fileID: 8821119716541630626}
 --- !u!137 &5936494859347991270 stripped
 SkinnedMeshRenderer:
   m_CorrespondingSourceObject: {fileID: 1236558303595688973, guid: 8135666d6946df443bf487c5ff01e2c3, type: 3}
