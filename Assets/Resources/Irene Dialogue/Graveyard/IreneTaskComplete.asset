@@ -16,49 +16,6 @@ MonoBehaviour:
   dialogueLines:
   - LineID: Start
     Speaker: Irene
-    text: You give flowers to our friends yet?
-    lineTone: 0
-    NPCGender: female
-    NextLineID: 
-    endDialogueAfterLine: 0
-    movingOn: 0
-    GiveItem: 0
-    choices:
-    - text: (Nod)
-      NextLineID: Good
-      moralityChange: 1
-      direction: 0
-      objectiveToActivate: 
-    - text: (Shake head)
-      NextLineID: Bad
-      moralityChange: -1
-      direction: 1
-      objectiveToActivate: 
-    objectivesToActivate: []
-  - LineID: Good
-    Speaker: Irene
-    text: Good. I know they appreciate them.
-    lineTone: 0
-    NPCGender: female
-    NextLineID: Story Start
-    endDialogueAfterLine: 0
-    movingOn: 0
-    GiveItem: 0
-    choices: []
-    objectivesToActivate: []
-  - LineID: Bad
-    Speaker: Irene
-    text: So you just got them for yourself? What's up with you?
-    lineTone: 0
-    NPCGender: female
-    NextLineID: Story Start
-    endDialogueAfterLine: 0
-    movingOn: 0
-    GiveItem: 0
-    choices: []
-    objectivesToActivate: []
-  - LineID: Story Start
-    Speaker: Irene
     text: ...I'm sorry, I was trying to not bring it up, but I still can't believe
       Penelope's gone.
     lineTone: 0
@@ -80,7 +37,7 @@ MonoBehaviour:
     movingOn: 0
     GiveItem: 0
     choices:
-    - text: You can't blame yourself for what happened.
+    - text: You can't blame yourself.
       NextLineID: Good E 1
       moralityChange: 1
       direction: 0
