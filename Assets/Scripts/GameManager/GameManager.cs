@@ -42,7 +42,7 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public GameObject playerUICanvas;
     [HideInInspector] public GameObject pauseManager;
     public GameObject pauseMenu;
-    [HideInInspector] public DialogueManager dialogueManager;
+    [HideInInspector] public NewDialogueManager dialogueManager;
     public GameObject dialoguePanel;
     [HideInInspector] public GameObject objectiveManager;
     public ObjectiveCanvas objectiveCanvas;
@@ -52,6 +52,7 @@ public class GameManager : MonoBehaviour
     public GameObject qteButtonMashUI;
     [HideInInspector] public GameObject eventSystem;
     public SceneLoadManager sceneLoadManager;
+    public CutsceneManager cutsceneManager;
 
     [HideInInspector] public NewDialogueManager newDialogueManager;
 
@@ -124,10 +125,11 @@ public class GameManager : MonoBehaviour
         journalUICanvas = GetComponentInChildren<Journal>().gameObject;
         playerUICanvas = GetComponentInChildren<TimerRingUI>().gameObject;
         pauseManager = GetComponentInChildren<PauseManager>().gameObject;
-        dialogueManager = GetComponentInChildren<DialogueManager>();
+        dialogueManager = GetComponentInChildren<NewDialogueManager>();
         objectiveManager = GetComponentInChildren<ObjectiveManager>().gameObject;
         eventSystem = GetComponentInChildren<EventSystem>().gameObject;
         sceneLoadManager = GetComponentInChildren<SceneLoadManager>();
+        cutsceneManager = GetComponentInChildren<CutsceneManager>();
     }
 
     // Called from the scene change event subscribed to above
