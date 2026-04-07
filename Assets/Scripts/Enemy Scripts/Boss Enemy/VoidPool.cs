@@ -169,7 +169,7 @@ public class VoidPool : MonoBehaviour
             {
                 if(InteractionTutorialUI.Instance != null)
                 {
-                    InteractionTutorialUI.Instance.ShowTutorial("Void pools damage you over time! Don't stay in them for too long to avoid damage!");
+                    InteractionTutorialUI.Instance.ShowTutorial(InteractType.BossAttack,"Void pools damage you over time! Don't stay in them for too long to avoid damage!");
                 }
                 InteractionTutorialManager.Instance.MarkTutorialSeen(InteractType.BossAttack);
             }

@@ -106,7 +106,12 @@ public class TransitionToNewLevel : MonoBehaviour
         }
     }
 
-    private IEnumerator WaitToLoadScene()
+    public void TriggerSceneLoad()
+    {
+        StartCoroutine(WaitToLoadScene());
+    }
+
+    public IEnumerator WaitToLoadScene()
     {
         if (SaveManager.Instance != null)
         {
