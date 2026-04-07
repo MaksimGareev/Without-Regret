@@ -3935,6 +3935,7 @@ GameObject:
   - component: {fileID: 51242036}
   - component: {fileID: 51242035}
   - component: {fileID: 51242034}
+  - component: {fileID: 51242037}
   m_Layer: 0
   m_Name: Terrain_(150.20, 0.00, -270.40)
   m_TagString: Untagged
@@ -4017,6 +4018,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 680123169}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &51242037
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 51242033}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6cd81d353eeedb47827dd1954147bd9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Surface
+  surfaceType: 1
 --- !u!1001 &52115992
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -23372,6 +23386,7 @@ GameObject:
   - component: {fileID: 389492796}
   - component: {fileID: 389492795}
   - component: {fileID: 389492794}
+  - component: {fileID: 389492797}
   m_Layer: 0
   m_Name: Terrain_(-149.80, 0.00, -0.40)
   m_TagString: Untagged
@@ -23454,6 +23469,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 680123169}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &389492797
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 389492793}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6cd81d353eeedb47827dd1954147bd9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Surface
+  surfaceType: 1
 --- !u!1001 &395813539
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -32881,7 +32909,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7504214182150986572, guid: 50418b5f2ca51554fb6c711361357d5e, type: 3}
       propertyPath: uniqueID
-      value: 5d0402ba-d7d8-4aae-9f72-fc36688a9b32
+      value: 3ed79c4c-0d68-481e-a8e1-6182c8e29c21
       objectReference: {fileID: 0}
     - target: {fileID: 8169829489572737092, guid: 50418b5f2ca51554fb6c711361357d5e, type: 3}
       propertyPath: m_LocalPosition.x
@@ -52252,6 +52280,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88311134e484ef5449f807aaba4711da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TreeRotater
+--- !u!95 &897654791 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 8740143108691262306, guid: 73a845bb62974e34fb448fc27f39117e, type: 3}
+  m_PrefabInstance: {fileID: 1706929685}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &898162725
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -53035,7 +53068,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7504214182150986572, guid: 50418b5f2ca51554fb6c711361357d5e, type: 3}
       propertyPath: uniqueID
-      value: 005d8480-4d3e-42e3-a35a-6d88639b7d43
+      value: a98d7f9f-1ad2-41f4-95e7-b05780f8abda
       objectReference: {fileID: 0}
     - target: {fileID: 8169829489572737092, guid: 50418b5f2ca51554fb6c711361357d5e, type: 3}
       propertyPath: m_LocalPosition.x
@@ -58163,7 +58196,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7504214182150986572, guid: 50418b5f2ca51554fb6c711361357d5e, type: 3}
       propertyPath: uniqueID
-      value: d3cd6cda-5360-4319-8ad9-7b715efe4b76
+      value: 44483967-ce9f-42ac-b0af-85380f9a63c9
       objectReference: {fileID: 0}
     - target: {fileID: 8169829489572737092, guid: 50418b5f2ca51554fb6c711361357d5e, type: 3}
       propertyPath: m_LocalPosition.x
@@ -68719,7 +68752,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7504214182150986572, guid: 50418b5f2ca51554fb6c711361357d5e, type: 3}
       propertyPath: uniqueID
-      value: b7a9dcba-32a6-4e0c-919a-fa8496b3ffc8
+      value: e323117c-9b58-4de7-b584-333cd26b38ec
       objectReference: {fileID: 0}
     - target: {fileID: 8169829489572737092, guid: 50418b5f2ca51554fb6c711361357d5e, type: 3}
       propertyPath: m_LocalPosition.x
@@ -84441,6 +84474,7 @@ GameObject:
   - component: {fileID: 1403384934}
   - component: {fileID: 1403384933}
   - component: {fileID: 1403384932}
+  - component: {fileID: 1403384935}
   m_Layer: 9
   m_Name: Terrain_(0.20, 0.00, -270.40)
   m_TagString: Untagged
@@ -84523,6 +84557,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 680123169}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1403384935
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1403384931}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6cd81d353eeedb47827dd1954147bd9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Surface
+  surfaceType: 1
 --- !u!1001 &1405618117
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -89605,6 +89652,7 @@ GameObject:
   - component: {fileID: 1512414055}
   - component: {fileID: 1512414054}
   - component: {fileID: 1512414053}
+  - component: {fileID: 1512414056}
   m_Layer: 0
   m_Name: Terrain_(150.20, 0.00, -0.40)
   m_TagString: Untagged
@@ -89687,6 +89735,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 680123169}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1512414056
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1512414052}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6cd81d353eeedb47827dd1954147bd9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Surface
+  surfaceType: 1
 --- !u!1001 &1513329551
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -91718,6 +91779,7 @@ GameObject:
   - component: {fileID: 1527602398}
   - component: {fileID: 1527602397}
   - component: {fileID: 1527602396}
+  - component: {fileID: 1527602399}
   m_Layer: 9
   m_Name: AstralForestGround
   m_TagString: Untagged
@@ -91800,6 +91862,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 680123169}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1527602399
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1527602395}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6cd81d353eeedb47827dd1954147bd9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Surface
+  surfaceType: 1
 --- !u!1001 &1531734876
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -94111,6 +94186,7 @@ GameObject:
   - component: {fileID: 1579154848}
   - component: {fileID: 1579154847}
   - component: {fileID: 1579154846}
+  - component: {fileID: 1579154849}
   m_Layer: 0
   m_Name: Terrain_(-149.80, 0.00, -270.40)
   m_TagString: Untagged
@@ -94193,6 +94269,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 680123169}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1579154849
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1579154845}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6cd81d353eeedb47827dd1954147bd9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Surface
+  surfaceType: 1
 --- !u!1001 &1579474166
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -101761,6 +101850,7 @@ MonoBehaviour:
   - {fileID: 1197161725}
   - {fileID: 337560657}
   point: 0
+  animator: {fileID: 897654791}
 --- !u!195 &1706929689 stripped
 NavMeshAgent:
   m_CorrespondingSourceObject: {fileID: 2800810733366397663, guid: 73a845bb62974e34fb448fc27f39117e, type: 3}
@@ -117739,6 +117829,7 @@ GameObject:
   - component: {fileID: 1990161675}
   - component: {fileID: 1990161674}
   - component: {fileID: 1990161673}
+  - component: {fileID: 1990161676}
   m_Layer: 0
   m_Name: Terrain_(-149.80, 0.00, 269.60)
   m_TagString: Untagged
@@ -117821,6 +117912,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 680123169}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1990161676
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1990161672}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6cd81d353eeedb47827dd1954147bd9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Surface
+  surfaceType: 1
 --- !u!1001 &1990844766
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -122630,6 +122734,7 @@ GameObject:
   - component: {fileID: 2071421573}
   - component: {fileID: 2071421572}
   - component: {fileID: 2071421571}
+  - component: {fileID: 2071421574}
   m_Layer: 9
   m_Name: Terrain_(0.20, 0.00, 269.60)
   m_TagString: Untagged
@@ -122712,6 +122817,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 680123169}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2071421574
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2071421570}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6cd81d353eeedb47827dd1954147bd9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Surface
+  surfaceType: 1
 --- !u!1001 &2072484481
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -123861,6 +123979,7 @@ GameObject:
   - component: {fileID: 2098673705}
   - component: {fileID: 2098673704}
   - component: {fileID: 2098673703}
+  - component: {fileID: 2098673706}
   m_Layer: 0
   m_Name: Terrain_(150.20, 0.00, 269.60)
   m_TagString: Untagged
@@ -123943,6 +124062,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 680123169}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2098673706
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2098673702}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6cd81d353eeedb47827dd1954147bd9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Surface
+  surfaceType: 1
 --- !u!1001 &2099448525
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -124986,6 +125118,7 @@ MonoBehaviour:
   - {fileID: 1197161725}
   - {fileID: 337560657}
   point: 0
+  animator: {fileID: 0}
 --- !u!195 &2109642882
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -128304,7 +128437,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7504214182150986572, guid: 50418b5f2ca51554fb6c711361357d5e, type: 3}
       propertyPath: uniqueID
-      value: 233e3303-b7cf-4a84-b38d-0e721b22363c
+      value: c211c852-f91a-410d-bf4f-bbb24bea3f84
       objectReference: {fileID: 0}
     - target: {fileID: 8169829489572737092, guid: 50418b5f2ca51554fb6c711361357d5e, type: 3}
       propertyPath: m_LocalPosition.x
@@ -128472,7 +128605,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7504214182150986572, guid: 50418b5f2ca51554fb6c711361357d5e, type: 3}
       propertyPath: uniqueID
-      value: dc5085bc-2a05-4aa2-a315-e4abe69eea6f
+      value: a4369a7b-9fa9-466e-9478-c7cde1941f74
       objectReference: {fileID: 0}
     - target: {fileID: 8169829489572737092, guid: 50418b5f2ca51554fb6c711361357d5e, type: 3}
       propertyPath: m_LocalPosition.x

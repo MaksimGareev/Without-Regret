@@ -15,7 +15,7 @@ public class NPCColorSet
     public Color portraitBGColor;
 }
 
-public class NewDialogueManager : MonoBehaviour
+public class NewDialogueManager : MonoBehaviour, ISaveable
 {
     public static NewDialogueManager Instance;
 
@@ -156,6 +156,7 @@ public class NewDialogueManager : MonoBehaviour
         BuildLetterSounds();
         SetupInput();
         
+        RegisterAsSaveable();
     }
 
     void SetupInput()
@@ -929,4 +930,42 @@ public class NewDialogueManager : MonoBehaviour
         npcPortrait.gameObject.SetActive(false);
     }
 
+    public void SaveTo(SaveData data)
+    {
+        Debug.Log("Player morality saved : " + PlayerPrefs.GetInt("Morality"));
+        data.playerMorality = PlayerPrefs.GetInt("Morality");
+    }
+
+    public void LoadFrom(SaveData data)
+    {
+        PlayerPrefs.SetInt("Morality", data.playerMorality);
+        playerMorality = Mathf.Clamp(data.playerMorality, minMorality, maxMorality);
+        Debug.Log("Player morality loaded : " + PlayerPrefs.GetInt("Morality"));
+    }
+
+    private void RegisterAsSaveable()
+    {
+        // Register self with SaveManager as a savable entity
+        if (SaveManager.Instance)
+        {
+            SaveManager.Instance.RegisterSaveable(this);
+        }
+        else
+        {
+            StartCoroutine(RegisterWhenReady());
+        }
+    }
+    
+    // Wait until SaveManager instance is available before registering, since SaveManager is 
+    // also a singleton and may not be initialized yet when ObjectiveManager's Awake is called.
+    private IEnumerator RegisterWhenReady()
+    {
+        while (!SaveManager.Instance)
+        {
+            yield return null;
+        }
+
+        SaveManager.Instance.RegisterSaveable(this);
+        Debug.Log("DialogueManager Registered with SaveManager");
+    }
 }

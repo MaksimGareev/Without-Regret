@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+[RequireComponent(typeof(SaveableBossEnemy))]
 public class BossEnemyController : MonoBehaviour
 {
     #region Phase Data Structure
@@ -603,7 +604,7 @@ public class BossEnemyController : MonoBehaviour
     void Die()
     {
         Debug.Log("Boss' health has depleted");
-        Destroy(gameObject); // Replace with death sequence later
+        gameObject.SetActive(false);
         GameEnding.SetActive(true);
     }
 
@@ -644,6 +645,16 @@ public class BossEnemyController : MonoBehaviour
     {
         voidPoolSettings.minEnemiesToSpawn = minValue;
         voidPoolSettings.maxEnemiesToSpawn = maxValue;
+    }
+
+    public int GetCurrentPhase()
+    {
+        return currentPhaseNumber;
+    }
+
+    public void LoadIntoPhase(int phase)
+    {
+        Debug.Log("Loading boss into phase " + phase);
     }
 }
 

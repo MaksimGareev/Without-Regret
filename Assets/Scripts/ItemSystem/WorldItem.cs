@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Collider))]
+[RequireComponent(typeof(Collider), typeof(SaveableWorldObject))]
 public class WorldItem : MonoBehaviour, IInteractable
 {
     [Header("General Settings")]
