@@ -86,6 +86,7 @@ public class CameraMovement : MonoBehaviour
 
     [Tooltip("Speed at which the camera transitions during focus movement.")]
     [SerializeField] private float transitionSpeed = 2f;
+    [SerializeField] private Transform ThrowTarget;
 
     // Cache settings for returning after override triggers
     private Vector3 cachedOffset;
@@ -150,6 +151,7 @@ public class CameraMovement : MonoBehaviour
             Debug.LogWarning("Check Collisions is enabled but no Collider component found on the camera. Disabling collision checking.");
             checkCollisions = false;
         }
+        
     }
 
     private void OnEnable()
@@ -175,6 +177,11 @@ public class CameraMovement : MonoBehaviour
         if (playerController == null) // get player controller
         {
             playerController = GameObject.FindGameObjectWithTag("Player")?.GetComponent<PlayerController>();
+        }
+
+        if (ThrowTarget == null)
+        {
+            ThrowTarget = playerController.throwLookatPoint;
         }
 
         // Disable self if no player is found
@@ -304,7 +311,7 @@ public class CameraMovement : MonoBehaviour
         }
 
         // Check if there is significant look input to determine whether to rotate the camera or return to default position, and to reset the mouse timer
-        bool hasLookInput = lookInput.sqrMagnitude > 0.0001f;
+        bool hasLookInput = lookInput.sqrMagnitude > 0.001f;
 
         if (!hasLookInput && mouseResetTimer >= 0)
         {
@@ -338,7 +345,7 @@ public class CameraMovement : MonoBehaviour
                 // Return the camera to its default position and rotation
                 if (rotateCamera)
                 {
-                    ReturnRotation();
+                    //ReturnRotation();
                 }
             }
 
@@ -362,7 +369,15 @@ public class CameraMovement : MonoBehaviour
                 transform.position = movePosition;
             }
 
-            Vector3 lookAtPos = target.position + currentLookAtOffset;
+            Vector3 lookAtPos;
+            if (!playerController.isThrowing || ThrowTarget == null)
+            {
+                lookAtPos = target.position + currentLookAtOffset;
+            }
+            else
+            {
+                lookAtPos = ThrowTarget.position + currentLookAtOffset;
+            }
 
             // Look at the Player
             transform.LookAt(lookAtPos);
@@ -407,14 +422,7 @@ public class CameraMovement : MonoBehaviour
         // Update the current offset and lookAtOffset based on the new rotation
         currentOffset = rotation * defaultOffset;
 
-        if (!playerController.isThrowing)
-        {
-            currentLookAtOffset = rotation * defaultLookAtOffset;
-        }
-        else
-        {
-            currentLookAtOffset = rotation * throwLookAtOffset;
-        }
+        currentLookAtOffset = rotation * defaultLookAtOffset;
     }
     
     // Smoothly returns the camera to its default position and rotation when there is no input for a certain amount of time
@@ -493,21 +501,6 @@ public class CameraMovement : MonoBehaviour
         {
             yield break;
         }
-
-        // TO FIX: With this implementation, the camera will snap back to the original position and rotation at the end of the coroutine
-        // Because LateUpdate will override the position and rotation once it finishes.
-        // Commenting this out for now so it's a little less jarring, but a smooth transition would be ideal later
-
-        // transform.GetPositionAndRotation(out Vector3 currentPos, out Quaternion currentRot);
-        // float t = 0;
-        // while (t < zoomDuration)
-        // {
-        //    t += Time.deltaTime * transitionSpeed;
-        //    transform.SetPositionAndRotation(Vector3.Lerp(currentPos, camPosCache, t), Quaternion.Slerp(currentRot, camRotCache, t));
-        //    Vector3 lookAtPos = Vector3.Lerp(lookAtCache, target.position + currentLookAtOffset, t);
-        //    transform.LookAt(lookAtPos);
-        //    yield return null;
-        // }
 
         isZooming = false;
         CameraLocked = false;
