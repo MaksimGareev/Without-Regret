@@ -6,6 +6,9 @@ using System.Collections;
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerFloating : MonoBehaviour
 {
+    [Header("If true, the player can float even outside of floating trigger volumes.")]
+    [SerializeField] private bool canAlwaysFloat = false;
+
     [Header("Float Settings")]
     [SerializeField, Tooltip("How powerful the instant upward boost on floating start is")] 
     private float floatLift = 3f;
@@ -61,16 +64,20 @@ public class PlayerFloating : MonoBehaviour
     private Animator animator;
     private CharacterSwap characterSwap;
 
-
-
     [Header("Chime Animation settings")]
     public Animator chimeAnimator;
     public bool chimeActive = false;
     public Chime chimeScript;
 
-    [Header("VFX")]
-    [SerializeField] private GameObject FloatingVfx;
+    [Header("Shadow")]
+    [Tooltip("Whether or not to show the player's shadow while floating.")]
+    [SerializeField] private bool showShadow = true;
+    [Tooltip("Layer mask used for raycasting the position player's shadow. Should include any layers that shouldn't obstruct the shadow's position on the ground (e.g. Target, Enemy)")]
+    [SerializeField] LayerMask shadowLayerMask;
+    [SerializeField] private GameObject shadowObject;
 
+    [Header("VFX")]
+    [SerializeField] private GameObject floatingVfx;
 
     public bool IsFloating { get; private set; } = false;
     private bool canFloat = false;
@@ -119,9 +126,10 @@ public class PlayerFloating : MonoBehaviour
         toggleInventoryUI = GetComponent<ToggleInventoryUI>();
         playerCamera = Camera.main;
         controls = new PlayerControls();
-        FloatingVfx.SetActive(false);
+        if (floatingVfx != null)
+            floatingVfx.SetActive(false);
 
-        characterSwap = FindObjectOfType<CharacterSwap>();
+        characterSwap = FindFirstObjectByType<CharacterSwap>();
 
         if (characterSwap != null)
         {
@@ -185,6 +193,18 @@ public class PlayerFloating : MonoBehaviour
         {
             Debug.LogError("PlayerFloating: Float Input Action Reference is not assigned.");
         }
+
+        if (showShadow && shadowObject != null)
+        {
+            shadowObject.SetActive(false);
+        }
+        else if (showShadow && shadowObject == null)
+        {
+            Debug.LogWarning("PlayerFloating: showShadow is true but shadowObject reference is not assigned. Shadow will not be shown.");
+            showShadow = false;
+        }
+
+        canFloat = canAlwaysFloat;
     }
 
     public void ReadSubmit(InputAction.CallbackContext context)
@@ -201,7 +221,7 @@ public class PlayerFloating : MonoBehaviour
     {
         moveInput = context.ReadValue<Vector2>();
 
-        //if (showDebugLogs && isFloating)
+        //if (showDebugLogs && IsFloating)
         //{
         //    Debug.Log("PlayerFloating - Move Input: " + moveInput);
         //}
@@ -271,6 +291,21 @@ public class PlayerFloating : MonoBehaviour
 
     private void Update()
     {
+        if (canAlwaysFloat && !IsFloating && !IsCoolingDown)
+        {
+            if (canFloat && ButtonIcons.Instance != null)
+            {
+                if (!toggleInventoryUI.isEnabled)
+                {
+                    ButtonIcons.Instance.Highlight(InteractType.Float);
+                }
+                else
+                {
+                    ButtonIcons.Instance.Clear();
+                }
+            }
+        }
+
         if (Time.timeScale != 0f) 
         {
             HandleCooldown();
@@ -289,6 +324,20 @@ public class PlayerFloating : MonoBehaviour
             {
                 HandleRhythmInput();
                 UpdateRhythmUI();
+
+                if (showShadow && shadowObject != null)
+                {
+                    // Position the shadow on the ground below the player
+                    if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 20f, ~shadowLayerMask) && !hit.collider.isTrigger)
+                    {
+                        shadowObject.transform.position = hit.point + Vector3.up * 0.001f; // Slightly above ground to avoid z-fighting
+                        shadowObject.SetActive(true);
+                    }
+                    else
+                    {
+                        shadowObject.SetActive(false);
+                    }
+                }
             }
         }
     }
@@ -307,7 +356,7 @@ public class PlayerFloating : MonoBehaviour
         animator.SetBool("isFloating", false);
         animator.SetTrigger("floatStart");
         StartCoroutine(FloatAnimationHandler());
-        FloatingVfx.SetActive(true);
+        floatingVfx.SetActive(true);
 
         if (chimeActive)
         {
@@ -347,6 +396,11 @@ public class PlayerFloating : MonoBehaviour
         // Apply lift force
         rb.AddForce(Vector3.up * floatLift, ForceMode.VelocityChange);
 
+        if (showShadow && shadowObject != null)
+        {
+            shadowObject.SetActive(true);
+        }
+
         // reset movement smoothing state
         currentMove = Vector3.zero;
         targetMove = Vector3.zero;
@@ -356,7 +410,7 @@ public class PlayerFloating : MonoBehaviour
     {
         animator.SetTrigger("isLanding");
         animator.SetBool("isFloating", false);
-        FloatingVfx.SetActive(false);
+        floatingVfx.SetActive(false);
 
         if (chimeActive)
             chimeScript.ResetChimeAnimations();
@@ -383,7 +437,13 @@ public class PlayerFloating : MonoBehaviour
         if (charController != null) charController.enabled = true;
         if (playerController != null) playerController.enabled = true;
 
-        canFloat = false;
+        if (showShadow && shadowObject != null)
+        {
+            shadowObject.SetActive(false);
+        }
+
+        if (!canAlwaysFloat)
+            canFloat = false;
     }
 
     private void HandleRhythmInput()
@@ -558,7 +618,12 @@ public class PlayerFloating : MonoBehaviour
 
     public void SetCanFloat (bool newCanfloat)
     {
+        if (canAlwaysFloat)
+        {
+            newCanfloat = true;
+        }
         canFloat = newCanfloat;
+        Debug.Log("PlayerFloating: canFloat set to " + canFloat);
     }
 
     IEnumerator FloatAnimationHandler()
