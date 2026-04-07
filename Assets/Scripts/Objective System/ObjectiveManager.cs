@@ -54,7 +54,7 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
         }
 
         // Register self with SaveManager as a savable entity
-        if (SaveManager.Instance != null)
+        if (SaveManager.Instance)
         {
             SaveManager.Instance.RegisterSaveable(this);
         }
@@ -69,7 +69,7 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
     // also a singleton and may not be initialized yet when ObjectiveManager's Awake is called.
     private IEnumerator RegisterWhenReady()
     {
-        while (SaveManager.Instance == null)
+        while (!SaveManager.Instance)
         {
             yield return null;
         }

@@ -3,11 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+[RequireComponent(typeof(SaveableWorldObject))]
 public class QTETriggerVolume : MonoBehaviour, IInteractable
 {
     [Header("QTE Settings")]
     [SerializeField] private int damage = 1;
-    [SerializeField, Tooltip("The number of inputs required to complete the QTE")] private int numInputs = 4;    
+    [SerializeField, Tooltip("The number of inputs required to complete the QTE")] private int numInputs = 4;
+    
+    [Tooltip("Amount of health to heal the player on successful QTE completion. Set to 0 if the QTE should not heal the player at all.")]
+    [SerializeField, Range(0,3)] private int amountToHeal = 3;
 
     [Header("Arrow UI")]
     [SerializeField, Tooltip("Prefab for a single arrow RawImage (used to duplicate arrows at runtime).")] private RawImage arrowPrefab;
@@ -283,9 +287,15 @@ public class QTETriggerVolume : MonoBehaviour, IInteractable
         }
 
         // Save game after successful QTE
-        if (SaveManager.Instance != null)
+        if (SaveManager.Instance)
         {
             SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
+        }
+        
+        // Heal Player on successful QTE
+        if (TimerRingUI.Instance)
+        {
+            TimerRingUI.Instance.AddRingSection(amountToHeal);
         }
 
         if (linkedObjective != null && ObjectiveManager.Instance != null && hasObjective)
