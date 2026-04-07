@@ -73,7 +73,7 @@ public class PlayerFloating : MonoBehaviour
 
 
     public bool IsFloating { get; private set; } = false;
-    private bool canFloat = false;
+    [SerializeField] private bool canFloat;
     private float floatTimer = 0f;
     private float cooldownTimer = 0f;
     public bool IsCoolingDown { get; private set; } = false;
@@ -383,7 +383,8 @@ public class PlayerFloating : MonoBehaviour
         if (charController != null) charController.enabled = true;
         if (playerController != null) playerController.enabled = true;
 
-        canFloat = false;
+        //canFloat = false;
+
     }
 
     private void HandleRhythmInput()
