@@ -30,6 +30,7 @@ public class Chime : MonoBehaviour
     [SerializeField] private float moveThreshold = 0.1f;
 
     private bool followPlayerCached = false;
+    private float wayfindSpeed = 5f;
     private bool isInObjectiveMarkerMode = false;
     public bool IsGuiding => isInObjectiveMarkerMode;
 
@@ -44,6 +45,16 @@ public class Chime : MonoBehaviour
 
     [Header("Animator")]
     public Animator animator;
+
+    private void Awake()
+    {
+        if (player == null)
+        {
+            var playerObject = GameObject.FindGameObjectWithTag("Player");
+            if (playerObject != null) player = playerObject.transform;
+            else Debug.LogError("Chime: Player not found in scene. Chime will not function without player reference.", this);
+        }
+    }
 
     private void Start()
     {
@@ -63,7 +74,7 @@ public class Chime : MonoBehaviour
             targetPos = objectiveTargetPosition + bob;
 
             // Keep smoothing to avoid teleportation
-            transform.position = Vector3.Lerp(transform.position, targetPos, Time.deltaTime * followSmooth);
+            transform.position = Vector3.Lerp(transform.position, targetPos, Time.deltaTime * wayfindSpeed);
 
             // Optionally still face the player while at the objective
             if (facePlayer && player != null)
@@ -178,11 +189,12 @@ public class Chime : MonoBehaviour
 
     // Called by ObjectiveMarker when an objective with chimeMovesToMarker is activated.
     // Chime will move to the supplied world position and remain there until ReturnToPlayer() is called.
-    public void GoToMarker(Vector3 newPosition)
+    public void GoToMarker(Vector3 newPosition, float speed)
     {
         isInObjectiveMarkerMode = true;
         objectiveTargetPosition = newPosition;
-            
+        wayfindSpeed = speed;
+
         // temporarily stop following the player while guiding    
         followPlayer = false;
     }
