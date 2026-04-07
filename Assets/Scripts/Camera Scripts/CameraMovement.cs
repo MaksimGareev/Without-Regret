@@ -86,6 +86,7 @@ public class CameraMovement : MonoBehaviour
 
     [Tooltip("Speed at which the camera transitions during focus movement.")]
     [SerializeField] private float transitionSpeed = 2f;
+    [SerializeField] private Transform ThrowTarget;
 
     [Header("Return Blending")]
     [Tooltip("Duration used when smoothly blending the camera back to its normal follow position/rotation after an override.")]
@@ -168,6 +169,7 @@ public class CameraMovement : MonoBehaviour
             Debug.LogWarning("Check Collisions is enabled but no Collider component found on the camera. Disabling collision checking.");
             checkCollisions = false;
         }
+        
     }
 
     private void OnEnable()
@@ -193,6 +195,11 @@ public class CameraMovement : MonoBehaviour
         if (playerController == null) // get player controller
         {
             playerController = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
+        }
+
+        if (ThrowTarget == null)
+        {
+            ThrowTarget = playerController.throwLookatPoint;
         }
 
         // Disable self if no player is found
@@ -322,7 +329,7 @@ public class CameraMovement : MonoBehaviour
         }
 
         // Check if there is significant look input to determine whether to rotate the camera or return to default position, and to reset the mouse timer
-        bool hasLookInput = lookInput.sqrMagnitude > 0.0001f;
+        bool hasLookInput = lookInput.sqrMagnitude > 0.001f;
 
         if (!hasLookInput && mouseResetTimer >= 0)
         {
@@ -356,7 +363,7 @@ public class CameraMovement : MonoBehaviour
                 // Return the camera to its default position and rotation
                 if (rotateCamera)
                 {
-                    ReturnRotation();
+                    //ReturnRotation();
                 }
             }
         }
@@ -389,7 +396,15 @@ public class CameraMovement : MonoBehaviour
             }
         }
 
-        Vector3 lookAtPos = target.position + currentLookAtOffset;
+            Vector3 lookAtPos;
+            if (!playerController.isThrowing || ThrowTarget == null)
+            {
+                lookAtPos = target.position + currentLookAtOffset;
+            }
+            else
+            {
+                lookAtPos = ThrowTarget.position + currentLookAtOffset;
+            }
 
         // If we're actively looking at a subject, do not override rotation with the default LookAt.
         // Also if blending to normal or zooming, the coroutine will control rotation.
@@ -465,6 +480,7 @@ public class CameraMovement : MonoBehaviour
             yield return null;
         }
 
+        // currentLookAtOffset = rotation * defaultLookAtOffset;
         // decay to zero smoothly
         float decayTime = 0.15f;
         float dec = 0f;

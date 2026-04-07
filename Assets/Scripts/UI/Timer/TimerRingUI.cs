@@ -12,36 +12,78 @@ public class TimerRingUI : MonoBehaviour
         Empty
     }
 
-    [Header("Invincibility Frame Length")]
-    [SerializeField] private float invincibilityFrameDuration = 1.5f;
+    private enum PlayerPortrait
+    {
+        Echo,
+        Chime
+    }
+    
+    public static TimerRingUI Instance { get; private set; }
 
     [Header("References")]
+    [Tooltip("The image component that represents the health ring behind the portrait. This will be updated to show the current state of the health.")]
     [SerializeField] private Image ringImage;
+    
+    [Tooltip("The image component that shows the portrait of the current character.")]
     [SerializeField] private Image portraitImage;
 
     [Header("Ring Textures")]
+    [Tooltip("The sprite to be used for the full ring state. This should be a complete ring with no sections missing.")]
     [SerializeField] private Sprite ringFull;
+    
+    [Tooltip("The sprite to be used for the two thirds ring state. This should be a ring with one section missing, leaving two thirds of the ring remaining.")]
     [SerializeField] private Sprite ringTwoThirds;
+    
+    [Tooltip("The sprite to be used for the one third ring state. This should be a ring with two sections missing, leaving one third of the ring remaining.")]
     [SerializeField] private Sprite ringOneThird;
+    
+    [Tooltip("The sprite to be used for the empty ring state. This should be a ring with all sections missing, leaving an empty circle.")]
     [SerializeField] private Sprite ringEmpty;
-
-    [Header("Portrait Textures")]
-    [SerializeField] private Sprite portraitFull;
-    [SerializeField] private Sprite portraitTwoThirds;
-    [SerializeField] private Sprite portraitOneThird;
-    [SerializeField] private Sprite portraitEmpty;
-
-    [Header("Animation")]
-    public Animator animator;
+    
+    [Header("Echo Portrait Textures")]
+    [Tooltip("The sprite to be used when the player is playing as Echo and the health is full. Should be the happiest of the portraits.")]
+    [SerializeField] private Sprite EchoPortraitFull;
+    
+    [Tooltip("The sprite to be used when the player is playing as Echo and the health is at two thirds. Should be progressively less happy than the previous portrait.")]
+    [SerializeField] private Sprite EchoPortraitTwoThirds;
+    
+    [Tooltip("The sprite to be used when the player is playing as Echo and the health is at one thirds. Should be progressively less happy than the previous portrait.")]
+    [SerializeField] private Sprite EchoPortraitOneThird;
+    
+    [Tooltip("The sprite to be used when the player is playing as Echo and the health is empty. Should be the saddest looking of the portraits.")]
+    [SerializeField] private Sprite EchoPortraitEmpty;
+    
+    [Header("Chime Portrait Textures")]
+    [Tooltip("The sprite to be used when the player is playing as Chime and the health is full. Should be the happiest of the portraits.")]
+    [SerializeField] private Sprite ChimePortraitFull;
+    
+    [Tooltip("The sprite to be used when the player is playing as Chime and the health is at two thirds. Should be progressively less happy than the previous portrait.")]
+    [SerializeField] private Sprite ChimePortraitTwoThirds;
+    
+    [Tooltip("The sprite to be used when the player is playing as Chime and the health is at one thirds. Should be progressively less happy than the previous portrait.")]
+    [SerializeField] private Sprite ChimePortraitOneThird;
+    
+    [Tooltip("The sprite to be used when the player is playing as Chime and the health is empty. Should be the saddest looking of the portraits.")]
+    [SerializeField] private Sprite ChimePortraitEmpty;
+    
+    private PlayerPortrait currentPortrait =  PlayerPortrait.Echo;
+    
+    [Header("Damage Cooldown Settings")]
+    [Tooltip("The time in seconds that the player will be invincible for before being able to take damage again")]
+    [SerializeField, Range(0.0f, 5.0f)] private float damageCooldown = 1.0f;
+    private bool canTakeDamage = true;
+    private float damageAvailableTime = 0f;
+    
+    private Animator animator;
     private CharacterSwap characterSwap;
+    
+    [HideInInspector] public RingState currentRingState;
+    private UIFadeController uiFade;
 
-    public RingState currentRingState;
-    public static TimerRingUI Instance { get; private set; }
+    [HideInInspector] public bool hasDied;
+    
 
-    public UIFadeController uiFade;
-
-    private bool isInvincible = false;
-
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Awake()
     {
         if (Instance == null)
@@ -53,30 +95,66 @@ public class TimerRingUI : MonoBehaviour
             Destroy(gameObject);
         }
         
-        characterSwap = FindFirstObjectByType<CharacterSwap>();
         uiFade = FindFirstObjectByType<UIFadeController>();
+        
+        SetRingState(RingState.Full);
+    }
+
+    private void OnEnable()
+    {
+        characterSwap = FindFirstObjectByType<CharacterSwap>();
+        
         if (characterSwap != null)
         {
             animator = characterSwap.GetAnimator();
 
             characterSwap.onAnimatorChanged += UpdateAnimator;
-        }
 
-        SetRingState(RingState.Full);
+            if (characterSwap.isEcho)
+            {
+                currentPortrait = PlayerPortrait.Echo;
+                SetRingState(currentRingState);
+            }
+            else
+            {
+                currentPortrait = PlayerPortrait.Chime;
+                SetRingState(currentRingState);
+            }
+        }
+        else
+        {
+            Debug.LogError("No CharacterSwap found!");
+        }
     }
 
     public void Update()
     {
-        if (Time.timeSinceLevelLoad < 0.1 && currentRingState ==  RingState.Empty)
+        if (Time.timeSinceLevelLoad < 0.1)
         {
-            SetRingState(RingState.Full);
+            if (hasDied)
+            {
+                RefillHealthOnDeath();
+            }
+
+            if (!canTakeDamage)
+            {
+                canTakeDamage = true;
+                damageAvailableTime = Time.realtimeSinceStartup;
+            }
+        }
+        
+        // Check if damage cooldown has expired using real time
+        if (!canTakeDamage && Time.realtimeSinceStartup >= damageAvailableTime)
+        {
+            canTakeDamage = true;
+            Debug.Log("Player damage cooldown finished, setting canTakeDamage to true.");
         }
     }
 
-    public void SubtractRingSection(int sections)
+    public bool SubtractRingSection(int sections)
     {
-        if (isInvincible) return;
-
+        if (!canTakeDamage) return false;
+        
         for (int i = 0; i < sections; i++)
         {
             switch (currentRingState)
@@ -106,9 +184,9 @@ public class TimerRingUI : MonoBehaviour
                     break;
             }
         }
-
-        isInvincible = true;
-        StartCoroutine(InvincibilityCoroutine());
+        
+        StartDamageCooldown();
+        return true;
     }
 
     public void AddRingSection(int sections)
@@ -139,6 +217,13 @@ public class TimerRingUI : MonoBehaviour
         }
     }
     
+    private void StartDamageCooldown()
+    {
+        canTakeDamage = false;
+        damageAvailableTime = Time.realtimeSinceStartup + damageCooldown;
+        Debug.Log($"Player has taken damage. Setting canTakeDamage to false. Will be available at real time: {damageAvailableTime}");
+    }
+
     private void EndGame()
     {   
         if (GameOverManager.Instance)
@@ -156,6 +241,7 @@ public class TimerRingUI : MonoBehaviour
             }
             
             GameOverManager.Instance.TriggerGameOver();
+            hasDied = true;
         }
         else
         {
@@ -169,25 +255,25 @@ public class TimerRingUI : MonoBehaviour
         {
             case RingState.Full:
                 ringImage.sprite = ringFull;
-                portraitImage.sprite = portraitFull;
+                portraitImage.sprite = currentPortrait == PlayerPortrait.Echo ? EchoPortraitFull : ChimePortraitFull;
                 currentRingState = RingState.Full;
                 break;
             
             case RingState.TwoThirds:
                 ringImage.sprite = ringTwoThirds;
-                portraitImage.sprite = portraitTwoThirds;
+                portraitImage.sprite = currentPortrait == PlayerPortrait.Echo ? EchoPortraitTwoThirds : ChimePortraitTwoThirds;
                 currentRingState = RingState.TwoThirds;
                 break;
             
             case RingState.OneThird:
                 ringImage.sprite = ringOneThird;
-                portraitImage.sprite = portraitOneThird;
+                portraitImage.sprite = currentPortrait == PlayerPortrait.Echo ? EchoPortraitOneThird : ChimePortraitOneThird;
                 currentRingState = RingState.OneThird;
                 break;
             
             case RingState.Empty:
                 ringImage.sprite = ringEmpty;
-                portraitImage.sprite = portraitEmpty;
+                portraitImage.sprite = currentPortrait == PlayerPortrait.Echo ? EchoPortraitEmpty : ChimePortraitEmpty;
                 currentRingState = RingState.Empty;
                 break;
         }
@@ -196,6 +282,19 @@ public class TimerRingUI : MonoBehaviour
     void UpdateAnimator(Animator newAnimator)
     {
         animator = newAnimator;
+
+        if (characterSwap.isEcho && currentPortrait != PlayerPortrait.Echo)
+        {
+            currentPortrait = PlayerPortrait.Echo;
+            SetRingState(currentRingState);
+            // Debug.Log("Updated portrait to  " + currentPortrait);
+        }
+        else if (characterSwap.isChime && currentPortrait != PlayerPortrait.Chime)
+        {
+            currentPortrait = PlayerPortrait.Chime;
+            SetRingState(currentRingState);
+            // Debug.Log("Updated portrait to  " + currentPortrait);
+        }
     }
 
     IEnumerator GameOverAnimation()
@@ -206,11 +305,9 @@ public class TimerRingUI : MonoBehaviour
         animator?.SetBool("GameOverLoop", true);
     }
 
-    IEnumerator InvincibilityCoroutine()
+    public void RefillHealthOnDeath()
     {
-        isInvincible = true;
-        yield return new WaitForSeconds(invincibilityFrameDuration);
-        isInvincible = false;
+        hasDied = false;
+        SetRingState(RingState.Full);
     }
-
 }

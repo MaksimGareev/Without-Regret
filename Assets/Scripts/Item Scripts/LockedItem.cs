@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Linq;
 
+[RequireComponent(typeof(SaveableWorldObject))]
 public class LockedItem : MonoBehaviour, IInteractable
 {
     [HideInInspector] public InteractType interactType => InteractType.Lockpick;
