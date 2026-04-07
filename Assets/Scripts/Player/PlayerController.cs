@@ -62,6 +62,8 @@ public class PlayerController : MonoBehaviour, ISaveable
 
     [SerializeField] private PlayerFloating playerFloating;
 
+    public Transform throwLookatPoint;
+
     public static bool DialogueActive = false;
 
     // Special Idle Variables
