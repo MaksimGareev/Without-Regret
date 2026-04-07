@@ -72,7 +72,7 @@ public class PlayerEquipItem : MonoBehaviour
             if (toggleInventoryUI != null)
             {
                 toggleInventoryUI.ToggleInventory();
-                InteractionTutorialUI.Instance.ShowTutorial(
+                InteractionTutorialUI.Instance.ShowTutorial(InteractType.Pickup,
                 "Throwable items can be used to distracted unaware enemies or be used to stun enemies that are chasing you."
                  );
                 return;

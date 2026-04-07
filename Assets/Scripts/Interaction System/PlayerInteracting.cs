@@ -76,14 +76,14 @@ public class PlayerInteracting : MonoBehaviour
 
     private void OnEnable()
     {
-        Mantle.Enable();
-        Interact.Enable();
+        Mantle?.Enable();
+        Interact?.Enable();
     }
 
     private void OnDisable()
     {
-        Mantle.Disable();
-        Interact.Disable();
+        Mantle?.Disable();
+        Interact?.Disable();
     }
 
     // Update is called once per frame
@@ -241,7 +241,7 @@ public class PlayerInteracting : MonoBehaviour
         if (string.IsNullOrEmpty(tutorialText))
             return false;
 
-        InteractionTutorialUI.Instance.ShowTutorial(tutorialText, () =>
+        InteractionTutorialUI.Instance.ShowTutorial(type,tutorialText, () =>
         {
             InteractionTutorialManager.Instance.MarkTutorialSeen(type);
             onComplete?.Invoke();

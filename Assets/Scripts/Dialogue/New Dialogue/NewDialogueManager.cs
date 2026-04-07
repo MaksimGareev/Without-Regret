@@ -5,6 +5,16 @@ using System.Collections;
 using UnityEngine.UI;
 using UnityEngine.Audio;
 
+[System.Serializable]
+public class NPCColorSet
+{
+    public string npcName;
+
+    public Color dialogueBoxColor;
+    public Color nameBGColor;
+    public Color portraitBGColor;
+}
+
 public class NewDialogueManager : MonoBehaviour, ISaveable
 {
     public static NewDialogueManager Instance;
@@ -30,8 +40,15 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
     [SerializeField] Slider choiceTimerSlider;
     [Tooltip("Pop up text showing the players change in morality and current total morality")]
     [SerializeField] TextMeshProUGUI popupText;
+    [SerializeField] GameObject popupBackground;
     [Tooltip("The visual feedback of the players dialogue choice input")]
     [SerializeField] List<HoldDirectionVisual> holdVisuals;
+
+    [Header("NPC Colors")]
+    [SerializeField] private List<NPCColorSet> npcColorSets;
+    public Image dialogueBoxBG;
+    public Image NPCNameBG;
+    public Image NPCPortraitBG;
 
     [Header("Player Portrait")]
     [Tooltip("Copy image of the players UI")]
@@ -172,6 +189,29 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
         HandleDirectionalSelection();
     }
 
+    public void SetNPCColors(string speaker)
+    {
+        NPCColorSet set = npcColorSets.Find(c => c.npcName == speaker);
+
+        if (set == null)
+        {
+            Debug.LogWarning($"No color set found for {speaker}");
+        }
+
+        if (dialogueBoxBG != null)
+        {
+            dialogueBoxBG.color = set.dialogueBoxColor;
+        }
+        if (NPCNameBG != null)
+        {
+            NPCNameBG.color = set.nameBGColor;
+        }
+        if (NPCPortraitBG != null)
+        {
+            NPCPortraitBG.color = set.portraitBGColor;
+        }
+    }
+
     // Load dialogue based on the intended Scriptable object dialogue 
     public void StartDialogue(NewDialogueData dialogueSO, NewDialogueTrigger trigger)
     {
@@ -253,6 +293,8 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
         dialogueText.text = "";
         npcNameText.text = currentLine.Speaker;
 
+        SetNPCColors(currentLine.Speaker);
+
         // set portrait and voice of speaker
         SetNPCPortrait(currentLine.lineTone);
         if (activeDialogueTrigger != null && activeDialogueTrigger.faceHandler != null) //Calls the faceHandler to display same expression as the NPC Portrait
@@ -260,6 +302,11 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
             activeDialogueTrigger.faceHandler.SetExpression(currentLine.lineTone);
         }
         SetVoiceGender(currentLine.NPCGender);
+
+        if (currentLine.ShakeCamera && cam != null)
+        {
+            cam.Shake(0.4f, 0.5f);
+        }
 
         // hide continue arrow and choices
         continueArrow.SetActive(false);
@@ -807,6 +854,17 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
         popupText.text = msg;
         popupText.alpha = 1f;
         popupText.gameObject.SetActive(true);
+
+        if (popupBackground != null)
+        {
+            CanvasGroup bgGroup = popupBackground.GetComponent<CanvasGroup>();
+            if (!bgGroup)
+            {
+                bgGroup = popupBackground.AddComponent<CanvasGroup>();
+            }
+            bgGroup.alpha = 1f;
+            popupBackground.SetActive(true);
+        }
         StartCoroutine(FadePopup());
     }
 
@@ -815,15 +873,28 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
     {
         yield return new WaitForSeconds(1f);
 
+        CanvasGroup bgGroup = popupBackground.GetComponent<CanvasGroup>();
         float t = 0;
-        while (t < 1f)
+        float fadeDuration = 1f;
+        while (t < fadeDuration)
         {
             t += Time.deltaTime;
-            popupText.alpha = 1 - t;
+            float alpha = Mathf.Lerp(1f, 0f, t / fadeDuration);
+            popupText.alpha = alpha;
+
+            if (bgGroup != null)
+            {
+                bgGroup.alpha = alpha;
+            }
+
             yield return null;
         }
 
         popupText.gameObject.SetActive(false);
+        if (popupBackground != null)
+        {
+            popupBackground.SetActive(false);
+        }
     }
 
     // end the current dialogue instance
