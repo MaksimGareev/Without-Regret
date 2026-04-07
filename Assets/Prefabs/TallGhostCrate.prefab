@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 3671447468523299878}
   - component: {fileID: 4279070643047779880}
   - component: {fileID: 2389122674868201980}
+  - component: {fileID: -7198752300272170800}
   m_Layer: 0
   m_Name: TallGhostCrate
   m_TagString: Untagged
@@ -139,3 +140,18 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 97.27833, y: 97.26241, z: 97.26238}
   m_Center: {x: -0.007966994, y: 48.63119, z: 0}
+--- !u!114 &-7198752300272170800
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7154316538392221134}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6ae8110a7bf9b64b904b977090c04a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ErosionTransition
+  minValue: 0.3
+  maxValue: 0.6
+  speed: 0.3
