@@ -323,7 +323,7 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
         if (allCompleted && CompleteJsonDialogueFile != null && TalkedAlready == true)
         {
             Debug.Log("DialogueTrigger: Starting dialogue from JSON");
-            GameManager.Instance.dialogueManager.StartDialogueFromJson(CompleteJsonDialogueFile, this);
+            //GameManager.Instance.dialogueManager.StartDialogueFromJson(CompleteJsonDialogueFile, this);
 
             // if (ObjectiveManager.Instance != null && linkedObjective != null)
             // {
@@ -350,7 +350,7 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
         if (anyActive && ActiveJsonDialogueFile != null)
         {
             Debug.Log("DialogueTrigger: Starting dialogue from JSON");
-            GameManager.Instance.dialogueManager.StartDialogueFromJson(ActiveJsonDialogueFile, this);
+            //GameManager.Instance.dialogueManager.StartDialogueFromJson(ActiveJsonDialogueFile, this);
             return;
         }
 
@@ -358,7 +358,7 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
         if (GameManager.Instance.dialogueManager != null && jsonDialogueFile != null && TalkedAlready == false)
         {
             Debug.Log("DialogueTrigger: Starting dialogue from JSON");
-            GameManager.Instance.dialogueManager.StartDialogueFromJson(jsonDialogueFile, this);
+            //GameManager.Instance.dialogueManager.StartDialogueFromJson(jsonDialogueFile, this);
             
             // Add Progress to objective if there is one to add to, (Talking to irene completes the "talk to irene" objective)
             // if (ObjectiveManager.Instance != null && linkedObjective != null)
@@ -375,7 +375,7 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
         else if (TalkedAlready == true && TalkedJsonDialogueFile != null)
         {
             Debug.Log("DialogueTrigger: Starting dialogue from JSON");
-            GameManager.Instance.dialogueManager.StartDialogueFromJson(TalkedJsonDialogueFile, this);
+            //GameManager.Instance.dialogueManager.StartDialogueFromJson(TalkedJsonDialogueFile, this);
 
             // if (ObjectiveManager.Instance != null && linkedObjective != null)
             // {
@@ -446,7 +446,7 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
 
             if (GameManager.Instance.dialogueManager != null && jsonDialogueFile != null)
             {
-                GameManager.Instance.dialogueManager.StartDialogueFromJson(jsonDialogueFile, this);
+                //GameManager.Instance.dialogueManager.StartDialogueFromJson(jsonDialogueFile, this);
 
                 // // Add Progress to objective if there is one to add to, (Talking to irene completes the "talk to irene" objective)
                 // if (ObjectiveManager.Instance != null && linkedObjective != null)

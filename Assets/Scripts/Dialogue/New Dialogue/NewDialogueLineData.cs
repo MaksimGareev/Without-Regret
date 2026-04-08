@@ -17,6 +17,7 @@ public class NewDialogueLineData
     public bool endDialogueAfterLine;
     public bool movingOn;
     public bool GiveItem;
+    public bool ShakeCamera;
 
     public List<NewDialogueChoiceData> choices;
     public List<string> objectivesToActivate;

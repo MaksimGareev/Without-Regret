@@ -338,6 +338,7 @@ GameObject:
   - component: {fileID: 39083802}
   - component: {fileID: 39083801}
   - component: {fileID: 39083800}
+  - component: {fileID: 39083803}
   m_Layer: 0
   m_Name: Terrain
   m_TagString: Untagged
@@ -420,6 +421,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &39083803
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 39083799}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6cd81d353eeedb47827dd1954147bd9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Surface
+  surfaceType: 1
 --- !u!4 &45604266 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7711344087514643748, guid: e90c4b2811101ef4db37b2b11ff10d50, type: 3}
@@ -6682,6 +6696,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1620355018659582118, guid: 73a845bb62974e34fb448fc27f39117e, type: 3}
+      propertyPath: targetSpot
+      value: 
+      objectReference: {fileID: 1740988977}
     - target: {fileID: 1623780519984519591, guid: 73a845bb62974e34fb448fc27f39117e, type: 3}
       propertyPath: m_LocalPosition.x
       value: 52.16
@@ -6727,6 +6745,10 @@ PrefabInstance:
       value: New_Penelope
       objectReference: {fileID: 0}
     - target: {fileID: 2617412719968606112, guid: 73a845bb62974e34fb448fc27f39117e, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2617412719968606112, guid: 73a845bb62974e34fb448fc27f39117e, type: 3}
       propertyPath: targetSpot
       value: 
       objectReference: {fileID: 1740988977}
@@ -6738,6 +6760,10 @@ PrefabInstance:
       propertyPath: m_AgentTypeID
       value: 1479372276
       objectReference: {fileID: 0}
+    - target: {fileID: 5785709738987249152, guid: 73a845bb62974e34fb448fc27f39117e, type: 3}
+      propertyPath: linkedObjective
+      value: 
+      objectReference: {fileID: 11400000, guid: 83f29f5bcb282b3418b708829347b808, type: 2}
     - target: {fileID: 5785709738987249152, guid: 73a845bb62974e34fb448fc27f39117e, type: 3}
       propertyPath: startDialogueFile
       value: 
@@ -31150,6 +31176,7 @@ GameObject:
   - component: {fileID: 1493282240}
   - component: {fileID: 1493282239}
   - component: {fileID: 1493282238}
+  - component: {fileID: 1493282241}
   m_Layer: 0
   m_Name: Terrain_(0.00, 4.50, 100.00)
   m_TagString: Untagged
@@ -31232,6 +31259,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1493282241
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1493282237}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6cd81d353eeedb47827dd1954147bd9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Surface
+  surfaceType: 1
 --- !u!4 &1498509674 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2818180868281774853, guid: 11f09b1ff10f1c74b863f056fb426b1c, type: 3}

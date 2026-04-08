@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 
+[RequireComponent(typeof(SaveableWorldObject))]
 public class RemoveableObject : MonoBehaviour, IInteractable
 {
     [Tooltip("Item required to remove this object. If null, no item is required and the object can be removed immediately.")]

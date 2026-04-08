@@ -2,7 +2,7 @@ using UnityEngine;
 using System;
 using UnityEngine.AI;
 
-[RequireComponent(typeof(Rigidbody), typeof(Collider))]
+[RequireComponent(typeof(Rigidbody), typeof(Collider), typeof(SaveableWorldObject))]
 public class MoveableObject : MonoBehaviour, IInteractable
 {
     [SerializeField, Tooltip("When moving this object, the player's base speed is divided by this value")] 

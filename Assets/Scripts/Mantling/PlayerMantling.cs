@@ -6,7 +6,8 @@ public class PlayerMantling : MonoBehaviour
     [Header("Mantling Settings")]
     //[SerializeField] private float mantleRange = 2f;
     [SerializeField] private float mantleSpeed = 6f;
-    
+    [SerializeField] private float mantleHeight = 3f;
+
     [Header("Debugging")]
     [SerializeField] private bool showDebugLogs = false;
 
@@ -58,6 +59,16 @@ public class PlayerMantling : MonoBehaviour
 
     public void StartMantle(MantleableObject point, Action completionCallback = null)
     {
+        //Checks object height to determine if mantleable object is too tall/is mantleable from current position
+        float heightDifference = point.GetMantlePosition().y - transform.position.y; //height difference is difference between mantle end point and current player transform point
+        if (heightDifference > mantleHeight) //if height difference is greater than mantle height, cant mantle (Set mantle height higher to mantle taller objects)
+        {
+            if (showDebugLogs)
+                Debug.Log("Cant Mantle, object is too tall!");
+
+            return;
+        }
+
         isMantling = true;
         if (animator)
             animator.SetBool("isMantling", true);

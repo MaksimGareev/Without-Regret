@@ -154,9 +154,14 @@ public class VoidPool : MonoBehaviour
         {
             if (showDebugLogs) Debug.Log("Player has been hurt by the void pool.");
 
-            if (TimerRingUI.Instance != null)
+            if (TimerRingUI.Instance)
             {
-                TimerRingUI.Instance.SubtractRingSection(amountOfRingsToSubtract);
+                bool playerTookDamage = TimerRingUI.Instance.SubtractRingSection(amountOfRingsToSubtract);
+
+                if (playerTookDamage)
+                {
+                    enterTime = Time.time;
+                }
             }
 
             // Show tutorial about the void pool
@@ -164,12 +169,10 @@ public class VoidPool : MonoBehaviour
             {
                 if(InteractionTutorialUI.Instance != null)
                 {
-                    InteractionTutorialUI.Instance.ShowTutorial("Void pools damage you over time! Don't stay in them for too long to avoid damage!");
+                    InteractionTutorialUI.Instance.ShowTutorial(InteractType.BossAttack,"Void pools damage you over time! Don't stay in them for too long to avoid damage!");
                 }
                 InteractionTutorialManager.Instance.MarkTutorialSeen(InteractType.BossAttack);
             }
-
-            enterTime = Time.time;
         }
     }
 
