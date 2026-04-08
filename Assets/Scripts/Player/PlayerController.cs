@@ -48,7 +48,7 @@ public class PlayerController : MonoBehaviour, ISaveable
 
     // Gravity / Ground settings
     [Tooltip("The strength of gravity applied to the player. Higher values will cause the player to fall faster")]
-    [SerializeField, Range(20.0f, 100.0f)] private float gravityScale = 50.0f;
+    [SerializeField, Range(5.0f, 100.0f)] private float gravityScale = 50.0f;
     private float yVelocity = 0f;
     private readonly float gravity = -9.81f;
     private bool gravityEnabled = true;
