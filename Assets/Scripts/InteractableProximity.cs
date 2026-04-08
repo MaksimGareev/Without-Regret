@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class InteractableProximity : MonoBehaviour
 {
-    public float range = 3f;
+    public float range = 5f;
     public Transform player;
 
     public float DistanceToPlayer { get; private set; }

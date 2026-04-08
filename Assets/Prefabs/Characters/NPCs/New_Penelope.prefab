@@ -136,6 +136,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: e40b43c9792e771498f43e36f3106ac3, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1620355018659582118}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: e40b43c9792e771498f43e36f3106ac3, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6719243084635254832}
   m_SourcePrefab: {fileID: 100100000, guid: e40b43c9792e771498f43e36f3106ac3, type: 3}
 --- !u!4 &1623780519984519591 stripped
 Transform:
@@ -243,6 +246,7 @@ MonoBehaviour:
   material:
   - {fileID: 2941850817333310338}
   - {fileID: 6497141882171760916}
+  penelope: {fileID: 0}
 --- !u!114 &2746203051679876380
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -339,7 +343,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c816b79715e89c84a9478dfd80fcc532, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractableProximity
-  range: 3
+  range: 5
   player: {fileID: 0}
 --- !u!114 &1620355018659582118
 MonoBehaviour:
@@ -364,6 +368,19 @@ MonoBehaviour:
   agent: {fileID: 2800810733366397663}
   animator: {fileID: 8740143108691262306}
   npcName: Penelope
+--- !u!114 &6719243084635254832
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2144561605727224605}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b93d8170e88d8e34684424c0750fb15a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SaveableFriendlyNPC
+  uniqueID: 10fc4c9a-c6f0-41ab-ac3b-1f9a5dde1a78
 --- !u!1001 &1786121623637168684
 PrefabInstance:
   m_ObjectHideFlags: 0

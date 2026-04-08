@@ -64,6 +64,8 @@ public class Barry : MonoBehaviour
     }
     public void StartTravel()
     {
+        if (!targetSpot || !agent) return;
+        
         if (animator)
         {
             animator.SetBool("isTalking", false);
@@ -76,7 +78,7 @@ public class Barry : MonoBehaviour
         {
             dialogueTrigger.isLookingAtPlayer = false;
         }
-
+        
         agent.SetDestination(targetSpot.position);
         Debug.Log("Barry is now traveling to her destination");
     }
