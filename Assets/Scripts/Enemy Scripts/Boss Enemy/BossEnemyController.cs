@@ -649,7 +649,8 @@ public class BossEnemyController : MonoBehaviour
 
     public int GetCurrentPhase()
     {
-        return currentPhaseNumber;
+        //return currentPhaseNumber;
+        return 0;
     }
 
     public void LoadIntoPhase(int phase)
