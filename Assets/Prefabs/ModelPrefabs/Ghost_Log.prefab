@@ -11,7 +11,7 @@ PrefabInstance:
     - target: {fileID: 235576493166013561, guid: dbec11af2282d284da5c4e81b4113d9b, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: 51c0e06a7f95807488e8abd3be92b2f8, type: 2}
+      objectReference: {fileID: 2100000, guid: 62eab1a06e87195448d5326e44c7d948, type: 2}
     - target: {fileID: 988277433372396990, guid: dbec11af2282d284da5c4e81b4113d9b, type: 3}
       propertyPath: m_IsTrigger
       value: 1
@@ -73,6 +73,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1748544419901476268, guid: dbec11af2282d284da5c4e81b4113d9b, type: 3}
       insertIndex: -1
       addedObject: {fileID: 64664863631505817}
+    - targetCorrespondingSourceObject: {fileID: 1748544419901476268, guid: dbec11af2282d284da5c4e81b4113d9b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -2322795128063265440}
   m_SourcePrefab: {fileID: 100100000, guid: dbec11af2282d284da5c4e81b4113d9b, type: 3}
 --- !u!1 &2051238342679728373 stripped
 GameObject:
@@ -115,3 +118,18 @@ MonoBehaviour:
   linkedObjective: {fileID: 11400000, guid: 2538c85277e38ff4a9135fc1efbb57bb, type: 2}
   needsObjective: 0
   navMeshSurface: {fileID: 0}
+--- !u!114 &-2322795128063265440
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2051238342679728373}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6ae8110a7bf9b64b904b977090c04a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ErosionTransition
+  minValue: 0.3
+  maxValue: 0.6
+  speed: 0.7

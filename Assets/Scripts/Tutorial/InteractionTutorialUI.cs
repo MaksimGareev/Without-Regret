@@ -2,11 +2,27 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.InputSystem;
 using System.Collections;
+using UnityEngine.Video;
+using System.Collections.Generic;
+
+[System.Serializable]
+public class TutorialVideoData
+{
+    public InteractType interactType;
+    public VideoClip videoClip;
+}
 
 public class InteractionTutorialUI : MonoBehaviour
 {
     public static InteractionTutorialUI Instance;
 
+    [Header("Video")]
+    [SerializeField] private VideoPlayer videoPlayer;
+    [SerializeField] private List<TutorialVideoData> tutorialVideos;
+
+    private Dictionary<InteractType, VideoClip> videoLookup;
+
+    [Header("Text")]
     [SerializeField] private GameObject panel;
     [SerializeField] private TextMeshProUGUI descriptionText;
 
@@ -19,6 +35,16 @@ public class InteractionTutorialUI : MonoBehaviour
 
     private void Awake()
     {
+        videoLookup = new Dictionary<InteractType, VideoClip>();
+
+        foreach (var entry in tutorialVideos)
+        {
+            if (!videoLookup.ContainsKey(entry.interactType))
+            {
+                videoLookup.Add(entry.interactType, entry.videoClip);
+            }
+        }
+
         if (Instance != null && Instance != this)
         {
             Debug.LogWarning("Duplicate InteractionTutorialUI destroyed.");
@@ -48,7 +74,7 @@ public class InteractionTutorialUI : MonoBehaviour
         IsShowing = false;
     }
 
-    public void ShowTutorial(string text, System.Action onConfirm = null)
+    public void ShowTutorial(InteractType type, string text, System.Action onConfirm = null)
     {
         DisableOtherCanvases();
         if (panel == null || descriptionText == null)
@@ -58,6 +84,17 @@ public class InteractionTutorialUI : MonoBehaviour
         }
 
         descriptionText.text = text;
+
+        if (videoLookup.TryGetValue(type, out VideoClip clip))
+        {
+            videoPlayer.clip = clip;
+            videoPlayer.Play();
+        }
+        else
+        {
+            Debug.LogWarning($"No video found for {type}");
+        }
+
         panel.SetActive(true);
         descriptionText.gameObject.SetActive(true);
 
@@ -102,6 +139,7 @@ public class InteractionTutorialUI : MonoBehaviour
     {
         yield return FadeCanvasGroup(canvasGroup, 1f, 0f, fadeDuration);
 
+        videoPlayer.Stop();
         panel.SetActive(false);
         descriptionText.gameObject.SetActive(false);
 

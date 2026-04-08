@@ -299,6 +299,12 @@ public class SaveManager : MonoBehaviour
     // If no save data is found for the specified slot, a warning will be logged and no loading will occur.
     public void LoadGame(int slot)
     {
+        if (IsLoading)
+        {
+            Debug.LogWarning("[SaveManager.LoadGame] Load was called again, but the SaveManager was already loading. Additional Load has been ignored");
+            return;
+        }
+        
         IsLoading = true;
 
         // Try loading from the specified save slot, if no save exists then create a new one in that slot.

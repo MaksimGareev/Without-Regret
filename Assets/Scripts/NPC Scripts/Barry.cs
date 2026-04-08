@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
+using System.Collections;
 
 public class Barry : MonoBehaviour
 {
@@ -16,6 +17,20 @@ public class Barry : MonoBehaviour
     public Animator animator;
 
     public string npcName = "Barry";
+
+    private void Awake()
+    {
+        foreach (Renderer r in GetComponentsInChildren<Renderer>())
+        {
+            Material[] mats = r.materials;
+            for (int i = 0; i < mats.Length; i++)
+            {
+                // Create a unique instance for runtime changes
+                mats[i] = new Material(mats[i]);
+            }
+            r.materials = mats;
+        }
+    }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -101,11 +116,89 @@ public class Barry : MonoBehaviour
         }
     }
 
+    public void StartDissolve(float duration)
+    {
+        StartCoroutine(DissolveOut(duration));
+    }
+
+    IEnumerator DissolveOut(float duration)
+    {
+        Renderer[] renderers = GetComponentsInChildren<Renderer>();
+        float time = 0f;
+
+        // switch materials to transparent to activate fade
+        foreach (Renderer r in renderers)
+        {
+            Material[] mats = r.materials;
+            for (int i = 0; i <mats.Length; i++)
+            {
+                // Change surface type to transparent so alpha will work
+                if (mats[i].HasProperty("_Surface"))
+                {
+                    mats[i].SetFloat("_Surface", 1f);
+                }
+
+                // Ensure rendering mode updates correctly
+                mats[i].SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+                mats[i].SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+                mats[i].SetInt("_ZWrite", 0);
+                mats[i].EnableKeyword("_ALPHAPREMULTIPLY_ON");
+                mats[i].renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
+            }
+        }
+
+        // store original colors
+        Color[][] originalColors = new Color[renderers.Length][];
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            Material[] mats = renderers[i].materials;
+            originalColors[i] = new Color[mats.Length];
+            for (int j = 0; j < mats.Length; j++)
+            {
+                originalColors[i][j] = mats[j].color;
+            }
+        }
+
+        while (time < duration)
+        {
+            float alpha = Mathf.Lerp(1f, 0f, time / duration);
+            
+            for (int i = 0; i < renderers.Length; i++)
+            {
+                Material[] mats = renderers[i].materials;
+                for (int j = 0; j < mats.Length; j++)
+                {
+                    Color c = originalColors[i][j];
+                    c.a = alpha;
+                    mats[j].color = c;
+                }
+            }
+
+            time += Time.deltaTime;
+            yield return null;
+        }
+
+        // ensure fully invisible at the end
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            Material[] mats = renderers[i].materials;
+            for (int j = 0; j < mats.Length; j++)
+            {
+                Color c = originalColors[i][j];
+                c.a = 0f;
+                mats[j].color = c;
+            }
+        }
+
+        gameObject.SetActive(false);
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("door"))
         {
-            this.gameObject.SetActive(false);
+            agent.enabled = false;
+            StartCoroutine(DissolveOut(1.5f));
             //ObjectiveManager.Instance.AddProgress(linkedHouseObjective.objectiveID, 1);
             Debug.Log("Barry has reached the door.");
         }

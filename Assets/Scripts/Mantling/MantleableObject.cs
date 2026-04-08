@@ -65,7 +65,6 @@ public class MantleableObject : MonoBehaviour, IInteractable
 
         if (lockPosition)
         {
-            Debug.Log("Locking mantleable object position and rotation during mantle.");
             pos = transform.position;
             rot = transform.rotation;
             shouldLock = true;
@@ -76,7 +75,6 @@ public class MantleableObject : MonoBehaviour, IInteractable
     {
         if (lockPosition)
         {
-            Debug.Log("Unlocking mantleable object position and rotation after mantle.");
             shouldLock = false;
         }
     }
