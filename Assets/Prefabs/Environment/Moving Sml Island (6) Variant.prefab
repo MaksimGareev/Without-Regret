@@ -8,6 +8,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3883991446184933469, guid: 50ed6c6a5e1a1234782a88b87a744605, type: 3}
+      propertyPath: m_Convex
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6988464302337763303, guid: 50ed6c6a5e1a1234782a88b87a744605, type: 3}
       propertyPath: m_LocalPosition.x
       value: 103.9
@@ -50,7 +54,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7761905498477526365, guid: 50ed6c6a5e1a1234782a88b87a744605, type: 3}
       propertyPath: m_Name
-      value: Sml Island (6) Variant
+      value: Moving Sml Island (6) Variant
       objectReference: {fileID: 0}
     - target: {fileID: 7761905498477526365, guid: 50ed6c6a5e1a1234782a88b87a744605, type: 3}
       propertyPath: m_Layer
@@ -121,9 +125,13 @@ MonoBehaviour:
   orbitSpeed: 0.2
   radius: 25
   centerPoint: {fileID: 0}
+  needsObjective: 0
   linkedObjective: {fileID: 0}
+  stopLocation: {x: 0, y: 0, z: 0}
   offset: 0
-  height: 2
+  objectiveComplete: 0
+  reachedLocation: 0
+  range: 5
 --- !u!65 &7491480534837289958
 BoxCollider:
   m_ObjectHideFlags: 0

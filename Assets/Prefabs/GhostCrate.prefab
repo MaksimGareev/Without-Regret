@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 3628279929338672192}
   - component: {fileID: 8601738597493328255}
   - component: {fileID: 5875010234342658027}
+  - component: {fileID: -400621378160486011}
   m_Layer: 0
   m_Name: GhostCrate
   m_TagString: Untagged
@@ -89,3 +90,18 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &-400621378160486011
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4854663112263761343}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6ae8110a7bf9b64b904b977090c04a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ErosionTransition
+  minValue: 0.3
+  maxValue: 0.6
+  speed: 0.3

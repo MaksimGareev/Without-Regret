@@ -48,7 +48,7 @@ public class PlayerController : MonoBehaviour, ISaveable
 
     // Gravity / Ground settings
     [Tooltip("The strength of gravity applied to the player. Higher values will cause the player to fall faster")]
-    [SerializeField, Range(20.0f, 100.0f)] private float gravityScale = 50.0f;
+    [SerializeField, Range(5.0f, 100.0f)] private float gravityScale = 50.0f;
     private float yVelocity = 0f;
     private readonly float gravity = -9.81f;
     private bool gravityEnabled = true;
@@ -61,6 +61,8 @@ public class PlayerController : MonoBehaviour, ISaveable
     [SerializeField] private bool isGrounded;
 
     [SerializeField] private PlayerFloating playerFloating;
+
+    public Transform throwLookatPoint;
 
     public static bool DialogueActive = false;
 
@@ -165,19 +167,16 @@ public class PlayerController : MonoBehaviour, ISaveable
 
     public void SaveTo(SaveData data)
     {
+        Debug.Log("PlayerController::SaveTo function called."); 
+        
         GetCheckpoint(SceneManager.GetActiveScene().name, out Vector3 savedPosition, out Vector3 savedRotation);
         float[] position = new float[] { savedPosition.x, savedPosition.y, savedPosition.z };
         float[] rotation = new float[] { savedRotation.x, savedRotation.y, savedRotation.z };
         data.playerSaveData.SetPlayerTransform(SceneManager.GetActiveScene().name, position, rotation);
+        
+        Debug.Log("Player position saved: " + position + rotation);
+        
         data.playerSaveData.checkpoints = checkpointData;
-        if (TimerRingUI.Instance != null)
-        {
-            data.playerSaveData.currentRingState = TimerRingUI.Instance.currentRingState;
-        }
-        else
-        {
-            Debug.Log("TimerRingUI.Instance == null! cannot save current ring state");
-        }
 
         CharacterSwap characterSwap = GetComponent<CharacterSwap>();
         if (!characterSwap) return;
@@ -194,15 +193,19 @@ public class PlayerController : MonoBehaviour, ISaveable
 
     public void LoadFrom(SaveData data)
     {
+        Debug.Log ("PlayerController::LoadFrom function called.");
         if (data.playerSaveData.TryGetPlayerTransform(SceneManager.GetActiveScene().name, out float[] position, out float[] rotation))
         {
+            Controller.enabled = false;
             transform.position = new Vector3(position[0], position[1], position[2]);
             transform.eulerAngles = new Vector3(rotation[0], rotation[1], rotation[2]);
+            Controller.enabled = true;
             Debug.Log("Player transform loaded for scene: " + SceneManager.GetActiveScene().name + " Position: " + transform.position + " Rotation: " + transform.eulerAngles);
+            //StartCoroutine(VerifyPosition());
         }
         else
         {
-            Debug.LogWarning("No saved transform found for player in scene: " + SceneManager.GetActiveScene().name);
+            Debug.Log("No saved transform found for player in scene: " + SceneManager.GetActiveScene().name);
         }
 
         if (data.playerSaveData.checkpoints != null)
@@ -213,28 +216,28 @@ public class PlayerController : MonoBehaviour, ISaveable
                 checkpointData.Add(kvp.Key, kvp.Value);
             }
         }
-
-        if (TimerRingUI.Instance != null && data.playerSaveData.currentRingState != TimerRingUI.RingState.Empty)
-        {
-            TimerRingUI.Instance.SetRingState(data.playerSaveData.currentRingState);
-            // GameOverManager.Instance.
-        }
-        else if (TimerRingUI.Instance != null)
-        {
-            TimerRingUI.Instance.SetRingState(TimerRingUI.RingState.Full);
-        }
         
         CharacterSwap characterSwap = GetComponent<CharacterSwap>();
         if (!characterSwap) return;
 
         if (data.playerSaveData.currentPlayerModel == PlayerModel.Echo)
         {
+            Debug.Log("Loading player model Echo");
             characterSwap.SwitchToEcho();
         }
         else if (data.playerSaveData.currentPlayerModel == PlayerModel.Chime)
         {
+            Debug.Log("Loading player model Chime");
             characterSwap.SwitchToChime();
         }
+    }
+
+    private IEnumerator VerifyPosition()
+    {
+        yield return null;
+        Debug.Log("Player Position Frame 1 :" + transform.position.x + " :" + transform.position.y + " :" + transform.position.z);
+        yield return new WaitForSeconds(0.1f);
+        Debug.Log("Player Position Frame 2 :" + transform.position.x + " :" + transform.position.y + " :" + transform.position.z);
     }
 
     public void SetCheckpoint(string sceneName, Vector3 position, Vector3 rotation)
@@ -253,11 +256,13 @@ public class PlayerController : MonoBehaviour, ISaveable
     {
         if (checkpointData.TryGetValue(sceneName, out var data))
         {
+            Debug.Log("Found Checkpoint Data, position: " + data.position + " rotation: " + data.rotation);
             position = data.position;
             rotation = data.rotation;
         }
         else
         {
+            Debug.Log("No checkpoint data found for scene: " + sceneName + ". Using current player position and rotation.");
             // If a checkpoint for the scene doesn't exist, return the player's current position and rotation
             position = transform.position;
             rotation = transform.eulerAngles;

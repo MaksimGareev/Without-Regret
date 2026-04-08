@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Collections;
 
 public class MovingOn : MonoBehaviour
 {
@@ -14,7 +15,7 @@ public class MovingOn : MonoBehaviour
     float timeElapsed = 0f;
     public List<Renderer> material;
     bool isMoving = false;
-
+    public Barry penelope;
     void Start()
     {
 
@@ -58,7 +59,8 @@ public class MovingOn : MonoBehaviour
                     targetParticle.Stop();
                     targetParticle.gameObject.SetActive(false);
                     isMoving = false;
-                    gameObject.SetActive(false);
+                    //gameObject.SetActive(false);
+                    
                 }
             }
         }
@@ -73,6 +75,11 @@ public class MovingOn : MonoBehaviour
             Vector3 pos = targetParticle.transform.localPosition;
             pos.y = particleStartY;
             targetParticle.transform.localPosition = pos;
+        }
+
+        if (penelope != null)
+        {
+            penelope.StartDissolve(1.5f);
         }
 
         timeElapsed = 0f;

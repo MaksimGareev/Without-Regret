@@ -546,7 +546,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -2134,6 +2134,8 @@ GameObject:
   - component: {fileID: 1133374889}
   - component: {fileID: 1133374891}
   - component: {fileID: 1133374890}
+  - component: {fileID: 1133374892}
+  - component: {fileID: 1133374893}
   m_Layer: 5
   m_Name: Credits Panel
   m_TagString: Untagged
@@ -2150,7 +2152,7 @@ RectTransform:
   m_GameObject: {fileID: 1133374888}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.8454922, y: 1.1271111, z: 0.64514434}
+  m_LocalScale: {x: 1.4508646, y: 1.9341226, z: 1.1070677}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1662298868}
@@ -2168,9 +2170,9 @@ RectTransform:
   - {fileID: 1248328356}
   m_Father: {fileID: 75573348}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0}
-  m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: -4, y: -11}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 263.5}
   m_SizeDelta: {x: 936, y: 527}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1133374890
@@ -2211,6 +2213,39 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1133374888}
   m_CullTransparentMesh: 1
+--- !u!114 &1133374892
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1133374888}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b39ca2febb0660540996a5a3fbc0a0a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Ending
+  scrollSpeed: 50
+  endYPosition: 1600
+  transition: {fileID: 1133374893}
+--- !u!114 &1133374893
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1133374888}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 879b0ef967fe0fa43876d0ff3a0cb029, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TransitionToNewLevel
+  sceneToLoad:
+    sceneAsset: {fileID: 102900000, guid: 7aa18f71b40720b469c1bd2d9c617d71, type: 3}
+    scenePath: Assets/Scenes/MainMenu.unity
+  linkedObjective: {fileID: 0}
+  needsObjective: 0
+  addProgress: 0
 --- !u!1 &1166029970
 GameObject:
   m_ObjectHideFlags: 0

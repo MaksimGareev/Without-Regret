@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Linq;
 
+[RequireComponent(typeof(SaveableWorldObject))]
 public class LockedItem : MonoBehaviour, IInteractable
 {
     [HideInInspector] public InteractType interactType => InteractType.Lockpick;
@@ -134,7 +135,7 @@ public class LockedItem : MonoBehaviour, IInteractable
         {
             turorialShown = true;
 
-            InteractionTutorialUI.Instance.ShowTutorial(
+            InteractionTutorialUI.Instance.ShowTutorial(InteractType.Lockpick,
                 "Rotate the lockpick into the correct position and match the correct inputs to open the locked item.",
                 StartLockPick
                 );

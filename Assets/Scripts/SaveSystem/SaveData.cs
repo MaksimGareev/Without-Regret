@@ -11,7 +11,9 @@ public class SaveData
     public FriendlyNPCListSaveData friendlyNPCListSaveData;
     public EnemyNPCListSaveData enemyNPCListSaveData;
     public JournalSaveData journalSaveData;
+    public BossEnemySaveData bossEnemySaveData;
     public int slot = 1;
+    public int playerMorality;
 
     public SaveData(int slot)
     {
@@ -24,5 +26,6 @@ public class SaveData
         friendlyNPCListSaveData = new FriendlyNPCListSaveData();
         enemyNPCListSaveData = new EnemyNPCListSaveData();
         journalSaveData = new JournalSaveData();
+        bossEnemySaveData = new BossEnemySaveData();
     }
 }
