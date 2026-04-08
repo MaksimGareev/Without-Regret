@@ -102,6 +102,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 56ac3c4f58ffc0241ac5c2ee4fa83478, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5296315071837233515}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 56ac3c4f58ffc0241ac5c2ee4fa83478, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7657335443640181920}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 56ac3c4f58ffc0241ac5c2ee4fa83478, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 702137628380327916}
   m_SourcePrefab: {fileID: 100100000, guid: 56ac3c4f58ffc0241ac5c2ee4fa83478, type: 3}
 --- !u!1 &1142448165180116803 stripped
 GameObject:
@@ -198,7 +204,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WorldItem
   itemData: {fileID: 11400000, guid: 1125ebedf7f309a4a834456baf57e745, type: 2}
+  journalEntry: {fileID: 0}
   isCollectible: 1
+  requiredObjectives: []
+  LinkedObjective: {fileID: 0}
+  ObjectiveNeeded: 0
   animationDuration: 1.5
   hasBeenCollected: 0
 --- !u!65 &8869812512668389801
@@ -263,3 +273,30 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ItemDistractingEnemy
   distractionRadius: 15
   distractionDuration: 3
+--- !u!114 &7657335443640181920
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1142448165180116803}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ced780c22dcf6ef4bb8e624b32e4787a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SaveableWorldObject
+  uniqueID: 4ab5259e-8f88-480f-a3ee-ebed52ba82ce
+--- !u!114 &702137628380327916
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1142448165180116803}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c816b79715e89c84a9478dfd80fcc532, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractableProximity
+  range: 3
+  player: {fileID: 0}

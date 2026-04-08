@@ -105,14 +105,14 @@ RectTransform:
   m_GameObject: {fileID: 2470545641079672294}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 9.058337, y: 9.058337, z: 9.058337}
+  m_LocalScale: {x: 11.379989, y: 9.808867, z: 11.379989}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8101789794328468548}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -21, y: 490}
+  m_AnchoredPosition: {x: -21, y: 506}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &517247377199239681
@@ -182,7 +182,7 @@ VideoPlayer:
   m_ControlledAudioTrackCount: 1
   m_PlayOnAwake: 1
   m_SkipOnDrop: 1
-  m_Looping: 0
+  m_Looping: 1
   m_WaitForFirstFrame: 1
   m_FrameReadyEventEnabled: 0
   m_VideoShaders: []
@@ -302,10 +302,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5dea90d657c222e47bb22e7e2a697365, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractionTutorialUI
-  videoPlayer: {fileID: 0}
+  videoPlayer: {fileID: 8505078518400919022}
   tutorialVideos:
   - interactType: 2
-    videoClip: {fileID: 32900000, guid: 09731336b992dd340ba00a57acd036be, type: 3}
+    videoClip: {fileID: 32900000, guid: c51e8745dbfd3fe459699b8c668c37e4, type: 3}
+  - interactType: 3
+    videoClip: {fileID: 32900000, guid: 555364d3c5ea3724fb5af888d50dfff6, type: 3}
+  - interactType: 4
+    videoClip: {fileID: 32900000, guid: ca28d0af9f5943f428b9b84626a6f27b, type: 3}
+  - interactType: 9
+    videoClip: {fileID: 32900000, guid: 0cca5345f002a8f41a36cd189f263685, type: 3}
+  - interactType: 7
+    videoClip: {fileID: 32900000, guid: cbb796da6f23edb4b8ea9bb0a89415c8, type: 3}
   panel: {fileID: 1474113724855175618}
   descriptionText: {fileID: 4378570431024671786}
 --- !u!114 &24003856731855198
