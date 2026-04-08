@@ -209,6 +209,8 @@ MonoBehaviour:
   dialogueBoxBG: {fileID: 190396248525326749}
   NPCNameBG: {fileID: 2894038346241914797}
   NPCPortraitBG: {fileID: 7443162942962097383}
+  ChoiceSliderOutline: {fileID: 8973192517704870513}
+  ChoiceSliderBackground: {fileID: 1961890204330346782}
   playerPortrait: {fileID: 3479682460622141906}
   defaultPortrait: {fileID: -1521356264, guid: e2ccdccbeb2923f46a2b46b751c3c81a, type: 3}
   positivePortrait: {fileID: -1481874976, guid: e2ccdccbeb2923f46a2b46b751c3c81a, type: 3}
@@ -296,33 +298,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1909011670422841878}
     m_Modifications:
-    - target: {fileID: 87508348762393176, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
-      propertyPath: m_IsActive
+    - target: {fileID: 4081335531108956419, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
+      propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4081335531108956419, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4081335531108956419, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4081335531108956419, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 100
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4081335531108956419, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -25
-      objectReference: {fileID: 0}
-    - target: {fileID: 4988284343203006540, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4988284343203006540, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5273993982251385165, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
       propertyPath: m_Pivot.x
@@ -432,6 +422,17 @@ MonoBehaviour:
 --- !u!114 &1228863693610725341 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7015810890030704046, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
+  m_PrefabInstance: {fileID: 8093223419389299315}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+--- !u!114 &1961890204330346782 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7740262169442222957, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
   m_PrefabInstance: {fileID: 8093223419389299315}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
@@ -597,3 +598,14 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 795735949686165513, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
   m_PrefabInstance: {fileID: 8093223419389299315}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &8973192517704870513 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 925429097787531266, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
+  m_PrefabInstance: {fileID: 8093223419389299315}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image

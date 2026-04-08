@@ -49,6 +49,8 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
     public Image dialogueBoxBG;
     public Image NPCNameBG;
     public Image NPCPortraitBG;
+    public Image ChoiceSliderOutline;
+    public Image ChoiceSliderBackground;
 
     [Header("Player Portrait")]
     [Tooltip("Copy image of the players UI")]
@@ -201,6 +203,9 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
         if (dialogueBoxBG != null)
         {
             dialogueBoxBG.color = set.dialogueBoxColor;
+            
+            ChoiceSliderBackground.color = set.dialogueBoxColor;
+            ChoiceSliderOutline.color = set.dialogueBoxColor;
         }
         if (NPCNameBG != null)
         {
