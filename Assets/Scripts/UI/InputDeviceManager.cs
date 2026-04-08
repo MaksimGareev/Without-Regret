@@ -39,10 +39,10 @@ public class InputDeviceManager : MonoBehaviour
     [SerializeField] private Sprite mouse;
     [SerializeField] private Sprite keyboardTab;
     
-    [Header("Keyboard text")]
-    [SerializeField] private TextMeshProUGUI tab;
-    [SerializeField] private TextMeshProUGUI e;
-    [SerializeField] private TextMeshProUGUI spaceBar;
+    //[Header("Keyboard text")]
+    //[SerializeField] private TextMeshProUGUI tab;
+    //[SerializeField] private TextMeshProUGUI e;
+    //[SerializeField] private TextMeshProUGUI spaceBar;
 
     private void Awake()
     {
@@ -105,9 +105,9 @@ public class InputDeviceManager : MonoBehaviour
                 journalImage.sprite = controllerSelect;
                 journalImage.rectTransform.sizeDelta = new Vector2(80, 80);
                 
-                tab.gameObject.SetActive(false);
-                e.gameObject.SetActive(false);
-                spaceBar.gameObject.SetActive(false);
+                //tab.gameObject.SetActive(false);
+                //e.gameObject.SetActive(false);
+                //spaceBar.gameObject.SetActive(false);
                 break;
             case InputMode.KeyboardMouse:
                 actionImage1.sprite = keyboardEKey;
@@ -122,9 +122,9 @@ public class InputDeviceManager : MonoBehaviour
                 journalImage.sprite = keyboardTab;
                 journalImage.rectTransform.sizeDelta = new Vector2(140, 85);
                 
-                tab.gameObject.SetActive(true);
-                e.gameObject.SetActive(true);
-                spaceBar.gameObject.SetActive(true);
+                //tab.gameObject.SetActive(true);
+                //e.gameObject.SetActive(true);
+                //spaceBar.gameObject.SetActive(true);
                 break;
         }
     }
