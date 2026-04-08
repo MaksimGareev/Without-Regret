@@ -186,16 +186,92 @@ public class Darry : MonoBehaviour
         {
             agent.SetDestination(currentTarget.position);
         }
-
-
-
     }
+    public void StartDissolve(float duration)
+    {
+        StartCoroutine(DissolveOut(duration));
+    }
+
+    IEnumerator DissolveOut(float duration)
+    {
+        Renderer[] renderers = GetComponentsInChildren<Renderer>();
+        float time = 0f;
+
+        // switch materials to transparent to activate fade
+        foreach (Renderer r in renderers)
+        {
+            Material[] mats = r.materials;
+            for (int i = 0; i < mats.Length; i++)
+            {
+                // Change surface type to transparent so alpha will work
+                if (mats[i].HasProperty("_Surface"))
+                {
+                    mats[i].SetFloat("_Surface", 1f);
+                }
+
+                // Ensure rendering mode updates correctly
+                mats[i].SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+                mats[i].SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+                mats[i].SetInt("_ZWrite", 0);
+                mats[i].EnableKeyword("_ALPHAPREMULTIPLY_ON");
+                mats[i].renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
+            }
+        }
+
+        // store original colors
+        Color[][] originalColors = new Color[renderers.Length][];
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            Material[] mats = renderers[i].materials;
+            originalColors[i] = new Color[mats.Length];
+            for (int j = 0; j < mats.Length; j++)
+            {
+                originalColors[i][j] = mats[j].color;
+            }
+        }
+
+        while (time < duration)
+        {
+            float alpha = Mathf.Lerp(1f, 0f, time / duration);
+
+            for (int i = 0; i < renderers.Length; i++)
+            {
+                Material[] mats = renderers[i].materials;
+                for (int j = 0; j < mats.Length; j++)
+                {
+                    Color c = originalColors[i][j];
+                    c.a = alpha;
+                    mats[j].color = c;
+                }
+            }
+
+            time += Time.deltaTime;
+            yield return null;
+        }
+
+        // ensure fully invisible at the end
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            Material[] mats = renderers[i].materials;
+            for (int j = 0; j < mats.Length; j++)
+            {
+                Color c = originalColors[i][j];
+                c.a = 0f;
+                mats[j].color = c;
+            }
+        }
+
+        gameObject.SetActive(false);
+    }
+
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("door"))
         {
             StopWaitCoroutine();
+            agent.enabled = false;
+            StartCoroutine(DissolveOut(1.5f));
 
             if (linkedHouseObjective != null)
             {
