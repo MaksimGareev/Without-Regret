@@ -764,14 +764,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TimerRingUI
   ringImage: {fileID: 5597851364840465714}
   portraitImage: {fileID: 7710274978063955484}
-  ringFull: {fileID: 21300000, guid: 6b9145965fe80c243bbc1f2ccfee0ac2, type: 3}
-  ringTwoThirds: {fileID: 21300000, guid: afefb4caf7e1dcd40a960d66bbe81795, type: 3}
-  ringOneThird: {fileID: 21300000, guid: 082e5c95d4dc60e408545104b42f5f36, type: 3}
-  ringEmpty: {fileID: 21300000, guid: 92206af1fe12dd142852c838ae4c9c6f, type: 3}
-  portraitFull: {fileID: -9653950, guid: e2ccdccbeb2923f46a2b46b751c3c81a, type: 3}
-  portraitTwoThirds: {fileID: -1521356264, guid: e2ccdccbeb2923f46a2b46b751c3c81a, type: 3}
-  portraitOneThird: {fileID: 835100968, guid: e2ccdccbeb2923f46a2b46b751c3c81a, type: 3}
-  portraitEmpty: {fileID: -1899959237, guid: e2ccdccbeb2923f46a2b46b751c3c81a, type: 3}
+  ringFull: {fileID: -1140834468, guid: 02197c973c960884fb0cccf5f651319a, type: 3}
+  ringTwoThirds: {fileID: -1777055870, guid: f031704bb2a446d46be8e1c5a887e878, type: 3}
+  ringOneThird: {fileID: -620896843, guid: 96eb90b5297e98f4c8ff27bab6b757a1, type: 3}
+  ringEmpty: {fileID: 1467570785, guid: ba564128f000d244d8432164ea29aab2, type: 3}
+  EchoPortraitFull: {fileID: -9653950, guid: e2ccdccbeb2923f46a2b46b751c3c81a, type: 3}
+  EchoPortraitTwoThirds: {fileID: -1521356264, guid: e2ccdccbeb2923f46a2b46b751c3c81a, type: 3}
+  EchoPortraitOneThird: {fileID: 835100968, guid: e2ccdccbeb2923f46a2b46b751c3c81a, type: 3}
+  EchoPortraitEmpty: {fileID: -1899959237, guid: e2ccdccbeb2923f46a2b46b751c3c81a, type: 3}
+  ChimePortraitFull: {fileID: 1363002158, guid: 9ce36c9eb0efa534b90f40a39ae72fad, type: 3}
+  ChimePortraitTwoThirds: {fileID: -1458931766, guid: 9ce36c9eb0efa534b90f40a39ae72fad, type: 3}
+  ChimePortraitOneThird: {fileID: 1280349358, guid: 9ce36c9eb0efa534b90f40a39ae72fad, type: 3}
+  ChimePortraitEmpty: {fileID: 1280349358, guid: 9ce36c9eb0efa534b90f40a39ae72fad, type: 3}
+  currentPortrait: 0
   animator: {fileID: 0}
   currentRingState: 0
   uiFade: {fileID: 0}
@@ -847,13 +852,13 @@ MonoBehaviour:
   controllerAButton: {fileID: 753746435, guid: 87f3924e1c8d803499add52931600cea, type: 3}
   controllerTrigger: {fileID: -1549019541, guid: 82d299fd1b338fa4a92e972dc85d5d54, type: 3}
   controllerSelect: {fileID: 326351646, guid: f92ce26eedbeb5640a24c0f914727e3d, type: 3}
-  keyboardEKey: {fileID: 21300000, guid: 583dad382c58fed47bfe653c9073d4d8, type: 3}
-  keyboardSpacebar: {fileID: 21300000, guid: 843cc88cbb0b0a14291d005018e258d3, type: 3}
+  keyboardEKey: {fileID: 1019117773, guid: ca97c7887e8fab14dae367734cf1049a, type: 3}
+  keyboardSpacebar: {fileID: 849286837, guid: 40e7e9c0a1298b5499b2bffa90a1967f, type: 3}
   mouse: {fileID: 193681150, guid: 43d6064b143d488478d3ad37259b3c56, type: 3}
-  keyboardTab: {fileID: 21300000, guid: a03d0f8ee349e8f41931731cef7733cd, type: 3}
-  tab: {fileID: 0}
-  e: {fileID: 0}
-  spaceBar: {fileID: 0}
+  keyboardTab: {fileID: 849286837, guid: 40e7e9c0a1298b5499b2bffa90a1967f, type: 3}
+  tab: {fileID: 4897275661429534502}
+  e: {fileID: 7246134326256353299}
+  spaceBar: {fileID: 2792097138648595312}
 --- !u!114 &4421687017123965208
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -937,7 +942,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: -137, y: -134}
-  m_SizeDelta: {x: 150, y: 150}
+  m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.49999988, y: 0.49999997}
 --- !u!222 &8672256549088457567
 CanvasRenderer:
@@ -967,7 +972,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 6b9145965fe80c243bbc1f2ccfee0ac2, type: 3}
+  m_Sprite: {fileID: -1140834468, guid: 02197c973c960884fb0cccf5f651319a, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

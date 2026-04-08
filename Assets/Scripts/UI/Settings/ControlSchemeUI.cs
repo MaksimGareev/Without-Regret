@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -15,8 +16,7 @@ public class ControlSchemeUI : MonoBehaviour
     [SerializeField] private GameObject mouseKeyLegends;
     private bool usingController = true;
     
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private void Awake()
     {
         ControllerButton.onClick.AddListener(OnControllerClicked);
         KeyboardMouseButton.onClick.AddListener(OnKeyboardMouseClicked);
@@ -24,6 +24,17 @@ public class ControlSchemeUI : MonoBehaviour
 
     private void OnEnable()
     {
+        StartCoroutine(WaitForUIHighlighting());
+    }
+
+    private void OnDisable()
+    {
+        StopAllCoroutines();
+    }
+
+    private IEnumerator WaitForUIHighlighting()
+    {
+        yield return null;
         OnControllerClicked();
     }
 

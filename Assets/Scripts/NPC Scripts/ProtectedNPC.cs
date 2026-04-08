@@ -7,6 +7,9 @@ public class ProtectedNPC : MonoBehaviour
     public TraversablePoint[] CheckPoints;
     public int point;
 
+    [Header("Animation Settings")]
+    public Animator animator;
+
     void Start()
     {
         agent.SetDestination(CheckPoints[point].transform.position);
@@ -14,7 +17,15 @@ public class ProtectedNPC : MonoBehaviour
 
     void Update()
     {
-        
+        if (animator != null)
+        {
+            bool isMoving = agent.velocity.sqrMagnitude > 0.05f;
+
+            animator.SetBool("isWalking", isMoving);
+            animator.SetBool("isIdle", !isMoving);
+
+        }
+
         // If agent reached its destination
         if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
         {
