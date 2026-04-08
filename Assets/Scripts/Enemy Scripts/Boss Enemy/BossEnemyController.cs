@@ -649,12 +649,12 @@ public class BossEnemyController : MonoBehaviour
 
     public int GetCurrentPhase()
     {
-        //return currentPhaseNumber;
-        return 0;
+        return currentPhaseIndex;
     }
 
     public void LoadIntoPhase(int phase)
     {
+        SetPhase(phase);
         Debug.Log("Loading boss into phase " + phase);
     }
 }

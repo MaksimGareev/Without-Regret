@@ -1,6 +1,4 @@
 using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 using System.Collections;
 
 public class Ending : MonoBehaviour
@@ -28,7 +26,7 @@ public class Ending : MonoBehaviour
 
     private void Update()
     {
-        if (finished) return;
+        if (finished || !rectTransform) return;
 
         rectTransform.anchoredPosition += Vector2.up * scrollSpeed * Time.deltaTime;
 

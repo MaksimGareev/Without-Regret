@@ -730,7 +730,7 @@ MonoBehaviour:
   emptyStaminaSpeedFactor: 0.5
   StationaryCamera: 0
   SprintTimer: 3
-  gravityScale: 25
+  gravityScale: 40
   groundCheck: {fileID: 4213321808433462014}
   groundCheckRadius: 0.2
   groundMask:
@@ -917,6 +917,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMantling
   mantleSpeed: 3
+  mantleHeight: 3
   showDebugLogs: 1
   animator: {fileID: 1306356219283198842}
   isMantling: 0
@@ -1054,6 +1055,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: d82dba2114d26c74590321272e2c2bd5, type: 3}
   - {fileID: 8300000, guid: 446e4bc6fb22748419c5d109053a4cb1, type: 3}
   Controller: {fileID: 0}
+  footstepsActive: 1
 --- !u!82 &1148485824787618765
 AudioSource:
   m_ObjectHideFlags: 0
@@ -1433,6 +1435,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: d82dba2114d26c74590321272e2c2bd5, type: 3}
   - {fileID: 8300000, guid: 446e4bc6fb22748419c5d109053a4cb1, type: 3}
   Controller: {fileID: 0}
+  footstepsActive: 1
 --- !u!1001 &4849120772465094379
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1656,6 +1659,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: d82dba2114d26c74590321272e2c2bd5, type: 3}
   - {fileID: 8300000, guid: 446e4bc6fb22748419c5d109053a4cb1, type: 3}
   Controller: {fileID: 8821119716541630626}
+  footstepsActive: 1
 --- !u!137 &5936494859347991270 stripped
 SkinnedMeshRenderer:
   m_CorrespondingSourceObject: {fileID: 1236558303595688973, guid: 8135666d6946df443bf487c5ff01e2c3, type: 3}
