@@ -107,10 +107,11 @@ public class BossEnemyController : MonoBehaviour
     private bool phaseSkip = false;
     private bool phaseChanging = false;
     private bool started = false;
-    public GameObject GameEnding;
 
     // Runtime list of sliders used by UI logic (either generated or the fallback `phaseSliders`)
     private readonly List<Slider> healthSliders = new List<Slider>();
+
+    public SceneReference credits;
 
     private void Awake()
     {
@@ -605,9 +606,17 @@ public class BossEnemyController : MonoBehaviour
     {
         Debug.Log("Boss' health has depleted");
         gameObject.SetActive(false);
-        GameEnding.SetActive(true);
+        SceneLoadManager.Instance.LoadScene(credits.GetSceneName());
     }
-
+    /*
+    public void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            Die();
+        }
+    }
+    */
     public void TakeDamage(int value = 1)
     {
         // Take damage to the current health part
