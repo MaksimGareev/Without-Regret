@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 [System.Serializable]
 public class SaveData
 {
@@ -14,6 +16,7 @@ public class SaveData
     public BossEnemySaveData bossEnemySaveData;
     public int slot = 1;
     public int playerMorality;
+    public List<InteractType> shownTutorials;
 
     public SaveData(int slot)
     {
@@ -27,5 +30,6 @@ public class SaveData
         enemyNPCListSaveData = new EnemyNPCListSaveData();
         journalSaveData = new JournalSaveData();
         bossEnemySaveData = new BossEnemySaveData();
+        shownTutorials = new List<InteractType>();
     }
 }
