@@ -16,6 +16,7 @@ public class MovingOn : MonoBehaviour
     public List<Renderer> material;
     bool isMoving = false;
     public Barry penelope;
+    public Darry darry;
     void Start()
     {
 
@@ -80,6 +81,11 @@ public class MovingOn : MonoBehaviour
         if (penelope != null)
         {
             penelope.StartDissolve(1.5f);
+        }
+
+        if (darry != null)
+        {
+            darry.StartDissolve(1.5f);
         }
 
         timeElapsed = 0f;
