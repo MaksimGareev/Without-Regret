@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,12 +7,15 @@ public class ForPlayerSeeTroughScript : MonoBehaviour
 {
     public static int PlayerPosID = Shader.PropertyToID("_PlayerPosition");
     public static int SizeID = Shader.PropertyToID("_Size");
+    //public static int TransparencyID = Shader.PropertyToID("_ObjectTransparancy");
     
     [SerializeField] Camera Cam;
     [SerializeField] LayerMask Mask;
 
-    private float LeafSizeValue = 1.93f;
-    private float OtherSizeValue = 1.15f;
+    [SerializeField] private float LeafSizeValue = 2.65f;
+    [SerializeField] private float OtherSizeValue = 0.87f;
+    [SerializeField] private float sphereCastRadius = 2.27f;
+    [SerializeField] private float sphereCastOffset = 4.0f;
 
     //[SerializeField] Material[] WallMaterials;
     RaycastHit[] RayArray;
@@ -32,12 +36,12 @@ public class ForPlayerSeeTroughScript : MonoBehaviour
             var dir = Cam.transform.position - transform.position;
             
             // Offset starting point to account for a sphere cast instead of raycast
-            Vector3 rayOrigin = transform.position + (dir.normalized * 2.0f);
+            Vector3 rayOrigin = transform.position + (dir.normalized * sphereCastOffset);
 
             // Ray from player toward camera
             var ray = new Ray(rayOrigin, dir.normalized);
 
-            RayArray = Physics.SphereCastAll(ray,1.1f, 3000, Mask);
+            RayArray = Physics.SphereCastAll(ray,sphereCastRadius, 3000, Mask);
 
             if (CurrentObjects != null)
             {
@@ -74,10 +78,25 @@ public class ForPlayerSeeTroughScript : MonoBehaviour
                     }
                     
                     rend.material.SetVector(PlayerPosID, view);
+                    
+                    //StartCoroutine(FadeIn(rend));
                 }
             }
         }
     }
+
+    // private IEnumerator FadeIn(Renderer rend, float duration = 0.5f)
+    // {
+    //     float timer = 0.0f;
+    //     
+    //     while (timer < duration)
+    //     {
+    //         timer += Time.unscaledDeltaTime;
+    //         float alpha = Mathf.Lerp(0, 1, timer / duration);
+    //         rend.material.SetFloat(TransparencyID, alpha);
+    //         yield return null;
+    //     }
+    // }
 
     List<T> GetNonSharedValues<T>(T[] arr1, T[] arr2)
     {
