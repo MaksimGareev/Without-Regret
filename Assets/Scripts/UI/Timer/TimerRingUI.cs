@@ -162,16 +162,19 @@ public class TimerRingUI : MonoBehaviour
                 case RingState.Full:
                     if (uiFade && !uiFade.inExcludedScene) uiFade.ShowUI();
                     SetRingState(RingState.TwoThirds);
+                    Debug.Log("Reduced rings from full to twothirds");
                     break;
                 
                 case RingState.TwoThirds:
                     if (uiFade && !uiFade.inExcludedScene) uiFade.ShowUI();
                     SetRingState(RingState.OneThird);
+                    Debug.Log("Reduced rings from twothirds to onethird");
                     break;
                 
                 case RingState.OneThird:
                     if (uiFade && !uiFade.inExcludedScene) uiFade.ShowUI();
                     SetRingState(RingState.Empty);
+                    Debug.Log("All rings depleted");
                     EndGame();
                     break;
                 
