@@ -196,7 +196,7 @@ public class CutsceneManager : MonoBehaviour
     private void InitializeInputActions()
     {
         // Initialize input actions
-        confirmAction = inputActions.FindActionMap("UI").FindAction("Confirm");
+        confirmAction = inputActions.FindActionMap("UI").FindAction("Submit");
         if (confirmAction== null)
         {
             Debug.LogError("Confirm action not found in InputActionAsset.");
@@ -219,10 +219,15 @@ public class CutsceneManager : MonoBehaviour
     {
         if (!isHoldingSkip) return;
         
-        skipTimer += Time.deltaTime;
-
+        skipTimer += Time.unscaledDeltaTime;
+        
         if (holdToSkipSlider)
         {
+            if (skipTimer > 0.2f)
+            {
+                holdToSkipSlider.gameObject.SetActive(true);
+            }
+            
             holdToSkipSlider.value = skipTimer;
         }
         
@@ -349,7 +354,6 @@ public class CutsceneManager : MonoBehaviour
 
         if (holdToSkipSlider && canSkipEntireCutscene)
         {
-            holdToSkipSlider.gameObject.SetActive(true);
             holdToSkipSlider.value = 0.0f;
         }
     }
@@ -391,6 +395,8 @@ public class CutsceneManager : MonoBehaviour
             return false;
         }
         
+        EnableInput(); 
+        
         Time.timeScale = 0f; // Pause the game while the cutscene is playing
         
         currentCutscene = cutscene;
@@ -409,7 +415,8 @@ public class CutsceneManager : MonoBehaviour
         {
             StartBackgroundMusic();
         }
-        
+
+        currentClipIndex = 0;
         PlayClip(currentCutscene.clips[currentClipIndex]);
         
         isCutscenePlaying = true;
@@ -420,6 +427,18 @@ public class CutsceneManager : MonoBehaviour
         }
 
         return true;
+    }
+    
+    private void EnableInput()
+    {
+        if (!inputActions)
+        {
+            Debug.LogError("InputActionAsset not found in CutsceneManager. Please assign the InputActionAsset to the CutsceneManager.");
+            return;
+        }
+        
+        inputActions.FindActionMap("UI").Enable();
+        inputActions.FindActionMap("Player").Disable();
     }
 
     private IEnumerator FadeInCutscene()
@@ -457,7 +476,7 @@ public class CutsceneManager : MonoBehaviour
     private void PlayClip(CutsceneClip clip)
     {
         // Update background image sprite
-        if (clip.backgroundImage || clip.useSolidColor && transitionBackgroundCoroutine == null)
+        if (transitionBackgroundCoroutine == null)
         {
             transitionBackgroundCoroutine = StartCoroutine(TransitionToNewBackground(clip));
         }
@@ -484,14 +503,15 @@ public class CutsceneManager : MonoBehaviour
         {
             // Initialization
             Color transparentColor =  new Color(clip.solidColor.r, clip.solidColor.g, clip.solidColor.b, 0f);
+            secondaryBackgroundImage.enabled = true;
             secondaryBackgroundImage.sprite = null;
             secondaryBackgroundImage.color = Color.clear;
-            secondaryBackgroundImage.enabled = true;
             
             // Fade in new background image on top of old background image
             while (timer < duration)
             {
                 secondaryBackgroundImage.color = Color.Lerp(transparentColor, clip.solidColor, timer / duration);
+                timer += Time.unscaledDeltaTime;
                 yield return null;
             }
             
@@ -511,9 +531,9 @@ public class CutsceneManager : MonoBehaviour
         {
             // Initialization
             Color transparentColor = new Color(1f, 1f, 1f, 0f);
+            secondaryBackgroundImage.enabled = true;
             secondaryBackgroundImage.sprite = clip.backgroundImage;
             secondaryBackgroundImage.color = Color.clear;
-            secondaryBackgroundImage.enabled = true;
             
             // Fade in new background image on top of old background image
             while (timer < duration)
@@ -538,6 +558,8 @@ public class CutsceneManager : MonoBehaviour
         {
             Debug.LogError("No background image assigned to this clip, and useSolidColor is not set to true, cannot transition to next cutscene background image. Please either enable useSolidColor in the inspector of this cutscene clip or assign a background image.");
         }
+        
+        transitionBackgroundCoroutine = null;
     }
 
     private void PlayClipDialogue(CutsceneDialogueLine dialogueLine)
@@ -599,7 +621,7 @@ public class CutsceneManager : MonoBehaviour
                     break;
             }
 
-            yield return new WaitForSeconds(delay);
+            yield return new WaitForSecondsRealtime(delay);
         }
 
         isTyping = false;
@@ -714,6 +736,7 @@ public class CutsceneManager : MonoBehaviour
         
         // Invoke event on completion
         currentCutscene.onCutsceneCompleted?.Invoke();
+        currentClipIndex = 0;
         currentCutscene = null;
     }
     
@@ -735,7 +758,20 @@ public class CutsceneManager : MonoBehaviour
         secondaryBackgroundImage.sprite = null;
         
         cutscenePanel.SetActive(false);
+        DisableInput();
         
         fadeOutCoroutine = null;
+    }
+
+    private void DisableInput()
+    {
+        if (!inputActions)
+        {
+            Debug.LogError("InputActionAsset not found in CutsceneManager. Please assign the InputActionAsset to the CutsceneManager.");
+            return;
+        }
+        
+        inputActions.FindActionMap("UI")?.Disable();
+        inputActions.FindActionMap("Player")?.Enable();
     }
 }
