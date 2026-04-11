@@ -70,6 +70,8 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
     [SerializeField] AudioSource typingSource;
     [Tooltip("Audio clips of each letter A-Z")]
     [SerializeField] List<AudioClip> letterClips;
+    [SerializeField] private float minTimeBetweenSounds = 0.5f;
+    private float lastSoundTime;
 
     [Header("Audio Mixer Groups")]
     [SerializeField] AudioMixerGroup maleVoiceGroup;
@@ -382,6 +384,12 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
         // if line is typing and confirm is pressed have the line be build instantly and spawn arrow if needed
         if (typing)
         {
+            if (currentLine.cannotSkip)
+            {
+                // small feedback showing it cannot be skipped
+                dialogueText.transform.localPosition += Random.insideUnitSphere * 2f;
+                return;
+            }
             if (typingRoutine != null)
             {
                 StopCoroutine(typingRoutine);
@@ -822,10 +830,17 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
     {
         if (char.IsWhiteSpace(c)) return;
 
+        // delay to prevent sounds from overlapping
+        if (Time.time - lastSoundTime < minTimeBetweenSounds)
+        {
+            return;
+        }
+
         char up = char.ToUpper(c);
         if (letterSounds.ContainsKey(up))
         {
-            typingSource.PlayOneShot(letterSounds[up], 0.7f);
+            typingSource.PlayOneShot(letterSounds[up], 0.8f);
+            lastSoundTime = Time.time;
         }
     }
 

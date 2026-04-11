@@ -350,7 +350,7 @@ public class PlayerFloating : MonoBehaviour
         }
     }
 
-    private void StartFloating()
+    public void StartFloating()
     {
         animator.ResetTrigger("isLanding");
         animator.SetBool("isFloating", false);
