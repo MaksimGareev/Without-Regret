@@ -856,6 +856,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "CutsceneConfirm",
+                    "type": "Button",
+                    "id": "7069f6b5-6940-448d-a5fd-44e66bc3a15b",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -1439,6 +1448,28 @@
                     "processors": "",
                     "groups": "",
                     "action": "ApplySettings",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "ad30f917-81fb-4efe-9a28-3554b6b390c9",
+                    "path": "<Gamepad>/buttonSouth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse;Gamepad;Touch;Joystick;XR",
+                    "action": "CutsceneConfirm",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e469cba1-3be0-4967-bc1d-1c8a2dc667d1",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "CutsceneConfirm",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

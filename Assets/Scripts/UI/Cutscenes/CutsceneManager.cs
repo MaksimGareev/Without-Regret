@@ -13,6 +13,18 @@ public class CutsceneManager : MonoBehaviour
 {
     public static CutsceneManager Instance { get; private set; }
     
+    [Header("General Settings")]
+    [Tooltip("The time in seconds that it will take for the cutscene to fade in and out when starting and ending the cutscene")]
+    [SerializeField, Range(0.0f, 5.0f)] private float fadeDuration = 0.5f;
+    
+    [Tooltip("The time in seconds that it will take to transition between two clips")]
+    [SerializeField, Range(0.0f, 5.0f)] private float transitionDuration = 0.5f;
+    
+    [Tooltip("The time in seconds that the player has to hold the confirm input in order to skip the entire cutscene.")]
+    [SerializeField, Range(0.5f, 5.0f)] private float holdToSkipDuration = 1.0f;
+    private float skipTimer = 0.0f;
+    private bool isHoldingSkip = false;
+    
     [Header("UI References")]
     [SerializeField] private GameObject cutscenePanel;
     [SerializeField] private GameObject dialoguePanel;
@@ -56,14 +68,8 @@ public class CutsceneManager : MonoBehaviour
     [Header("Input Action Assets")]
     [SerializeField] private InputActionAsset inputActions;
     private InputAction confirmAction;
-    private bool usingController = false;
-    private bool usingControllerLegend = false;
-
-    [Header("Settings")] 
-    [Tooltip("The time in seconds that the player has to hold the confirm input in order to skip the entire cutscene.")]
-    [SerializeField, Range(0.5f, 5.0f)] private float holdToSkipDuration = 1.0f;
-    private float skipTimer = 0.0f;
-    private bool isHoldingSkip = false;
+    private bool usingController = true;
+    private bool usingControllerLegend = true;
 
     private bool canSkipClip = false;
     private bool canSkipEntireCutscene = false;
@@ -197,7 +203,7 @@ public class CutsceneManager : MonoBehaviour
     private void InitializeInputActions()
     {
         // Initialize input actions
-        confirmAction = inputActions.FindActionMap("UI").FindAction("Submit");
+        confirmAction = inputActions.FindActionMap("UI").FindAction("CutsceneConfirm");
         if (confirmAction== null)
         {
             Debug.LogError("Confirm action not found in InputActionAsset.");
@@ -218,7 +224,14 @@ public class CutsceneManager : MonoBehaviour
 
     private void ProcessHoldToSkip()
     {
-        if (!isHoldingSkip) return;
+        if (!isHoldingSkip)
+        {
+            if (holdToSkipSlider.gameObject.activeSelf)
+            {
+                holdToSkipSlider.gameObject.SetActive(false);
+            }
+            return;
+        }
         
         skipTimer += Time.unscaledDeltaTime;
         
@@ -235,7 +248,10 @@ public class CutsceneManager : MonoBehaviour
         if (skipTimer >= holdToSkipDuration && canSkipEntireCutscene)
         {
             holdToSkipPanel.SetActive(false);
-            EndCutscene();
+            if (isCutscenePlaying)
+            {
+                EndCutscene();
+            }
             ResetHoldTimer();
         }
     }
@@ -336,6 +352,8 @@ public class CutsceneManager : MonoBehaviour
         
         holdText.rectTransform.anchoredPosition = originalHoldTextOffset;
         toSkipText.rectTransform.anchoredPosition = originalToSkipOffset;
+        
+        usingControllerLegend = true;
     }
 
     private void SwitchToMouseKeyLegend()
@@ -346,6 +364,8 @@ public class CutsceneManager : MonoBehaviour
         
         holdText.rectTransform.anchoredPosition = holdTextOffset;
         toSkipText.rectTransform.anchoredPosition = toSkipTextOffset;
+        
+        usingControllerLegend = false;
     }
 
     private void OnConfirmStarted(InputAction.CallbackContext ctx)
@@ -366,7 +386,7 @@ public class CutsceneManager : MonoBehaviour
 
     private void ResetHoldTimer()
     {
-        if (skipTimer < holdToSkipDuration && skipTimer > 0.02f && canSkipClip)
+        if (skipTimer < holdToSkipDuration && skipTimer > 0.02f && canSkipClip && isCutscenePlaying)
         {
             SkipCurrentClip();
         }
@@ -447,11 +467,10 @@ public class CutsceneManager : MonoBehaviour
     private IEnumerator FadeInCutscene()
     {
         float timer = 0.0f;
-        const float duration = 0.25f;
 
-        while (timer < duration)
+        while (timer < fadeDuration)
         {
-            cutsceneCanvasGroup.alpha = Mathf.Lerp(0f, 1f, timer / duration);
+            cutsceneCanvasGroup.alpha = Mathf.Lerp(0f, 1f, timer / fadeDuration);
             timer += Time.unscaledDeltaTime;
             yield return null;
         }
@@ -483,17 +502,16 @@ public class CutsceneManager : MonoBehaviour
     private IEnumerator FadeOtherSourceVolumes(bool volumeOn)
     {
         float timer = 0.0f;
-        const float duration = 0.25f;
         
         // Fade each audiosource volume on or off depending on volumeOn parameter
-        while (timer < duration)
+        while (timer < fadeDuration)
         {
             foreach (var kvp in otherAudioSources)
             {
                 AudioSource audioSource = kvp.Key;
                 float originalVolume = kvp.Value;
             
-                audioSource.volume = Mathf.Lerp(volumeOn ? 0.0f : originalVolume, volumeOn ? originalVolume : 0.0f, timer / duration);
+                audioSource.volume = Mathf.Lerp(volumeOn ? 0.0f : originalVolume, volumeOn ? originalVolume : 0.0f, timer / fadeDuration);
             }
             
             timer += Time.unscaledDeltaTime;
@@ -522,6 +540,7 @@ public class CutsceneManager : MonoBehaviour
     {
         backgroundAudioSource.clip = currentCutscene.backgroundMusic;
         backgroundAudioSource.loop = true;
+        backgroundAudioSource.volume = currentCutscene.musicVolume;
         backgroundAudioSource.Play();
     }
 
@@ -545,7 +564,7 @@ public class CutsceneManager : MonoBehaviour
         // Play sound effect if clip has one assigned
         if (soundEffectAudioSource && clip.clipSoundEffect)
         {
-            soundEffectAudioSource.PlayOneShot(clip.clipSoundEffect);
+            soundEffectAudioSource.PlayOneShot(clip.clipSoundEffect, clip.soundEffectVolume);
         }
         
         // Play appropriate Dialogue
@@ -558,7 +577,6 @@ public class CutsceneManager : MonoBehaviour
     private IEnumerator TransitionToNewBackground(CutsceneClip clip)
     {
         float timer = 0.0f;
-        const float duration = 0.25f;
         
         if (clip.useSolidColor)
         {
@@ -569,9 +587,9 @@ public class CutsceneManager : MonoBehaviour
             secondaryBackgroundImage.color = transparentColor;
             
             // Fade in new background image on top of old background image
-            while (timer < duration)
+            while (timer < transitionDuration)
             {
-                secondaryBackgroundImage.color = Color.Lerp(transparentColor, clip.solidColor, timer / duration);
+                secondaryBackgroundImage.color = Color.Lerp(transparentColor, clip.solidColor, timer / transitionDuration);
                 timer += Time.unscaledDeltaTime;
                 yield return null;
             }
@@ -597,9 +615,9 @@ public class CutsceneManager : MonoBehaviour
             secondaryBackgroundImage.color = transparentColor;
             
             // Fade in new background image on top of old background image
-            while (timer < duration)
+            while (timer < transitionDuration)
             {
-                secondaryBackgroundImage.color = Color.Lerp(transparentColor, Color.white, timer / duration);
+                secondaryBackgroundImage.color = Color.Lerp(transparentColor, Color.white, timer / transitionDuration);
                 timer += Time.unscaledDeltaTime;
                 yield return null;
             }
@@ -768,7 +786,7 @@ public class CutsceneManager : MonoBehaviour
         currentClipIndex++;
         
         // Return early if it is the last clip to play
-        if (currentCutscene.clips.Length <= currentClipIndex)
+        if (currentCutscene.clips.Length <= currentClipIndex && isCutscenePlaying)
         {
             EndCutscene();
             return;

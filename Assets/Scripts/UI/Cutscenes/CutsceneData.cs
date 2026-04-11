@@ -10,13 +10,14 @@ public class CutsceneData : ScriptableObject
     [Tooltip("Whether or not the entire cutscene is able to be skipped.")]
     public bool canSkipEntireCutscene;
 
-    [Tooltip(
-        "The audio clip to be played during the cutscene. This will be looped for the entire duration of the cutscene.")]
+    [Tooltip("The audio clip to be played during the cutscene. This will be looped for the entire duration of the cutscene.")]
     public AudioClip backgroundMusic;
+    
+    [Tooltip("The volume of the background music to be played during the cutscene. Will be ignored if there is no background music to play.")]
+    [Range(0.0f, 1.0f)] public float musicVolume = 1.0f;
 
     [Header("Events")]
-    [Tooltip(
-        "Any events that should be triggered at the end of the cutscene. This can be used to trigger things that should happen once the cutscene has finished.")]
+    [Tooltip("Any events that should be triggered at the end of the cutscene. This can be used to trigger things that should happen once the cutscene has finished.")]
     public UnityEvent onCutsceneCompleted;
 }
 
@@ -47,6 +48,9 @@ public class CutsceneClip
     
     [Tooltip("The audio clip to be played during this individual clip. Will only play once at the beginning of the clip")]
     public AudioClip clipSoundEffect;
+    
+    [Tooltip("The volume of the audio clip to be played in this individual clip. Will be ignored if there is no sound effect to play")]
+    [Range(0.0f, 1.0f)] public float soundEffectVolume = 1.0f;
 }
 
 [System.Serializable]
@@ -59,7 +63,7 @@ public class CutsceneDialogueLine
     public CutsceneDialogueGender NPCGender;
     
     [Tooltip("The text to display for the actual dialogue")]
-    public string text;
+    [TextArea(3,6)] public string text;
 }
 
 [System.Serializable]
