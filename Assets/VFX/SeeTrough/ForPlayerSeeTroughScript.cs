@@ -57,7 +57,7 @@ public class ForPlayerSeeTroughScript : MonoBehaviour
                 UnSharedObjects = GetNonSharedValues(CurrentObjects, RayArray);
             }
 
-            if (UnSharedObjects != null)
+            if (UnSharedObjects != null)// gets materials in the currentObjects list that the sphere cast did not hit
             {
                 for (int i = 0; i < UnSharedObjects.Count; ++i)
                 {
@@ -70,7 +70,7 @@ public class ForPlayerSeeTroughScript : MonoBehaviour
 
             CurrentObjects = RayArray;
 
-            if (CurrentObjects.Length > 0 && TimeSinceStartFadeIn <= FadeDuration)
+            if (CurrentObjects.Length > 0 && TimeSinceStartFadeIn <= FadeDuration)// fades in when current objects isn't empty
             {
                 float progress = TimeSinceStartFadeIn / FadeDuration;
                 LeafSizeValue = Mathf.Lerp(0, LeafSizeValueMax, progress);
@@ -78,7 +78,7 @@ public class ForPlayerSeeTroughScript : MonoBehaviour
                 TimeSinceStartFadeIn += Time.deltaTime;
                 TimeSinceStartFadeOut = 0;
             }
-            else if (CurrentObjects.Length <= 0 && TimeSinceStartFadeOut <= FadeDuration)
+            else if (CurrentObjects.Length <= 0 && TimeSinceStartFadeOut <= FadeDuration)// fades out when empty
             {
                 float progress = TimeSinceStartFadeOut / FadeDuration;
                 LeafSizeValue = Mathf.Lerp(LeafSizeValueMax, 0, progress);
