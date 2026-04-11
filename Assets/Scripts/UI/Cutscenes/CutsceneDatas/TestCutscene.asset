@@ -13,13 +13,52 @@ MonoBehaviour:
   m_Name: TestCutscene
   m_EditorClassIdentifier: Assembly-CSharp::CutsceneData
   clips:
-  - backgroundImage: {fileID: 0}
-    duration: 0
+  - backgroundImage: {fileID: 21300000, guid: 8d6fb112f3af86d458e6b60d350ffaa8, type: 3}
+    useSolidColor: 0
+    solidColor: {r: 0, g: 0, b: 0, a: 0}
+    duration: 5
     autoContinue: 0
-    canSkip: 0
-    clip: {fileID: 0}
-    onClipCompleted:
-      m_PersistentCalls:
-        m_Calls: []
-  canSkip: 0
-  backgroundMusic: {fileID: 0}
+    canSkipClipEarly: 1
+    dialogueLine:
+      Speaker: John Doe
+      NPCGender: 0
+      text: Hello world
+    clipSoundEffect: {fileID: 0}
+  - backgroundImage: {fileID: 1017994159, guid: 3b130e7697565b845881173f60a866d5, type: 3}
+    useSolidColor: 0
+    solidColor: {r: 0, g: 1, b: 0.049730778, a: 0}
+    duration: 5
+    autoContinue: 0
+    canSkipClipEarly: 0
+    dialogueLine:
+      Speaker: John Doe Jr
+      NPCGender: 0
+      text: male voice playing line 2
+    clipSoundEffect: {fileID: 0}
+  - backgroundImage: {fileID: 0}
+    useSolidColor: 1
+    solidColor: {r: 1, g: 0, b: 0, a: 0}
+    duration: 5
+    autoContinue: 1
+    canSkipClipEarly: 0
+    dialogueLine:
+      Speaker: Jane Doe
+      NPCGender: 1
+      text: female voice playing line 3
+    clipSoundEffect: {fileID: 8300000, guid: f95ad4e0a74d23243a8dcd2a7e337ca2, type: 3}
+  - backgroundImage: {fileID: 0}
+    useSolidColor: 1
+    solidColor: {r: 0, g: 1, b: 0.049730778, a: 0}
+    duration: 5
+    autoContinue: 0
+    canSkipClipEarly: 0
+    dialogueLine:
+      Speaker: John Doe Jr
+      NPCGender: 0
+      text: male voice playing line 4
+    clipSoundEffect: {fileID: 8300000, guid: 9da3d0d8794e75c4dab093a12efe4543, type: 3}
+  canSkipEntireCutscene: 1
+  backgroundMusic: {fileID: 8300000, guid: 619550a60a9780d418717bd7f4202e00, type: 3}
+  onCutsceneCompleted:
+    m_PersistentCalls:
+      m_Calls: []

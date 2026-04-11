@@ -21,14 +21,20 @@ public class CutsceneData : ScriptableObject
 }
 
 [System.Serializable]
-public struct CutsceneClip
+public class CutsceneClip
 {
     [Header("Clip Settings")]
     [Tooltip("The image to be displayed during this cutscene clip.")]
     public Sprite backgroundImage;
     
+    [Tooltip("If true, this clip will display a solid color and ignore the background image set above. It will also use the color value set below.")]
+    public bool useSolidColor;
+    
+    [Tooltip("If Use Solid Color is true, this will be the color that is displayed for the background of this clip.")]
+    public Color solidColor;
+    
     [Tooltip("The time in seconds that this clip will be shown for. If Auto Continue is true, this value will be the time when the next clip will play. If Auto Continue if false, this value will be the time when the player is able to press the continue button to manually trigger the next clip.")]
-    public float duration;
+    public float duration = 5.0f;
     
     [Tooltip("Whether the clip will play the next clip automatically or require the player to manually press the continue button")]
     public bool autoContinue;

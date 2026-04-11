@@ -13,6 +13,16 @@ public class CutsceneTriggerVolume : MonoBehaviour
     [SerializeField] private bool needsObjective;
     
     private bool playedOnce;
+
+    private void Awake()
+    {
+        BoxCollider boxCollider = GetComponent<BoxCollider>();
+        
+        if (boxCollider && !boxCollider.isTrigger)
+        {
+            boxCollider.isTrigger = true;
+        }
+    }
     
     private void OnTriggerEnter(Collider other)
     {
