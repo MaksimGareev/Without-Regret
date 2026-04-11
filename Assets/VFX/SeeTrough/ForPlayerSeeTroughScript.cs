@@ -12,14 +12,23 @@ public class ForPlayerSeeTroughScript : MonoBehaviour
     [SerializeField] Camera Cam;
     [SerializeField] LayerMask Mask;
 
-    [SerializeField] private float LeafSizeValue = 2.65f;
-    [SerializeField] private float OtherSizeValue = 0.87f;
-    [SerializeField] private float sphereCastRadius = 2.27f;
+    [SerializeField] private float LeafSizeValueMax = 2.65f;
+    [SerializeField] private float OtherSizeValueMax = 0.87f;
+    [SerializeField] private float LeafSizeValue = 0;
+    [SerializeField] private float OtherSizeValue = 0;
+    [SerializeField] private float sphereCastRadius = 1.5f;
     [SerializeField] private float sphereCastOffset = 4.0f;
+
+    [SerializeField] float FadeDuration = 1f;
+
+    [SerializeField] RaycastHit[] CurrentObjects;
+
+    float TimeSinceStartFadeIn = 0f;
+    float TimeSinceStartFadeOut = 0f;
 
     //[SerializeField] Material[] WallMaterials;
     RaycastHit[] RayArray;
-    [SerializeField] RaycastHit[] CurrentObjects;
+    
     List<RaycastHit> UnSharedObjects;
    
 
@@ -60,6 +69,23 @@ public class ForPlayerSeeTroughScript : MonoBehaviour
             }
 
             CurrentObjects = RayArray;
+
+            if (CurrentObjects.Length > 0 && TimeSinceStartFadeIn <= FadeDuration)
+            {
+                float progress = TimeSinceStartFadeIn / FadeDuration;
+                LeafSizeValue = Mathf.Lerp(0, LeafSizeValueMax, progress);
+                OtherSizeValue = Mathf.Lerp(0, OtherSizeValueMax, progress);
+                TimeSinceStartFadeIn += Time.deltaTime;
+                TimeSinceStartFadeOut = 0;
+            }
+            else if (CurrentObjects.Length <= 0 && TimeSinceStartFadeOut <= FadeDuration)
+            {
+                float progress = TimeSinceStartFadeOut / FadeDuration;
+                LeafSizeValue = Mathf.Lerp(LeafSizeValueMax, 0, progress);
+                OtherSizeValue = Mathf.Lerp(OtherSizeValueMax, 0, progress);
+                TimeSinceStartFadeOut += Time.deltaTime;
+                TimeSinceStartFadeIn = 0;
+            }
 
             for (int i = 0; i < CurrentObjects.Length; ++i)
             {
