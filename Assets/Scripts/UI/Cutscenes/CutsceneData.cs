@@ -25,7 +25,7 @@ public class CutsceneClip
 {
     [Header("Clip Settings")]
     [Tooltip("The image to be displayed during this cutscene clip.")]
-    public Sprite backgroundImage;
+    public Texture backgroundImage;
     
     [Tooltip("If true, this clip will display a solid color and ignore the background image set above. It will also use the color value set below.")]
     public bool useSolidColor;

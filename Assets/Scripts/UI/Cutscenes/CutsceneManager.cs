@@ -17,8 +17,8 @@ public class CutsceneManager : MonoBehaviour
     [SerializeField] private GameObject cutscenePanel;
     [SerializeField] private GameObject dialoguePanel;
     [SerializeField] private Button continueButton;
-    [SerializeField] private Image primaryBackgroundImage;
-    [SerializeField] private Image secondaryBackgroundImage;
+    [SerializeField] private RawImage primaryBackgroundImage;
+    [SerializeField] private RawImage secondaryBackgroundImage; 
     [SerializeField] private Image dialogueBackgroundImage;
     [SerializeField] private Image speakerNameBackgroundImage;
     [SerializeField] private GameObject holdToSkipPanel;
@@ -28,8 +28,6 @@ public class CutsceneManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI toSkipText;
     [SerializeField] private TextMeshProUGUI dialogueText;
     [SerializeField] private TextMeshProUGUI speakerNameText;
-
-    
     
     [Header("Art Assets")]
     [SerializeField] private Sprite holdButtonSprite;
@@ -79,10 +77,13 @@ public class CutsceneManager : MonoBehaviour
     private Coroutine fadeInCoroutine;
     private Coroutine fadeOutCoroutine;
     private Coroutine transitionBackgroundCoroutine;
+    private Coroutine fadeOtherAudioCoroutine;
     
     [HideInInspector] public bool isCutscenePlaying = false;
     
     private CanvasGroup cutsceneCanvasGroup;
+    
+    private Dictionary<AudioSource, float> otherAudioSources =  new Dictionary<AudioSource, float>();
 
     private void Awake()
     {
@@ -411,6 +412,8 @@ public class CutsceneManager : MonoBehaviour
             fadeInCoroutine = StartCoroutine(FadeInCutscene());
         }
 
+        DisableOtherAudioSources();
+
         if (currentCutscene.backgroundMusic)
         {
             StartBackgroundMusic();
@@ -455,6 +458,64 @@ public class CutsceneManager : MonoBehaviour
         
         cutsceneCanvasGroup.alpha = 1f;
         fadeInCoroutine = null;
+    }
+
+    private void DisableOtherAudioSources()
+    {
+        // Refresh AudioSource List
+        otherAudioSources.Clear();
+        AudioSource[] audioSources = FindObjectsByType<AudioSource>(FindObjectsSortMode.None);
+
+        foreach (AudioSource audioSource in audioSources)
+        {
+            if (!audioSource.gameObject.GetComponentInParent<CutsceneManager>())
+            {
+                otherAudioSources.Add(audioSource, audioSource.volume);
+            }
+        }
+
+        if (fadeOtherAudioCoroutine == null)
+        {
+            fadeOtherAudioCoroutine = StartCoroutine(FadeOtherSourceVolumes(false));
+        }
+    }
+
+    private IEnumerator FadeOtherSourceVolumes(bool volumeOn)
+    {
+        float timer = 0.0f;
+        const float duration = 0.25f;
+        
+        // Fade each audiosource volume on or off depending on volumeOn parameter
+        while (timer < duration)
+        {
+            foreach (var kvp in otherAudioSources)
+            {
+                AudioSource audioSource = kvp.Key;
+                float originalVolume = kvp.Value;
+            
+                audioSource.volume = Mathf.Lerp(volumeOn ? 0.0f : originalVolume, volumeOn ? originalVolume : 0.0f, timer / duration);
+            }
+            
+            timer += Time.unscaledDeltaTime;
+            yield return null;
+        }
+        
+        // Finish Transition
+        foreach (var kvp in otherAudioSources)
+        {
+            AudioSource audioSource = kvp.Key;
+            float originalVolume = kvp.Value;
+
+            audioSource.volume = volumeOn ? originalVolume : 0.0f;
+        }
+        
+        // Release references if fading back on
+        if (volumeOn)
+        {
+            otherAudioSources.Clear();
+        }
+        
+        fadeOtherAudioCoroutine = null;
     }
 
     private void StartBackgroundMusic()
@@ -504,8 +565,8 @@ public class CutsceneManager : MonoBehaviour
             // Initialization
             Color transparentColor =  new Color(clip.solidColor.r, clip.solidColor.g, clip.solidColor.b, 0f);
             secondaryBackgroundImage.enabled = true;
-            secondaryBackgroundImage.sprite = null;
-            secondaryBackgroundImage.color = Color.clear;
+            secondaryBackgroundImage.texture = null;
+            secondaryBackgroundImage.color = transparentColor;
             
             // Fade in new background image on top of old background image
             while (timer < duration)
@@ -519,26 +580,27 @@ public class CutsceneManager : MonoBehaviour
             secondaryBackgroundImage.color = clip.solidColor;
             
             // Update primary image to match instantly
-            primaryBackgroundImage.sprite = null;
+            primaryBackgroundImage.texture = null;
             primaryBackgroundImage.color = clip.solidColor;
             
             // Disable and reset secondary image to use again in next transition
             secondaryBackgroundImage.enabled = false;
-            secondaryBackgroundImage.sprite = null;
-            secondaryBackgroundImage.color = Color.white;
+            secondaryBackgroundImage.texture = null;
+            secondaryBackgroundImage.color = Color.clear;
         }
         else if (clip.backgroundImage)
         {
             // Initialization
             Color transparentColor = new Color(1f, 1f, 1f, 0f);
             secondaryBackgroundImage.enabled = true;
-            secondaryBackgroundImage.sprite = clip.backgroundImage;
-            secondaryBackgroundImage.color = Color.clear;
+            secondaryBackgroundImage.texture = clip.backgroundImage;
+            secondaryBackgroundImage.color = transparentColor;
             
             // Fade in new background image on top of old background image
             while (timer < duration)
             {
                 secondaryBackgroundImage.color = Color.Lerp(transparentColor, Color.white, timer / duration);
+                timer += Time.unscaledDeltaTime;
                 yield return null;
             }
             
@@ -546,12 +608,12 @@ public class CutsceneManager : MonoBehaviour
             secondaryBackgroundImage.color = Color.white;
             
             // Update primary image to match instantly
-            primaryBackgroundImage.sprite = clip.backgroundImage;
+            primaryBackgroundImage.texture = clip.backgroundImage;
             primaryBackgroundImage.color = Color.white;
             
             // Disable and reset secondary image to use again in next transition
             secondaryBackgroundImage.enabled = false;
-            secondaryBackgroundImage.sprite = null;
+            secondaryBackgroundImage.texture= null;
             secondaryBackgroundImage.color = Color.white;
         }
         else
@@ -730,6 +792,8 @@ public class CutsceneManager : MonoBehaviour
         
         EndBackgroundMusic();
         
+        EnableOtherAudioSources();
+        
         isCutscenePlaying = false;
         
         Time.timeScale = 1.0f; // Unpause Game
@@ -754,8 +818,8 @@ public class CutsceneManager : MonoBehaviour
         
         cutsceneCanvasGroup.alpha = 0f;
         
-        primaryBackgroundImage.sprite = null;
-        secondaryBackgroundImage.sprite = null;
+        primaryBackgroundImage.texture = null;
+        secondaryBackgroundImage.texture = null;
         
         cutscenePanel.SetActive(false);
         DisableInput();
@@ -773,5 +837,13 @@ public class CutsceneManager : MonoBehaviour
         
         inputActions.FindActionMap("UI")?.Disable();
         inputActions.FindActionMap("Player")?.Enable();
+    }
+
+    private void EnableOtherAudioSources()
+    {
+        if (fadeOtherAudioCoroutine == null)
+        {
+            fadeOtherAudioCoroutine = StartCoroutine(FadeOtherSourceVolumes(true));
+        }
     }
 }
