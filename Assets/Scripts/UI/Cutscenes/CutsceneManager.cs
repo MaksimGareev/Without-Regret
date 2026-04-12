@@ -204,15 +204,21 @@ public class CutsceneManager : MonoBehaviour
     {
         // Initialize input actions
         confirmAction = inputActions.FindActionMap("UI").FindAction("CutsceneConfirm");
-        if (confirmAction== null)
+        if (confirmAction != null)
+        {
+            confirmAction.started += OnConfirmStarted;
+            confirmAction.canceled += OnConfirmCancelled;
+            confirmAction.Enable();
+        }
+        else
         {
             Debug.LogError("Confirm action not found in InputActionAsset.");
-            return;
         }
 
-        confirmAction.started += OnConfirmStarted;
-        confirmAction.canceled += OnConfirmCancelled;
-        confirmAction.Enable();
+        if (continueButton)
+        {
+            continueButton.onClick.AddListener(SkipCurrentClip);
+        }
     }
     
     private void Update()
@@ -776,6 +782,7 @@ public class CutsceneManager : MonoBehaviour
     private void HideContinueButton()
     {
         continueButton.gameObject.SetActive(false);
+        canSkipClip = false;
     }
     
     private void SkipCurrentClip()
