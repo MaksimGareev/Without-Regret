@@ -84,6 +84,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 27c2655fb60b25b44a1e1941b0c63796, type: 3}
       insertIndex: -1
       addedObject: {fileID: -8862540249745878470}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 27c2655fb60b25b44a1e1941b0c63796, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6462285386556873548}
   m_SourcePrefab: {fileID: 100100000, guid: 27c2655fb60b25b44a1e1941b0c63796, type: 3}
 --- !u!1 &1748544419901476268 stripped
 GameObject:
@@ -119,8 +122,8 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1748544419901476268}
   serializedVersion: 5
-  m_Mass: 50
-  m_LinearDamping: 0
+  m_Mass: 100
+  m_LinearDamping: 2
   m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
@@ -137,7 +140,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!114 &3489293993248852428
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -158,9 +161,8 @@ MonoBehaviour:
   maxGrabDistance: 2.5
   allowSprint: 1
   requiredItem: {fileID: 0}
-  collisionCheckSizeFactor: 1
+  collisionCheckSizeFactor: 0.25
   checkGrabPointCollisions: 1
-  collisionCheckSizeMultiplier: 0.9
   heldPositionOffset: {x: 0, y: 0, z: 0}
   setHeldRotation: 0
   heldRotation: {x: 0, y: 0, z: 0}
@@ -181,3 +183,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InteractableProximity
   range: 3
   player: {fileID: 0}
+--- !u!114 &6462285386556873548
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1748544419901476268}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ced780c22dcf6ef4bb8e624b32e4787a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SaveableWorldObject
+  uniqueID: 2e75e5a7-f23d-4554-98d4-b7b44f6ef4fe
