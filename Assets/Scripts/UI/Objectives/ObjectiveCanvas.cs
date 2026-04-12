@@ -318,6 +318,6 @@ public class ObjectiveCanvas : MonoBehaviour
 
     public bool IsVisible()
     {
-        return objectiveUI != null && (canvasGroup.alpha > targetAlpha || objectiveUI.activeSelf);
+        return objectiveUI != null && canvasGroup != null && (canvasGroup.alpha > targetAlpha || objectiveUI.activeSelf);
     }
 }
