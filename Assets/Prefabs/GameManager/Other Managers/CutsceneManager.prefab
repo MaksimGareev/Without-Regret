@@ -937,6 +937,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7368480003b0e5147a4562bb5864678c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CutsceneManager
+  fadeDuration: 0.5
+  transitionDuration: 0.5
+  holdToSkipDuration: 1
   cutscenePanel: {fileID: 6807384885782901130}
   dialoguePanel: {fileID: 3447438313821203903}
   continueButton: {fileID: 5774898458349232857}
@@ -989,7 +992,6 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 727dfede81bdee44d9228ba063291c4d, type: 3}
   - {fileID: 8300000, guid: 2ac35b0aca60abd40a465433a835605f, type: 3}
   inputActions: {fileID: -944628639613478452, guid: f1f4dbfd8c64cd440924988ec4fb6f6a, type: 3}
-  holdToSkipDuration: 1
   isCutscenePlaying: 0
 --- !u!82 &8806541016412782844
 AudioSource:
@@ -1691,6 +1693,7 @@ GameObject:
   - component: {fileID: 1173832163955582735}
   - component: {fileID: 7834028708376468650}
   - component: {fileID: 5774898458349232857}
+  - component: {fileID: 2307148790297271277}
   m_Layer: 0
   m_Name: ContinueButton
   m_TagString: Untagged
@@ -1799,6 +1802,19 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &2307148790297271277
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7756825757774928711}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 096ba1d866970c945a6669bc625c4011, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowBlink
+  blinkSpeed: 2
 --- !u!1 &8735988998872213906
 GameObject:
   m_ObjectHideFlags: 0
