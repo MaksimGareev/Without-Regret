@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -24,12 +23,19 @@ public class CutsceneData : ScriptableObject
 [System.Serializable]
 public class CutsceneClip
 {
+    public enum BackgroundType
+    {
+        Image,
+        ImageFromPreviousClip,
+        SolidColor
+    }
+    
     [Header("Clip Settings")]
+    [Tooltip("This will control which type of background will be shown for this clip. Selecting Image will use the image assigned to background image, and ignore the solid color. Image from previous clip will ignore both solid color and the background image, and simply use the image in the previous clip. Solid color will ignore the background image, and just display the color set in solid color.")]
+    public BackgroundType backgroundType = BackgroundType.Image;
+    
     [Tooltip("The image to be displayed during this cutscene clip.")]
     public Texture backgroundImage;
-    
-    [Tooltip("If true, this clip will display a solid color and ignore the background image set above. It will also use the color value set below.")]
-    public bool useSolidColor;
     
     [Tooltip("If Use Solid Color is true, this will be the color that is displayed for the background of this clip.")]
     public Color solidColor;

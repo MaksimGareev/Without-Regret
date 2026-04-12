@@ -578,7 +578,7 @@ public class CutsceneManager : MonoBehaviour
     {
         float timer = 0.0f;
         
-        if (clip.useSolidColor)
+        if (clip.backgroundType == CutsceneClip.BackgroundType.SolidColor)
         {
             // Initialization
             Color transparentColor =  new Color(clip.solidColor.r, clip.solidColor.g, clip.solidColor.b, 0f);
@@ -606,7 +606,7 @@ public class CutsceneManager : MonoBehaviour
             secondaryBackgroundImage.texture = null;
             secondaryBackgroundImage.color = Color.clear;
         }
-        else if (clip.backgroundImage)
+        else if (clip.backgroundType == CutsceneClip.BackgroundType.Image && clip.backgroundImage)
         {
             // Initialization
             Color transparentColor = new Color(1f, 1f, 1f, 0f);
@@ -633,6 +633,11 @@ public class CutsceneManager : MonoBehaviour
             secondaryBackgroundImage.enabled = false;
             secondaryBackgroundImage.texture= null;
             secondaryBackgroundImage.color = Color.white;
+        }
+        else if (clip.backgroundType == CutsceneClip.BackgroundType.ImageFromPreviousClip)
+        {
+            // Do nothing, leave previous image or color on screen.
+            Debug.Log("Cutscene clip using image from previous clip.");
         }
         else
         {
