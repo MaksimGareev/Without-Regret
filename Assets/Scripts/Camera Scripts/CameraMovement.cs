@@ -309,7 +309,7 @@ public class CameraMovement : MonoBehaviour
 
         if (GameManager.Instance.journalUICanvas != null
             && GameManager.Instance.journalUICanvas.GetComponent<Journal>() != null
-            && GameManager.Instance.journalUICanvas.GetComponent<Journal>().isJournalOpen) return;
+            && GameManager.Instance.journalUICanvas.GetComponent<Journal>().IsJournalOpen) return;
 
         if (GameManager.Instance.LockPickUI != null
             && GameManager.Instance.LockPickUI.GetComponent<LockPickUI>() != null

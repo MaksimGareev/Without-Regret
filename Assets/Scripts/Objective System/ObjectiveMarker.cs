@@ -12,18 +12,18 @@ public class ObjectiveMarker : MonoBehaviour
     public OffscreenObjectiveIndicator ScreenSpaceIndicator;
 
     [Tooltip("Scenemanager to listen for event from")]
-    public SceneLoadManager sceneManger;
+    [SerializeField] SceneLoadManager sceneManager;
 
     private int objectiveTransformIndex;
 
     private void OnEnable()
     {
-        sceneManger.OnSceneLoaded.AddListener(OnSceneLoad);
+        if (sceneManager != null) sceneManager.OnSceneLoaded.AddListener(OnSceneLoad);
     }
 
     private void OnDisable()
     {
-        sceneManger.OnSceneLoaded.RemoveListener(OnSceneLoad);
+        if (sceneManager != null) sceneManager.OnSceneLoaded.RemoveListener(OnSceneLoad);
     }
 
     private void Awake()

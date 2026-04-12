@@ -67,7 +67,10 @@ public class Journal : MonoBehaviour, ISaveable
     [Tooltip("Horizontal spacing in pixels between button left edge and the arrow.")]
     [SerializeField] private float arrowSpacing = 8f;
 
-    [HideInInspector] public bool isJournalOpen = false;
+    [Header("Debug")]
+    [SerializeField] private bool showDebugLogs = false;
+
+    [HideInInspector] public bool IsJournalOpen = false;
 
     private Animator animator;
     private List<ObjectiveInstance> objectivesList;
@@ -112,11 +115,13 @@ public class Journal : MonoBehaviour, ISaveable
             if (!journalAnimationCallback.gameObject.TryGetComponent<Animator>(out animator))
             {
                 Debug.LogWarning("Journal Animation Callback object is missing the Animator component");
+                return;
             }
         }
         else
         {
             Debug.LogWarning("Journal is missing JournalAnimationCallback reference");
+            return;
         }
 
         if (pagesHolder == null || tabsHolder == null)
@@ -189,12 +194,12 @@ public class Journal : MonoBehaviour, ISaveable
             ToggleJournalUI();
         }
 
-        if (cancelAction.triggered && isJournalOpen)
+        if (cancelAction.triggered && IsJournalOpen)
         {
             ToggleJournalUI();
         }
 
-        if (isJournalOpen)
+        if (IsJournalOpen)
         {
             navigateTimer += Time.unscaledDeltaTime;
 
@@ -270,9 +275,9 @@ public class Journal : MonoBehaviour, ISaveable
 
     private void ToggleJournalUI()
     {
-        isJournalOpen = !isJournalOpen;
+        IsJournalOpen = !IsJournalOpen;
 
-        if (isJournalOpen)
+        if (IsJournalOpen)
         {
             StartCoroutine(ToggleJournalRoutine(true));
         }
@@ -330,7 +335,7 @@ public class Journal : MonoBehaviour, ISaveable
             yield return new WaitUntil(() => journalAnimationCallback.AnimationFinished());
 
             journalAnimationCallback.SetAnimationFinishedFalse();
-            journalUI.SetActive(isJournalOpen);
+            journalUI.SetActive(IsJournalOpen);
             SetPlayerInputEnabled(true);
             EnableOtherCanvases();
             Time.timeScale = 1f;
@@ -345,7 +350,7 @@ public class Journal : MonoBehaviour, ISaveable
 
     private void EnableOtherCanvases()
     {
-        Debug.Log("Enabling other canvases from Journal");
+        if (showDebugLogs) Debug.Log("Enabling other canvases from Journal");
         if (GameManager.Instance == null) return;
 
         if (GameManager.Instance.mainCanvas != null && !GameManager.Instance.mainCanvas.activeSelf)
@@ -376,7 +381,7 @@ public class Journal : MonoBehaviour, ISaveable
 
     private void DisableOtherCanvases()
     {
-        Debug.Log("Disabling other canvases from Journal");
+        if (showDebugLogs) Debug.Log("Disabling other canvases from Journal");
         if (GameManager.Instance == null) return;
 
         if (GameManager.Instance.mainCanvas != null && GameManager.Instance.mainCanvas.activeSelf)
@@ -624,19 +629,19 @@ public class Journal : MonoBehaviour, ISaveable
 
     public void OnObjectiveSelect(int index)
     {
-        Debug.Log($"Objective Select called with index : {index}");
+        if (showDebugLogs) Debug.Log($"Objective Select called with index : {index}");
         
         if (index < 0) return;
         
         if (index >= objectiveButtons.Length)
         {
-            Debug.LogWarning($"Objective index {index} is out of bounds for objective buttons.");
+            if (showDebugLogs) Debug.LogWarning($"Objective index {index} is out of bounds for objective buttons.");
             return;
         }
         
         if (objectivesList == null || index >= objectivesList.Count)
         {
-            Debug.LogWarning($"Objective index {index} is out of bounds for objective entries.");
+            if (showDebugLogs) Debug.LogWarning($"Objective index {index} is out of bounds for objective entries.");
             return;
         }
         
@@ -676,19 +681,19 @@ public class Journal : MonoBehaviour, ISaveable
 
     private void OnCharacterSelect(int index)
     {
-        Debug.Log($"Character Select called with index : {index}");
+        if (showDebugLogs) Debug.Log($"Character Select called with index : {index}");
         
         if (index < 0) return;
 
         if (index >= characterButtons.Length)
         {
-            Debug.LogWarning($"Character index {index} is out of bounds for character buttons.");
+            if (showDebugLogs) Debug.LogWarning($"Character index {index} is out of bounds for character buttons.");
             return;
         }
 
         if (index >= characterDictionary.Count)
         {
-            Debug.LogWarning($"Character index {index} is out of bounds for character entries.");
+            if (showDebugLogs) Debug.LogWarning($"Character index {index} is out of bounds for character entries.");
             characterDescriptionText.text = "";
             return;
         }
@@ -720,13 +725,13 @@ public class Journal : MonoBehaviour, ISaveable
 
         if (index >= collectiblesButtons.Length)
         {
-            Debug.LogWarning($"Collectible index {index} is out of bounds for collectible buttons.");
+            if (showDebugLogs) Debug.LogWarning($"Collectible index {index} is out of bounds for collectible buttons.");
             return;
         }
 
         if (index >= collectibleDictionary.Count)
         {
-            Debug.LogWarning($"Collectible index {index} is out of bounds for collectible entries.");
+            if (showDebugLogs) Debug.LogWarning($"Collectible index {index} is out of bounds for collectible entries.");
             collectibleDescriptionText.text = "";
             return;
         }
@@ -765,9 +770,7 @@ public class Journal : MonoBehaviour, ISaveable
         // reverse objectivelist
         for (int i = 0; i < objectivesList.Count / 2; i++)
         {
-            var temp = objectivesList[i];
-            objectivesList[i] = objectivesList[objectivesList.Count - i - 1];
-            objectivesList[objectivesList.Count - i - 1] = temp;
+            (objectivesList[objectivesList.Count - i - 1], objectivesList[i]) = (objectivesList[i], objectivesList[objectivesList.Count - i - 1]);
         }
     }
 
@@ -838,14 +841,16 @@ public class Journal : MonoBehaviour, ISaveable
         {
             // Character is already in the list, so update the description
             characterDictionary[name] = description;
-            Debug.Log($"Updated character entry for {name} in the journal with description \"{description}.\"");
+
+            if (showDebugLogs) Debug.Log($"Updated character entry for {name} in the journal with description \"{description}.\"");
         }
         else
         {
             // Add character entry to the names list and dictionary
             characterNamesList.Add(name);
             characterDictionary.Add(name, description);
-            Debug.Log($"Added character entry for {name} in the journal with description \"{description}.\"");
+
+            if (showDebugLogs) Debug.Log($"Added character entry for {name} in the journal with description \"{description}.\"");
         }
 
         RefreshCharacters();
@@ -857,13 +862,15 @@ public class Journal : MonoBehaviour, ISaveable
         {
             // Update existing collectible description
             collectibleDictionary[name] = description;
-            Debug.Log($"Updated collectible entry for {name} in the journal with description \"{description}.\"");
+
+            if (showDebugLogs) Debug.Log($"Updated collectible entry for {name} in the journal with description \"{description}.\"");
         }
         else
         {
             collectibleNamesList.Add(name);
             collectibleDictionary.Add(name, description);
-            Debug.Log($"Added collectible entry for {name} in the journal with description \"{description}.\"");
+
+            if (showDebugLogs) Debug.Log($"Added collectible entry for {name} in the journal with description \"{description}.\"");
         }
 
         RefreshCollectibles();
@@ -893,6 +900,13 @@ public class Journal : MonoBehaviour, ISaveable
         }
     }
 
+    [Serializable]
+    private struct CharacterPortrait
+    {
+        public string name;
+        public Sprite portrait;
+    }
+
     private void SetCharacterPageInfo(int index)
     {
         if (characterDictionary.Count > index)
@@ -902,7 +916,7 @@ public class Journal : MonoBehaviour, ISaveable
         if (npcPortrait != null)
         {
             var portrait = characterPortraits.Find(p => p.name == characterNamesList[index]);
-            if (portrait != null)
+            if (portrait.Equals(default(CharacterPortrait)))
             {
                 npcPortrait.sprite = portrait.portrait;
                 npcPortrait.SetNativeSize();
@@ -920,6 +934,7 @@ public class Journal : MonoBehaviour, ISaveable
     private void OnDisable()
     {
         DisableJournalInput();
+        SetPlayerInputEnabled(true);
     }
 
     private void EnableJournalInput()
@@ -962,13 +977,6 @@ public class Journal : MonoBehaviour, ISaveable
                 cam.SetCameraLocked(true);
             }
         }
-    }
-
-    [Serializable]
-    private class CharacterPortrait
-    {
-        public string name;
-        public Sprite portrait;
     }
 
     // Moves the selection arrow to the left of the provided tab button.

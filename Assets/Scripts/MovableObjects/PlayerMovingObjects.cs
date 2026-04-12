@@ -26,7 +26,7 @@ public class PlayerMovingObjects : MonoBehaviour
 
     private void Awake()
     {
-        characterSwap = FindObjectOfType<CharacterSwap>();
+        characterSwap = FindFirstObjectByType<CharacterSwap>();
 
         if (characterSwap != null)
         {
