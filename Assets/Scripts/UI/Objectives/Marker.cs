@@ -3,7 +3,7 @@ using UnityEngine;
 public class Marker : MonoBehaviour
 {
     Vector3 targetViewportPos;
-    [HideInInspector] public Transform target;
+    public Transform target;
     private Camera playerCam;
     [SerializeField] private GameObject onScreenIndicator;
 
