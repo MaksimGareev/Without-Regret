@@ -16,6 +16,7 @@ public class PlayerMovingObjects : MonoBehaviour
     private bool isGrabbing;
 
     private PlayerController playerController;
+    private PlayerMantling playerMantling;
     private float normalMoveSpeed;
     private float normalSprintSpeed;
     private HashSet<MoveableObject> movedObjects = new HashSet<MoveableObject>();
@@ -35,6 +36,7 @@ public class PlayerMovingObjects : MonoBehaviour
             characterSwap.onAnimatorChanged += UpdateAnimator;
         }
         playerController = gameObject.GetComponent<PlayerController>();
+        playerMantling = gameObject.GetComponent<PlayerMantling>();
         normalMoveSpeed = playerController.Speed;
         normalSprintSpeed = playerController.SprintSpeed;
     }
@@ -117,8 +119,10 @@ public class PlayerMovingObjects : MonoBehaviour
         animator.SetTrigger("pickup");
         Debug.Log("Picking up!");
         playerController.DisableInput();
+        playerMantling.canMantle = false;
         yield return new WaitForSeconds(1.5f);
         playerController.EnableInput();
+        playerMantling.canMantle = true;
     }
 
     IEnumerator PlaceDown()
@@ -126,8 +130,10 @@ public class PlayerMovingObjects : MonoBehaviour
         animator.SetTrigger("placing");
         Debug.Log("Placing down!");
         playerController.DisableInput();
+        playerMantling.canMantle = false;
         yield return new WaitForSeconds(1.0f);
         playerController.EnableInput();
+        playerMantling.canMantle = true;
         ResetAnimations();
     }
 
