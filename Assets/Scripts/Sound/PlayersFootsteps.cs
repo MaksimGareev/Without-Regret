@@ -9,6 +9,9 @@ public class PlayersFootsteps : MonoBehaviour
     public AudioClip[] DefaultSteps;
     public AudioClip[] GrassSteps;
     public AudioClip[] HardwoodSteps;
+    public AudioClip[] PavementSteps;
+    public AudioClip[] DirtSteps;
+
 
     public CharacterController Controller;
     private float StepTimer;
@@ -81,6 +84,8 @@ public class PlayersFootsteps : MonoBehaviour
         {
             SurfaceType.Grass => GrassSteps,
             SurfaceType.Hardwood => HardwoodSteps,
+            SurfaceType.Pavement => PavementSteps,
+            SurfaceType.Dirt => DirtSteps,
             _ => DefaultSteps
         };
 

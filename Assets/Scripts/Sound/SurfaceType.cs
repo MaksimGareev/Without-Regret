@@ -2,5 +2,7 @@ public enum SurfaceType
 {
     Default,
     Grass,
-    Hardwood
+    Hardwood,
+    Pavement,
+    Dirt
 }
