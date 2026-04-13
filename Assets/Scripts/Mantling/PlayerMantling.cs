@@ -47,6 +47,7 @@ public class PlayerMantling : MonoBehaviour
         playerMovingObjects = GetComponent<PlayerMovingObjects>();
         playerPossessing = GetComponent<PlayerPossessing>();
         playerThrowing = GetComponent<PlayerThrowing>();
+        canMantle = true;
     }
 
     // Update is called once per frame
