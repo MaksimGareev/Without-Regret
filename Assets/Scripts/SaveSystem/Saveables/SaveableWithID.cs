@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public abstract class SaveableWithID : MonoBehaviour, ISaveable
@@ -9,18 +10,18 @@ public abstract class SaveableWithID : MonoBehaviour, ISaveable
     {
         if (Application.isPlaying) return;
 
-        if (string.IsNullOrEmpty(uniqueID) || !IsUniqueID(uniqueID))
+        if (string.IsNullOrEmpty(uniqueID) || !IsUniqueID(uniqueID, this))
         {
             RefreshUniqueID();
         }
     }
 
-    private static bool IsUniqueID(string id)
+    private static bool IsUniqueID(string id, SaveableWithID thisSaveable)
     {
         var allSaveables = FindObjectsByType<SaveableWithID>(FindObjectsSortMode.None);
         foreach (var saveable in allSaveables)
         {
-            if (saveable != null && saveable.GetUniqueID() == id)
+            if (saveable && saveable != thisSaveable && saveable.GetUniqueID() == id)
             {
                 return false;
             }
