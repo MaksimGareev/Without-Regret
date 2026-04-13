@@ -106,7 +106,7 @@ public class LockPicking : MonoBehaviour
     }
     void Awake()
     {
-        characterSwap = FindObjectOfType<CharacterSwap>();
+        characterSwap = FindFirstObjectByType<CharacterSwap>();
 
         if (characterSwap != null)
         {

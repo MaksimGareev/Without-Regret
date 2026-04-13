@@ -108,6 +108,6 @@ public class UIFadeController : MonoBehaviour
 
     private void OnDisable()
     {
-        SceneLoadManager.Instance.OnSceneLoaded.RemoveListener(OnSceneLoaded);
+        if (SceneLoadManager.Instance != null) SceneLoadManager.Instance.OnSceneLoaded.RemoveListener(OnSceneLoaded);
     }
 }

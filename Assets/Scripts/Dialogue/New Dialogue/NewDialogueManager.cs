@@ -452,7 +452,7 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
 
         string npcName = activeDialogueTrigger.NPCName;
 
-        Irene irene = FindObjectOfType<Irene>();
+        Irene irene = FindFirstObjectByType<Irene>();
 
         // Switch case to handle who is the NPC that should move after dialogue has been completed
         switch (npcName)
@@ -491,13 +491,13 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
 
             case "Reed":
             case "Darry":
-                Barry barry = FindObjectOfType<Barry>();
+                Barry barry = FindFirstObjectByType<Barry>();
                 if (barry != null)
                 {
                     barry.StartTravel();
                 }
 
-                DarryNeighborhood darry = FindObjectOfType<DarryNeighborhood>();
+                DarryNeighborhood darry = FindFirstObjectByType<DarryNeighborhood>();
                 if (darry != null)
                 {
                     darry.StartTravel();
@@ -505,7 +505,7 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
                 break;
 
             case "Penelope":
-                Barry penelope = FindObjectOfType<Barry>();
+                Barry penelope = FindFirstObjectByType<Barry>();
                 if (penelope != null)
                 {
                     penelope.StartTravel();
@@ -513,7 +513,7 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
                 break;
             
             case "Echo":
-                Barry echo = FindObjectOfType<Barry>();
+                Barry echo = FindFirstObjectByType<Barry>();
                 if (echo != null)
                 {
                     echo.StartTravel();

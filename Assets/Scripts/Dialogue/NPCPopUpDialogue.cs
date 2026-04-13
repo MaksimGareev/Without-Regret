@@ -28,7 +28,7 @@ public class NPCPopUpDialogue : MonoBehaviour
         canvasRect = dialogueCanvas.GetComponent<RectTransform>();
 
         // Enable word wrapping
-        dialogueText.enableWordWrapping = true;
+        dialogueText.textWrappingMode = TextWrappingModes.Normal;
         dialogueText.overflowMode = TextOverflowModes.Overflow;
     }
 
