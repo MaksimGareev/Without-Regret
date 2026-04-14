@@ -113,14 +113,16 @@ public class PlayerInteracting : MonoBehaviour
             return;
         
 
-        // Interact with mantleable Objects
+        // Interact with mantleable Objects or floating triggers
         if (Mantle.triggered)
         {
-            var mantle = currentTargets.FirstOrDefault(i => i.interactType == InteractType.Mantle);
+            var special = currentTargets.FirstOrDefault(i => 
+                i.interactType == InteractType.Mantle ||
+                i.interactType == InteractType.Float);
 
-            if (mantle != null)
+            if (special != null)
             {
-                mantle.OnPlayerInteraction(gameObject);
+                special.OnPlayerInteraction(gameObject);
                 return;
             }
         }

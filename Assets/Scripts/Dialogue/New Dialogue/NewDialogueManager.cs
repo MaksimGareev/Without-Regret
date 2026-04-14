@@ -45,6 +45,7 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
     [SerializeField] List<HoldDirectionVisual> holdVisuals;
 
     [Header("NPC Colors")]
+    [Tooltip("List of colors corresponding NPC names displaying a unique color for dialogue UI")]
     [SerializeField] private List<NPCColorSet> npcColorSets;
     public Image dialogueBoxBG;
     public Image NPCNameBG;
@@ -70,9 +71,13 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
     [SerializeField] AudioSource typingSource;
     [Tooltip("Audio clips of each letter A-Z")]
     [SerializeField] List<AudioClip> letterClips;
+    [SerializeField] private float minTimeBetweenSounds = 0.5f;
+    private float lastSoundTime;
 
     [Header("Audio Mixer Groups")]
+    [Tooltip("Audio mixer that is used during male speakers")]
     [SerializeField] AudioMixerGroup maleVoiceGroup;
+    [Tooltip("Audio mixer that is used during female speakers")]
     [SerializeField] AudioMixerGroup femaleVoiceGroup;
 
     [Header("Morality Settings")]
@@ -101,10 +106,10 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
     private NewDialogueLineData currentLine;
     private string currentLineID;
 
-    bool typing;
-    bool canChoose;
-    bool resolvingChoice;
-    bool waitingForHoldCompletion;
+    bool typing;                    // Bool if the current line is being typed
+    bool canChoose;                 // Bool if the player can currently choice a dialogue choice
+    bool resolvingChoice;           // Bool used to finalize the players choice
+    bool waitingForHoldCompletion;  // Bool used to see if the player is holding the input till completion
 
     Dictionary<char, AudioClip> letterSounds = new();
     Dictionary<ChoiceDirection, NewDialogueChoiceData> directionalChoices = new();
@@ -191,6 +196,7 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
         HandleDirectionalSelection();
     }
 
+    // Used for setting the UI colors to match the speakers unique color
     public void SetNPCColors(string speaker)
     {
         NPCColorSet set = npcColorSets.Find(c => c.npcName == speaker);
@@ -200,6 +206,7 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
             Debug.LogWarning($"No color set found for {speaker}");
         }
 
+        // Check if main dialogue box background color is missing
         if (dialogueBoxBG != null)
         {
             dialogueBoxBG.color = set.dialogueBoxColor;
@@ -207,10 +214,12 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
             ChoiceSliderBackground.color = set.dialogueBoxColor;
             ChoiceSliderOutline.color = set.dialogueBoxColor;
         }
+        // Check if NPC name background color is missing
         if (NPCNameBG != null)
         {
             NPCNameBG.color = set.nameBGColor;
         }
+        // Check if NPC portrait background color is missing
         if (NPCPortraitBG != null)
         {
             NPCPortraitBG.color = set.portraitBGColor;
@@ -287,6 +296,7 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
             return;
         }
 
+        // check if line is still typing
         if (typingRoutine != null)
         {
             StopCoroutine(typingRoutine);
@@ -294,6 +304,7 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
 
         typing = false;
 
+        // find current line with text and speaker
         currentLine = lineLookup[currentLineID];
         dialogueText.text = "";
         npcNameText.text = currentLine.Speaker;
@@ -308,9 +319,20 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
         }
         SetVoiceGender(currentLine.NPCGender);
 
+        // Shake camera if bool is true for current line
         if (currentLine.ShakeCamera && cam != null)
         {
             cam.Shake(0.4f, 0.5f);
+        }
+
+        // Spawn collectable if this line is configured to do so
+        if (currentLine.spawnCollectible)
+        {
+            CollectableSpawnManager.Instance?.SpawnCollectable(
+                currentLine.collectableSpawnID,
+                currentLine.spawnPointID,
+                currentLine.collectablePrefab,
+                currentLine.collectableData);
         }
 
         // hide continue arrow and choices
@@ -382,6 +404,12 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
         // if line is typing and confirm is pressed have the line be build instantly and spawn arrow if needed
         if (typing)
         {
+            if (currentLine.cannotSkip)
+            {
+                // small feedback showing it cannot be skipped
+                dialogueText.transform.localPosition += Random.insideUnitSphere * 2f;
+                return;
+            }
             if (typingRoutine != null)
             {
                 StopCoroutine(typingRoutine);
@@ -436,6 +464,7 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
 
         Irene irene = FindFirstObjectByType<Irene>();
 
+        // Switch case to handle who is the NPC that should move after dialogue has been completed
         switch (npcName)
         {
             case "Irene":
@@ -689,6 +718,7 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
     // read the value of directional input when choices are present
     void HandleDirectionalSelection()
     {
+        // Read directional input and reset hold if player lets go
         Vector2 input = controls.Dialogue.Move.ReadValue<Vector2>();
         if (input.magnitude < .5f)
         {
@@ -696,6 +726,7 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
             return;
         }
 
+        // Determine input for choice selection
         ChoiceDirection dir = Mathf.Abs(input.x) > Mathf.Abs(input.y)
         ? (input.x > 0 ? ChoiceDirection.Right : ChoiceDirection.Left)
         : (input.y > 0 ? ChoiceDirection.Up : ChoiceDirection.Down);
@@ -712,6 +743,7 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
             currentDir = dir;
         }
 
+        // Highlight choice that is being selected or last direction that has been pressed
         HighlightChoice(dir);
 
         holdTimer += Time.deltaTime;
@@ -822,10 +854,17 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
     {
         if (char.IsWhiteSpace(c)) return;
 
+        // delay to prevent sounds from overlapping
+        if (Time.time - lastSoundTime < minTimeBetweenSounds)
+        {
+            return;
+        }
+
         char up = char.ToUpper(c);
         if (letterSounds.ContainsKey(up))
         {
-            typingSource.PlayOneShot(letterSounds[up], 0.7f);
+            typingSource.PlayOneShot(letterSounds[up], 0.8f);
+            lastSoundTime = Time.time;
         }
     }
 
@@ -935,12 +974,14 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
         npcPortrait.gameObject.SetActive(false);
     }
 
+    // Add players morality to save data
     public void SaveTo(SaveData data)
     {
         Debug.Log("Player morality saved : " + PlayerPrefs.GetInt("Morality"));
         data.playerMorality = PlayerPrefs.GetInt("Morality");
     }
 
+    // Retrieve players morality from save data
     public void LoadFrom(SaveData data)
     {
         PlayerPrefs.SetInt("Morality", data.playerMorality);

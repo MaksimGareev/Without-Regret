@@ -43,8 +43,6 @@ public class LockedItem : MonoBehaviour, IInteractable
     [HideInInspector] public bool isInRange = false;
     private PlayerControls controls;
 
-    private bool turorialShown = false;
-
     // Start is called before the first frame update
     void Awake()
     {
@@ -129,18 +127,6 @@ public class LockedItem : MonoBehaviour, IInteractable
     private void TryInteract()
     {
         if (!isInRange || GameManager.Instance.LockPickUI == null || hasBeenLockpicked || !player.gameObject.GetComponent<Inventory>().keyItems.Any(x => x.ItemName == "Lock Pick")) return;
-
-        // Show tutorial for first time interaction
-        if (!turorialShown && InteractionTutorialUI.Instance != null)
-        {
-            turorialShown = true;
-
-            InteractionTutorialUI.Instance.ShowTutorial(InteractType.Lockpick,
-                "Rotate the lockpick into the correct position and match the correct inputs to open the locked item.",
-                StartLockPick
-                );
-            return;
-        }
 
         StartLockPick();
     }
