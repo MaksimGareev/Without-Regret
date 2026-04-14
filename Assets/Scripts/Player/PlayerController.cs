@@ -95,8 +95,7 @@ public class PlayerController : MonoBehaviour, ISaveable
     private void Awake()
     {
         Controller = GetComponent<CharacterController>();
-        //Animator = GetComponentInChildren<Animator>();
-        characterSwap = FindObjectOfType<CharacterSwap>();
+        characterSwap = FindFirstObjectByType<CharacterSwap>();
 
         if (characterSwap != null)
         {

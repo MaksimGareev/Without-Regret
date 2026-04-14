@@ -50,8 +50,6 @@ public class WorldItem : MonoBehaviour, IInteractable
         if (!isCollectible || hasBeenCollected || player == null)
             return false;
 
-        bool allCompleted = true;
-
         if (requiredObjectives != null)
         {
             // check if all required objectives are completed if needed
@@ -60,7 +58,6 @@ public class WorldItem : MonoBehaviour, IInteractable
                 // if all required objectives are not completed set bool to false
                 if (!ObjectiveManager.Instance.IsObjectiveCompleted(id))
                 {
-                    allCompleted = false;
                     return false;
                 }
             }
@@ -90,7 +87,7 @@ public class WorldItem : MonoBehaviour, IInteractable
             Journal.Instance.AddCollectibleEntry(journalEntry.entryTitle, journalEntry.entryDescription);
         }
 
-        ButtonIcons.Instance?.Clear();
+        ButtonIcons.Instance.Clear();
 
 
         

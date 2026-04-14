@@ -268,7 +268,7 @@ public class GameOverManager : MonoBehaviour
 
         if (GameManager.Instance.journalUI && !GameManager.Instance.journalUI.activeSelf)
         {
-            GameManager.Instance.journalUI.SetActive(Journal.Instance.isJournalOpen);
+            GameManager.Instance.journalUI.SetActive(Journal.Instance.IsJournalOpen);
         }
 
         if (GameManager.Instance.objectivePanel && !GameManager.Instance.objectivePanel.activeSelf)
@@ -509,7 +509,7 @@ public class GameOverManager : MonoBehaviour
 
     private void OnDestroy()
     {
-        SceneLoadManager.Instance.OnSceneLoaded.RemoveListener(OnSceneLoaded);
+        if (SceneLoadManager.Instance != null) SceneLoadManager.Instance.OnSceneLoaded.RemoveListener(OnSceneLoaded);
         DisableInputActions();
         RemoveListeners();
     }

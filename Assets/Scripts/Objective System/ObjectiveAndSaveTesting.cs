@@ -156,7 +156,7 @@ public class ObjectiveAndSaveTesting : MonoBehaviour
         // Early returns to avoid unnecessary checks when conditions are not met
         if (sceneObjectiveMap.Count == 0 || objectiveDebugUIAction == null || debugUI == null) return;
         if (SceneManager.GetActiveScene().name == "MainMenu") return;
-        if (Journal.Instance != null && Journal.Instance.isJournalOpen) return;
+        if (Journal.Instance != null && Journal.Instance.IsJournalOpen) return;
         if (PauseManager.Instance != null && PauseManager.Instance.isGamePaused) return;
 
         // Check for input to toggle debug UI

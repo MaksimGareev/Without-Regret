@@ -31,10 +31,10 @@ public class DeadlyFogMaks : MonoBehaviour
 
     // from maks: ColorAdjustments override from the assigned Volume 
     private ColorAdjustments colorAdjustments;
-    private float exposureLerpSpeed = 2f;
+    //private float exposureLerpSpeed = 2f;
 
-    // from maks: true = darken screen, false = return exposure to 0
-    private bool shouldDarken = false;
+    //// from maks: true = darken screen, false = return exposure to 0
+    //private bool shouldDarken = false;
 
     private void Awake()
     {
@@ -99,8 +99,8 @@ public class DeadlyFogMaks : MonoBehaviour
 
         if (timeSinceEnter >= timeTillDamage)
         {
-            // from maks: stop darkening when damage happens
-            shouldDarken = true;
+            //// from maks: stop darkening when damage happens
+            //shouldDarken = true;
 
             if (TimerRingUI.Instance != null && canDamage)
             {
@@ -111,11 +111,11 @@ public class DeadlyFogMaks : MonoBehaviour
         }
         else
         {
-            if (timeSinceEnter >= timeTillDamage / 2f)
-            {
-                // from maks: start darkening screen halfway to damage
-                shouldDarken = true;
-            }
+            //if (timeSinceEnter >= timeTillDamage / 2f)
+            //{
+            //    // from maks: start darkening screen halfway to damage
+            //    shouldDarken = true;
+            //}
 
             timeSinceEnter += Time.deltaTime;
         }
@@ -125,11 +125,11 @@ public class DeadlyFogMaks : MonoBehaviour
     {
         timeSinceEnter = 0;
 
-        // from maks: restore brightness when leaving fog
-        if (!isResetting)
-        {
-            shouldDarken = false;
-        }
+        //// from maks: restore brightness when leaving fog
+        //if (!isResetting)
+        //{
+        //    shouldDarken = false;
+        //}
     }
 
     private IEnumerator HandleReset(PlayerController player)

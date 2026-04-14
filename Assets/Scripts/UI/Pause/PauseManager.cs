@@ -90,7 +90,7 @@ public class PauseManager : MonoBehaviour
         if (SceneManager.GetActiveScene().name == "MainMenu") return;
         
         if ((playerPauseAction.triggered || UIPauseAction.triggered) 
-        && !Journal.Instance.isJournalOpen 
+        && !Journal.Instance.IsJournalOpen 
         && !NewDialogueManager.Instance.DialogueIsActive 
         && !confirmationPanel.activeSelf 
         && !(GameOverManager.Instance != null && GameOverManager.Instance.IsGameOver))

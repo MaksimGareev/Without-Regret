@@ -49,7 +49,7 @@ public class ChasingEnemy : MonoBehaviour
     {
         if (playerMorality == null)
         {
-            playerMorality = FindObjectOfType<NewDialogueManager>();
+            playerMorality = FindFirstObjectByType<NewDialogueManager>();
         }
 
         agent.speed = baseSpeed;

@@ -29,7 +29,7 @@ public class SpawnChasingEnemy : MonoBehaviour
 
             if (hasPassed == false)
             {
-                ChimeHintUI hintUI = FindObjectOfType<ChimeHintUI>();
+                ChimeHintUI hintUI = FindFirstObjectByType<ChimeHintUI>();
                 if (hintUI != null)
                 {
                     hintUI.ShowHintMessage(hintMessage);
