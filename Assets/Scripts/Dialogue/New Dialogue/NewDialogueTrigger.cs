@@ -88,6 +88,8 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
     public ItemData RewardItem;
     private bool rewardGiven = false;
 
+    public bool hasPlayed = false;
+
     public enum DialogueTriggerType
     {
         NPC,
@@ -343,6 +345,12 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
     {
         bool allCompleted = true;
 
+        // Make sure talked dialogue file plays after completed dialogue
+        if (hasPlayed)
+        {
+            return talkedDialogueFile;
+        }
+
         // search the objective manager to check if objectives that are conncected to the NPC were completed or not
         foreach (string id in objectiveIDsYouCareAbout)
         {
@@ -357,6 +365,7 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
         if (allCompleted && taskCompleteDialogueFile != null && objectiveIDsYouCareAbout != null)
         {
             return taskCompleteDialogueFile;
+            hasPlayed = true;
         }
 
         // dialogue selected if the player has an active task connected to the NPC

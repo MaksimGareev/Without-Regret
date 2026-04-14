@@ -1,8 +1,9 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class CollectableSpawnManager : MonoBehaviour
+public class CollectableSpawnManager : MonoBehaviour, ISaveable
 {
+
     public static CollectableSpawnManager Instance;
 
     private Dictionary<string, Transform> spawnPoints = new Dictionary<string, Transform>(); 
@@ -77,5 +78,15 @@ public class CollectableSpawnManager : MonoBehaviour
     public void LoadSpawnedIDs(List<string> ids)
     {
         spawnedIDs = new HashSet<string>(ids);
+    }
+
+    public void SaveTo(SaveData data)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void LoadFrom(SaveData data)
+    {
+        throw new System.NotImplementedException();
     }
 }
