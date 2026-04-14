@@ -352,9 +352,8 @@ public class PlayerFloating : MonoBehaviour
 
     public void StartFloating()
     {
-        animator.ResetTrigger("isLanding");
-        animator.SetBool("isFloating", false);
         animator.SetTrigger("floatStart");
+        animator.SetBool("isFloating", true);
         StartCoroutine(FloatAnimationHandler());
         floatingVfx.SetActive(true);
 
@@ -408,7 +407,6 @@ public class PlayerFloating : MonoBehaviour
 
     private void StopFloating()
     {
-        animator.SetTrigger("isLanding");
         animator.SetBool("isFloating", false);
         floatingVfx.SetActive(false);
 

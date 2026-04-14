@@ -7,7 +7,7 @@ public class Darry : MonoBehaviour
     // Movement
     public NavMeshAgent agent;
     public Transform[] targets;
-    private int currentIndex = 0;
+    [HideInInspector] public int currentTargetIndex = 0;
     [HideInInspector] public Transform currentTarget;
     private Coroutine waitAfterBake;
 
@@ -48,9 +48,9 @@ public class Darry : MonoBehaviour
     {
         if (targets.Length > 0)
         {
-            currentIndex = 0;
-            currentTarget = targets[currentIndex];
-            agent.SetDestination(targets[currentIndex].position);
+            currentTargetIndex = 0;
+            currentTarget = targets[currentTargetIndex];
+            agent.SetDestination(targets[currentTargetIndex].position);
         }
         else
         {
@@ -84,9 +84,9 @@ public class Darry : MonoBehaviour
         updateTimer -= Time.deltaTime;
         if (updateTimer <= 0f)
         {
-            if (currentIndex < targets.Length && targets[currentIndex] != null)
+            if (currentTargetIndex < targets.Length && targets[currentTargetIndex] != null)
             {
-                agent.SetDestination(targets[currentIndex].position);
+                agent.SetDestination(targets[currentTargetIndex].position);
             }
             updateTimer = updateRate;
         }
@@ -167,10 +167,10 @@ public class Darry : MonoBehaviour
           }*/
 
         // Move to next waypoint
-        currentIndex++;
+        currentTargetIndex++;
 
         waitAfterBake = StartCoroutine(waitForNavmesh()); //Waits for navmesh to be baked before moving
-        if (currentIndex >= targets.Length)
+        if (currentTargetIndex >= targets.Length)
         {
             //Debug.Log("Darry reached final target!");
             currentTarget = null;       // <--- set to null when no more targets
@@ -181,7 +181,7 @@ public class Darry : MonoBehaviour
             return; // Stop here, no more targets
         }
 
-        currentTarget = targets[currentIndex];
+        currentTarget = targets[currentTargetIndex];
         if (currentTarget != null)
         {
             agent.SetDestination(currentTarget.position);

@@ -21,7 +21,7 @@ public class ArrowBlink : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        timer += Time.deltaTime * blinkSpeed;
+        timer += Time.unscaledDeltaTime * blinkSpeed;
 
         float alpha = Mathf.PingPong(timer, 1f);
 

@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Audio;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.UI;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(AudioSource))]
@@ -11,12 +13,24 @@ public class CutsceneManager : MonoBehaviour
 {
     public static CutsceneManager Instance { get; private set; }
     
+    [Header("General Settings")]
+    [Tooltip("The time in seconds that it will take for the cutscene to fade in and out when starting and ending the cutscene")]
+    [SerializeField, Range(0.0f, 5.0f)] private float fadeDuration = 0.5f;
+    
+    [Tooltip("The time in seconds that it will take to transition between two clips")]
+    [SerializeField, Range(0.0f, 5.0f)] private float transitionDuration = 0.5f;
+    
+    [Tooltip("The time in seconds that the player has to hold the confirm input in order to skip the entire cutscene.")]
+    [SerializeField, Range(0.5f, 5.0f)] private float holdToSkipDuration = 1.0f;
+    private float skipTimer = 0.0f;
+    private bool isHoldingSkip = false;
+    
     [Header("UI References")]
     [SerializeField] private GameObject cutscenePanel;
     [SerializeField] private GameObject dialoguePanel;
     [SerializeField] private Button continueButton;
-    [SerializeField] private Image backgroundImage;
-    [SerializeField] private Image blackScreenImage;
+    [SerializeField] private RawImage primaryBackgroundImage;
+    [SerializeField] private RawImage secondaryBackgroundImage; 
     [SerializeField] private Image dialogueBackgroundImage;
     [SerializeField] private Image speakerNameBackgroundImage;
     [SerializeField] private GameObject holdToSkipPanel;
@@ -29,18 +43,24 @@ public class CutsceneManager : MonoBehaviour
     
     [Header("Art Assets")]
     [SerializeField] private Sprite holdButtonSprite;
+    [SerializeField] private Vector3 holdButtonScale =  Vector3.one;
     [SerializeField] private Sprite holdKeySprite;
+    [SerializeField] private Vector3 holdKeyScale = Vector3.one;
+    [SerializeField]private Vector3 holdTextOffset = Vector3.zero ;
+    [SerializeField]private Vector3 toSkipTextOffset = Vector3.zero;
     [SerializeField] private Sprite continueButtonSprite;
     [SerializeField] private Sprite dialogueBackgroundSprite;
     [SerializeField] private Sprite speakerBackgroundSprite;
+    private Vector3 originalHoldTextOffset;
+    private Vector3 originalToSkipOffset;
     
     [Header("Audio")]
     [SerializeField] private AudioMixer mainAudioMixer;
     
     [Tooltip("Audio clips of each letter A-Z")]
-    [SerializeField] List<AudioClip> letterClips;
+    [SerializeField] private List<AudioClip> letterClips;
     
-    private Dictionary<char, AudioClip> letterSounds = new();
+    private readonly Dictionary<char, AudioClip> letterSounds = new();
     private AudioSource backgroundAudioSource;
     private AudioSource dialogueAudioSource;
     private AudioSource soundEffectAudioSource;
@@ -48,12 +68,8 @@ public class CutsceneManager : MonoBehaviour
     [Header("Input Action Assets")]
     [SerializeField] private InputActionAsset inputActions;
     private InputAction confirmAction;
-
-    [Header("Settings")] 
-    [Tooltip("The time in seconds that the player has to hold the confirm input in order to skip the entire cutscene.")]
-    [SerializeField, Range(0.5f, 5.0f)] private float holdToSkipDuration = 1.0f;
-    private float skipTimer = 0.0f;
-    private bool isHoldingSkip = false;
+    private bool usingController = true;
+    private bool usingControllerLegend = true;
 
     private bool canSkipClip = false;
     private bool canSkipEntireCutscene = false;
@@ -64,8 +80,16 @@ public class CutsceneManager : MonoBehaviour
 
     private bool isTyping = false;
     private Coroutine typingCoroutine;
+    private Coroutine fadeInCoroutine;
+    private Coroutine fadeOutCoroutine;
+    private Coroutine transitionBackgroundCoroutine;
+    private Coroutine fadeOtherAudioCoroutine;
     
     [HideInInspector] public bool isCutscenePlaying = false;
+    
+    private CanvasGroup cutsceneCanvasGroup;
+    
+    private Dictionary<AudioSource, float> otherAudioSources =  new Dictionary<AudioSource, float>();
 
     private void Awake()
     {
@@ -110,6 +134,35 @@ public class CutsceneManager : MonoBehaviour
         {
             Debug.LogWarning("Letter sounds not found in CutsceneManager. Please assign letter sounds to the letterSounds dictionary in the CutsceneManager.");
         }
+        
+        if (cutscenePanel)
+        {
+            cutsceneCanvasGroup = cutscenePanel.GetComponent<CanvasGroup>();
+            
+            if (!cutsceneCanvasGroup)
+            {
+                Debug.LogWarning("Cutscene Panel is missing a CanvasGroup component. Adding one now.");
+                cutsceneCanvasGroup = cutscenePanel.AddComponent<CanvasGroup>();
+            }
+            
+            cutscenePanel.SetActive(false);
+        }
+        else
+        {
+            Debug.LogWarning("Cutscene Manager requires a Cutscene Panel.");
+        }
+        
+        if (holdToSkipPanel)
+        {
+            holdToSkipPanel.SetActive(false);
+        }
+        else
+        {
+            Debug.LogWarning("Cutscene Manager requires a Hold To Skip Panel.");
+        }
+        
+        originalHoldTextOffset = holdText.rectTransform.anchoredPosition;
+        originalToSkipOffset = toSkipText.rectTransform.anchoredPosition;
     }
 
     private void InitializeUIArt()
@@ -150,39 +203,175 @@ public class CutsceneManager : MonoBehaviour
     private void InitializeInputActions()
     {
         // Initialize input actions
-        confirmAction = inputActions.FindActionMap("UI").FindAction("Confirm");
-        if (confirmAction== null)
+        confirmAction = inputActions.FindActionMap("UI").FindAction("CutsceneConfirm");
+        if (confirmAction != null)
+        {
+            confirmAction.started += OnConfirmStarted;
+            confirmAction.canceled += OnConfirmCancelled;
+            confirmAction.Enable();
+        }
+        else
         {
             Debug.LogError("Confirm action not found in InputActionAsset.");
-            return;
         }
 
-        confirmAction.started += OnConfirmStarted;
-        confirmAction.canceled += OnConfirmCancelled;
-        confirmAction.Enable();
+        if (continueButton)
+        {
+            continueButton.onClick.AddListener(SkipCurrentClip);
+        }
     }
     
     private void Update()
     {
         ProcessHoldToSkip();
+        CheckMouseInput();
+        CheckControllerInput();
     }
 
     private void ProcessHoldToSkip()
     {
-        if (!isHoldingSkip) return;
+        if (!isHoldingSkip)
+        {
+            if (holdToSkipSlider.gameObject.activeSelf)
+            {
+                holdToSkipSlider.gameObject.SetActive(false);
+            }
+            return;
+        }
         
-        skipTimer += Time.deltaTime;
-
+        skipTimer += Time.unscaledDeltaTime;
+        
         if (holdToSkipSlider)
         {
+            if (skipTimer > 0.2f)
+            {
+                holdToSkipSlider.gameObject.SetActive(true);
+            }
+            
             holdToSkipSlider.value = skipTimer;
         }
         
         if (skipTimer >= holdToSkipDuration && canSkipEntireCutscene)
         {
-            EndCutscene();
+            holdToSkipPanel.SetActive(false);
+            if (isCutscenePlaying)
+            {
+                EndCutscene();
+            }
             ResetHoldTimer();
         }
+    }
+    
+    private void CheckMouseInput()
+    {
+        if (Mouse.current == null || !isCutscenePlaying)
+        {
+            return;
+        }
+
+        Vector2 mouseDelta = Mouse.current.delta.ReadValue();
+
+        bool mouseKeysMoved = mouseDelta.sqrMagnitude > 0.1f || Keyboard.current.anyKey.isPressed;
+
+        if (!mouseKeysMoved) return;
+        
+        if (usingController)
+        {
+            usingController = false;
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+
+            if (EventSystem.current.currentSelectedGameObject)
+            {
+                EventSystem.current.SetSelectedGameObject(null);
+            }
+
+            if (usingControllerLegend)
+            {
+                SwitchToMouseKeyLegend();
+            }
+        }
+    }
+
+    private void CheckControllerInput()
+    {
+        if (Gamepad.current == null || !isCutscenePlaying)
+        {
+            return;
+        }
+
+        bool controllerMoved = 
+            Gamepad.current.leftStick.ReadValue().sqrMagnitude > 0.1f 
+            || Gamepad.current.dpad.ReadValue().sqrMagnitude > 0.1f
+            || Gamepad.current.leftShoulder.IsPressed() 
+            || Gamepad.current.rightShoulder.IsPressed();
+        
+        if (!controllerMoved)
+        {
+            return;
+        }
+
+        if (!usingController)
+        {
+            usingController = true;
+            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
+
+            var es = EventSystem.current;
+
+            // Clear selected GameObject if mouse was hovering over something
+            if (es.IsPointerOverGameObject())
+            {
+                var ped = new PointerEventData(es)
+                {
+                    position = new Vector2(-99999f, -99999f)
+                };
+
+                es.RaycastAll(ped, new System.Collections.Generic.List<RaycastResult>());
+                es.SetSelectedGameObject(null);
+
+                InputSystemUIInputModule inputModule = es.currentInputModule as InputSystemUIInputModule;
+                if (inputModule)
+                {
+                    inputModule.enabled = false;
+                    inputModule.enabled = true;
+                }
+            }
+
+            if (EventSystem.current.currentSelectedGameObject)
+            {
+                EventSystem.current.SetSelectedGameObject(null);
+            }
+            
+            if (!usingControllerLegend)
+            {
+                SwitchToControllerLegend();
+            }
+        } 
+    }
+
+    private void SwitchToControllerLegend()
+    {
+        holdKeyImage.sprite = holdButtonSprite;
+        holdKeyImage.SetNativeSize();
+        holdKeyImage.rectTransform.localScale = holdButtonScale;
+        
+        holdText.rectTransform.anchoredPosition = originalHoldTextOffset;
+        toSkipText.rectTransform.anchoredPosition = originalToSkipOffset;
+        
+        usingControllerLegend = true;
+    }
+
+    private void SwitchToMouseKeyLegend()
+    {
+        holdKeyImage.sprite = holdKeySprite;
+        holdKeyImage.SetNativeSize();
+        holdKeyImage.rectTransform.localScale = holdKeyScale;
+        
+        holdText.rectTransform.anchoredPosition = holdTextOffset;
+        toSkipText.rectTransform.anchoredPosition = toSkipTextOffset;
+        
+        usingControllerLegend = false;
     }
 
     private void OnConfirmStarted(InputAction.CallbackContext ctx)
@@ -192,7 +381,6 @@ public class CutsceneManager : MonoBehaviour
 
         if (holdToSkipSlider && canSkipEntireCutscene)
         {
-            holdToSkipSlider.gameObject.SetActive(true);
             holdToSkipSlider.value = 0.0f;
         }
     }
@@ -204,7 +392,7 @@ public class CutsceneManager : MonoBehaviour
 
     private void ResetHoldTimer()
     {
-        if (skipTimer < holdToSkipDuration && skipTimer > 0.02f && canSkipClip)
+        if (skipTimer < holdToSkipDuration && skipTimer > 0.02f && canSkipClip && isCutscenePlaying)
         {
             SkipCurrentClip();
         }
@@ -234,6 +422,8 @@ public class CutsceneManager : MonoBehaviour
             return false;
         }
         
+        EnableInput(); 
+        
         Time.timeScale = 0f; // Pause the game while the cutscene is playing
         
         currentCutscene = cutscene;
@@ -243,11 +433,19 @@ public class CutsceneManager : MonoBehaviour
             cutscenePanel.SetActive(true);
         }
 
+        if (cutsceneCanvasGroup && fadeInCoroutine == null)
+        {
+            fadeInCoroutine = StartCoroutine(FadeInCutscene());
+        }
+
+        DisableOtherAudioSources();
+
         if (currentCutscene.backgroundMusic)
         {
             StartBackgroundMusic();
         }
-        
+
+        currentClipIndex = 0;
         PlayClip(currentCutscene.clips[currentClipIndex]);
         
         isCutscenePlaying = true;
@@ -259,11 +457,96 @@ public class CutsceneManager : MonoBehaviour
 
         return true;
     }
+    
+    private void EnableInput()
+    {
+        if (!inputActions)
+        {
+            Debug.LogError("InputActionAsset not found in CutsceneManager. Please assign the InputActionAsset to the CutsceneManager.");
+            return;
+        }
+        
+        inputActions.FindActionMap("UI").Enable();
+        inputActions.FindActionMap("Player").Disable();
+    }
+
+    private IEnumerator FadeInCutscene()
+    {
+        float timer = 0.0f;
+
+        while (timer < fadeDuration)
+        {
+            cutsceneCanvasGroup.alpha = Mathf.Lerp(0f, 1f, timer / fadeDuration);
+            timer += Time.unscaledDeltaTime;
+            yield return null;
+        }
+        
+        cutsceneCanvasGroup.alpha = 1f;
+        fadeInCoroutine = null;
+    }
+
+    private void DisableOtherAudioSources()
+    {
+        // Refresh AudioSource List
+        otherAudioSources.Clear();
+        AudioSource[] audioSources = FindObjectsByType<AudioSource>(FindObjectsSortMode.None);
+
+        foreach (AudioSource audioSource in audioSources)
+        {
+            if (!audioSource.gameObject.GetComponentInParent<CutsceneManager>())
+            {
+                otherAudioSources.Add(audioSource, audioSource.volume);
+            }
+        }
+
+        if (fadeOtherAudioCoroutine == null)
+        {
+            fadeOtherAudioCoroutine = StartCoroutine(FadeOtherSourceVolumes(false));
+        }
+    }
+
+    private IEnumerator FadeOtherSourceVolumes(bool volumeOn)
+    {
+        float timer = 0.0f;
+        
+        // Fade each audiosource volume on or off depending on volumeOn parameter
+        while (timer < fadeDuration)
+        {
+            foreach (var kvp in otherAudioSources)
+            {
+                AudioSource audioSource = kvp.Key;
+                float originalVolume = kvp.Value;
+            
+                audioSource.volume = Mathf.Lerp(volumeOn ? 0.0f : originalVolume, volumeOn ? originalVolume : 0.0f, timer / fadeDuration);
+            }
+            
+            timer += Time.unscaledDeltaTime;
+            yield return null;
+        }
+        
+        // Finish Transition
+        foreach (var kvp in otherAudioSources)
+        {
+            AudioSource audioSource = kvp.Key;
+            float originalVolume = kvp.Value;
+
+            audioSource.volume = volumeOn ? originalVolume : 0.0f;
+        }
+        
+        // Release references if fading back on
+        if (volumeOn)
+        {
+            otherAudioSources.Clear();
+        }
+        
+        fadeOtherAudioCoroutine = null;
+    }
 
     private void StartBackgroundMusic()
     {
         backgroundAudioSource.clip = currentCutscene.backgroundMusic;
         backgroundAudioSource.loop = true;
+        backgroundAudioSource.volume = currentCutscene.musicVolume;
         backgroundAudioSource.Play();
     }
 
@@ -279,12 +562,15 @@ public class CutsceneManager : MonoBehaviour
     private void PlayClip(CutsceneClip clip)
     {
         // Update background image sprite
-        backgroundImage.sprite = clip.backgroundImage;
+        if (transitionBackgroundCoroutine == null)
+        {
+            transitionBackgroundCoroutine = StartCoroutine(TransitionToNewBackground(clip));
+        }
         
         // Play sound effect if clip has one assigned
         if (soundEffectAudioSource && clip.clipSoundEffect)
         {
-            soundEffectAudioSource.PlayOneShot(clip.clipSoundEffect);
+            soundEffectAudioSource.PlayOneShot(clip.clipSoundEffect, clip.soundEffectVolume);
         }
         
         // Play appropriate Dialogue
@@ -294,8 +580,87 @@ public class CutsceneManager : MonoBehaviour
         currentClipCoroutine = StartCoroutine(WaitForClipDuration());
     }
 
+    private IEnumerator TransitionToNewBackground(CutsceneClip clip)
+    {
+        float timer = 0.0f;
+        
+        if (clip.backgroundType == CutsceneClip.BackgroundType.SolidColor)
+        {
+            // Initialization
+            Color transparentColor =  new Color(clip.solidColor.r, clip.solidColor.g, clip.solidColor.b, 0f);
+            secondaryBackgroundImage.enabled = true;
+            secondaryBackgroundImage.texture = null;
+            secondaryBackgroundImage.color = transparentColor;
+            
+            // Fade in new background image on top of old background image
+            while (timer < transitionDuration)
+            {
+                secondaryBackgroundImage.color = Color.Lerp(transparentColor, clip.solidColor, timer / transitionDuration);
+                timer += Time.unscaledDeltaTime;
+                yield return null;
+            }
+            
+            // Finish fading in
+            secondaryBackgroundImage.color = clip.solidColor;
+            
+            // Update primary image to match instantly
+            primaryBackgroundImage.texture = null;
+            primaryBackgroundImage.color = clip.solidColor;
+            
+            // Disable and reset secondary image to use again in next transition
+            secondaryBackgroundImage.enabled = false;
+            secondaryBackgroundImage.texture = null;
+            secondaryBackgroundImage.color = Color.clear;
+        }
+        else if (clip.backgroundType == CutsceneClip.BackgroundType.Image && clip.backgroundImage)
+        {
+            // Initialization
+            Color transparentColor = new Color(1f, 1f, 1f, 0f);
+            secondaryBackgroundImage.enabled = true;
+            secondaryBackgroundImage.texture = clip.backgroundImage;
+            secondaryBackgroundImage.color = transparentColor;
+            
+            // Fade in new background image on top of old background image
+            while (timer < transitionDuration)
+            {
+                secondaryBackgroundImage.color = Color.Lerp(transparentColor, Color.white, timer / transitionDuration);
+                timer += Time.unscaledDeltaTime;
+                yield return null;
+            }
+            
+            // Finish fading in
+            secondaryBackgroundImage.color = Color.white;
+            
+            // Update primary image to match instantly
+            primaryBackgroundImage.texture = clip.backgroundImage;
+            primaryBackgroundImage.color = Color.white;
+            
+            // Disable and reset secondary image to use again in next transition
+            secondaryBackgroundImage.enabled = false;
+            secondaryBackgroundImage.texture= null;
+            secondaryBackgroundImage.color = Color.white;
+        }
+        else if (clip.backgroundType == CutsceneClip.BackgroundType.ImageFromPreviousClip)
+        {
+            // Do nothing, leave previous image or color on screen.
+            Debug.Log("Cutscene clip using image from previous clip.");
+        }
+        else
+        {
+            Debug.LogError("No background image assigned to this clip, and useSolidColor is not set to true, cannot transition to next cutscene background image. Please either enable useSolidColor in the inspector of this cutscene clip or assign a background image.");
+        }
+        
+        transitionBackgroundCoroutine = null;
+    }
+
     private void PlayClipDialogue(CutsceneDialogueLine dialogueLine)
     {
+        if (isTyping)
+        {
+            Debug.LogWarning("Dialogue is already typing, ignoring duplicate call");
+            return;
+        }
+        
         if (typingCoroutine != null)
         {
             StopCoroutine(typingCoroutine);
@@ -347,7 +712,7 @@ public class CutsceneManager : MonoBehaviour
                     break;
             }
 
-            yield return new WaitForSeconds(delay);
+            yield return new WaitForSecondsRealtime(delay);
         }
 
         isTyping = false;
@@ -417,6 +782,7 @@ public class CutsceneManager : MonoBehaviour
     private void HideContinueButton()
     {
         continueButton.gameObject.SetActive(false);
+        canSkipClip = false;
     }
     
     private void SkipCurrentClip()
@@ -432,7 +798,7 @@ public class CutsceneManager : MonoBehaviour
         currentClipIndex++;
         
         // Return early if it is the last clip to play
-        if (currentCutscene.clips.Length <= currentClipIndex)
+        if (currentCutscene.clips.Length <= currentClipIndex && isCutscenePlaying)
         {
             EndCutscene();
             return;
@@ -449,11 +815,14 @@ public class CutsceneManager : MonoBehaviour
     
     private void EndCutscene()
     {
-        cutscenePanel.SetActive(false);
+        if (cutsceneCanvasGroup && fadeOutCoroutine == null)
+        {
+            fadeOutCoroutine = StartCoroutine(FadeOutCutscene());
+        }
         
         EndBackgroundMusic();
         
-        backgroundImage.sprite = null;
+        EnableOtherAudioSources();
         
         isCutscenePlaying = false;
         
@@ -461,6 +830,50 @@ public class CutsceneManager : MonoBehaviour
         
         // Invoke event on completion
         currentCutscene.onCutsceneCompleted?.Invoke();
+        currentClipIndex = 0;
         currentCutscene = null;
+    }
+    
+    private IEnumerator FadeOutCutscene()
+    {
+        float timer = 0.0f;
+        float duration = 0.25f;
+
+        while (timer < duration)
+        {
+            cutsceneCanvasGroup.alpha = Mathf.Lerp(1f, 0f, timer / duration);
+            timer += Time.unscaledDeltaTime;
+            yield return null;
+        }
+        
+        cutsceneCanvasGroup.alpha = 0f;
+        
+        primaryBackgroundImage.texture = null;
+        secondaryBackgroundImage.texture = null;
+        
+        cutscenePanel.SetActive(false);
+        DisableInput();
+        
+        fadeOutCoroutine = null;
+    }
+
+    private void DisableInput()
+    {
+        if (!inputActions)
+        {
+            Debug.LogError("InputActionAsset not found in CutsceneManager. Please assign the InputActionAsset to the CutsceneManager.");
+            return;
+        }
+        
+        inputActions.FindActionMap("UI")?.Disable();
+        inputActions.FindActionMap("Player")?.Enable();
+    }
+
+    private void EnableOtherAudioSources()
+    {
+        if (fadeOtherAudioCoroutine == null)
+        {
+            fadeOtherAudioCoroutine = StartCoroutine(FadeOtherSourceVolumes(true));
+        }
     }
 }

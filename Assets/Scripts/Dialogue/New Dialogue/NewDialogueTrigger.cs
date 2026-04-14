@@ -183,7 +183,7 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
 
         if (NewDialogueManager.Instance.DialogueIsActive)
         {
-            Debug.Log("Dialogue already active!");
+            // Debug.Log("Dialogue already active!");
             return false;
         }
 

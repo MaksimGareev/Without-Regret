@@ -8,4 +8,5 @@ public class BossEnemySaveData
     public float[] rotation;
     public bool isActive;
     public int currentPhase;
+    //public int currentPhaseHealth;
 }

@@ -16,7 +16,7 @@ public class CheckpointTriggerVolume : MonoBehaviour
         // When the player enters the trigger, set the checkpoint in the PlayerController and save the game
         if (other.TryGetComponent<PlayerController>(out var player))
         {
-            player.SetCheckpoint(SceneManager.GetActiveScene().name, transform.position, transform.eulerAngles);
+            //player.SetCheckpoint(SceneManager.GetActiveScene().name, transform.position, transform.eulerAngles);
 
             SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
             

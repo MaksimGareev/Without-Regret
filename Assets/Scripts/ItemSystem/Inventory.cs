@@ -187,17 +187,14 @@ public class Inventory : MonoBehaviour, ISaveable
                 
                 StartCoroutine(WaitForCameraTransition());
             }
-            
-            itemToCollect.gameObject.SetActive(false);
-            itemToCollect.hasBeenCollected = true;
-            itemToCollect = null;
+
+            StartCoroutine(ItemPickUpDelay());
         }
         else if (itemToCollect != null)
         {
-            itemToCollect.gameObject.SetActive(false);
-            itemToCollect.hasBeenCollected = true;
-            itemToCollect = null;
-        }        
+            StartCoroutine(ItemPickUpDelay());
+
+        }
 
         GameManager.Instance.inventoryInteractingScript.RefreshInventoryUI();
 
@@ -266,6 +263,16 @@ public class Inventory : MonoBehaviour, ISaveable
         GameManager.Instance.inventoryPopupText.gameObject.SetActive(true);
         yield return new WaitForSecondsRealtime(1.5f);
         GameManager.Instance.inventoryPopupText.gameObject.SetActive(false);
+    }
+
+    private IEnumerator ItemPickUpDelay() //Delays item dissapearing to match up with animation
+    {
+        yield return new WaitForSeconds(0.8f);
+
+        itemToCollect.gameObject.SetActive(false);
+        itemToCollect.hasBeenCollected = true;
+        itemToCollect = null;
+
     }
 
     private void SetHasBackpack(bool newHasBackpack)

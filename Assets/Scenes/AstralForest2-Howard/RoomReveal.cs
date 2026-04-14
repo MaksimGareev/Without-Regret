@@ -10,8 +10,6 @@ public class RoomRevealTrigger : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (triggered) return;
-
         if (other.CompareTag("Player"))
         {
             StartCoroutine(FadeDarkness(timeToFade));
