@@ -43,6 +43,8 @@ public class SaveableFriendlyNPC : SaveableWithID
         {
             Irene irene = GetComponent<Irene>();
             state.isTraveling = irene.isTraveling;
+            state.targetPosition = irene.targetSpot ? irene.targetSpot.position : Vector3.zero;
+            state.targetRotation = irene.targetSpot ? irene.targetSpot.rotation : Quaternion.identity;
             state.arrived = irene.arrived;
             state.canFollowPlayer = irene.CanFollowPlayer;
             state.isFollowingPlayer = irene.IsFollowing;
@@ -91,9 +93,8 @@ public class SaveableFriendlyNPC : SaveableWithID
         NavMeshAgent agent = GetComponent<NavMeshAgent>();
         if (agent)
         {
-            agent.enabled = false; 
+            agent.enabled = false;
             agent.Warp(new Vector3(state.position[0], state.position[1], state.position[2])); 
-            
             agent.enabled = true;
         }
         else
@@ -101,7 +102,6 @@ public class SaveableFriendlyNPC : SaveableWithID
             transform.position = new Vector3(state.position[0], state.position[1], state.position[2]);
             transform.eulerAngles = new Vector3(state.rotation[0], state.rotation[1], state.rotation[2]);
         }
-
         
         gameObject.SetActive(state.isActive);
 
@@ -121,6 +121,10 @@ public class SaveableFriendlyNPC : SaveableWithID
         {
             Darry darry = GetComponent<Darry>();
             darry.isTraveling = state.isTraveling;
+            if (darry.isTraveling)
+            {
+                darry.StartTravel();
+            }
             darry.arrived = state.arrived;
             darry.currentTargetIndex = state.currentTargetIndex;
             
@@ -130,6 +134,10 @@ public class SaveableFriendlyNPC : SaveableWithID
         {
             DarryNeighborhood darry = GetComponent<DarryNeighborhood>();
             darry.isTraveling = state.isTraveling;
+            if (darry.isTraveling)
+            {
+                darry.StartTravel();
+            }
             darry.arrived = state.arrived;
             Debug.Log($"Loading DarryNeighborhood: isTraveling={state.isTraveling}, arrived={state.arrived}, ID: {GetUniqueID()}");
         }
@@ -137,7 +145,9 @@ public class SaveableFriendlyNPC : SaveableWithID
         {
             Irene irene = GetComponent<Irene>();
             irene.isTraveling = state.isTraveling;
-            if (irene.isTraveling)
+            irene.targetSpot.position = state.targetPosition;
+            irene.targetSpot.rotation = state.targetRotation;
+            if (irene.isTraveling && irene.targetSpot)
             {
                 irene.StartTravel();
             }

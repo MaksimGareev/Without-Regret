@@ -22,4 +22,6 @@ public class FriendlyNPCSaveData
     public bool talkedAlready;
     public bool isActive;
     public int currentTargetIndex;
+    public Vector3 targetPosition;
+    public Quaternion targetRotation;
 }
