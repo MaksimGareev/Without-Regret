@@ -12,7 +12,7 @@ public class ForPlayerSeeTroughScript : MonoBehaviour
     [SerializeField] Camera Cam;
     [SerializeField] LayerMask Mask;
 
-    [SerializeField] private float LeafSizeValue = 2.65f;
+    [SerializeField] private float LeafSizeValue = 1.65f;
     [SerializeField] private float OtherSizeValue = 0.87f;
     [SerializeField] private float sphereCastRadius = 2.27f;
     [SerializeField] private float sphereCastOffset = 4.0f;
