@@ -114,6 +114,7 @@ public class ChasingEnemy : MonoBehaviour
 
         if (baseSpeed > 0.1f)
         {
+            
             animator?.SetBool("isWalking", true);
             animator?.SetBool("isIdle", false);
         }
