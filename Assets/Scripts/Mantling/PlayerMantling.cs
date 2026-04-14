@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
 public class PlayerMantling : MonoBehaviour
@@ -7,6 +8,7 @@ public class PlayerMantling : MonoBehaviour
     //[SerializeField] private float mantleRange = 2f;
     [SerializeField] private float mantleSpeed = 6f;
     [SerializeField] private float mantleHeight = 3f;
+    [SerializeField] public bool canMantle = true;
 
     [Header("Debugging")]
     [SerializeField] private bool showDebugLogs = false;
@@ -45,6 +47,7 @@ public class PlayerMantling : MonoBehaviour
         playerMovingObjects = GetComponent<PlayerMovingObjects>();
         playerPossessing = GetComponent<PlayerPossessing>();
         playerThrowing = GetComponent<PlayerThrowing>();
+        canMantle = true;
     }
 
     // Update is called once per frame
@@ -59,52 +62,55 @@ public class PlayerMantling : MonoBehaviour
 
     public void StartMantle(MantleableObject point, Action completionCallback = null)
     {
-        //Checks object height to determine if mantleable object is too tall/is mantleable from current position
-        float heightDifference = point.GetMantlePosition().y - transform.position.y; //height difference is difference between mantle end point and current player transform point
-        if (heightDifference > mantleHeight) //if height difference is greater than mantle height, cant mantle (Set mantle height higher to mantle taller objects)
+        if (canMantle) //mantle check to prevent mantling while performing certain actions on other scripts
         {
-            if (showDebugLogs)
-                Debug.Log("Cant Mantle, object is too tall!");
+            //Checks object height to determine if mantleable object is too tall/is mantleable from current position
+            float heightDifference = point.GetMantlePosition().y - transform.position.y; //height difference is difference between mantle end point and current player transform point
+            if (heightDifference > mantleHeight) //if height difference is greater than mantle height, cant mantle (Set mantle height higher to mantle taller objects)
+            {
+                if (showDebugLogs)
+                    Debug.Log("Cant Mantle, object is too tall!");
 
-            return;
-        }
+                return;
+            }
 
-        isMantling = true;
-        if (animator)
-            animator.SetBool("isMantling", true);
-        mantleStartPos = transform.position;
-        mantleEndPos = point.GetMantlePosition();
-        mantleProgress = 0f;
-        mantleCompleteCallback = completionCallback;
+            isMantling = true;
+            if (animator)
+                animator.SetBool("isMantling", true);
+            mantleStartPos = transform.position;
+            mantleEndPos = point.GetMantlePosition();
+            mantleProgress = 0f;
+            mantleCompleteCallback = completionCallback;
 
-        if (playerController != null)
-        {
-            playerController.enabled = false;
-        }
+            if (playerController != null)
+            {
+                playerController.enabled = false;
+            }
 
-        if (playerFloating != null)
-        {
-            playerFloating.enabled = false;
-        }
+            if (playerFloating != null)
+            {
+                playerFloating.enabled = false;
+            }
 
-        if (playerMovingObjects != null)
-        {
-            playerMovingObjects.enabled = false;
-        }
+            if (playerMovingObjects != null)
+            {
+                playerMovingObjects.enabled = false;
+            }
 
-        if (playerPossessing != null)
-        {
-            playerPossessing.enabled = false;
-        }
+            if (playerPossessing != null)
+            {
+                playerPossessing.enabled = false;
+            }
 
-        if (playerThrowing != null)
-        {
-            playerThrowing.enabled = false;
-        }
+            if (playerThrowing != null)
+            {
+                playerThrowing.enabled = false;
+            }
 
-        if (controller != null)
-        {
-            controller.enabled = false;
+            if (controller != null)
+            {
+                controller.enabled = false;
+            }
         }
     }
 
@@ -137,7 +143,7 @@ public class PlayerMantling : MonoBehaviour
         mantleCompleteCallback?.Invoke();
 
         if (animator)
-            animator.SetBool("isMantling", false);
+            StartCoroutine(finishedMantling());
 
 
         if (playerController != null)
@@ -169,6 +175,14 @@ public class PlayerMantling : MonoBehaviour
         {
             controller.enabled = true;
         }
+    }
+
+    private IEnumerator finishedMantling() //Transition sequence from mantling and mantling exit animation
+    {
+        animator.SetBool("finishedMantling", true);
+        yield return new WaitForSeconds(0.3f);
+        animator.SetBool("isMantling", false);
+        animator.SetBool("finishedMantling", false);
     }
 
     void UpdateAnimator(Animator newAnimator)

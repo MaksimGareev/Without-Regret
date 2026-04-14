@@ -43,6 +43,7 @@ public class PlayerController : MonoBehaviour, ISaveable
     private bool sprintOnCooldown = false;
     private bool isSprinting = false;
     private PlayerMovingObjects mover;
+    private PlayerMantling playerMantling;
     private (bool movingObject, float sprintDepletionRate, float staminaDecay, bool allowSprint) moveableObjectMod = (false, 1f, 1f, true);
     private Coroutine sprintCooldownRoutine;
 
@@ -162,6 +163,7 @@ public class PlayerController : MonoBehaviour, ISaveable
 
         rb = GetComponent<Rigidbody>();
         mover = GetComponent<PlayerMovingObjects>();
+        playerMantling = GetComponent<PlayerMantling>();
     }
 
     public void SaveTo(SaveData data)
@@ -501,6 +503,8 @@ public class PlayerController : MonoBehaviour, ISaveable
                 Animator.SetBool("isSprinting", false);
 
                 Animator.SetBool("isExhausted", true);
+                playerMantling.canMantle = false;
+
 
                 canSprint = false;
                 if (GameManager.Instance.staminaFill != null)
@@ -534,6 +538,8 @@ public class PlayerController : MonoBehaviour, ISaveable
                 SprintTimer = SprintDuration;
 
                 Animator.SetBool("isExhausted", false);
+                playerMantling.canMantle = true;
+
 
                 if (staminaFadeRoutine == null)
                 {

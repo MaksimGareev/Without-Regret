@@ -3,11 +3,16 @@ using UnityEngine;
 
 public class FaceHandler : MonoBehaviour
 {
+    [Tooltip("NPC's Neutral Facecard")]
     public Material NeutralFace;
+    [Tooltip("NPC's Happy Facecard")]
     public Material HappyFace;
+    [Tooltip("NPC's Sad Facecard")]
     public Material SadFace;
+    [Tooltip("NPC's Angry Facecard")]
     public Material AngryFace;
 
+    [Tooltip("Render attached to the Models Facecard Mesh")]
     public Renderer faceRender;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
