@@ -942,6 +942,15 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""CutsceneConfirm"",
+                    ""type"": ""Button"",
+                    ""id"": ""7069f6b5-6940-448d-a5fd-44e66bc3a15b"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -1525,6 +1534,28 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""ApplySettings"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ad30f917-81fb-4efe-9a28-3554b6b390c9"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse;Gamepad;Touch;Joystick;XR"",
+                    ""action"": ""CutsceneConfirm"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e469cba1-3be0-4967-bc1d-1c8a2dc667d1"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""CutsceneConfirm"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -2417,6 +2448,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_UI_ResetSettings = m_UI.FindAction("ResetSettings", throwIfNotFound: true);
         m_UI_DiscardSettings = m_UI.FindAction("DiscardSettings", throwIfNotFound: true);
         m_UI_ApplySettings = m_UI.FindAction("ApplySettings", throwIfNotFound: true);
+        m_UI_CutsceneConfirm = m_UI.FindAction("CutsceneConfirm", throwIfNotFound: true);
         // LockPicking
         m_LockPicking = asset.FindActionMap("LockPicking", throwIfNotFound: true);
         m_LockPicking_Unlock = m_LockPicking.FindAction("Unlock", throwIfNotFound: true);
@@ -2830,6 +2862,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_UI_ResetSettings;
     private readonly InputAction m_UI_DiscardSettings;
     private readonly InputAction m_UI_ApplySettings;
+    private readonly InputAction m_UI_CutsceneConfirm;
     /// <summary>
     /// Provides access to input actions defined in input action map "UI".
     /// </summary>
@@ -2910,6 +2943,10 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @ApplySettings => m_Wrapper.m_UI_ApplySettings;
         /// <summary>
+        /// Provides access to the underlying input action "UI/CutsceneConfirm".
+        /// </summary>
+        public InputAction @CutsceneConfirm => m_Wrapper.m_UI_CutsceneConfirm;
+        /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
         public InputActionMap Get() { return m_Wrapper.m_UI; }
@@ -2986,6 +3023,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @ApplySettings.started += instance.OnApplySettings;
             @ApplySettings.performed += instance.OnApplySettings;
             @ApplySettings.canceled += instance.OnApplySettings;
+            @CutsceneConfirm.started += instance.OnCutsceneConfirm;
+            @CutsceneConfirm.performed += instance.OnCutsceneConfirm;
+            @CutsceneConfirm.canceled += instance.OnCutsceneConfirm;
         }
 
         /// <summary>
@@ -3048,6 +3088,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @ApplySettings.started -= instance.OnApplySettings;
             @ApplySettings.performed -= instance.OnApplySettings;
             @ApplySettings.canceled -= instance.OnApplySettings;
+            @CutsceneConfirm.started -= instance.OnCutsceneConfirm;
+            @CutsceneConfirm.performed -= instance.OnCutsceneConfirm;
+            @CutsceneConfirm.canceled -= instance.OnCutsceneConfirm;
         }
 
         /// <summary>
@@ -3966,6 +4009,13 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnApplySettings(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "CutsceneConfirm" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnCutsceneConfirm(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "LockPicking" which allows adding and removing callbacks.

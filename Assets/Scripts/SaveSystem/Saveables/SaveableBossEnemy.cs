@@ -26,13 +26,18 @@ public class SaveableBossEnemy : SaveableWithID
     public override void LoadFrom(SaveData data)
     {
         var boss = GetComponent<BossEnemyController>();
+        var state = data?.bossEnemySaveData;
 
         if (boss)
         {
-            transform.position = new Vector3(data.bossEnemySaveData.position[0], data.bossEnemySaveData.position[1], data.bossEnemySaveData.position[2]);
-            transform.eulerAngles = new Vector3(data.bossEnemySaveData.rotation[0], data.bossEnemySaveData.rotation[1], data.bossEnemySaveData.rotation[2]);
-            gameObject.SetActive(data.bossEnemySaveData.isActive);
-            boss.LoadIntoPhase(data.bossEnemySaveData.currentPhase);
+            transform.position = new Vector3(state.position[0], state.position[1], state.position[2]);
+            transform.eulerAngles = new Vector3(state.rotation[0], state.rotation[1], data.bossEnemySaveData.rotation[2]);
+            gameObject.SetActive(state.isActive);
+
+            if (state.isActive)
+            {
+                boss.LoadIntoPhase(state.currentPhase);
+            }
         }
         else
         {

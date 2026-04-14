@@ -64,7 +64,7 @@ public class PlayerThrowing : MonoBehaviour
     }
     private void Awake()
     {
-        characterSwap = FindObjectOfType<CharacterSwap>();
+        characterSwap = FindFirstObjectByType<CharacterSwap>();
 
         if (characterSwap != null)
         {
@@ -244,10 +244,12 @@ public class PlayerThrowing : MonoBehaviour
 
     }
 
-    private void ThrowItem(float charge)// throws the item
+    private void ThrowItem(float charge) //throw item script now handles the animation, input, UI and inventory, ThrowDelay now handles the actual throwing physics that were previously in this function
     {
         Debug.Log("Throwing Item");
+
         TimeSinceChargingStart = 0;
+
         ItemData itemToThrow = inventory.GetFirstThrowable();
         if (itemToThrow == null)
         {
@@ -259,25 +261,13 @@ public class PlayerThrowing : MonoBehaviour
         GameManager.Instance.inventoryInteractingScript.RefreshInventoryUI();
         playerEquipItem.UnequipItem();
 
-        StartCoroutine(ThrowAnimHandler());// plays throw animation
+        animator.SetBool("isChargingThrow", false);
+        animator.SetTrigger("Throw");
 
-        GameObject gameObject = Instantiate(itemToThrow.WorldPrefab, throwOrigin.position, Quaternion.identity);
+        // Delay the actual throw
+        StartCoroutine(ThrowDelay(itemToThrow, charge, 0.25f)); //float value used to tweak how much the delay is until the throw
 
-        Rigidbody rb = gameObject.GetComponent<Rigidbody>();
-
-        if (rb != null)
-        {
-            Vector3 direction;
-
-            Vector3 aimDirection = transform.forward;
-
-            direction = aimDirection.normalized;
-
-            float throwForce = Mathf.Lerp(minThrowForce, maxThrowForce, charge);
-            currentUpwardForce = Mathf.Lerp(upwardForceMax, upwardForceMin, charge);// upward force dependant on how long charge is held. its at max when charging just begins.
-            Vector3 finalForce = direction * throwForce + Vector3.up.normalized * currentUpwardForce / 1;
-            rb.AddForce(finalForce, ForceMode.Impulse);
-        }
+        // Reset UI
         if (GameManager.Instance.throwingSlider != null)
         {
             GameManager.Instance.throwingSlider.value = 0f;
@@ -286,11 +276,10 @@ public class PlayerThrowing : MonoBehaviour
             WorldThrowPointer.SetActive(false);
             line.enabled = false;
         }
+
         currentHoldTime = 0;
         isCharging = false;
-
     }
-
     private void DrawProjection()
     {
         line.enabled = true;
@@ -334,6 +323,29 @@ public class PlayerThrowing : MonoBehaviour
         animator.SetBool("isChargingThrow", false);
         animator.SetTrigger("Throw");
         yield return new WaitForSeconds(0.5f);
+        animator.SetBool("canThrow", false);
+    }
+
+    IEnumerator ThrowDelay(ItemData itemToThrow, float charge, float delay) //handles the actual throwing of the item
+    {
+        yield return new WaitForSeconds(delay); //delays thrown item spawn to wait for animation
+
+        //rest is the same script that was previously in ThrowItem script
+        GameObject obj = Instantiate(itemToThrow.WorldPrefab, throwOrigin.position, Quaternion.identity);
+        Rigidbody rb = obj.GetComponent<Rigidbody>();
+
+        if (rb != null)
+        {
+            Vector3 direction = transform.forward.normalized;
+
+            float throwForce = Mathf.Lerp(minThrowForce, maxThrowForce, charge);
+            float upwardForce = Mathf.Lerp(upwardForceMax, upwardForceMin, charge);
+
+            Vector3 finalForce = direction * throwForce + Vector3.up * upwardForce;
+
+            rb.AddForce(finalForce, ForceMode.Impulse);
+        }
+
         animator.SetBool("canThrow", false);
     }
     public void resetAnimations() // backup animation reseter

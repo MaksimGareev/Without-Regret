@@ -13,11 +13,11 @@ public class CameraMovement : MonoBehaviour
         East,
         West
     }
-    
+
     // Not yet implemented, will apply appropriate vfx and movement settings
     [Header("Astral Post Processing")]
     [Tooltip("Set to true if this camera is used in the astral plane for special effects. This will enable the post-processing effects for the Astral Plane.")]
-    public bool isAstral = false; 
+    public bool isAstral = false;
     [Tooltip("Reference to the GameObject containing the VFX for the astral plane, which will be toggled on and off based on the isAstral boolean. The object should be a child of the Main Camera Prefab")]
     [SerializeField] private GameObject astralVFX;
 
@@ -43,12 +43,12 @@ public class CameraMovement : MonoBehaviour
     public Vector3 defaultLookAtOffset = Vector3.zero;
 
     [Tooltip("The offeset used instead of default when charging a throw")]
-    public Vector3 throwLookAtOffset = new Vector3(3,3,0);
+    public Vector3 throwLookAtOffset = new Vector3(3, 3, 0);
 
     [Tooltip("Speed at which the camera moves to follow the player. Lower numbers are slower and smoother, higher numbers are faster and more rigid.")]
     [SerializeField] private float smoothSpeed = 5f;
     private Transform target; // Reference the player as the intended target of the camera
-    
+
     [Header("Rotation Settings")]
     [Tooltip("Defines the world-space direction that the camera should face by default.")]
     [SerializeField] private WorldDirection defaultFacingDirection = WorldDirection.North;
@@ -72,7 +72,7 @@ public class CameraMovement : MonoBehaviour
     [SerializeField] private bool restrictYaw = false;
 
     [Tooltip("Maximum yaw angle of the camera when restrictYaw is enabled.")]
-    [SerializeField, ] private float maxYaw = 120f;
+    [SerializeField,] private float maxYaw = 120f;
 
     [Tooltip("Maximum pitch angle of the camera.")]
     [SerializeField] private float maxPitch = 45f;
@@ -128,13 +128,18 @@ public class CameraMovement : MonoBehaviour
     private Vector3 shakeOffset = Vector3.zero;
     private Coroutine shakeRoutine = null;
 
-    // Camera look-at (subject) state
+    // Camera look-at state
     private Coroutine lookRoutine = null;
     private bool isLookingAtSubject = false;
+    private bool moveCameraToPosition = false;
+    private Transform moveToPosition;
 
     // Blending state - used to smoothly interpolate back to normal follow position/rotation
     private Coroutine blendRoutine = null;
     private bool isBlendingToNormal = false;
+
+    // When true the normal follow position is suppressed (prevents LateUpdate from snapping camera back while we move+hold)
+    private bool suppressFollow = false;
 
     private bool cameraInputEnabled = true;
 
@@ -169,7 +174,7 @@ public class CameraMovement : MonoBehaviour
             Debug.LogWarning("Check Collisions is enabled but no Collider component found on the camera. Disabling collision checking.");
             checkCollisions = false;
         }
-        
+
     }
 
     private void OnEnable()
@@ -294,20 +299,20 @@ public class CameraMovement : MonoBehaviour
         {
             lookAction?.Enable();
         }
-        
+
         if (target == null) return;
         if (GameOverManager.Instance != null && GameOverManager.Instance.IsGameOver) return;
-        
-        if (GameManager.Instance.pauseManager != null 
-            && GameManager.Instance.pauseManager.GetComponent<PauseManager>() != null 
+
+        if (GameManager.Instance.pauseManager != null
+            && GameManager.Instance.pauseManager.GetComponent<PauseManager>() != null
             && GameManager.Instance.pauseManager.GetComponent<PauseManager>().isGamePaused) return;
 
-        if (GameManager.Instance.journalUICanvas != null 
-            && GameManager.Instance.journalUICanvas.GetComponent<Journal>() != null 
-            && GameManager.Instance.journalUICanvas.GetComponent<Journal>().isJournalOpen) return;
+        if (GameManager.Instance.journalUICanvas != null
+            && GameManager.Instance.journalUICanvas.GetComponent<Journal>() != null
+            && GameManager.Instance.journalUICanvas.GetComponent<Journal>().IsJournalOpen) return;
 
-        if (GameManager.Instance.LockPickUI != null 
-            && GameManager.Instance.LockPickUI.GetComponent<LockPickUI>() != null 
+        if (GameManager.Instance.LockPickUI != null
+            && GameManager.Instance.LockPickUI.GetComponent<LockPickUI>() != null
             && GameManager.Instance.LockPickUI.GetComponent<LockPickUI>().IsActive) return;
 
         if (pc != null && pc.MovementLocked && pc.enabled)
@@ -370,7 +375,7 @@ public class CameraMovement : MonoBehaviour
 
         // Early return if the camera is not set to follow the player, allowing it to remain fixed in place
         if (!followPlayer) return;
-            
+
         // Position of the camera
         Vector3 desiredPosition = target.position + currentOffset;
 
@@ -379,7 +384,8 @@ public class CameraMovement : MonoBehaviour
 
         // When blending to normal is active or while a zoom is running, do not overwrite transform.position here;
         // the blend coroutine or zoom coroutine drives transform until blending completes or zoom ends.
-        if (!isZooming && !isBlendingToNormal)
+        // Also respect suppressFollow so LookAt routines that temporarily move the camera are not overwritten.
+        if (!isZooming && !isBlendingToNormal && !suppressFollow)
         {
             if (checkCollisions)
             {
@@ -396,15 +402,15 @@ public class CameraMovement : MonoBehaviour
             }
         }
 
-            Vector3 lookAtPos;
-            if (!playerController.isThrowing || ThrowTarget == null)
-            {
-                lookAtPos = target.position + currentLookAtOffset;
-            }
-            else
-            {
-                lookAtPos = ThrowTarget.position + currentLookAtOffset;
-            }
+        Vector3 lookAtPos;
+        if (!playerController.isThrowing || ThrowTarget == null)
+        {
+            lookAtPos = target.position + currentLookAtOffset;
+        }
+        else
+        {
+            lookAtPos = ThrowTarget.position + currentLookAtOffset;
+        }
 
         // If we're actively looking at a subject, do not override rotation with the default LookAt.
         // Also if blending to normal or zooming, the coroutine will control rotation.
@@ -508,16 +514,33 @@ public class CameraMovement : MonoBehaviour
         }
     }
 
-    // Public function to start looking at a subject. While looking, camera input is optionally disabled.
-    // subject: transform to look at
-    // rotateDuration: time (seconds) to rotate into the look. If <= 0 the rotation is immediate.
-    // disableInputWhileLooking: if true, camera rotation input will be disabled while the look is active.
-    // holdDuration: how long to stay looking at the subject before auto-returning (only used when autoReturn==true)
-    // autoReturn: if true the camera will automatically blend back to the normal follow pose after holdDuration,
-    //             if false the camera will continue to face the subject until StopLookingAtSubject() is called.
-    public void LookAtSubject(Transform subject, float rotateDuration = 1f, bool disableCameraInputWhileLooking = true, bool disablePlayerInputWhileLooking = false, float holdDuration = 0.6f, bool autoReturn = true)
+    /// <summary>
+    /// Initiates a camera look at the specified subject, optionally moving the camera to a target position and
+    /// disabling input during the look. The camera can automatically return to its normal pose after a specified
+    /// duration or remain focused until manually reset.
+    /// </summary>
+    /// <remarks>Calling this method interrupts any ongoing look or blend-to-normal operation. If input is
+    /// disabled, it is re-enabled when the look ends. To manually end the look when <paramref name="autoReturn"/> is
+    /// <see langword="false"/>, call <c>StopLookingAtSubject()</c>.</remarks>
+    /// <param name="subject">The transform to look at. Cannot be null.</param>
+    /// <param name="cameraMoveTo">An optional transform specifying the position to which the camera should move before and during the look. If
+    /// null, the camera remains at its current position.</param>
+    /// <param name="rotateDuration">The duration, in seconds, over which the camera rotates and moves into position. If less than or equal to zero,
+    /// the transition occurs immediately.</param>
+    /// <param name="disableCameraInputWhileLooking">If <see langword="true"/>, camera rotation input is disabled while the look is active.</param>
+    /// <param name="disablePlayerInputWhileLooking">If <see langword="true"/>, player input is disabled while the look is active.</param>
+    /// <param name="holdDuration">The duration, in seconds, to hold the camera's focus on the subject before automatically returning. Used only if
+    /// <paramref name="autoReturn"/> is <see langword="true"/>.</param>
+    /// <param name="autoReturn">If <see langword="true"/>, the camera automatically returns to its normal follow pose after <paramref
+    /// name="holdDuration"/> seconds. If <see langword="false"/>, the camera remains focused on the subject until
+    /// <c>StopLookingAtSubject()</c> is called.</param>
+    public void LookAtSubject(Transform subject, Transform cameraMoveTo = null, float rotateDuration = 1f, bool disableCameraInputWhileLooking = true, bool disablePlayerInputWhileLooking = false, float holdDuration = 0.6f, bool autoReturn = true)
     {
         if (subject == null) return;
+
+        // If a cameraMoveTo transform is provided, flag it so the coroutine will move the camera there before (and while) rotating
+        moveCameraToPosition = (cameraMoveTo != null);
+        moveToPosition = cameraMoveTo;
 
         // stop any existing look coroutine first
         if (lookRoutine != null)
@@ -534,7 +557,7 @@ public class CameraMovement : MonoBehaviour
             isBlendingToNormal = false;
         }
 
-        lookRoutine = StartCoroutine(LookAtRoutine(subject, rotateDuration, disableCameraInputWhileLooking, disablePlayerInputWhileLooking, holdDuration, autoReturn));
+        lookRoutine = StartCoroutine(LookAtRoutine(subject, rotateDuration, disableCameraInputWhileLooking, disablePlayerInputWhileLooking, holdDuration, autoReturn, moveCameraToPosition, moveToPosition));
     }
 
     // Stop an ongoing look-at and smoothly return to the normal follow pose.
@@ -554,7 +577,7 @@ public class CameraMovement : MonoBehaviour
         StartBlendToNormal(returnBlendDuration, reenableCameraAtEnd: true, reenablePlayerAtEnd: true);
     }
 
-    private IEnumerator LookAtRoutine(Transform subject, float rotateDuration, bool disableInputWhileLooking, bool disablePlayerInputWhileLooking, float holdDuration, bool autoReturn)
+    private IEnumerator LookAtRoutine(Transform subject, float rotateDuration, bool disableInputWhileLooking, bool disablePlayerInputWhileLooking, float holdDuration, bool autoReturn, bool moveCamera, Transform cameraMoveTo)
     {
         // disable camera input if requested
         if (disableInputWhileLooking)
@@ -562,12 +585,101 @@ public class CameraMovement : MonoBehaviour
 
         if (disablePlayerInputWhileLooking && target.TryGetComponent<PlayerController>(out var player))
             player.DisableInput();
-        
 
         isLookingAtSubject = true;
 
+        // If we are instructed to move the camera to a provided transform, smoothly move & rotate there over rotateDuration.
+        if (moveCamera && cameraMoveTo != null)
+        {
+            // suppress follow so LateUpdate doesn't snap the camera back while we move & hold
+            suppressFollow = true;
+
+            transform.GetPositionAndRotation(out Vector3 startPos, out Quaternion startRot);
+            Vector3 targetPos = cameraMoveTo.position;
+
+            float elapsedMove = 0f;
+            float durMove = Mathf.Max(0.0001f, rotateDuration);
+
+            while (elapsedMove < durMove && isLookingAtSubject)
+            {
+                elapsedMove += Time.deltaTime;
+                float t = Mathf.Clamp01(elapsedMove / durMove);
+                float s = Mathf.SmoothStep(0f, 1f, t);
+
+                // Interpolate position
+                Vector3 curPos = Vector3.Lerp(startPos, targetPos, s);
+                transform.position = curPos;
+
+                // Interpolate rotation toward subject so camera arrives facing them
+                Vector3 dir = subject.position - curPos;
+                if (dir.sqrMagnitude > 0.000001f)
+                {
+                    Quaternion targetRot = Quaternion.LookRotation(dir.normalized, Vector3.up);
+                    transform.rotation = Quaternion.Slerp(startRot, targetRot, s);
+                }
+
+                yield return null;
+            }
+
+            // Ensure final pose
+            Vector3 finalDir = subject.position - targetPos;
+            if (finalDir.sqrMagnitude > 0.000001f)
+            {
+                transform.SetPositionAndRotation(targetPos, Quaternion.LookRotation(finalDir.normalized, Vector3.up));
+            }
+            else
+            {
+                transform.position = targetPos;
+            }
+
+            // If autoReturn is requested we should remain at the targetPos for holdDuration, then start blending back.
+            if (autoReturn)
+            {
+                // remain at the moved position and continue looking at the subject for the hold duration
+                float wait = Mathf.Max(0f, holdDuration);
+                float elapsedWait = 0f;
+                while (elapsedWait < wait && isLookingAtSubject)
+                {
+                    elapsedWait += Time.deltaTime;
+                    // keep facing the subject while waiting in case they move
+                    Vector3 dir = subject.position - transform.position;
+                    if (dir.sqrMagnitude > 0.000001f)
+                    {
+                        Quaternion targetRot = Quaternion.LookRotation(dir.normalized, Vector3.up);
+                        transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, Time.deltaTime * 10f);
+                    }
+                    yield return null;
+                }
+
+                isLookingAtSubject = false;
+
+                // start blend back to normal; BlendToNormalCoroutine will clear suppressFollow at the end
+                StartBlendToNormal(returnBlendDuration, reenableCameraAtEnd: disableInputWhileLooking, reenablePlayerAtEnd: disablePlayerInputWhileLooking);
+                lookRoutine = null;
+                yield break;
+            }
+            else
+            {
+                // Keep facing the subject until StopLookingAtSubject is called
+                while (isLookingAtSubject)
+                {
+                    Vector3 dir = subject.position - transform.position;
+                    if (dir.sqrMagnitude > 0.000001f)
+                    {
+                        Quaternion targetRot = Quaternion.LookRotation(dir.normalized, Vector3.up);
+                        transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, Time.deltaTime * 10f);
+                    }
+                    yield return null;
+                }
+
+                // StopLookingAtSubject will trigger blending back
+                lookRoutine = null;
+                yield break;
+            }
+        }
+
         // Capture starting rotation
-        Quaternion startRot = transform.rotation;
+        Quaternion startRotation = transform.rotation;
 
         float elapsed = 0f;
         // If rotateDuration is zero or negative, snap immediately
@@ -584,10 +696,25 @@ public class CameraMovement : MonoBehaviour
                 isLookingAtSubject = false;
                 StartBlendToNormal(returnBlendDuration, reenableCameraAtEnd: disableInputWhileLooking, reenablePlayerAtEnd: disablePlayerInputWhileLooking);
             }
+            else
+            {
+                while (isLookingAtSubject)
+                {
+                    Vector3 dir = subject.position - transform.position;
+                    if (dir.sqrMagnitude > 0.000001f)
+                    {
+                        Quaternion targetRot = Quaternion.LookRotation(dir.normalized, Vector3.up);
+                        transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, Time.deltaTime * 10f);
+                    }
+                    yield return null;
+                }
+            }
 
+            lookRoutine = null;
             yield break;
         }
 
+        // Smoothly rotate toward a dynamic target rotation computed each frame
         while (elapsed < rotateDuration)
         {
             elapsed += Time.deltaTime;
@@ -599,8 +726,8 @@ public class CameraMovement : MonoBehaviour
 
             Quaternion targetRot = Quaternion.LookRotation(dir.normalized, Vector3.up);
 
-            // Interpolate from startRot towards the dynamic target
-            transform.rotation = Quaternion.Slerp(startRot, targetRot, Mathf.SmoothStep(0f, 1f, t));
+            // Interpolate from startRotation towards the dynamic target
+            transform.rotation = Quaternion.Slerp(startRotation, targetRot, Mathf.SmoothStep(0f, 1f, t));
 
             yield return null;
         }
@@ -701,7 +828,7 @@ public class CameraMovement : MonoBehaviour
             float t = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(elapsed / dur));
 
             // Interpolate position and rotation
-            transform.SetPositionAndRotation(Vector3.Lerp(startPos, endPos, t) + shakeOffset, 
+            transform.SetPositionAndRotation(Vector3.Lerp(startPos, endPos, t) + shakeOffset,
                                              Quaternion.Slerp(startRot, endRot, t));
             yield return null;
         }
@@ -710,6 +837,9 @@ public class CameraMovement : MonoBehaviour
         transform.SetPositionAndRotation(endPos + shakeOffset, endRot);
         isBlendingToNormal = false;
         blendRoutine = null;
+
+        // clear suppression so normal follow logic resumes
+        suppressFollow = false;
 
         if (reenableInputAtEnd)
         {
@@ -925,7 +1055,7 @@ public class CameraMovement : MonoBehaviour
             currentLookAtOffset = rotation * throwLookAtOffset;
         }
     }
-    
+
     // Smoothly returns the camera to its default position and rotation when there is no input for a certain amount of time
     private void ReturnRotation()
     {
@@ -1040,7 +1170,7 @@ public class CameraMovement : MonoBehaviour
     {
         Vector3 startOffset = defaultOffset;
         Vector3 startLookAtOffset = defaultLookAtOffset;
-        
+
         float t = 0f;
         while (t < transitionDuration)
         {
@@ -1065,7 +1195,7 @@ public class CameraMovement : MonoBehaviour
         }
 
         if (followPlayer != this.followPlayer)
-        {   
+        {
             this.followPlayer = followPlayer;
         }
 
@@ -1092,7 +1222,7 @@ public class CameraMovement : MonoBehaviour
         {
             cachedRotateSpeed = this.rotateSpeed;
             cachedRotateCamera = this.rotateCamera;
-            cachedRestrictYaw = this.restrictYaw; 
+            cachedRestrictYaw = this.restrictYaw;
             cachedMaxYaw = this.maxYaw;
             cachedMaxPitch = this.maxPitch;
 

@@ -106,7 +106,7 @@ public class LockPicking : MonoBehaviour
     }
     void Awake()
     {
-        characterSwap = FindObjectOfType<CharacterSwap>();
+        characterSwap = FindFirstObjectByType<CharacterSwap>();
 
         if (characterSwap != null)
         {
@@ -207,8 +207,9 @@ public class LockPicking : MonoBehaviour
             {
                 if (rotateInput.magnitude > 0)//if receiving controller stick input, uses this method
                 {
-                    // Rotate pick cursor with horisontal input (A/D)
-                    CurrentAngle = Mathf.Atan2(rotateInput.y, rotateInput.x) * Mathf.Rad2Deg;
+                    // Rotate pick cursor with right stick
+                    CurrentAngle = (Mathf.Atan2(rotateInput.y, rotateInput.x) * Mathf.Rad2Deg);
+                    CurrentAngle = Mathf.Clamp(CurrentAngle, 0, 180);
 
                     // Apply rotation to pick cursor
                     PickCursor.localEulerAngles = new Vector3(0, 0, CurrentAngle - 90);
@@ -217,6 +218,7 @@ public class LockPicking : MonoBehaviour
                 {
                     RotationAmount = -KeyBoardInputValue * CursorSpeed * Time.deltaTime;
                     CurrentAngle += RotationAmount;
+                    CurrentAngle = Mathf.Clamp(CurrentAngle, 0, 180);
                     PickCursor.localEulerAngles = new Vector3(0, 0, CurrentAngle - 90);
                 }
             }
@@ -405,11 +407,13 @@ public class LockPicking : MonoBehaviour
         currentLockedItem = lockedItem;
         CurrentPickDurability = PickDurability;
         TriesRemainingText.gameObject.SetActive(false);
+        DurabilityMeter.gameObject.SetActive(true);
         SecondStageActive = false;
         StageTwoUI.SetActive(false);
         LockPickUi.SetActive(true);
         OnScreenMarker.SetActive(false);
         OffscreenMarker.SetActive(false);
+        updateInputPrompt(isController);
 
         if (player == null || animator == null || rb == null)
         {

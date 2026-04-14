@@ -3,6 +3,8 @@ using UnityEngine;
 public class CameraLookTrigger : MonoBehaviour
 {
     [SerializeField] private Transform target;
+    [Tooltip("If not null, the camera will move to this transform before looking at the target.")]
+    [SerializeField] private Transform cameraMoveTo;
     [Tooltip("Time in seconds for the camera to rotate towards the target.")]
     [SerializeField] private float rotateDuration = 1.5f;
     [Tooltip("Time in seconds to hold the camera looking at the target before allowing it to return to normal.")]
@@ -28,7 +30,7 @@ public class CameraLookTrigger : MonoBehaviour
                 return;
             }
 
-            cam.LookAtSubject(target, 
+            cam.LookAtSubject(target, cameraMoveTo: cameraMoveTo,
                 rotateDuration: rotateDuration, holdDuration: holdDuration, 
                 disableCameraInputWhileLooking: disableCameraInputWhileLooking, disablePlayerInputWhileLooking: disablePlayerInputWhileLooking);
 

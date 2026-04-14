@@ -38,7 +38,7 @@ public class Door : MonoBehaviour, IInteractable
 
     private void Awake()
     {
-        characterSwap = FindObjectOfType<CharacterSwap>();
+        characterSwap = FindFirstObjectByType<CharacterSwap>();
 
         if (characterSwap != null)
         {

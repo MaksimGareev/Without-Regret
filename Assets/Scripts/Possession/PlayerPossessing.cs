@@ -45,7 +45,7 @@ public class PlayerPossessing : MonoBehaviour
 
     private void Awake()
     {
-        characterSwap = FindObjectOfType<CharacterSwap>();
+        characterSwap = FindFirstObjectByType<CharacterSwap>();
 
         if (characterSwap != null)
         {

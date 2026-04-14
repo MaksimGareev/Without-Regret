@@ -1,10 +1,16 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class hideandshow : MonoBehaviour
 {
     public GameObject ObjectToToggle;
     public RoomRevealTrigger[] DarknessZones;
+    public GameObject[] floors;
+    public static int ObjectTransparency = Shader.PropertyToID("_ObjectTransparency");
+    public List<Renderer> seeThroughMats = new List<Renderer>();
+
+    public static int SizeID = Shader.PropertyToID("_Size");
 
     private void Awake()
     {
@@ -25,7 +31,12 @@ public class hideandshow : MonoBehaviour
     {
         if (other.gameObject.tag == "Player")
         {
+            for (int b = 0; b <= seeThroughMats.Count - 1; b++)
+            {
+                seeThroughMats[b].gameObject.SetActive(true);
+            }
             StartCoroutine(DissolveIn(1f));
+            
         }
     }
 
@@ -48,15 +59,28 @@ public class hideandshow : MonoBehaviour
             StartCoroutine(DarknessZones[c].FadeInDarkness(duration));
         }
 
+        for (int d = 0; d < floors.Length; d++)
+        {
+            floors[d].SetActive(true);
+        }
+
         // store original colors
+        seeThroughMats = new List<Renderer>();
         Color[][] originalColors = new Color[renderers.Length][];
         for (int i = 0; i < renderers.Length; i++)
         {
-            Material[] mats = renderers[i].materials;
-            originalColors[i] = new Color[mats.Length];
-            for (int j = 0; j < mats.Length; j++)
+            if (renderers[i].material.HasProperty("_Color"))
             {
-                originalColors[i][j] = mats[j].color;
+                Material[] mats = renderers[i].materials;
+                originalColors[i] = new Color[mats.Length];
+                for (int j = 0; j < mats.Length; j++)
+                {
+                    originalColors[i][j] = mats[j].color;
+                }
+            }
+            else
+            {
+                seeThroughMats.Add(renderers[i]);
             }
         }
 
@@ -66,13 +90,22 @@ public class hideandshow : MonoBehaviour
 
             for (int i = 0; i < renderers.Length; i++)
             {
-                Material[] mats = renderers[i].materials;
-                for (int j = 0; j < mats.Length; j++)
+                if (renderers[i].material.HasProperty("_Color"))
                 {
-                    Color c = originalColors[i][j];
-                    c.a = alpha;
-                    mats[j].color = c;
+                    Material[] mats = renderers[i].materials;
+                    for (int j = 0; j < mats.Length; j++)
+                    {
+                        Color c = originalColors[i][j];
+                        c.a = alpha;
+                        mats[j].color = c;
+                    }
                 }
+            }
+
+            float sizeAlpha = Mathf.Lerp(10f, 0f, time / duration);
+            for (int b = 0; b <= seeThroughMats.Count -1 ; b++)
+            {
+                seeThroughMats[b].material.SetFloat(SizeID, sizeAlpha);
             }
 
             time += Time.deltaTime;
@@ -84,17 +117,20 @@ public class hideandshow : MonoBehaviour
             for (int i = 0; i < mats.Length; i++)
             {
                 // Change surface type to transparent so alpha will work
-                if (mats[i].HasProperty("_Surface"))
+                if (mats[i].HasProperty("_Surface") && !mats[i].HasProperty(SizeID))
                 {
                     mats[i].SetFloat("_Surface", 0f);
                 }
 
                 // Ensure rendering mode updates correctly
-                mats[i].SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
-                mats[i].SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-                mats[i].SetInt("_ZWrite", 1);
-                mats[i].EnableKeyword("_ALPHAPREMULTIPLY_ON");
-                mats[i].renderQueue = (int)UnityEngine.Rendering.RenderQueue.Geometry;
+                if (!mats[i].HasProperty(SizeID))
+                {
+                    mats[i].SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+                    mats[i].SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+                    mats[i].SetInt("_ZWrite", 1);
+                    mats[i].EnableKeyword("_ALPHAPREMULTIPLY_ON");
+                    mats[i].renderQueue = (int)UnityEngine.Rendering.RenderQueue.Geometry;
+                }
             }
         }
 
@@ -116,6 +152,11 @@ public class hideandshow : MonoBehaviour
             StartCoroutine(DarknessZones[c].FadeDarkness(duration));
         }
 
+        for (int d = 0; d < floors.Length; d++)
+        {
+            floors[d].SetActive(false);
+        }
+
         // switch materials to transparent to activate fade
         foreach (Renderer r in renderers)
         {
@@ -123,29 +164,40 @@ public class hideandshow : MonoBehaviour
             for (int i = 0; i < mats.Length; i++)
             {
                 // Change surface type to transparent so alpha will work
-                if (mats[i].HasProperty("_Surface"))
+                if (mats[i].HasProperty("_Surface") && !mats[i].HasProperty(SizeID))
                 {
                     mats[i].SetFloat("_Surface", 1f);
                 }
 
-                // Ensure rendering mode updates correctly
-                mats[i].SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
-                mats[i].SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-                mats[i].SetInt("_ZWrite", 0);
-                mats[i].EnableKeyword("_ALPHAPREMULTIPLY_ON");
-                mats[i].renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
+            // Ensure rendering mode updates correctly
+                if (!mats[i].HasProperty(SizeID))
+                {
+                    mats[i].SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+                    mats[i].SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+                    mats[i].SetInt("_ZWrite", 0);
+                    mats[i].EnableKeyword("_ALPHAPREMULTIPLY_ON");
+                    mats[i].renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
+                }
             }
         }
 
         // store original colors
+        seeThroughMats = new List<Renderer>();
         Color[][] originalColors = new Color[renderers.Length][];
         for (int i = 0; i < renderers.Length; i++)
         {
-            Material[] mats = renderers[i].materials;
-            originalColors[i] = new Color[mats.Length];
-            for (int j = 0; j < mats.Length; j++)
+            if (renderers[i].material.HasProperty("_Color"))
             {
-                originalColors[i][j] = mats[j].color;
+                Material[] mats = renderers[i].materials;
+                originalColors[i] = new Color[mats.Length];
+                for (int j = 0; j < mats.Length; j++)
+                {
+                    originalColors[i][j] = mats[j].color;
+                }
+            }
+            else
+            {
+                seeThroughMats.Add(renderers[i]);
             }
         }
 
@@ -155,17 +207,30 @@ public class hideandshow : MonoBehaviour
 
             for (int i = 0; i < renderers.Length; i++)
             {
-                Material[] mats = renderers[i].materials;
-                for (int j = 0; j < mats.Length; j++)
+                if (renderers[i].material.HasProperty("_Color"))
                 {
-                    Color c = originalColors[i][j];
-                    c.a = alpha;
-                    mats[j].color = c;
+                    Material[] mats = renderers[i].materials;
+                    for (int j = 0; j < mats.Length; j++)
+                    {
+                        Color c = originalColors[i][j];
+                        c.a = alpha;
+                        mats[j].color = c;
+                    }
                 }
+            }
+
+            float sizeAlpha = Mathf.Lerp(0f, 10f, time / duration);
+            for (int b = 0; b <= seeThroughMats.Count - 1; b++)
+            {
+                seeThroughMats[b].material.SetFloat(SizeID, sizeAlpha);
             }
 
             time += Time.deltaTime;
             yield return null;
+        }
+        for (int b = 0; b <= seeThroughMats.Count - 1; b++)
+        {
+            seeThroughMats[b].gameObject.SetActive(false);
         }
 
         foreach (Light l in ObjectToToggle.GetComponentsInChildren<Light>())

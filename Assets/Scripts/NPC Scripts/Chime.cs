@@ -14,20 +14,8 @@ public class Chime : MonoBehaviour
     [SerializeField] private float followSmooth = 10f;
 
     [Header("Orbiting")]
-    [Tooltip("If false, will use leading behavior instead of orbiting")]
-    [SerializeField] private bool orbitPlayer = false;
     [SerializeField] private float orbitRadius = 2f;
     [SerializeField] private float orbitSpeed = 2f;
-
-    [Header("Leading")]
-    [Tooltip("Distance ahead of the player when they are moving")]
-    [SerializeField] private float leadDistance = 2f;
-    [Tooltip("Distance in front of the player when they are stationary")]
-    [SerializeField] private float leadStationaryDistance = 1.5f;
-    [Tooltip("Base vertical offset above player's position")]
-    [SerializeField] private float leadVerticalOffset = 1f;
-    [Tooltip("Minimum horizontal speed to consider the player as 'moving'")]
-    [SerializeField] private float moveThreshold = 0.1f;
 
     private bool followPlayerCached = false;
     private float wayfindSpeed = 5f;
@@ -94,69 +82,14 @@ public class Chime : MonoBehaviour
 
         if (followPlayer && !isInDialogue)
         {
-            if (orbitPlayer)
-            {
-                // Orbit angle increases steadily
-                orbitAngle += orbitSpeed * Time.deltaTime;
-                if (orbitAngle > Mathf.PI * 2f) orbitAngle -= Mathf.PI * 2f;
+            // Orbit angle increases steadily
+            orbitAngle += orbitSpeed * Time.deltaTime;
+            if (orbitAngle > Mathf.PI * 2f) orbitAngle -= Mathf.PI * 2f;
 
-                // Calculate orbit position relative to player
-                Vector3 offset = new Vector3(Mathf.Cos(orbitAngle) * orbitRadius, Mathf.Sin(Time.time * bobSpeed) * bobHeight + 1f, Mathf.Sin(orbitAngle) * orbitRadius);
+            // Calculate orbit position relative to player
+            Vector3 offset = new Vector3(Mathf.Cos(orbitAngle) * orbitRadius, Mathf.Sin(Time.time * bobSpeed) * bobHeight + 1f, Mathf.Sin(orbitAngle) * orbitRadius);
 
-                targetPos = player.position + offset;
-            }
-            else
-            {
-                // Leading behavior:
-                // Try to use the player's CharacterController velocity first (PlayerController uses a CharacterController),
-                // otherwise try Rigidbody velocity, then otherwise use player's forward.
-                Vector3 playerVelocity = Vector3.zero;
-
-                if (player != null)
-                {
-                    if (player.TryGetComponent<PlayerController>(out var pc) && pc.Controller != null)
-                    {
-                        playerVelocity = pc.Controller.velocity;
-                    }
-                    else
-                    {
-                        if (player.TryGetComponent<Rigidbody>(out var rb))
-                            playerVelocity = rb.linearVelocity;
-                    }
-                }
-
-                // Vertical bob
-                float bobY = Mathf.Sin(Time.time * bobSpeed) * bobHeight + leadVerticalOffset;
-                Vector3 bob = new Vector3(0f, bobY, 0f);
-
-                // If player is moving, place Chime ahead in the movement direction
-                Vector3 horizontalVel = playerVelocity;
-                horizontalVel.y = 0f;
-
-                Vector3 lookDir;
-                if (horizontalVel.sqrMagnitude > moveThreshold * moveThreshold)
-                {
-                    Vector3 moveDir = horizontalVel.normalized;
-                    lookDir = moveDir;
-                    targetPos = player.position + moveDir * leadDistance + bob;
-                }
-                else
-                {
-                    // Player standing / not moving: place Chime a little in front of the player
-                    lookDir = player.forward;
-                    targetPos = player.position + player.forward * leadStationaryDistance + new Vector3(0f, leadVerticalOffset, 0f) + bob;
-                }
-
-                if (!facePlayer)
-                {
-                    // Look in the direction of movement (or player's forward if stationary)
-                    if (lookDir.sqrMagnitude > 0.001f)
-                    {
-                        Quaternion lookRot = Quaternion.LookRotation(lookDir, Vector3.up);
-                        transform.rotation = Quaternion.Slerp(transform.rotation, lookRot, Time.deltaTime * lookSmooth);
-                    }
-                }
-            }
+            targetPos = player.position + offset;
         }
         else if (isInDialogue)
         {
