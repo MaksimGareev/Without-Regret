@@ -62,7 +62,7 @@ public class PlayerMantling : MonoBehaviour
 
     public void StartMantle(MantleableObject point, Action completionCallback = null)
     {
-        if (canMantle) //mantle check to prevent mantling while performing certain actions
+        if (canMantle) //mantle check to prevent mantling while performing certain actions on other scripts
         {
             //Checks object height to determine if mantleable object is too tall/is mantleable from current position
             float heightDifference = point.GetMantlePosition().y - transform.position.y; //height difference is difference between mantle end point and current player transform point
@@ -177,7 +177,7 @@ public class PlayerMantling : MonoBehaviour
         }
     }
 
-    private IEnumerator finishedMantling()
+    private IEnumerator finishedMantling() //Transition sequence from mantling and mantling exit animation
     {
         animator.SetBool("finishedMantling", true);
         yield return new WaitForSeconds(0.3f);

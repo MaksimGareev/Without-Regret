@@ -1,4 +1,4 @@
-public enum SurfaceType
+public enum SurfaceType //Surfaces for each material type
 {
     Default,
     Grass,

@@ -6,6 +6,7 @@ public class PlayersFootsteps : MonoBehaviour
     public float StepInterval = 0.5f;
 
     [Header("Footstep Sounds")]
+    [Tooltip("Default Steps can be set to whatever is most appropriate, can also be done per scene")]
     public AudioClip[] DefaultSteps;
     public AudioClip[] GrassSteps;
     public AudioClip[] HardwoodSteps;
@@ -80,7 +81,7 @@ public class PlayersFootsteps : MonoBehaviour
 
     AudioClip GetRandomClip(SurfaceType surface)
     {
-        AudioClip[] Clips = surface switch
+        AudioClip[] Clips = surface switch //List of each surface type and the footstep sounds they are linked to on the player
         {
             SurfaceType.Grass => GrassSteps,
             SurfaceType.Hardwood => HardwoodSteps,
