@@ -46,14 +46,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 218f2fd800b43af4c8de0c0663919970, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  followPlayer: 1
   player: {fileID: 0}
-  OrbitRadius: 1
-  OrbitSpeed: 1
-  BobHeight: 0.5
-  BobSpeed: 2
   facePlayer: 1
   lookSmooth: 8
-  model: {fileID: 2143820101934723543}
+  bobHeight: 0.5
+  bobSpeed: 2
+  followSmooth: 10
+  orbitPlayer: 0
+  orbitRadius: 2
+  orbitSpeed: 2
+  leadDistance: 2
+  leadStationaryDistance: 1.5
+  leadVerticalOffset: 1
+  moveThreshold: 0.1
   animator: {fileID: 9001952302103700978}
 --- !u!114 &8565140599229439162
 MonoBehaviour:
@@ -143,6 +149,18 @@ PrefabInstance:
     - target: {fileID: 1067483465265286743, guid: 060d1994ce174a34196d13cf86d99581, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 7.35
+      objectReference: {fileID: 0}
+    - target: {fileID: 3812346716202215934, guid: 060d1994ce174a34196d13cf86d99581, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 1619812072, guid: 32c388294f5c7b8469ea3f201a11b696, type: 3}
+    - target: {fileID: 3876268687996935901, guid: 060d1994ce174a34196d13cf86d99581, type: 3}
+      propertyPath: m_fontSize
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 3876268687996935901, guid: 060d1994ce174a34196d13cf86d99581, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 4608264795140478027, guid: 060d1994ce174a34196d13cf86d99581, type: 3}
       propertyPath: m_TagString
