@@ -35,6 +35,10 @@ public class InteractionTutorialUI : MonoBehaviour
     [Tooltip("Text element that is changed for specific tutorial descriptions")]
     [SerializeField] private TextMeshProUGUI descriptionText;
 
+    [Header("Input Dealy")]
+    [SerializeField] private float inputDelay = 0.5f;
+    private bool canAcceptInput = false;
+
     private float fadeDuration = 0.5f;      // How long the fade takes
     private CanvasGroup canvasGroup;        // Used to fade UI in and out
 
@@ -147,11 +151,20 @@ public class InteractionTutorialUI : MonoBehaviour
             playerController.DisableInput();
         }
 
+        canAcceptInput = false;
+        StartCoroutine(InputDelayRoutine());
+
+    }
+
+    private IEnumerator InputDelayRoutine()
+    {
+        yield return new WaitForSecondsRealtime(inputDelay);
+        canAcceptInput = true;
     }
 
     public void Update()
     {
-        if (!IsShowing)
+        if (!IsShowing || !canAcceptInput)
             return;
         
         if (IsShowing)

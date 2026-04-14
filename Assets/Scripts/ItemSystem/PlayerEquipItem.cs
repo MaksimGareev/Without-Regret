@@ -72,8 +72,8 @@ public class PlayerEquipItem : MonoBehaviour
             if (toggleInventoryUI != null)
             {
                 toggleInventoryUI.ToggleInventory();
-                InteractionTutorialUI.Instance.ShowTutorial(InteractType.Pickup,
-                "Throwable items can be used to distracted unaware enemies or be used to stun enemies that are chasing you."
+                InteractionTutorialUI.Instance.ShowTutorial(InteractType.Throwable,
+                "Hold the Right trigger / Right mouse button to aim your equiped throwable object.  Follow the indicator to know where the throwable item will land.  Holding the charge longer will result in a more direct throw.."
                  );
                 return;
             }
