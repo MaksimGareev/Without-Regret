@@ -294,6 +294,7 @@ public class Journal : MonoBehaviour, ISaveable
             SetPlayerInputEnabled(false);
             journalUI.SetActive(true);
             animator.SetTrigger("Open");
+            Time.timeScale = 0f;
 
             yield return new WaitUntil(() => journalAnimationCallback.AnimationFinished());
 
@@ -319,7 +320,6 @@ public class Journal : MonoBehaviour, ISaveable
 
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
-            Time.timeScale = 0f;
             EnableJournalInput();
             DisableOtherCanvases();
         }
