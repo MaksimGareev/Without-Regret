@@ -88,8 +88,6 @@ public class WorldItem : MonoBehaviour, IInteractable
         }
 
         ButtonIcons.Instance.Clear();
-
-
         
         if (ObjectiveNeeded)
         {

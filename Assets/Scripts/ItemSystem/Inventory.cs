@@ -188,13 +188,15 @@ public class Inventory : MonoBehaviour, ISaveable
                 StartCoroutine(WaitForCameraTransition());
             }
 
-            StartCoroutine(ItemPickUpDelay());
+            StartCoroutine(ItemPickUpDelay(itemToCollect.gameObject));
         }
         else if (itemToCollect != null)
         {
-            StartCoroutine(ItemPickUpDelay());
-
+            StartCoroutine(ItemPickUpDelay(itemToCollect.gameObject));
         }
+        
+        itemToCollect.hasBeenCollected = true;
+        itemToCollect = null;
 
         GameManager.Instance.inventoryInteractingScript.RefreshInventoryUI();
 
@@ -235,8 +237,6 @@ public class Inventory : MonoBehaviour, ISaveable
         {
             SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
         }
-
-        return;
     }
 
     public IReadOnlyList<ItemData> GetItems()
@@ -265,13 +265,13 @@ public class Inventory : MonoBehaviour, ISaveable
         GameManager.Instance.inventoryPopupText.gameObject.SetActive(false);
     }
 
-    private IEnumerator ItemPickUpDelay() //Delays item dissapearing to match up with animation
+    private IEnumerator ItemPickUpDelay(GameObject itemToCollect) //Delays item dissapearing to match up with animation
     {
         yield return new WaitForSeconds(0.8f);
 
-        itemToCollect.gameObject.SetActive(false);
-        itemToCollect.hasBeenCollected = true;
-        itemToCollect = null;
+        itemToCollect.SetActive(false);
+        // itemToCollect.hasBeenCollected = true;
+        // itemToCollect = null;
 
     }
 
