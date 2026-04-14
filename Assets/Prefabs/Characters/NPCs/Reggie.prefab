@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 33584142970360482}
   - component: {fileID: 7272062635568098858}
   - component: {fileID: 2218548058499907805}
+  - component: {fileID: 6699545628504589725}
   m_Layer: 3
   m_Name: Reggie
   m_TagString: protectedNPC
@@ -160,17 +161,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb6f976906f2747449b6d75a67a35b9d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NewDialogueTrigger
-  animator: {fileID: 0}
+  animator: {fileID: 7133831780033117040}
   isTalking: 0
   chimeAnimator: {fileID: 0}
   chimeActive: 0
   chimeScript: {fileID: 0}
-  faceHandler: {fileID: 0}
+  faceHandler: {fileID: 1731006593769616815}
   startDialogueFile: {fileID: 0}
   talkedDialogueFile: {fileID: 0}
   taskActiveDialogueFile: {fileID: 0}
   taskCompleteDialogueFile: {fileID: 0}
-  NPCName: Reed
+  NPCName: Reggie
   chatRange: 3
   journalEntry: {fileID: 0}
   objectiveIDsYouCareAbout: []
@@ -212,6 +213,29 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InteractableProximity
   range: 3
   player: {fileID: 0}
+--- !u!114 &6699545628504589725
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1239127344705375727}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24de1c77947978d4c9a324b22fa4eb64, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Reggie
+  Speed: 3
+  RotationSpeed: 3
+  dialogueTrigger: {fileID: 33584142970360482}
+  targetSpot: {fileID: 0}
+  lookAtTarget: {fileID: 0}
+  isTraveling: 0
+  arrived: 0
+  stopDistance: 0.5
+  agent: {fileID: 1261743198065681055}
+  animator: {fileID: 7133831780033117040}
+  npcName: Reggie
 --- !u!1001 &1923200454420849438
 PrefabInstance:
   m_ObjectHideFlags: 0
