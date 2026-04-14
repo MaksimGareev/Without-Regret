@@ -170,25 +170,26 @@ public class PlayerController : MonoBehaviour, ISaveable
     {
         Debug.Log("PlayerController::SaveTo function called."); 
         
-        GetCheckpoint(SceneManager.GetActiveScene().name, out Vector3 savedPosition, out Vector3 savedRotation);
-        float[] position = new float[] { savedPosition.x, savedPosition.y, savedPosition.z };
-        float[] rotation = new float[] { savedRotation.x, savedRotation.y, savedRotation.z };
+        //GetCheckpoint(SceneManager.GetActiveScene().name, out Vector3 savedPosition, out Vector3 savedRotation);
+        float[] position = { transform.position.x, transform.position.y, transform.position.z };
+        float[] rotation = { transform.position.x, transform.position.y, transform.position.z };
         data.playerSaveData.SetPlayerTransform(SceneManager.GetActiveScene().name, position, rotation);
         
         Debug.Log("Player position saved: " + position + rotation);
         
-        data.playerSaveData.checkpoints = checkpointData;
+        // data.playerSaveData.checkpoints = checkpointData;
 
         CharacterSwap characterSwap = GetComponent<CharacterSwap>();
-        if (!characterSwap) return;
-        
-        if (characterSwap.isEcho)
+        if (characterSwap)
         {
-            data.playerSaveData.currentPlayerModel = PlayerModel.Echo;
-        }
-        else if (characterSwap.isChime)
-        {
-            data.playerSaveData.currentPlayerModel = PlayerModel.Chime;
+            if (characterSwap.isEcho)
+            {
+                data.playerSaveData.currentPlayerModel = PlayerModel.Echo;
+            }
+            else if (characterSwap.isChime)
+            {
+                data.playerSaveData.currentPlayerModel = PlayerModel.Chime;
+            }
         }
     }
 
@@ -209,28 +210,31 @@ public class PlayerController : MonoBehaviour, ISaveable
             Debug.Log("No saved transform found for player in scene: " + SceneManager.GetActiveScene().name);
         }
 
-        if (data.playerSaveData.checkpoints != null)
+        // if (data.playerSaveData.checkpoints != null)
+        // {
+        //     checkpointData.Clear();
+        //     foreach (var kvp in data.playerSaveData.checkpoints)
+        //     {
+        //         checkpointData.Add(kvp.Key, kvp.Value);
+        //     }
+        // }
+        
+        CharacterSwap characterSwap = GetComponent<CharacterSwap>();
+
+        if (characterSwap)
         {
-            checkpointData.Clear();
-            foreach (var kvp in data.playerSaveData.checkpoints)
+            if (data.playerSaveData.currentPlayerModel == PlayerModel.Echo)
             {
-                checkpointData.Add(kvp.Key, kvp.Value);
+                Debug.Log("Loading player model Echo");
+                characterSwap.SwitchToEcho();
+            }
+            else if (data.playerSaveData.currentPlayerModel == PlayerModel.Chime)
+            {
+                Debug.Log("Loading player model Chime");
+                characterSwap.SwitchToChime();
             }
         }
         
-        CharacterSwap characterSwap = GetComponent<CharacterSwap>();
-        if (!characterSwap) return;
-
-        if (data.playerSaveData.currentPlayerModel == PlayerModel.Echo)
-        {
-            Debug.Log("Loading player model Echo");
-            characterSwap.SwitchToEcho();
-        }
-        else if (data.playerSaveData.currentPlayerModel == PlayerModel.Chime)
-        {
-            Debug.Log("Loading player model Chime");
-            characterSwap.SwitchToChime();
-        }
     }
 
     private IEnumerator VerifyPosition()
@@ -241,34 +245,34 @@ public class PlayerController : MonoBehaviour, ISaveable
         Debug.Log("Player Position Frame 2 :" + transform.position.x + " :" + transform.position.y + " :" + transform.position.z);
     }
 
-    public void SetCheckpoint(string sceneName, Vector3 position, Vector3 rotation)
-    {
-        if (checkpointData.ContainsKey(sceneName))
-        {
-            checkpointData[sceneName] = (position, rotation);
-        }
-        else
-        {
-            checkpointData.Add(sceneName, (position, rotation));
-        }
-    }
-
-    public void GetCheckpoint(string sceneName, out Vector3 position, out Vector3 rotation)
-    {
-        if (checkpointData.TryGetValue(sceneName, out var data))
-        {
-            Debug.Log("Found Checkpoint Data, position: " + data.position + " rotation: " + data.rotation);
-            position = data.position;
-            rotation = data.rotation;
-        }
-        else
-        {
-            Debug.Log("No checkpoint data found for scene: " + sceneName + ". Using current player position and rotation.");
-            // If a checkpoint for the scene doesn't exist, return the player's current position and rotation
-            position = transform.position;
-            rotation = transform.eulerAngles;
-        }
-    }
+    // public void SetCheckpoint(string sceneName, Vector3 position, Vector3 rotation)
+    // {
+    //     if (checkpointData.ContainsKey(sceneName))
+    //     {
+    //         checkpointData[sceneName] = (position, rotation);
+    //     }
+    //     else
+    //     {
+    //         checkpointData.Add(sceneName, (position, rotation));
+    //     }
+    // }
+    //
+    // public void GetCheckpoint(string sceneName, out Vector3 position, out Vector3 rotation)
+    // {
+    //     if (checkpointData.TryGetValue(sceneName, out var data))
+    //     {
+    //         Debug.Log("Found Checkpoint Data, position: " + data.position + " rotation: " + data.rotation);
+    //         position = data.position;
+    //         rotation = data.rotation;
+    //     }
+    //     else
+    //     {
+    //         Debug.Log("No checkpoint data found for scene: " + sceneName + ". Using current player position and rotation.");
+    //         // If a checkpoint for the scene doesn't exist, return the player's current position and rotation
+    //         position = transform.position;
+    //         rotation = transform.eulerAngles;
+    //     }
+    // }
 
     private void OnEnable() => controls?.Enable();
     private void OnDisable() => controls?.Disable();

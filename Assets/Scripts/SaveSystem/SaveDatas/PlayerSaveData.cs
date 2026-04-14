@@ -14,7 +14,7 @@ public class PlayerTransformEntry
 public class PlayerSaveData
 {
     public List<PlayerTransformEntry> playerTransforms = new List<PlayerTransformEntry>();
-    public Dictionary<string, (Vector3 position, Vector3 rotation)> checkpoints = new();
+    //public Dictionary<string, (Vector3 position, Vector3 rotation)> checkpoints = new();
     public TimerRingUI.RingState currentRingState = TimerRingUI.RingState.Full;
     public PlayerModel currentPlayerModel = PlayerModel.Echo;
 
