@@ -20,6 +20,13 @@ public class NewDialogueLineData
     public bool ShakeCamera;            // Bool that contorls if the camera should shake durring the current line
     public bool cannotSkip;             // Bool that contorls if the player cannont skip this line of dialogue and should be fully built out
 
+    [Header("Collectable Spawn")]
+    public bool spawnCollectible;
+    public GameObject collectablePrefab;
+    public string spawnPointID;
+    public string collectableSpawnID;
+    public CollectableEntries collectableData;
+
     public List<NewDialogueChoiceData> choices;
     public List<string> objectivesToActivate;
 }

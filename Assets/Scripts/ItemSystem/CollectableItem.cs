@@ -4,7 +4,7 @@ using System.Collections;
 public class CollectableItem : MonoBehaviour, IInteractable
 {
     [Tooltip("The journal entry associated with this collectable item. If empty, no entry is added")]
-    [SerializeField] JournalEntry journalEntry;
+    [SerializeField] CollectableEntries collectableEntry;
 
     public float interactionPriority => 2f;
     public InteractType interactType => InteractType.Collectable;
@@ -50,14 +50,40 @@ public class CollectableItem : MonoBehaviour, IInteractable
         hasBeenCollected = true;
 
         // Add journal entry when collected (if provided)
-        if (journalEntry != null && Journal.Instance != null)
+        if (collectableEntry != null && Journal.Instance != null)
         {
-            Journal.Instance.AddCollectibleEntry(journalEntry.entryTitle, journalEntry.entryDescription);
+            float morality = NewDialogueManager.Instance.playerMorality;
+
+            string finalDescription = collectableEntry.GetDescriptionByMorality(morality);
+
+            Journal.Instance.AddCollectibleEntry(collectableEntry.entryTitle, finalDescription);
         }
 
         collectCoroutine = StartCoroutine(collectAnimationDelay());
 
         ButtonIcons.Instance?.Clear();
+    }
+
+    public void Initialize(CollectableEntries data, int playerMorality)
+    {
+        collectableEntry = data;
+
+        // Lock in the description at spawn time
+        if (collectableEntry != null)
+        {
+            if (playerMorality > 5)
+            {
+                collectableEntry.description = collectableEntry.positiveDescription;
+            }
+            else if (playerMorality < -5)
+            {
+                collectableEntry.description = collectableEntry.negativeDescription;
+            }
+            else
+            {
+                collectableEntry.description = collectableEntry.neutralDescription;
+            }
+        }
     }
 
     IEnumerator collectAnimationDelay()

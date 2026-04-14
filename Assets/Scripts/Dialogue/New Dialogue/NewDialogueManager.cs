@@ -325,6 +325,16 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
             cam.Shake(0.4f, 0.5f);
         }
 
+        // Spawn collectable if this line is configured to do so
+        if (currentLine.spawnCollectible)
+        {
+            CollectableSpawnManager.Instance?.SpawnCollectable(
+                currentLine.collectableSpawnID,
+                currentLine.spawnPointID,
+                currentLine.collectablePrefab,
+                currentLine.collectableData);
+        }
+
         // hide continue arrow and choices
         continueArrow.SetActive(false);
         ClearChoices();
