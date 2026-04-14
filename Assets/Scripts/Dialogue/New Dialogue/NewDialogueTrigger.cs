@@ -362,10 +362,10 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
         }
 
         // dialogue selected if the player has completed all the objectives connected to the NPC
-        if (allCompleted && taskCompleteDialogueFile != null && objectiveIDsYouCareAbout != null)
+        if (allCompleted && taskCompleteDialogueFile != null && objectiveIDsYouCareAbout != null && hasPlayed == false)
         {
-            return taskCompleteDialogueFile;
             hasPlayed = true;
+            return taskCompleteDialogueFile;
         }
 
         // dialogue selected if the player has an active task connected to the NPC
