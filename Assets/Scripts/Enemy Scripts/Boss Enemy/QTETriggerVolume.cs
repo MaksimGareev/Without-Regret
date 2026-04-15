@@ -136,6 +136,12 @@ public class QTETriggerVolume : MonoBehaviour, IInteractable
 
         qteCanvas.SetActive(true);
         arrowsContainer.gameObject.SetActive(true);
+        
+        if (GameManager.Instance)
+        {
+            GameManager.Instance.qteIsActive = true;
+        }
+        
         if (showDebugLogs) Debug.Log("Starting QTE");
         
         // Pause game
@@ -316,6 +322,11 @@ public class QTETriggerVolume : MonoBehaviour, IInteractable
             {
                 ObjectiveManager.Instance.AddProgress(linkedObjective.objectiveID, 1);
             }
+        }
+        
+        if (GameManager.Instance)
+        {
+            GameManager.Instance.qteIsActive = false;
         }
 
         gameObject.SetActive(false);

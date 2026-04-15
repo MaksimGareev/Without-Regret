@@ -50,6 +50,7 @@ public class GameManager : MonoBehaviour
     public GameObject qteCanvas;
     public RectTransform qteArrowsContainer;
     public GameObject qteButtonMashUI;
+    public bool qteIsActive;
     [HideInInspector] public GameObject eventSystem;
     public SceneLoadManager sceneLoadManager;
     public CutsceneManager cutsceneManager;

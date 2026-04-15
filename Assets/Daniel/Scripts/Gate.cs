@@ -61,6 +61,12 @@ public class Gate : SaveableWithID
     
     void OnTriggerEnter(Collider other)
     {
+        if (locked && needsObjective)
+        {
+            ObjectiveManager.Instance.OnObjectiveCompleted.RemoveListener(SetObjectiveComplete);
+            CheckIfObjectiveCompleted();
+        }
+        
         if ((locked && needsObjective) || opened) return;
 
         if (other.gameObject.CompareTag("Player"))
