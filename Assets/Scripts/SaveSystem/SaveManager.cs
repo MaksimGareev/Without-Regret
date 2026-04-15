@@ -70,7 +70,8 @@ public class SaveManager : MonoBehaviour
 
         if (saveables.Count > 0)
         {
-            LoadGame(SaveSystem.activeSaveSlot);
+            // Delay load until after all objects have finished their Awake() and Start() methods
+            StartCoroutine(DelayedLoad());
         }
 
         else if (showDebugLogs)
@@ -79,6 +80,16 @@ public class SaveManager : MonoBehaviour
         }
 
         inputActions.FindActionMap("Player").Enable();
+    }
+
+    // Coroutine that waits for one frame to ensure all objects have finished their initialization before loading save data
+    private IEnumerator DelayedLoad()
+    {
+        // Wait until the end of the current frame, then wait one more frame to be safe
+        yield return new WaitForEndOfFrame();
+        yield return null;
+        
+        LoadGame(SaveSystem.activeSaveSlot);
     }
 
     // Clears all save data for the specified slot by deleting the corresponding save file and clearing any relevant data in the ObjectiveManager. 
@@ -262,10 +273,18 @@ public class SaveManager : MonoBehaviour
         if (showDebugLogs) Debug.Log($"[SaveManager.SaveGame] Saveables count = {saveables.Count}");
 
         // Loop through the saveables list and call each object's SaveTo method, passing in the SaveData to be written to.
+        // Wrapped in try-catch to ensure one failing saveable doesn't prevent the rest from saving
         foreach (ISaveable saveable in saveables)
         {
-            if (showDebugLogs) Debug.Log($"[SaveManager.SaveGame] calling SaveTo on {saveable.GetType().Name}");
-            saveable.SaveTo(data);
+            try
+            {
+                if (showDebugLogs) Debug.Log($"[SaveManager.SaveGame] calling SaveTo on {saveable.GetType().Name}");
+                saveable.SaveTo(data);
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogError($"[SaveManager.SaveGame] Error calling SaveTo on {saveable.GetType().Name}: {ex.Message}\n{ex.StackTrace}");
+            }
         }
 
         if (showDebugLogs)
@@ -314,23 +333,38 @@ public class SaveManager : MonoBehaviour
 
         // Loop through the saveables list and call each object's LoadFrom method, passing in the loaded SaveData. 
         // This will allow each object to update its state based on the saved data.
+        // Wrapped in try-catch to ensure one failing saveable doesn't prevent the rest from loading
         foreach (ISaveable saveable in saveables)
         {
-            if (saveable is PlayerController)
+            try
             {
-                continue;
+                if (saveable is PlayerController)
+                {
+                    continue;
+                }
+                saveable.LoadFrom(data);
+                if (showDebugLogs) Debug.Log($"[SaveManager.LoadGame] Loading {saveable.GetType().Name}");
             }
-            saveable.LoadFrom(data);
-            if (showDebugLogs) Debug.Log($"[SaveManager.LoadGame] Loading {saveable.GetType().Name}");
+            catch (System.Exception ex)
+            {
+                Debug.LogError($"[SaveManager.LoadGame] Error calling LoadFrom on {saveable.GetType().Name}: {ex.Message}\n{ex.StackTrace}");
+            }
         }
 
         foreach (ISaveable saveable in saveables)
         {
-            if (saveable is PlayerController player)
+            try
             {
-                player.LoadFrom(data);
-                if (showDebugLogs) Debug.Log($"[SaveManager.LoadGame] Loading PlayerController");
-                break;
+                if (saveable is PlayerController player)
+                {
+                    player.LoadFrom(data);
+                    if (showDebugLogs) Debug.Log($"[SaveManager.LoadGame] Loading PlayerController");
+                    break;
+                }
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogError($"[SaveManager.LoadGame] Error calling LoadFrom on PlayerController: {ex.Message}\n{ex.StackTrace}");
             }
         }
 
