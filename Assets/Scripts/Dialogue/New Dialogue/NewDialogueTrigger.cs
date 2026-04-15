@@ -395,7 +395,14 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
     public void OnDialogueComplete()
     {
         isLookingAtPlayer = false;
-
+        
+        CameraMovement cam = FindAnyObjectByType<CameraMovement>();
+        if (cam != null && focusCameraOnTrigger == true)
+        {
+            cam.StopLookingAtSubject();
+            cam.SetCameraLocked(false);
+        }
+        
         if (linkedObjective != null)
         {
             if (ObjectiveManager.Instance.IsObjectiveActive(linkedObjective.objectiveID))

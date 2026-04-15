@@ -123,6 +123,8 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
     Coroutine timerRoutine;
     Coroutine portraitRoutine;
 
+    private bool cameraWasUsed = false;
+
     CanvasGroup portraitGroup;
 
     int posCount, negCount, neutralCount;
@@ -268,11 +270,14 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
         }
 
         // zoom the camera if focus camera on trigger bool is true
-        if (cam != null)
+        if (cam != null && activeDialogueTrigger.cameraMoveTo != null)
         {
             cam.SetCameraLocked(true);
+
             if (trigger != null && trigger.focusCameraOnTrigger)
             {
+                cameraWasUsed = true;
+
                 cam.LookAtSubject(
                     trigger.transform,
                     cameraMoveTo: trigger.cameraMoveTo,
@@ -977,8 +982,9 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
         }
         
         // return camera to original position
-        if (cam != null)
+        if (cam != null && cameraWasUsed)
         {
+            cam.StopAllCoroutines();
             cam.StopLookingAtSubject();
             cam.SetCameraLocked(false);
         }
