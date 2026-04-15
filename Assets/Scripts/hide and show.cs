@@ -23,14 +23,20 @@ public class hideandshow : MonoBehaviour
                 mats[i] = new Material(mats[i]);
             }
             r.materials = mats;
+            if (r.material.HasProperty(SizeID))
+            {
+                seeThroughMats.Add(r);
+            }
         }
-        StartCoroutine(DissolveOut(.2f));
+        StartCoroutine(DissolveOut(.4f));
     }
 
     private void OnTriggerEnter(Collider other)
     {
+        
         if (other.gameObject.tag == "Player")
         {
+            StopAllCoroutines();
             for (int b = 0; b <= seeThroughMats.Count - 1; b++)
             {
                 seeThroughMats[b].gameObject.SetActive(true);
@@ -44,6 +50,7 @@ public class hideandshow : MonoBehaviour
     {
         if (other.gameObject.tag == "Player")
         {
+            StopAllCoroutines();
             StartCoroutine(DissolveOut(1f));
         }
     }
@@ -65,7 +72,6 @@ public class hideandshow : MonoBehaviour
         }
 
         // store original colors
-        seeThroughMats = new List<Renderer>();
         Color[][] originalColors = new Color[renderers.Length][];
         for (int i = 0; i < renderers.Length; i++)
         {
@@ -77,10 +83,6 @@ public class hideandshow : MonoBehaviour
                 {
                     originalColors[i][j] = mats[j].color;
                 }
-            }
-            else
-            {
-                seeThroughMats.Add(renderers[i]);
             }
         }
 
@@ -183,7 +185,6 @@ public class hideandshow : MonoBehaviour
         }
 
         // store original colors
-        seeThroughMats = new List<Renderer>();
         Color[][] originalColors = new Color[renderers.Length][];
         for (int i = 0; i < renderers.Length; i++)
         {
@@ -195,10 +196,6 @@ public class hideandshow : MonoBehaviour
                 {
                     originalColors[i][j] = mats[j].color;
                 }
-            }
-            else
-            {
-                seeThroughMats.Add(renderers[i]);
             }
         }
 
