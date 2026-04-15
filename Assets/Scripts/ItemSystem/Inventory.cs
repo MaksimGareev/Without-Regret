@@ -195,8 +195,12 @@ public class Inventory : MonoBehaviour, ISaveable
             StartCoroutine(ItemPickUpDelay(itemToCollect.gameObject));
         }
         
-        itemToCollect.hasBeenCollected = true;
-        itemToCollect = null;
+        // Objective rewards and scripted grants do not always come from a WorldItem pickup.
+        if (itemToCollect != null)
+        {
+            itemToCollect.hasBeenCollected = true;
+            itemToCollect = null;
+        }
 
         GameManager.Instance.inventoryInteractingScript.RefreshInventoryUI();
 
@@ -215,6 +219,15 @@ public class Inventory : MonoBehaviour, ISaveable
 
     public void RemoveItem(ItemData item)
     {
+        if (item == null)
+        {
+            if (showDebugLogs)
+            {
+                Debug.LogWarning("Tried to remove a null item from inventory.");
+            }
+            return;
+        }
+
         if (showDebugLogs)
         {
             Debug.Log($"Removed {item.ItemName} from inventory.");

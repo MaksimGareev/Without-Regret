@@ -34,9 +34,15 @@ public class CleanupLeavesObjective : MonoBehaviour
     {
         if (objective.data == linkedObjective)
         {
+            // Reload progress if player already has some from reloading a save
+            for (int i = 0; i < objective.currentProgress; i++)
+            {
+                AddLeaves();
+            }
+            
             foreach (GameObject leaf in GameObject.FindGameObjectsWithTag("Leaves"))
             {
-                if (leaf.TryGetComponent<RemoveableObject>(out var interactable))
+                if (leaf.TryGetComponent<RemoveableObject>(out var interactable) && leaf.gameObject.activeSelf)
                 {
                     interactable.SetInteractable(true);
                     interactable.OnInteracted += IncrementCount; // Subscribe to the interaction event
