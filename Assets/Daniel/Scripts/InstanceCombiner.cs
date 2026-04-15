@@ -10,6 +10,24 @@ public class InstanceCombiner : MonoBehaviour
     // Make a new mesh to be the target of the combine operation
     [SerializeField] private MeshFilter TargetMesh;
 
+    private void OnValidate()
+    {
+        if (listMeshFilter == null)
+        {
+            listMeshFilter = new List<MeshFilter>();
+            
+            MeshFilter[] allMeshFilters = GetComponentsInChildren<MeshFilter>();
+
+            foreach (MeshFilter mf in allMeshFilters)
+            {
+                if (mf)
+                {
+                    listMeshFilter.Add(mf);
+                }
+            }
+        }
+    }
+
     [ContextMenu("Combine Meshes")]
     private void CombineMesh()
     {
