@@ -274,12 +274,12 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
         {
             cam.SetCameraLocked(true);
 
-            if (trigger != null && trigger.focusCameraOnTrigger)
+            if (trigger != null && trigger.focusCameraOnTrigger == true)
             {
                 cameraWasUsed = true;
 
                 cam.LookAtSubject(
-                    trigger.transform,
+                    activeDialogueTrigger.target,
                     cameraMoveTo: trigger.cameraMoveTo,
                     1f,
                     true,

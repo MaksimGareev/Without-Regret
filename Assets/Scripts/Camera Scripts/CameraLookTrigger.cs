@@ -34,8 +34,8 @@ public class CameraLookTrigger : MonoBehaviour
                 target,
                 cameraMoveTo,
                 rotateDuration,
-                disableCameraInputWhileLooking,
-                disablePlayerInputWhileLooking,
+                true,
+                true,
                 0f,
                 false);
 
