@@ -92,6 +92,11 @@ public class PauseManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (Time.timeSinceLevelLoad < 0.1f && pauseMenuPanel.activeSelf)
+        {
+            ResumeGame();
+        }
+        
         // Do not allow pausing in the main menu
         if (SceneManager.GetActiveScene().name == "MainMenu") return;
         
@@ -600,7 +605,7 @@ public class PauseManager : MonoBehaviour
     private void QuitToMainMenu()
     {
         // Save game before quitting
-        if (SaveManager.Instance != null)
+        if (SaveManager.Instance)
         {
             SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
         }
@@ -608,7 +613,7 @@ public class PauseManager : MonoBehaviour
         DisableOtherCanvases();
 
         // Logic to quit to main menu
-        if (GameManager.Instance != null && GameManager.Instance.sceneLoadManager != null)
+        if (GameManager.Instance&& GameManager.Instance.sceneLoadManager)
         {
             GameManager.Instance.sceneLoadManager.LoadScene("MainMenu");
         }
