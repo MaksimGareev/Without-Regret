@@ -33,6 +33,7 @@ public class PauseManager : MonoBehaviour
 
     [HideInInspector] public bool isGamePaused = false;
     [HideInInspector] public bool usingController { get; private set; } = false;
+    private bool inventoryWasOpen = false;
 
     private void Awake()
     {
@@ -47,6 +48,11 @@ public class PauseManager : MonoBehaviour
             Destroy(gameObject);
         }
 
+        InitializeInputActions();
+    }
+
+    private void InitializeInputActions()
+    {
         // Initialize input actions
         playerPauseAction = inputActions.FindAction("Player/Pause");
         playerPauseAction.Enable();
@@ -93,7 +99,8 @@ public class PauseManager : MonoBehaviour
         && !Journal.Instance.IsJournalOpen 
         && !NewDialogueManager.Instance.DialogueIsActive 
         && !confirmationPanel.activeSelf 
-        && !(GameOverManager.Instance != null && GameOverManager.Instance.IsGameOver))
+        && !(GameOverManager.Instance != null && GameOverManager.Instance.IsGameOver)
+        && !SceneLoadManager.Instance.IsLoading)
         {
             if (!pauseMenuPanel.activeSelf && !settingsPanel.activeSelf)
             {
@@ -303,6 +310,16 @@ public class PauseManager : MonoBehaviour
         }
 
         inputActions.FindActionMap("UI").Enable();
+        
+        if (GameManager.Instance && GameManager.Instance.InventoryUI)
+        {
+            InventoryUIController inventory = GameManager.Instance.InventoryUI.GetComponentInChildren<InventoryUIController>();
+            if (inventory && inventory.InventoryOpen())
+            {
+                inventory.DisableInventoryInput();
+                inventoryWasOpen = true;
+            }
+        }
 
         // Disable other canvases
         DisableOtherCanvases();
@@ -393,7 +410,17 @@ public class PauseManager : MonoBehaviour
         Time.timeScale = 1f;
 
         inputActions.FindActionMap("UI").Disable();
-        //inputActions.FindActionMap("Player").Enable();
+        
+        if (GameManager.Instance && GameManager.Instance.InventoryUI)
+        {
+            InventoryUIController inventory = GameManager.Instance.InventoryUI.GetComponentInChildren<InventoryUIController>();
+            if (inventory && inventoryWasOpen)
+            {
+                inventory.EnableInventoryInput();
+                inventoryWasOpen = false;
+            }
+        }
+        
         PlayerController playerController = FindFirstObjectByType<PlayerController>();
         if (playerController != null)
         {

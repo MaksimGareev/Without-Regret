@@ -392,7 +392,7 @@ public class InventoryUIController : MonoBehaviour
         DisableInventoryInput();
     }
 
-    private void EnableInventoryInput()
+    public void EnableInventoryInput()
     {
         inputActions.FindActionMap("Inventory")?.Enable();
         inputActions.FindActionMap("UI")?.Enable();
@@ -421,7 +421,7 @@ public class InventoryUIController : MonoBehaviour
         EventSystem.current.SetSelectedGameObject(slotButtons[0, 0].gameObject);
     }
 
-    private void DisableInventoryInput()
+    public void DisableInventoryInput()
     {
         inputActions.FindActionMap("Inventory")?.Disable();
         inputActions.FindActionMap("UI")?.Disable();
