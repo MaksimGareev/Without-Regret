@@ -201,6 +201,8 @@ MonoBehaviour:
   objectiveIDsYouCareAbout: []
   linkedObjective: {fileID: 11400000, guid: 012fad80146c44a46b8766e3a2ee700c, type: 2}
   focusCameraOnTrigger: 1
+  cameraMoveTo: {fileID: 0}
+  target: {fileID: 0}
   playerMovePoint: {fileID: 0}
   moveSpeed: 2
   lookSpeed: 6
@@ -210,6 +212,7 @@ MonoBehaviour:
   isLookingAtPlayer: 0
   enemy: {fileID: 0}
   RewardItem: {fileID: 0}
+  hasPlayed: 0
   triggerType: 0
 --- !u!114 &7430618000941399012
 MonoBehaviour:
@@ -241,7 +244,6 @@ MonoBehaviour:
   endValue: -0.02
   duration: 2
   targetParticle: {fileID: 847448135685025697}
-  particleStartY: 23.85
   particleEndY: -23
   material:
   - {fileID: 2941850817333310338}
@@ -381,7 +383,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b93d8170e88d8e34684424c0750fb15a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SaveableFriendlyNPC
-  uniqueID: 10fc4c9a-c6f0-41ab-ac3b-1f9a5dde1a78
+  uniqueID: b44bf46f-db8f-4968-9d7c-b96ead367372
 --- !u!1001 &1786121623637168684
 PrefabInstance:
   m_ObjectHideFlags: 0
