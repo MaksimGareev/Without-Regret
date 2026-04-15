@@ -30,10 +30,19 @@ public class CameraLookTrigger : MonoBehaviour
                 return;
             }
 
-            cam.LookAtSubject(target, cameraMoveTo: cameraMoveTo,
+            cam.LookAtSubject(
+                target,
+                cameraMoveTo,
+                rotateDuration,
+                disableCameraInputWhileLooking,
+                disablePlayerInputWhileLooking,
+                0f,
+                false);
+
+            /*cam.LookAtSubject(target, cameraMoveTo: cameraMoveTo,
                 rotateDuration: rotateDuration, holdDuration: holdDuration, 
                 disableCameraInputWhileLooking: disableCameraInputWhileLooking, disablePlayerInputWhileLooking: disablePlayerInputWhileLooking);
-
+            */
             if (onlyTriggerOnce)
             {
                 GetComponent<Collider>().enabled = false;

@@ -14,7 +14,7 @@ public class MovingOn : MonoBehaviour
     float timeElapsed = 0f;
     public List<Renderer> material;
     bool isMoving = false;
-    public Barry penelope;
+    public Penelope penelope;
     public Darry darry;
 
     float particleStartY;

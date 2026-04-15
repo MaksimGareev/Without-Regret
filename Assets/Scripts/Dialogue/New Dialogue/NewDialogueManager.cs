@@ -273,7 +273,14 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
             cam.SetCameraLocked(true);
             if (trigger != null && trigger.focusCameraOnTrigger)
             {
-                cam.TriggerDialogueCamera(trigger.transform);
+                cam.LookAtSubject(
+                    trigger.transform,
+                    cameraMoveTo: trigger.cameraMoveTo,
+                    1f,
+                    true,
+                    true,
+                    0f,
+                    false);
             }
         }
 
@@ -775,10 +782,11 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
         TextMeshProUGUI txt = target.GetComponentInChildren<TextMeshProUGUI>();
 
         // change color of text based on morality change value
-        txt.color =
+        /*txt.color =
             choice.moralityChange > 0 ? Color.green :
             choice.moralityChange < 0 ? Color.red :
             Color.yellow;
+        */
     }
 
     // update the hold UI to show how long the player needs to hold and give feedback to player
@@ -967,10 +975,13 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
                 activeDialogueTrigger.GiveReward();
             }
         }
-
+        
         // return camera to original position
-        StartCoroutine(cam.EndCameraZoom());
-        cam.SetCameraLocked(false);
+        if (cam != null)
+        {
+            cam.StopLookingAtSubject();
+            cam.SetCameraLocked(false);
+        }
         npcPortrait.gameObject.SetActive(false);
     }
 

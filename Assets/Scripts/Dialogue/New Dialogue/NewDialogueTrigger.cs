@@ -58,6 +58,7 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
 
     [Header("Camera")]
     public bool focusCameraOnTrigger = true;
+    public Transform cameraMoveTo;
 
     [Header("Movement")]
     [SerializeField] private Transform playerMovePoint;
