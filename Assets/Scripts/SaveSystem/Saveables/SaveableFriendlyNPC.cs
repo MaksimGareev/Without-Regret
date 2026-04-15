@@ -145,12 +145,18 @@ public class SaveableFriendlyNPC : SaveableWithID
         {
             Irene irene = GetComponent<Irene>();
             irene.isTraveling = state.isTraveling;
-            irene.targetSpot.position = state.targetPosition;
-            irene.targetSpot.rotation = state.targetRotation;
+            
+            if (irene.targetSpot)
+            {
+                irene.targetSpot.position = state.targetPosition;
+                irene.targetSpot.rotation = state.targetRotation;
+            }
+            
             if (irene.isTraveling && irene.targetSpot)
             {
                 irene.StartTravel();
             }
+            
             irene.arrived = state.arrived;
             irene.CanFollowPlayer = state.canFollowPlayer;
             irene.IsFollowing = state.isFollowingPlayer;
