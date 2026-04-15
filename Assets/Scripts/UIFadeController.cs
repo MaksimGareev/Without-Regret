@@ -65,7 +65,7 @@ public class UIFadeController : MonoBehaviour
         // Continue as normal if not in excluded scene
         Debug.Log("UIFadeController: Current scene is not in the excluded list, UI will fade as normal.");
 
-        // Reset flag if player was previously in a excluded scene
+        // Reset flag if player was previously in an excluded scene
         if (inExcludedScene)
         {
             inExcludedScene = false;
