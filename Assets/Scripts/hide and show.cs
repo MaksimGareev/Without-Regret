@@ -149,6 +149,7 @@ public class hideandshow : MonoBehaviour
 
         for (int c = 0; c < DarknessZones.Length; c++)
         {
+            DarknessZones[c].StopAllCoroutines();
             StartCoroutine(DarknessZones[c].FadeDarkness(duration));
         }
 

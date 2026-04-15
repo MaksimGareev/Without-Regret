@@ -6,7 +6,7 @@ public class RoomRevealTrigger : MonoBehaviour
     public Renderer darknessRenderer;
     public float timeToFade = 2f;
 
-    private bool triggered = false;
+    
 
     void OnTriggerEnter(Collider other)
     {
@@ -14,7 +14,7 @@ public class RoomRevealTrigger : MonoBehaviour
         {
             StopAllCoroutines();
             StartCoroutine(FadeDarkness(timeToFade));
-            triggered = true;
+           
         }
     }
 
@@ -24,7 +24,7 @@ public class RoomRevealTrigger : MonoBehaviour
         {
             StopAllCoroutines();
             StartCoroutine(FadeInDarkness(timeToFade));
-            triggered = false;
+            
         }
     }
 
