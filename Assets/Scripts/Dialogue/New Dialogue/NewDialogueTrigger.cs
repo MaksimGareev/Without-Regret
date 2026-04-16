@@ -298,6 +298,11 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
     // start the dialogue interaction
     private void TryStartDialogue()
     {
+        if (playerController != null)
+        {
+            playerController.SetDialogueActive(true);
+        }
+
         NewDialogueData selectedDialogue = SelectDialogue();
 
         if (selectedDialogue == null)
@@ -676,6 +681,11 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
     // trigger dialogue interaction for spawn and story trigger types
     private void OnTriggerEnter(Collider other)
     {
+        if (hasTalked)
+        {
+            return;
+        }
+
         // if trigger type is NPC collision is not detected
         if (triggerType == DialogueTriggerType.NPC || other == null) return;
 
@@ -693,8 +703,8 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
             }
         }
 
-            // only try to start dialogue if the trigger has not talked already
-            if (!hasTalked && startDialogueFile != null)
+        // only try to start dialogue if the trigger has not talked already
+        if (!hasTalked && startDialogueFile != null)
         {
             TryStartDialogue();
         }

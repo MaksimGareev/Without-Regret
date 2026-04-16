@@ -270,11 +270,11 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
         }
 
         // zoom the camera if focus camera on trigger bool is true
-        if (cam != null && activeDialogueTrigger.cameraMoveTo != null)
+        if (cam != null)
         {
             cam.SetCameraLocked(true);
 
-            if (trigger != null && trigger.focusCameraOnTrigger == true)
+            if (trigger != null && trigger.focusCameraOnTrigger == true && activeDialogueTrigger.cameraMoveTo != null)
             {
                 cameraWasUsed = true;
 
@@ -286,6 +286,10 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
                     true,
                     0f,
                     false);
+            }
+            else
+            {
+                cam.StopAllCoroutines();
             }
         }
 
