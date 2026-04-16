@@ -32,7 +32,7 @@ public class MantleableObject : MonoBehaviour, IInteractable
 
     public bool CanInteract(GameObject player)
     {
-        if (DialogueManager.DialogueIsActive) return false;
+        if (NewDialogueManager.Instance.DialogueIsActive) return false;
 
         PlayerMantling pc = player.GetComponent<PlayerMantling>();
         if (pc == null || pc.isMantling) return false;

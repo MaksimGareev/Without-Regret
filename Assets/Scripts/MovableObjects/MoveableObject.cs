@@ -61,7 +61,7 @@ public class MoveableObject : MonoBehaviour, IInteractable
 
     public bool CanInteract(GameObject player)
     {
-        if (isGrabbable == false || DialogueManager.DialogueIsActive)
+        if (isGrabbable == false || NewDialogueManager.Instance.DialogueIsActive)
             return false;
 
         // Make sure player is facing toward the object by getting the Dot Product

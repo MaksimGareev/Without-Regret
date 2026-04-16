@@ -55,14 +55,7 @@ public class SaveableFriendlyNPC : SaveableWithID
             Debug.LogWarning("SaveableFriendlyNPC attached to an unknown NPC type.");
         }
 
-        if (GetComponent<DialogueTrigger>())
-        {
-            DialogueTrigger dialogueTrigger = GetComponent<DialogueTrigger>();
-            state.isLookingAtPlayer = dialogueTrigger.isLookingAtPlayer;
-            state.talkedAlready = dialogueTrigger.TalkedAlready;
-            Debug.Log($"Saving DialogueTrigger: isLookingAtPlayer={state.isLookingAtPlayer}, talkedAlready={state.talkedAlready}, ID: {GetUniqueID()}");
-        }
-        else if (GetComponent<NewDialogueTrigger>())
+        if (GetComponent<NewDialogueTrigger>())
         {
             NewDialogueTrigger newDialogueTrigger = GetComponent<NewDialogueTrigger>();
             state.isLookingAtPlayer = newDialogueTrigger.isLookingAtPlayer;
@@ -162,18 +155,11 @@ public class SaveableFriendlyNPC : SaveableWithID
             irene.IsFollowing = state.isFollowingPlayer;
             Debug.Log($"Loading Irene: canFollowPlayer={state.canFollowPlayer}, isFollowingPlayer={state.isFollowingPlayer}, ID: {GetUniqueID()}");
         }
-        else if (!GetComponent<DialogueTrigger>())
+        else if (!GetComponent<NewDialogueTrigger>())
         {
             Debug.LogWarning("SaveableFriendlyNPC attached to an unknown NPC type.");
         }
-
-        if (GetComponent<DialogueTrigger>())
-        {
-            DialogueTrigger dialogueTrigger = GetComponent<DialogueTrigger>();
-            dialogueTrigger.isLookingAtPlayer = state.isLookingAtPlayer;
-            dialogueTrigger.TalkedAlready = state.talkedAlready;
-            Debug.Log($"Loading DialogueTrigger: isLookingAtPlayer={state.isLookingAtPlayer}, talkedAlready={state.talkedAlready}, ID: {GetUniqueID()}");
-        }
+        
         else if (GetComponent<NewDialogueTrigger>())
         {
             NewDialogueTrigger newDialogueTrigger = GetComponent<NewDialogueTrigger>();
