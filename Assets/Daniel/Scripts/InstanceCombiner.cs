@@ -1,10 +1,10 @@
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEditor;
-using System.Collections;
 
 public class InstanceCombiner : MonoBehaviour
 {
+#if  UNITY_EDITOR
      [SerializeField] private List<MeshFilter> listMeshFilter;
 
     // Make a new mesh to be the target of the combine operation
@@ -73,4 +73,5 @@ public class InstanceCombiner : MonoBehaviour
         AssetDatabase.CreateAsset(meshToSave, path);
         AssetDatabase.SaveAssets();
     }
+#endif
 }
