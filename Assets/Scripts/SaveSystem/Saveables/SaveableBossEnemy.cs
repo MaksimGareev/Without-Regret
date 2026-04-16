@@ -28,20 +28,27 @@ public class SaveableBossEnemy : SaveableWithID
         var boss = GetComponent<BossEnemyController>();
         var state = data?.bossEnemySaveData;
 
-        if (boss)
+        if (state == null)
         {
-            transform.position = new Vector3(state.position[0], state.position[1], state.position[2]);
-            transform.eulerAngles = new Vector3(state.rotation[0], state.rotation[1], data.bossEnemySaveData.rotation[2]);
-            gameObject.SetActive(state.isActive);
-
-            if (state.isActive)
-            {
-                boss.LoadIntoPhase(state.currentPhase);
-            }
+            Debug.LogWarning($"Loading Failed: No save data found for Boss Enemy with ID: {GetUniqueID()}");
+            return;
         }
-        else
+        
+        if (!boss)
         {
-            Debug.LogWarning($"SaveableBossEnemy attached to " + gameObject.name + " which does not have a BossEnemyController component. Cannot load any data.");
+            Debug.LogWarning($"Loading Failed: SaveableBossEnemy attached to " + gameObject.name + " which does not have a BossEnemyController component. Cannot load any data.");
+            return;
+        }
+        
+        Debug.Log($"Loading Boss Enemy with ID: {GetUniqueID()}");
+
+        transform.position = new Vector3(state.position[0], state.position[1], state.position[2]);
+        transform.eulerAngles = new Vector3(state.rotation[0], state.rotation[1], data.bossEnemySaveData.rotation[2]);
+        gameObject.SetActive(state.isActive);
+
+        if (state.isActive) 
+        {
+            boss.LoadIntoPhase(state.currentPhase);
         }
     }
 }
