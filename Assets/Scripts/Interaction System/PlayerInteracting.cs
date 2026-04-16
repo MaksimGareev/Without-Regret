@@ -221,8 +221,21 @@ public class PlayerInteracting : MonoBehaviour
         lastDetectionTime = Time.time;
 
         var best = currentTargets.OrderByDescending(i => i.interactionPriority).FirstOrDefault();
+        var mantle = currentTargets.FirstOrDefault(i => i.interactType == InteractType.Mantle);
 
-        ButtonIcons.Instance?.HighlightBest(best, gameObject);
+        ButtonIcons.Instance?.Clear();
+
+        if (best != null)
+        {
+            ButtonIcons.Instance?.Highlight(best.interactType);
+        }
+
+        // Always show mantle if present
+        if (mantle != null && mantle != best)
+        {
+            ButtonIcons.Instance?.Highlight(InteractType.Mantle);
+        }
+
     }
 
     // Activate tutorial description on first interaction with specific interaction type
