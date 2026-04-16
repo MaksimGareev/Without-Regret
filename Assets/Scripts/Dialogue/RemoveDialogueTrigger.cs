@@ -19,6 +19,14 @@ public class RemoveDialogueTrigger : MonoBehaviour
         {
             Debug.Log("Player has entered");
         }
+
+        if (this.CompareTag("Intro"))
+        {
+            if (other.CompareTag("Player"))
+            {
+                trigger1.SetActive(false);
+            }
+        }
     }
 
     private void OnTriggerExit(Collider other)
