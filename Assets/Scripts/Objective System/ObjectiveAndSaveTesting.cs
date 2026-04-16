@@ -55,6 +55,8 @@ public class ObjectiveAndSaveTesting : MonoBehaviour
     [SerializeField] private Button CloseUIButton;
 
     private bool usingController = false;
+    
+    public bool DebugUIIsActive { get; private set; } = false; 
 
     private void Awake()
     {
@@ -177,9 +179,16 @@ public class ObjectiveAndSaveTesting : MonoBehaviour
         CheckControllerInput();
         CheckMouseInput();
         
-        if (usingController && !EventSystem.current.currentSelectedGameObject && debugUI.activeSelf)
+        if (usingController && !EventSystem.current.currentSelectedGameObject)
         {
-            EventSystem.current.SetSelectedGameObject(LevelSelectButtons[0].gameObject);
+            usingController = false;
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+        }
+        else if (!usingController && !Cursor.visible || Cursor.lockState != CursorLockMode.None)
+        {
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
         }
     }
 //#endif
@@ -265,26 +274,26 @@ public class ObjectiveAndSaveTesting : MonoBehaviour
     {
         AddListeners();
         debugUI.SetActive(true);
+        DebugUIIsActive = true;
         
-        EventSystem.current.SetSelectedGameObject(null);
+        EventSystem.current.SetSelectedGameObject(LevelSelectButtons[0].gameObject);
         
         Time.timeScale = 0f;
 
         Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
-        
-        usingController = false;
+        Cursor.visible = false;
+        usingController = true;
     }
 
     private void CloseDebugUI()
     {
         RemoveListeners();
         debugUI.SetActive(false);
+        DebugUIIsActive = false;
         
         EventSystem.current.SetSelectedGameObject(null);
         
         Time.timeScale = 1f;
-
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }

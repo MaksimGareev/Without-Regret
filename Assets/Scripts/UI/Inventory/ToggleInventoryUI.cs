@@ -47,7 +47,8 @@ public class ToggleInventoryUI : MonoBehaviour
             && !Journal.Instance.IsJournalOpen
             && !DialogueManager.DialogueIsActive
             && !GameOverManager.Instance.IsGameOver
-            && !SceneLoadManager.Instance.IsLoading)
+            && !SceneLoadManager.Instance.IsLoading
+            && !GameManager.Instance.objectiveDebugScript.DebugUIIsActive)
         {
             ToggleInventory();
         }
