@@ -181,14 +181,7 @@ public class ObjectiveAndSaveTesting : MonoBehaviour
         
         if (usingController && !EventSystem.current.currentSelectedGameObject)
         {
-            usingController = false;
-            Cursor.visible = true;
-            Cursor.lockState = CursorLockMode.None;
-        }
-        else if (!usingController && !Cursor.visible || Cursor.lockState != CursorLockMode.None)
-        {
-            Cursor.visible = true;
-            Cursor.lockState = CursorLockMode.None;
+            EventSystem.current.SetSelectedGameObject(LevelSelectButtons[0].gameObject);
         }
     }
 //#endif
