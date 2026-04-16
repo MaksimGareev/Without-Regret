@@ -11,7 +11,7 @@ public class FloatingTriggerVolume : MonoBehaviour, IInteractable
     //[SerializeField] private bool shouldShowIcon = true;
     //private GameObject popupInstance;
     public InteractType interactType => InteractType.Float;
-    public float interactionPriority => 6f;
+    public float interactionPriority => 4f;
 
     private bool playerInRange = false;
     private PlayerFloating playerFloating;
