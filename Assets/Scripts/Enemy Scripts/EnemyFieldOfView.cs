@@ -34,7 +34,7 @@ public class EnemyFieldOfView : MonoBehaviour
     public Transform playerRef;
 
     [Header("DialogueManager Reference")]
-    public DialogueManager dialogueManager;
+    public NewDialogueManager dialogueManager;
 
     [Header("Animator")]// Animator reference
     public Animator animator;

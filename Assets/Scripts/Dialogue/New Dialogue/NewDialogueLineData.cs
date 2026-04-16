@@ -1,6 +1,13 @@
 using UnityEngine;
 using System.Collections.Generic;
 
+public enum LineTone
+{
+    Neutral,    // 0 = Neutral
+    Happy,      // 1 = Happy
+    Upset       // 2 = Upset
+}
+
 [System.Serializable]
 public class NewDialogueLineData
 {

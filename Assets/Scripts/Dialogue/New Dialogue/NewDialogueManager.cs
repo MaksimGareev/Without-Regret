@@ -15,6 +15,15 @@ public class NPCColorSet
     public Color portraitBGColor;
 }
 
+[System.Serializable]
+public class NPCPortraitSet
+{
+    public string npcName;
+    public Sprite neutral;
+    public Sprite happy;
+    public Sprite upset;
+}
+
 public class NewDialogueManager : MonoBehaviour, ISaveable
 {
     public static NewDialogueManager Instance;
