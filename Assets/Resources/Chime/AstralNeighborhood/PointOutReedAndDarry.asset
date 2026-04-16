@@ -23,6 +23,13 @@ MonoBehaviour:
     endDialogueAfterLine: 0
     movingOn: 0
     GiveItem: 0
+    ShakeCamera: 0
+    cannotSkip: 0
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
     choices: []
     objectivesToActivate: []
   - LineID: Part II
@@ -34,6 +41,13 @@ MonoBehaviour:
     endDialogueAfterLine: 0
     movingOn: 0
     GiveItem: 0
+    ShakeCamera: 0
+    cannotSkip: 0
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
     choices:
     - text: Yeah, that's Darry.
       NextLineID: E Good I
@@ -52,10 +66,17 @@ MonoBehaviour:
       they're arguing...
     lineTone: 0
     NPCGender: 
-    NextLineID: 
-    endDialogueAfterLine: 1
+    NextLineID: Remember
+    endDialogueAfterLine: 0
     movingOn: 0
     GiveItem: 0
+    ShakeCamera: 0
+    cannotSkip: 0
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
     choices: []
     objectivesToActivate: []
   - LineID: Bad
@@ -64,22 +85,35 @@ MonoBehaviour:
       why they're arguing with each other.
     lineTone: 0
     NPCGender: 
-    NextLineID: 
-    endDialogueAfterLine: 1
+    NextLineID: Remember
+    endDialogueAfterLine: 0
     movingOn: 0
     GiveItem: 0
+    ShakeCamera: 0
+    cannotSkip: 0
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
     choices: []
     objectivesToActivate: []
   - LineID: E Good I
     Speaker: Echo
-    text: That's Darry, his roommate that he was visiting in the graveyard. Is he
-      alive again here in the Astral Plane?
+    text: That's Darry, his roommate that he was visiting in the graveyard.
     lineTone: 0
     NPCGender: female
     NextLineID: Good
     endDialogueAfterLine: 0
     movingOn: 0
     GiveItem: 0
+    ShakeCamera: 0
+    cannotSkip: 0
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
     choices: []
     objectivesToActivate: []
   - LineID: E Bad I
@@ -92,5 +126,50 @@ MonoBehaviour:
     endDialogueAfterLine: 0
     movingOn: 0
     GiveItem: 0
+    ShakeCamera: 0
+    cannotSkip: 0
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
+    choices: []
+    objectivesToActivate: []
+  - LineID: Remember II
+    Speaker: Chime
+    text: Remember that, Echo. Now, go help your friends!
+    lineTone: 1
+    NPCGender: female
+    NextLineID: 
+    endDialogueAfterLine: 1
+    movingOn: 0
+    GiveItem: 0
+    ShakeCamera: 0
+    cannotSkip: 0
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
+    choices: []
+    objectivesToActivate: []
+  - LineID: Remember
+    Speaker: Chime
+    text: Just so you know, since you're here in the Astral Plane due to my influence,
+      you're unable to be seen or heard by anyone else unless specific conditions
+      are met. It's why you're the perfect, silent mediator.
+    lineTone: 0
+    NPCGender: female
+    NextLineID: Remember II
+    endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
+    ShakeCamera: 0
+    cannotSkip: 1
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
     choices: []
     objectivesToActivate: []

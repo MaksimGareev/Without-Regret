@@ -21,7 +21,15 @@ MonoBehaviour:
     NPCGender: 
     NextLineID: 
     endDialogueAfterLine: 0
+    movingOn: 0
     GiveItem: 0
+    ShakeCamera: 0
+    cannotSkip: 0
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
     choices:
     - text: Why does everything look strange?
       NextLineID: Good E 1
@@ -46,16 +54,25 @@ MonoBehaviour:
     objectivesToActivate: []
   - LineID: Part II
     Speaker: Chime
-    text: I'm sure you have many questions, I'll do my best to explain. My name is
-      Chime, your guiding fairy, and we're in the Astral Plane now. This is the Astral
+    text: I'm not in my usual form, and it seems you don't remember me, but I'll
+      do my best to explain. My name is Chime, your guiding fairy, and we're in a
+      place called The Astral Plane now. I pulled you in here, this is the Astral
       form of your house.
     lineTone: 0
     NPCGender: 
     NextLineID: 
     endDialogueAfterLine: 0
+    movingOn: 0
     GiveItem: 0
+    ShakeCamera: 0
+    cannotSkip: 1
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
     choices:
-    - text: What is the 'Astral Plane?
+    - text: What is the Astral Plane?
       NextLineID: Good E I
       moralityChange: 1
       direction: 3
@@ -73,14 +90,23 @@ MonoBehaviour:
     objectivesToActivate: []
   - LineID: Part III
     Speaker: Chime
-    text: The astral plane is set in the past, but it's your present. You're special,
-      Echo. Your involvement with everyone here saw to your awakening of powers.
-      I'm here to guide you, so you can use those powers to better everyone's outcomes.
+    text: The astral plane is an afterlife, of sorts, but a disturbed one. Your friends
+      and others are stuck in traumatic loops of their deaths. Since I pulled you
+      in, you've gotten powers from my energy. I'm here to guide you, so you can
+      use those powers to break tormented souls free.
     lineTone: 0
     NPCGender: 
     NextLineID: Part IV
     endDialogueAfterLine: 0
+    movingOn: 0
     GiveItem: 0
+    ShakeCamera: 0
+    cannotSkip: 1
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
     choices: []
     objectivesToActivate: []
   - LineID: Part IV
@@ -92,7 +118,15 @@ MonoBehaviour:
     NPCGender: 
     NextLineID: Part V
     endDialogueAfterLine: 0
+    movingOn: 0
     GiveItem: 0
+    ShakeCamera: 0
+    cannotSkip: 0
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
     choices: []
     objectivesToActivate: []
   - LineID: Part V
@@ -102,7 +136,15 @@ MonoBehaviour:
     NPCGender: 
     NextLineID: 
     endDialogueAfterLine: 0
+    movingOn: 0
     GiveItem: 0
+    ShakeCamera: 0
+    cannotSkip: 0
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
     choices:
     - text: Yes, I can!
       NextLineID: Good E One
@@ -132,7 +174,15 @@ MonoBehaviour:
     NPCGender: 
     NextLineID: End
     endDialogueAfterLine: 0
+    movingOn: 0
     GiveItem: 0
+    ShakeCamera: 0
+    cannotSkip: 0
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
     choices: []
     objectivesToActivate: []
   - LineID: Bad
@@ -142,18 +192,34 @@ MonoBehaviour:
     NPCGender: 
     NextLineID: End
     endDialogueAfterLine: 0
+    movingOn: 0
     GiveItem: 0
+    ShakeCamera: 0
+    cannotSkip: 0
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
     choices: []
     objectivesToActivate: []
   - LineID: End
     Speaker: Chime
-    text: We'll have to go through a gate in The Graveyard. Grab what you need, and
-      when you're ready, we'll head out.
+    text: We'll have to go through a gate in The Graveyard. When you're ready, we'll
+      head out.
     lineTone: 0
     NPCGender: 
     NextLineID: 
     endDialogueAfterLine: 1
+    movingOn: 0
     GiveItem: 0
+    ShakeCamera: 0
+    cannotSkip: 0
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
     choices: []
     objectivesToActivate: []
   - LineID: Good E 1
@@ -164,7 +230,15 @@ MonoBehaviour:
     NPCGender: female
     NextLineID: Part II
     endDialogueAfterLine: 0
+    movingOn: 0
     GiveItem: 0
+    ShakeCamera: 0
+    cannotSkip: 0
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
     choices: []
     objectivesToActivate: []
   - LineID: Good E 2
@@ -175,7 +249,15 @@ MonoBehaviour:
     NPCGender: female
     NextLineID: Part II berries
     endDialogueAfterLine: 0
+    movingOn: 0
     GiveItem: 0
+    ShakeCamera: 0
+    cannotSkip: 0
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
     choices: []
     objectivesToActivate: []
   - LineID: Bad E 1
@@ -185,7 +267,15 @@ MonoBehaviour:
     NPCGender: female
     NextLineID: Part II confused
     endDialogueAfterLine: 0
+    movingOn: 0
     GiveItem: 0
+    ShakeCamera: 0
+    cannotSkip: 0
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
     choices: []
     objectivesToActivate: []
   - LineID: Bad E 2
@@ -195,7 +285,15 @@ MonoBehaviour:
     NPCGender: female
     NextLineID: Part II get away
     endDialogueAfterLine: 0
+    movingOn: 0
     GiveItem: 0
+    ShakeCamera: 0
+    cannotSkip: 0
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
     choices: []
     objectivesToActivate: []
   - LineID: Part II berries
@@ -205,7 +303,15 @@ MonoBehaviour:
     NPCGender: female
     NextLineID: Part II
     endDialogueAfterLine: 0
+    movingOn: 0
     GiveItem: 0
+    ShakeCamera: 0
+    cannotSkip: 0
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
     choices: []
     objectivesToActivate: []
   - LineID: Part II confused
@@ -215,7 +321,15 @@ MonoBehaviour:
     NPCGender: female
     NextLineID: Part II
     endDialogueAfterLine: 0
+    movingOn: 0
     GiveItem: 0
+    ShakeCamera: 0
+    cannotSkip: 0
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
     choices: []
     objectivesToActivate: []
   - LineID: Part II get away
@@ -225,7 +339,15 @@ MonoBehaviour:
     NPCGender: female
     NextLineID: Part II
     endDialogueAfterLine: 0
+    movingOn: 0
     GiveItem: 0
+    ShakeCamera: 0
+    cannotSkip: 0
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
     choices: []
     objectivesToActivate: []
   - LineID: Good E I
@@ -235,7 +357,15 @@ MonoBehaviour:
     NPCGender: female
     NextLineID: Part III
     endDialogueAfterLine: 0
+    movingOn: 0
     GiveItem: 0
+    ShakeCamera: 0
+    cannotSkip: 0
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
     choices: []
     objectivesToActivate: []
   - LineID: Bad E I
@@ -246,7 +376,15 @@ MonoBehaviour:
     NPCGender: female
     NextLineID: Part III sleep
     endDialogueAfterLine: 0
+    movingOn: 0
     GiveItem: 0
+    ShakeCamera: 0
+    cannotSkip: 0
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
     choices: []
     objectivesToActivate: []
   - LineID: Neutral E I
@@ -256,7 +394,15 @@ MonoBehaviour:
     NPCGender: female
     NextLineID: Part III
     endDialogueAfterLine: 0
+    movingOn: 0
     GiveItem: 0
+    ShakeCamera: 0
+    cannotSkip: 0
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
     choices: []
     objectivesToActivate: []
   - LineID: Part III sleep
@@ -266,7 +412,15 @@ MonoBehaviour:
     NPCGender: female
     NextLineID: Part III
     endDialogueAfterLine: 0
+    movingOn: 0
     GiveItem: 0
+    ShakeCamera: 0
+    cannotSkip: 0
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
     choices: []
     objectivesToActivate: []
   - LineID: Good E One
@@ -276,7 +430,15 @@ MonoBehaviour:
     NPCGender: female
     NextLineID: Good
     endDialogueAfterLine: 0
+    movingOn: 0
     GiveItem: 0
+    ShakeCamera: 0
+    cannotSkip: 0
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
     choices: []
     objectivesToActivate: []
   - LineID: Good E Two
@@ -286,7 +448,15 @@ MonoBehaviour:
     NPCGender: female
     NextLineID: Good
     endDialogueAfterLine: 0
+    movingOn: 0
     GiveItem: 0
+    ShakeCamera: 0
+    cannotSkip: 0
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
     choices: []
     objectivesToActivate: []
   - LineID: Bad E One
@@ -296,7 +466,15 @@ MonoBehaviour:
     NPCGender: female
     NextLineID: Bad
     endDialogueAfterLine: 0
+    movingOn: 0
     GiveItem: 0
+    ShakeCamera: 0
+    cannotSkip: 0
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
     choices: []
     objectivesToActivate: []
   - LineID: Bad E Two
@@ -307,6 +485,14 @@ MonoBehaviour:
     NPCGender: female
     NextLineID: Bad
     endDialogueAfterLine: 0
+    movingOn: 0
     GiveItem: 0
+    ShakeCamera: 0
+    cannotSkip: 0
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
     choices: []
     objectivesToActivate: []

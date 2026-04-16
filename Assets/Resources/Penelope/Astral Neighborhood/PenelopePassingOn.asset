@@ -24,6 +24,12 @@ MonoBehaviour:
     movingOn: 0
     GiveItem: 0
     ShakeCamera: 0
+    cannotSkip: 0
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
     choices: []
     objectivesToActivate: []
   - LineID: Part II
@@ -36,6 +42,12 @@ MonoBehaviour:
     movingOn: 0
     GiveItem: 0
     ShakeCamera: 0
+    cannotSkip: 0
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
     choices: []
     objectivesToActivate: []
   - LineID: Part III
@@ -48,6 +60,12 @@ MonoBehaviour:
     movingOn: 0
     GiveItem: 0
     ShakeCamera: 0
+    cannotSkip: 0
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
     choices:
     - text: Breathe, you're okay.
       NextLineID: Breathe
@@ -76,6 +94,12 @@ MonoBehaviour:
     movingOn: 0
     GiveItem: 0
     ShakeCamera: 0
+    cannotSkip: 0
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
     choices: []
     objectivesToActivate: []
   - LineID: Calm Down
@@ -89,6 +113,12 @@ MonoBehaviour:
     movingOn: 0
     GiveItem: 0
     ShakeCamera: 0
+    cannotSkip: 0
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
     choices: []
     objectivesToActivate: []
   - LineID: Trust
@@ -101,16 +131,27 @@ MonoBehaviour:
     movingOn: 0
     GiveItem: 0
     ShakeCamera: 0
+    cannotSkip: 0
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
     choices:
     - text: I'm so sorry...
       NextLineID: Nice
       moralityChange: 1
       direction: 1
       objectiveToActivate: 
-    - text: This might take a while...
-      NextLineID: Nice II
+    - text: I can't be bothered...
+      NextLineID: Mean
       moralityChange: -1
       direction: 0
+      objectiveToActivate: 
+    - text: What do I even say?
+      NextLineID: Neutral Point
+      moralityChange: 0
+      direction: 2
       objectiveToActivate: 
     objectivesToActivate: []
   - LineID: Sorry
@@ -123,16 +164,27 @@ MonoBehaviour:
     movingOn: 0
     GiveItem: 0
     ShakeCamera: 0
+    cannotSkip: 0
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
     choices:
     - text: I'm so sorry...
       NextLineID: Nice
       moralityChange: 1
       direction: 0
       objectiveToActivate: 
-    - text: This might take a while...
-      NextLineID: Nice II
+    - text: I can't be bothered...
+      NextLineID: Mean
       moralityChange: -1
-      direction: 0
+      direction: 1
+      objectiveToActivate: 
+    - text: What do I even say?
+      NextLineID: Neutral Point
+      moralityChange: 0
+      direction: 2
       objectiveToActivate: 
     objectivesToActivate: []
   - LineID: Nice
@@ -146,12 +198,18 @@ MonoBehaviour:
     movingOn: 0
     GiveItem: 0
     ShakeCamera: 0
+    cannotSkip: 0
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
     choices: []
     objectivesToActivate: []
   - LineID: Nice II
     Speaker: Echo
     text: This place we're in, while it looks just like back home, it's actually
-      an 'afterlife' of sorts, called The Astral Plane.
+      an afterlife of sorts, called The Astral Plane.
     lineTone: 0
     NPCGender: female
     NextLineID: Nice III
@@ -159,6 +217,12 @@ MonoBehaviour:
     movingOn: 0
     GiveItem: 0
     ShakeCamera: 0
+    cannotSkip: 0
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
     choices: []
     objectivesToActivate: []
   - LineID: Nice III
@@ -172,6 +236,12 @@ MonoBehaviour:
     movingOn: 0
     GiveItem: 0
     ShakeCamera: 0
+    cannotSkip: 0
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
     choices: []
     objectivesToActivate: []
   - LineID: Next
@@ -185,15 +255,21 @@ MonoBehaviour:
     movingOn: 0
     GiveItem: 0
     ShakeCamera: 0
+    cannotSkip: 0
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
     choices:
     - text: Irene misses you every day.
       NextLineID: E Good I
-      moralityChange: 1
+      moralityChange: 2
       direction: 1
       objectiveToActivate: 
     - text: Getting you out was tough.
       NextLineID: E Bad I
-      moralityChange: -1
+      moralityChange: -2
       direction: 3
       objectiveToActivate: 
     - text: I'm not very good at this...
@@ -206,8 +282,8 @@ MonoBehaviour:
     Speaker: Echo
     text: If you're wondering if Irene grew to hate you...you never had anything
       to worry about. She visits your grave every day, and cries every time. You
-      didn't make it through the forest in our original world, but it's different
-      now. You can move on from here.
+      didn't make it through the forest in a past life, but it's different now. You
+      can move on from here.
     lineTone: 1
     NPCGender: female
     NextLineID: Happy End
@@ -215,6 +291,12 @@ MonoBehaviour:
     movingOn: 0
     GiveItem: 0
     ShakeCamera: 0
+    cannotSkip: 1
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
     choices: []
     objectivesToActivate: []
   - LineID: E Neutral I
@@ -223,21 +305,27 @@ MonoBehaviour:
       process. You'd think I'd get better at it, but clearly, I haven't. I'm sorry
       Penelope, I really don't know what to say. I'm sure what's next for you, wherever
       it is, will be good...hopefully...
-    lineTone: 1
+    lineTone: 0
     NPCGender: female
     NextLineID: Neutral End
     endDialogueAfterLine: 0
     movingOn: 0
     GiveItem: 0
     ShakeCamera: 0
+    cannotSkip: 1
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
     choices: []
     objectivesToActivate: []
   - LineID: E Bad I
     Speaker: Echo
-    text: Penelope, I'm so happy to see you again. With that said, it was quite difficult
-      getting you through the Astral Forest in one piece. I've secured your way out
-      of here, something I'm not even sure I'll be able to do. Do you have anything
-      useful on you, as a thanks for my hard work?
+    text: Penelope, nice to see you again, whatever. With that out of the way, it
+      was quite difficult getting you through the Astral Forest in one piece. I've
+      secured your way out of here, something I'm not even sure I'll be able to do.
+      Do you have anything useful on you, as a thanks for my hard work?
     lineTone: 2
     NPCGender: female
     NextLineID: Negative End
@@ -245,6 +333,12 @@ MonoBehaviour:
     movingOn: 0
     GiveItem: 0
     ShakeCamera: 0
+    cannotSkip: 1
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
     choices: []
     objectivesToActivate: []
   - LineID: Happy End
@@ -260,6 +354,12 @@ MonoBehaviour:
     movingOn: 1
     GiveItem: 0
     ShakeCamera: 0
+    cannotSkip: 1
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
     choices: []
     objectivesToActivate: []
   - LineID: Neutral End
@@ -275,6 +375,12 @@ MonoBehaviour:
     movingOn: 1
     GiveItem: 0
     ShakeCamera: 0
+    cannotSkip: 1
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
     choices: []
     objectivesToActivate: []
   - LineID: Negative End
@@ -290,6 +396,12 @@ MonoBehaviour:
     movingOn: 1
     GiveItem: 0
     ShakeCamera: 0
+    cannotSkip: 1
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
     choices: []
     objectivesToActivate: []
   - LineID: Airplanes
@@ -304,6 +416,12 @@ MonoBehaviour:
     movingOn: 0
     GiveItem: 0
     ShakeCamera: 0
+    cannotSkip: 0
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
     choices: []
     objectivesToActivate: []
   - LineID: Trust Funny
@@ -316,5 +434,51 @@ MonoBehaviour:
     movingOn: 0
     GiveItem: 0
     ShakeCamera: 0
+    cannotSkip: 0
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
+    choices: []
+    objectivesToActivate: []
+  - LineID: Mean
+    Speaker: Echo
+    text: Man, I do NOT want to have to explain this whole Astral Plane thing...basically,
+      we're in the afterlife. You're here because you passed away, I'm here because
+      a weird moth fairy thing pulled me in.
+    lineTone: 2
+    NPCGender: female
+    NextLineID: Nice III
+    endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
+    ShakeCamera: 0
+    cannotSkip: 0
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
+    choices: []
+    objectivesToActivate: []
+  - LineID: Neutral Point
+    Speaker: Echo
+    text: Wow, uhh...where do I even start. This place, the Astral Plane, is an afterlife.
+      I was brought here by a moth fairy thing named Chime, and you're here because
+      you passed away some years ago...yeah...
+    lineTone: 0
+    NPCGender: female
+    NextLineID: Nice III
+    endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
+    ShakeCamera: 0
+    cannotSkip: 0
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
     choices: []
     objectivesToActivate: []

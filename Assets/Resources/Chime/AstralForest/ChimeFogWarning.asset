@@ -16,8 +16,8 @@ MonoBehaviour:
   dialogueLines:
   - LineID: First
     Speaker: Chime
-    text: The fog on this path is too suffocating to walk through, if we linger in
-      there for too long we'll be lost to this forest.
+    text: The fog on this path is too suffocating to walk through. If we linger in
+      there for too long, we'll be lost to this forest.
     lineTone: 0
     NPCGender: female
     NextLineID: Second
@@ -25,12 +25,18 @@ MonoBehaviour:
     movingOn: 0
     GiveItem: 0
     ShakeCamera: 0
+    cannotSkip: 0
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
     choices: []
     objectivesToActivate: []
   - LineID: Second
     Speaker: Chime
-    text: 'Let''s try and find another way around. I saw a path near the forest sign
-      we passed by, we can try to go through there. '
+    text: Let's try to find another way around. I saw a path near the forest sign
+      we passed by, maybe we can go through there?
     lineTone: 0
     NPCGender: female
     NextLineID: Second
@@ -38,5 +44,11 @@ MonoBehaviour:
     movingOn: 0
     GiveItem: 0
     ShakeCamera: 0
+    cannotSkip: 0
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
     choices: []
     objectivesToActivate: []
