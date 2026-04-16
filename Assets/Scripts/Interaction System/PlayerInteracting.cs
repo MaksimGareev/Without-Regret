@@ -220,7 +220,9 @@ public class PlayerInteracting : MonoBehaviour
         currentTargets = bestTargets;
         lastDetectionTime = Time.time;
 
-        ButtonIcons.Instance?.HighlightMultiple(currentTargets, gameObject);
+        var best = currentTargets.OrderByDescending(i => i.interactionPriority).FirstOrDefault();
+
+        ButtonIcons.Instance?.HighlightBest(best, gameObject);
     }
 
     // Activate tutorial description on first interaction with specific interaction type
