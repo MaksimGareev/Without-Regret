@@ -51,17 +51,6 @@ public class VoidPool : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             if (showDebugLogs) Debug.Log("Player has entered void pool.");
-
-            // Show tutorial about the void pool
-            if (InteractionTutorialManager.Instance != null && !InteractionTutorialManager.Instance.HasSeenTutorial(InteractType.BossAttack))
-            {
-                if (InteractionTutorialUI.Instance != null)
-                {
-                    InteractionTutorialUI.Instance.ShowTutorial(InteractType.BossAttack, "Void pools damage you over time! Don't stay in them for too long to avoid damage!");
-                }
-                InteractionTutorialManager.Instance.MarkTutorialSeen(InteractType.BossAttack);
-            }
-
             enterTime = Time.time;
         }
     }
