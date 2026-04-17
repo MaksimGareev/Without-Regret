@@ -53,7 +53,6 @@ public class PossessedEnemyResisting : MonoBehaviour
     public void BeginPossession()
     {
         isPossessed = true;
-        //gameObject.GetComponent<MeshRenderer>().material.SetColor("BorderColor", new Color(255, 255, 255, 255));
     }
 
     public void UpdatePossession(Vector3 input)
@@ -63,9 +62,27 @@ public class PossessedEnemyResisting : MonoBehaviour
 
     public void EndPossession()
     {
+
         isPossessed = false;
         playerInput = Vector3.zero;
-        //gameObject.GetComponent<MeshRenderer>().material.SetColor("BorderColor", new Color(255, 0, 0, 255));
+        Agent.enabled = false;
+        StartCoroutine(PushEnemy());
+    }
+
+    private IEnumerator PushEnemy()
+    {
+        Rigidbody rb = gameObject.GetComponent<Rigidbody>();
+        CapsuleCollider collider = gameObject.GetComponent<CapsuleCollider>();
+        rb.useGravity = true;
+        collider.isTrigger = false;
+        Vector3 direction = gameObject.transform.forward;
+        
+
+        rb.AddForce(direction * 6, ForceMode.Impulse);
+        yield return new WaitForSecondsRealtime(2f);
+        Agent.enabled = true;
+        rb.useGravity = false;
+        collider.isTrigger = true;
     }
 }
 

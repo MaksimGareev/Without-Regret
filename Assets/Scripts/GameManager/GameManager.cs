@@ -50,9 +50,12 @@ public class GameManager : MonoBehaviour
     public GameObject qteCanvas;
     public RectTransform qteArrowsContainer;
     public GameObject qteButtonMashUI;
+    public bool qteIsActive;
     [HideInInspector] public GameObject eventSystem;
     public SceneLoadManager sceneLoadManager;
     public CutsceneManager cutsceneManager;
+    //public GameObject objectiveDebugObject;
+    [HideInInspector] public ObjectiveAndSaveTesting objectiveDebugScript;
 
     [HideInInspector] public NewDialogueManager newDialogueManager;
 
@@ -130,6 +133,7 @@ public class GameManager : MonoBehaviour
         eventSystem = GetComponentInChildren<EventSystem>().gameObject;
         sceneLoadManager = GetComponentInChildren<SceneLoadManager>();
         cutsceneManager = GetComponentInChildren<CutsceneManager>();
+        objectiveDebugScript = GetComponentInChildren<ObjectiveAndSaveTesting>();
     }
 
     // Called from the scene change event subscribed to above

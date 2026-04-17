@@ -17,5 +17,6 @@ public enum InteractType
     BossAttack,
     Remove,
     Push,
-    Sleep
+    Sleep,
+    Sprinting
 }

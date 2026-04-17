@@ -8,6 +8,11 @@ public class ObjectiveTriggerVolume : MonoBehaviour
     [Tooltip("The ObjectiveData asset that this trigger volume is linked to. When the player enters this trigger, it will add progress to the linked objective.")]
     [SerializeField] private ObjectiveData linkedObjective;
 
+    private void Awake()
+    {
+        ObjectiveManager.Instance.OnObjectiveCompleted.AddListener(ObjectiveCompleted);
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         // Check if the player entered the trigger volume, and if there is a valid linked objective
@@ -24,6 +29,14 @@ public class ObjectiveTriggerVolume : MonoBehaviour
                     break;
                 }
             }
+        }
+    }
+
+    private void ObjectiveCompleted(ObjectiveInstance instance)
+    {
+        if(instance.data == linkedObjective)
+        {
+            gameObject.SetActive(false);
         }
     }
 }

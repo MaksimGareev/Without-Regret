@@ -33,6 +33,7 @@ public class PauseManager : MonoBehaviour
 
     [HideInInspector] public bool isGamePaused = false;
     [HideInInspector] public bool usingController { get; private set; } = false;
+    private bool inventoryWasOpen = false;
 
     private void Awake()
     {
@@ -47,6 +48,11 @@ public class PauseManager : MonoBehaviour
             Destroy(gameObject);
         }
 
+        InitializeInputActions();
+    }
+
+    private void InitializeInputActions()
+    {
         // Initialize input actions
         playerPauseAction = inputActions.FindAction("Player/Pause");
         playerPauseAction.Enable();
@@ -86,14 +92,22 @@ public class PauseManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (Time.timeSinceLevelLoad < 0.1f && pauseMenuPanel.activeSelf)
+        {
+            ResumeGame();
+        }
+        
         // Do not allow pausing in the main menu
         if (SceneManager.GetActiveScene().name == "MainMenu") return;
         
         if ((playerPauseAction.triggered || UIPauseAction.triggered) 
-        && !Journal.Instance.isJournalOpen 
+        && !Journal.Instance.IsJournalOpen 
         && !NewDialogueManager.Instance.DialogueIsActive 
         && !confirmationPanel.activeSelf 
-        && !(GameOverManager.Instance != null && GameOverManager.Instance.IsGameOver))
+        && !(GameOverManager.Instance && (GameOverManager.Instance.IsGameOver || GameManager.Instance.qteIsActive || GameManager.Instance.objectiveDebugScript.DebugUIIsActive))
+        && !SceneLoadManager.Instance.IsLoading 
+        && !InteractionTutorialUI.Instance.IsShowing 
+        && !(Ending.Instance && Ending.Instance.finished))
         {
             if (!pauseMenuPanel.activeSelf && !settingsPanel.activeSelf)
             {
@@ -303,6 +317,16 @@ public class PauseManager : MonoBehaviour
         }
 
         inputActions.FindActionMap("UI").Enable();
+        
+        if (GameManager.Instance && GameManager.Instance.InventoryUI)
+        {
+            InventoryUIController inventory = GameManager.Instance.InventoryUI.GetComponentInChildren<InventoryUIController>();
+            if (inventory && inventory.InventoryOpen())
+            {
+                inventory.DisableInventoryInput();
+                inventoryWasOpen = true;
+            }
+        }
 
         // Disable other canvases
         DisableOtherCanvases();
@@ -393,7 +417,17 @@ public class PauseManager : MonoBehaviour
         Time.timeScale = 1f;
 
         inputActions.FindActionMap("UI").Disable();
-        //inputActions.FindActionMap("Player").Enable();
+        
+        if (GameManager.Instance && GameManager.Instance.InventoryUI)
+        {
+            InventoryUIController inventory = GameManager.Instance.InventoryUI.GetComponentInChildren<InventoryUIController>();
+            if (inventory && inventoryWasOpen)
+            {
+                inventory.EnableInventoryInput();
+                inventoryWasOpen = false;
+            }
+        }
+        
         PlayerController playerController = FindFirstObjectByType<PlayerController>();
         if (playerController != null)
         {
@@ -405,72 +439,93 @@ public class PauseManager : MonoBehaviour
 
     private void EnableOtherCanvases()
     {
-        if (GameManager.Instance == null) return;
+        if (!GameManager.Instance) return;
 
-        if (GameManager.Instance.mainCanvas != null && !GameManager.Instance.mainCanvas.activeSelf)
+        if (GameManager.Instance.mainCanvas && !GameManager.Instance.mainCanvas.activeSelf)
         {
             GameManager.Instance.mainCanvas.SetActive(true);
         }
 
-        if (GameManager.Instance.interactionIconsCanvas != null && !GameManager.Instance.interactionIconsCanvas.activeSelf)
+        if (GameManager.Instance.interactionIconsCanvas && !GameManager.Instance.interactionIconsCanvas.activeSelf)
         {
             GameManager.Instance.interactionIconsCanvas.SetActive(true);
         }
 
-        if (GameManager.Instance.playerUICanvas != null && !GameManager.Instance.playerUICanvas.activeSelf)
+        if (GameManager.Instance.playerUICanvas && !GameManager.Instance.playerUICanvas.activeSelf)
         {
             GameManager.Instance.playerUICanvas.SetActive(true);
         }
 
-        if (GameManager.Instance.gameOverCanvas != null && !GameManager.Instance.gameOverCanvas.activeSelf)
+        if (GameManager.Instance.gameOverCanvas && !GameManager.Instance.gameOverCanvas.activeSelf)
         {
             GameManager.Instance.gameOverCanvas.SetActive(GameOverManager.Instance.IsGameOver);
         }
 
-        if (GameManager.Instance.objectivePanel != null && !GameManager.Instance.objectivePanel.activeSelf)
+        if (GameManager.Instance.objectivePanel && !GameManager.Instance.objectivePanel.activeSelf)
         {
             GameManager.Instance.objectivePanel.SetActive(GameManager.Instance.objectiveCanvas.IsVisible());
         }
-
+        
+        if (GameManager.Instance.qteCanvas && !GameManager.Instance.qteCanvas.activeSelf)
+        {
+            GameManager.Instance.qteCanvas.SetActive(true);
+        }
+        
+        BossEnemyController boss = FindFirstObjectByType<BossEnemyController>();
+        if (boss && boss.slidersContainer)
+        {
+            boss.slidersContainer.gameObject.SetActive(true);
+        }
     }
 
     private void DisableOtherCanvases()
     {
-        if (GameManager.Instance == null) return;
+        if (!GameManager.Instance) return;
 
-        if (GameManager.Instance.mainCanvas != null && GameManager.Instance.mainCanvas.activeSelf)
+        if (GameManager.Instance.mainCanvas && GameManager.Instance.mainCanvas.activeSelf)
         {
             GameManager.Instance.mainCanvas.SetActive(false);
         }
 
-        if (GameManager.Instance.interactionIconsCanvas != null && GameManager.Instance.interactionIconsCanvas.activeSelf)
+        if (GameManager.Instance.interactionIconsCanvas && GameManager.Instance.interactionIconsCanvas.activeSelf)
         {
             GameManager.Instance.interactionIconsCanvas.SetActive(false);
         }
 
-        if (GameManager.Instance.journalUI != null && GameManager.Instance.journalUI.activeSelf)
+        if (GameManager.Instance.journalUI && GameManager.Instance.journalUI.activeSelf)
         {
             GameManager.Instance.journalUI.SetActive(false);
         }
 
-        if (GameManager.Instance.playerUICanvas != null && GameManager.Instance.playerUICanvas.activeSelf)
+        if (GameManager.Instance.playerUICanvas && GameManager.Instance.playerUICanvas.activeSelf)
         {
             GameManager.Instance.playerUICanvas.SetActive(false);
         }
 
-        if (GameManager.Instance.gameOverCanvas != null && GameManager.Instance.gameOverCanvas.activeSelf)
+        if (GameManager.Instance.gameOverCanvas && GameManager.Instance.gameOverCanvas.activeSelf)
         {
             GameManager.Instance.gameOverCanvas.SetActive(false);
         }
 
-        if (GameManager.Instance.dialoguePanel != null && GameManager.Instance.dialoguePanel.activeSelf)
+        if (GameManager.Instance.dialoguePanel && GameManager.Instance.dialoguePanel.activeSelf)
         {
             GameManager.Instance.dialoguePanel.SetActive(false);
         }
 
-        if (GameManager.Instance.objectivePanel != null && GameManager.Instance.objectivePanel.activeSelf)
+        if (GameManager.Instance.objectivePanel && GameManager.Instance.objectivePanel.activeSelf)
         {
             GameManager.Instance.objectivePanel.SetActive(false);
+        }
+        
+        if (GameManager.Instance.qteCanvas && GameManager.Instance.qteCanvas.activeSelf)
+        {
+            GameManager.Instance.qteCanvas.SetActive(false);
+        }
+        
+        BossEnemyController boss = FindFirstObjectByType<BossEnemyController>();
+        if (boss && boss.slidersContainer)
+        {
+            boss.slidersContainer.gameObject.SetActive(false);
         }
     }
 
@@ -552,7 +607,7 @@ public class PauseManager : MonoBehaviour
     private void QuitToMainMenu()
     {
         // Save game before quitting
-        if (SaveManager.Instance != null)
+        if (SaveManager.Instance)
         {
             SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
         }
@@ -560,7 +615,7 @@ public class PauseManager : MonoBehaviour
         DisableOtherCanvases();
 
         // Logic to quit to main menu
-        if (GameManager.Instance != null && GameManager.Instance.sceneLoadManager != null)
+        if (GameManager.Instance&& GameManager.Instance.sceneLoadManager)
         {
             GameManager.Instance.sceneLoadManager.LoadScene("MainMenu");
         }

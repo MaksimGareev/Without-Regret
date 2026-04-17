@@ -22,15 +22,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: dc10b53fa8d81fe47b40586f6b361951, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 9.013
+      value: 9.049
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: dc10b53fa8d81fe47b40586f6b361951, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.765
+      value: 2.007
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: dc10b53fa8d81fe47b40586f6b361951, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 55.209
+      value: 55.185
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: dc10b53fa8d81fe47b40586f6b361951, type: 3}
       propertyPath: m_LocalRotation.w
@@ -81,6 +81,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: dc10b53fa8d81fe47b40586f6b361951, type: 3}
       insertIndex: -1
       addedObject: {fileID: -8779279301205504777}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: dc10b53fa8d81fe47b40586f6b361951, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4407078390477009588}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: dc10b53fa8d81fe47b40586f6b361951, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7156930412292789251}
   m_SourcePrefab: {fileID: 100100000, guid: dc10b53fa8d81fe47b40586f6b361951, type: 3}
 --- !u!1 &462077719618289031 stripped
 GameObject:
@@ -121,6 +127,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WorldItem
   itemData: {fileID: 11400000, guid: 2e9bab4e363e12b40a5f85d33aaa3819, type: 2}
+  journalEntry: {fileID: 0}
   isCollectible: 1
   requiredObjectives: []
   LinkedObjective: {fileID: 0}
@@ -141,3 +148,34 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InteractableProximity
   range: 3
   player: {fileID: 0}
+--- !u!114 &4407078390477009588
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 462077719618289031}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da9255d01a9de2049b233711262c1fe4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CollectableItem
+  collectableEntry: {fileID: 0}
+  isCollectible: 1
+  hasBeenCollected: 0
+  animator: {fileID: 0}
+  collectAnimation: 0
+  playerController: {fileID: 0}
+--- !u!114 &7156930412292789251
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 462077719618289031}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ced780c22dcf6ef4bb8e624b32e4787a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SaveableWorldObject
+  uniqueID: 49ed495e-7764-4164-a8c9-5ed1ddc5bc84

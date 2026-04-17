@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.AI;
 
 public class SaveableFriendlyNPC : SaveableWithID
 {
@@ -42,6 +43,8 @@ public class SaveableFriendlyNPC : SaveableWithID
         {
             Irene irene = GetComponent<Irene>();
             state.isTraveling = irene.isTraveling;
+            state.targetPosition = irene.targetSpot ? irene.targetSpot.position : Vector3.zero;
+            state.targetRotation = irene.targetSpot ? irene.targetSpot.rotation : Quaternion.identity;
             state.arrived = irene.arrived;
             state.canFollowPlayer = irene.CanFollowPlayer;
             state.isFollowingPlayer = irene.IsFollowing;
@@ -52,14 +55,7 @@ public class SaveableFriendlyNPC : SaveableWithID
             Debug.LogWarning("SaveableFriendlyNPC attached to an unknown NPC type.");
         }
 
-        if (GetComponent<DialogueTrigger>())
-        {
-            DialogueTrigger dialogueTrigger = GetComponent<DialogueTrigger>();
-            state.isLookingAtPlayer = dialogueTrigger.isLookingAtPlayer;
-            state.talkedAlready = dialogueTrigger.TalkedAlready;
-            Debug.Log($"Saving DialogueTrigger: isLookingAtPlayer={state.isLookingAtPlayer}, talkedAlready={state.talkedAlready}, ID: {GetUniqueID()}");
-        }
-        else if (GetComponent<NewDialogueTrigger>())
+        if (GetComponent<NewDialogueTrigger>())
         {
             NewDialogueTrigger newDialogueTrigger = GetComponent<NewDialogueTrigger>();
             state.isLookingAtPlayer = newDialogueTrigger.isLookingAtPlayer;
@@ -86,29 +82,55 @@ public class SaveableFriendlyNPC : SaveableWithID
         }
         
         Debug.Log($"Loading Friendly NPC with ID: {GetUniqueID()}");
-
-        transform.position = new Vector3(state.position[0], state.position[1], state.position[2]);
-        transform.eulerAngles = new Vector3(state.rotation[0], state.rotation[1], state.rotation[2]);
+        
+        NavMeshAgent agent = GetComponent<NavMeshAgent>();
+        if (agent)
+        {
+            agent.enabled = false;
+            agent.Warp(new Vector3(state.position[0], state.position[1], state.position[2])); 
+            agent.enabled = true;
+        }
+        else
+        {
+            transform.position = new Vector3(state.position[0], state.position[1], state.position[2]);
+            transform.eulerAngles = new Vector3(state.rotation[0], state.rotation[1], state.rotation[2]);
+        }
+        
         gameObject.SetActive(state.isActive);
 
         if (GetComponent<Barry>())
         {
             Barry barry = GetComponent<Barry>();
             barry.isTraveling = state.isTraveling;
+            if (barry.isTraveling)
+            {
+                barry.StartTravel();
+            }
             barry.arrived = state.arrived;
+            
             Debug.Log($"Loading Barry: isTraveling={state.isTraveling}, arrived={state.arrived}, ID: {GetUniqueID()}");
         }
         else if (GetComponent<Darry>())
         {
             Darry darry = GetComponent<Darry>();
             darry.isTraveling = state.isTraveling;
+            if (darry.isTraveling)
+            {
+                darry.StartTravel();
+            }
             darry.arrived = state.arrived;
+            darry.currentTargetIndex = state.currentTargetIndex;
+            
             Debug.Log($"Loading Darry: isTraveling={state.isTraveling}, arrived={state.arrived}, ID: {GetUniqueID()}");
         }
         else if (GetComponent<DarryNeighborhood>())
         {
             DarryNeighborhood darry = GetComponent<DarryNeighborhood>();
             darry.isTraveling = state.isTraveling;
+            if (darry.isTraveling)
+            {
+                darry.StartTravel();
+            }
             darry.arrived = state.arrived;
             Debug.Log($"Loading DarryNeighborhood: isTraveling={state.isTraveling}, arrived={state.arrived}, ID: {GetUniqueID()}");
         }
@@ -116,23 +138,28 @@ public class SaveableFriendlyNPC : SaveableWithID
         {
             Irene irene = GetComponent<Irene>();
             irene.isTraveling = state.isTraveling;
+            
+            if (irene.targetSpot)
+            {
+                irene.targetSpot.position = state.targetPosition;
+                irene.targetSpot.rotation = state.targetRotation;
+            }
+            
+            if (irene.isTraveling && irene.targetSpot)
+            {
+                irene.StartTravel();
+            }
+            
             irene.arrived = state.arrived;
             irene.CanFollowPlayer = state.canFollowPlayer;
             irene.IsFollowing = state.isFollowingPlayer;
             Debug.Log($"Loading Irene: canFollowPlayer={state.canFollowPlayer}, isFollowingPlayer={state.isFollowingPlayer}, ID: {GetUniqueID()}");
         }
-        else if (!GetComponent<DialogueTrigger>())
+        else if (!GetComponent<NewDialogueTrigger>())
         {
             Debug.LogWarning("SaveableFriendlyNPC attached to an unknown NPC type.");
         }
-
-        if (GetComponent<DialogueTrigger>())
-        {
-            DialogueTrigger dialogueTrigger = GetComponent<DialogueTrigger>();
-            dialogueTrigger.isLookingAtPlayer = state.isLookingAtPlayer;
-            dialogueTrigger.TalkedAlready = state.talkedAlready;
-            Debug.Log($"Loading DialogueTrigger: isLookingAtPlayer={state.isLookingAtPlayer}, talkedAlready={state.talkedAlready}, ID: {GetUniqueID()}");
-        }
+        
         else if (GetComponent<NewDialogueTrigger>())
         {
             NewDialogueTrigger newDialogueTrigger = GetComponent<NewDialogueTrigger>();

@@ -13,13 +13,69 @@ MonoBehaviour:
   m_Name: TestCutscene
   m_EditorClassIdentifier: Assembly-CSharp::CutsceneData
   clips:
-  - backgroundImage: {fileID: 0}
-    duration: 0
+  - backgroundType: 0
+    backgroundImage: {fileID: 2800000, guid: 66eef8067a388ef49aecaa4150b379bf, type: 3}
+    solidColor: {r: 0, g: 0, b: 0, a: 0}
+    duration: 5
     autoContinue: 0
-    canSkip: 0
-    clip: {fileID: 0}
-    onClipCompleted:
-      m_PersistentCalls:
-        m_Calls: []
-  canSkip: 0
-  backgroundMusic: {fileID: 0}
+    canSkipClipEarly: 1
+    dialogueLine:
+      Speaker: John Doe
+      NPCGender: 0
+      text: Hello world
+    clipSoundEffect: {fileID: 0}
+    soundEffectVolume: 1
+  - backgroundType: 1
+    backgroundImage: {fileID: 2800000, guid: 364b8c9c345c2dc4aa864eae12aa8842, type: 3}
+    solidColor: {r: 0, g: 1, b: 0.049730778, a: 0}
+    duration: 5
+    autoContinue: 0
+    canSkipClipEarly: 0
+    dialogueLine:
+      Speaker: John Doe Jr
+      NPCGender: 0
+      text: male voice playing line 2
+    clipSoundEffect: {fileID: 0}
+    soundEffectVolume: 1
+  - backgroundType: 2
+    backgroundImage: {fileID: 0}
+    solidColor: {r: 1, g: 0, b: 0, a: 1}
+    duration: 5
+    autoContinue: 1
+    canSkipClipEarly: 0
+    dialogueLine:
+      Speaker: Jane Doe
+      NPCGender: 1
+      text: female voice playing line 3
+    clipSoundEffect: {fileID: 8300000, guid: f95ad4e0a74d23243a8dcd2a7e337ca2, type: 3}
+    soundEffectVolume: 1
+  - backgroundType: 2
+    backgroundImage: {fileID: 0}
+    solidColor: {r: 0, g: 1, b: 0.049730778, a: 1}
+    duration: 5
+    autoContinue: 0
+    canSkipClipEarly: 0
+    dialogueLine:
+      Speaker: John Doe Jr
+      NPCGender: 0
+      text: male voice playing line 4
+    clipSoundEffect: {fileID: 8300000, guid: 9da3d0d8794e75c4dab093a12efe4543, type: 3}
+    soundEffectVolume: 1
+  - backgroundType: 0
+    backgroundImage: {fileID: 2800000, guid: 20f503cfb074383449049c6bdfe57946, type: 3}
+    solidColor: {r: 0, g: 1, b: 0.049730778, a: 0}
+    duration: 5
+    autoContinue: 0
+    canSkipClipEarly: 0
+    dialogueLine:
+      Speaker: Echo
+      NPCGender: 1
+      text: Im Echo
+    clipSoundEffect: {fileID: 8300000, guid: 9da3d0d8794e75c4dab093a12efe4543, type: 3}
+    soundEffectVolume: 1
+  canSkipEntireCutscene: 1
+  backgroundMusic: {fileID: 8300000, guid: 619550a60a9780d418717bd7f4202e00, type: 3}
+  musicVolume: 1
+  onCutsceneCompleted:
+    m_PersistentCalls:
+      m_Calls: []

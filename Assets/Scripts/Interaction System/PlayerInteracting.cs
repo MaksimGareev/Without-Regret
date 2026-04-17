@@ -113,14 +113,16 @@ public class PlayerInteracting : MonoBehaviour
             return;
         
 
-        // Interact with mantleable Objects
+        // Interact with mantleable Objects or floating triggers
         if (Mantle.triggered)
         {
-            var mantle = currentTargets.FirstOrDefault(i => i.interactType == InteractType.Mantle);
+            var special = currentTargets.FirstOrDefault(i => 
+                i.interactType == InteractType.Mantle ||
+                i.interactType == InteractType.Float);
 
-            if (mantle != null)
+            if (special != null)
             {
-                mantle.OnPlayerInteraction(gameObject);
+                special.OnPlayerInteraction(gameObject);
                 return;
             }
         }
@@ -218,7 +220,22 @@ public class PlayerInteracting : MonoBehaviour
         currentTargets = bestTargets;
         lastDetectionTime = Time.time;
 
-        ButtonIcons.Instance?.HighlightMultiple(currentTargets, gameObject);
+        var best = currentTargets.OrderByDescending(i => i.interactionPriority).FirstOrDefault();
+        var mantle = currentTargets.FirstOrDefault(i => i.interactType == InteractType.Mantle);
+
+        ButtonIcons.Instance?.Clear();
+
+        if (best != null)
+        {
+            ButtonIcons.Instance?.Highlight(best.interactType);
+        }
+
+        // Always show mantle if present
+        if (mantle != null && mantle != best)
+        {
+            ButtonIcons.Instance?.Highlight(InteractType.Mantle);
+        }
+
     }
 
     // Activate tutorial description on first interaction with specific interaction type

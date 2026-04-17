@@ -39,10 +39,10 @@ public class ChimeHintUI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (hintAction?.triggered ?? false)
+       /* if (hintAction?.triggered ?? false)
         {
             ShowHint();
-        }
+        }*/
     }
 
     private void LateUpdate()

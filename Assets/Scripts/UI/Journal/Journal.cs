@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -13,6 +14,10 @@ public class Journal : MonoBehaviour, ISaveable
 
     [Header("Journal")]
     [SerializeField] private GameObject journalUI;
+    [Tooltip("Should be located on the Journal Image object (or whichever object has the journal animator)")]
+    [SerializeField] private JournalAnimationCallback journalAnimationCallback;
+    [SerializeField] private GameObject pagesHolder;
+    [SerializeField] private GameObject tabsHolder;
 
     [Header("Input")]
     [SerializeField] private InputActionAsset inputActions;
@@ -31,6 +36,8 @@ public class Journal : MonoBehaviour, ISaveable
     [SerializeField] private Button charactersTab;
     [SerializeField] private Button collectiblesTab;
     [SerializeField] private bool rememberLastTab = true;
+    [Tooltip("If true, the player won't be able to tab from collectibles -> objectives or objectives -> collectibles. Since the animation is flipping through pages, having this on is a little more realistic.")]
+    [SerializeField] private bool preventLooping = true;
 
     [Header("Objectives")]
     [SerializeField] private GameObject objectivesPage;
@@ -60,8 +67,12 @@ public class Journal : MonoBehaviour, ISaveable
     [Tooltip("Horizontal spacing in pixels between button left edge and the arrow.")]
     [SerializeField] private float arrowSpacing = 8f;
 
-    [HideInInspector] public bool isJournalOpen = false;
+    [Header("Debug")]
+    [SerializeField] private bool showDebugLogs = false;
 
+    [HideInInspector] public bool IsJournalOpen = false;
+
+    private Animator animator;
     private List<ObjectiveInstance> objectivesList;
     private int currentObjectiveIndex = 0;
     private readonly List<string> characterNamesList = new(); // List to maintain the order of character entries
@@ -72,6 +83,7 @@ public class Journal : MonoBehaviour, ISaveable
     private int currentCollectibleIndex = 0;
 
     private CameraMovement cam;
+    private PlayerController player;
 
     private enum JournalPage
     {
@@ -96,6 +108,32 @@ public class Journal : MonoBehaviour, ISaveable
         }
 
         cam = Camera.main.GetComponent<CameraMovement>();
+        player = FindFirstObjectByType<PlayerController>();
+
+        if (journalAnimationCallback != null)
+        {
+            if (!journalAnimationCallback.gameObject.TryGetComponent<Animator>(out animator))
+            {
+                Debug.LogWarning("Journal Animation Callback object is missing the Animator component");
+                return;
+            }
+        }
+        else
+        {
+            Debug.LogWarning("Journal is missing JournalAnimationCallback reference");
+            return;
+        }
+
+        if (pagesHolder == null || tabsHolder == null)
+        {
+            Debug.LogError("Missing Pages or Tabs reference in Journal. Must be assigned to allow function");
+            return;
+        }
+        else
+        {
+            pagesHolder.SetActive(false);
+            tabsHolder.SetActive(false);
+        }
 
         // Initialize input actions
         playerJournalAction = inputActions.FindAction("Player/Journal");
@@ -151,17 +189,20 @@ public class Journal : MonoBehaviour, ISaveable
             && !PauseManager.Instance.isGamePaused 
             && !NewDialogueManager.Instance.DialogueIsActive 
             && !GameOverManager.Instance.IsGameOver
-            && !GameManager.Instance.inventoryInteractingScript.InventoryOpen())
+            && !GameManager.Instance.inventoryInteractingScript.InventoryOpen()
+            && !SceneLoadManager.Instance.IsLoading
+            && !GameManager.Instance.qteIsActive
+            && !GameManager.Instance.objectiveDebugScript.DebugUIIsActive)
         {
             ToggleJournalUI();
         }
 
-        if (cancelAction.triggered && isJournalOpen)
+        if (cancelAction.triggered && IsJournalOpen)
         {
             ToggleJournalUI();
         }
 
-        if (isJournalOpen)
+        if (IsJournalOpen)
         {
             navigateTimer += Time.unscaledDeltaTime;
 
@@ -237,14 +278,36 @@ public class Journal : MonoBehaviour, ISaveable
 
     private void ToggleJournalUI()
     {
-        journalUI.SetActive(!journalUI.activeSelf);
-        isJournalOpen = journalUI.activeSelf;
+        IsJournalOpen = !IsJournalOpen;
 
-        if (isJournalOpen)
+        if (IsJournalOpen)
         {
+            StartCoroutine(ToggleJournalRoutine(true));
+        }
+        else
+        {
+            StartCoroutine(ToggleJournalRoutine(false));
+        }
+    }
+
+    IEnumerator ToggleJournalRoutine(bool open)
+    {
+        if (open)
+        {
+            SetPlayerInputEnabled(false);
+            journalUI.SetActive(true);
+            animator.SetTrigger("Open");
+            Time.timeScale = 0f;
+
+            yield return new WaitUntil(() => journalAnimationCallback.AnimationFinished());
+
+            journalAnimationCallback.SetAnimationFinishedFalse();
+            pagesHolder.SetActive(true);
+            tabsHolder.SetActive(true);
+
             // Show last or default page
             if (!rememberLastTab) currentPage = JournalPage.Objectives;
-            
+
             switch (currentPage)
             {
                 case JournalPage.Characters:
@@ -260,17 +323,25 @@ public class Journal : MonoBehaviour, ISaveable
 
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
-            Time.timeScale = 0f;
             EnableJournalInput();
             DisableOtherCanvases();
         }
         else
         {
+            pagesHolder.SetActive(false);
+            tabsHolder.SetActive(false);
+            DisableJournalInput();
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
-            Time.timeScale = 1f;
-            DisableJournalInput();
+            animator.SetTrigger("Close");
+
+            yield return new WaitUntil(() => journalAnimationCallback.AnimationFinished());
+
+            journalAnimationCallback.SetAnimationFinishedFalse();
+            journalUI.SetActive(IsJournalOpen);
+            SetPlayerInputEnabled(true);
             EnableOtherCanvases();
+            Time.timeScale = 1f;
 
             // hide arrow when closing
             if (selectionArrow != null)
@@ -282,7 +353,7 @@ public class Journal : MonoBehaviour, ISaveable
 
     private void EnableOtherCanvases()
     {
-        Debug.Log("Enabling other canvases from Journal");
+        if (showDebugLogs) Debug.Log("Enabling other canvases from Journal");
         if (GameManager.Instance == null) return;
 
         if (GameManager.Instance.mainCanvas != null && !GameManager.Instance.mainCanvas.activeSelf)
@@ -313,7 +384,7 @@ public class Journal : MonoBehaviour, ISaveable
 
     private void DisableOtherCanvases()
     {
-        Debug.Log("Disabling other canvases from Journal");
+        if (showDebugLogs) Debug.Log("Disabling other canvases from Journal");
         if (GameManager.Instance == null) return;
 
         if (GameManager.Instance.mainCanvas != null && GameManager.Instance.mainCanvas.activeSelf)
@@ -493,6 +564,27 @@ public class Journal : MonoBehaviour, ISaveable
 
     private void MoveToNextTab()
     {
+        if (preventLooping && currentPage == JournalPage.Collectibles) return;
+
+        StartCoroutine(NextTabRoutine());
+    }
+
+    private void MoveToPreviousTab()
+    {
+        if (preventLooping && currentPage == JournalPage.Objectives) return;
+
+        StartCoroutine(PreviousTabRoutine());
+    }
+
+    IEnumerator NextTabRoutine()
+    {
+        DisableJournalInput();
+        pagesHolder.SetActive(false);
+        animator.SetTrigger("FlipLeft");
+
+        yield return new WaitUntil(() => journalAnimationCallback.AnimationFinished());
+
+        journalAnimationCallback.SetAnimationFinishedFalse();
         // cycle: Objectives -> Characters -> Collectibles -> Objectives
         currentPage = (JournalPage)(((int)currentPage + 1) % 3);
         switch (currentPage)
@@ -507,10 +599,19 @@ public class Journal : MonoBehaviour, ISaveable
                 OpenCollectiblesPage();
                 break;
         }
+        pagesHolder.SetActive(true);
+        EnableJournalInput();
     }
 
-    private void MoveToPreviousTab()
+    IEnumerator PreviousTabRoutine()
     {
+        DisableJournalInput();
+        pagesHolder.SetActive(false);
+        animator.SetTrigger("FlipRight");
+
+        yield return new WaitUntil(() => journalAnimationCallback.AnimationFinished());
+
+        journalAnimationCallback.SetAnimationFinishedFalse();
         // cycle backwards
         currentPage = (JournalPage)(((int)currentPage + 2) % 3);
         switch (currentPage)
@@ -525,23 +626,25 @@ public class Journal : MonoBehaviour, ISaveable
                 OpenCollectiblesPage();
                 break;
         }
+        pagesHolder.SetActive(true);
+        EnableJournalInput();
     }
 
     public void OnObjectiveSelect(int index)
     {
-        Debug.Log($"Objective Select called with index : {index}");
+        if (showDebugLogs) Debug.Log($"Objective Select called with index : {index}");
         
         if (index < 0) return;
         
         if (index >= objectiveButtons.Length)
         {
-            Debug.LogWarning($"Objective index {index} is out of bounds for objective buttons.");
+            if (showDebugLogs) Debug.LogWarning($"Objective index {index} is out of bounds for objective buttons.");
             return;
         }
         
         if (objectivesList == null || index >= objectivesList.Count)
         {
-            Debug.LogWarning($"Objective index {index} is out of bounds for objective entries.");
+            if (showDebugLogs) Debug.LogWarning($"Objective index {index} is out of bounds for objective entries.");
             return;
         }
         
@@ -581,19 +684,19 @@ public class Journal : MonoBehaviour, ISaveable
 
     private void OnCharacterSelect(int index)
     {
-        Debug.Log($"Character Select called with index : {index}");
+        if (showDebugLogs) Debug.Log($"Character Select called with index : {index}");
         
         if (index < 0) return;
 
         if (index >= characterButtons.Length)
         {
-            Debug.LogWarning($"Character index {index} is out of bounds for character buttons.");
+            if (showDebugLogs) Debug.LogWarning($"Character index {index} is out of bounds for character buttons.");
             return;
         }
 
         if (index >= characterDictionary.Count)
         {
-            Debug.LogWarning($"Character index {index} is out of bounds for character entries.");
+            if (showDebugLogs) Debug.LogWarning($"Character index {index} is out of bounds for character entries.");
             characterDescriptionText.text = "";
             return;
         }
@@ -625,13 +728,13 @@ public class Journal : MonoBehaviour, ISaveable
 
         if (index >= collectiblesButtons.Length)
         {
-            Debug.LogWarning($"Collectible index {index} is out of bounds for collectible buttons.");
+            if (showDebugLogs) Debug.LogWarning($"Collectible index {index} is out of bounds for collectible buttons.");
             return;
         }
 
         if (index >= collectibleDictionary.Count)
         {
-            Debug.LogWarning($"Collectible index {index} is out of bounds for collectible entries.");
+            if (showDebugLogs) Debug.LogWarning($"Collectible index {index} is out of bounds for collectible entries.");
             collectibleDescriptionText.text = "";
             return;
         }
@@ -670,9 +773,7 @@ public class Journal : MonoBehaviour, ISaveable
         // reverse objectivelist
         for (int i = 0; i < objectivesList.Count / 2; i++)
         {
-            var temp = objectivesList[i];
-            objectivesList[i] = objectivesList[objectivesList.Count - i - 1];
-            objectivesList[objectivesList.Count - i - 1] = temp;
+            (objectivesList[objectivesList.Count - i - 1], objectivesList[i]) = (objectivesList[i], objectivesList[objectivesList.Count - i - 1]);
         }
     }
 
@@ -743,14 +844,16 @@ public class Journal : MonoBehaviour, ISaveable
         {
             // Character is already in the list, so update the description
             characterDictionary[name] = description;
-            Debug.Log($"Updated character entry for {name} in the journal with description \"{description}.\"");
+
+            if (showDebugLogs) Debug.Log($"Updated character entry for {name} in the journal with description \"{description}.\"");
         }
         else
         {
             // Add character entry to the names list and dictionary
             characterNamesList.Add(name);
             characterDictionary.Add(name, description);
-            Debug.Log($"Added character entry for {name} in the journal with description \"{description}.\"");
+
+            if (showDebugLogs) Debug.Log($"Added character entry for {name} in the journal with description \"{description}.\"");
         }
 
         RefreshCharacters();
@@ -762,13 +865,15 @@ public class Journal : MonoBehaviour, ISaveable
         {
             // Update existing collectible description
             collectibleDictionary[name] = description;
-            Debug.Log($"Updated collectible entry for {name} in the journal with description \"{description}.\"");
+
+            if (showDebugLogs) Debug.Log($"Updated collectible entry for {name} in the journal with description \"{description}.\"");
         }
         else
         {
             collectibleNamesList.Add(name);
             collectibleDictionary.Add(name, description);
-            Debug.Log($"Added collectible entry for {name} in the journal with description \"{description}.\"");
+
+            if (showDebugLogs) Debug.Log($"Added collectible entry for {name} in the journal with description \"{description}.\"");
         }
 
         RefreshCollectibles();
@@ -798,6 +903,13 @@ public class Journal : MonoBehaviour, ISaveable
         }
     }
 
+    [Serializable]
+    private struct CharacterPortrait
+    {
+        public string name;
+        public Sprite portrait;
+    }
+
     private void SetCharacterPageInfo(int index)
     {
         if (characterDictionary.Count > index)
@@ -807,7 +919,7 @@ public class Journal : MonoBehaviour, ISaveable
         if (npcPortrait != null)
         {
             var portrait = characterPortraits.Find(p => p.name == characterNamesList[index]);
-            if (portrait != null)
+            if (portrait.Equals(default(CharacterPortrait)))
             {
                 npcPortrait.sprite = portrait.portrait;
                 npcPortrait.SetNativeSize();
@@ -825,56 +937,49 @@ public class Journal : MonoBehaviour, ISaveable
     private void OnDisable()
     {
         DisableJournalInput();
+        SetPlayerInputEnabled(true);
     }
 
     private void EnableJournalInput()
     {
         inputActions.FindActionMap("UI").Enable();
-        inputActions.FindActionMap("Player").Disable();
-
-        // Also disable player and camera input
-        SetPlayerInputEnabled(false);
-        if (cam != null)
-        {
-            cam.SetCameraLocked(true);
-        }
     }
 
     private void DisableJournalInput()
     {
         inputActions.FindActionMap("UI").Disable();
-        inputActions.FindActionMap("Player").Enable();
-
-        // Re-enable the player's input handling when closing the journal.
-        SetPlayerInputEnabled(true);
-        if (cam != null)
-        {
-            cam.SetCameraLocked(false);
-        }
     }
 
     private void SetPlayerInputEnabled(bool enabled)
     {
-        var player = GameObject.FindGameObjectWithTag("Player");
-        if (player == null) return;
-
-        if (!player.TryGetComponent<PlayerController>(out var pc)) return;
+        if (player == null)
+        {
+            if (!GameObject.FindGameObjectWithTag("Player").TryGetComponent<PlayerController>(out player))
+            {
+                return;
+            }
+        }
 
         if (enabled)
         {
-            pc.EnableInput();
+            inputActions.FindActionMap("Player").Enable();
+
+            player.EnableInput();
+            if (cam != null)
+            {
+                cam.SetCameraLocked(false);
+            }
         }
         else
         {
-            pc.DisableInput();
-        }
-    }
+            inputActions.FindActionMap("Player").Disable();
 
-    [Serializable]
-    private class CharacterPortrait
-    {
-        public string name;
-        public Sprite portrait;
+            player.DisableInput();
+            if (cam != null)
+            {
+                cam.SetCameraLocked(true);
+            }
+        }
     }
 
     // Moves the selection arrow to the left of the provided tab button.

@@ -33,12 +33,14 @@ public class Door : MonoBehaviour, IInteractable
     public AudioClip interactSound;
     private AudioSource audioSource; //not sure if needed ,but will keep for now
 
+    private bool hasInteracted = false;
+
     // private bool isPlayerNear = false;
     // private bool isInteracting = false;
 
     private void Awake()
     {
-        characterSwap = FindObjectOfType<CharacterSwap>();
+        characterSwap = FindFirstObjectByType<CharacterSwap>();
 
         if (characterSwap != null)
         {
@@ -86,6 +88,11 @@ public class Door : MonoBehaviour, IInteractable
 
     public void OnPlayerInteraction(GameObject player)
     {
+        // prevent spamming
+        if (hasInteracted) return;
+
+        hasInteracted = true;
+
         if (animator != null)
         {
             animator.SetTrigger("DoorOpen");

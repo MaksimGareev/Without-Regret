@@ -11,10 +11,12 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
     public InteractType interactType => InteractType.Dialogue;
 
     [Header("Animation")]
+    [Tooltip("Animator used for character during dialogue")]
     public Animator animator;
     public bool isTalking = false;
     private Coroutine talkRoutine;
     [Header("Chime Animation")]
+    [Tooltip("Animator used for chime")]
     public Animator chimeAnimator;
     public bool chimeActive = false;
     public Chime chimeScript;
@@ -25,6 +27,7 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
     private Coroutine playerTalkRoutine;
 
     [Header("Face Animation")]
+    [Tooltip("FaceHandler for the NPC that will change their eyes and mouth to match the dialogue portrait")]
     public FaceHandler faceHandler;
 
     [Header("Dialogue Files")]
@@ -55,6 +58,8 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
 
     [Header("Camera")]
     public bool focusCameraOnTrigger = true;
+    public Transform cameraMoveTo;
+    public Transform target;
 
     [Header("Movement")]
     [SerializeField] private Transform playerMovePoint;
@@ -85,6 +90,8 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
     public ItemData RewardItem;
     private bool rewardGiven = false;
 
+    public bool hasPlayed = false;
+
     public enum DialogueTriggerType
     {
         NPC,
@@ -98,7 +105,7 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
 
     private void Awake()
     {
-        characterSwap = FindObjectOfType<CharacterSwap>();
+        characterSwap = FindFirstObjectByType<CharacterSwap>();
 
         if (characterSwap != null)
         {
@@ -164,6 +171,7 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
         }
     }
 
+    // The function used by the interaction scan to have the pop up icon appear
     public bool CanInteract(GameObject interactor)
     {
         if (triggerType == DialogueTriggerType.Story || triggerType == DialogueTriggerType.NPCInitiated || triggerType == DialogueTriggerType.Spawn)
@@ -179,13 +187,14 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
 
         if (NewDialogueManager.Instance.DialogueIsActive)
         {
-            Debug.Log("Dialogue already active!");
+            // Debug.Log("Dialogue already active!");
             return false;
         }
 
         return true;
     }
 
+    // This function makes the NPC move towards the player and start the dialogue instance
     private void CheckNPCInitiatedDialogue()
     {
         if (triggerType != DialogueTriggerType.NPCInitiated) return;
@@ -219,6 +228,7 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
         }
     }
 
+    // This handles the movement of the NPC towards the player when the dialogue trigger is set to NPC Initiated
     private IEnumerator NPCWalkToPlayerAndTalk()
     {
 
@@ -288,6 +298,11 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
     // start the dialogue interaction
     private void TryStartDialogue()
     {
+        if (playerController != null)
+        {
+            playerController.SetDialogueActive(true);
+        }
+
         NewDialogueData selectedDialogue = SelectDialogue();
 
         if (selectedDialogue == null)
@@ -337,6 +352,12 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
     {
         bool allCompleted = true;
 
+        // Make sure talked dialogue file plays after completed dialogue
+        if (hasPlayed)
+        {
+            return talkedDialogueFile;
+        }
+
         // search the objective manager to check if objectives that are conncected to the NPC were completed or not
         foreach (string id in objectiveIDsYouCareAbout)
         {
@@ -348,8 +369,9 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
         }
 
         // dialogue selected if the player has completed all the objectives connected to the NPC
-        if (allCompleted && taskCompleteDialogueFile != null && objectiveIDsYouCareAbout != null)
+        if (allCompleted && taskCompleteDialogueFile != null && objectiveIDsYouCareAbout != null && hasPlayed == false)
         {
+            hasPlayed = true;
             return taskCompleteDialogueFile;
         }
 
@@ -379,7 +401,14 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
     public void OnDialogueComplete()
     {
         isLookingAtPlayer = false;
-
+        
+        CameraMovement cam = FindAnyObjectByType<CameraMovement>();
+        if (cam != null && focusCameraOnTrigger == true)
+        {
+            cam.StopLookingAtSubject();
+            cam.SetCameraLocked(false);
+        }
+        
         if (linkedObjective != null)
         {
             if (ObjectiveManager.Instance.IsObjectiveActive(linkedObjective.objectiveID))
@@ -398,6 +427,7 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
         npcWander?.ResumeWandering();
     }
 
+    // Function that gives the intended item to the player
     public void GiveReward()
     {
         if (rewardGiven) return;
@@ -460,6 +490,7 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, lookSpeed * Time.deltaTime);
     }
 
+    // makes the NPC stop looking at the player after dialogue
     public void StopLookingAtPlayer()
     {
         isTalking = false;
@@ -478,6 +509,7 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
         isLookingAtPlayer = false;
     }
 
+    // Controls the player's mediation animations
     private void StartPlayerMediation()
     {
         if (playerAnimator == null)
@@ -500,6 +532,7 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
         playerAnimator.SetBool("isMediating", true);
     }
 
+    // Controls the players talking animations during dialogue
     private void StartPlayerTalking()
     {
         if (playerAnimator == null)
@@ -514,6 +547,7 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
         playerTalkRoutine ??= StartCoroutine(PlayerTalkAnimationCycle());
     }
 
+    // Controls the players thinking animations when selecting a dialogue choice
     public void StartPlayerThinking()
     {
         if (playerAnimator == null)
@@ -530,6 +564,7 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
         playerAnimator.SetBool("Think", true);
     }
 
+    // Stops the players thinking animations
     public void StopPlayerThinking()
     {
         if (playerAnimator == null)
@@ -548,6 +583,7 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
         }
     }
 
+    // Stops the players talking animations
     private void StopPlayerTalking()
     {
         if (playerAnimator == null)
@@ -645,6 +681,11 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
     // trigger dialogue interaction for spawn and story trigger types
     private void OnTriggerEnter(Collider other)
     {
+        if (hasTalked)
+        {
+            return;
+        }
+
         // if trigger type is NPC collision is not detected
         if (triggerType == DialogueTriggerType.NPC || other == null) return;
 
@@ -662,8 +703,8 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
             }
         }
 
-            // only try to start dialogue if the trigger has not talked already
-            if (!hasTalked && startDialogueFile != null)
+        // only try to start dialogue if the trigger has not talked already
+        if (!hasTalked && startDialogueFile != null)
         {
             TryStartDialogue();
         }
@@ -671,6 +712,7 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
 
     }
 
+    // Triggers moving on VFX played when dialogue corresponds to NPC moving on
     public void MovingOn()
     {
         if (movingOn != null)

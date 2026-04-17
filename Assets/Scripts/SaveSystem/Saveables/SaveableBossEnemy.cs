@@ -12,7 +12,6 @@ public class SaveableBossEnemy : SaveableWithID
             state.id = GetUniqueID();
             state.position = new float[] { transform.position.x, transform.position.y, transform.position.z };
             state.rotation = new float[] { transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z };
-            state.isActive = gameObject.activeSelf;
             state.currentPhase = boss.GetCurrentPhase();
 
             data.bossEnemySaveData = state;
@@ -26,17 +25,28 @@ public class SaveableBossEnemy : SaveableWithID
     public override void LoadFrom(SaveData data)
     {
         var boss = GetComponent<BossEnemyController>();
+        var state = data?.bossEnemySaveData;
 
-        if (boss)
+        if (state == null)
         {
-            transform.position = new Vector3(data.bossEnemySaveData.position[0], data.bossEnemySaveData.position[1], data.bossEnemySaveData.position[2]);
-            transform.eulerAngles = new Vector3(data.bossEnemySaveData.rotation[0], data.bossEnemySaveData.rotation[1], data.bossEnemySaveData.rotation[2]);
-            gameObject.SetActive(data.bossEnemySaveData.isActive);
-            boss.LoadIntoPhase(data.bossEnemySaveData.currentPhase);
+            Debug.LogWarning($"Loading Failed: No save data found for Boss Enemy with ID: {GetUniqueID()}");
+            return;
         }
-        else
+        
+        if (!boss)
         {
-            Debug.LogWarning($"SaveableBossEnemy attached to " + gameObject.name + " which does not have a BossEnemyController component. Cannot load any data.");
+            Debug.LogWarning($"Loading Failed: SaveableBossEnemy attached to " + gameObject.name + " which does not have a BossEnemyController component. Cannot load any data.");
+            return;
+        }
+        
+        Debug.Log($"Loading Boss Enemy with ID: {GetUniqueID()}");
+
+        transform.position = new Vector3(state.position[0], state.position[1], state.position[2]);
+        transform.eulerAngles = new Vector3(state.rotation[0], state.rotation[1], data.bossEnemySaveData.rotation[2]);
+
+        if (state.currentPhase > 0)
+        {
+            boss.LoadIntoPhase(state.currentPhase);
         }
     }
 }

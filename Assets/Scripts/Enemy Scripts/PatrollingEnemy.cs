@@ -18,7 +18,7 @@ public class PatrollingEnemy : MonoBehaviour
     public float minSpeed = 1.5f;
     public float maxSpeed = 6.5f;
     public float moralitySpeedMultiplier = 0.15f;
-    public DialogueManager playerMorality;
+    public NewDialogueManager playerMorality;
 
     public bool chasing;
 

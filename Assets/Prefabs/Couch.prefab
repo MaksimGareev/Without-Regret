@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 3080319134033207582}
   - component: {fileID: 3644853657650807019}
   - component: {fileID: 2049555466196921852}
+  - component: {fileID: 237662616033839032}
   m_Layer: 0
   m_Name: GameObject
   m_TagString: Untagged
@@ -94,8 +95,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1f1ab1a81f3ad7468ec1fe89381d319, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MoveableObject
-  moveSlowdownMultiplier: 3
+  moveSlowdownDivisor: 1.75
+  sprintSlowdownDivisor: 1.5
+  sprintDepletionFactor: 1.05
+  staminaReduction: 0.35
+  dotProductThreshold: 0.4
+  maxGrabDistance: 2.5
+  allowSprint: 1
+  requiredItem: {fileID: 0}
+  collisionCheckSizeFactor: 1
+  checkGrabPointCollisions: 1
+  heldPositionOffset: {x: 0, y: 0, z: 0}
+  setHeldRotation: 0
+  heldRotation: {x: 0, y: 0, z: 0}
+  applyHeldRotationOffset: 0
+  heldRotationOffset: {x: 0, y: 0, z: 0}
   isGrabbable: 1
+--- !u!114 &237662616033839032
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1950190983039389178}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ced780c22dcf6ef4bb8e624b32e4787a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SaveableWorldObject
+  uniqueID: f36e91a8-eafb-41a3-a05b-5cd4f16fe264
 --- !u!1 &2314517216957916353
 GameObject:
   m_ObjectHideFlags: 0
@@ -336,6 +364,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 49ee97b7d9ddc7b46b5c49c518952821, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6772401823725203034}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 49ee97b7d9ddc7b46b5c49c518952821, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6888948021453760092}
   m_SourcePrefab: {fileID: 100100000, guid: 49ee97b7d9ddc7b46b5c49c518952821, type: 3}
 --- !u!4 &1674065528460739417 stripped
 Transform:
@@ -386,7 +417,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1f1ab1a81f3ad7468ec1fe89381d319, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MoveableObject
-  moveSlowdownMultiplier: 3
+  moveSlowdownDivisor: 1.75
+  sprintSlowdownDivisor: 1.5
+  sprintDepletionFactor: 1.05
+  staminaReduction: 0.35
+  dotProductThreshold: 0.4
+  maxGrabDistance: 2.5
+  allowSprint: 1
+  requiredItem: {fileID: 0}
+  collisionCheckSizeFactor: 1
+  checkGrabPointCollisions: 1
+  heldPositionOffset: {x: 0, y: 0, z: 0}
+  setHeldRotation: 0
+  heldRotation: {x: 0, y: 0, z: 0}
+  applyHeldRotationOffset: 0
+  heldRotationOffset: {x: 0, y: 0, z: 0}
   isGrabbable: 1
 --- !u!65 &6772401823725203034
 BoxCollider:
@@ -409,3 +454,16 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 84.84643, y: 33.13046, z: 32.43602}
   m_Center: {x: -0.0000019073489, y: -0.38453194, z: -0.7779398}
+--- !u!114 &6888948021453760092
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2049323742811740643}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ced780c22dcf6ef4bb8e624b32e4787a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SaveableWorldObject
+  uniqueID: 0fe4eb16-2206-4bcc-bf5e-021f4783bf19

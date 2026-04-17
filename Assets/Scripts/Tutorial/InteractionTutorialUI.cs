@@ -5,11 +5,16 @@ using System.Collections;
 using UnityEngine.Video;
 using System.Collections.Generic;
 
+
+// Holds all data for a single tutorial
 [System.Serializable]
 public class TutorialVideoData
 {
-    public InteractType interactType;
-    public VideoClip videoClip;
+    public InteractType interactType;   // The type of interaction
+    public VideoClip videoClip;         // Video clip corresponding to interaction type
+
+    [TextArea]
+    public string tutorialText;         // Text description for tutorial
 }
 
 public class InteractionTutorialUI : MonoBehaviour
@@ -17,24 +22,33 @@ public class InteractionTutorialUI : MonoBehaviour
     public static InteractionTutorialUI Instance;
 
     [Header("Video")]
+    [Tooltip("The video player that renders the selected video for the interaction type")]
     [SerializeField] private VideoPlayer videoPlayer;
+    [Tooltip("The list of videos selected to play for tutorial")]
     [SerializeField] private List<TutorialVideoData> tutorialVideos;
 
     private Dictionary<InteractType, VideoClip> videoLookup;
 
     [Header("Text")]
-    [SerializeField] private GameObject panel;
+    [Tooltip("Root game object containing all UI for tutorial")]
+    [SerializeField] private GameObject tutorial;
+    [Tooltip("Text element that is changed for specific tutorial descriptions")]
     [SerializeField] private TextMeshProUGUI descriptionText;
 
-    private float fadeDuration = 0.5f;
-    private CanvasGroup canvasGroup;
+    [Header("Input Dealy")]
+    [SerializeField] private float inputDelay = 0.5f;
+    private bool canAcceptInput = false;
 
-    public bool IsShowing { get; private set; }
+    private float fadeDuration = 0.5f;      // How long the fade takes
+    private CanvasGroup canvasGroup;        // Used to fade UI in and out
 
-    private System.Action onConfrimCallBack;
+    public bool IsShowing { get; private set; } // Tracks if tutorial is currently beeing seen
+
+    private System.Action onConfrimCallBack;    // Optional callback when tutorial is closed
 
     private void Awake()
     {
+        // Buid dictionary for video lookup
         videoLookup = new Dictionary<InteractType, VideoClip>();
 
         foreach (var entry in tutorialVideos)
@@ -53,36 +67,58 @@ public class InteractionTutorialUI : MonoBehaviour
         }
 
         Instance = this;
-
-        if (panel == null)
+        // Safety check to know if UI references exists
+        if (tutorial == null)
         {
             Debug.LogError("Panel reference missing");
             return;
         }
-
-        canvasGroup = panel.GetComponent<CanvasGroup>();
+        
+        // Get or add CanvasGroup
+        canvasGroup = tutorial.GetComponent<CanvasGroup>();
         if (canvasGroup == null)
         {
-            canvasGroup = panel.AddComponent<CanvasGroup>();
+            canvasGroup = tutorial.AddComponent<CanvasGroup>();
         }
 
+        // Start UI fully hidden and non-interactable
         canvasGroup.alpha = 0f;
         canvasGroup.interactable = false;
         canvasGroup.blocksRaycasts = false;
 
-        panel.SetActive(false);
+        tutorial.SetActive(false);
         IsShowing = false;
     }
 
+    // Returns the tutorial text for a specific interactType
+    // Used by trigger scripts to fetch correct text
+    public string GetTutorialText(InteractType type)
+    {
+        foreach (var entry in tutorialVideos)
+        {
+            if (entry.interactType == type)
+            {
+                return entry.tutorialText;
+            }
+        }
+
+        Debug.LogWarning($"No text found for {type}");
+        return "";
+    }
+
+    // Shows the Ui with correct text and video
     public void ShowTutorial(InteractType type, string text, System.Action onConfirm = null)
     {
+        // diasble other canvases while active
         DisableOtherCanvases();
-        if (panel == null || descriptionText == null)
+
+        if (tutorial == null || descriptionText == null)
         {
             Debug.LogError("Tutorial UI references missing");
             return;
         }
 
+        // Set tutorial text
         descriptionText.text = text;
 
         if (videoLookup.TryGetValue(type, out VideoClip clip))
@@ -95,26 +131,40 @@ public class InteractionTutorialUI : MonoBehaviour
             Debug.LogWarning($"No video found for {type}");
         }
 
-        panel.SetActive(true);
+        // Enable UI 
+        tutorial.SetActive(true);
         descriptionText.gameObject.SetActive(true);
 
+        // Fade UI in
         StartCoroutine(FadeCanvasGroup(canvasGroup, 0f, 1f, fadeDuration));
 
         IsShowing = true;
         onConfrimCallBack = onConfirm;
 
+        // Pause the game
         Time.timeScale = 0f;
+
+        // Disable player input while tutorial is open
         PlayerController playerController = FindFirstObjectByType<PlayerController>();
         if (playerController != null)
         {
             playerController.DisableInput();
         }
 
+        canAcceptInput = false;
+        StartCoroutine(InputDelayRoutine());
+
+    }
+
+    private IEnumerator InputDelayRoutine()
+    {
+        yield return new WaitForSecondsRealtime(inputDelay);
+        canAcceptInput = true;
     }
 
     public void Update()
     {
-        if (!IsShowing)
+        if (!IsShowing || !canAcceptInput)
             return;
         
         if (IsShowing)
@@ -129,24 +179,32 @@ public class InteractionTutorialUI : MonoBehaviour
         }
     }
 
+    // Hides the tutorial
     public void HideTutorial()
     {
         StartCoroutine(FadeOutAndDeactivate());
         EnableOtherCanvases();
     }
 
+    // Handles fade out and cleanup after tutorial closes
     private IEnumerator FadeOutAndDeactivate()
     {
+        // Fade out
         yield return FadeCanvasGroup(canvasGroup, 1f, 0f, fadeDuration);
 
+        // Stop video
         videoPlayer.Stop();
-        panel.SetActive(false);
+
+        // Disable UI
+        tutorial.SetActive(false);
         descriptionText.gameObject.SetActive(false);
 
         IsShowing = false;
 
+        // Resume game
         Time.timeScale = 1f;
 
+        // Re-enable player inputs
         PlayerController playerController = FindFirstObjectByType<PlayerController>();
         if (playerController != null)
         {
@@ -157,6 +215,7 @@ public class InteractionTutorialUI : MonoBehaviour
         onConfrimCallBack = null;
     }
 
+    // Handles smooth fading of UI using canvas group
     private IEnumerator FadeCanvasGroup(CanvasGroup cg, float start, float end, float duration)
     {
         float elapsed = 0f;
@@ -184,6 +243,7 @@ public class InteractionTutorialUI : MonoBehaviour
         }
     }
 
+    // Re-enable all other canvases
     private void EnableOtherCanvases()
     {
         Debug.Log("Enabling other canvases from Journal");
@@ -215,6 +275,7 @@ public class InteractionTutorialUI : MonoBehaviour
         }
     }
 
+    // Disable all other canvases
     private void DisableOtherCanvases()
     {
         Debug.Log("Disabling other canvases from Journal");

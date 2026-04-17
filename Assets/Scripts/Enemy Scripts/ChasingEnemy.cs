@@ -49,7 +49,7 @@ public class ChasingEnemy : MonoBehaviour
     {
         if (playerMorality == null)
         {
-            playerMorality = FindObjectOfType<NewDialogueManager>();
+            playerMorality = FindFirstObjectByType<NewDialogueManager>();
         }
 
         agent.speed = baseSpeed;
@@ -114,6 +114,7 @@ public class ChasingEnemy : MonoBehaviour
 
         if (baseSpeed > 0.1f)
         {
+            
             animator?.SetBool("isWalking", true);
             animator?.SetBool("isIdle", false);
         }

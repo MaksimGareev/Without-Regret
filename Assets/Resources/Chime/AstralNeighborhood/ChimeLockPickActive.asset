@@ -16,11 +16,20 @@ MonoBehaviour:
   dialogueLines:
   - LineID: Start
     Speaker: Chime
-    text: Hmm...Seems this door is locked. You'll have to lockpick it, or maybe there's
-      another way inside?
+    text: Hmm...Seems this door is locked. You'll have to lockpick it.  Then we can
+      go and grab the map.
     lineTone: 0
     NPCGender: 
     NextLineID: 
     endDialogueAfterLine: 1
+    movingOn: 0
+    GiveItem: 0
+    ShakeCamera: 0
+    cannotSkip: 0
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
     choices: []
     objectivesToActivate: []

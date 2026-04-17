@@ -201,6 +201,8 @@ MonoBehaviour:
   objectiveIDsYouCareAbout: []
   linkedObjective: {fileID: 11400000, guid: 012fad80146c44a46b8766e3a2ee700c, type: 2}
   focusCameraOnTrigger: 1
+  cameraMoveTo: {fileID: 0}
+  target: {fileID: 0}
   playerMovePoint: {fileID: 0}
   moveSpeed: 2
   lookSpeed: 6
@@ -210,6 +212,7 @@ MonoBehaviour:
   isLookingAtPlayer: 0
   enemy: {fileID: 0}
   RewardItem: {fileID: 0}
+  hasPlayed: 0
   triggerType: 0
 --- !u!114 &7430618000941399012
 MonoBehaviour:
@@ -241,12 +244,12 @@ MonoBehaviour:
   endValue: -0.02
   duration: 2
   targetParticle: {fileID: 847448135685025697}
-  particleStartY: 23.85
   particleEndY: -23
   material:
   - {fileID: 2941850817333310338}
   - {fileID: 6497141882171760916}
   penelope: {fileID: 0}
+  darry: {fileID: 0}
 --- !u!114 &2746203051679876380
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -380,7 +383,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b93d8170e88d8e34684424c0750fb15a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SaveableFriendlyNPC
-  uniqueID: 10fc4c9a-c6f0-41ab-ac3b-1f9a5dde1a78
+  uniqueID: b44bf46f-db8f-4968-9d7c-b96ead367372
 --- !u!1001 &1786121623637168684
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1159,7 +1162,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c799f236d9c38c34384cd262e6e3b199, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FaceHandler
-  NeutralFace: {fileID: 2100000, guid: c875c0c01725c1d40ac12e0491f79b88, type: 2}
+  NeutralFace: {fileID: 2100000, guid: 7cd75b95e6836e54d933b3c176de3181, type: 2}
   HappyFace: {fileID: 2100000, guid: e199e6a7cfcb16f41b0773579972a0a6, type: 2}
   SadFace: {fileID: 2100000, guid: 5e3ff169e45a4204ba2b092b55e29263, type: 2}
   AngryFace: {fileID: 2100000, guid: 5915d7babedde7d439293cb983c854a1, type: 2}

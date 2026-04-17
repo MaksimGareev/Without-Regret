@@ -1,5 +1,94 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &8042912865472644734
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4261147710157948042}
+  - component: {fileID: 1277611578147361225}
+  - component: {fileID: 4211121297931694098}
+  m_Layer: 0
+  m_Name: BushLeaves
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4261147710157948042
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8042912865472644734}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -2994.7349, y: -175.79863, z: -4023.4612}
+  m_LocalScale: {x: 71.61658, y: 71.61658, z: 71.61658}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2818180868281774853}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!33 &1277611578147361225
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8042912865472644734}
+  m_Mesh: {fileID: 4300000, guid: 32f3d2e356d14b8448e79ee343966a6f, type: 2}
+--- !u!23 &4211121297931694098
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8042912865472644734}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: bbe0cf5645fcdb84da091c92e6f64f53, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1001 &2348215902425699566
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -22,15 +111,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: f0f90f14e9cdd034abf89be610031067, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 31.86
+      value: 43.746613
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: f0f90f14e9cdd034abf89be610031067, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 2.33387
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: f0f90f14e9cdd034abf89be610031067, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 41.59
+      value: 57.794937
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: f0f90f14e9cdd034abf89be610031067, type: 3}
       propertyPath: m_LocalRotation.w
@@ -64,14 +153,28 @@ PrefabInstance:
       propertyPath: m_Name
       value: Bush
       objectReference: {fileID: 0}
+    - target: {fileID: 6722800253898608971, guid: f0f90f14e9cdd034abf89be610031067, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 3bd9639d5a04e9f47bca8db45715f25c, type: 2}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 8603806674150118374, guid: f0f90f14e9cdd034abf89be610031067, type: 3}
+    - {fileID: 7943253817934379543, guid: f0f90f14e9cdd034abf89be610031067, type: 3}
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: f0f90f14e9cdd034abf89be610031067, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4261147710157948042}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: -6612626591053245, guid: f0f90f14e9cdd034abf89be610031067, type: 3}
       insertIndex: -1
       addedObject: {fileID: 125213066459567842}
   m_SourcePrefab: {fileID: 100100000, guid: f0f90f14e9cdd034abf89be610031067, type: 3}
+--- !u!4 &2818180868281774853 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: f0f90f14e9cdd034abf89be610031067, type: 3}
+  m_PrefabInstance: {fileID: 2348215902425699566}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &6880946308237221549 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -6612626591053245, guid: f0f90f14e9cdd034abf89be610031067, type: 3}

@@ -187,17 +187,20 @@ public class Inventory : MonoBehaviour, ISaveable
                 
                 StartCoroutine(WaitForCameraTransition());
             }
-            
-            itemToCollect.gameObject.SetActive(false);
-            itemToCollect.hasBeenCollected = true;
-            itemToCollect = null;
+
+            StartCoroutine(ItemPickUpDelay(itemToCollect.gameObject));
         }
         else if (itemToCollect != null)
         {
-            itemToCollect.gameObject.SetActive(false);
+            StartCoroutine(ItemPickUpDelay(itemToCollect.gameObject));
+        }
+        
+        // Objective rewards and scripted grants do not always come from a WorldItem pickup.
+        if (itemToCollect != null)
+        {
             itemToCollect.hasBeenCollected = true;
             itemToCollect = null;
-        }        
+        }
 
         GameManager.Instance.inventoryInteractingScript.RefreshInventoryUI();
 
@@ -216,6 +219,15 @@ public class Inventory : MonoBehaviour, ISaveable
 
     public void RemoveItem(ItemData item)
     {
+        if (item == null)
+        {
+            if (showDebugLogs)
+            {
+                Debug.LogWarning("Tried to remove a null item from inventory.");
+            }
+            return;
+        }
+
         if (showDebugLogs)
         {
             Debug.Log($"Removed {item.ItemName} from inventory.");
@@ -238,8 +250,6 @@ public class Inventory : MonoBehaviour, ISaveable
         {
             SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
         }
-
-        return;
     }
 
     public IReadOnlyList<ItemData> GetItems()
@@ -266,6 +276,16 @@ public class Inventory : MonoBehaviour, ISaveable
         GameManager.Instance.inventoryPopupText.gameObject.SetActive(true);
         yield return new WaitForSecondsRealtime(1.5f);
         GameManager.Instance.inventoryPopupText.gameObject.SetActive(false);
+    }
+
+    private IEnumerator ItemPickUpDelay(GameObject itemToCollect) //Delays item dissapearing to match up with animation
+    {
+        yield return new WaitForSeconds(0.8f);
+
+        itemToCollect.SetActive(false);
+        // itemToCollect.hasBeenCollected = true;
+        // itemToCollect = null;
+
     }
 
     private void SetHasBackpack(bool newHasBackpack)

@@ -55,6 +55,8 @@ public class ObjectiveAndSaveTesting : MonoBehaviour
     [SerializeField] private Button CloseUIButton;
 
     private bool usingController = false;
+    
+    public bool DebugUIIsActive { get; private set; } = false; 
 
     private void Awake()
     {
@@ -150,13 +152,13 @@ public class ObjectiveAndSaveTesting : MonoBehaviour
         }
     }
     
-#if UNITY_EDITOR
+//#if UNITY_EDITOR
     private void Update()
     {
         // Early returns to avoid unnecessary checks when conditions are not met
         if (sceneObjectiveMap.Count == 0 || objectiveDebugUIAction == null || debugUI == null) return;
         if (SceneManager.GetActiveScene().name == "MainMenu") return;
-        if (Journal.Instance != null && Journal.Instance.isJournalOpen) return;
+        if (Journal.Instance != null && Journal.Instance.IsJournalOpen) return;
         if (PauseManager.Instance != null && PauseManager.Instance.isGamePaused) return;
 
         // Check for input to toggle debug UI
@@ -177,12 +179,12 @@ public class ObjectiveAndSaveTesting : MonoBehaviour
         CheckControllerInput();
         CheckMouseInput();
         
-        if (usingController && !EventSystem.current.currentSelectedGameObject && debugUI.activeSelf)
+        if (usingController && !EventSystem.current.currentSelectedGameObject)
         {
             EventSystem.current.SetSelectedGameObject(LevelSelectButtons[0].gameObject);
         }
     }
-#endif
+//#endif
     
     private void CheckMouseInput()
     {
@@ -265,26 +267,26 @@ public class ObjectiveAndSaveTesting : MonoBehaviour
     {
         AddListeners();
         debugUI.SetActive(true);
+        DebugUIIsActive = true;
         
-        EventSystem.current.SetSelectedGameObject(null);
+        EventSystem.current.SetSelectedGameObject(LevelSelectButtons[0].gameObject);
         
         Time.timeScale = 0f;
 
         Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
-        
-        usingController = false;
+        Cursor.visible = false;
+        usingController = true;
     }
 
     private void CloseDebugUI()
     {
         RemoveListeners();
         debugUI.SetActive(false);
+        DebugUIIsActive = false;
         
         EventSystem.current.SetSelectedGameObject(null);
         
         Time.timeScale = 1f;
-
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }

@@ -34,7 +34,7 @@ public class EnemyFieldOfView : MonoBehaviour
     public Transform playerRef;
 
     [Header("DialogueManager Reference")]
-    public DialogueManager dialogueManager;
+    public NewDialogueManager dialogueManager;
 
     [Header("Animator")]// Animator reference
     public Animator animator;
@@ -263,10 +263,10 @@ public class EnemyFieldOfView : MonoBehaviour
     // Function for killing the player
     void OnTriggerEnter(Collider other)
     {
-        if (other.name == "Player")
-        {
-            //Debug.Log("Player is killed");
-        }
+        //if (other.name == "Player")
+        //{
+        //    //Debug.Log("Player is killed");
+        //}
 
         if (other.gameObject.CompareTag("protectedNPC"))
         {
@@ -346,7 +346,7 @@ public class EnemyFieldOfView : MonoBehaviour
             if (Time.time >= lastAttackTime + attackCooldown)
             {
                 lastAttackTime = Time.time;
-                StartCoroutine(attackAnimation());
+                StartCoroutine(AttackAnimation());
             }
             return true;
         }
@@ -356,40 +356,41 @@ public class EnemyFieldOfView : MonoBehaviour
     private void EnemyAnimations()
     {
         bool isMoving = m_Agent.velocity.sqrMagnitude > 0.1f && m_Agent.remainingDistance > m_Agent.stoppingDistance;
-        if (!isAttacking)
+        if (!isAttacking && animator != null)
         {
             if (isMoving)
             {
-                animator?.SetBool("isWalking", true);
-                animator?.SetBool("isIdle", false);
+                animator.SetBool("isWalking", true);
+                animator.SetBool("isIdle", false);
             }
             else if (!isMoving)
             {
-                animator?.SetBool("isIdle", true);
-                animator?.SetBool("isWalking", false);
+                animator.SetBool("isIdle", true);
+                animator.SetBool("isWalking", false);
             }
         }
     }
 
-    IEnumerator attackAnimation()
+    IEnumerator AttackAnimation()
     {
         if (!isAttacking)
         {
-            resetanimations();
+            ResetAnimations();
         }
         isAttacking = true;
-        animator?.SetTrigger("Attack");
+        if (animator != null) animator.SetTrigger("Attack");
         Debug.Log("Attacked");
         TimerRingUI.Instance.SubtractRingSection(1);
         yield return new WaitForSeconds(2f);
         isAttacking = false;
     }
 
-    private void resetanimations()
+    private void ResetAnimations()
     {
-        animator?.SetBool("isIdle", false);
-        animator?.SetBool("isWalking", false);
+        if (animator == null) return;
 
+        animator.SetBool("isIdle", false);
+        animator.SetBool("isWalking", false);
     }
 
     private enum FOVState
@@ -403,7 +404,7 @@ public class EnemyFieldOfView : MonoBehaviour
 
     public void GetStunned(float duration)
     {
-        m_Agent.Stop();
+        m_Agent.isStopped = true;
         normalMovement.animator.SetBool("isIdle", true);
         isStunned = true;
         Debug.Log("Hit with throwable");

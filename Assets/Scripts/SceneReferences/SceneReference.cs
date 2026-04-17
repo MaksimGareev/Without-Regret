@@ -2,6 +2,7 @@
 using UnityEditor;
 #endif
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 [System.Serializable]
 public class SceneReference
@@ -27,6 +28,8 @@ public class SceneReference
     [SerializeField, HideInInspector] private string scenePath;
     private string sceneName => 
         string.IsNullOrEmpty(scenePath) ? string.Empty : System.IO.Path.GetFileNameWithoutExtension(scenePath);
+    private int sceneIndex => SceneUtility.GetBuildIndexByScenePath(scenePath);
 
     public string GetSceneName() => sceneName;
+    public int GetSceneIndex() => sceneIndex;
 }

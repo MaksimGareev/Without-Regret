@@ -81,7 +81,7 @@ public class BossEnemyController : MonoBehaviour
     [Tooltip("Base slider prefab used to create one slider per phase at runtime.")]
     [SerializeField] private Slider baseSliderPrefab;
     [Tooltip("Container RectTransform under which the generated sliders will be placed.")]
-    [SerializeField] private RectTransform slidersContainer;
+    public RectTransform slidersContainer;
     [Tooltip("Spacing in pixels between generated sliders.")]
     [SerializeField] private float sliderSpacing = 4f;
     [Tooltip("The color of the fill area of inactive (future) phases in the boss health UI")]

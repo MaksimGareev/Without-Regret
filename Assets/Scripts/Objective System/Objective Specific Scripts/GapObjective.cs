@@ -120,7 +120,7 @@ public class GapObjective : MonoBehaviour
 
         navMeshSurface.BuildNavMesh();
 
-        foreach (var link in FindObjectsOfType<NavMeshLink>())
+        foreach (var link in FindObjectsByType<NavMeshLink>(FindObjectsSortMode.None))
         {
             link.UpdateLink();
         }

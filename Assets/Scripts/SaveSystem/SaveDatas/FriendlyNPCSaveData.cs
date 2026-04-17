@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 [Serializable]
 public class FriendlyNPCListSaveData
@@ -20,4 +21,7 @@ public class FriendlyNPCSaveData
     public bool isLookingAtPlayer;
     public bool talkedAlready;
     public bool isActive;
+    public int currentTargetIndex;
+    public Vector3 targetPosition;
+    public Quaternion targetRotation;
 }

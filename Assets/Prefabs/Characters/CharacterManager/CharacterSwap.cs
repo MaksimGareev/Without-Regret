@@ -100,14 +100,14 @@ public class CharacterSwap : MonoBehaviour
         SetCurrentAnimator(Chime);
     }
 
-    public void SetCurrentAnimator(GameObject model)
+    public void SetCurrentAnimator(GameObject model) //Sets up listener to update with the current active model each time there is a swap
     {
         currentAnimator = model.GetComponentInChildren<Animator>(true);
 
         onAnimatorChanged?.Invoke(currentAnimator);
     }
 
-    public Animator GetAnimator()
+    public Animator GetAnimator() //Used for other Animator related scripts to get the current active model and its Animator 
     {
         return currentAnimator;
     }    

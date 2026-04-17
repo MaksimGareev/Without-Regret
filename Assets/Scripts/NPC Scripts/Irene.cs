@@ -1,23 +1,22 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
 public class Irene : MonoBehaviour
 {
     public Animator animator;
-    [HideInInspector] public Transform player;            // the player to follow
-    public string npcName = "Irene";    // string data of npc name
-    public float FollowDistance = 2f;   // how far behind the player
-    public float FollowSpeed = 3f;      // movement speed
-    public float RotationSpeed = 3f;    // how fast the NPC rotates
-    public float BaseSpeed = 3.5f;      // how fast the NPC is
-    public float SprintingSpeed = 6f;        // how fast the NPC is when the player is too far away
+    [HideInInspector] public Transform player;      // the player to follow
+    public string npcName = "Irene";                // string data of npc name
+    public float FollowDistance = 2f;               // how far behind the player
+    public float FollowSpeed = 3f;                  // movement speed
+    public float RotationSpeed = 3f;                // how fast the NPC rotates
+    public float BaseSpeed = 3.5f;                  // how fast the NPC is
+    public float SprintingSpeed = 6f;               // how fast the NPC is when the player is too far away
     public bool IsFollowing = false;
-    private bool isMoving = false; //detects whether or not Irene is moving for animator purposes
+    private bool isMoving = false;                  //detects whether or not Irene is moving for animator purposes
     private Vector3 lastPosition;
 
-    public NewDialogueTrigger dialogueTrigger; // dialogue trigger script reference
+    public NewDialogueTrigger dialogueTrigger;      // dialogue trigger script reference
 
     public Transform targetSpot;
     public Transform GoBackHomeSpot;
@@ -122,7 +121,7 @@ public class Irene : MonoBehaviour
             {
                 agent.speed = SprintingSpeed;
                 animator.speed = 2;
-                Debug.Log("Irene is too far!");
+                // Debug.Log("Irene is too far!");
             }
         }
         else

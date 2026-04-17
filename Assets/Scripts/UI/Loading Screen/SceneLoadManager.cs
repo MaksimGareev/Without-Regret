@@ -31,6 +31,9 @@ public class SceneLoadManager : MonoBehaviour
 
     [HideInInspector] public UnityEvent OnSceneLoaded = new();
 
+    private bool isLoading = false;
+    public bool IsLoading =>  Instance && Instance.isLoading;
+
     private void Awake()
     {
         if (Instance == null)
@@ -73,6 +76,8 @@ public class SceneLoadManager : MonoBehaviour
         
         //Debug.Log("Fading in black screen");
         yield return FadeInBlackScreen();
+        
+        isLoading = true;
 
         //Debug.Log("Starting scene load");
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
@@ -116,6 +121,8 @@ public class SceneLoadManager : MonoBehaviour
         
         // Ensure game is not started paused
         Time.timeScale = 1f;
+        
+        isLoading = false;
     }
 
     private IEnumerator InvokeSceneLoadedEvent()
