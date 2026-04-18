@@ -34,6 +34,8 @@ public class PlayerController : MonoBehaviour, ISaveable
     public float SprintSpeed = 2f;
     public float SprintDuration = 3f;
     public float sprintCooldown = 4f;
+    [Tooltip("Sets how fast the stamina regenerates")]
+    public float sprintRegeneration = 0.75f;
     [SerializeField, Tooltip("The speed the player moves at when their sprint stamina is at 0. Only relevant for when they're holding a moveable object. Lower numbers = lower speed")]
     private float emptyStaminaSpeedFactor = 0.5f;
     [SerializeField] private bool StationaryCamera;
@@ -525,7 +527,7 @@ public class PlayerController : MonoBehaviour, ISaveable
             {
                 // Regenerating stamina
                 Animator.SetBool("isSprinting", false);
-                SprintTimer += Time.deltaTime;
+                SprintTimer += Time.deltaTime * sprintRegeneration; //Regenerating stamina multiplier
                 if (staminaGroup != null)
                 {
                     staminaGroup.alpha = 1f;
