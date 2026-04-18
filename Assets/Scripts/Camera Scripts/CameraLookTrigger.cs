@@ -11,7 +11,9 @@ public class CameraLookTrigger : MonoBehaviour
     [SerializeField] private float holdDuration = 2.0f;
     [SerializeField] private bool disableCameraInputWhileLooking = true;
     [SerializeField] private bool disablePlayerInputWhileLooking = true;
+    [Tooltip("Whether to reset the camera automatically at the end of the hold duration or not")]
     [SerializeField] private bool autoReturn = false;
+    [Tooltip("If true, this trigger only activates once")]
     [SerializeField] private bool onlyTriggerOnce = true;
 
     private CameraMovement cam;
@@ -31,19 +33,11 @@ public class CameraLookTrigger : MonoBehaviour
                 return;
             }
 
-            cam.LookAtSubject(
-                target,
-                cameraMoveTo,
-                rotateDuration,
-                true,
-                true,
-                holdDuration,
-                autoReturn);
-
-            /*cam.LookAtSubject(target, cameraMoveTo: cameraMoveTo,
+            cam.LookAtSubject(target, cameraMoveTo: cameraMoveTo,
                 rotateDuration: rotateDuration, holdDuration: holdDuration, 
-                disableCameraInputWhileLooking: disableCameraInputWhileLooking, disablePlayerInputWhileLooking: disablePlayerInputWhileLooking);
-            */
+                disableCameraInputWhileLooking: disableCameraInputWhileLooking, disablePlayerInputWhileLooking: disablePlayerInputWhileLooking, 
+                autoReturn: autoReturn);
+
             if (onlyTriggerOnce)
             {
                 GetComponent<Collider>().enabled = false;

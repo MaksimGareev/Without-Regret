@@ -22,6 +22,8 @@ public class PlayerFloating : MonoBehaviour
     private float moveSmoothing = 8f;
     [SerializeField, Tooltip("Air drag while hovering")] 
     private float hoverDrag = 3f;
+    [SerializeField, Tooltip("The alpha the slider gets set to while recharging")]
+    private float cooldownAlpha = 0.6f;
     [SerializeField, Tooltip("Deadzone for controllers")] 
     private float stickDeadzone = 0.2f;
 
@@ -31,7 +33,7 @@ public class PlayerFloating : MonoBehaviour
     [SerializeField, Tooltip("Control input for cancelling floating")]
     private InputActionReference cancelFloatAction;
     [SerializeField] private float floatDuration = 5f;
-    [SerializeField] private float floatCooldown = 3f;
+    [SerializeField] private float floatCooldown = 1.5f;
     [SerializeField, Tooltip("Determines the size of the success window")]
     private float rhythmWindow = 0.3f;
     [SerializeField, Tooltip("Determines the size of the rhythm bar")] 
@@ -86,7 +88,7 @@ public class PlayerFloating : MonoBehaviour
     public bool IsCoolingDown { get; private set; } = false;
     private float rhythmTimer = 0f;
     private float hoverTargetY;
-
+    private CanvasGroup sliderVisual;
     private Vector3 currentMove = Vector3.zero;
     private Vector3 targetMove = Vector3.zero;
 
@@ -164,6 +166,7 @@ public class PlayerFloating : MonoBehaviour
             cooldownSlider = GameManager.Instance.floatCooldown;
             cooldownFillImage = cooldownSlider.fillRect.GetComponent<Image>();
             originalCooldownColor = cooldownFillImage.color;
+            sliderVisual = cooldownSlider.gameObject.GetComponent<CanvasGroup>();
             cooldownSlider.gameObject.SetActive(false);
         }
 
@@ -597,6 +600,7 @@ public class PlayerFloating : MonoBehaviour
                     // Otherwise, if time ran out normally, cooldown fill is normal
                     cooldownFillImage.color = originalCooldownColor;
                 }
+                sliderVisual.alpha = cooldownAlpha;
                 cooldownSlider.value = Mathf.Clamp01(1f - (cooldownTimer / floatCooldown));
             }
             
@@ -610,6 +614,7 @@ public class PlayerFloating : MonoBehaviour
         else if (cooldownSlider != null)
         {
             cooldownSlider.gameObject.SetActive(false);
+            sliderVisual.alpha = 1f;
             cooldownSlider.value = 0f;
         }
     }
