@@ -167,6 +167,7 @@ public class PlayerFloating : MonoBehaviour
             cooldownFillImage = cooldownSlider.fillRect.GetComponent<Image>();
             originalCooldownColor = cooldownFillImage.color;
             sliderVisual = cooldownSlider.gameObject.GetComponent<CanvasGroup>();
+            if (sliderVisual == null) Debug.LogWarning("Floating Cooldown Slider is missing a CanvasGroup component, can't adjust transparency", cooldownSlider);
             cooldownSlider.gameObject.SetActive(false);
         }
 
@@ -600,7 +601,7 @@ public class PlayerFloating : MonoBehaviour
                     // Otherwise, if time ran out normally, cooldown fill is normal
                     cooldownFillImage.color = originalCooldownColor;
                 }
-                sliderVisual.alpha = cooldownAlpha;
+                if (sliderVisual != null) sliderVisual.alpha = cooldownAlpha;
                 cooldownSlider.value = Mathf.Clamp01(1f - (cooldownTimer / floatCooldown));
             }
             
@@ -614,7 +615,7 @@ public class PlayerFloating : MonoBehaviour
         else if (cooldownSlider != null)
         {
             cooldownSlider.gameObject.SetActive(false);
-            sliderVisual.alpha = 1f;
+            if (sliderVisual != null) sliderVisual.alpha = 1f;
             cooldownSlider.value = 0f;
         }
     }
