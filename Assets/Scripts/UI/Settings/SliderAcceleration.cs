@@ -10,12 +10,14 @@ public class SliderAcceleration : MonoBehaviour
     [SerializeField] private InputActionReference navigateAction;
     
     [Header("Tuning")]
-    [SerializeField] private float baseUnitsPerSecond = 1.0f;
-    [SerializeField] private float accelerationDelay = 3.0f;
-    [SerializeField] private float accelerationMultiplier = 4.0f;
+    private static float baseUnitsPerSecond = 10.0f;
+    private static float accelerationDelay = 2.0f;
+    private static float timeToFullAcceleration = 2.0f;
+    private static float accelerationMultiplier = 15.0f;
     
     private Slider slider;
-    private float holdTimer;
+    private float holdTimer = 0.0f;
+    private float accelerationTimer = 0.0f;
     private Vector2 navValue = Vector2.zero;
 
     private void Awake()
@@ -39,11 +41,13 @@ public class SliderAcceleration : MonoBehaviour
         }
 
         holdTimer = 0.0f;
+        accelerationTimer = 0.0f;
     }
 
     private void OnDisable()
     {
         holdTimer = 0.0f;
+        accelerationTimer = 0.0f;
     }
 
     private void Update()
@@ -53,10 +57,6 @@ public class SliderAcceleration : MonoBehaviour
             || !EventSystem.current 
             || EventSystem.current.currentSelectedGameObject != gameObject)
         {
-            if (holdTimer > 0)
-            {
-                holdTimer = 0.0f;
-            }
             return;
         }
 
@@ -69,25 +69,51 @@ public class SliderAcceleration : MonoBehaviour
             navValue = Vector2.zero;
             Debug.LogError($"SliderAcceleration on {gameObject.name} does not have a Navigate Action Reference assigned.");
         }
-        
+    }
+
+    private void FixedUpdate()
+    {
+        if (!slider.interactable 
+            || !isActiveAndEnabled 
+            || !EventSystem.current 
+            || EventSystem.current.currentSelectedGameObject != gameObject)
+        {
+            if (holdTimer > 0)
+            {
+                holdTimer = 0.0f;
+            }
+
+            if (accelerationTimer > 0)
+            {
+                accelerationTimer = 0.0f;
+            }
+            return;
+        }
+
         float x = navValue.x;
         
         if (Mathf.Approximately(x, 0f))
         {
             holdTimer = 0.0f;
+            accelerationTimer = 0.0f;
             return;
         }
         
         holdTimer += Time.unscaledDeltaTime;
+        
+        float stepSize = Mathf.Pow(slider.maxValue - slider.minValue, 0.5f) / 10f;
 
-        float rate = baseUnitsPerSecond;
+        float rate = baseUnitsPerSecond * stepSize;
         
         if (holdTimer > accelerationDelay)
         {
-            rate = baseUnitsPerSecond *  accelerationMultiplier;
+            accelerationTimer += Time.unscaledDeltaTime;
+            float t = Mathf.Clamp01(accelerationTimer / timeToFullAcceleration);
+            
+            rate *= Mathf.Lerp(1.0f, accelerationMultiplier, t);
         }
 
-        float delta = x * Time.unscaledDeltaTime * rate;
+        float delta = Mathf.Sign(x) * Time.unscaledDeltaTime * rate;
         
         float next = Mathf.Clamp(slider.value + delta, slider.minValue, slider.maxValue);
 
