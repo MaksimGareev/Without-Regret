@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
 using UnityEngine.AI;
+using System.Collections;
 
 [RequireComponent(typeof(Rigidbody), typeof(Collider), typeof(SaveableWorldObject))]
 public class MoveableObject : MonoBehaviour, IInteractable
@@ -23,6 +24,7 @@ public class MoveableObject : MonoBehaviour, IInteractable
     [Min(0f), Tooltip("When the player is moving this object, the size of the collider used to check for collisions with the environment is multiplied by this factor.")]
     [SerializeField] private float collisionCheckSizeFactor = 1f;
     [SerializeField] private bool checkGrabPointCollisions = true;
+    [SerializeField] private float pickupCooldown = 1f;
 
     [Header("Transform Settings")]
     [SerializeField] private Vector3 heldPositionOffset = Vector3.zero;
@@ -34,6 +36,7 @@ public class MoveableObject : MonoBehaviour, IInteractable
     private Rigidbody rb;
     private PlayerMovingObjects mover;
     private NavMeshObstacle navMeshObstacle;
+    private bool onCooldown = false;
 
     public bool IsGrabbed { get; private set; } = false;
     public bool isGrabbable = true;
@@ -61,7 +64,7 @@ public class MoveableObject : MonoBehaviour, IInteractable
 
     public bool CanInteract(GameObject player)
     {
-        if (isGrabbable == false || NewDialogueManager.Instance.DialogueIsActive)
+        if (onCooldown || isGrabbable == false || NewDialogueManager.Instance.DialogueIsActive)
             return false;
 
         // Make sure player is facing toward the object by getting the Dot Product
@@ -124,6 +127,9 @@ public class MoveableObject : MonoBehaviour, IInteractable
 
     public void Release()
     {
+        onCooldown = true;
+        StartCoroutine(InteractionCooldown());
+
         IsGrabbed = false;
         transform.parent = null; // Unparent from grabpoint
         rb.constraints = RigidbodyConstraints.FreezeRotation;
@@ -137,6 +143,13 @@ public class MoveableObject : MonoBehaviour, IInteractable
         {
             navMeshObstacle.enabled = true;
         }
+    }
+
+    IEnumerator InteractionCooldown()
+    {
+        onCooldown = true;
+        yield return new WaitForSeconds(pickupCooldown);
+        onCooldown = false;
     }
 
     public void OnPlayerInteraction(GameObject player)

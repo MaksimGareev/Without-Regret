@@ -11,6 +11,7 @@ public class CameraLookTrigger : MonoBehaviour
     [SerializeField] private float holdDuration = 2.0f;
     [SerializeField] private bool disableCameraInputWhileLooking = true;
     [SerializeField] private bool disablePlayerInputWhileLooking = true;
+    [SerializeField] private bool autoReturn = false;
     [SerializeField] private bool onlyTriggerOnce = true;
 
     private CameraMovement cam;
@@ -36,8 +37,8 @@ public class CameraLookTrigger : MonoBehaviour
                 rotateDuration,
                 true,
                 true,
-                0f,
-                false);
+                holdDuration,
+                autoReturn);
 
             /*cam.LookAtSubject(target, cameraMoveTo: cameraMoveTo,
                 rotateDuration: rotateDuration, holdDuration: holdDuration, 
