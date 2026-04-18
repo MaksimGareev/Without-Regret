@@ -12,8 +12,8 @@ public class SliderAcceleration : MonoBehaviour
     [Header("Tuning")]
     private static float baseUnitsPerSecond = 10.0f;
     private static float accelerationDelay = 2.0f;
-    private static float timeToFullAcceleration = 2.0f;
-    private static float accelerationMultiplier = 15.0f;
+    private static float timeToFullAcceleration = 3.0f;
+    private static float accelerationMultiplier = 30.0f;
     
     private Slider slider;
     private float holdTimer = 0.0f;
