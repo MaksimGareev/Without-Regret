@@ -67,6 +67,13 @@ public class SceneLoadManager : MonoBehaviour
 
     public void LoadScene(string sceneName)
     {
+        if (isLoading)
+        {
+            Debug.LogWarning("SceneLoadManager: Loading is already in progress. Ignoring duplicate call to load level");
+            return;
+        }
+
+        isLoading = true;
         StartCoroutine(LoadSceneCoroutine(sceneName));
     }
 
@@ -77,7 +84,7 @@ public class SceneLoadManager : MonoBehaviour
         //Debug.Log("Fading in black screen");
         yield return FadeInBlackScreen();
         
-        isLoading = true;
+        //isLoading = true;
 
         //Debug.Log("Starting scene load");
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
