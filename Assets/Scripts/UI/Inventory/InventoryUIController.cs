@@ -45,6 +45,7 @@ public class InventoryUIController : MonoBehaviour
     private ItemData[,] slotItems;
 
     private GameObject currentSelectedSlot;
+    private GameObject lastValidSlotSelection;
     private Dictionary<GameObject, (int row, int col)> slotLookup = new Dictionary<GameObject, (int row, int col)>();
     
     private PlayerEquipItem playerEquipItem;
@@ -81,6 +82,7 @@ public class InventoryUIController : MonoBehaviour
     private void Setup()
     {
         InitializeSlots();
+        DisableTabButtonControllerNavigation();
         RefreshInventoryUI();
         EnableInventoryInput();
         SwitchTabs(currentTab);
@@ -98,17 +100,20 @@ public class InventoryUIController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        GameObject selectedGameObject = EventSystem.current.currentSelectedGameObject;
-        
-        if (selectedGameObject && slotLookup.ContainsKey(selectedGameObject) && selectedGameObject != currentSelectedSlot)
+        if (EventSystem.current == null || slotButtons == null)
         {
-            currentSelectedSlot = selectedGameObject;
-            OnSelectionChanged(currentSelectedSlot);
+            return;
         }
-        else if (selectedGameObject && selectedGameObject != currentSelectedSlot)
+
+        GameObject selectedGameObject = EventSystem.current.currentSelectedGameObject;
+
+        if (!IsSlotSelection(selectedGameObject))
         {
-            currentSelectedSlot = slotButtons[0, 0].gameObject;
-            OnSelectionChanged(currentSelectedSlot);
+            EnsureSlotGridSelection();
+        }
+        else if (selectedGameObject != currentSelectedSlot)
+        {
+            OnSelectionChanged(selectedGameObject);
         }
         
         // Switch tabs on input action triggered
@@ -171,7 +176,7 @@ public class InventoryUIController : MonoBehaviour
                     }
 
                     EventTrigger.Entry entryEnter = new EventTrigger.Entry { eventID = EventTriggerType.PointerEnter };
-                    entryEnter.callback.AddListener((_) => OnSelectionChanged(slotButtons[capturedRow, capturedCol].gameObject));
+                    entryEnter.callback.AddListener((_) => OnSlotPointerEnter(capturedRow, capturedCol));
                     trigger.triggers.Add(entryEnter);
 
                     EventTrigger.Entry entryExit = new EventTrigger.Entry { eventID = EventTriggerType.PointerExit };
@@ -303,6 +308,9 @@ public class InventoryUIController : MonoBehaviour
     private void OnSelectionChanged(GameObject selectedSlot)
     {
         if (!selectedSlot || !slotLookup.ContainsKey(selectedSlot)) return;
+
+        currentSelectedSlot = selectedSlot;
+        lastValidSlotSelection = selectedSlot;
         
         var (selectedRow, selectedCol) = slotLookup[selectedSlot];
         
@@ -380,8 +388,8 @@ public class InventoryUIController : MonoBehaviour
                 // keyItemsTabButton.GetComponent<SelectableHighlighting>()?.RemoveHighlight(true);
             }
         }
-        
-        OnSelectionChanged(currentSelectedSlot);
+
+        EnsureSlotGridSelection();
     }
 
     private void OnDisable()
@@ -417,8 +425,8 @@ public class InventoryUIController : MonoBehaviour
         }
         
         uiInputModule.move = inventoryMoveAction;
-        
-        EventSystem.current.SetSelectedGameObject(slotButtons[0, 0].gameObject);
+
+        EnsureSlotGridSelection();
     }
 
     public void DisableInventoryInput()
@@ -437,5 +445,62 @@ public class InventoryUIController : MonoBehaviour
         }
         
         EventSystem.current.SetSelectedGameObject(null);
+    }
+
+    private bool IsSlotSelection(GameObject selectedGameObject)
+    {
+        return selectedGameObject && slotLookup.ContainsKey(selectedGameObject);
+    }
+
+    private GameObject GetFallbackSlotSelection()
+    {
+        if (IsSlotSelection(lastValidSlotSelection))
+        {
+            return lastValidSlotSelection;
+        }
+
+        return slotButtons[0, 0] ? slotButtons[0, 0].gameObject : null;
+    }
+
+    private void EnsureSlotGridSelection()
+    {
+        if (EventSystem.current == null || slotButtons == null)
+        {
+            return;
+        }
+
+        GameObject fallbackSlot = GetFallbackSlotSelection();
+        if (!fallbackSlot)
+        {
+            return;
+        }
+
+        if (EventSystem.current.currentSelectedGameObject != fallbackSlot)
+        {
+            EventSystem.current.SetSelectedGameObject(fallbackSlot);
+        }
+
+        if (currentSelectedSlot != fallbackSlot)
+        {
+            OnSelectionChanged(fallbackSlot);
+        }
+    }
+
+    private void DisableTabButtonControllerNavigation()
+    {
+        DisableSelectableNavigation(keyItemsTabButton);
+        DisableSelectableNavigation(otherItemsTabButton);
+    }
+
+    private static void DisableSelectableNavigation(Selectable selectable)
+    {
+        if (!selectable)
+        {
+            return;
+        }
+
+        Navigation navigation = selectable.navigation;
+        navigation.mode = Navigation.Mode.None;
+        selectable.navigation = navigation;
     }
 }
