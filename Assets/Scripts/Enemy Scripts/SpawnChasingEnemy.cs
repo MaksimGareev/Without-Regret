@@ -6,6 +6,8 @@ public class SpawnChasingEnemy : MonoBehaviour
     public string hintMessage = "Hurry Echo that thing is still chasing after Darry we need to help him!";
     public bool hasPassed = false;
 
+    public bool enableChimeHint;
+
     private void Start()
     {
         Enemy.SetActive(false);
@@ -30,7 +32,7 @@ public class SpawnChasingEnemy : MonoBehaviour
             if (hasPassed == false)
             {
                 ChimeHintUI hintUI = FindFirstObjectByType<ChimeHintUI>();
-                if (hintUI != null)
+                if (hintUI != null && enableChimeHint)
                 {
                     hintUI.ShowHintMessage(hintMessage);
                 }

@@ -26,6 +26,16 @@ public class ProtectedNPC : MonoBehaviour
 
         }
 
+        if (NewDialogueManager.Instance.DialogueIsActive)
+        {
+            agent.isStopped = true;
+            return;
+        }
+        else
+        {
+            agent.isStopped = false;
+        }
+
         // If agent reached its destination
         if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
         {
