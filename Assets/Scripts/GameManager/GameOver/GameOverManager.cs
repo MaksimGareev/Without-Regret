@@ -36,6 +36,7 @@ public class GameOverManager : MonoBehaviour
         if (Instance != null && Instance != this)
         {
             Destroy(this.gameObject);
+            return;
         }
         else
         {
@@ -315,11 +316,13 @@ public class GameOverManager : MonoBehaviour
 
     private void OnSceneLoaded()
     {
-        if (TimerRingUI.Instance != null && TimerRingUI.Instance.currentRingState != TimerRingUI.RingState.Empty)
-        {
-            isGameOver = false;
-            DisableGameOverUI();
-        }
+        isGameOver = false;
+        DisableGameOverUI();
+        
+        // if (TimerRingUI.Instance != null && TimerRingUI.Instance.currentRingState != TimerRingUI.RingState.Empty)
+        // {
+        //     
+        // }
     }
 
     public void TriggerGameOver()
