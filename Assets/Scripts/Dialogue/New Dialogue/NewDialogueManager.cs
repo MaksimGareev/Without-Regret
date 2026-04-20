@@ -61,6 +61,7 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
     public Image NPCPortraitBG;
     public Image ChoiceSliderOutline;
     public Image ChoiceSliderBackground;
+    [SerializeField] private float colorTransitionTime = 0.25f;
 
     [Header("Player Portrait")]
     [Tooltip("Copy image of the players UI")]
@@ -78,6 +79,7 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
 
     [Header("Audio")]
     [SerializeField] AudioSource typingSource;
+    [SerializeField] private AudioSource sfxSource;
     [Tooltip("Audio clips of each letter A-Z")]
     [SerializeField] List<AudioClip> letterClips;
     [SerializeField] private float minTimeBetweenSounds = 0.5f;
@@ -131,6 +133,7 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
     Coroutine typingRoutine;
     Coroutine timerRoutine;
     Coroutine portraitRoutine;
+    Coroutine colorRoutine;
 
     private bool cameraWasUsed = false;
 
@@ -145,6 +148,8 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
     private PlayerController playerController;
     private CameraMovement cam;
     PlayerControls controls;
+
+    private bool isHoldingConfirm;
 
     private void Awake()
     {
@@ -180,6 +185,8 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
     void SetupInput()
     {
         controls.Dialogue.Confirm.performed += _ => OnConfirmPressed();
+        controls.Dialogue.Confirm.performed += _ => isHoldingConfirm = true;
+        controls.Dialogue.Confirm.canceled += _ => isHoldingConfirm = false;
     }
 
     // Build the dictionary of dialogue letter sounds
@@ -215,25 +222,53 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
         if (set == null)
         {
             Debug.LogWarning($"No color set found for {speaker}");
+            return;
         }
 
-        // Check if main dialogue box background color is missing
-        if (dialogueBoxBG != null)
+        // stop previous transition if running
+        if (colorRoutine != null)
         {
-            dialogueBoxBG.color = set.dialogueBoxColor;
-            
-            ChoiceSliderBackground.color = set.dialogueBoxColor;
-            ChoiceSliderOutline.color = set.dialogueBoxColor;
+            StopCoroutine(colorRoutine);
         }
-        // Check if NPC name background color is missing
-        if (NPCNameBG != null)
+
+        colorRoutine = StartCoroutine(TransitionColors(set));
+
+    }
+
+    IEnumerator TransitionColors(NPCColorSet set)
+    {
+        float t = 0f;
+
+        // cache starting colors
+        Color startDialogue = dialogueBoxBG.color;
+        Color startName = NPCNameBG.color;
+        Color startPortrait = NPCPortraitBG.color;
+        Color startSliderBG = ChoiceSliderBackground.color;
+        Color startSliderOutline = ChoiceSliderOutline.color;
+
+        while (t < colorTransitionTime)
         {
-            NPCNameBG.color = set.nameBGColor;
-        }
-        // Check if NPC portrait background color is missing
-        if (NPCPortraitBG != null)
-        {
-            NPCPortraitBG.color = set.portraitBGColor;
+            t += Time.deltaTime;
+            float lerp = t / colorTransitionTime;
+
+            if (dialogueBoxBG != null)
+            {
+                dialogueBoxBG.color = Color.Lerp(startDialogue, set.dialogueBoxColor, lerp);
+                ChoiceSliderBackground.color = Color.Lerp(startSliderBG, set.dialogueBoxColor, lerp);
+                ChoiceSliderOutline.color = Color.Lerp(startSliderOutline, set.dialogueBoxColor, lerp);
+            }
+
+            if (NPCNameBG != null)
+            {
+                NPCNameBG.color = Color.Lerp(startName, set.nameBGColor, lerp);
+            }
+
+            if (NPCPortraitBG != null)
+            {
+                NPCPortraitBG.color = Color.Lerp(startPortrait, set.portraitBGColor, lerp);
+            }
+
+            yield return null;
         }
     }
 
@@ -336,6 +371,15 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
 
         SetNPCColors(currentLine.Speaker);
 
+        // Play sound effect at start of line
+        if (currentLine.playSFXOnstart && currentLine.SFX != null)
+        {
+            if (sfxSource != null)
+            {
+                sfxSource.PlayOneShot(currentLine.SFX);
+            }
+        }
+
         // set portrait and voice of speaker
         SetNPCPortrait(currentLine.lineTone);
         if (activeDialogueTrigger != null && activeDialogueTrigger.faceHandler != null) //Calls the faceHandler to display same expression as the NPC Portrait
@@ -383,20 +427,23 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
             PlayTypingSound(c);
 
             // create a small delay for punctuation
-            float delay = .035f;
+            float baseDelay = .035f;
+            float fastDelay = 0.008f;
+
+            float delay = (line.cannotSkip && isHoldingConfirm) ? fastDelay : baseDelay;
 
             switch (c)
             {
                 case '.':
                 case '!':
                 case '?':
-                    delay += 0.25f;
+                    delay += (line.cannotSkip && isHoldingConfirm) ? 0.05f : 0.25f;
                     break;
 
                 case ',':
                 case ';':
                 case ':':
-                    delay += 0.12f;
+                    delay += (line.cannotSkip && isHoldingConfirm) ? 0.05f : 0.12f;
                     break;
             }
 

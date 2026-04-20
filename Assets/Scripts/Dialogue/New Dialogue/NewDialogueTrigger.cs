@@ -318,7 +318,8 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
             StartCoroutine(MovePlayerToPosition());
         }
 
-        FaceTarget(player, transform);
+        //FaceTarget(player, transform);
+        LookAtPlayer();
 
         isLookingAtPlayer = true;
         if (IsMediation)

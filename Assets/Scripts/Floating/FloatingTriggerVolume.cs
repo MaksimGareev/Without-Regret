@@ -39,6 +39,12 @@ public class FloatingTriggerVolume : MonoBehaviour, IInteractable
     {
         if (player == null) return false;
 
+        var interacting = player.GetComponent<PlayerInteracting>();
+        if (interacting != null && interacting.IsHoldingObject())
+        {
+            return false;
+        }
+
         if (playerFloating == null)
         {
             playerFloating = player.GetComponent<PlayerFloating>();
@@ -72,8 +78,34 @@ public class FloatingTriggerVolume : MonoBehaviour, IInteractable
         {
             player = other.gameObject;
             playerFloating = player.GetComponent<PlayerFloating>();
+
+            var interacting = player.GetComponent<PlayerInteracting>();
+
+            if (interacting != null && interacting.IsHoldingObject())
+            {
+                playerFloating.SetCanFloat(false);
+                return;
+            }
+
             playerFloating.SetCanFloat(true);
             playerInRange = true;
+        }
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            var interacting = other.GetComponent<PlayerInteracting>();
+
+            if (interacting != null && interacting.IsHoldingObject())
+            {
+                playerFloating.SetCanFloat(false);
+            }
+            else
+            {
+                playerFloating.SetCanFloat(true);
+            }
         }
     }
 

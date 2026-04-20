@@ -18,6 +18,9 @@ public class Barry : MonoBehaviour
 
     public string npcName = "Barry";
 
+    private InteractableProximity proximityScript;
+    private Collider proximityCollider;
+
     private void Awake()
     {
         foreach (Renderer r in GetComponentsInChildren<Renderer>())
@@ -56,7 +59,44 @@ public class Barry : MonoBehaviour
                 animator.SetBool("isWalking", isMoving);
                 animator.SetBool("isIdle", !isMoving);
             }
+
+            // disable dialogue trigger when following
+            if (dialogueTrigger != null && dialogueTrigger.enabled)
+            {
+                dialogueTrigger.enabled = false;
+
+                Collider col = dialogueTrigger.GetComponent<Collider>();
+                if (col != null)
+                {
+                    col.enabled = false;
+                }
+                Debug.Log("Irene's dialogue trigger has been deactivated.");
+            }
+
+            if (proximityScript != null && proximityScript.enabled)
+            {
+                proximityScript.enabled = false;
+
+                if (proximityCollider != null)
+                {
+                    proximityCollider.enabled = false;
+                }
+            }
+
         }
+        else
+        {
+            if (proximityScript != null && !proximityScript.enabled)
+            {
+                proximityScript.enabled = true;
+
+                if (proximityCollider != null)
+                {
+                    proximityCollider.enabled = true;
+                }
+            }
+        }
+
         /*else if (arrived && lookAtTarget != null)
         {
             LookAtObject();
