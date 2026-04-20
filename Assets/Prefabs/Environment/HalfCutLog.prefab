@@ -2852,10 +2852,15 @@ MonoBehaviour:
   staminaReduction: 0.35
   dotProductThreshold: 0.4
   maxGrabDistance: 2.5
+  snapToGrabPoint: 0
   allowSprint: 1
   requiredItem: {fileID: 0}
-  collisionCheckSizeFactor: 0.5
+  collisionCheckSizeFactor: 0.8
   checkGrabPointCollisions: 1
+  checkCollisionsOnRelease: 0
+  checkCollisionsOnRotation: 1
+  checkCollisionsOnMovement: 1
+  pickupCooldown: 0.5
   heldPositionOffset: {x: 0, y: 0, z: 0}
   setHeldRotation: 0
   heldRotation: {x: 0, y: 0, z: 0}
