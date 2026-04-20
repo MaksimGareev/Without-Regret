@@ -79,7 +79,7 @@ public class PossessedEnemyResisting : MonoBehaviour
         
 
         rb.AddForce(direction * 6, ForceMode.Impulse);
-        yield return new WaitForSecondsRealtime(2f);
+        yield return new WaitForSecondsRealtime(1f);
         Agent.enabled = true;
         rb.useGravity = false;
         collider.isTrigger = true;
