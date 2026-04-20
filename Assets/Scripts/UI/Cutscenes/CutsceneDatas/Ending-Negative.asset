@@ -1,0 +1,57 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84bc8b7b4e1963c4fba94977599534a1, type: 3}
+  m_Name: Ending-Negative
+  m_EditorClassIdentifier: Assembly-CSharp::CutsceneData
+  clips:
+  - backgroundType: 2
+    backgroundImage: {fileID: 0}
+    solidColor: {r: 0, g: 0, b: 0, a: 0}
+    duration: 3
+    autoContinue: 0
+    canSkipClipEarly: 0
+    dialogueLine:
+      Speaker: 
+      NPCGender: 1
+      text: ...
+    clipSoundEffect: {fileID: 0}
+    soundEffectVolume: 1
+  - backgroundType: 2
+    backgroundImage: {fileID: 0}
+    solidColor: {r: 0, g: 0, b: 0, a: 1}
+    duration: 3
+    autoContinue: 0
+    canSkipClipEarly: 0
+    dialogueLine:
+      Speaker: 
+      NPCGender: 1
+      text: ...no...watch out...
+    clipSoundEffect: {fileID: 0}
+    soundEffectVolume: 1
+  - backgroundType: 2
+    backgroundImage: {fileID: 0}
+    solidColor: {r: 0, g: 0, b: 0, a: 1}
+    duration: 9
+    autoContinue: 1
+    canSkipClipEarly: 0
+    dialogueLine:
+      Speaker: 
+      NPCGender: 1
+      text: ...
+    clipSoundEffect: {fileID: 8300000, guid: c8f9ba61e40921f47beb72f95ea2de22, type: 3}
+    soundEffectVolume: 1
+  canSkipEntireCutscene: 0
+  backgroundMusic: {fileID: 8300000, guid: 619550a60a9780d418717bd7f4202e00, type: 3}
+  musicVolume: 1
+  onCutsceneCompleted:
+    m_PersistentCalls:
+      m_Calls: []
