@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using System.Collections;
 
-public class Penelope : MonoBehaviour
+public class EchoNPC : MonoBehaviour
 {
     public float Speed = 3f;      // movement speed
     public float RotationSpeed = 3f;    // how fast the NPC rotates
@@ -17,41 +17,51 @@ public class Penelope : MonoBehaviour
     public Animator animator;
     [SerializeField] private bool isScared = false;
 
+    public string npcName = "Echo";
 
-    public string npcName = "Penelope";
+    private void Awake()
+    {
+        foreach (Renderer r in GetComponentsInChildren<Renderer>())
+        {
+            Material[] mats = r.materials;
+            for (int i = 0; i < mats.Length; i++)
+            {
+                // Create a unique instance for runtime changes
+                mats[i] = new Material(mats[i]);
+            }
+            r.materials = mats;
+        }
+    }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        // agent.updateRotation = false;
-
-        if (!animator)
-        {
-            Debug.LogError($"{this.name} has no animator assigned to the Penelope script");
-        }
         if (isScared)
         {
             animator.SetBool("isScared", true);
             animator.SetBool("isIdle", true);
         }
+        // agent.updateRotation = false;
 
-
+        if (!animator)
+        {
+            Debug.LogError($"{this.name} has no animator assigned to the Echo script");
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        bool isMoving = agent.velocity.sqrMagnitude > 0.05f;
-
-        if (animator)
-        {
-            animator.SetBool("isWalking", isMoving);
-            animator.SetBool("isIdle", !isMoving);
-        }
-
         if (isTraveling)
         {
             TravelToTarget();
+            bool isMoving = agent.velocity.sqrMagnitude > 0.05f;
+
+            if (animator)
+            {
+                animator.SetBool("isWalking", isMoving);
+                animator.SetBool("isIdle", !isMoving);
+            }
         }
         /*else if (arrived && lookAtTarget != null)
         {
@@ -60,6 +70,8 @@ public class Penelope : MonoBehaviour
     }
     public void StartTravel()
     {
+        if (!targetSpot || !agent) return;
+
         if (animator)
         {
             animator.SetBool("isTalking", false);
@@ -74,14 +86,14 @@ public class Penelope : MonoBehaviour
         }
 
         agent.SetDestination(targetSpot.position);
-        Debug.Log("Penelope is now traveling to her destination");
+        Debug.Log("Echo is now traveling to her destination");
     }
 
     public void TravelToTarget()
     {
         if (targetSpot == null)
         {
-            Debug.Log("There is no target for Penelope to go to");
+            Debug.Log("There is no target for Echo to go to");
             return;
         }
 
@@ -108,7 +120,7 @@ public class Penelope : MonoBehaviour
         {
             isTraveling = false;
             arrived = true;
-            Debug.Log("Penelope reached the destination.");
+            Debug.Log("Echo reached the destination.");
         }
     }
 
@@ -196,7 +208,7 @@ public class Penelope : MonoBehaviour
             agent.enabled = false;
             StartCoroutine(DissolveOut(1.5f));
             //ObjectiveManager.Instance.AddProgress(linkedHouseObjective.objectiveID, 1);
-            Debug.Log("Penelope has reached the door.");
+            Debug.Log("Echo has reached the door.");
         }
     }
 
