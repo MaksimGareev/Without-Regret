@@ -222,7 +222,7 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
         {
             moralitySlider.minValue = minMorality;
             moralitySlider.maxValue = maxMorality;
-            moralitySlider.value = 0;
+            moralitySlider.value = playerMorality;
         }
 
         if (moralitySliderGroup != null)
@@ -686,19 +686,18 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
         }
     }
 
-    void UpdateMoralitySlider(int newValue, int change)
+    void UpdateMoralitySlider(int startValue, int endValue)
     {
-        targetMoralityValue = newValue;
 
         if (moralitySliderRoutine != null)
         {
             StopCoroutine(moralitySliderRoutine);
         }
 
-        moralitySliderRoutine = StartCoroutine(MoralitySliderRoutine(change));
+        moralitySliderRoutine = StartCoroutine(MoralitySliderRoutine(startValue, endValue));
     }
 
-    IEnumerator MoralitySliderRoutine(int change)
+    IEnumerator MoralitySliderRoutine(int startValue, int endValue)
     {
         moralitySliderGroup.gameObject.SetActive(true);
 
@@ -712,11 +711,11 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
         }
 
         // set center baseline first
-        moralitySlider.value = 0f;
-
+        moralitySlider.value = startValue;
+        /*
         float start = 0f;
         float end = Mathf.Clamp(change, -maxMorality, maxMorality);
-
+        */
         // animate movemnt
         t = 0f;
         while (t < sliderMoveTime)
@@ -724,12 +723,12 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
             t += Time.deltaTime;
             float lerp = t / sliderMoveTime;
 
-            moralitySlider.value = Mathf.Lerp(start, end, lerp);
+            moralitySlider.value = Mathf.Lerp(startValue, endValue, lerp);
 
             yield return null;
         }
 
-        moralitySlider.value = end;
+        moralitySlider.value = endValue;
 
         yield return new WaitForSeconds(sliderHoldTime);
 
@@ -797,9 +796,12 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
     // apply morality change of selected answer choice
     void ApplyMorality(int change)
     {
-        UpdateMoralitySlider(playerMorality, change);
+        int oldMorality = playerMorality;
 
         playerMorality += change;
+        playerMorality = Mathf.Clamp(playerMorality, minMorality, maxMorality);
+
+        UpdateMoralitySlider(oldMorality, playerMorality);
 
         // clamp morality between min and max
         playerMorality = Mathf.Clamp(playerMorality, minMorality, maxMorality);
@@ -1061,56 +1063,6 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
         spawnedChoices.Clear();
     }
 
-    /*
-    // show pop up message of morality change and current total morality
-    void ShowPopup(string msg)
-    {
-        popupText.text = msg;
-        popupText.alpha = 1f;
-        popupText.gameObject.SetActive(true);
-
-        if (popupBackground != null)
-        {
-            CanvasGroup bgGroup = popupBackground.GetComponent<CanvasGroup>();
-            if (!bgGroup)
-            {
-                bgGroup = popupBackground.AddComponent<CanvasGroup>();
-            }
-            bgGroup.alpha = 1f;
-            popupBackground.SetActive(true);
-        }
-        StartCoroutine(FadePopup());
-    }
-
-    // make pop up fade away after selection
-    IEnumerator FadePopup()
-    {
-        yield return new WaitForSeconds(1f);
-
-        CanvasGroup bgGroup = popupBackground.GetComponent<CanvasGroup>();
-        float t = 0;
-        float fadeDuration = 1f;
-        while (t < fadeDuration)
-        {
-            t += Time.deltaTime;
-            float alpha = Mathf.Lerp(1f, 0f, t / fadeDuration);
-            popupText.alpha = alpha;
-
-            if (bgGroup != null)
-            {
-                bgGroup.alpha = alpha;
-            }
-
-            yield return null;
-        }
-
-        popupText.gameObject.SetActive(false);
-        if (popupBackground != null)
-        {
-            popupBackground.SetActive(false);
-        }
-    }
-    */
     // end the current dialogue instance
     public void EndDialogue()
     {
@@ -1160,6 +1112,10 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
     {
         PlayerPrefs.SetInt("Morality", data.playerMorality);
         playerMorality = Mathf.Clamp(data.playerMorality, minMorality, maxMorality);
+        if (moralitySlider != null)
+        {
+            moralitySlider.value = playerMorality;
+        }
         Debug.Log("Player morality loaded : " + PlayerPrefs.GetInt("Morality"));
     }
 
