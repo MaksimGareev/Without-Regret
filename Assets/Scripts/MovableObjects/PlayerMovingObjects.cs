@@ -1,6 +1,7 @@
-using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
+using static UnityEditor.PlayerSettings;
 
 public class PlayerMovingObjects : MonoBehaviour
 {
@@ -12,9 +13,7 @@ public class PlayerMovingObjects : MonoBehaviour
     [Header("Debugging")]
     [SerializeField] private bool showDebugLogs = false;
 
-    //[Header("Animator Settings")]
     private bool isGrabbing;
-
     private PlayerController playerController;
     private PlayerMantling playerMantling;
     private float normalMoveSpeed;
@@ -137,8 +136,6 @@ public class PlayerMovingObjects : MonoBehaviour
         ResetAnimations();
     }
 
-
-
     private void ResetAnimations()
     {
         if (showDebugLogs) Debug.Log("Reset animations");
@@ -153,18 +150,19 @@ public class PlayerMovingObjects : MonoBehaviour
         animator = newAnimator;
     }
 
-
     // Returns true if any objects are currently held
     public bool IsOccupied() => movedObjects.Count > 0;
 
     // Predict whether moving the player by 'delta' (world-space) would cause any held object to overlap environment colliders.
     // This uses the held object's world bounds as an approximate test (OverlapBox).
-    public bool CanMoveBy(Vector3 delta)
+    public bool CanMoveByPosition(Vector3 delta)
     {
         if (!IsOccupied()) return true;
 
         foreach (var obj in movedObjects)
         {
+            if (!obj.CheckMovement) continue;
+
             Collider col = obj.ObjectCollider;
             if (col == null) continue;
 
@@ -187,7 +185,7 @@ public class PlayerMovingObjects : MonoBehaviour
                 // Any other hit means we'd clip into something
                 if (showDebugLogs)
                 {
-                    Debug.Log($"CanMoveBy: movement blocked by {hit.name} (held object {obj.name} would overlap)");
+                    Debug.Log($"CanMoveByPosition: movement blocked by {hit.name} (held object {obj.name} would overlap)");
                 }
                 return false;
             }
@@ -195,4 +193,98 @@ public class PlayerMovingObjects : MonoBehaviour
 
         return true;
     }
+
+    public bool CanMoveByRotation(Quaternion targetRotation)
+    {
+        if (!IsOccupied()) return true;
+
+        foreach (var obj in movedObjects)
+        {
+            if (!obj.CheckRotation) continue;
+
+            Collider col = obj.ObjectCollider;
+            if (col == null) continue;
+
+            Vector3 simulatedPosition = SimulateWorldPosition(transform, targetRotation, grabPoint, obj.transform.localPosition);
+            Quaternion simulatedRotation = SimulateWorldRotation(targetRotation, grabPoint, obj.transform.localRotation);
+
+            Collider[] hits = new Collider[8];
+            Physics.OverlapSphereNonAlloc(obj.transform.position, 5f, hits, ~ignoreCollisionLayer, QueryTriggerInteraction.Ignore);
+
+            foreach (var hit in hits)
+            {
+                if (hit == null) continue;
+                if (hit == col) continue;
+                if (hit.transform == null) continue;
+                // ignore any colliders that belong to the player (so player's own collider won't block)
+                if (hit.transform.IsChildOf(transform)) continue;
+                // ignore the held object hierarchy
+                if (hit.transform.IsChildOf(obj.transform)) continue;
+
+                if (Physics.ComputePenetration(
+                    col, simulatedPosition, simulatedRotation,
+                    hit, hit.transform.position, hit.transform.rotation,
+                    out Vector3 _, out float _))
+                {
+                    if (showDebugLogs)
+                    {
+                        Debug.Log($"CanMoveByRotation: movement blocked by {hit.name} (held object {obj.name} would overlap)");
+                    }
+                    return false;
+                }
+            }
+        }
+
+        return true;
+
+        //foreach (var obj in movedObjects)
+        //{
+        //    Collider col = obj.ObjectCollider;
+        //    if (col == null) continue;
+
+        //    // compute the target bounds after moving player by delta (held object moves with player as it's parented to grab point)
+        //    Bounds b = col.bounds;
+        //    Vector3 targetCenter = b.center;
+        //    Vector3 extents = b.extents * obj.CollisionCheckSizeFactor; // adjust the size of the box used for checking collisions based on the object's setting
+        //    Quaternion rotation = targetRotation;
+
+        //    // Query for overlapping colliders at the target location
+        //    Collider[] hits = Physics.OverlapBox(targetCenter, extents, rotation, ~ignoreCollisionLayer, QueryTriggerInteraction.Ignore);
+        //    foreach (var hit in hits)
+        //    {
+        //        if (hit == col) continue; // ignore self
+        //        // ignore any colliders that belong to the player (so player's own collider won't block)
+        //        if (hit.transform.IsChildOf(transform)) continue;
+        //        // ignore the held object hierarchy
+        //        if (hit.transform.IsChildOf(obj.transform)) continue;
+
+        //        // Any other hit means we'd clip into something
+        //        if (showDebugLogs)
+        //        {
+        //            Debug.Log($"CanMoveByRotation: movement blocked by {hit.name} (held object {obj.name} would overlap)");
+        //        }
+        //        return false;
+        //    }
+        //}
+
+        //return true;
+    }
+
+    // Helpers for calculating collision clipping
+    Vector3 SimulateWorldPosition(Transform player, Quaternion playerTargetRotation, Transform grabPoint, Vector3 objectLocalPos)
+    {
+        Vector3 grabWorldPos = playerTargetRotation * grabPoint.localPosition + player.position;
+
+        Quaternion grabWorldRot = playerTargetRotation * grabPoint.localRotation;
+
+        return grabWorldPos + grabWorldRot * objectLocalPos;
+    }
+
+    Quaternion SimulateWorldRotation(Quaternion playerTargetRotation, Transform grabPoint, Quaternion objectLocalRot)
+    {
+        Quaternion grabWorldRot = playerTargetRotation * grabPoint.localRotation;
+
+        return grabWorldRot * objectLocalRot;
+    }
+
 }
