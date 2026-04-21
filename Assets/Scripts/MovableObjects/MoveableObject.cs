@@ -207,7 +207,7 @@ public class MoveableObject : MonoBehaviour, IInteractable
             }
 
             // Can't grab if an item is equipped
-            if (PlayerComponents.playerEquipItem != null && PlayerComponents.playerEquipItem.currentEquippedItem != null)
+            if (PlayerComponents.playerEquipItem != null && PlayerComponents.playerEquipItem.currentEquippedItem != null || !mover.canPickUp)
             {
                 Debug.LogWarning("Player tried to grab an object while having an item equipped.");
                 return;
@@ -219,6 +219,7 @@ public class MoveableObject : MonoBehaviour, IInteractable
             mover.OnMovingObject(this);
             interacting.SetHeldObject(this);
         }
+        // else if (mover.canPlace)
         else if (checkCollisionsOnRelease && collisions.Count > 0)
         {
             Debug.Log("Can't release object here due to a collision.");

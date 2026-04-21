@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using System.Collections;
 
-public class Barry : MonoBehaviour
+public class Lydia : MonoBehaviour
 {
     public float Speed = 3f;      // movement speed
     public float RotationSpeed = 3f;    // how fast the NPC rotates
@@ -15,9 +15,8 @@ public class Barry : MonoBehaviour
     public NavMeshAgent agent;
 
     public Animator animator;
-    [SerializeField] private bool startInConversation = false;
 
-    public string npcName = "Barry";
+    public string npcName = "Lydia";
 
     private void Awake()
     {
@@ -42,12 +41,6 @@ public class Barry : MonoBehaviour
         {
             Debug.LogError($"{this.name} has no animator assigned to the Barry script");
         }
-        if (startInConversation)
-        {
-            animator.SetBool("isIdle", true);
-            animator.SetBool("isTalking", true);
-            animator.SetBool("Talk1", true);
-        }
     }
 
     // Update is called once per frame
@@ -57,7 +50,7 @@ public class Barry : MonoBehaviour
         {
             TravelToTarget();
             bool isMoving = agent.velocity.sqrMagnitude > 0.05f;
-            
+
             if (animator)
             {
                 animator.SetBool("isWalking", isMoving);
@@ -72,12 +65,12 @@ public class Barry : MonoBehaviour
     public void StartTravel()
     {
         if (!targetSpot || !agent) return;
-        
+
         if (animator)
         {
             animator.SetBool("isTalking", false);
         }
-        
+
         //IsFollowing = false;
         isTraveling = true;
         arrived = false;
@@ -85,16 +78,16 @@ public class Barry : MonoBehaviour
         {
             dialogueTrigger.isLookingAtPlayer = false;
         }
-        
+
         agent.SetDestination(targetSpot.position);
-        Debug.Log("Barry is now traveling to her destination");
+        Debug.Log("Lydia is now traveling to her destination");
     }
 
     public void TravelToTarget()
     {
         if (targetSpot == null)
         {
-            Debug.Log("There is no target for Barry to go to");
+            Debug.Log("There is no target for Lydia to go to");
             return;
         }
 
@@ -121,7 +114,7 @@ public class Barry : MonoBehaviour
         {
             isTraveling = false;
             arrived = true;
-            Debug.Log("Barry reached the destination.");
+            Debug.Log("Lydia reached the destination.");
         }
     }
 
@@ -139,7 +132,7 @@ public class Barry : MonoBehaviour
         foreach (Renderer r in renderers)
         {
             Material[] mats = r.materials;
-            for (int i = 0; i <mats.Length; i++)
+            for (int i = 0; i < mats.Length; i++)
             {
                 // Change surface type to transparent so alpha will work
                 if (mats[i].HasProperty("_Surface"))
@@ -171,7 +164,7 @@ public class Barry : MonoBehaviour
         while (time < duration)
         {
             float alpha = Mathf.Lerp(1f, 0f, time / duration);
-            
+
             for (int i = 0; i < renderers.Length; i++)
             {
                 Material[] mats = renderers[i].materials;
@@ -209,11 +202,11 @@ public class Barry : MonoBehaviour
             agent.enabled = false;
             StartCoroutine(DissolveOut(1.5f));
             //ObjectiveManager.Instance.AddProgress(linkedHouseObjective.objectiveID, 1);
-            Debug.Log("Barry has reached the door.");
+            Debug.Log("Lydia has reached the door.");
         }
     }
 
-   public bool NPCNameMatches(string name)
+    public bool NPCNameMatches(string name)
     {
         return string.Equals(npcName, name, System.StringComparison.OrdinalIgnoreCase);
     }

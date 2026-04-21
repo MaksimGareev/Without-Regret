@@ -14,6 +14,12 @@ public class PlayerMovingObjects : MonoBehaviour
     [SerializeField] private bool showDebugLogs = false;
 
     private bool isGrabbing;
+
+    [Tooltip("Determines if player can pick up an object")] 
+    public bool canPickUp = true;
+    [Tooltip("Determines if player can place down an object")] 
+    public bool canPlace;
+
     private PlayerController playerController;
     private PlayerMantling playerMantling;
     private float normalMoveSpeed;
@@ -26,6 +32,7 @@ public class PlayerMovingObjects : MonoBehaviour
 
     private void Awake()
     {
+        canPickUp = true;
         characterSwap = FindFirstObjectByType<CharacterSwap>();
 
         if (characterSwap != null)
@@ -115,6 +122,8 @@ public class PlayerMovingObjects : MonoBehaviour
 
     IEnumerator Pickup()
     {
+        canPlace = false; //Prevent player from placing down or picking up during pickup animation
+        canPickUp = false;
         animator.SetTrigger("pickup");
         Debug.Log("Picking up!");
         playerController.DisableInput();
@@ -122,10 +131,14 @@ public class PlayerMovingObjects : MonoBehaviour
         yield return new WaitForSeconds(1.5f);
         playerController.EnableInput();
         playerMantling.canMantle = true;
+        canPlace = true; //Allow player to place down objects
+        animator.ResetTrigger("pickup"); //Safety pickup trigger reset
     }
 
     IEnumerator PlaceDown()
     {
+        canPickUp = false; //Prevent player from placing down or picking up during Placing animation
+        canPlace = false;
         animator.SetTrigger("placing");
         Debug.Log("Placing down!");
         playerController.DisableInput();
@@ -134,6 +147,8 @@ public class PlayerMovingObjects : MonoBehaviour
         playerController.EnableInput();
         playerMantling.canMantle = true;
         ResetAnimations();
+        canPickUp = true; //Allow player to pick up objects
+        animator.ResetTrigger("placing"); //Safety place trigger reset
     }
 
     private void ResetAnimations()

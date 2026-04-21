@@ -15,6 +15,8 @@ public class Penelope : MonoBehaviour
     public NavMeshAgent agent;
 
     public Animator animator;
+    [SerializeField] private bool isScared = false;
+
 
     public string npcName = "Penelope";
 
@@ -27,6 +29,13 @@ public class Penelope : MonoBehaviour
         {
             Debug.LogError($"{this.name} has no animator assigned to the Penelope script");
         }
+        if (isScared)
+        {
+            animator.SetBool("isScared", true);
+            animator.SetBool("isIdle", true);
+        }
+
+
     }
 
     // Update is called once per frame
