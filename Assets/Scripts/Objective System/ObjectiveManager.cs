@@ -311,7 +311,15 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
         // Notify listeners (ObjectiveUI will display completion)
         OnObjectiveCompleted.Invoke(objective);
 
-        Debug.Log($"Objective '{objective.data.title}' completed!");
+        ObjectiveData data = objective.data;
+        if (data.cameraShake)
+        {
+            // Shake the camera
+            if (Camera.main.TryGetComponent<CameraMovement>(out var cam)) 
+                cam.Shake(data.cameraShakeDuration, data.cameraShakeMagnitude, data.cameraShakeFrequency);
+        }
+
+        Debug.Log($"Objective '{data.title}' completed!");
 
         // Trigger next objective after UI (listeners) finished
         StartCoroutine(ActivateNextObjectiveAfterDelay());

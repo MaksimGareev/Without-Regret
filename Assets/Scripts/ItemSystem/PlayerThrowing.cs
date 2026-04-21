@@ -34,6 +34,8 @@ public class PlayerThrowing : MonoBehaviour
     [Header("Input")]
     [SerializeField] private MouseButton chargeKey = MouseButton.Right;
     [SerializeField] private string chargeButton = "XboxRightTrigger";
+    [SerializeField] private KeyCode cancelKey = KeyCode.Q;
+    [SerializeField] private KeyCode cancelButton = KeyCode.Joystick1Button4;
 
     private int chargeKeyInt;
     private bool isCharging = false;
@@ -42,6 +44,7 @@ public class PlayerThrowing : MonoBehaviour
     private Vector3 PointerScale;
     private float TimeSinceChargingStart;
     private float waitBeforeCharging = .75f;
+    private bool canCharge = true;
 
     public Animator animator;
     private CharacterSwap characterSwap;
@@ -170,7 +173,7 @@ public class PlayerThrowing : MonoBehaviour
             StartCharging(false);
         }
 
-        if ((Input.GetAxis(chargeButton) > 0.1f) && !isCharging)
+        if ((Input.GetAxis(chargeButton) > 0.1f) && !isCharging && canCharge)
         {
             StartCharging(true);
         }
@@ -208,32 +211,48 @@ public class PlayerThrowing : MonoBehaviour
 
             DrawProjection();// render line
 
-                if (GameManager.Instance.throwingSlider != null)
-                {
-                    GameManager.Instance.throwingSlider.value = currentCharge;
-                    GameManager.Instance.throwingSlider.gameObject.SetActive(true);
-                }
+            if (GameManager.Instance.throwingSlider != null)
+            {
+                GameManager.Instance.throwingSlider.value = currentCharge;
+                GameManager.Instance.throwingSlider.gameObject.SetActive(true);
+            }
 
-                if (WorldThrowPointer != null)
-                {
-                    WorldThrowPointer.gameObject.SetActive(true);
-                }
+            if (WorldThrowPointer != null)
+            {
+                WorldThrowPointer.gameObject.SetActive(true);
+            }
 
-                if (usingController)
+            if (usingController)
+            {
+                if (Input.GetAxis(chargeButton) < 0.1f)
                 {
-                    if (Input.GetAxis(chargeButton) < 0.1f)
-                    {
-                        ThrowItem(currentCharge);
-                        Debug.Log($"Charge Button Value: {Input.GetAxis(chargeButton)}");
-                    }
+                    ThrowItem(currentCharge);
+                    Debug.Log($"Charge Button Value: {Input.GetAxis(chargeButton)}");
                 }
-                else
+            }
+            else
+            {
+                if (Input.GetMouseButtonUp(chargeKeyInt))
                 {
-                    if (Input.GetMouseButtonUp(chargeKeyInt))
-                    {
-                        ThrowItem(currentCharge);
-                    }
+                    ThrowItem(currentCharge);
                 }
+            }
+
+            if (usingController)
+            {
+                if (Input.GetKeyDown(cancelButton))
+                {
+                    CancelCharge();
+                    StartCoroutine(CanceledDelay());
+                }
+            }
+            else
+            {
+                if (Input.GetKeyDown(cancelKey))
+                {
+                    CancelCharge();
+                }
+            }
             
         }
         else
@@ -375,5 +394,27 @@ public class PlayerThrowing : MonoBehaviour
         currentCharge = 0f;
         usingController = Controller;
         OnStartThrowing.Invoke(true);
+    }
+
+    private void CancelCharge()
+    {
+        if (GameManager.Instance.throwingSlider != null)
+        {
+            GameManager.Instance.throwingSlider.value = 0f;
+            GameManager.Instance.throwingSlider.gameObject.SetActive(false);
+            WorldThrowPointer.transform.localScale = PointerScale;
+            WorldThrowPointer.SetActive(false);
+            line.enabled = false;
+        }
+        StartCoroutine(ThrowAnimHandler());
+        currentHoldTime = 0;
+        isCharging = false;
+    }
+
+    private IEnumerator CanceledDelay()
+    {
+        canCharge = false;
+        yield return new WaitForSecondsRealtime(0.4f);
+        canCharge = true;
     }
 }

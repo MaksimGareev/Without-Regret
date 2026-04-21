@@ -118,7 +118,7 @@ public class PlayerInteracting : MonoBehaviour
         {
             var special = currentTargets.FirstOrDefault(i => 
                 i.interactType == InteractType.Mantle ||
-                i.interactType == InteractType.Float);
+                (i.interactType == InteractType.Float && heldObject == null));
 
             if (special != null)
             {
@@ -156,6 +156,11 @@ public class PlayerInteracting : MonoBehaviour
             return;
 
         target.OnPlayerInteraction(gameObject);
+    }
+
+    public bool IsHoldingObject()
+    {
+        return heldObject != null;
     }
 
     public void SetHeldObject(MoveableObject obj)

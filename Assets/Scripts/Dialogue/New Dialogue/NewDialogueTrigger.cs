@@ -318,7 +318,8 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
             StartCoroutine(MovePlayerToPosition());
         }
 
-        FaceTarget(player, transform);
+        //FaceTarget(player, transform);
+        LookAtPlayer();
 
         isLookingAtPlayer = true;
         if (IsMediation)
@@ -403,12 +404,15 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
         isLookingAtPlayer = false;
         
         CameraMovement cam = FindAnyObjectByType<CameraMovement>();
+        cam.SetCameraInputEnabled(true);
+        
+        /*
         if (cam != null && focusCameraOnTrigger == true)
         {
             cam.StopLookingAtSubject();
             cam.SetCameraLocked(false);
         }
-        
+        */
         if (linkedObjective != null)
         {
             if (ObjectiveManager.Instance.IsObjectiveActive(linkedObjective.objectiveID))

@@ -145,6 +145,9 @@ public class CameraMovement : MonoBehaviour
 
     private bool cameraInputEnabled = true;
 
+    private float lerpBetweenValue = 0f;
+    private float lerpSpeed = 1.5f;
+
     private void Awake()
     {
         // Set up input action references
@@ -406,13 +409,20 @@ public class CameraMovement : MonoBehaviour
         Vector3 lookAtPos;
         if (!playerController.isThrowing || ThrowTarget == null)
         {
-            lookAtPos = target.position + currentLookAtOffset;
+            if(lerpBetweenValue > 0)
+            {
+                lerpBetweenValue -= Time.deltaTime * lerpSpeed;
+            }
         }
         else
         {
-            lookAtPos = ThrowTarget.position + currentLookAtOffset;
+            if(lerpBetweenValue < 1)
+            {
+                lerpBetweenValue += Time.deltaTime * lerpSpeed;
+            }
         }
 
+        lookAtPos = Vector3.Lerp(target.position + currentLookAtOffset, ThrowTarget.position + currentLookAtOffset, lerpBetweenValue);
         // If we're actively looking at a subject, do not override rotation with the default LookAt.
         // Also if blending to normal or zooming, the coroutine will control rotation.
         if (!isLookingAtSubject && !isBlendingToNormal && !isZooming)
@@ -422,10 +432,12 @@ public class CameraMovement : MonoBehaviour
         }
     }
 
-    // Public Camera Shake function
-    // duration: seconds the shake runs
-    // magnitude: maximum displacement in world units
-    // frequency: how many shakes per second
+    /// <summary>
+    /// Causes the camera to shake.
+    /// </summary>
+    /// <param name="duration">How long the camera shakes for</param>
+    /// <param name="magnitude">The 'strength' of each shake</param>
+    /// <param name="frequency">How often a shake occurs</param>
     public void Shake(float duration, float magnitude, float frequency = 30f)
     {
         // stop any existing shake then start new
@@ -1047,14 +1059,8 @@ public class CameraMovement : MonoBehaviour
         // Update the current offset and lookAtOffset based on the new rotation
         currentOffset = rotation * defaultOffset;
 
-        if (!playerController.isThrowing)
-        {
-            currentLookAtOffset = rotation * defaultLookAtOffset;
-        }
-        else
-        {
-            currentLookAtOffset = rotation * throwLookAtOffset;
-        }
+        currentLookAtOffset = rotation * defaultLookAtOffset;
+        
     }
 
     // Smoothly returns the camera to its default position and rotation when there is no input for a certain amount of time
@@ -1075,14 +1081,9 @@ public class CameraMovement : MonoBehaviour
         Quaternion rotation = initialRotation * Quaternion.Euler(pitch, yaw, 0f);
         currentOffset = rotation * defaultOffset;
 
-        if (!playerController.isThrowing)
-        {
-            currentLookAtOffset = Vector3.Lerp(currentLookAtOffset, initialRotation * defaultLookAtOffset, returnSpeed * Time.deltaTime);
-        }
-        else
-        {
-            currentLookAtOffset = Vector3.Lerp(currentLookAtOffset, initialRotation * throwLookAtOffset, returnSpeed * Time.deltaTime);
-        }
+        currentLookAtOffset = Vector3.Lerp(currentLookAtOffset, initialRotation * defaultLookAtOffset, returnSpeed * Time.deltaTime);
+
+        
     }
 
     // Predict whether moving the camera by 'delta' (world-space) would cause an overlap with environment colliders

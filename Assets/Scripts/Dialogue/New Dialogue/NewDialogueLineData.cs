@@ -27,6 +27,10 @@ public class NewDialogueLineData
     public bool ShakeCamera;            // Bool that contorls if the camera should shake durring the current line
     public bool cannotSkip;             // Bool that contorls if the player cannont skip this line of dialogue and should be fully built out
 
+    [Header("Audio")]
+    public bool playSFXOnstart;
+    public AudioClip SFX;
+
     [Header("Collectable Spawn")]
     public bool spawnCollectible;
     public GameObject collectablePrefab;
