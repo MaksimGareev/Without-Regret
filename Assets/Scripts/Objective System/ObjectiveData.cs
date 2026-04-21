@@ -30,6 +30,13 @@ public class ObjectiveData : ScriptableObject
     [Tooltip("Build index of the scene where the objective takes place.")]
     public int sceneIndex; // build index of the scene where the objective takes place
 
+    [Header("Camera Shake")]
+    [Tooltip("If true, will cause the camera to shake after the objective is completed")]
+    public bool cameraShake = false;
+    public float cameraShakeDuration = 0.5f;
+    public float cameraShakeMagnitude = 0.1f;
+    public float cameraShakeFrequency = 30f;
+
     [Header("Chime Wayfinding")]
     [Tooltip("If on and there's an object with the FollowChimeObjective component that's linked to this objective, Chime will move between the transforms provided to the FollowChimeObjective component.")]
     public bool chimeWayfinding = false;

@@ -9,13 +9,20 @@ public class PossessedEnemyResisting : MonoBehaviour
     [Header("Possession Settings")]
     [SerializeField] private NavMeshAgent Agent;
     [SerializeField] private float moveSpeed = 20f;
+    public Transform iconPoint;
 
     private bool isPossessed = false;
     private Vector3 playerInput;
     private float struggleTimer;
     private Camera PlayerCamera;
 
+    private bool HighlightApplied =  false;
+
     private Vector3 struggleDirection;
+
+    private Color highlightColor = Color.white;
+
+    private Color baseColor = Color.red;
 
 
     private void Awake()
@@ -79,10 +86,34 @@ public class PossessedEnemyResisting : MonoBehaviour
         
 
         rb.AddForce(direction * 6, ForceMode.Impulse);
-        yield return new WaitForSecondsRealtime(2f);
+        yield return new WaitForSecondsRealtime(1f);
         Agent.enabled = true;
         rb.useGravity = false;
         collider.isTrigger = true;
+    }
+
+    public void ApplyHighlightColor()
+    {
+        if (!HighlightApplied)
+        {
+            Renderer[] r = gameObject.GetComponentsInChildren<Renderer>();
+
+            foreach (Renderer v in r)
+            {
+                v.material.SetColor("_BorderColor", highlightColor);
+            }
+            HighlightApplied = true;
+        }
+    }
+    public void RemoveHighlightColor()
+    {
+        Renderer[] r = gameObject.GetComponentsInChildren<Renderer>();
+
+        foreach( Renderer v in r)
+        {
+            v.material.SetColor("_BorderColor", baseColor);
+        }
+        HighlightApplied = false;
     }
 }
 
