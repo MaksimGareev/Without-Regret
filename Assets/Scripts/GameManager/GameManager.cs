@@ -55,6 +55,8 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public GameObject eventSystem;
     public SceneLoadManager sceneLoadManager;
     public CutsceneManager cutsceneManager;
+
+    public Marker posessionIcon;
     //public GameObject objectiveDebugObject;
     [HideInInspector] public ObjectiveAndSaveTesting objectiveDebugScript;
 
@@ -74,6 +76,7 @@ public class GameManager : MonoBehaviour
         }
 
         UpdateChildReferences(); // Update references to child objects
+        posessionIcon.TurnOffMarker();
     }
 
     private void OnEnable()
@@ -115,6 +118,7 @@ public class GameManager : MonoBehaviour
         {
             SaveManager.Instance.LoadGame(SaveSystem.activeSaveSlot);
         }
+        posessionIcon.TurnOffMarker();
     }
 
     // Finds and updates references to child objects
