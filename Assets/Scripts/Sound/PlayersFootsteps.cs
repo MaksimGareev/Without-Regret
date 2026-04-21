@@ -57,11 +57,11 @@ public class PlayersFootsteps : MonoBehaviour
             if (Clip != null)
             {
                 audioSource.PlayOneShot(Clip);
-                //Debug.Log("Step");
+                Debug.Log("Step");
             }
             if (Clip == null)
             {
-                //Debug.Log("Step");
+                Debug.Log("NO Step");
             }
         }
     }
