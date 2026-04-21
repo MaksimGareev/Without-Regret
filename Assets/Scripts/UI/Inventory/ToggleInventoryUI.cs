@@ -66,14 +66,15 @@ public class ToggleInventoryUI : MonoBehaviour
         }
 
         isEnabled = !isEnabled;
-        Cursor.visible = !Cursor.visible;
 
         if (isEnabled)
         {
+            Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
         }
         else
         {
+            Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
         }
         

@@ -295,6 +295,12 @@ public class Irene : MonoBehaviour
         isTraveling = true;
         dialogueTrigger.isLookingAtPlayer = false;
         arrived = false;
+
+        // if (SaveManager.Instance)
+        // {
+        //     SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
+        // }
+        
         Debug.Log("Irene is now traveling to her destination");
     }
 

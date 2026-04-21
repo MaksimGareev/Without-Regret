@@ -163,6 +163,11 @@ public class CutsceneManager : MonoBehaviour
         
         originalHoldTextOffset = holdText.rectTransform.anchoredPosition;
         originalToSkipOffset = toSkipText.rectTransform.anchoredPosition;
+
+        if (ObjectiveManager.Instance)
+        {
+            ObjectiveManager.Instance.OnObjectiveCompleted.AddListener(OnObjectiveCompleted);
+        }
     }
 
     private void InitializeUIArt()
@@ -175,6 +180,14 @@ public class CutsceneManager : MonoBehaviour
         if (speakerNameBackgroundImage && speakerBackgroundSprite)
         {
             speakerNameBackgroundImage.sprite = speakerBackgroundSprite;
+        }
+    }
+    
+    private void OnObjectiveCompleted(ObjectiveInstance objectiveInstance)
+    {
+        if (objectiveInstance.data.cutsceneOnCompletion)
+        {
+            StartCutscene(objectiveInstance.data.cutsceneOnCompletion);
         }
     }
 

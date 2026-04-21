@@ -56,5 +56,8 @@ public class ObjectiveData : ScriptableObject
 
     [Tooltip("mark this as true if you want the marker to progress to multiple spots when an objective is progressed I.E. the boss fight damage orbs.")]
     public bool hasMultiplepositions;
-
+    
+    [Header("Cutscene")]
+    [Tooltip("If assigned, this cutscene will play when the objective is completed. If left empty, this field will be ignored.")]
+    public CutsceneData cutsceneOnCompletion;
 }

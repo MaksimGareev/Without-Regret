@@ -108,7 +108,8 @@ public class PauseManager : MonoBehaviour
         && !(GameOverManager.Instance && (GameOverManager.Instance.IsGameOver || GameManager.Instance.qteIsActive || GameManager.Instance.objectiveDebugScript.DebugUIIsActive))
         && !SceneLoadManager.Instance.IsLoading 
         && !InteractionTutorialUI.Instance.IsShowing 
-        && !(Ending.Instance && Ending.Instance.finished))
+        && !(Ending.Instance && Ending.Instance.finished)
+        && !CutsceneManager.Instance.isCutscenePlaying)
         {
             if (!pauseMenuPanel.activeSelf && !settingsPanel.activeSelf)
             {

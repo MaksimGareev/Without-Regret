@@ -18,6 +18,7 @@ public class CameraMovement : MonoBehaviour
     [Header("Astral Post Processing")]
     [Tooltip("Set to true if this camera is used in the astral plane for special effects. This will enable the post-processing effects for the Astral Plane.")]
     public bool isAstral = false;
+    
     [Tooltip("Reference to the GameObject containing the VFX for the astral plane, which will be toggled on and off based on the isAstral boolean. The object should be a child of the Main Camera Prefab")]
     [SerializeField] private GameObject astralVFX;
 
@@ -72,7 +73,7 @@ public class CameraMovement : MonoBehaviour
     [SerializeField] private bool restrictYaw = false;
 
     [Tooltip("Maximum yaw angle of the camera when restrictYaw is enabled.")]
-    [SerializeField,] private float maxYaw = 120f;
+    [SerializeField] private float maxYaw = 120f;
 
     [Tooltip("Maximum pitch angle of the camera.")]
     [SerializeField] private float maxPitch = 45f;
@@ -86,6 +87,7 @@ public class CameraMovement : MonoBehaviour
 
     [Tooltip("Speed at which the camera transitions during focus movement.")]
     [SerializeField] private float transitionSpeed = 2f;
+    
     [SerializeField] private Transform ThrowTarget;
 
     [Header("Return Blending")]
@@ -177,7 +179,6 @@ public class CameraMovement : MonoBehaviour
             Debug.LogWarning("Check Collisions is enabled but no Collider component found on the camera. Disabling collision checking.");
             checkCollisions = false;
         }
-
     }
 
     private void OnEnable()

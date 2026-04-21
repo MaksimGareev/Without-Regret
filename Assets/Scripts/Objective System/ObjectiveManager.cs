@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.SceneManagement;
 
 // The Objective Manager is responsible for managing the player's objectives throughout the game. 
 // It keeps track of active and completed objectives, and handles the activation of new objectives as the player progresses. 
