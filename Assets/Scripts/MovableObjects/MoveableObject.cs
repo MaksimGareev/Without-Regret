@@ -1,5 +1,7 @@
-using UnityEngine;
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(Rigidbody), typeof(Collider), typeof(SaveableWorldObject))]
@@ -18,11 +20,23 @@ public class MoveableObject : MonoBehaviour, IInteractable
     [SerializeField] private float maxGrabDistance = 2.5f;
 
     [Header("Options")]
+    [SerializeField] private bool snapToGrabPoint = false;
     [SerializeField] private bool allowSprint = true;
     [SerializeField] ItemData requiredItem;
+
+    [Header("Collision Check Options (Test Extensively)")]
     [Min(0f), Tooltip("When the player is moving this object, the size of the collider used to check for collisions with the environment is multiplied by this factor.")]
     [SerializeField] private float collisionCheckSizeFactor = 1f;
     [SerializeField] private bool checkGrabPointCollisions = true;
+    [Tooltip("If true, this object won't be able to be released if colliding with another object")]
+    [SerializeField] private bool checkCollisionsOnRelease = false;
+    [Tooltip("If true, before the player makes a rotation, it will check if this object would collide with something after doing so. If a collision is found, the rotation is prevented.")]
+    [SerializeField] private bool checkCollisionsOnRotation = false;
+    public bool CheckRotation => checkCollisionsOnRotation;
+    [Tooltip("If true, before the player moves, it will check if this object would collide with something after doing so. If a collision is found, the movement is prevented.")]
+    [SerializeField] private bool checkCollisionsOnMovement = false;
+    public bool CheckMovement => checkCollisionsOnMovement;
+    [SerializeField] private float pickupCooldown = 1f;
 
     [Header("Transform Settings")]
     [SerializeField] private Vector3 heldPositionOffset = Vector3.zero;
@@ -34,6 +48,7 @@ public class MoveableObject : MonoBehaviour, IInteractable
     private Rigidbody rb;
     private PlayerMovingObjects mover;
     private NavMeshObstacle navMeshObstacle;
+    private bool onCooldown = false;
 
     public bool IsGrabbed { get; private set; } = false;
     public bool isGrabbable = true;
@@ -43,6 +58,7 @@ public class MoveableObject : MonoBehaviour, IInteractable
     public event Action OnInteracted;
     private Collider coll;
     private bool trigger;
+    private readonly HashSet<Collider> collisions = new(); // track collisions to prevent releasing inside a collider
 
     public Collider ObjectCollider => coll;
     public float CollisionCheckSizeFactor => collisionCheckSizeFactor;
@@ -61,7 +77,7 @@ public class MoveableObject : MonoBehaviour, IInteractable
 
     public bool CanInteract(GameObject player)
     {
-        if (isGrabbable == false || NewDialogueManager.Instance.DialogueIsActive)
+        if (onCooldown || isGrabbable == false || NewDialogueManager.Instance.DialogueIsActive)
             return false;
 
         // Make sure player is facing toward the object by getting the Dot Product
@@ -81,14 +97,20 @@ public class MoveableObject : MonoBehaviour, IInteractable
     {
         if (!isGrabbable) return;
 
-        // Get closest point on collider to grab position (world space)
-        Vector3 closestPoint = coll.ClosestPoint(grabTransform.position);
-
-        // Calculate offset from object pivot to that closest point
-        Vector3 pivotToClosest = closestPoint - transform.position;
-
-        // Move object so closest point aligns with grab transform
-        transform.position = grabTransform.position - pivotToClosest;
+        if (snapToGrabPoint)
+        {
+            // Snap the object position to the grabTransform
+            transform.position = grabTransform.position;
+        }
+        else
+        {
+            // Get closest point on collider to grab position (world space)
+            Vector3 closestPoint = coll.ClosestPoint(grabTransform.position);
+            // Calculate offset from object pivot to that closest point
+            Vector3 pivotToClosest = closestPoint - transform.position;
+            // Move object so closest point aligns with grab transform
+            transform.position = grabTransform.position - pivotToClosest;
+        }
 
         // Parent to grab point
         transform.parent = grabTransform;
@@ -124,6 +146,11 @@ public class MoveableObject : MonoBehaviour, IInteractable
 
     public void Release()
     {
+        collisions.Clear();
+
+        onCooldown = true;
+        StartCoroutine(InteractionCooldown());
+
         IsGrabbed = false;
         transform.parent = null; // Unparent from grabpoint
         rb.constraints = RigidbodyConstraints.FreezeRotation;
@@ -137,6 +164,13 @@ public class MoveableObject : MonoBehaviour, IInteractable
         {
             navMeshObstacle.enabled = true;
         }
+    }
+
+    IEnumerator InteractionCooldown()
+    {
+        onCooldown = true;
+        yield return new WaitForSeconds(pickupCooldown);
+        onCooldown = false;
     }
 
     public void OnPlayerInteraction(GameObject player)
@@ -154,8 +188,6 @@ public class MoveableObject : MonoBehaviour, IInteractable
                 return;
             }
         }
-
-        
 
         // Only get grabbed if the player isnt holding something already
         if (!IsGrabbed && !mover.IsOccupied())
@@ -187,6 +219,10 @@ public class MoveableObject : MonoBehaviour, IInteractable
             mover.OnMovingObject(this);
             interacting.SetHeldObject(this);
         }
+        else if (checkCollisionsOnRelease && collisions.Count > 0)
+        {
+            Debug.Log("Can't release object here due to a collision.");
+        }
         else
         {
             // Object is current held, so release it instead
@@ -199,6 +235,23 @@ public class MoveableObject : MonoBehaviour, IInteractable
 
         // Notify any listeners
         OnInteracted?.Invoke();
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (!checkCollisionsOnRelease || other.isTrigger) return; // Ignore trigger colliders, as they shouldn't prevent grabbing
+        if (other.CompareTag("Player")) return;
+
+        collisions.Add(other);
+        //Debug.Log($"{gameObject.name} started colliding with: {other.gameObject.name}");
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (!checkCollisionsOnRelease) return;
+
+        collisions.Remove(other);
+        //Debug.Log($"{gameObject.name} stopped colliding with: {other.gameObject.name}");
     }
 
     private float GetDistanceToCollider(Collider collider, Vector3 point)

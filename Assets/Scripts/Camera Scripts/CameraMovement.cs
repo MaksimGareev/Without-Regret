@@ -431,10 +431,12 @@ public class CameraMovement : MonoBehaviour
         }
     }
 
-    // Public Camera Shake function
-    // duration: seconds the shake runs
-    // magnitude: maximum displacement in world units
-    // frequency: how many shakes per second
+    /// <summary>
+    /// Causes the camera to shake.
+    /// </summary>
+    /// <param name="duration">How long the camera shakes for</param>
+    /// <param name="magnitude">The 'strength' of each shake</param>
+    /// <param name="frequency">How often a shake occurs</param>
     public void Shake(float duration, float magnitude, float frequency = 30f)
     {
         // stop any existing shake then start new

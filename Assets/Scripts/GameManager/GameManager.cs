@@ -47,6 +47,7 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public GameObject objectiveManager;
     public ObjectiveCanvas objectiveCanvas;
     public GameObject objectivePanel;
+    public ObjectiveMarker ObjectiveMarker;
     public GameObject qteCanvas;
     public RectTransform qteArrowsContainer;
     public GameObject qteButtonMashUI;
@@ -138,6 +139,9 @@ public class GameManager : MonoBehaviour
         sceneLoadManager = GetComponentInChildren<SceneLoadManager>();
         cutsceneManager = GetComponentInChildren<CutsceneManager>();
         objectiveDebugScript = GetComponentInChildren<ObjectiveAndSaveTesting>();
+
+        if (ObjectiveMarker == null)
+            ObjectiveMarker = GetComponentInChildren<ObjectiveMarker>(true);
     }
 
     // Called from the scene change event subscribed to above

@@ -15,6 +15,8 @@ public class ObjectiveMarker : MonoBehaviour
     [SerializeField] SceneLoadManager sceneManager;
 
     private int objectiveTransformIndex;
+    private bool markerShown = false;
+    public bool MarkerShown => markerShown;
 
     private void OnEnable()
     {
@@ -70,7 +72,7 @@ public class ObjectiveMarker : MonoBehaviour
                     {
                         ScreenSpaceIndicator.disableOnScreenIndicator = false;
                     }
-                    
+
                     if (objective.data.hasOffScreenMarker)
                     {
                         ScreenSpaceIndicator.disableIndicator = false;
@@ -98,6 +100,8 @@ public class ObjectiveMarker : MonoBehaviour
             ScreenSpaceIndicator.disableIndicator = true;
             ScreenSpaceIndicator.disableOnScreenIndicator = true;
         }
+
+        markerShown = !ScreenSpaceIndicator.disableOnScreenIndicator;
     }
 
     private void ObjectiveProgressed(ObjectiveInstance instance)
