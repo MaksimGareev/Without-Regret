@@ -28,6 +28,7 @@ public class Darry : MonoBehaviour
 
     public Animator animator;
     [SerializeField] private bool isScared = false;
+    [SerializeField] private bool startInConversation = false;
 
     public NewDialogueTrigger dialogueTrigger; // dialogue trigger script reference
     private InteractableProximity proximityScript;
@@ -53,6 +54,13 @@ public class Darry : MonoBehaviour
             animator.SetBool("isScared", true);
             animator.SetBool("isIdle", true);
         }
+        if (startInConversation)
+        {
+            animator.SetBool("isIdle", true);
+            animator.SetBool("isTalking", true);
+            animator.SetBool("Talk1", true);
+        }
+
 
         if (targets.Length > 0)
         {
