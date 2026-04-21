@@ -59,12 +59,13 @@ public class Irene : MonoBehaviour
         if (dialogueTrigger != null)
         {
             dialogueTrigger.enabled = !shouldDisableInteraction;
-
+            /*
             Collider col = dialogueTrigger.GetComponent<Collider>();
             if (col != null)
             {
                 col.enabled = !shouldDisableInteraction;
             }
+            */
         }
 
         if (proximityScript != null)

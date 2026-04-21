@@ -304,6 +304,7 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
         dialoguePanel.SetActive(true);
         playerPortrait.gameObject.SetActive(true);
         npcNameText.text = dialogue.npcName;
+        cam.SetCameraInputEnabled(false);
 
         DialogueIsActive = true;
 
@@ -314,27 +315,24 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
         }
 
         // zoom the camera if focus camera on trigger bool is true
-        if (cam != null)
+        if (trigger != null && trigger.focusCameraOnTrigger == true && activeDialogueTrigger.cameraMoveTo != null)
         {
             cam.SetCameraLocked(true);
 
-            if (trigger != null && trigger.focusCameraOnTrigger == true && activeDialogueTrigger.cameraMoveTo != null)
-            {
-                cameraWasUsed = true;
+            cameraWasUsed = true;
 
-                cam.LookAtSubject(
-                    activeDialogueTrigger.target,
-                    cameraMoveTo: trigger.cameraMoveTo,
-                    1f,
-                    true,
-                    true,
-                    0f,
-                    false);
-            }
-            else
-            {
-                cam.StopAllCoroutines();
-            }
+            cam.LookAtSubject(
+                activeDialogueTrigger.target,
+                cameraMoveTo: trigger.cameraMoveTo,
+                1f,
+                true,
+                true,
+                0f,
+                false);
+        }
+        else
+        {
+            cameraWasUsed = false;
         }
 
         ShowLine();

@@ -40,6 +40,7 @@ public class FloatingTriggerVolume : MonoBehaviour, IInteractable
         if (player == null) return false;
 
         var interacting = player.GetComponent<PlayerInteracting>();
+        //bool dialogue = NewDialogueManager.Instance.DialogueIsActive;
         if (interacting != null && interacting.IsHoldingObject())
         {
             return false;

@@ -608,7 +608,7 @@ public class BossEnemyController : MonoBehaviour
         gameObject.SetActive(false);
         SceneLoadManager.Instance.LoadScene(credits.GetSceneName());
     }
-    /*
+    
     public void Update()
     {
         if (Input.GetKeyDown(KeyCode.T))
@@ -616,7 +616,7 @@ public class BossEnemyController : MonoBehaviour
             Die();
         }
     }
-    */
+    
     public void TakeDamage(int value = 1)
     {
         // Take damage to the current health part
