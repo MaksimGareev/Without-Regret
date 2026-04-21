@@ -286,9 +286,27 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
         }
 
         Irene irene = GetComponent<Irene>();
-        if (irene != null && irene.IsFollowing)
+        if (irene != null && (irene.IsFollowing || irene.isTraveling))
         {
             Debug.Log("Irene Cannot talk to Irene while she is following");
+            return;
+        }
+        Barry barry = GetComponent<Barry>();
+        if (barry != null && barry.isTraveling)
+        {
+            Debug.Log("Reed is moving and cannot be talked to");
+            return;
+        }
+        Penelope penelope = GetComponent<Penelope>();
+        if (penelope != null && penelope.isTraveling)
+        {
+            Debug.Log("Penelope is moving and cannot be talked to");
+            return;
+        }
+        Barry echo = GetComponent<Barry>();
+        if (echo != null && echo.isTraveling)
+        {
+            Debug.Log("Echo is moving and cannot be talked to");
             return;
         }
 
