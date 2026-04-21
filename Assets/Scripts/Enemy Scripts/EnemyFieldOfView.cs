@@ -23,8 +23,8 @@ public class EnemyFieldOfView : MonoBehaviour
     [Tooltip("Multiplier for how much effect the morality has on the minimum/maximum value of the radius/angle")]
     public float moralityEffect = 0.5f;
 
-    private float baseRadius;
-    private float baseAngle;
+    private float baseRadius = 5f;
+    private float baseAngle = 90f;
 
     [Header("Detection Settings")]// Detection Settings
     public LayerMask obstacleMask;
@@ -48,7 +48,7 @@ public class EnemyFieldOfView : MonoBehaviour
     [Tooltip("How far the enemy can see/general radius around the enemy")]
     public float radius; // field of view radius around enemy
     [Tooltip("Size of the radius that get's set when the enemy is chasing the player/NPC")]
-    public float aggroRadius; // bigger radius that the enemy uses when chasing an entity
+    public float aggroRadius = 9f; // bigger radius that the enemy uses when chasing an entity
     [Range(0, 360)]
     public float angle; // viewing angle of enemy
     private float m_Distance;
@@ -66,9 +66,9 @@ public class EnemyFieldOfView : MonoBehaviour
     [Tooltip("Shows if the enemy can see the player")]
     public bool canSeePlayer; // if the player is in the enemy's field of view
     [Tooltip("The current duration of the chase, this value goes down when ever the enemy can't see the player, once this reaches 0 chasing will end, if the player is seen while this value is going down, it will reset back up to the Max Chase Duration")]
-    public float chaseDuration = 1;
+    public float chaseDuration = 1f;
     [Tooltip("Sets how long the chaseDuration will be, raising this will require the Player to be out of line of sight for longer")]
-    public float maxChaseDuration = 1;
+    public float maxChaseDuration = 1f;
 
     [Tooltip("Range in which the Enemy will detect an entity, regardless of being in the enemy FOV or not")]
     public float detectionRadius = 4f; //detects player/NPC if they get too close, regardless of whether they are in the FOV or not
@@ -122,7 +122,7 @@ public class EnemyFieldOfView : MonoBehaviour
 
         UpdateFOVBasedOnMorality();
         ApplyFOV();
-        DetectPlayer();
+        //DetectPlayer();
         
     }
 
@@ -193,7 +193,7 @@ public class EnemyFieldOfView : MonoBehaviour
 
                 if (!Physics.Raycast(transform.position, directionToTarget, distanceToTarget, obstructionMask)) // raycast vision of the enemy
                 {
-                    chaseDuration = 1;
+                    chaseDuration = maxChaseDuration;
                     canSeePlayer = true;
                     normalMovement.chasing = true;
                     if (!isStunned)
@@ -232,18 +232,18 @@ public class EnemyFieldOfView : MonoBehaviour
         switch (currentState)
         {
             case FOVState.Idle:
-                radius = baseRadius;
-                angle = baseAngle;
+                targetRadius = baseRadius;
+                targetAngle = baseAngle;
                 break;
 
             case FOVState.Alerted:
-                radius = baseRadius * 1.2f;
-                angle = Mathf.Max(baseAngle, 150f);
+                targetRadius = baseRadius * 1.2f;
+                targetAngle = Mathf.Max(baseAngle, 150f);
                 break;
 
             case FOVState.Chasing:
-                radius = aggroRadius;
-                angle = Mathf.Max(baseAngle, 230f);
+                targetRadius = aggroRadius;
+                targetAngle = Mathf.Max(baseAngle, 230f);
                 break;
         }
 
@@ -326,7 +326,7 @@ public class EnemyFieldOfView : MonoBehaviour
         if (closeTargets.Length > 0)
         {
             Transform target = closeTargets[0].transform;
-            chaseDuration = 1;
+            chaseDuration = maxChaseDuration;
             canSeePlayer = true;
             m_Agent.destination = target.position;
             angle = 230;

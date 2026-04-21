@@ -15,6 +15,7 @@ public class Barry : MonoBehaviour
     public NavMeshAgent agent;
 
     public Animator animator;
+    [SerializeField] private bool startInConversation = false;
 
     public string npcName = "Barry";
 
@@ -43,6 +44,12 @@ public class Barry : MonoBehaviour
         if (!animator)
         {
             Debug.LogError($"{this.name} has no animator assigned to the Barry script");
+        }
+        if (startInConversation)
+        {
+            animator.SetBool("isIdle", true);
+            animator.SetBool("isTalking", true);
+            animator.SetBool("Talk1", true);
         }
     }
 

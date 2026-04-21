@@ -575,6 +575,12 @@ public class BossEnemyController : MonoBehaviour
 
         if (showDebugLogs) Debug.Log("Performing Arm Sweep action");
 
+        // Align the arm's height with the player's
+        sweepingArmObject.transform.position =
+            new Vector3(sweepingArmObject.transform.position.x,
+            player.position.y,
+            sweepingArmObject.transform.position.z);
+
         sweepingArmObject.SetActive(true);
 
         StartCoroutine(Sweep());
