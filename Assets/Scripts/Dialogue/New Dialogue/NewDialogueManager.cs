@@ -47,11 +47,13 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
     [SerializeField] ScrollRect scrollRect;
     [Tooltip("Slider indicating the time the player has to make a dialogue choice")]
     [SerializeField] Slider choiceTimerSlider;
-    [Tooltip("Pop up text showing the players change in morality and current total morality")]
-    [SerializeField] TextMeshProUGUI popupText;
-    [SerializeField] GameObject popupBackground;
     [Tooltip("The visual feedback of the players dialogue choice input")]
     [SerializeField] List<HoldDirectionVisual> holdVisuals;
+
+    [Header("Morality UI")]
+    [SerializeField] private Slider moralitySlider;
+    [SerializeField] private float sliderSmoothSpeed = 5f;
+    private float targetMoralityValue;
 
     [Header("NPC Colors")]
     [Tooltip("List of colors corresponding NPC names displaying a unique color for dialogue UI")]
@@ -95,6 +97,12 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
     public int playerMorality;
     [SerializeField] private int minMorality = -10;
     [SerializeField] private int maxMorality = 10;
+
+    [Header("Morality Slider FX")]
+    [SerializeField] private CanvasGroup moralitySliderGroup;
+    [SerializeField] private float sliderMoveTime = 0.5f;
+    [SerializeField] private float sliderHoldTime = 0.5f;
+    private Coroutine moralitySliderRoutine;
 
     [Header("Choice Selection")]
     [Tooltip("How long the player needs to hold to confirm a selection")]
@@ -208,10 +216,27 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
         controls.Disable();
     }
 
+    void Start()
+    {
+        if (moralitySlider != null)
+        {
+            moralitySlider.minValue = minMorality;
+            moralitySlider.maxValue = maxMorality;
+            moralitySlider.value = 0;
+        }
+
+        if (moralitySliderGroup != null)
+        {
+            moralitySliderGroup.alpha = 0;
+            moralitySliderGroup.gameObject.SetActive(false);
+        }
+    }
+
     private void Update()
     {
         if (!canChoose) return;
         HandleDirectionalSelection();
+
     }
 
     // Used for setting the UI colors to match the speakers unique color
@@ -642,7 +667,9 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
     {
         ApplyMorality(c.moralityChange);
 
-        ShowPopup($"Morality changed by {c.moralityChange}. New Morality: {playerMorality}");
+        //ShowPopup($"Morality changed by {c.moralityChange}. New Morality: {playerMorality}");
+
+        //UpdateMoralitySlider(playerMorality);
 
         yield return new WaitForSeconds(portraitFadeTime * 2 + portraitHoldTime);
 
@@ -657,6 +684,65 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
         {
             EndDialogue();
         }
+    }
+
+    void UpdateMoralitySlider(int newValue, int change)
+    {
+        targetMoralityValue = newValue;
+
+        if (moralitySliderRoutine != null)
+        {
+            StopCoroutine(moralitySliderRoutine);
+        }
+
+        moralitySliderRoutine = StartCoroutine(MoralitySliderRoutine(change));
+    }
+
+    IEnumerator MoralitySliderRoutine(int change)
+    {
+        moralitySliderGroup.gameObject.SetActive(true);
+
+        // fade in
+        float t = 0f;
+        while (t < 0.2f)
+        {
+            t += Time.deltaTime;
+            moralitySliderGroup.alpha = Mathf.Lerp(0, 1, t / 0.2f);
+            yield return null;
+        }
+
+        // set center baseline first
+        moralitySlider.value = 0f;
+
+        float start = 0f;
+        float end = Mathf.Clamp(change, -maxMorality, maxMorality);
+
+        // animate movemnt
+        t = 0f;
+        while (t < sliderMoveTime)
+        {
+            t += Time.deltaTime;
+            float lerp = t / sliderMoveTime;
+
+            moralitySlider.value = Mathf.Lerp(start, end, lerp);
+
+            yield return null;
+        }
+
+        moralitySlider.value = end;
+
+        yield return new WaitForSeconds(sliderHoldTime);
+
+        // fade out
+        t = 0f;
+        while (t < 0.25f)
+        {
+            t += Time.deltaTime;
+            moralitySliderGroup.alpha = Mathf.Lerp(1, 0, t / 0.25f);
+            yield return null;
+        }
+
+        moralitySliderGroup.gameObject.SetActive(false);
     }
 
     // Handle countdown of time remaining to select answer choice
@@ -711,6 +797,8 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
     // apply morality change of selected answer choice
     void ApplyMorality(int change)
     {
+        UpdateMoralitySlider(playerMorality, change);
+
         playerMorality += change;
 
         // clamp morality between min and max
@@ -973,6 +1061,7 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
         spawnedChoices.Clear();
     }
 
+    /*
     // show pop up message of morality change and current total morality
     void ShowPopup(string msg)
     {
@@ -1021,7 +1110,7 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
             popupBackground.SetActive(false);
         }
     }
-
+    */
     // end the current dialogue instance
     public void EndDialogue()
     {
