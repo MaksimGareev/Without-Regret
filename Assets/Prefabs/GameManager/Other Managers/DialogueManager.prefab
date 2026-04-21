@@ -166,8 +166,6 @@ MonoBehaviour:
   continueArrow: {fileID: 159517934221287011}
   scrollRect: {fileID: 7871861633870878448}
   choiceTimerSlider: {fileID: 6659783491404590732}
-  popupText: {fileID: 3479041796190186735}
-  popupBackground: {fileID: 8888947262904801914}
   holdVisuals:
   - direction: 0
     image: {fileID: 6253936200083480949}
@@ -181,6 +179,8 @@ MonoBehaviour:
   - direction: 1
     image: {fileID: 1228863693610725341}
     offset: {x: 0, y: 0}
+  moralitySlider: {fileID: 3570834685225634297}
+  sliderSmoothSpeed: 5
   npcColorSets:
   - npcName: Irene
     dialogueBoxColor: {r: 0.010681844, g: 0.3679245, b: 0, a: 1}
@@ -215,6 +215,7 @@ MonoBehaviour:
   NPCPortraitBG: {fileID: 7443162942962097383}
   ChoiceSliderOutline: {fileID: 8973192517704870513}
   ChoiceSliderBackground: {fileID: 1961890204330346782}
+  colorTransitionTime: 0.25
   playerPortrait: {fileID: 3479682460622141906}
   defaultPortrait: {fileID: -1521356264, guid: e2ccdccbeb2923f46a2b46b751c3c81a, type: 3}
   positivePortrait: {fileID: -1481874976, guid: e2ccdccbeb2923f46a2b46b751c3c81a, type: 3}
@@ -265,6 +266,7 @@ MonoBehaviour:
     happy: {fileID: 1363002158, guid: 9ce36c9eb0efa534b90f40a39ae72fad, type: 3}
     upset: {fileID: 1280349358, guid: 9ce36c9eb0efa534b90f40a39ae72fad, type: 3}
   typingSource: {fileID: 1940466084136260643}
+  sfxSource: {fileID: 0}
   letterClips:
   - {fileID: 8300000, guid: 46955f2bd3e9e2e49b5658667a378641, type: 3}
   - {fileID: 8300000, guid: 819559db03543bc4287e1f189f0e109f, type: 3}
@@ -298,6 +300,9 @@ MonoBehaviour:
   playerMorality: 0
   minMorality: -10
   maxMorality: 10
+  moralitySliderGroup: {fileID: 2381532052577335768}
+  sliderMoveTime: 0.5
+  sliderHoldTime: 0.5
   holdTimeToSelect: 1.2
   choiceTimeLimit: 15
   choiceDistance: 250
@@ -311,14 +316,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1909011670422841878}
     m_Modifications:
-    - target: {fileID: 1665076851947148948, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
-      propertyPath: m_Type
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1665076851947148948, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: -1636883276, guid: e44e3c7110f6f6d4896a1b4584691527, type: 3}
     - target: {fileID: 4081335531108956419, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -415,22 +412,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6375222796184321502, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
-      propertyPath: m_Type
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6375222796184321502, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: 350159181, guid: e44e3c7110f6f6d4896a1b4584691527, type: 3}
-    - target: {fileID: 8283399206689375214, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
-      propertyPath: m_Type
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8283399206689375214, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: -741961663, guid: e44e3c7110f6f6d4896a1b4584691527, type: 3}
     - target: {fileID: 8472669192102556517, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
       propertyPath: m_Name
       value: DialogueCanvas
@@ -478,6 +459,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+--- !u!225 &2381532052577335768 stripped
+CanvasGroup:
+  m_CorrespondingSourceObject: {fileID: 5862562023283782571, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
+  m_PrefabInstance: {fileID: 8093223419389299315}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &2894038346241914797 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6375222796184321502, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
@@ -489,17 +475,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
---- !u!114 &3479041796190186735 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4618702849511351964, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
-  m_PrefabInstance: {fileID: 8093223419389299315}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
 --- !u!114 &3479682460622141906 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4619205659988620193, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
@@ -511,6 +486,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+--- !u!114 &3570834685225634297 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4746443176537408394, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
+  m_PrefabInstance: {fileID: 8093223419389299315}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Slider
 --- !u!224 &4134333339353353022 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 5273993982251385165, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
@@ -628,11 +614,6 @@ GameObject:
 --- !u!1 &8171222631887880235 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 87508348762393176, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
-  m_PrefabInstance: {fileID: 8093223419389299315}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &8888947262904801914 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 795735949686165513, guid: ba586fc02303dd94b9dc94437272d247, type: 3}
   m_PrefabInstance: {fileID: 8093223419389299315}
   m_PrefabAsset: {fileID: 0}
 --- !u!114 &8973192517704870513 stripped
