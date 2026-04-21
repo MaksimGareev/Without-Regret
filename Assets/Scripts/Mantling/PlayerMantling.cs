@@ -76,7 +76,11 @@ public class PlayerMantling : MonoBehaviour
 
             isMantling = true;
             if (animator)
+            {
+                animator.SetTrigger("mantleUp");
                 animator.SetBool("isMantling", true);
+
+            }
             mantleStartPos = transform.position;
             mantleEndPos = point.GetMantlePosition();
             mantleProgress = 0f;
@@ -179,7 +183,7 @@ public class PlayerMantling : MonoBehaviour
 
     private IEnumerator finishedMantling() //Transition sequence from mantling and mantling exit animation
     {
-        animator.SetBool("finishedMantling", true);
+        //animator.SetBool("finishedMantling", true);
         yield return new WaitForSeconds(0.3f);
         animator.SetBool("isMantling", false);
         animator.SetBool("finishedMantling", false);

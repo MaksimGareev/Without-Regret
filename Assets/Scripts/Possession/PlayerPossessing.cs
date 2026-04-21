@@ -12,7 +12,6 @@ public class PlayerPossessing : MonoBehaviour
     //[SerializeField] private float searchConeAngle = 30f;
     [SerializeField] private KeyCode possessKey = KeyCode.R;
     [SerializeField] private KeyCode possessButton = KeyCode.JoystickButton9;
-    [SerializeField] private GameObject iconPrefab;
     [SerializeField] private Vector3 iconOffset = new Vector3(0f, 2f, 0f);
     [SerializeField] private LayerMask mask;
 
@@ -30,6 +29,8 @@ public class PlayerPossessing : MonoBehaviour
     [SerializeField] private float rechargeDelay = 1.5f;
     private float rechargeSpeed = .5f;
     [SerializeField] private PossessedEnemyResisting target = null;
+
+    private Marker posessionIcon;
     
     RaycastHit[] hit = new RaycastHit[20];
     private bool posessing = false;
@@ -62,6 +63,8 @@ public class PlayerPossessing : MonoBehaviour
         {
             GameManager.Instance.possessionSlider.value = 1;
             GameManager.Instance.possessionSlider.gameObject.SetActive(false);
+            posessionIcon = GameManager.Instance.posessionIcon;
+
         }
     }
 
@@ -111,13 +114,15 @@ public class PlayerPossessing : MonoBehaviour
                         {
                             //if yes, set the target to the closer enemy
                             target = hit[i].collider.GetComponent<PossessedEnemyResisting>();
-                            EnablePopupIcon();
+                            EnablePopupIcon(target.iconPoint);
+                            target.ApplyHighlightColor();
                         }
                     }
                     else
                     {
                         target = hit[i].collider.GetComponent<PossessedEnemyResisting>();
-                        EnablePopupIcon();
+                        target.ApplyHighlightColor();
+                        EnablePopupIcon(target.iconPoint);
                     }
 
                 }
@@ -279,29 +284,27 @@ public class PlayerPossessing : MonoBehaviour
     private void ClearTargetInfo()
     {
         DisablePopupIcon();
+        target.RemoveHighlightColor();
         possessedEnemyMovement = null;
         normalEnemyMovement = null;
         enemyPOV = null;
+        
         target = null;
     }
 
-    public void EnablePopupIcon()
+    public void EnablePopupIcon(Transform target)
     {
-        if (popupInstance == null && iconPrefab != null && PopupManager.Instance != null)
+        if (posessionIcon != null)
         {
-            popupInstance = PopupManager.Instance.CreatePopup(target.transform, iconPrefab).gameObject;
-            target.gameObject.GetComponent<WorldPopup>().worldOffset = iconOffset;
-            shouldShowIcon = true;
+            posessionIcon.target = target;
         }
     }
 
     public void DisablePopupIcon()
     {
-        if (popupInstance != null)
+        if (posessionIcon != null)
         {
-            Destroy(popupInstance);
-            popupInstance = null;
-            shouldShowIcon = false;
+            posessionIcon.TurnOffMarker();
         }
     }
 

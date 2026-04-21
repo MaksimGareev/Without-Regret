@@ -99,6 +99,7 @@ public class PauseManager : MonoBehaviour
         
         // Do not allow pausing in the main menu
         if (SceneManager.GetActiveScene().name == "MainMenu") return;
+        if (SceneManager.GetActiveScene().name == "Credits") return;
         
         if ((playerPauseAction.triggered || UIPauseAction.triggered) 
         && !Journal.Instance.IsJournalOpen 
@@ -107,7 +108,8 @@ public class PauseManager : MonoBehaviour
         && !(GameOverManager.Instance && (GameOverManager.Instance.IsGameOver || GameManager.Instance.qteIsActive || GameManager.Instance.objectiveDebugScript.DebugUIIsActive))
         && !SceneLoadManager.Instance.IsLoading 
         && !InteractionTutorialUI.Instance.IsShowing 
-        && !(Ending.Instance && Ending.Instance.finished))
+        && !(Ending.Instance && Ending.Instance.finished)
+        && !CutsceneManager.Instance.isCutscenePlaying)
         {
             if (!pauseMenuPanel.activeSelf && !settingsPanel.activeSelf)
             {

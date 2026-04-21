@@ -1,5 +1,4 @@
 using System.Collections;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Linq;
@@ -9,8 +8,13 @@ public class Door : MonoBehaviour, IInteractable
     [Header("Door Settings")]
     [Tooltip("The scene that this door will load when the player interacts with it. Drag and drop the scene asset from the project window into this field.")]
     public SceneReference sceneToLoad;
+    
     [Tooltip("Distance at which the player can interact with the door.")]
     public float interactDistance = 5f;
+    
+    [Tooltip("If assigned, this cutscene will play before loading the next level.")]
+    public CutsceneData cutsceneToPlay;
+    
     public float interactionPriority => 5f;
     public InteractType interactType => InteractType.Door;
 
@@ -59,24 +63,6 @@ public class Door : MonoBehaviour, IInteractable
         animator = player.GetComponentInChildren<Animator>();
     }
 
-    void Update()
-    {
-        /*if (player != null && Vector3.Distance(player.position, transform.position) <= interactDistance)
-        {
-            isPlayerNear = true;
-
-            // if player presses E to enter
-            if (Input.GetKeyDown(KeyCode.E) || Input.GetButtonDown("Xbox X Button"))
-            {
-                LoadScene();
-            }
-        }
-        else
-        {
-            isPlayerNear = false;
-        }*/
-    }
-
     public bool CanInteract(GameObject player)
     {
         if (!needsObjective) return true;
@@ -104,30 +90,6 @@ public class Door : MonoBehaviour, IInteractable
         StartCoroutine(WaitToLoadScene());
     }
 
-    void LoadScene()
-    {
-        /*if (needsObjective)
-        {
-            var completeObjectives = ObjectiveManager.Instance.GetCompletedObjectives();
-            foreach (var obj in completeObjectives)
-            {
-                if (obj.data == linkedObjective)
-                {
-                    StartCoroutine(WaitToLoadScene());
-                    return;
-                }
-                else
-                {
-                    Debug.Log("You must complete all objectives before moving forward");
-                }
-            }
-        }
-        else
-        {
-            StartCoroutine(WaitToLoadScene());
-        }*/
-    }
-
     private IEnumerator WaitToLoadScene()
     {
         if (SaveManager.Instance != null)
@@ -150,7 +112,7 @@ public class Door : MonoBehaviour, IInteractable
 
         if (GameManager.Instance != null && GameManager.Instance.sceneLoadManager != null)
         {
-            GameManager.Instance.sceneLoadManager.LoadScene(sceneToLoad.GetSceneName());
+            GameManager.Instance.sceneLoadManager.LoadScene(sceneToLoad.GetSceneName(), cutsceneToPlay);
         }
         else
         {

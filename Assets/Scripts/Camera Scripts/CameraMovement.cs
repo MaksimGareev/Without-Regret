@@ -18,6 +18,7 @@ public class CameraMovement : MonoBehaviour
     [Header("Astral Post Processing")]
     [Tooltip("Set to true if this camera is used in the astral plane for special effects. This will enable the post-processing effects for the Astral Plane.")]
     public bool isAstral = false;
+    
     [Tooltip("Reference to the GameObject containing the VFX for the astral plane, which will be toggled on and off based on the isAstral boolean. The object should be a child of the Main Camera Prefab")]
     [SerializeField] private GameObject astralVFX;
 
@@ -72,7 +73,7 @@ public class CameraMovement : MonoBehaviour
     [SerializeField] private bool restrictYaw = false;
 
     [Tooltip("Maximum yaw angle of the camera when restrictYaw is enabled.")]
-    [SerializeField,] private float maxYaw = 120f;
+    [SerializeField] private float maxYaw = 120f;
 
     [Tooltip("Maximum pitch angle of the camera.")]
     [SerializeField] private float maxPitch = 45f;
@@ -86,6 +87,7 @@ public class CameraMovement : MonoBehaviour
 
     [Tooltip("Speed at which the camera transitions during focus movement.")]
     [SerializeField] private float transitionSpeed = 2f;
+    
     [SerializeField] private Transform ThrowTarget;
 
     [Header("Return Blending")]
@@ -143,6 +145,9 @@ public class CameraMovement : MonoBehaviour
 
     private bool cameraInputEnabled = true;
 
+    private float lerpBetweenValue = 0f;
+    private float lerpSpeed = 1.5f;
+
     private void Awake()
     {
         // Set up input action references
@@ -174,7 +179,6 @@ public class CameraMovement : MonoBehaviour
             Debug.LogWarning("Check Collisions is enabled but no Collider component found on the camera. Disabling collision checking.");
             checkCollisions = false;
         }
-
     }
 
     private void OnEnable()
@@ -405,13 +409,20 @@ public class CameraMovement : MonoBehaviour
         Vector3 lookAtPos;
         if (!playerController.isThrowing || ThrowTarget == null)
         {
-            lookAtPos = target.position + currentLookAtOffset;
+            if(lerpBetweenValue > 0)
+            {
+                lerpBetweenValue -= Time.deltaTime * lerpSpeed;
+            }
         }
         else
         {
-            lookAtPos = ThrowTarget.position + currentLookAtOffset;
+            if(lerpBetweenValue < 1)
+            {
+                lerpBetweenValue += Time.deltaTime * lerpSpeed;
+            }
         }
 
+        lookAtPos = Vector3.Lerp(target.position + currentLookAtOffset, ThrowTarget.position + currentLookAtOffset, lerpBetweenValue);
         // If we're actively looking at a subject, do not override rotation with the default LookAt.
         // Also if blending to normal or zooming, the coroutine will control rotation.
         if (!isLookingAtSubject && !isBlendingToNormal && !isZooming)
@@ -421,10 +432,12 @@ public class CameraMovement : MonoBehaviour
         }
     }
 
-    // Public Camera Shake function
-    // duration: seconds the shake runs
-    // magnitude: maximum displacement in world units
-    // frequency: how many shakes per second
+    /// <summary>
+    /// Causes the camera to shake.
+    /// </summary>
+    /// <param name="duration">How long the camera shakes for</param>
+    /// <param name="magnitude">The 'strength' of each shake</param>
+    /// <param name="frequency">How often a shake occurs</param>
     public void Shake(float duration, float magnitude, float frequency = 30f)
     {
         // stop any existing shake then start new
@@ -1046,14 +1059,8 @@ public class CameraMovement : MonoBehaviour
         // Update the current offset and lookAtOffset based on the new rotation
         currentOffset = rotation * defaultOffset;
 
-        if (!playerController.isThrowing)
-        {
-            currentLookAtOffset = rotation * defaultLookAtOffset;
-        }
-        else
-        {
-            currentLookAtOffset = rotation * throwLookAtOffset;
-        }
+        currentLookAtOffset = rotation * defaultLookAtOffset;
+        
     }
 
     // Smoothly returns the camera to its default position and rotation when there is no input for a certain amount of time
@@ -1074,14 +1081,9 @@ public class CameraMovement : MonoBehaviour
         Quaternion rotation = initialRotation * Quaternion.Euler(pitch, yaw, 0f);
         currentOffset = rotation * defaultOffset;
 
-        if (!playerController.isThrowing)
-        {
-            currentLookAtOffset = Vector3.Lerp(currentLookAtOffset, initialRotation * defaultLookAtOffset, returnSpeed * Time.deltaTime);
-        }
-        else
-        {
-            currentLookAtOffset = Vector3.Lerp(currentLookAtOffset, initialRotation * throwLookAtOffset, returnSpeed * Time.deltaTime);
-        }
+        currentLookAtOffset = Vector3.Lerp(currentLookAtOffset, initialRotation * defaultLookAtOffset, returnSpeed * Time.deltaTime);
+
+        
     }
 
     // Predict whether moving the camera by 'delta' (world-space) would cause an overlap with environment colliders

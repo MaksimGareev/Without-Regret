@@ -15,8 +15,12 @@ public class Barry : MonoBehaviour
     public NavMeshAgent agent;
 
     public Animator animator;
+    [SerializeField] private bool startInConversation = false;
 
     public string npcName = "Barry";
+
+    private InteractableProximity proximityScript;
+    private Collider proximityCollider;
 
     private void Awake()
     {
@@ -41,6 +45,12 @@ public class Barry : MonoBehaviour
         {
             Debug.LogError($"{this.name} has no animator assigned to the Barry script");
         }
+        if (startInConversation)
+        {
+            animator.SetBool("isIdle", true);
+            animator.SetBool("isTalking", true);
+            animator.SetBool("Talk1", true);
+        }
     }
 
     // Update is called once per frame
@@ -56,7 +66,44 @@ public class Barry : MonoBehaviour
                 animator.SetBool("isWalking", isMoving);
                 animator.SetBool("isIdle", !isMoving);
             }
+
+            // disable dialogue trigger when following
+            if (dialogueTrigger != null && dialogueTrigger.enabled)
+            {
+                dialogueTrigger.enabled = false;
+
+               /* Collider col = dialogueTrigger.GetComponent<Collider>();
+                if (col != null)
+                {
+                    col.enabled = false;
+                }*/
+                Debug.Log("Irene's dialogue trigger has been deactivated.");
+            }
+
+            if (proximityScript != null && proximityScript.enabled)
+            {
+                proximityScript.enabled = false;
+
+                if (proximityCollider != null)
+                {
+                    proximityCollider.enabled = false;
+                }
+            }
+
         }
+        else
+        {
+            if (proximityScript != null && !proximityScript.enabled)
+            {
+                proximityScript.enabled = true;
+
+                if (proximityCollider != null)
+                {
+                    proximityCollider.enabled = true;
+                }
+            }
+        }
+
         /*else if (arrived && lookAtTarget != null)
         {
             LookAtObject();

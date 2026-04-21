@@ -23,6 +23,7 @@ public class Irene : MonoBehaviour
     public Transform lookAtTarget;
     private NavMeshAgent agent;
     public bool isTraveling;
+    public bool isTalking = false;
     public bool arrived = false;
     public bool CanFollowPlayer = true;
     public float stopDistance = 0.5f;
@@ -53,6 +54,40 @@ public class Irene : MonoBehaviour
     {
         movementAnimation();
 
+        bool shouldDisableInteraction = IsFollowing || isTraveling;
+
+        if (dialogueTrigger != null)
+        {
+            dialogueTrigger.enabled = !shouldDisableInteraction;
+            /*
+            Collider col = dialogueTrigger.GetComponent<Collider>();
+            if (col != null)
+            {
+                col.enabled = !shouldDisableInteraction;
+            }
+            */
+        }
+
+        if (proximityScript != null)
+        {
+            proximityScript.enabled = !shouldDisableInteraction;
+        }
+
+        if (proximityCollider != null)
+        {
+            proximityCollider.enabled = !shouldDisableInteraction;
+        }
+
+        if (IsFollowing)
+        {
+            Follow();
+        }
+
+        if (isTraveling)
+        {
+            TravelToTarget();
+        }
+        /*
         if (IsFollowing == true)
         {
             Follow();
@@ -97,7 +132,49 @@ public class Irene : MonoBehaviour
         if (isTraveling)
         {
             TravelToTarget();
+
+            // disable dialogue trigger when following
+            if (dialogueTrigger != null && dialogueTrigger.enabled)
+            {
+                dialogueTrigger.enabled = false;
+
+                Collider col = dialogueTrigger.GetComponent<Collider>();
+                if (col != null)
+                {
+                    col.enabled = false;
+                }
+                Debug.Log("Irene's dialogue trigger has been deactivated.");
+            }
+
+            if (proximityScript != null && proximityScript.enabled)
+            {
+                proximityScript.enabled = false;
+
+                if (proximityCollider != null)
+                {
+                    proximityCollider.enabled = false;
+                }
+            }
         }
+        else
+        {
+            if (proximityScript != null && !proximityScript.enabled)
+            {
+                proximityScript.enabled = true;
+
+                if (proximityCollider != null)
+                {
+                    proximityCollider.enabled = true;
+                }
+            }
+        }
+
+        if (isTalking)
+        {
+            dialogueTrigger.isLookingAtPlayer = true;
+        }
+        */
+
         if (arrived && lookAtTarget != null)
         {
             LookAtObject();
@@ -218,6 +295,12 @@ public class Irene : MonoBehaviour
         isTraveling = true;
         dialogueTrigger.isLookingAtPlayer = false;
         arrived = false;
+
+        // if (SaveManager.Instance)
+        // {
+        //     SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
+        // }
+        
         Debug.Log("Irene is now traveling to her destination");
     }
 

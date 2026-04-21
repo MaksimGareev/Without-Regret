@@ -16,7 +16,7 @@ public class LockPicking : MonoBehaviour
     public float MaxAngle = 90;
     public float LockSpeed = 10;
     public float CursorSpeed = 100f;
-    [HideInInspector] private float CurrentAngle = 0f;
+    public float CurrentAngle = 90f;
     [HideInInspector] public float RotationAmount;
     public List<Sprite> ArrowImages;
 
@@ -209,6 +209,10 @@ public class LockPicking : MonoBehaviour
                 {
                     // Rotate pick cursor with right stick
                     CurrentAngle = (Mathf.Atan2(rotateInput.y, rotateInput.x) * Mathf.Rad2Deg);
+                    if(CurrentAngle <= -90 && CurrentAngle >= -180)
+                    {
+                        CurrentAngle = 180;
+                    }
                     CurrentAngle = Mathf.Clamp(CurrentAngle, 0, 180);
 
                     // Apply rotation to pick cursor

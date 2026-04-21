@@ -1,0 +1,110 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e28c2e20bb6c4240a55d8edffb777ec, type: 3}
+  m_Name: ChimeSacredTree
+  m_EditorClassIdentifier: Assembly-CSharp::NewDialogueData
+  npcName: Chime
+  dialogueLines:
+  - LineID: Start
+    Speaker: Chime
+    text: ...it's back...I got my body back!
+    lineTone: 1
+    NPCGender: female
+    NextLineID: II
+    endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
+    ShakeCamera: 0
+    cannotSkip: 0
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
+    choices: []
+    objectivesToActivate: []
+  - LineID: II
+    Speaker: Chime
+    text: but wait...where did Echo go?
+    lineTone: 0
+    NPCGender: female
+    NextLineID: III
+    endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
+    ShakeCamera: 0
+    cannotSkip: 0
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
+    choices: []
+    objectivesToActivate: []
+  - LineID: III
+    Speaker: Chime
+    text: Oh no...in touching the Sacred Tree, Echo probably learned the truth about
+      my circumstances.
+    lineTone: 0
+    NPCGender: female
+    NextLineID: IV
+    endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
+    ShakeCamera: 0
+    cannotSkip: 0
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
+    choices: []
+    objectivesToActivate: []
+  - LineID: IV
+    Speaker: Chime
+    text: They must remember now...that I fell from this tree...that they tried to
+      save me, but didn't make it in time...Echo, I'm so sorry you had to remember
+      this way.
+    lineTone: 0
+    NPCGender: female
+    NextLineID: V
+    endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
+    ShakeCamera: 0
+    cannotSkip: 1
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
+    choices: []
+    objectivesToActivate: []
+  - LineID: V
+    Speaker: Chime
+    text: I need to find Echo and make sure they're okay! Maybe they'll be somewhere
+      in the neighborhood...
+    lineTone: 0
+    NPCGender: female
+    NextLineID: 
+    endDialogueAfterLine: 1
+    movingOn: 0
+    GiveItem: 0
+    ShakeCamera: 0
+    cannotSkip: 0
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
+    choices: []
+    objectivesToActivate: []
