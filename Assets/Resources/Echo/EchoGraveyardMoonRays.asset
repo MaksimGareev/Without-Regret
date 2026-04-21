@@ -10,16 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5e28c2e20bb6c4240a55d8edffb777ec, type: 3}
-  m_Name: Gaps
+  m_Name: EchoGraveyardMoonRays
   m_EditorClassIdentifier: Assembly-CSharp::NewDialogueData
-  npcName: Chime
+  npcName: Echo
   dialogueLines:
   - LineID: Start
-    Speaker: Chime
-    text: I don't think that's enough...we need to help Darry run away.
+    Speaker: Echo
+    text: ...
     lineTone: 0
     NPCGender: female
-    NextLineID: Part II
+    NextLineID: II
     endDialogueAfterLine: 0
     movingOn: 0
     GiveItem: 0
@@ -32,15 +32,31 @@ MonoBehaviour:
     collectableData: {fileID: 0}
     choices: []
     objectivesToActivate: []
-  - LineID: Part II
-    Speaker: Chime
-    text: Hurry, we need to find a way to bridge those gaps! You have the ability
-      to float, I should have mentioned it earlier. Press A when you're close to
-      a gap to activate your ability, then press A whenever the indicator is in the
-      green zone to stay in the air.
+  - LineID: II
+    Speaker: Echo
+    text: For some reason, I can't help but feel...strongly, about this particular
+      head stone.
+    lineTone: 2
+    NPCGender: female
+    NextLineID: III
+    endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
+    ShakeCamera: 0
+    cannotSkip: 1
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
+    choices: []
+    objectivesToActivate: []
+  - LineID: III
+    Speaker: Echo
+    text: Is this Deja Vu?
     lineTone: 0
     NPCGender: female
-    NextLineID: Part III
+    NextLineID: IV
     endDialogueAfterLine: 0
     movingOn: 0
     GiveItem: 0
@@ -53,10 +69,9 @@ MonoBehaviour:
     collectableData: {fileID: 0}
     choices: []
     objectivesToActivate: []
-  - LineID: Part III
-    Speaker: Chime
-    text: I think you can use those crates to fill the gaps enough for Darry to make
-      it across.
+  - LineID: IV
+    Speaker: Echo
+    text: Whatever. I'm probably just tired, I should get home.
     lineTone: 0
     NPCGender: female
     NextLineID: 
@@ -71,5 +86,4 @@ MonoBehaviour:
     collectableSpawnID: 
     collectableData: {fileID: 0}
     choices: []
-    objectivesToActivate:
-    - guideDarryToSafety
+    objectivesToActivate: []
