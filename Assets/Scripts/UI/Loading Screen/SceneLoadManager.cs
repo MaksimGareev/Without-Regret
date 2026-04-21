@@ -65,7 +65,7 @@ public class SceneLoadManager : MonoBehaviour
         }
     }
 
-    public void LoadScene(string sceneName)
+    public void LoadScene(string sceneName, CutsceneData cutsceneToPlay = null)
     {
         if (isLoading)
         {
@@ -74,17 +74,27 @@ public class SceneLoadManager : MonoBehaviour
         }
 
         isLoading = true;
-        StartCoroutine(LoadSceneCoroutine(sceneName));
+        
+        StartCoroutine(LoadSceneCoroutine(sceneName, cutsceneToPlay));
     }
 
-    private IEnumerator LoadSceneCoroutine(string sceneName)
+    private IEnumerator LoadSceneCoroutine(string sceneName, CutsceneData cutsceneToPlay = null)
     {
         loadingProgressSlider.value = 0f;
         
         //Debug.Log("Fading in black screen");
         yield return FadeInBlackScreen();
-        
-        //isLoading = true;
+
+        if (cutsceneToPlay)
+        {
+            CutsceneManager.Instance.StartCutscene(cutsceneToPlay);
+            
+            
+            while (CutsceneManager.Instance.isCutscenePlaying)
+            {
+                yield return null;
+            }
+        }
 
         //Debug.Log("Starting scene load");
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);

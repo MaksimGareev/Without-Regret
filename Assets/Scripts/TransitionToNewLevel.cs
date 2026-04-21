@@ -7,6 +7,9 @@ public class TransitionToNewLevel : MonoBehaviour
     [Header("Scene Transition Settings")]
     [Tooltip("The scene that this trigger will load when the player enters it. Drag and drop the scene asset from the project window into this field.")]
     public SceneReference sceneToLoad;
+    
+    [Tooltip("If assigned, this cutscene will play before loading the next level.")]
+    public CutsceneData cutsceneToPlay;
 
     [Header("Objective Settings")]
     [Tooltip("Objective that must be ACTIVE to allow the player to trigger the scene transition. If the player does not have the linked objective ACTIVE, they will not be able to trigger the scene transition. When the player enters this trigger, it will add progress to the linked objective.")]
@@ -128,7 +131,7 @@ public class TransitionToNewLevel : MonoBehaviour
 
         if (GameManager.Instance != null && GameManager.Instance.sceneLoadManager != null)
         {
-            GameManager.Instance.sceneLoadManager.LoadScene(sceneToLoad.GetSceneName());
+            GameManager.Instance.sceneLoadManager.LoadScene(sceneToLoad.GetSceneName(), cutsceneToPlay);
         }
         else
         {

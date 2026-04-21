@@ -167,9 +167,9 @@ public class SaveSlotUI : MonoBehaviour
     {
         SaveManager.Instance.SetActiveSaveSlot(slot);
 
-        if (GameManager.Instance != null && GameManager.Instance.sceneLoadManager != null)
+        if (GameManager.Instance && GameManager.Instance.sceneLoadManager)
         {
-            GameManager.Instance.sceneLoadManager.LoadScene(firstScene.GetSceneName());
+            GameManager.Instance.sceneLoadManager.LoadScene(firstScene.GetSceneName(), mainMenu.GetIntroCutscene());
         }
         else
         {

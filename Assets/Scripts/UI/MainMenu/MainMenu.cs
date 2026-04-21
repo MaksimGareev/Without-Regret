@@ -42,6 +42,10 @@ public class MainMenu : MonoBehaviour
     [Tooltip("Audio source for main menu music. Will start playing when the game manager instance is ready.")]
     [SerializeField] private GameObject musicSource;
 
+    [Header("Cutscene")]
+    [Tooltip("The cutscene that will play when the player starts a new game.")]
+    [SerializeField] private CutsceneData introCutscene;
+
     // Feedback Survey URL
     private string feedbackSurveyURL = "https://docs.google.com/forms/d/e/1FAIpQLSe6KfbYdlWsa25Scm4URfYHRRS8lzQC3mZkm6tqyS_uxxHObA/viewform?usp=sharing&ouid=106294286738853521476";
     
@@ -504,5 +508,10 @@ public class MainMenu : MonoBehaviour
         TabRightAction?.Disable();
         confirmAction?.Disable();
         cancelAction?.Disable();
+    }
+    
+    public CutsceneData GetIntroCutscene()
+    {
+        return introCutscene;
     }
 }
