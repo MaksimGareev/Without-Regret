@@ -175,7 +175,7 @@ public class MoveableObject : MonoBehaviour, IInteractable
             }
 
             // Can't grab if an item is equipped
-            if (PlayerComponents.playerEquipItem != null && PlayerComponents.playerEquipItem.currentEquippedItem != null)
+            if (PlayerComponents.playerEquipItem != null && PlayerComponents.playerEquipItem.currentEquippedItem != null || !mover.canPickUp)
             {
                 Debug.LogWarning("Player tried to grab an object while having an item equipped.");
                 return;
@@ -187,7 +187,7 @@ public class MoveableObject : MonoBehaviour, IInteractable
             mover.OnMovingObject(this);
             interacting.SetHeldObject(this);
         }
-        else
+        else if (mover.canPlace)
         {
             // Object is current held, so release it instead
             Release();
