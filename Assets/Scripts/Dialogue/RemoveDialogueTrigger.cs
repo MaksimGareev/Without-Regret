@@ -6,6 +6,7 @@ public class RemoveDialogueTrigger : MonoBehaviour
     private ObjectiveManager objectiveManager;
     public GameObject trigger1;
     public GameObject trigger2;
+    public GameObject trigger3;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
@@ -37,6 +38,7 @@ public class RemoveDialogueTrigger : MonoBehaviour
             {
                 trigger1.SetActive(false);
                 trigger2.SetActive(false);
+                trigger3.SetActive(false);
             }
             Debug.Log("player has exited");
         }
