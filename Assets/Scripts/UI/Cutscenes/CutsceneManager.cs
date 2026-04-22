@@ -480,11 +480,31 @@ public class CutsceneManager : MonoBehaviour
         }
         
         inputActions.FindActionMap("UI").Enable();
+        inputActions.FindActionMap("UI").FindAction("Navigate").Disable();
         inputActions.FindActionMap("Player").Disable();
+
+        if (EventSystem.current.currentSelectedGameObject)
+        {
+            EventSystem.current.SetSelectedGameObject(null);
+        }
     }
 
-    private IEnumerator FadeInCutscene()
+    private IEnumerator FadeInCutscene(bool fadeIn = true)
     {
+        // Set to black to avoid white flashing
+        primaryBackgroundImage.texture = null;
+        primaryBackgroundImage.color = Color.black;
+        
+        secondaryBackgroundImage.texture = null;
+        secondaryBackgroundImage.color = Color.black;
+        
+        if (!fadeIn)
+        {
+            cutsceneCanvasGroup.alpha = 1f;
+            fadeInCoroutine = null;
+            yield break;
+        }
+        
         float timer = 0.0f;
 
         while (timer < fadeDuration)

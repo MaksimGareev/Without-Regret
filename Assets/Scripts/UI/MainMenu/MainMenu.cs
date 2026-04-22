@@ -21,7 +21,7 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private SettingsMenu settingsScript;
     [SerializeField] private GameObject settingsPanel;
     [SerializeField] private GameObject creditsPanel;
-    [SerializeField] private GameObject saveSlotsPanel;
+    [SerializeField] public GameObject saveSlotsPanel;
     [SerializeField] private GameObject confirmationPanel;
 
     [Header("Buttons")]

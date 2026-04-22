@@ -190,6 +190,16 @@ public class SceneLoadManager : MonoBehaviour
         }
         
         canvasGroup.alpha = 1f;
+
+        if (SceneManager.GetActiveScene().name == "MainMenu")
+        {
+            MainMenu mainMenu = FindAnyObjectByType<MainMenu>();
+            if (mainMenu)
+            {
+                mainMenu.saveSlotsPanel.SetActive(false);
+                mainMenu.gameObject.SetActive(false);
+            }
+        }
     }
 
     private IEnumerator FadeOutBlackScreen()
