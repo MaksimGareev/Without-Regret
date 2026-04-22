@@ -179,6 +179,11 @@ public class CameraMovement : MonoBehaviour
             Debug.LogWarning("Check Collisions is enabled but no Collider component found on the camera. Disabling collision checking.");
             checkCollisions = false;
         }
+
+        if (ObjectiveManager.Instance)
+        {
+            ObjectiveManager.Instance.OnObjectiveCompleted.AddListener(ShakeOnObjectiveComplete);
+        }
     }
 
     private void OnEnable()
@@ -429,6 +434,14 @@ public class CameraMovement : MonoBehaviour
         {
             // Look at the Player
             transform.LookAt(lookAtPos);
+        }
+    }
+    
+    private void ShakeOnObjectiveComplete(ObjectiveInstance objective)
+    {
+        if (objective.data.cameraShake)
+        {
+            Shake(objective.data.cameraShakeDuration, objective.data.cameraShakeMagnitude, objective.data.cameraShakeFrequency);
         }
     }
 
