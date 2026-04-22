@@ -445,7 +445,6 @@ public class LockPicking : MonoBehaviour
         {
             GameManager.Instance.staminaSlider.gameObject.SetActive(true);
         }
-        
 
         if (GameManager.Instance.journalUI != null && !GameManager.Instance.journalUICanvas.activeSelf)
         {
@@ -622,8 +621,7 @@ public class LockPicking : MonoBehaviour
         VictoryText.SetActive(false);
         StageTwoUI.SetActive(false);
         LockPickUi.SetActive(false);
-        
-
+        DeactivateLockPick();
 
         // Unlock player movement
         PlayerController pc = player.GetComponent<PlayerController>();

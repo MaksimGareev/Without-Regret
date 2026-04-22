@@ -88,7 +88,6 @@ public class BossEnemyController : MonoBehaviour
     [SerializeField] private Color inactiveFillColor = new Color(0.5f, 0.5f, 0.5f, 0.6f);
     private Color activeFillColor = Color.white;
 
-
     [Header("Debugging")]
     [SerializeField] bool showDebugLogs = false;
 
@@ -612,6 +611,8 @@ public class BossEnemyController : MonoBehaviour
     {
         Debug.Log("Boss' health has depleted");
         gameObject.SetActive(false);
+        
+        
         SceneLoadManager.Instance.LoadScene(credits.GetSceneName());
     }
     
