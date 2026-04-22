@@ -9,7 +9,7 @@ public class CutsceneData : ScriptableObject
     public bool fadeIn = true;
     
     [Tooltip("Whether or not the entire cutscene is able to be skipped.")]
-    public bool canSkipEntireCutscene;
+    public bool canSkipEntireCutscene = true;
     
     [Header("Cutscene Clips")] 
     [Tooltip("The individual clips that make up this cutscene. Each clip will be played in order, and will have its own settings for background, dialogue, and audio.")]
