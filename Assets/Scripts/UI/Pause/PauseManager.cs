@@ -105,7 +105,7 @@ public class PauseManager : MonoBehaviour
         && !Journal.Instance.IsJournalOpen 
         && !NewDialogueManager.Instance.DialogueIsActive 
         && !confirmationPanel.activeSelf 
-        && !(GameOverManager.Instance && (GameOverManager.Instance.IsGameOver || GameManager.Instance.qteIsActive || GameManager.Instance.objectiveDebugScript.DebugUIIsActive))
+        && !(GameOverManager.Instance && (GameOverManager.Instance.IsGameOver || GameManager.Instance.qteIsActive || GameManager.Instance.objectiveDebugScript.DebugUIIsActive || GameManager.Instance.lockPickUIScript.IsActive))
         && !SceneLoadManager.Instance.IsLoading 
         && !InteractionTutorialUI.Instance.IsShowing 
         && !(Ending.Instance && Ending.Instance.finished)

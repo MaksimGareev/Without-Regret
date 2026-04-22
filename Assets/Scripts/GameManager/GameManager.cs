@@ -33,6 +33,7 @@ public class GameManager : MonoBehaviour
     public Image staminaFill;
     public GameObject InventoryUI;
     public GameObject LockPickUI;
+    [HideInInspector] public LockPicking lockPickUIScript;
     public RectTransform inventoryRectTransform;
     public InventoryUIController inventoryInteractingScript;
     public TextMeshProUGUI inventoryPopupText;
@@ -139,6 +140,7 @@ public class GameManager : MonoBehaviour
         sceneLoadManager = GetComponentInChildren<SceneLoadManager>();
         cutsceneManager = GetComponentInChildren<CutsceneManager>();
         objectiveDebugScript = GetComponentInChildren<ObjectiveAndSaveTesting>();
+        lockPickUIScript = LockPickUI.GetComponent<LockPicking>();
 
         if (ObjectiveMarker == null)
             ObjectiveMarker = GetComponentInChildren<ObjectiveMarker>(true);

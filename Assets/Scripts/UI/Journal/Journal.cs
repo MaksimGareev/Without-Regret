@@ -193,7 +193,8 @@ public class Journal : MonoBehaviour, ISaveable
             && !SceneLoadManager.Instance.IsLoading
             && !GameManager.Instance.qteIsActive
             && !GameManager.Instance.objectiveDebugScript.DebugUIIsActive
-            && !CutsceneManager.Instance.isCutscenePlaying)
+            && !CutsceneManager.Instance.isCutscenePlaying
+            && !GameManager.Instance.lockPickUIScript.IsActive)
         {
             ToggleJournalUI();
         }

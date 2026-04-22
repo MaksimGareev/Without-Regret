@@ -5,6 +5,7 @@ using System.Collections;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Users;
 using TMPro;
+using UnityEngine.Assertions.Must;
 
 public class LockPicking : MonoBehaviour
 {
@@ -80,6 +81,8 @@ public class LockPicking : MonoBehaviour
     [Header("Animation")]
     public Animator animator;
     private CharacterSwap characterSwap;
+    
+    public bool IsActive { get; private set; }
 
     private bool IsController
     {
@@ -372,6 +375,7 @@ public class LockPicking : MonoBehaviour
         OnScreenMarker.SetActive(true);
         OffscreenMarker.SetActive(true);
         EnableOtherCanvases();
+        IsActive = false;
 
         // Unlock player movement
         PlayerController pc = player.GetComponent<PlayerController>();
@@ -418,13 +422,15 @@ public class LockPicking : MonoBehaviour
         LockPickUi.SetActive(true);
         OnScreenMarker.SetActive(false);
         OffscreenMarker.SetActive(false);
-        DisableOtherCanvases();
+        IsActive = true;
         updateInputPrompt(isController);
 
         if (player == null || animator == null || rb == null)
         {
             ReassignPlayer();
         }
+        
+        DisableOtherCanvases();
         
         PickCursor.eulerAngles = new Vector3(0, 0, 0);
         GenerateSolutions();
@@ -434,6 +440,12 @@ public class LockPicking : MonoBehaviour
     private void EnableOtherCanvases()
     {
         if (GameManager.Instance == null) return;
+        
+        if (GameManager.Instance.staminaSlider && GameManager.Instance.staminaSlider.gameObject.activeSelf)
+        {
+            GameManager.Instance.staminaSlider.gameObject.SetActive(true);
+        }
+        
 
         if (GameManager.Instance.journalUI != null && !GameManager.Instance.journalUICanvas.activeSelf)
         {
@@ -464,6 +476,16 @@ public class LockPicking : MonoBehaviour
     private void DisableOtherCanvases()
     {
         if (GameManager.Instance == null) return;
+        
+        if (player.TryGetComponent<ToggleInventoryUI>(out ToggleInventoryUI inventory) && inventory.isEnabled)
+        {
+            inventory.ToggleInventory();
+        }
+        
+        if (GameManager.Instance.staminaSlider && GameManager.Instance.staminaSlider.gameObject.activeSelf)
+        {
+            GameManager.Instance.staminaSlider.gameObject.SetActive(false);
+        }
 
         if (GameManager.Instance.journalUI != null && GameManager.Instance.journalUICanvas.activeSelf)
         {

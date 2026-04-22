@@ -26,6 +26,13 @@ public class CutsceneTriggerVolume : MonoBehaviour
         {
             boxCollider.isTrigger = true;
         }
+        
+        CheckIfObjectiveActive();
+    }
+
+    private void CheckIfObjectiveActive()
+    {
+        
     }
     
     private void OnTriggerEnter(Collider other)
