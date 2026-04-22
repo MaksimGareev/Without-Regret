@@ -22,22 +22,25 @@ public class SacredTreeSequence : MonoBehaviour
     [Header("Player Control")]
     public MonoBehaviour playerControllerScript;
     public CharacterController characterController;
+    
+    [Header("Cutscene")]
+    public CutsceneData cutsceneData;
 
-    [Header("UI")]
-    public CanvasGroup instantBlackScreen; 
-    public ScreenFadeController fadeController; // Handles fade-in
+    // [Header("UI")]
+    // public CanvasGroup instantBlackScreen; 
+    // public ScreenFadeController fadeController; // Handles fade-in
 
     private bool sequenceStarted = false; // Disables multiple triggers
 
-    void Start()  // Black screen on hidden at start
-    {
-        if (instantBlackScreen != null)
-        {
-            instantBlackScreen.alpha = 0f;
-            instantBlackScreen.interactable = false;
-            instantBlackScreen.blocksRaycasts = false;
-        }
-    }
+    // void Start()  // Black screen on hidden at start
+    // {
+    //     if (instantBlackScreen != null)
+    //     {
+    //         instantBlackScreen.alpha = 0f;
+    //         instantBlackScreen.interactable = false;
+    //         instantBlackScreen.blocksRaycasts = false;
+    //     }
+    // }
 
     void Update() // Checks Player Distance // Does nothing if already triggered or player is missing 
     {
@@ -74,11 +77,16 @@ public class SacredTreeSequence : MonoBehaviour
 
         yield return new WaitForSeconds(cutToBlackDelay); // Instant cut to black screen 
 
-        if (instantBlackScreen != null)
+        // if (instantBlackScreen != null)
+        // {
+        //     instantBlackScreen.alpha = 1f; // Black screen for a second 
+        //     instantBlackScreen.interactable = true;
+        //     instantBlackScreen.blocksRaycasts = true;
+        // }
+
+        if (CutsceneManager.Instance)
         {
-            instantBlackScreen.alpha = 1f; // Black screen for a second 
-            instantBlackScreen.interactable = true;
-            instantBlackScreen.blocksRaycasts = true;
+            CutsceneManager.Instance.StartCutscene(cutsceneData);
         }
         
         CharacterSwap swapScript = playerControllerScript.gameObject.GetComponent<CharacterSwap>();
@@ -91,7 +99,15 @@ public class SacredTreeSequence : MonoBehaviour
             Debug.LogError("CharacterSwap script not found on player controller object. Could not swap characters");
         }
 
-        yield return new WaitForSeconds(blackScreenDuration);
+        while (CutsceneManager.Instance.isCutscenePlaying) // Wait for cutscene to end 
+        {
+            yield return null;
+        }
+
+        if (TimerRingUI.Instance)
+        {
+            TimerRingUI.Instance.SetPortrait(TimerRingUI.PlayerPortrait.Chime);
+        }
 
         if (pull != null)
             Destroy(pull);
@@ -106,16 +122,5 @@ public class SacredTreeSequence : MonoBehaviour
 
         if (playerControllerScript != null)
             playerControllerScript.enabled = true;
-
-        if (fadeController != null) // Fade black screen into gameplay
-        {
-            fadeController.FadeFromBlack();
-        }
-        else if (instantBlackScreen != null)
-        {
-            instantBlackScreen.alpha = 0f;
-            instantBlackScreen.interactable = false;
-            instantBlackScreen.blocksRaycasts = false;
-        }
     }
 }

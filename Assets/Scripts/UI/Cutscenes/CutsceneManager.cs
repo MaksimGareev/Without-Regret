@@ -197,7 +197,7 @@ public class CutsceneManager : MonoBehaviour
         
         if (audioSources.Length < 3)
         {
-            Debug.LogError("CutsceneManager requires at least 2 AudioSources. Please add more AudioSources to the CutsceneManager GameObject.");
+            Debug.LogError("CutsceneManager requires at least 3 AudioSources. Please add more AudioSources to the CutsceneManager GameObject.");
             return;
         }
         
@@ -506,7 +506,7 @@ public class CutsceneManager : MonoBehaviour
 
         foreach (AudioSource audioSource in audioSources)
         {
-            if (!audioSource.gameObject.GetComponentInParent<CutsceneManager>())
+            if (!audioSource.gameObject.GetComponent<CutsceneManager>())
             {
                 otherAudioSources.Add(audioSource, audioSource.volume);
             }

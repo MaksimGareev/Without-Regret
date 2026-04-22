@@ -12,7 +12,7 @@ public class TimerRingUI : MonoBehaviour
         Empty
     }
 
-    private enum PlayerPortrait
+    public enum PlayerPortrait
     {
         Echo,
         Chime
@@ -71,6 +71,7 @@ public class TimerRingUI : MonoBehaviour
     [Header("Damage Cooldown Settings")]
     [Tooltip("The time in seconds that the player will be invincible for before being able to take damage again")]
     [SerializeField, Range(0.0f, 5.0f)] private float damageCooldown = 1.0f;
+    
     private bool canTakeDamage = true;
     private float damageAvailableTime = 0f;
     
@@ -138,7 +139,6 @@ public class TimerRingUI : MonoBehaviour
 
     public void Update()
     {
-        
         //if (Input.GetKeyDown(KeyCode.J)) //For Testing
         //{
         //    SubtractRingSection(1);
@@ -349,5 +349,11 @@ public class TimerRingUI : MonoBehaviour
         Debug.Log("Refilled Health");
         hasDied = false;
         SetRingState(RingState.Full);
+    }
+    
+    public void SetPortrait(PlayerPortrait portrait)
+    {
+        currentPortrait = portrait;
+        SetRingState(currentRingState);
     }
 }

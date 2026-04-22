@@ -39,9 +39,6 @@ public class Door : MonoBehaviour, IInteractable
 
     private bool hasInteracted = false;
 
-    // private bool isPlayerNear = false;
-    // private bool isInteracting = false;
-
     private void Awake()
     {
         characterSwap = FindFirstObjectByType<CharacterSwap>();

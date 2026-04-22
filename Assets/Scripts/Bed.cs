@@ -1,5 +1,4 @@
 using System.Collections;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Linq;
@@ -9,8 +8,10 @@ public class Bed : MonoBehaviour, IInteractable
     [Header("Bed Settings")]
     [Tooltip("The scene that this bed will load when the player interacts with it. Drag and drop the scene asset from the project window into this field.")]
     public SceneReference sceneToLoad;
+    
     [Tooltip("Distance at which the player can interact with the bed.")]
     public float interactDistance = 5f;
+    
     public float interactionPriority => 5f;
     public InteractType interactType => InteractType.Sleep;
 
@@ -18,6 +19,7 @@ public class Bed : MonoBehaviour, IInteractable
     private Transform player;
     private Animator animator;
     private CharacterSwap characterSwap;
+    
     [Header("Objective Settings")]
     [Tooltip("Objective that must be ACTIVE to allow the player to interact with this bed. If the player has not ACTIVE the linked objective, they will not be able to interact with the bed.")]
     public ObjectiveData linkedObjective;
@@ -32,9 +34,10 @@ public class Bed : MonoBehaviour, IInteractable
     [Tooltip("Sound that will play when the player interacts with the bed.")]
     public AudioClip interactSound;
     private AudioSource audioSource; //not sure if needed ,but will keep for now
-
-    // private bool isPlayerNear = false;
-    // private bool isInteracting = false;
+    
+    [Header("Cutscene")]
+    [Tooltip("If assigned, this cutscene will play before loading the next level.")]
+    public CutsceneData cutsceneToPlay;
 
     private void Awake()
     {
@@ -143,7 +146,7 @@ public class Bed : MonoBehaviour, IInteractable
 
         if (GameManager.Instance != null && GameManager.Instance.sceneLoadManager != null)
         {
-            GameManager.Instance.sceneLoadManager.LoadScene(sceneToLoad.GetSceneName());
+            GameManager.Instance.sceneLoadManager.LoadScene(sceneToLoad.GetSceneName(), cutsceneToPlay);
         }
         else
         {
