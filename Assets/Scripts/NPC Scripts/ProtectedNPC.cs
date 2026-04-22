@@ -19,7 +19,16 @@ public class ProtectedNPC : MonoBehaviour
         {
             animator.SetBool("isScared", true);
         }
-        agent.SetDestination(CheckPoints[point].transform.position);
+
+        for (int i = 0; i < CheckPoints.Length; i++)
+        {
+            if (CheckPoints[i].isTraversable)
+            {
+                point = i;
+                agent.SetDestination(CheckPoints[point].transform.position);
+                break;
+            }
+        }
     }
 
     void Update()
@@ -48,17 +57,26 @@ public class ProtectedNPC : MonoBehaviour
                 animator.SetBool("isIdle", !isMoving);
             }
         }
-
+        
         if (NewDialogueManager.Instance.DialogueIsActive)
         {
             agent.isStopped = true;
-            return;
+            //return;
         }
-        else
+        else if (!NewDialogueManager.Instance.DialogueIsActive)
         {
             agent.isStopped = false;
         }
 
+        // If we haven't started moving yet
+        if (agent.destination == Vector3.zero || agent.remainingDistance == 0f)
+        {
+            if (CheckPoints[point].isTraversable)
+            {
+                agent.SetDestination(CheckPoints[point].transform.position);
+            }
+        }
+        
         // If agent reached its destination
         if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
         {
@@ -71,5 +89,6 @@ public class ProtectedNPC : MonoBehaviour
                 }
             }      
         }
+        
     }
 }
