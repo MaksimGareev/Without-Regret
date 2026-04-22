@@ -371,6 +371,7 @@ public class LockPicking : MonoBehaviour
         Rigidbody rb = player.GetComponent<Rigidbody>();
         OnScreenMarker.SetActive(true);
         OffscreenMarker.SetActive(true);
+        EnableOtherCanvases();
 
         // Unlock player movement
         PlayerController pc = player.GetComponent<PlayerController>();
@@ -417,6 +418,7 @@ public class LockPicking : MonoBehaviour
         LockPickUi.SetActive(true);
         OnScreenMarker.SetActive(false);
         OffscreenMarker.SetActive(false);
+        DisableOtherCanvases();
         updateInputPrompt(isController);
 
         if (player == null || animator == null || rb == null)
@@ -427,6 +429,66 @@ public class LockPicking : MonoBehaviour
         PickCursor.eulerAngles = new Vector3(0, 0, 0);
         GenerateSolutions();
         rb.constraints = RigidbodyConstraints.FreezeAll;
+    }
+    
+    private void EnableOtherCanvases()
+    {
+        if (GameManager.Instance == null) return;
+
+        if (GameManager.Instance.journalUI != null && !GameManager.Instance.journalUICanvas.activeSelf)
+        {
+            GameManager.Instance.journalUICanvas.SetActive(true);
+        }
+
+        if (GameManager.Instance.interactionIconsCanvas != null && !GameManager.Instance.interactionIconsCanvas.activeSelf)
+        {
+            GameManager.Instance.interactionIconsCanvas.SetActive(true);
+        }
+
+        if (GameManager.Instance.playerUICanvas != null && !GameManager.Instance.playerUICanvas.activeSelf)
+        {
+            GameManager.Instance.playerUICanvas.SetActive(true);
+        }
+
+        if (GameManager.Instance.gameOverCanvas != null && !GameManager.Instance.gameOverCanvas.activeSelf)
+        {
+            GameManager.Instance.gameOverCanvas.SetActive(GameOverManager.Instance.IsGameOver);
+        }
+
+        if (GameManager.Instance.objectivePanel != null && !GameManager.Instance.objectivePanel.activeSelf)
+        {
+            GameManager.Instance.objectivePanel.SetActive(GameManager.Instance.objectiveCanvas.IsVisible());
+        }
+    }
+
+    private void DisableOtherCanvases()
+    {
+        if (GameManager.Instance == null) return;
+
+        if (GameManager.Instance.journalUI != null && GameManager.Instance.journalUICanvas.activeSelf)
+        {
+            GameManager.Instance.journalUICanvas.SetActive(false);
+        }
+
+        if (GameManager.Instance.interactionIconsCanvas != null && GameManager.Instance.interactionIconsCanvas.activeSelf)
+        {
+            GameManager.Instance.interactionIconsCanvas.SetActive(false);
+        }
+
+        if (GameManager.Instance.playerUICanvas != null && GameManager.Instance.playerUICanvas.activeSelf)
+        {
+            GameManager.Instance.playerUICanvas.SetActive(false);
+        }
+
+        if (GameManager.Instance.gameOverCanvas != null && GameManager.Instance.gameOverCanvas.activeSelf)
+        {
+            GameManager.Instance.gameOverCanvas.SetActive(false);
+        }
+
+        if (GameManager.Instance.objectivePanel != null && GameManager.Instance.objectivePanel.activeSelf)
+        {
+            GameManager.Instance.objectivePanel.SetActive(false);
+        }
     }
 
     public void Unlock()//resets and deactivates Ui

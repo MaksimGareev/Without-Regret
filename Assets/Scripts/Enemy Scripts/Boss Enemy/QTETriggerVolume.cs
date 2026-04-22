@@ -135,6 +135,8 @@ public class QTETriggerVolume : MonoBehaviour, IInteractable
         initiated = true;
 
         qteCanvas.SetActive(true);
+        DisableOtherCanvases();
+        
         arrowsContainer.gameObject.SetActive(true);
         
         if (GameManager.Instance)
@@ -146,6 +148,68 @@ public class QTETriggerVolume : MonoBehaviour, IInteractable
         
         // Pause game
         Time.timeScale = 0.0f;
+    }
+    
+    private void EnableOtherCanvases()
+    {
+        if (showDebugLogs) Debug.Log("Enabling other canvases from Journal");
+        if (GameManager.Instance == null) return;
+
+        if (GameManager.Instance.mainCanvas != null && !GameManager.Instance.mainCanvas.activeSelf)
+        {
+            GameManager.Instance.mainCanvas.SetActive(true);
+        }
+
+        if (GameManager.Instance.interactionIconsCanvas != null && !GameManager.Instance.interactionIconsCanvas.activeSelf)
+        {
+            GameManager.Instance.interactionIconsCanvas.SetActive(true);
+        }
+
+        if (GameManager.Instance.playerUICanvas != null && !GameManager.Instance.playerUICanvas.activeSelf)
+        {
+            GameManager.Instance.playerUICanvas.SetActive(true);
+        }
+
+        if (GameManager.Instance.gameOverCanvas != null && !GameManager.Instance.gameOverCanvas.activeSelf)
+        {
+            GameManager.Instance.gameOverCanvas.SetActive(GameOverManager.Instance.IsGameOver);
+        }
+
+        if (GameManager.Instance.objectivePanel != null && !GameManager.Instance.objectivePanel.activeSelf)
+        {
+            GameManager.Instance.objectivePanel.SetActive(GameManager.Instance.objectiveCanvas.IsVisible());
+        }
+    }
+
+    private void DisableOtherCanvases()
+    {
+        if (showDebugLogs) Debug.Log("Disabling other canvases from Journal");
+        if (GameManager.Instance == null) return;
+
+        if (GameManager.Instance.mainCanvas != null && GameManager.Instance.mainCanvas.activeSelf)
+        {
+            GameManager.Instance.mainCanvas.SetActive(false);
+        }
+
+        if (GameManager.Instance.interactionIconsCanvas != null && GameManager.Instance.interactionIconsCanvas.activeSelf)
+        {
+            GameManager.Instance.interactionIconsCanvas.SetActive(false);
+        }
+
+        if (GameManager.Instance.playerUICanvas != null && GameManager.Instance.playerUICanvas.activeSelf)
+        {
+            GameManager.Instance.playerUICanvas.SetActive(false);
+        }
+
+        if (GameManager.Instance.gameOverCanvas != null && GameManager.Instance.gameOverCanvas.activeSelf)
+        {
+            GameManager.Instance.gameOverCanvas.SetActive(false);
+        }
+
+        if (GameManager.Instance.objectivePanel != null && GameManager.Instance.objectivePanel.activeSelf)
+        {
+            GameManager.Instance.objectivePanel.SetActive(false);
+        }
     }
 
     private void SetupArrowUI()
@@ -257,6 +321,7 @@ public class QTETriggerVolume : MonoBehaviour, IInteractable
     private void EndQTESuccess()
     {
         arrowsContainer.gameObject.SetActive(false);
+        EnableOtherCanvases();
 
         // Unlock player movement
         Rigidbody rb = playerController.GetComponent<Rigidbody>();
