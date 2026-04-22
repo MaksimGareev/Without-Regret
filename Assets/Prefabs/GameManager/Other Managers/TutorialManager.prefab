@@ -86,6 +86,7 @@ GameObject:
   - component: {fileID: 8101789794328468548}
   - component: {fileID: 3731248523992734241}
   - component: {fileID: 8294288674934845121}
+  - component: {fileID: 7936635487756757642}
   m_Layer: 5
   m_Name: Tutorial
   m_TagString: Untagged
@@ -112,7 +113,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -333}
+  m_AnchoredPosition: {x: 0, y: -316}
   m_SizeDelta: {x: 1419, y: 346}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3731248523992734241
@@ -153,6 +154,18 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!225 &7936635487756757642
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1474113724855175618}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &2470545641079672294
 GameObject:
   m_ObjectHideFlags: 0
@@ -181,14 +194,14 @@ RectTransform:
   m_GameObject: {fileID: 2470545641079672294}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_LocalScale: {x: 0.47879, y: 0.47879, z: 0.47879}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 8101789794328468548}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 530}
+  m_AnchoredPosition: {x: 0, y: 501}
   m_SizeDelta: {x: 1920, y: 1080}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &517247377199239681
@@ -354,7 +367,8 @@ MonoBehaviour:
       inputs to send a burst of energy at the boss and damage it.
   - interactType: 12
     videoClip: {fileID: 32900000, guid: 58d1d7c6a9ac06145860a5c3f989c861, type: 3}
-    tutorialText: 
+    tutorialText: Watch out for those void pools, they will do more damage the longer
+      that you are in them.
   - interactType: 16
     videoClip: {fileID: 32900000, guid: b4211c0d757109c4d9ff21adf7abd3ec, type: 3}
     tutorialText: Echo can sprint by holding R3 / Left Shift, Echo's sprint meter
@@ -402,14 +416,14 @@ RectTransform:
   m_GameObject: {fileID: 3901473533814470558}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.95758, y: 0.95758, z: 0.95758}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8101789794328468548}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 4, y: 530}
+  m_AnchoredPosition: {x: 4, y: 501}
   m_SizeDelta: {x: 1056.2, y: 630.8}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2926608457742205416
@@ -469,7 +483,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1818838515106804211
 RectTransform:
   m_ObjectHideFlags: 0
@@ -659,7 +673,7 @@ MonoBehaviour:
     serializedVersion: 2
     rgba: 4294967295
   m_fontSize: 14
-  m_fontSizeBase: 14
+  m_fontSizeBase: 16
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
