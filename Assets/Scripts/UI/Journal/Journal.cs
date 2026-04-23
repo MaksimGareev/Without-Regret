@@ -921,7 +921,7 @@ public class Journal : MonoBehaviour, ISaveable
         if (npcPortrait)
         {
             var portrait = characterPortraits.Find(p => p.name == characterNamesList[index]);
-            if (portrait.Equals(default(CharacterPortrait)))
+            if (!portrait.Equals(default(CharacterPortrait)) && portrait.portrait)
             {
                 npcPortrait.sprite = portrait.portrait;
                 npcPortrait.SetNativeSize();
