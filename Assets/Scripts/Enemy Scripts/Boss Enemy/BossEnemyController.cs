@@ -41,8 +41,10 @@ public class BossEnemyController : MonoBehaviour
 
     [Header("Void Attack Settings")]
     [SerializeField, Min(0.1f)] float projectileSpeed = 5f;
+    
     [Tooltip("Percentage chance that a health pickup drops when an enemy created from a void pool despawns")]
     [SerializeField, Range(0, 1f)] float healthDropChance = 0.7f;
+    
     [Tooltip("Layer mask used for raycasting the position of the void projectile's warning shadow. Should include any layers that shouldn't obstruct the shadow's position on the ground (e.g. Target, Enemy)")]
     [SerializeField] LayerMask shadowLayerMask;
     [SerializeField] VoidPoolSettings voidPoolSettings = new(5f, 1f, 1, 2, 6f);
@@ -52,6 +54,7 @@ public class BossEnemyController : MonoBehaviour
     [Header("Arm Sweep Settings")]
     [Tooltip("The speed at which the boss' arm moves, in degrees per second")]
     [SerializeField] float sweepingSpeed = 20f;
+    
     [Tooltip("The duration for how long the arm sweeps across")]
     [SerializeField] float sweepingDuration = 8f;
 
@@ -60,33 +63,54 @@ public class BossEnemyController : MonoBehaviour
 
     [Header("References")]
     [SerializeField] Transform player;
+    
     [Tooltip("The enemy prefab used for spawning")]
     [SerializeField] GameObject enemyPrefab;
+    
     [Tooltip("The visual model of the boss")]
     [SerializeField] GameObject model;
+    
     [Tooltip("The arm used for the Arm Sweep attack")]
     [SerializeField] GameObject sweepingArmObject;
+    
     [Tooltip("The projectile prefab used for the void projectile attack")]
     [SerializeField] GameObject voidProjectileObject;
+    
     [Tooltip("A shadow object that appears on the ground to indicate where the void projectile will land")]
     [SerializeField] GameObject voidProjectileShadow;
+    
     [Tooltip("The prefab used for the void pool created by the void projectile")]
     [SerializeField] GameObject voidPoolPrefab;
+    
     [Tooltip("The transform from which the void projectile will be launched. Position is used, rotation is ignored.")]
     [SerializeField] Transform projectileSpawn;
+    
     [SerializeField] GameObject healthPickup;
     [SerializeField] Animator animator;
 
     [Header("Boss Health UI")]
     [Tooltip("Base slider prefab used to create one slider per phase at runtime.")]
     [SerializeField] private Slider baseSliderPrefab;
+    
     [Tooltip("Container RectTransform under which the generated sliders will be placed.")]
     public RectTransform slidersContainer;
+    
     [Tooltip("Spacing in pixels between generated sliders.")]
     [SerializeField] private float sliderSpacing = 4f;
+    
     [Tooltip("The color of the fill area of inactive (future) phases in the boss health UI")]
     [SerializeField] private Color inactiveFillColor = new Color(0.5f, 0.5f, 0.5f, 0.6f);
     private Color activeFillColor = Color.white;
+
+    [Header("Cutscenes")]
+    [Tooltip("The cutscene to play if the player has a good morality when defeating the boss")] 
+    [SerializeField] private CutsceneData goodEndingCutscene;
+    
+    [Tooltip("The cutscene to play if the player has a neutral morality when defeating the boss")]
+    [SerializeField] private CutsceneData neutralEndingCutscene;
+    
+    [Tooltip("The cutscene to play if the player has a bad morality when defeating the boss")]
+    [SerializeField] private CutsceneData badEndingCutscene;
 
     [Header("Debugging")]
     [SerializeField] bool showDebugLogs = false;
@@ -611,11 +635,30 @@ public class BossEnemyController : MonoBehaviour
     {
         Debug.Log("Boss' health has depleted");
         gameObject.SetActive(false);
-        
-        
-        SceneLoadManager.Instance.LoadScene(credits.GetSceneName());
+
+        if (NewDialogueManager.Instance)
+        {
+            if (NewDialogueManager.Instance.playerMorality >= 5)
+            {
+                SceneLoadManager.Instance.LoadScene(credits.GetSceneName(), goodEndingCutscene);
+            }
+            else if (NewDialogueManager.Instance.playerMorality <= -5)
+            {
+                SceneLoadManager.Instance.LoadScene(credits.GetSceneName(), badEndingCutscene);
+            }
+            else
+            {
+                SceneLoadManager.Instance.LoadScene(credits.GetSceneName(), neutralEndingCutscene);
+            }
+        }
+        else
+        {
+            Debug.LogWarning("Morality Manager instance not found. Starting neutral ending cutscene by default.");
+            SceneLoadManager.Instance.LoadScene(credits.GetSceneName(), neutralEndingCutscene);
+        }
     }
     
+#if UNITY_EDITOR
     public void Update()
     {
         if (Input.GetKeyDown(KeyCode.T))
@@ -623,6 +666,7 @@ public class BossEnemyController : MonoBehaviour
             Die();
         }
     }
+#endif
     
     public void TakeDamage(int value = 1)
     {
