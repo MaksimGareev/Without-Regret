@@ -33,9 +33,14 @@ public class ObjectiveData : ScriptableObject
     [Header("Camera Shake")]
     [Tooltip("If true, will cause the camera to shake after the objective is completed")]
     public bool cameraShake = false;
+    [Tooltip("The length of time in seconds that the camera shake will last for")]
     public float cameraShakeDuration = 0.5f;
+    [Tooltip("The strength of each shake, in terms of positional displacement")]
     public float cameraShakeMagnitude = 0.1f;
+    [Tooltip("How often the camera shakes, higher numbers are faster")]
     public float cameraShakeFrequency = 30f;
+    [Tooltip("The sound to play when starting the shake")]
+    public AudioClip shakeSound;
 
     [Header("Chime Wayfinding")]
     [Tooltip("If on and there's an object with the FollowChimeObjective component that's linked to this objective, Chime will move between the transforms provided to the FollowChimeObjective component.")]
