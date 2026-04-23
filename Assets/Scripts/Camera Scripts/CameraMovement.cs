@@ -194,7 +194,7 @@ public class CameraMovement : MonoBehaviour
         if (shakeAudioSource)
         {
             shakeAudioSource.outputAudioMixerGroup = mainAudioMixer.FindMatchingGroups("SFX")[0];
-            shakeAudioSource.volume = 0.6f;
+            shakeAudioSource.volume = 0.8f;
         }
     }
 
