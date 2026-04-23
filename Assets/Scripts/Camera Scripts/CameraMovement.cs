@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 
+[RequireComponent(typeof(AudioSource))]
 public class CameraMovement : MonoBehaviour
 {
     // Enum to define cardinal directions for the default facing direction of the camera, to be used by designers in the inspector
@@ -147,6 +148,8 @@ public class CameraMovement : MonoBehaviour
 
     private float lerpBetweenValue = 0f;
     private float lerpSpeed = 1.5f;
+    
+    private AudioSource shakeAudioSource;
 
     private void Awake()
     {
@@ -184,6 +187,8 @@ public class CameraMovement : MonoBehaviour
         {
             ObjectiveManager.Instance.OnObjectiveActivated.AddListener(ShakeOnObjectiveActive);
         }
+        
+        shakeAudioSource = GetComponent<AudioSource>();
     }
 
     private void OnEnable()
@@ -442,6 +447,11 @@ public class CameraMovement : MonoBehaviour
         if (objective.data.cameraShake)
         {
             Shake(objective.data.cameraShakeDuration, objective.data.cameraShakeMagnitude, objective.data.cameraShakeFrequency);
+            
+            if (objective.data.shakeSound)
+            {
+                shakeAudioSource.PlayOneShot(objective.data.shakeSound);
+            }
         }
     }
 
