@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 public class CollectableSpawnManager : MonoBehaviour, ISaveable
 {
@@ -20,18 +21,55 @@ public class CollectableSpawnManager : MonoBehaviour, ISaveable
         }
 
         Instance = this;
+        DontDestroyOnLoad(gameObject);
+
+    }
+
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        RebuildSpawnPoints(scene);
+    }
+
+    public void RebuildSpawnPoints(Scene scene)
+    {
+        spawnPoints.Clear();
 
         // Find all spawn points in scene
         CollectableSpawnPoint[] points = FindObjectsOfType<CollectableSpawnPoint>();
 
+        Debug.Log($"[CollectableSpawnManager] Scene Loaded: {scene.name}");
+        Debug.Log($"Spawn points found: {points.Length}");
+
         foreach (var p in points)
         {
+            if (p == null) continue;
+
+            if (string.IsNullOrEmpty(p.spawnPointID))
+            {
+                continue;
+            }
+
             if (!spawnPoints.ContainsKey(p.spawnPointID))
             {
                 spawnPoints.Add(p.spawnPointID, p.transform);
             }
+            else
+            {
+                Debug.LogWarning($"Duplicate spawnpointID detected: {p.spawnPointID}");
+            }
         }
 
+        Debug.Log("Registered spawn points total: " + spawnPoints.Count);
     }
 
     public void SpawnCollectable(string collectableID, string spawnPointID, GameObject prefab, CollectableEntries data)
@@ -43,13 +81,31 @@ public class CollectableSpawnManager : MonoBehaviour, ISaveable
             return;
         }
 
-        if (prefab == null || spawnPointID == null)
+        if (prefab == null)
         {
-            Debug.LogWarning("Missing prefab or spawn point!");
+            Debug.LogWarning("Missing prefab");
             return;
         }
 
-        Transform point = spawnPoints[spawnPointID];
+        if (string.IsNullOrEmpty(spawnPointID))
+        {
+            Debug.LogWarning($"Missing SpawnPointID for collectable : {collectableID}");
+            return;
+        }
+
+        if (data == null)
+        {
+            Debug.LogWarning($"SpawnPoint ID '{spawnPointID}' not found in scene!");
+            return;
+        }
+
+        if (!spawnPoints.TryGetValue(spawnPointID, out Transform point))
+        {
+            Debug.LogError($"SpawnPoint ID '{spawnPointID}' not found in scene '{SceneManager.GetActiveScene().name}'!");
+            return;
+        }
+
+        //Transform point = spawnPoints[spawnPointID];
 
         GameObject obj = Instantiate(prefab, point.position, point.rotation);
 
@@ -57,7 +113,18 @@ public class CollectableSpawnManager : MonoBehaviour, ISaveable
 
         if (item != null)
         {
-            item.Initialize(data, NewDialogueManager.Instance.playerMorality);
+            int morality = 0;
+            
+            if (NewDialogueManager.Instance != null)
+            {
+                morality = NewDialogueManager.Instance.playerMorality;
+            }
+
+            item.Initialize(data, morality);
+        }
+        else
+        {
+            Debug.LogWarning($"Collectable component missing on prefab: {prefab.name}");
         }
 
         spawnedIDs.Add(collectableID);

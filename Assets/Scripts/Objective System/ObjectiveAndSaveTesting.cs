@@ -273,7 +273,7 @@ public class ObjectiveAndSaveTesting : MonoBehaviour
         
         Time.timeScale = 0f;
 
-        Cursor.lockState = CursorLockMode.None;
+        Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         usingController = true;
     }
@@ -284,7 +284,7 @@ public class ObjectiveAndSaveTesting : MonoBehaviour
         debugUI.SetActive(false);
         DebugUIIsActive = false;
         
-        EventSystem.current.SetSelectedGameObject(null);
+        EventSystem.current.SetSelectedGameObject(LevelSelectButtons[0].gameObject);
         
         Time.timeScale = 1f;
         Cursor.lockState = CursorLockMode.Locked;

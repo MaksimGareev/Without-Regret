@@ -163,6 +163,11 @@ public class CutsceneManager : MonoBehaviour
         
         originalHoldTextOffset = holdText.rectTransform.anchoredPosition;
         originalToSkipOffset = toSkipText.rectTransform.anchoredPosition;
+
+        if (ObjectiveManager.Instance)
+        {
+            ObjectiveManager.Instance.OnObjectiveCompleted.AddListener(OnObjectiveCompleted);
+        }
     }
 
     private void InitializeUIArt()
@@ -177,6 +182,14 @@ public class CutsceneManager : MonoBehaviour
             speakerNameBackgroundImage.sprite = speakerBackgroundSprite;
         }
     }
+    
+    private void OnObjectiveCompleted(ObjectiveInstance objectiveInstance)
+    {
+        if (objectiveInstance.data.cutsceneOnCompletion)
+        {
+            StartCutscene(objectiveInstance.data.cutsceneOnCompletion);
+        }
+    }
 
     private void InitializeAudioSources()
     {
@@ -184,7 +197,7 @@ public class CutsceneManager : MonoBehaviour
         
         if (audioSources.Length < 3)
         {
-            Debug.LogError("CutsceneManager requires at least 2 AudioSources. Please add more AudioSources to the CutsceneManager GameObject.");
+            Debug.LogError("CutsceneManager requires at least 3 AudioSources. Please add more AudioSources to the CutsceneManager GameObject.");
             return;
         }
         
@@ -435,7 +448,7 @@ public class CutsceneManager : MonoBehaviour
 
         if (cutsceneCanvasGroup && fadeInCoroutine == null)
         {
-            fadeInCoroutine = StartCoroutine(FadeInCutscene());
+            fadeInCoroutine = StartCoroutine(FadeInCutscene(currentCutscene.fadeIn));
         }
 
         DisableOtherAudioSources();
@@ -466,12 +479,32 @@ public class CutsceneManager : MonoBehaviour
             return;
         }
         
-        inputActions.FindActionMap("UI").Enable();
-        inputActions.FindActionMap("Player").Disable();
+        inputActions.FindActionMap("UI")?.Enable();
+        inputActions.FindActionMap("UI")?.FindAction("Navigate")?.Disable();
+        inputActions.FindActionMap("Player")?.Disable();
+
+        if (EventSystem.current.currentSelectedGameObject)
+        {
+            EventSystem.current.SetSelectedGameObject(null);
+        }
     }
 
-    private IEnumerator FadeInCutscene()
+    private IEnumerator FadeInCutscene(bool fadeIn = true)
     {
+        // Set to black to avoid white flashing
+        primaryBackgroundImage.texture = null;
+        primaryBackgroundImage.color = Color.black;
+        
+        secondaryBackgroundImage.texture = null;
+        secondaryBackgroundImage.color = Color.black;
+        
+        if (!fadeIn)
+        {
+            cutsceneCanvasGroup.alpha = 1f;
+            fadeInCoroutine = null;
+            yield break;
+        }
+        
         float timer = 0.0f;
 
         while (timer < fadeDuration)
@@ -493,7 +526,7 @@ public class CutsceneManager : MonoBehaviour
 
         foreach (AudioSource audioSource in audioSources)
         {
-            if (!audioSource.gameObject.GetComponentInParent<CutsceneManager>())
+            if (!audioSource.gameObject.GetComponent<CutsceneManager>())
             {
                 otherAudioSources.Add(audioSource, audioSource.volume);
             }
@@ -669,6 +702,16 @@ public class CutsceneManager : MonoBehaviour
         isTyping = false;
         
         dialogueText.text = "";
+        
+        if (dialogueLine.Speaker == "")
+        {
+            speakerNameBackgroundImage.gameObject.SetActive(false);
+        }
+        else
+        {
+            speakerNameBackgroundImage.gameObject.SetActive(true);
+        }
+        
         speakerNameText.text = dialogueLine.Speaker;
         
         SetVoiceGender(dialogueLine.NPCGender);
@@ -866,6 +909,7 @@ public class CutsceneManager : MonoBehaviour
         }
         
         inputActions.FindActionMap("UI")?.Disable();
+        inputActions.FindActionMap("UI")?.FindAction("Navigate")?.Enable();
         inputActions.FindActionMap("Player")?.Enable();
     }
 

@@ -150,13 +150,13 @@ public class TODManager : MonoBehaviour
     {
         switch (timeOfDay)
         {
-            case TOD.Morning:
+            case TOD.Morning: //directional light morning 39f, 0f, 0f
                 return new Vector3(39f, 0f, 0f);
 
-            case TOD.Evening:
-                return new Vector3(13f, 0f, 0f);
+            case TOD.Evening://directional light evening 5f, 0f, 0f
+                return new Vector3(20f, 0f, 0f);
 
-            case TOD.Night:
+            case TOD.Night://directional light night 0f, 0f, 0f
                 return new Vector3(0f, 0f, 0f);
         }
 

@@ -5,6 +5,7 @@ using System.Collections;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Users;
 using TMPro;
+using UnityEngine.Assertions.Must;
 
 public class LockPicking : MonoBehaviour
 {
@@ -16,7 +17,7 @@ public class LockPicking : MonoBehaviour
     public float MaxAngle = 90;
     public float LockSpeed = 10;
     public float CursorSpeed = 100f;
-    [HideInInspector] private float CurrentAngle = 0f;
+    public float CurrentAngle = 90f;
     [HideInInspector] public float RotationAmount;
     public List<Sprite> ArrowImages;
 
@@ -80,6 +81,8 @@ public class LockPicking : MonoBehaviour
     [Header("Animation")]
     public Animator animator;
     private CharacterSwap characterSwap;
+    
+    public bool IsActive { get; private set; }
 
     private bool IsController
     {
@@ -209,6 +212,10 @@ public class LockPicking : MonoBehaviour
                 {
                     // Rotate pick cursor with right stick
                     CurrentAngle = (Mathf.Atan2(rotateInput.y, rotateInput.x) * Mathf.Rad2Deg);
+                    if(CurrentAngle <= -90 && CurrentAngle >= -180)
+                    {
+                        CurrentAngle = 180;
+                    }
                     CurrentAngle = Mathf.Clamp(CurrentAngle, 0, 180);
 
                     // Apply rotation to pick cursor
@@ -367,6 +374,8 @@ public class LockPicking : MonoBehaviour
         Rigidbody rb = player.GetComponent<Rigidbody>();
         OnScreenMarker.SetActive(true);
         OffscreenMarker.SetActive(true);
+        EnableOtherCanvases();
+        IsActive = false;
 
         // Unlock player movement
         PlayerController pc = player.GetComponent<PlayerController>();
@@ -413,6 +422,7 @@ public class LockPicking : MonoBehaviour
         LockPickUi.SetActive(true);
         OnScreenMarker.SetActive(false);
         OffscreenMarker.SetActive(false);
+        IsActive = true;
         updateInputPrompt(isController);
 
         if (player == null || animator == null || rb == null)
@@ -420,9 +430,86 @@ public class LockPicking : MonoBehaviour
             ReassignPlayer();
         }
         
+        DisableOtherCanvases();
+        
         PickCursor.eulerAngles = new Vector3(0, 0, 0);
         GenerateSolutions();
         rb.constraints = RigidbodyConstraints.FreezeAll;
+    }
+    
+    private void EnableOtherCanvases()
+    {
+        if (GameManager.Instance == null) return;
+        
+        if (GameManager.Instance.staminaSlider && GameManager.Instance.staminaSlider.gameObject.activeSelf)
+        {
+            GameManager.Instance.staminaSlider.gameObject.SetActive(true);
+        }
+
+        if (GameManager.Instance.journalUI != null && !GameManager.Instance.journalUICanvas.activeSelf)
+        {
+            GameManager.Instance.journalUICanvas.SetActive(true);
+        }
+
+        if (GameManager.Instance.interactionIconsCanvas != null && !GameManager.Instance.interactionIconsCanvas.activeSelf)
+        {
+            GameManager.Instance.interactionIconsCanvas.SetActive(true);
+        }
+
+        if (GameManager.Instance.playerUICanvas != null && !GameManager.Instance.playerUICanvas.activeSelf)
+        {
+            GameManager.Instance.playerUICanvas.SetActive(true);
+        }
+
+        if (GameManager.Instance.gameOverCanvas != null && !GameManager.Instance.gameOverCanvas.activeSelf)
+        {
+            GameManager.Instance.gameOverCanvas.SetActive(GameOverManager.Instance.IsGameOver);
+        }
+
+        if (GameManager.Instance.objectivePanel != null && !GameManager.Instance.objectivePanel.activeSelf)
+        {
+            GameManager.Instance.objectivePanel.SetActive(GameManager.Instance.objectiveCanvas.IsVisible());
+        }
+    }
+
+    private void DisableOtherCanvases()
+    {
+        if (GameManager.Instance == null) return;
+        
+        if (player.TryGetComponent<ToggleInventoryUI>(out ToggleInventoryUI inventory) && inventory.isEnabled)
+        {
+            inventory.ToggleInventory();
+        }
+        
+        if (GameManager.Instance.staminaSlider && GameManager.Instance.staminaSlider.gameObject.activeSelf)
+        {
+            GameManager.Instance.staminaSlider.gameObject.SetActive(false);
+        }
+
+        if (GameManager.Instance.journalUI != null && GameManager.Instance.journalUICanvas.activeSelf)
+        {
+            GameManager.Instance.journalUICanvas.SetActive(false);
+        }
+
+        if (GameManager.Instance.interactionIconsCanvas != null && GameManager.Instance.interactionIconsCanvas.activeSelf)
+        {
+            GameManager.Instance.interactionIconsCanvas.SetActive(false);
+        }
+
+        if (GameManager.Instance.playerUICanvas != null && GameManager.Instance.playerUICanvas.activeSelf)
+        {
+            GameManager.Instance.playerUICanvas.SetActive(false);
+        }
+
+        if (GameManager.Instance.gameOverCanvas != null && GameManager.Instance.gameOverCanvas.activeSelf)
+        {
+            GameManager.Instance.gameOverCanvas.SetActive(false);
+        }
+
+        if (GameManager.Instance.objectivePanel != null && GameManager.Instance.objectivePanel.activeSelf)
+        {
+            GameManager.Instance.objectivePanel.SetActive(false);
+        }
     }
 
     public void Unlock()//resets and deactivates Ui
@@ -534,8 +621,7 @@ public class LockPicking : MonoBehaviour
         VictoryText.SetActive(false);
         StageTwoUI.SetActive(false);
         LockPickUi.SetActive(false);
-        
-
+        DeactivateLockPick();
 
         // Unlock player movement
         PlayerController pc = player.GetComponent<PlayerController>();

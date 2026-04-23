@@ -28,6 +28,7 @@ public class SceneLoadManager : MonoBehaviour
 
     float startVolume;
     float currentTime = 0;
+    private bool hasFadedAudio = false;
 
     [HideInInspector] public UnityEvent OnSceneLoaded = new();
 
@@ -65,19 +66,37 @@ public class SceneLoadManager : MonoBehaviour
         }
     }
 
-    public void LoadScene(string sceneName)
+    public void LoadScene(string sceneName, CutsceneData cutsceneToPlay = null)
     {
-        StartCoroutine(LoadSceneCoroutine(sceneName));
+        if (isLoading)
+        {
+            Debug.LogWarning("SceneLoadManager: Loading is already in progress. Ignoring duplicate call to load level");
+            return;
+        }
+
+        isLoading = true;
+        
+        StartCoroutine(LoadSceneCoroutine(sceneName, cutsceneToPlay));
     }
 
-    private IEnumerator LoadSceneCoroutine(string sceneName)
+    private IEnumerator LoadSceneCoroutine(string sceneName, CutsceneData cutsceneToPlay = null)
     {
+        hasFadedAudio = false;
         loadingProgressSlider.value = 0f;
         
         //Debug.Log("Fading in black screen");
-        yield return FadeInBlackScreen();
-        
-        isLoading = true;
+        yield return FadeInBlackScreen(!cutsceneToPlay);
+
+        if (cutsceneToPlay)
+        {
+            CutsceneManager.Instance.StartCutscene(cutsceneToPlay);
+            
+            
+            while (CutsceneManager.Instance.isCutscenePlaying)
+            {
+                yield return null;
+            }
+        }
 
         //Debug.Log("Starting scene load");
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
@@ -117,7 +136,7 @@ public class SceneLoadManager : MonoBehaviour
         yield return WaitForStableFrameRate();
 
         //Debug.Log("Fading out black screen");
-        yield return FadeOutBlackScreen();
+        yield return FadeOutBlackScreen(hasFadedAudio);
         
         // Ensure game is not started paused
         Time.timeScale = 1f;
@@ -158,9 +177,13 @@ public class SceneLoadManager : MonoBehaviour
         }
     }
 
-    private IEnumerator FadeInBlackScreen()
+    private IEnumerator FadeInBlackScreen(bool fadeOutAudio)
     {
-        StartCoroutine(FadeOutAudio());
+        if (fadeOutAudio)
+        {
+            yield return FadeOutAudio();
+            hasFadedAudio = true;
+        }
         
         float startTime = Time.realtimeSinceStartup;
         float endTime = startTime + fadeDuration;
@@ -173,11 +196,24 @@ public class SceneLoadManager : MonoBehaviour
         }
         
         canvasGroup.alpha = 1f;
+
+        if (SceneManager.GetActiveScene().name == "MainMenu")
+        {
+            MainMenu mainMenu = FindAnyObjectByType<MainMenu>();
+            if (mainMenu)
+            {
+                mainMenu.saveSlotsPanel.SetActive(false);
+                mainMenu.gameObject.SetActive(false);
+            }
+        }
     }
 
-    private IEnumerator FadeOutBlackScreen()
+    private IEnumerator FadeOutBlackScreen(bool fadeInAudio)
     {
-        StartCoroutine(FadeInAudio());
+        if (fadeInAudio)
+        {
+            StartCoroutine(FadeInAudio());
+        }
         
         float startTime = Time.realtimeSinceStartup;
         float endTime = startTime + fadeDuration;
@@ -202,29 +238,33 @@ public class SceneLoadManager : MonoBehaviour
         startVolume = PlayerPrefs.GetInt("masterVolume", 100);
         currentTime = 0;
         
-        while (currentTime <= fadeDuration)
+        while (currentTime <= audioFadeDuration)
         {
-            currentTime += Time.deltaTime;
+            currentTime += Time.unscaledDeltaTime;
             
-            float newVolume = Mathf.Lerp(startVolume, 0, currentTime / fadeDuration);
+            float newVolume = Mathf.Lerp(startVolume, 0, currentTime / audioFadeDuration);
             AudioManager.Instance.SetMasterVolume(Mathf.RoundToInt(newVolume));
             
             yield return null;
         }
+
+        AudioManager.Instance.SetMasterVolume(0);
     }
 
     private IEnumerator FadeInAudio()
     {
         currentTime = 0;
         
-        while (currentTime <= fadeDuration)
+        while (currentTime <= audioFadeDuration)
         {
-            currentTime += Time.deltaTime;
+            currentTime += Time.unscaledDeltaTime;
             
-            float newVolume = Mathf.Lerp(0, startVolume, currentTime / fadeDuration);
+            float newVolume = Mathf.Lerp(0, startVolume, currentTime / audioFadeDuration);
             AudioManager.Instance.SetMasterVolume(Mathf.RoundToInt(newVolume));
             
             yield return null;
         }
+
+        AudioManager.Instance.SetMasterVolume(Mathf.RoundToInt(startVolume));
     }
 }

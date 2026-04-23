@@ -27,6 +27,9 @@ public class Darry : MonoBehaviour
     public GameObject enemy;
 
     public Animator animator;
+    [SerializeField] private bool isScared = false;
+    [SerializeField] private bool startInConversation = false;
+
     public NewDialogueTrigger dialogueTrigger; // dialogue trigger script reference
     private InteractableProximity proximityScript;
     private Collider proximityCollider;
@@ -46,6 +49,19 @@ public class Darry : MonoBehaviour
 
     void Start()
     {
+        if (isScared)
+        {
+            animator.SetBool("isScared", true);
+            animator.SetBool("isIdle", true);
+        }
+        if (startInConversation)
+        {
+            animator.SetBool("isIdle", true);
+            animator.SetBool("isTalking", true);
+            animator.SetBool("Talk1", true);
+        }
+
+
         if (targets.Length > 0)
         {
             currentTargetIndex = 0;

@@ -12,6 +12,8 @@ public class CutsceneTriggerVolume : MonoBehaviour
     [Tooltip("If true, the player will need to have the linked objective active in order for the cutscene to play. If false, the cutscene will play regardless of the state of the linked objective.")]
     [SerializeField] private bool needsObjective;
 
+    [SerializeField] private bool showDebugLogs = false;
+
     private bool objectiveActive = false;
     
     private bool playedOnce;
@@ -24,11 +26,18 @@ public class CutsceneTriggerVolume : MonoBehaviour
         {
             boxCollider.isTrigger = true;
         }
+        
+        CheckIfObjectiveActive();
+    }
+
+    private void CheckIfObjectiveActive()
+    {
+        
     }
     
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log(other.gameObject.name + " Entered " + gameObject.name);
+        if (showDebugLogs) Debug.Log(other.gameObject.name + " Entered " + gameObject.name);
         
         bool shouldPlay =
             (
@@ -42,34 +51,37 @@ public class CutsceneTriggerVolume : MonoBehaviour
 
         if (!shouldPlay)
         {
-            if (playedOnce)
+            if (showDebugLogs)
             {
-                Debug.LogWarning("Cutscene " + cutsceneToPlay.name + " has already been played once. It will not play again.");
-            }
+                if (playedOnce)
+                {
+                    Debug.LogWarning("Cutscene " + cutsceneToPlay.name + " has already been played once. It will not play again.");
+                }
 
-            if (!CutsceneManager.Instance)
-            {
-                Debug.LogWarning("Cutscene Manager instance not found. Make sure there is a Cutscene Manager in the scene for cutscenes to play.");
-            }
+                if (!CutsceneManager.Instance)
+                {
+                    Debug.LogWarning("Cutscene Manager instance not found. Make sure there is a Cutscene Manager in the scene for cutscenes to play.");
+                }
 
-            if (CutsceneManager.Instance.isCutscenePlaying)
-            {
-                Debug.LogWarning("Cutscene " + cutsceneToPlay.name + " cannot play because another cutscene is currently playing. Cutscenes cannot overlap, so please wait for the current cutscene to finish before triggering another one.");
-            }
+                if (CutsceneManager.Instance.isCutscenePlaying)
+                {
+                    Debug.LogWarning("Cutscene " + cutsceneToPlay.name + " cannot play because another cutscene is currently playing. Cutscenes cannot overlap, so please wait for the current cutscene to finish before triggering another one.");
+                }
 
-            if (!cutsceneToPlay)
-            {
-                Debug.LogWarning("No cutscene assigned to " + gameObject.name + ". Please assign a cutscene to play in the inspector.");
-            }
+                if (!cutsceneToPlay)
+                {
+                    Debug.LogWarning("No cutscene assigned to " + gameObject.name + ". Please assign a cutscene to play in the inspector.");
+                }
 
-            if (needsObjective && !linkedObjective)
-            {
-                Debug.LogWarning("Cutscene " + cutsceneToPlay.name + " is set to require an objective, but no linked objective has been assigned. Please assign a linked objective in the inspector.");
-            }
+                if (needsObjective && !linkedObjective)
+                {
+                    Debug.LogWarning("Cutscene " + cutsceneToPlay.name + " is set to require an objective, but no linked objective has been assigned. Please assign a linked objective in the inspector.");
+                }
 
-            if (!other.CompareTag("Player"))
-            {
-                Debug.LogWarning("Object " + other.gameObject.name + " entered " + gameObject.name + " but is not tagged as Player. Only objects tagged as Player can trigger cutscenes.");
+                if (!other.CompareTag("Player"))
+                {
+                    Debug.LogWarning("Object " + other.gameObject.name + " entered " + gameObject.name + " but is not tagged as Player. Only objects tagged as Player can trigger cutscenes.");
+                }
             }
             
             return;

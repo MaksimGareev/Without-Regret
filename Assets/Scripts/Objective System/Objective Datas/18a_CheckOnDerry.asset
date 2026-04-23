@@ -13,13 +13,17 @@ MonoBehaviour:
   m_Name: 18a_CheckOnDerry
   m_EditorClassIdentifier: Assembly-CSharp::ObjectiveData
   objectiveID: checkDerry
-  title: Check on Derry
-  description: I just helped Derry get across the gaps which must have spooked the
-    intruder because I can't see him anymore. I hope Derry is okay?
+  title: Check on Darry
+  description: I just helped Derry get across the gaps, which must've spooked the
+    intruder because I can't see him anymore. I hope Darry is okay?
   recap: I floated across gaps and used boxes to create a path to Safety for Darry.
-  chimeDialogue: 
+  chimeDialogue: Good job protecting Darry, Echo! Let's check on him.
   requiredProgress: 1
-  sceneIndex: 8
+  sceneIndex: 9
+  cameraShake: 0
+  cameraShakeDuration: 0.5
+  cameraShakeMagnitude: 0.1
+  cameraShakeFrequency: 30
   chimeWayfinding: 0
   chimeProgressesObjective: 0
   markerTransforms:
@@ -27,3 +31,4 @@ MonoBehaviour:
   hasMarker: 1
   hasOffScreenMarker: 1
   hasMultiplepositions: 0
+  cutsceneOnCompletion: {fileID: 0}

@@ -12,7 +12,7 @@ public class TimerRingUI : MonoBehaviour
         Empty
     }
 
-    private enum PlayerPortrait
+    public enum PlayerPortrait
     {
         Echo,
         Chime
@@ -71,11 +71,12 @@ public class TimerRingUI : MonoBehaviour
     [Header("Damage Cooldown Settings")]
     [Tooltip("The time in seconds that the player will be invincible for before being able to take damage again")]
     [SerializeField, Range(0.0f, 5.0f)] private float damageCooldown = 1.0f;
+    
     private bool canTakeDamage = true;
     private float damageAvailableTime = 0f;
     
-    private Animator animator;
-    private CharacterSwap characterSwap;
+    public Animator animator;
+    public CharacterSwap characterSwap;
     
     [HideInInspector] public RingState currentRingState;
     private UIFadeController uiFade;
@@ -86,6 +87,7 @@ public class TimerRingUI : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Awake()
     {
+
         if (Instance == null)
         {
             Instance = this;
@@ -96,14 +98,13 @@ public class TimerRingUI : MonoBehaviour
         }
         
         uiFade = FindFirstObjectByType<UIFadeController>();
-        
+
         SetRingState(RingState.Full);
     }
 
     private void OnEnable()
     {
         characterSwap = FindFirstObjectByType<CharacterSwap>();
-        
         if (characterSwap != null)
         {
             animator = characterSwap.GetAnimator();
@@ -127,9 +128,23 @@ public class TimerRingUI : MonoBehaviour
         }
     }
 
+    private void OnDisable()
+    {
+        if (characterSwap != null)
+        {
+            characterSwap.onAnimatorChanged -= UpdateAnimator;
+        }
+    }
+
+
     public void Update()
     {
-        if (Time.timeSinceLevelLoad < 0.1)
+        //if (Input.GetKeyDown(KeyCode.J)) //For Testing
+        //{
+        //    SubtractRingSection(1);
+        //}
+
+        if (Time.timeSinceLevelLoad < 2f)
         {
             if (hasDied)
             {
@@ -228,23 +243,24 @@ public class TimerRingUI : MonoBehaviour
     }
 
     private void EndGame()
-    {   
+    {
+        if (characterSwap == null)
+        {
+            characterSwap = FindFirstObjectByType<CharacterSwap>();
+
+            if (characterSwap != null)
+            {
+                animator = characterSwap.GetAnimator();
+
+                characterSwap.onAnimatorChanged += UpdateAnimator;
+            }
+        }
+
         if (GameOverManager.Instance)
         {
             Debug.Log("Timer has run out! Triggering end game sequence.");
-            
-            if (animator)
-            {
-                StartCoroutine(GameOverAnimation());
-            }
-            else if (characterSwap)
-            {
-                animator = characterSwap.GetAnimator();
-                StartCoroutine(GameOverAnimation());
-            }
-            
-            GameOverManager.Instance.TriggerGameOver();
-            hasDied = true;
+
+            StartCoroutine(GameOverAnimation());
         }
         else
         {
@@ -284,6 +300,18 @@ public class TimerRingUI : MonoBehaviour
     
     void UpdateAnimator(Animator newAnimator)
     {
+        if (newAnimator == null)
+        {
+            Debug.LogWarning("Received NULL animator.");
+            return;
+        }
+
+        if (!newAnimator.isActiveAndEnabled)
+        {
+            Debug.LogWarning("Received inactive animator.");
+            return;
+        }
+
         animator = newAnimator;
 
         if (characterSwap.isEcho && currentPortrait != PlayerPortrait.Echo)
@@ -300,17 +328,32 @@ public class TimerRingUI : MonoBehaviour
         }
     }
 
+
     IEnumerator GameOverAnimation()
     {
-        Debug.Log("Started Game Over Animation");
-        animator?.SetBool("GameOver", true);
-        yield return new WaitForSecondsRealtime(0.5f);
-        animator?.SetBool("GameOverLoop", true);
+        if (animator)
+        {
+            Debug.Log("Started Game Over Animation");
+            animator?.SetBool("GameOver", true);
+            yield return new WaitForSecondsRealtime(0.5f);
+            animator?.SetBool("GameOverLoop", true);
+        }
+        yield return new WaitForSecondsRealtime(1f);
+        GameOverManager.Instance.TriggerGameOver();
+        hasDied = true;
+
     }
 
     public void RefillHealthOnDeath()
     {
+        Debug.Log("Refilled Health");
         hasDied = false;
         SetRingState(RingState.Full);
+    }
+    
+    public void SetPortrait(PlayerPortrait portrait)
+    {
+        currentPortrait = portrait;
+        SetRingState(currentRingState);
     }
 }

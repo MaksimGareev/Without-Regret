@@ -66,6 +66,10 @@ public class ChasingEnemy : MonoBehaviour
             currentTarget = null;
             Debug.LogWarning("No targets assigned to ChasingEnemy!");
         }
+        if (animator)
+        {
+            animator.SetBool("isIdle", true);
+        }
     }
 
     // Update is called once per frame

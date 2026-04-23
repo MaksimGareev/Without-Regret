@@ -11,12 +11,12 @@ GameObject:
   - component: {fileID: 6466563162477584433}
   - component: {fileID: 4112100310431409521}
   - component: {fileID: 4306706503304583710}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Point Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &6466563162477584433
 Transform:
@@ -205,8 +205,39 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 24137ae0925ff7c4b92e9fec6c63c0de, type: 3}
       insertIndex: 0
       addedObject: {fileID: 6466563162477584433}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8934777400606672865, guid: 24137ae0925ff7c4b92e9fec6c63c0de, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1956071610572305276}
   m_SourcePrefab: {fileID: 100100000, guid: 24137ae0925ff7c4b92e9fec6c63c0de, type: 3}
+--- !u!1 &2340326094606504579 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8934777400606672865, guid: 24137ae0925ff7c4b92e9fec6c63c0de, type: 3}
+  m_PrefabInstance: {fileID: 6594455797512557922}
+  m_PrefabAsset: {fileID: 0}
+--- !u!136 &1956071610572305276
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2340326094606504579}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 9.029369
+  m_Height: 578.46124
+  m_Direction: 1
+  m_Center: {x: 0.0000016977439, y: 235.93082, z: 0.000019524052}
 --- !u!4 &6633397521844351625 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 24137ae0925ff7c4b92e9fec6c63c0de, type: 3}

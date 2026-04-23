@@ -34,6 +34,8 @@ public class PlayerController : MonoBehaviour, ISaveable
     public float SprintSpeed = 2f;
     public float SprintDuration = 3f;
     public float sprintCooldown = 4f;
+    [Tooltip("Sets how fast the stamina regenerates")]
+    public float sprintRegeneration = 0.75f;
     [SerializeField, Tooltip("The speed the player moves at when their sprint stamina is at 0. Only relevant for when they're holding a moveable object. Lower numbers = lower speed")]
     private float emptyStaminaSpeedFactor = 0.5f;
     [SerializeField] private bool StationaryCamera;
@@ -74,7 +76,6 @@ public class PlayerController : MonoBehaviour, ISaveable
     // stores the last checkpoint reached in each scene
     private readonly Dictionary<string, (Vector3 position, Vector3 rotation)> checkpointData = new();
 
-    // Input System
     private PlayerControls controls;
     private Rigidbody rb;
     private Vector2 moveInput;
@@ -90,8 +91,7 @@ public class PlayerController : MonoBehaviour, ISaveable
     private readonly float moveCheckDelay = 0.1f;
     private float lastStoppedCheck = -1f;
     private OrbitingPlatform currentPlatform;
-
-    
+    private bool rotationObstructed = false; // Used for MoveableObject collision checking
 
     private void Awake()
     {
@@ -525,7 +525,7 @@ public class PlayerController : MonoBehaviour, ISaveable
             {
                 // Regenerating stamina
                 Animator.SetBool("isSprinting", false);
-                SprintTimer += Time.deltaTime;
+                SprintTimer += Time.deltaTime * sprintRegeneration; //Regenerating stamina multiplier
                 if (staminaGroup != null)
                 {
                     staminaGroup.alpha = 1f;
@@ -583,11 +583,37 @@ public class PlayerController : MonoBehaviour, ISaveable
         Vector3 horizontalMove = (move.normalized * currentSpeed) * Time.deltaTime;
         Vector3 verticalMove = new Vector3(0f, yVelocity, 0f) * Time.deltaTime;
 
+        // Handle rotation
+        if (move.sqrMagnitude > 0.01f && !isThrowing)
+        {
+            float angle = Mathf.Atan2(move.x, move.z) * Mathf.Rad2Deg;
+            Quaternion targetRotation = Quaternion.Euler(0f, angle, 0f);
+            PerformRotation(targetRotation);
+        }
+        else if (isThrowing && !StationaryCamera)
+        {
+            Vector3 camForward = PlayerCamera.transform.forward;
+            camForward.y = 0f;
+            camForward.Normalize();
+            float angle = Mathf.Atan2(camForward.x, camForward.z) * Mathf.Rad2Deg;
+            Quaternion targetRotation = Quaternion.Euler(0f, angle, 0f);
+            PerformRotation(targetRotation);
+        }
+        else if (isThrowing && StationaryCamera)
+        {
+            if (lookInput.magnitude > 0)
+            {
+                float angle = Mathf.Atan2(lookInput.x, -lookInput.y) * Mathf.Rad2Deg;
+                Quaternion targetRotation = Quaternion.Euler(0f, -angle, 0f);
+                PerformRotation(targetRotation);
+            }
+        }
+
         // If player is holding an object, ask PlayerMovingObjects if the horizontal move would cause clipping.
+        // Also prevent movement if rotation is obstructed
         if (moveableObjectMod.movingObject)
         {
-            bool canMove = mover.CanMoveBy(horizontalMove);
-            if (!canMove)
+            if (rotationObstructed || !mover.CanMoveByPosition(horizontalMove))
             {
                 // block horizontal movement while still allowing vertical (gravity) to apply
                 horizontalMove = Vector3.zero;
@@ -606,27 +632,27 @@ public class PlayerController : MonoBehaviour, ISaveable
         }
 
         Controller.Move(combined);
+    }
 
-        if (move.sqrMagnitude > 0.01f && !isThrowing)
+    private void PerformRotation(Quaternion targetRotation)
+    {
+        if (moveableObjectMod.movingObject)
         {
-            float angle = Mathf.Atan2(move.x, move.z) * Mathf.Rad2Deg;
-            transform.rotation = Quaternion.Euler(0f, angle, 0f);
-        }
-        else if(isThrowing && !StationaryCamera)
-        {
-            Vector3 camForward = PlayerCamera.transform.forward;
-            camForward.y = 0f;
-            camForward.Normalize();
-            float angle = Mathf.Atan2(camForward.x, camForward.z) * Mathf.Rad2Deg;
-            transform.rotation = Quaternion.Euler(0f, angle, 0f);
-        }
-        else if(isThrowing && StationaryCamera)
-        {
-            if(lookInput.magnitude > 0)
+            if (mover.CanMoveByRotation(targetRotation))
             {
-                float angle = Mathf.Atan2(lookInput.x, -lookInput.y) * Mathf.Rad2Deg;
-                transform.rotation = Quaternion.Euler(0f, -angle, 0f);
+                // Only Set rotation if it wouldn't cause a collision with moveable object
+                transform.rotation = targetRotation;
+                rotationObstructed = false;
             }
+            else
+            {
+                rotationObstructed = true;
+            }
+        }
+        else
+        {
+            transform.rotation = targetRotation;
+            rotationObstructed = false;
         }
     }
 

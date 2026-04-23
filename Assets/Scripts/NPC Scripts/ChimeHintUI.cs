@@ -1,28 +1,45 @@
 using UnityEngine;
 using System.Collections;
-using UnityEngine.UI;
 using TMPro;
 using UnityEngine.InputSystem;
 
 public class ChimeHintUI : MonoBehaviour
 {
-    [Header("Input Settings")]
+    [Header("Settings")]
+    [SerializeField] private float displayTime = 3f;
+    [Tooltip("How far the player must be from the objective marker for the hint UI to pop up automatically")]
+    [SerializeField] private float markerDistanceThreshold = 50f;
+    [Tooltip("If a hint is shown automatically due to distance, it will only happen again after this many seconds")]
+    [SerializeField] private float autoHintCooldown = 10f;
+
+    [Header("References")]
     [SerializeField] private InputActionAsset inputActions;
-    private InputAction hintAction;
-    public GameObject hintBubbleUI;
-    public TextMeshProUGUI hintText;
-    private Transform cam;
+    [SerializeField] private GameObject hintBubbleUI;
+    [SerializeField] private TextMeshProUGUI hintText;
+    [SerializeField] private Transform player;
 
-    public float displayTime = 3f;
-
-    //private bool isShowing = false;
-    private Coroutine hideRoutine;
-
-    [Header("Animation settings")]
+    [Header("Animation Settings")]
     public Animator animator;
 
+    private InputAction hintAction;
+    private Transform cam;
+    //private bool isShowing = false;
+    private Coroutine hideRoutine;
+    private Coroutine autoRoutine;
+    private Transform objectiveMarker;
+    private ObjectiveMarker markerComponent;
+    private bool canShowAutoHint = true;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    private void Awake()
+    {
+        if (player == null)
+        {
+            var playerObject = GameObject.FindGameObjectWithTag("Player");
+            if (playerObject != null) player = playerObject.transform;
+            else Debug.LogError("ChimeHintUI: Player not found in scene. Chime will not function without player reference.", this);
+        }
+    }
+
     void Start()
     {
         if (hintBubbleUI != null)
@@ -31,18 +48,36 @@ public class ChimeHintUI : MonoBehaviour
         }
         cam = Camera.main.transform;
 
+        if (GameManager.Instance != null)
+        {
+            markerComponent = GameManager.Instance.ObjectiveMarker;
+            objectiveMarker = markerComponent.WorldIndicator.transform;
+        }
+
         // Setup input action
         hintAction = inputActions.FindAction("Player/ChimeHint");
         hintAction.Enable();
     }
 
-    // Update is called once per frame
     void Update()
     {
+        if (objectiveMarker == null || player == null) return;
+
        /* if (hintAction?.triggered ?? false)
         {
             ShowHint();
         }*/
+
+        if (canShowAutoHint && markerComponent.MarkerShown)
+        {
+            // If the player strays too far from the objective marker, show a hint
+            float distance = Vector3.Distance(player.position, objectiveMarker.position);
+            if (distance >= markerDistanceThreshold)
+            {
+                canShowAutoHint = false;
+                ShowHint(startAutoCooldown: true);
+            }
+        }
     }
 
     private void LateUpdate()
@@ -64,7 +99,7 @@ public class ChimeHintUI : MonoBehaviour
         transform.LookAt(lookPos);*/
     }
 
-    public void ShowHint()
+    public void ShowHint(bool startAutoCooldown = false)
     {
         animator.SetBool("isHinting", true);
 
@@ -90,6 +125,14 @@ public class ChimeHintUI : MonoBehaviour
         }
 
         hideRoutine = StartCoroutine(HideBubbleAfterDelay());
+
+        if (startAutoCooldown)
+        {
+            if (autoRoutine != null)
+                StopCoroutine(autoRoutine);
+
+            autoRoutine = StartCoroutine(AutoHintCooldown());
+        }
     }
 
     private IEnumerator HideBubbleAfterDelay()
@@ -99,6 +142,16 @@ public class ChimeHintUI : MonoBehaviour
         yield return new WaitForSeconds(displayTime);
         hintBubbleUI.SetActive(false);
         hideRoutine = null;
+    }
+
+    private IEnumerator AutoHintCooldown()
+    {
+        canShowAutoHint = false;
+
+        yield return new WaitForSeconds(autoHintCooldown);
+
+        canShowAutoHint = true;
+        autoRoutine = null;
     }
 
     private ObjectiveInstance GetCurrentObjective()

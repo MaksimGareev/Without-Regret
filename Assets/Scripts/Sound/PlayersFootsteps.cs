@@ -61,7 +61,7 @@ public class PlayersFootsteps : MonoBehaviour
             }
             if (Clip == null)
             {
-                //Debug.Log("Step");
+                //Debug.Log("NO Step");
             }
         }
     }

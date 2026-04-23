@@ -192,7 +192,9 @@ public class Journal : MonoBehaviour, ISaveable
             && !GameManager.Instance.inventoryInteractingScript.InventoryOpen()
             && !SceneLoadManager.Instance.IsLoading
             && !GameManager.Instance.qteIsActive
-            && !GameManager.Instance.objectiveDebugScript.DebugUIIsActive)
+            && !GameManager.Instance.objectiveDebugScript.DebugUIIsActive
+            && !CutsceneManager.Instance.isCutscenePlaying
+            && !GameManager.Instance.lockPickUIScript.IsActive)
         {
             ToggleJournalUI();
         }
@@ -916,10 +918,10 @@ public class Journal : MonoBehaviour, ISaveable
         {
             characterDescriptionText.text = characterDictionary[characterNamesList[index]];
         }
-        if (npcPortrait != null)
+        if (npcPortrait)
         {
             var portrait = characterPortraits.Find(p => p.name == characterNamesList[index]);
-            if (portrait.Equals(default(CharacterPortrait)))
+            if (!portrait.Equals(default(CharacterPortrait)) && portrait.portrait)
             {
                 npcPortrait.sprite = portrait.portrait;
                 npcPortrait.SetNativeSize();

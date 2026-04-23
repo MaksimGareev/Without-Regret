@@ -9,34 +9,86 @@ public class ProtectedNPC : MonoBehaviour
 
     [Header("Animation Settings")]
     public Animator animator;
+    [SerializeField] private bool isScared = false;
+
+    private bool wasOnLink; //Check to not replay Jump trigger
 
     void Start()
     {
-        agent.SetDestination(CheckPoints[point].transform.position);
+        if (isScared)
+        {
+            animator.SetBool("isScared", true);
+        }
+
+        for (int i = 0; i < CheckPoints.Length; i++)
+        {
+            if (CheckPoints[i].isTraversable)
+            {
+                point = i;
+                agent.SetDestination(CheckPoints[point].transform.position);
+                break;
+            }
+        }
     }
 
     void Update()
     {
-        if (animator != null)
+        bool linkJump = agent.isOnOffMeshLink; //Bool that detects if NPC is jumping across a Navmesh Link
+
+        if (linkJump && !wasOnLink)
         {
-            bool isMoving = agent.velocity.sqrMagnitude > 0.05f;
+            if (animator != null)
+            {
+                animator.SetTrigger("Jump");
+                animator.SetBool("isWalking", false);
+                animator.SetBool("isIdle", false);
 
-            animator.SetBool("isWalking", isMoving);
-            animator.SetBool("isIdle", !isMoving);
-
+            }
         }
 
+        wasOnLink = linkJump;
+        if (animator != null)
+        {
+            if (!agent.isOnOffMeshLink) //Dont account for movement animationss if NPC is on a navmesh link
+            {
+                bool isMoving = agent.velocity.sqrMagnitude > 0.05f && !agent.isOnOffMeshLink;
+
+                animator.SetBool("isWalking", isMoving);
+                animator.SetBool("isIdle", !isMoving);
+            }
+        }
+        
+        if (NewDialogueManager.Instance.DialogueIsActive)
+        {
+            agent.isStopped = true;
+            //return;
+        }
+        else if (!NewDialogueManager.Instance.DialogueIsActive)
+        {
+            agent.isStopped = false;
+        }
+
+        // If we haven't started moving yet
+        if (agent.destination == Vector3.zero || agent.remainingDistance == 0f)
+        {
+            if (CheckPoints[point].isTraversable)
+            {
+                agent.SetDestination(CheckPoints[point].transform.position);
+            }
+        }
+        
         // If agent reached its destination
         if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
         {
             if(point+1 < CheckPoints.Length) //checks to see if next point doesn't exist
+            {
+                if (CheckPoints[point + 1].isTraversable)
                 {
-                    if(CheckPoints[point+1].isTraversable)
-
-                    
                     point++;
                     agent.SetDestination(CheckPoints[point].transform.position);
-                }      
+                }
+            }      
         }
+        
     }
 }

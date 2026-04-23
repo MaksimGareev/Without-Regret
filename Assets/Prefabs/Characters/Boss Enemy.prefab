@@ -4431,7 +4431,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArmSweepHitbox
   damage: 1
-  invincibilityDuration: 1
 --- !u!1 &6901448535411178111
 GameObject:
   m_ObjectHideFlags: 0
@@ -5091,8 +5090,13 @@ MonoBehaviour:
   slidersContainer: {fileID: 5598156055868058803}
   sliderSpacing: 4
   inactiveFillColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.6}
+  goodEndingCutscene: {fileID: 11400000, guid: 06c9766a8dc32f54ab9bf2b38634965f, type: 2}
+  neutralEndingCutscene: {fileID: 11400000, guid: 56176216499ec8947b3160efc6582382, type: 2}
+  badEndingCutscene: {fileID: 11400000, guid: 92ae25b441734164f9a7123f7e6f85d2, type: 2}
   showDebugLogs: 0
-  GameEnding: {fileID: 0}
+  credits:
+    sceneAsset: {fileID: 102900000, guid: ddc60bbbd077bd143aa2f66001ef68f9, type: 3}
+    scenePath: Assets/Scenes/Credits.unity
 --- !u!114 &5005265724021330662
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5105,7 +5109,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 727d450d967b611488a6dcd8682903f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SaveableBossEnemy
-  uniqueID: 0d55d7df-ec0d-4af4-baa1-bfc2439aefef
+  uniqueID: 0b5f4559-8fe6-43e2-a629-5e0975408985
 --- !u!1 &7808760994735140927
 GameObject:
   m_ObjectHideFlags: 0
@@ -6025,10 +6029,10 @@ SphereCollider:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 512
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 1048063
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
@@ -6052,10 +6056,10 @@ Rigidbody:
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 512
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 16392
+    m_Bits: 1048063
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1

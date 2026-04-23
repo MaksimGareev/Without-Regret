@@ -48,7 +48,8 @@ public class ToggleInventoryUI : MonoBehaviour
             && !NewDialogueManager.Instance.DialogueIsActive
             && !GameOverManager.Instance.IsGameOver
             && !SceneLoadManager.Instance.IsLoading
-            && !GameManager.Instance.objectiveDebugScript.DebugUIIsActive)
+            && !GameManager.Instance.objectiveDebugScript.DebugUIIsActive
+            && !GameManager.Instance.lockPickUIScript.IsActive)
         {
             ToggleInventory();
         }
@@ -66,14 +67,15 @@ public class ToggleInventoryUI : MonoBehaviour
         }
 
         isEnabled = !isEnabled;
-        Cursor.visible = !Cursor.visible;
 
         if (isEnabled)
         {
+            Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
         }
         else
         {
+            Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
         }
         
@@ -93,7 +95,7 @@ public class ToggleInventoryUI : MonoBehaviour
         float timeElapsed = 0f;
         while (timeElapsed < slideDuration)
         {
-            timeElapsed += Time.deltaTime;
+            timeElapsed += Time.unscaledDeltaTime;
             float lerpControl = slideCurve.Evaluate(timeElapsed / slideDuration);
             GameManager.Instance.inventoryRectTransform.anchoredPosition = Vector2.Lerp(startPosition, endPosition, lerpControl);
             yield return null;

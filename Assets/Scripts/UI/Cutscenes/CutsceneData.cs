@@ -4,11 +4,18 @@ using UnityEngine.Events;
 [CreateAssetMenu(fileName = "NewCutsceneData", menuName = "Cutscene/CutsceneData")]
 public class CutsceneData : ScriptableObject
 {
-    [Header("Cutscene Clips")] public CutsceneClip[] clips;
-
+    [Header("General Settings")]
+    [Tooltip("Whether or not the cutscene should fade in at the beginning. If false, the cutscene will start immediately with no fade in. This should be false if the cutscene happens between level transitions, like the intro and the transition to astral plane.")]
+    public bool fadeIn = true;
+    
     [Tooltip("Whether or not the entire cutscene is able to be skipped.")]
-    public bool canSkipEntireCutscene;
-
+    public bool canSkipEntireCutscene = true;
+    
+    [Header("Cutscene Clips")] 
+    [Tooltip("The individual clips that make up this cutscene. Each clip will be played in order, and will have its own settings for background, dialogue, and audio.")]
+    public CutsceneClip[] clips;
+    
+    [Header("Audio Settings")]
     [Tooltip("The audio clip to be played during the cutscene. This will be looped for the entire duration of the cutscene.")]
     public AudioClip backgroundMusic;
     
