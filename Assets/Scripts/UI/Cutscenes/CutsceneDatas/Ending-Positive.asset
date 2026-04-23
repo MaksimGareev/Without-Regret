@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84bc8b7b4e1963c4fba94977599534a1, type: 3}
   m_Name: Ending-Positive
   m_EditorClassIdentifier: Assembly-CSharp::CutsceneData
+  fadeIn: 1
+  canSkipEntireCutscene: 1
   clips:
   - backgroundType: 2
     backgroundImage: {fileID: 0}
@@ -203,7 +205,6 @@ MonoBehaviour:
         Are you ready?
     clipSoundEffect: {fileID: 0}
     soundEffectVolume: 1
-  canSkipEntireCutscene: 0
   backgroundMusic: {fileID: 8300000, guid: 619550a60a9780d418717bd7f4202e00, type: 3}
   musicVolume: 1
   onCutsceneCompleted:

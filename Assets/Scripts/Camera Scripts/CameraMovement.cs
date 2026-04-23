@@ -182,7 +182,7 @@ public class CameraMovement : MonoBehaviour
 
         if (ObjectiveManager.Instance)
         {
-            ObjectiveManager.Instance.OnObjectiveCompleted.AddListener(ShakeOnObjectiveComplete);
+            ObjectiveManager.Instance.OnObjectiveActivated.AddListener(ShakeOnObjectiveActive);
         }
     }
 
@@ -437,7 +437,7 @@ public class CameraMovement : MonoBehaviour
         }
     }
     
-    private void ShakeOnObjectiveComplete(ObjectiveInstance objective)
+    private void ShakeOnObjectiveActive(ObjectiveInstance objective)
     {
         if (objective.data.cameraShake)
         {

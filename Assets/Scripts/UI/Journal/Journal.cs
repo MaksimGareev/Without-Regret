@@ -918,7 +918,7 @@ public class Journal : MonoBehaviour, ISaveable
         {
             characterDescriptionText.text = characterDictionary[characterNamesList[index]];
         }
-        if (npcPortrait != null)
+        if (npcPortrait)
         {
             var portrait = characterPortraits.Find(p => p.name == characterNamesList[index]);
             if (portrait.Equals(default(CharacterPortrait)))
