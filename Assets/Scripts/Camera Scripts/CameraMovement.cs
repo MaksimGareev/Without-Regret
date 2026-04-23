@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 
@@ -150,6 +151,7 @@ public class CameraMovement : MonoBehaviour
     private float lerpSpeed = 1.5f;
     
     private AudioSource shakeAudioSource;
+    public AudioMixer mainAudioMixer;
 
     private void Awake()
     {
@@ -189,6 +191,11 @@ public class CameraMovement : MonoBehaviour
         }
         
         shakeAudioSource = GetComponent<AudioSource>();
+        if (shakeAudioSource)
+        {
+            shakeAudioSource.outputAudioMixerGroup = mainAudioMixer.FindMatchingGroups("SFX")[0];
+            shakeAudioSource.volume = 0.6f;
+        }
     }
 
     private void OnEnable()
