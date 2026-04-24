@@ -19,12 +19,14 @@ MonoBehaviour:
     text: Look, over there!
     lineTone: 0
     NPCGender: female
-    NextLineID: End
+    NextLineID: Middle
     endDialogueAfterLine: 0
     movingOn: 0
     GiveItem: 0
     ShakeCamera: 1
     cannotSkip: 0
+    playSFXOnstart: 0
+    SFX: {fileID: 0}
     spawnCollectible: 0
     collectablePrefab: {fileID: 0}
     spawnPointID: 
@@ -32,20 +34,43 @@ MonoBehaviour:
     collectableData: {fileID: 0}
     choices: []
     objectivesToActivate: []
-  - LineID: End
+  - LineID: Middle
     Speaker: Chime
-    text: What was that? Quick, since that weirdo is by the front door, you should
-      try and sneak in by using their side gate to get inside Darry's house through
-      the chimmey and save him! This might be the person who set the house on fire
-      too!
+    text: 'What is that? Quick, that thing is going to break down the window. The
+      front door is stuck, so we''ll have to go down the chimney if we want to get
+      to Darry before it does. '
     lineTone: 0
     NPCGender: female
-    NextLineID: 
+    NextLineID: End
+    endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
+    ShakeCamera: 0
+    cannotSkip: 0
+    playSFXOnstart: 0
+    SFX: {fileID: 0}
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
+    choices: []
+    objectivesToActivate:
+    - intoBarryDarryHouse
+  - LineID: End
+    Speaker: Chime
+    text: There's a side gate by Reed and Darry's House we can go through to get
+      to the backyard. Hurry!
+    lineTone: 0
+    NPCGender: female
+    NextLineID: End
     endDialogueAfterLine: 1
     movingOn: 0
     GiveItem: 0
     ShakeCamera: 0
     cannotSkip: 0
+    playSFXOnstart: 0
+    SFX: {fileID: 0}
     spawnCollectible: 0
     collectablePrefab: {fileID: 0}
     spawnPointID: 
