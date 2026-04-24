@@ -152,7 +152,7 @@ public class ObjectiveAndSaveTesting : MonoBehaviour
         }
     }
     
-//#if UNITY_EDITOR
+#if UNITY_EDITOR
     private void Update()
     {
         // Early returns to avoid unnecessary checks when conditions are not met
@@ -184,7 +184,7 @@ public class ObjectiveAndSaveTesting : MonoBehaviour
             EventSystem.current.SetSelectedGameObject(LevelSelectButtons[0].gameObject);
         }
     }
-//#endif
+#endif
     
     private void CheckMouseInput()
     {
