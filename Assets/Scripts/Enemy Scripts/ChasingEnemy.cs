@@ -207,17 +207,18 @@ public class ChasingEnemy : MonoBehaviour
             return; // Stop here, no more targets
         }
 
-        currentTarget = targets[currentIndex].transform;
-        if (currentTarget != null && targets[currentIndex+1].isTraversable)
+       // currentTarget = targets[currentIndex].transform;
+        if (currentTarget != null && targets[currentIndex+1].isTraversable) //checking if next point is traversable
         {
-            currentIndex++;
-            agent.SetDestination(currentTarget.position);
+            currentIndex++; //if so , increment to that point
+            baseSpeed = 2; //set speed back here to ensure animation plays
+            agent.SetDestination(targets[currentIndex].transform.position);
         }
         else
         {
-            if (!Posessed)
+            if (!Posessed) 
             {
-                baseSpeed = 0;
+                baseSpeed = 0; //to ensure enemy doesn't move only when not possessed and when the next point isn't traversable
             }
         }
     }
