@@ -44,6 +44,8 @@ public class ChasingEnemy : MonoBehaviour
     public float updateRate = 0.2f;
     private float updateTimer = 0f;
 
+    public bool Posessed = false;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -75,7 +77,7 @@ public class ChasingEnemy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (agent == null) return;
+        if (Posessed || agent == null || agent.enabled == false) return;
         
         UpdateSpeedFromMorality();
 

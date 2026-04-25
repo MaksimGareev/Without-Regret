@@ -24,12 +24,22 @@ public class PossessedEnemyResisting : MonoBehaviour
 
     private Color baseColor = Color.red;
 
+    private ChasingEnemy chasingEnemy;
+
 
     private void Awake()
     {
         if (PlayerCamera == null)
         {
             PlayerCamera = Camera.main;
+        }
+
+        if(chasingEnemy == null)
+        {
+            if (gameObject.GetComponent<ChasingEnemy>())
+            {
+                chasingEnemy = gameObject.GetComponent<ChasingEnemy>();
+            }
         }
     }
     private void FixedUpdate()
@@ -60,6 +70,10 @@ public class PossessedEnemyResisting : MonoBehaviour
     public void BeginPossession()
     {
         isPossessed = true;
+        if(chasingEnemy != null)
+        {
+            chasingEnemy.Posessed = true;
+        }
     }
 
     public void UpdatePossession(Vector3 input)
@@ -72,8 +86,17 @@ public class PossessedEnemyResisting : MonoBehaviour
 
         isPossessed = false;
         playerInput = Vector3.zero;
-        Agent.enabled = false;
-        StartCoroutine(PushEnemy());
+        
+        
+        if (chasingEnemy != null)
+        {
+            chasingEnemy.Posessed = false;
+        }
+        if (gameObject.GetComponent<PatrollingEnemy>())
+        {
+            Agent.enabled = false;
+            StartCoroutine(PushEnemy());
+        }
     }
 
     private IEnumerator PushEnemy()
