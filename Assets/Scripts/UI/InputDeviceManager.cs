@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.LowLevel;
+using UnityEngine.InputSystem.Controls;
 using UnityEngine.UI;
 using System;
 using UnityEngine.EventSystems;
@@ -21,6 +22,12 @@ public class InputDeviceManager : MonoBehaviour
 
     private GameObject activeUIObject = null;
     private bool UIActive = false;
+
+    [Header("Input Mode Switching")]
+    [SerializeField, Min(0f)] private float controllerMovementThreshold = 0.2f;
+    [Min(0f)] private float mouseMovementThreshold = 0.01f;
+    [SerializeField, Min(0f)] private float inputModeSwitchCooldown = 0.1f;
+    private float lastInputModeSwitchTime = float.NegativeInfinity;
     
     [Header("InputActions")]
     [SerializeField] private InputActionAsset inputActions;
@@ -79,22 +86,97 @@ public class InputDeviceManager : MonoBehaviour
     {
         if (device == null) return;
 
-        InputMode previous = CurrentMode;
+        if (!TryGetInputMode(eventPtr, device, out InputMode targetMode))
+        {
+            return;
+        }
 
-        if (device is Gamepad)
+        if (CurrentMode != targetMode && Time.unscaledTime - lastInputModeSwitchTime < inputModeSwitchCooldown)
         {
-            CurrentMode = InputMode.Controller;
+            return;
         }
-        else if (device is Keyboard || device is Mouse)
-        {
-            CurrentMode = InputMode.KeyboardMouse;
-        }
+
+        InputMode previous = CurrentMode;
+        CurrentMode = targetMode;
 
         if (previous != CurrentMode)
         {
+            lastInputModeSwitchTime = Time.unscaledTime;
             OnInputModeChanged?.Invoke(CurrentMode);
             UpdateUIForInputMode(CurrentMode);
         }
+    }
+
+    private bool TryGetInputMode(InputEventPtr eventPtr, InputDevice device, out InputMode mode)
+    {
+        mode = CurrentMode;
+
+        if (device is Keyboard)
+        {
+            mode = InputMode.KeyboardMouse;
+            return true;
+        }
+
+        if (device is Mouse mouseDevice)
+        {
+            if (HasPressedAnyButtonInEvent(mouseDevice, eventPtr) || IsMeaningfulMouseMovement(mouseDevice, eventPtr))
+            {
+                mode = InputMode.KeyboardMouse;
+                return true;
+            }
+        }
+
+        else if (device is Gamepad gamepad)
+        {
+            if (HasPressedAnyButtonInEvent(gamepad, eventPtr) || IsMeaningfulGamepadMovement(gamepad, eventPtr))
+            {
+                mode = InputMode.Controller;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private bool IsMeaningfulGamepadMovement(Gamepad gamepad, InputEventPtr eventPtr)
+    {
+        float thresholdSqr = controllerMovementThreshold * controllerMovementThreshold;
+        bool hasLeftStick = gamepad.leftStick.ReadValueFromEvent(eventPtr, out Vector2 leftStick);
+        bool hasRightStick = gamepad.rightStick.ReadValueFromEvent(eventPtr, out Vector2 rightStick);
+        bool hasDPad = gamepad.dpad.ReadValueFromEvent(eventPtr, out Vector2 dpad);
+        bool hasLeftTrigger = gamepad.leftTrigger.ReadValueFromEvent(eventPtr, out float leftTrigger);
+        bool hasRightTrigger = gamepad.rightTrigger.ReadValueFromEvent(eventPtr, out float rightTrigger);
+
+        return (hasLeftStick && leftStick.sqrMagnitude >= thresholdSqr)
+            || (hasRightStick && rightStick.sqrMagnitude >= thresholdSqr)
+            || (hasDPad && dpad.sqrMagnitude >= thresholdSqr)
+            || (hasLeftTrigger && leftTrigger >= controllerMovementThreshold)
+            || (hasRightTrigger && rightTrigger >= controllerMovementThreshold);
+    }
+
+    private bool IsMeaningfulMouseMovement(Mouse mouseDevice, InputEventPtr eventPtr)
+    {
+        float thresholdSqr = mouseMovementThreshold * mouseMovementThreshold;
+        bool hasDelta = mouseDevice.delta.ReadValueFromEvent(eventPtr, out Vector2 delta);
+        bool hasScroll = mouseDevice.scroll.ReadValueFromEvent(eventPtr, out Vector2 scroll);
+
+        return (hasDelta && delta.sqrMagnitude >= thresholdSqr)
+            || (hasScroll && scroll.sqrMagnitude > 0f);
+    }
+
+    private static bool HasPressedAnyButtonInEvent(InputDevice device, InputEventPtr eventPtr)
+    {
+        foreach (InputControl control in device.allControls)
+        {
+            if (control is ButtonControl button
+                && button.ReadValueFromEvent(eventPtr, out float value)
+                && value > 0f)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void UpdateUIForInputMode(InputMode mode)
@@ -218,11 +300,12 @@ public class InputDeviceManager : MonoBehaviour
 
     public void SetUIActive(bool active, GameObject uiRoot)
     {
+        bool hasContextChanged = UIActive != active || activeUIObject != uiRoot;
+
         UIActive = active;
         if (active)
         {
             this.activeUIObject = uiRoot;
-            inputActions.FindActionMap("UI")?.Enable();
         }
         else
         {
@@ -237,8 +320,17 @@ public class InputDeviceManager : MonoBehaviour
             {
                 Cursor.visible = false;
             }
-            
-            inputActions.FindActionMap("UI")?.Disable();
+            EventSystem eventSystem = EventSystem.current;
+            if (eventSystem)
+            {
+                eventSystem.SetSelectedGameObject(null);
+                eventSystem.firstSelectedGameObject = null;
+            }
+        }
+
+        if (!hasContextChanged)
+        {
+            return;
         }
 
         // Re-apply the current mode when UI context changes (eg. pause opens while already on controller).

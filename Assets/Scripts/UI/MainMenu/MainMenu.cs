@@ -52,6 +52,8 @@ public class MainMenu : MonoBehaviour
     private SaveManager saveManager;
     //[HideInInspector] public bool usingController { get; private set; } = false;
     private Button lastSelectedButton;
+    private float menuInputWarmupUntil;
+    private const float MenuInputWarmupSeconds = 0.5f;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -115,6 +117,10 @@ public class MainMenu : MonoBehaviour
             return;
         }
         TabLeftAction.Enable();
+
+        menuInputWarmupUntil = Time.unscaledTime + MenuInputWarmupSeconds;
+        StartCoroutine(EnsureMenuInputAfterLoad());
+        EnsureMenuInputState();
     }
     
     private void OnEnable()
@@ -163,11 +169,66 @@ public class MainMenu : MonoBehaviour
         //     Cursor.lockState = CursorLockMode.None;
         // }
 
-        if (!inputActions.FindActionMap("UI").enabled)
+        EnsureMenuInputState();
+
+        if (Time.unscaledTime < menuInputWarmupUntil)
         {
-            Debug.LogError("UI action map not enabled. Enabling now");
-            inputActions.FindActionMap("UI").Enable();
+            EnsureMenuSelection();
         }
+    }
+
+    private IEnumerator EnsureMenuInputAfterLoad()
+    {
+        // Re-assert menu input state for a few frames in case another transition script toggles maps late.
+        for (int i = 0; i < 5; i++)
+        {
+            yield return null;
+            EnsureMenuInputState();
+            EnsureMenuSelection();
+        }
+    }
+
+    private void EnsureMenuInputState()
+    {
+        InputActionMap uiMap = inputActions.FindActionMap("UI");
+        if (uiMap != null && !uiMap.enabled)
+        {
+            uiMap.Enable();
+        }
+
+        InputActionMap playerMap = inputActions.FindActionMap("Player");
+        if (playerMap != null && playerMap.enabled)
+        {
+            playerMap.Disable();
+        }
+
+        if (EventSystem.current && EventSystem.current.currentInputModule is InputSystemUIInputModule inputModule && !inputModule.enabled)
+        {
+            inputModule.enabled = true;
+        }
+
+        if (InputDeviceManager.Instance)
+        {
+            InputDeviceManager.Instance.SetUIActive(true, mainMenuPanel);
+        }
+    }
+
+    private void EnsureMenuSelection()
+    {
+        if (!mainMenuPanel.activeSelf || confirmationPanel.activeSelf)
+        {
+            return;
+        }
+
+        EventSystem eventSystem = EventSystem.current;
+        if (!eventSystem || eventSystem.currentSelectedGameObject)
+        {
+            return;
+        }
+
+        Button buttonToSelect = lastSelectedButton ? lastSelectedButton : playButton;
+        eventSystem.firstSelectedGameObject = buttonToSelect.gameObject;
+        eventSystem.SetSelectedGameObject(buttonToSelect.gameObject);
     }
 
     private void DeleteSavesDebug()

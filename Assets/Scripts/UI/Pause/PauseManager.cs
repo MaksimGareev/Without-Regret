@@ -34,6 +34,7 @@ public class PauseManager : MonoBehaviour
     [HideInInspector] public bool isGamePaused = false;
     //[HideInInspector] public bool usingController { get; private set; } = false;
     private bool inventoryWasOpen = false;
+    private bool awaitingMainMenuLoad;
 
     private void Awake()
     {
@@ -103,14 +104,18 @@ public class PauseManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        string activeSceneName = SceneManager.GetActiveScene().name;
+
+        // Do not run pause-state recovery or pause input in menu scenes.
+        if (activeSceneName == "MainMenu" || activeSceneName == "Credits")
+        {
+            return;
+        }
+
         if (Time.timeSinceLevelLoad < 0.1f && pauseMenuPanel.activeSelf)
         {
             ResumeGame();
         }
-        
-        // Do not allow pausing in the main menu
-        if (SceneManager.GetActiveScene().name == "MainMenu") return;
-        if (SceneManager.GetActiveScene().name == "Credits") return;
         
         if ((playerPauseAction.triggered || UIPauseAction.triggered) 
         && !Journal.Instance.IsJournalOpen 
@@ -664,17 +669,37 @@ public class PauseManager : MonoBehaviour
             SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
         }
 
+        // Force-close pause UI so it cannot persist as a raycast blocker in MainMenu.
+        pauseMenuPanel.SetActive(false);
+        settingsScript.DisableSettingsPanel();
+        settingsPanel.SetActive(false);
+        confirmationPanel.SetActive(false);
+        backButton.gameObject.SetActive(false);
+
+        RemoveListeners();
+
         DisableOtherCanvases();
         
         Time.timeScale = 1f; // Ensure time scale is reset
         isGamePaused = false;
-        
-        InputDeviceManager.Instance?.SetUIActive(false, null);
-    
-        inputActions.FindActionMap("UI").Disable();
-        inputActions.FindActionMap("Player").Enable();
-        
-        EventSystem.current.firstSelectedGameObject = null;
+        inventoryWasOpen = false;
+
+        EventSystem eventSystem = EventSystem.current;
+        if (eventSystem)
+        {
+            eventSystem.SetSelectedGameObject(null);
+            eventSystem.firstSelectedGameObject = null;
+        }
+
+        // Keep menu navigation responsive during scene transition.
+        inputActions.FindActionMap("Player")?.Disable();
+        inputActions.FindActionMap("UI")?.Enable();
+
+        if (!awaitingMainMenuLoad)
+        {
+            awaitingMainMenuLoad = true;
+            SceneManager.sceneLoaded += HandleMainMenuLoaded;
+        }
 
         // Logic to quit to main menu
         if (GameManager.Instance&& GameManager.Instance.sceneLoadManager)
@@ -687,7 +712,31 @@ public class PauseManager : MonoBehaviour
             SceneManager.LoadScene("MainMenu");
         }
         
-        //Debug.Log("Quitting to Main Menu...");
+    }
+
+    private void HandleMainMenuLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name != "MainMenu")
+        {
+            return;
+        }
+
+        SceneManager.sceneLoaded -= HandleMainMenuLoaded;
+        awaitingMainMenuLoad = false;
+
+        // Enforce menu-safe input state in case another system changed maps during load.
+        inputActions.FindActionMap("Player")?.Disable();
+        inputActions.FindActionMap("UI")?.Enable();
+
+        if (Cursor.lockState != CursorLockMode.None)
+        {
+            Cursor.lockState = CursorLockMode.None;
+        }
+
+        if (!Cursor.visible)
+        {
+            Cursor.visible = true;
+        }
     }
 
     private void DisableAllButtons()
@@ -709,6 +758,12 @@ public class PauseManager : MonoBehaviour
     private void OnDisable()
     {
         RemoveListeners();
+
+        if (awaitingMainMenuLoad)
+        {
+            SceneManager.sceneLoaded -= HandleMainMenuLoaded;
+            awaitingMainMenuLoad = false;
+        }
         
         if (InputDeviceManager.Instance)
         {
