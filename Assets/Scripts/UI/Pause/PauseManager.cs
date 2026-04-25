@@ -32,7 +32,7 @@ public class PauseManager : MonoBehaviour
     [SerializeField] private GameObject confirmationPanel;
 
     [HideInInspector] public bool isGamePaused = false;
-    [HideInInspector] public bool usingController { get; private set; } = false;
+    //[HideInInspector] public bool usingController { get; private set; } = false;
     private bool inventoryWasOpen = false;
 
     private void Awake()
@@ -46,6 +46,7 @@ public class PauseManager : MonoBehaviour
         else
         {
             Destroy(gameObject);
+            return;
         }
 
         InitializeInputActions();
@@ -78,6 +79,16 @@ public class PauseManager : MonoBehaviour
             return;
         }
         TabLeftAction.Enable();
+    }
+
+    private void OnEnable()
+    {
+        if (InputDeviceManager.Instance)
+        {
+            InputDeviceManager.Instance.OnInputModeChanged += OnInputModeChanged;
+            Debug.Log("PauseManager subscribed to OnInputModeChanged");
+            OnInputModeChanged(InputDeviceManager.Instance.CurrentMode);
+        }
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -138,14 +149,46 @@ public class PauseManager : MonoBehaviour
 
         HandleControllerCancelInput();
 
-        CheckMouseInput();
-        CheckControllerInput();
+        // CheckMouseInput();
+        // CheckControllerInput();
         
-        if (usingController && !EventSystem.current.currentSelectedGameObject)
+        // if (usingController && !EventSystem.current.currentSelectedGameObject)
+        // {
+        //     usingController = false;
+        //     Cursor.visible = true;
+        //     Cursor.lockState = CursorLockMode.None;
+        // }
+    }
+    
+    private void OnInputModeChanged(InputDeviceManager.InputMode mode)
+    {
+        Debug.Log($"PauseManager InputModeChanged: {mode}");
+        
+        switch (mode)
         {
-            usingController = false;
-            Cursor.visible = true;
-            Cursor.lockState = CursorLockMode.None;
+            case InputDeviceManager.InputMode.Controller:
+                
+                // Switch UI Legends
+                if (settingsPanel.activeSelf && settingsScript 
+                    && !settingsScript.controllerLegends.activeSelf && settingsScript.keyboardLegends.activeSelf)
+                {
+                    settingsScript.controllerLegends.SetActive(true);
+                    settingsScript.keyboardLegends.SetActive(false);
+                }
+                
+                break;
+            
+            case InputDeviceManager.InputMode.KeyboardMouse:
+                
+                // Switch UI Legends
+                if (settingsPanel.activeSelf && settingsScript
+                    && settingsScript.controllerLegends.activeSelf && !settingsScript.keyboardLegends.activeSelf)
+                {
+                    settingsScript.controllerLegends.SetActive(false);
+                    settingsScript.keyboardLegends.SetActive(true);
+                }
+                
+                break;
         }
     }
 
@@ -175,121 +218,121 @@ public class PauseManager : MonoBehaviour
         }
     }
 
-    private void CheckMouseInput()
-    {
-        if (Mouse.current == null)
-        {
-            return;
-        }
-
-        Vector2 mouseDelta = Mouse.current.delta.ReadValue();
-
-        bool mouseKeysMoved = mouseDelta.sqrMagnitude > 0.1f || Keyboard.current.anyKey.isPressed;
-
-        if (!mouseKeysMoved) return;
-        
-        if (usingController)
-        {
-            usingController = false;
-            Cursor.visible = true;
-            Cursor.lockState = CursorLockMode.None;
-
-            if (EventSystem.current.currentSelectedGameObject != null)
-            {
-                EventSystem.current.SetSelectedGameObject(null);
-            }
-
-            if (settingsPanel.activeSelf && settingsScript != null && settingsScript.controllerLegends.activeSelf && !settingsScript.keyboardLegends.activeSelf)
-            {
-                settingsScript.controllerLegends.SetActive(false);
-                settingsScript.keyboardLegends.SetActive(true);
-            }
-        }
-    }
-
-    private void CheckControllerInput()
-    {
-        if (Gamepad.current == null)
-        {
-            return;
-        }
-
-        bool controllerMoved = 
-            Gamepad.current.leftStick.ReadValue().sqrMagnitude > 0.1f 
-            || Gamepad.current.dpad.ReadValue().sqrMagnitude > 0.1f
-            || ((Gamepad.current.leftShoulder.IsPressed() || Gamepad.current.rightShoulder.IsPressed()) && settingsPanel.activeSelf);
-        
-        if (!controllerMoved)
-        {
-            return;
-        }
-
-        if (!usingController)
-        {
-            usingController = true;
-            Cursor.visible = false;
-            Cursor.lockState = CursorLockMode.Locked;
-
-            var es = EventSystem.current;
-
-            // Clear selected GameObject if mouse was hovering over something
-            if (es.IsPointerOverGameObject())
-            {
-                var ped = new PointerEventData(es)
-                {
-                    position = new Vector2(-99999f, -99999f)
-                };
-
-                es.RaycastAll(ped, new System.Collections.Generic.List<RaycastResult>());
-                es.SetSelectedGameObject(null);
-
-                InputSystemUIInputModule inputModule = es.currentInputModule as InputSystemUIInputModule;
-                if (inputModule != null)
-                {
-                    inputModule.enabled = false;
-                    inputModule.enabled = true;
-                }
-            }
-
-            // If nothing is selected, set a default based on the active panel
-            if (es.currentSelectedGameObject == null)
-            {
-                if (confirmationPanel.activeSelf)
-                {
-                    es.SetSelectedGameObject(confirmationPanel.GetComponent<ConfirmationUI>().cancelButton.gameObject);
-                }
-                else if (pauseMenuPanel.activeSelf)
-                {
-                    es.SetSelectedGameObject(resumeButton.gameObject);
-                }
-                else if (settingsPanel.activeSelf && !settingsScript.controlSchemeOpen)
-                {
-                    if (settingsScript.videoSettingsOpen)
-                    {
-                        es.SetSelectedGameObject(settingsScript.resolutionDropdown.gameObject);
-                    }
-                    else if (settingsScript.audioSettingsOpen)
-                    {
-                        es.SetSelectedGameObject(settingsScript.masterVolumeSlider.gameObject);
-                    }
-                    else if (settingsScript.controlsSettingsOpen)
-                    {
-                        es.SetSelectedGameObject(settingsScript.mouseSensitivitySlider.gameObject);
-                    }
-                }
-                else if (settingsPanel.activeSelf && settingsScript.controlSchemeOpen)
-                {
-                    es.SetSelectedGameObject(backButton.gameObject);
-                }
-
-                if (settingsPanel.activeSelf && !settingsScript.controllerLegends.activeSelf && settingsScript.keyboardLegends.activeSelf)
-                {
-                    settingsScript.controllerLegends.SetActive(true);
-                    settingsScript.keyboardLegends.SetActive(false);
-                }
-            }
-        } 
-    }
+    // private void CheckMouseInput()
+    // {
+    //     if (Mouse.current == null)
+    //     {
+    //         return;
+    //     }
+    //
+    //     Vector2 mouseDelta = Mouse.current.delta.ReadValue();
+    //
+    //     bool mouseKeysMoved = mouseDelta.sqrMagnitude > 0.1f || Keyboard.current.anyKey.isPressed;
+    //
+    //     if (!mouseKeysMoved) return;
+    //     
+    //     if (usingController)
+    //     {
+    //         usingController = false;
+    //         Cursor.visible = true;
+    //         Cursor.lockState = CursorLockMode.None;
+    //
+    //         if (EventSystem.current.currentSelectedGameObject != null)
+    //         {
+    //             EventSystem.current.SetSelectedGameObject(null);
+    //         }
+    //
+    //         if (settingsPanel.activeSelf && settingsScript != null && settingsScript.controllerLegends.activeSelf && !settingsScript.keyboardLegends.activeSelf)
+    //         {
+    //             settingsScript.controllerLegends.SetActive(false);
+    //             settingsScript.keyboardLegends.SetActive(true);
+    //         }
+    //     }
+    // }
+    //
+    // private void CheckControllerInput()
+    // {
+    //     if (Gamepad.current == null)
+    //     {
+    //         return;
+    //     }
+    //
+    //     bool controllerMoved = 
+    //         Gamepad.current.leftStick.ReadValue().sqrMagnitude > 0.1f 
+    //         || Gamepad.current.dpad.ReadValue().sqrMagnitude > 0.1f
+    //         || ((Gamepad.current.leftShoulder.IsPressed() || Gamepad.current.rightShoulder.IsPressed()) && settingsPanel.activeSelf);
+    //     
+    //     if (!controllerMoved)
+    //     {
+    //         return;
+    //     }
+    //
+    //     if (!usingController)
+    //     {
+    //         usingController = true;
+    //         Cursor.visible = false;
+    //         Cursor.lockState = CursorLockMode.Locked;
+    //
+    //         var es = EventSystem.current;
+    //
+    //         // Clear selected GameObject if mouse was hovering over something
+    //         if (es.IsPointerOverGameObject())
+    //         {
+    //             var ped = new PointerEventData(es)
+    //             {
+    //                 position = new Vector2(-99999f, -99999f)
+    //             };
+    //
+    //             es.RaycastAll(ped, new System.Collections.Generic.List<RaycastResult>());
+    //             es.SetSelectedGameObject(null);
+    //
+    //             InputSystemUIInputModule inputModule = es.currentInputModule as InputSystemUIInputModule;
+    //             if (inputModule != null)
+    //             {
+    //                 inputModule.enabled = false;
+    //                 inputModule.enabled = true;
+    //             }
+    //         }
+    //
+    //         // If nothing is selected, set a default based on the active panel
+    //         if (es.currentSelectedGameObject == null)
+    //         {
+    //             if (confirmationPanel.activeSelf)
+    //             {
+    //                 es.SetSelectedGameObject(confirmationPanel.GetComponent<ConfirmationUI>().cancelButton.gameObject);
+    //             }
+    //             else if (pauseMenuPanel.activeSelf)
+    //             {
+    //                 es.SetSelectedGameObject(resumeButton.gameObject);
+    //             }
+    //             else if (settingsPanel.activeSelf && !settingsScript.controlSchemeOpen)
+    //             {
+    //                 if (settingsScript.videoSettingsOpen)
+    //                 {
+    //                     es.SetSelectedGameObject(settingsScript.resolutionDropdown.gameObject);
+    //                 }
+    //                 else if (settingsScript.audioSettingsOpen)
+    //                 {
+    //                     es.SetSelectedGameObject(settingsScript.masterVolumeSlider.gameObject);
+    //                 }
+    //                 else if (settingsScript.controlsSettingsOpen)
+    //                 {
+    //                     es.SetSelectedGameObject(settingsScript.mouseSensitivitySlider.gameObject);
+    //                 }
+    //             }
+    //             else if (settingsPanel.activeSelf && settingsScript.controlSchemeOpen)
+    //             {
+    //                 es.SetSelectedGameObject(backButton.gameObject);
+    //             }
+    //
+    //             if (settingsPanel.activeSelf && !settingsScript.controllerLegends.activeSelf && settingsScript.keyboardLegends.activeSelf)
+    //             {
+    //                 settingsScript.controllerLegends.SetActive(true);
+    //                 settingsScript.keyboardLegends.SetActive(false);
+    //             }
+    //         }
+    //     } 
+    // }
 
     private void PauseGame()
     {
@@ -299,9 +342,6 @@ public class PauseManager : MonoBehaviour
         pauseMenuPanel.SetActive(true);
         
         Time.timeScale = 0f;
-
-        Cursor.visible = true;
-        Cursor.lockState = CursorLockMode.None;
 
         isGamePaused = true;
 
@@ -334,7 +374,9 @@ public class PauseManager : MonoBehaviour
         DisableOtherCanvases();
 
         // Set initial selected button
-        EventSystem.current.SetSelectedGameObject(resumeButton.gameObject);
+        EventSystem.current.firstSelectedGameObject = resumeButton.gameObject;
+        EventSystem.current.SetSelectedGameObject(EventSystem.current.firstSelectedGameObject);
+        InputDeviceManager.Instance?.SetUIActive(true, pauseMenuPanel);
     }
 
     private void SetUpListeners()
@@ -386,7 +428,9 @@ public class PauseManager : MonoBehaviour
         pauseMenuPanel.SetActive(true);
         backButton.gameObject.SetActive(false);
 
-        EventSystem.current.SetSelectedGameObject(resumeButton.gameObject);
+        EventSystem.current.firstSelectedGameObject = resumeButton.gameObject;
+        EventSystem.current.SetSelectedGameObject(EventSystem.current.firstSelectedGameObject);
+        InputDeviceManager.Instance?.SetUIActive(true, pauseMenuPanel);
     }
 
     public void ResumeGame()
@@ -397,9 +441,6 @@ public class PauseManager : MonoBehaviour
         pauseMenuPanel.SetActive(false);
         settingsScript.DisableSettingsPanel();
         backButton.gameObject.SetActive(false);
-
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
 
         isGamePaused = false;
 
@@ -435,6 +476,9 @@ public class PauseManager : MonoBehaviour
         {
             playerController.EnableInput();
         }
+        
+        EventSystem.current.firstSelectedGameObject = null;
+        InputDeviceManager.Instance?.SetUIActive(false, null);
         
         //Debug.Log("Resuming Game...");
     }
@@ -538,6 +582,7 @@ public class PauseManager : MonoBehaviour
         DisableAllButtons();
 
         ConfirmationUI confirmationUI = confirmationPanel.GetComponent<ConfirmationUI>();
+        InputDeviceManager.Instance?.SetUIActive(true, confirmationPanel);
         confirmationUI.ConfirmTask(ConfirmationType.QuitToMainMenu, 
             () => 
             {
@@ -549,7 +594,8 @@ public class PauseManager : MonoBehaviour
             {
                 confirmationPanel.SetActive(false);
                 EnableAllButtons();
-                EventSystem.current.SetSelectedGameObject(quitButton.gameObject);
+                EventSystem.current.firstSelectedGameObject = quitButton.gameObject;
+                EventSystem.current.SetSelectedGameObject(EventSystem.current.firstSelectedGameObject);
             });
     }
 
@@ -560,6 +606,7 @@ public class PauseManager : MonoBehaviour
         DisableAllButtons();
 
         ConfirmationUI confirmationUI = confirmationPanel.GetComponent<ConfirmationUI>();
+        InputDeviceManager.Instance?.SetUIActive(true, confirmationPanel);
         confirmationUI.ConfirmTask(ConfirmationType.ReloadSave, 
             () => 
             {
@@ -573,7 +620,8 @@ public class PauseManager : MonoBehaviour
                 // Do nothing if canceled
                 confirmationPanel.SetActive(false);
                 EnableAllButtons();
-                EventSystem.current.SetSelectedGameObject(reloadSaveButton.gameObject);
+                EventSystem.current.firstSelectedGameObject = reloadSaveButton.gameObject;
+                EventSystem.current.SetSelectedGameObject(EventSystem.current.firstSelectedGameObject);
             });
     }
 
@@ -600,8 +648,10 @@ public class PauseManager : MonoBehaviour
         pauseMenuPanel.SetActive(false);
         settingsScript.EnableSettingsPanel();
         backButton.gameObject.SetActive(true);
-
-        EventSystem.current.SetSelectedGameObject(settingsScript.resolutionDropdown.gameObject);
+        
+        EventSystem.current.firstSelectedGameObject = settingsScript.resolutionDropdown.gameObject;
+        EventSystem.current.SetSelectedGameObject(EventSystem.current.firstSelectedGameObject);
+        InputDeviceManager.Instance?.SetUIActive(true, settingsPanel);
         
         //Debug.Log("Opening Settings...");
     }
@@ -615,6 +665,16 @@ public class PauseManager : MonoBehaviour
         }
 
         DisableOtherCanvases();
+        
+        Time.timeScale = 1f; // Ensure time scale is reset
+        isGamePaused = false;
+        
+        InputDeviceManager.Instance?.SetUIActive(false, null);
+    
+        inputActions.FindActionMap("UI").Disable();
+        inputActions.FindActionMap("Player").Enable();
+        
+        EventSystem.current.firstSelectedGameObject = null;
 
         // Logic to quit to main menu
         if (GameManager.Instance&& GameManager.Instance.sceneLoadManager)
@@ -626,14 +686,6 @@ public class PauseManager : MonoBehaviour
             Debug.LogError("SceneLoadManager reference is missing in the GameManager. Loading Main Menu scene directly without fade transition.");
             SceneManager.LoadScene("MainMenu");
         }
-        
-        Time.timeScale = 1f; // Ensure time scale is reset
-        isGamePaused = false;
-        Cursor.visible = true;
-        Cursor.lockState = CursorLockMode.None;
-    
-        inputActions.FindActionMap("UI").Disable();
-        inputActions.FindActionMap("Player").Enable();
         
         //Debug.Log("Quitting to Main Menu...");
     }
@@ -657,5 +709,10 @@ public class PauseManager : MonoBehaviour
     private void OnDisable()
     {
         RemoveListeners();
+        
+        if (InputDeviceManager.Instance)
+        {
+            InputDeviceManager.Instance.OnInputModeChanged -= OnInputModeChanged;
+        }
     }
 }

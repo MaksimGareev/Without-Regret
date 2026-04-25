@@ -2,8 +2,8 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.UI;
-using TMPro;
 using System;
+using UnityEngine.EventSystems;
 
 public class InputDeviceManager : MonoBehaviour
 {
@@ -19,7 +19,11 @@ public class InputDeviceManager : MonoBehaviour
 
     public event Action<InputMode> OnInputModeChanged;
 
-    private IDisposable inputSubscription;
+    private GameObject activeUIObject = null;
+    private bool UIActive = false;
+    
+    [Header("InputActions")]
+    [SerializeField] private InputActionAsset inputActions;
 
     [Header("UI References")]
     [SerializeField] private Image actionImage1;
@@ -38,11 +42,6 @@ public class InputDeviceManager : MonoBehaviour
     [SerializeField] private Sprite keyboardSpacebar;
     [SerializeField] private Sprite mouse;
     [SerializeField] private Sprite keyboardTab;
-    
-    //[Header("Keyboard text")]
-    //[SerializeField] private TextMeshProUGUI tab;
-    //[SerializeField] private TextMeshProUGUI e;
-    //[SerializeField] private TextMeshProUGUI spaceBar;
 
     private void Awake()
     {
@@ -53,22 +52,33 @@ public class InputDeviceManager : MonoBehaviour
         }
         Instance = this;
         DontDestroyOnLoad(gameObject);
-    }
 
-    private void OnEnable()
-    {
-        //inputSubscription = InputSystem.onAnyButtonPress.Subscribe(control => DetectInputDevice(control);
+        // Stay subscribed even if this GameObject gets temporarily disabled by UI toggles.
+        InputSystem.onEvent -= OnInputEvent;
         InputSystem.onEvent += OnInputEvent;
     }
 
-    private void OnDisable()
+    private void OnDestroy()
     {
-        //inputSubscription?.Dispose();
         InputSystem.onEvent -= OnInputEvent;
+        if (Instance == this)
+        {
+            Instance = null;
+        }
+    }
+
+    private void Update()
+    {
+        if (!UIActive || CurrentMode != InputMode.Controller)
+            return;
+
+        EnsureControllerSelection();
     }
 
     private void OnInputEvent(InputEventPtr eventPtr, InputDevice device)
     {
+        if (device == null) return;
+
         InputMode previous = CurrentMode;
 
         if (device is Gamepad)
@@ -85,7 +95,6 @@ public class InputDeviceManager : MonoBehaviour
             OnInputModeChanged?.Invoke(CurrentMode);
             UpdateUIForInputMode(CurrentMode);
         }
-
     }
 
     private void UpdateUIForInputMode(InputMode mode)
@@ -93,6 +102,8 @@ public class InputDeviceManager : MonoBehaviour
         switch (mode)
         {
             case InputMode.Controller:
+                
+                // Player UI Sprite Updates
                 actionImage1.sprite = controllerXButton;
                 actionImage1.rectTransform.sizeDelta = new Vector2(80, 80);
 
@@ -104,12 +115,29 @@ public class InputDeviceManager : MonoBehaviour
                 
                 journalImage.sprite = controllerSelect;
                 journalImage.rectTransform.sizeDelta = new Vector2(80, 80);
+
                 
-                //tab.gameObject.SetActive(false);
-                //e.gameObject.SetActive(false);
-                //spaceBar.gameObject.SetActive(false);
+                // Updates for controller input
+                if (Cursor.lockState != CursorLockMode.Locked)
+                {
+                    Cursor.lockState = CursorLockMode.Locked;
+                }
+
+                if (Cursor.visible)
+                {
+                    Cursor.visible = false;
+                }
+
+                if (UIActive)
+                {
+                    EnsureControllerSelection();
+                }
+                
                 break;
+            
             case InputMode.KeyboardMouse:
+                
+                // Player UI Sprite Updates
                 actionImage1.sprite = keyboardEKey;
                 actionImage1.rectTransform.sizeDelta = new Vector2(80, 80);
 
@@ -122,10 +150,99 @@ public class InputDeviceManager : MonoBehaviour
                 journalImage.sprite = keyboardTab;
                 journalImage.rectTransform.sizeDelta = new Vector2(140, 85);
                 
-                //tab.gameObject.SetActive(true);
-                //e.gameObject.SetActive(true);
-                //spaceBar.gameObject.SetActive(true);
+                // Updates for mouse and keyboard input
+                if (UIActive)
+                {
+                    if (Cursor.lockState != CursorLockMode.None)
+                    {
+                        Cursor.lockState = CursorLockMode.None;
+                    }
+
+                    if (!Cursor.visible)
+                    {
+                        Cursor.visible = true;
+                    }
+
+                    ClearSelection();
+                }
+                else
+                {
+                    if (Cursor.lockState != CursorLockMode.Locked)
+                    {
+                        Cursor.lockState = CursorLockMode.Locked;
+                    }
+
+                    if (Cursor.visible)
+                    {
+                        Cursor.visible = false;
+                    }
+                }
+                
                 break;
         }
+    }
+    
+    private void EnsureControllerSelection()
+    {
+        EventSystem eventSystem = EventSystem.current;
+        if (!eventSystem || eventSystem.currentSelectedGameObject)
+        {
+            return;
+        }
+
+        GameObject target = eventSystem.firstSelectedGameObject;
+
+        if ((!target || !target.activeInHierarchy) && activeUIObject)
+        {
+            Selectable selectable = activeUIObject.GetComponentInChildren<Selectable>(true);
+            if (selectable)
+            {
+                target = selectable.gameObject;
+            }
+        }
+
+        if (target && target.activeInHierarchy)
+        {
+            eventSystem.SetSelectedGameObject(target);
+        }
+    }
+
+    private void ClearSelection()
+    {
+        EventSystem eventSystem = EventSystem.current;
+        if (eventSystem && eventSystem.currentSelectedGameObject)
+        {
+            eventSystem.SetSelectedGameObject(null);
+        }
+    }
+
+    public void SetUIActive(bool active, GameObject uiRoot)
+    {
+        UIActive = active;
+        if (active)
+        {
+            this.activeUIObject = uiRoot;
+            inputActions.FindActionMap("UI")?.Enable();
+        }
+        else
+        {
+            this.activeUIObject = null;
+
+            if (Cursor.lockState != CursorLockMode.Locked)
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+            }
+
+            if (Cursor.visible)
+            {
+                Cursor.visible = false;
+            }
+            
+            inputActions.FindActionMap("UI")?.Disable();
+        }
+
+        // Re-apply the current mode when UI context changes (eg. pause opens while already on controller).
+        OnInputModeChanged?.Invoke(CurrentMode);
+        UpdateUIForInputMode(CurrentMode);
     }
 }
