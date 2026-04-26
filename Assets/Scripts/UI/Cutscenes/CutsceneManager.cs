@@ -658,8 +658,19 @@ public class CutsceneManager : MonoBehaviour
 
         isTyping = false;
         
+        // return early if no text is set.
+        if (dialogueLine.text == "")
+        {
+            dialogueText.text = "";
+            speakerNameText.text = "";
+            dialoguePanel.SetActive(false);
+            speakerNameBackgroundImage.gameObject.SetActive(false);
+            return;
+        }
+        
         dialogueText.text = "";
         
+        // Hide speaker name background if no speaker, show if there is a speaker and set speaker name text
         if (dialogueLine.Speaker == "")
         {
             speakerNameBackgroundImage.gameObject.SetActive(false);
@@ -679,7 +690,12 @@ public class CutsceneManager : MonoBehaviour
             HideContinueButton();
         }
 
-        // type the current line
+        // Set panel active and type the current line
+        if (!dialoguePanel.activeSelf)
+        {
+            dialoguePanel.SetActive(true);
+        }
+            
         typingCoroutine = StartCoroutine(TypeLine(dialogueLine.text));
     }
 
