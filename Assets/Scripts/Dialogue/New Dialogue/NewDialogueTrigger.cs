@@ -91,6 +91,7 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
     private bool rewardGiven = false;
 
     public bool hasPlayed = false;
+    public bool completed = false;
 
     public enum DialogueTriggerType
     {
@@ -316,6 +317,8 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
     // start the dialogue interaction
     private void TryStartDialogue()
     {
+        completed = false;
+
         if (playerController != null)
         {
             playerController.SetDialogueActive(true);
@@ -420,6 +423,7 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
     public void OnDialogueComplete()
     {
         isLookingAtPlayer = false;
+        completed = true;
         
         CameraMovement cam = FindAnyObjectByType<CameraMovement>();
         cam.SetCameraInputEnabled(true);

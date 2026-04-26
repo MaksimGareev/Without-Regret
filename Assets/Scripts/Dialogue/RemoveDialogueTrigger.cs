@@ -7,6 +7,8 @@ public class RemoveDialogueTrigger : MonoBehaviour
     public GameObject trigger1;
     public GameObject trigger2;
     public GameObject trigger3;
+    public GameObject Enemy;
+    public NewDialogueTrigger DialogueTrigger;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
@@ -30,17 +32,19 @@ public class RemoveDialogueTrigger : MonoBehaviour
         }
     }
 
-    private void OnTriggerExit(Collider other)
+    public void Update()
     {
-        if (other.CompareTag("Player"))
+        RemoveGameobjects();
+    }
+
+    public void RemoveGameobjects()
+    {
+        if (DialogueTrigger.completed && DialogueTrigger != null)
         {
-            if (objectiveManager != null && objectiveManager.IsObjectiveCompleted(linkedObjectiveID))
-            {
-                trigger1.SetActive(false);
-                trigger2.SetActive(false);
-                trigger3.SetActive(false);
-            }
-            Debug.Log("player has exited");
+            trigger1.SetActive(false);
+            trigger2.SetActive(false);
+            trigger3.SetActive(false);
+            Enemy.SetActive(false);
         }
     }
 }
