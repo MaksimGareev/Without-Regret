@@ -31,7 +31,7 @@ public class Inventory : MonoBehaviour, ISaveable
         playerEquipItem = GetComponent<PlayerEquipItem>();
         
         toggleInventoryUI = GetComponent<ToggleInventoryUI>();
-        cameraMovement = Camera.main.GetComponent<CameraMovement>();
+        cameraMovement = Camera.main?.GetComponent<CameraMovement>();
         itemToCollect = null;
 
         if (backpack == null)
@@ -51,14 +51,14 @@ public class Inventory : MonoBehaviour, ISaveable
 
     private void Start()
     {
-        if (hasBackpack)
+        if (hasBackpack && backpack)
         {
             SetBackpackActive();
             toggleInventoryUI.hasBackpack = true;
         }
         else
         {
-            backpack.SetActive(false);
+            backpack?.SetActive(false);
         }
     }
 
@@ -311,11 +311,15 @@ public class Inventory : MonoBehaviour, ISaveable
             yield return null;
         }
 
-        itemsList.Clear();
-
         if (newInventory != null)
         {
+            itemsList.Clear();
             itemsList.AddRange(newInventory);
+        }
+        else
+        {
+            Debug.Log("New inventory is empty, cannot overwrite.");
+            yield break;
         }
 
         keyItems.Clear();
@@ -336,7 +340,18 @@ public class Inventory : MonoBehaviour, ISaveable
         SetHasBackpack(newHasBackpack);
 
         Debug.Log($"Inventory overwritten with {newInventory.Count} items. Backpack status: {newHasBackpack}");
-        yield break;
+
+        if (SaveManager.Instance)
+        {
+            SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
+        }
+
+        GameManager.Instance.inventoryInteractingScript.RefreshInventoryUI();
+    }
+
+    public bool HasItemInInventory(ItemData item)
+    {
+        return itemsList.Contains(item);
     }
 }
 

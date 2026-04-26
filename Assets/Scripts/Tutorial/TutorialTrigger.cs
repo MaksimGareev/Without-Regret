@@ -7,6 +7,9 @@ public class TutorialTrigger : MonoBehaviour
 
     [Header("Options")]
     public bool triggerOnce = true;
+
+    public ItemData requiredItem;
+    
     private bool hasTriggered = false;
 
     private void OnTriggerEnter(Collider other)
@@ -16,6 +19,8 @@ public class TutorialTrigger : MonoBehaviour
 
         // Stop the player from retriggering the tutorial
         if (triggerOnce && hasTriggered) return;
+        
+        if (requiredItem && !CheckIfPlayerHasItem()) return;
 
         if (InteractionTutorialUI.Instance != null)
         {
@@ -23,7 +28,20 @@ public class TutorialTrigger : MonoBehaviour
             InteractionTutorialUI.Instance.ShowTutorial(tutorialType, text);
         }
 
-        // don,t let trigger fire again
+        // don't let trigger fire again
         hasTriggered = true;
+    }
+
+    private bool CheckIfPlayerHasItem()
+    {
+        if (!requiredItem) return true;
+        
+        Inventory playerInventory = FindAnyObjectByType<Inventory>();
+        if (playerInventory)
+        {
+            return playerInventory.HasItemInInventory(requiredItem);
+        }
+        
+        return false;
     }
 }

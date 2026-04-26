@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class CleanupLeavesObjective : MonoBehaviour
@@ -9,6 +10,8 @@ public class CleanupLeavesObjective : MonoBehaviour
     [SerializeField] private ItemData TrashbagRefForRemoval;
     private Inventory playerInv;
     private int NumLeavesCollected;
+    private float interactSpamDelay = 2.0f;
+    private float interactSpamTimer = 0.0f;
 
     private void OnEnable()
     {
@@ -27,6 +30,14 @@ public class CleanupLeavesObjective : MonoBehaviour
         if (ObjectiveManager.Instance.IsObjectiveActive(linkedObjective.objectiveID))
         {
             SetObjectiveActive(new ObjectiveInstance(linkedObjective));
+        }
+    }
+
+    private void Update()
+    {
+        if (interactSpamTimer < interactSpamDelay + 2.0f)
+        {
+            interactSpamTimer += Time.deltaTime;
         }
     }
 
@@ -68,11 +79,17 @@ public class CleanupLeavesObjective : MonoBehaviour
 
     void IncrementCount()
     {
+        if (interactSpamTimer < interactSpamDelay) return;
+        
         ObjectiveManager.Instance.AddProgress(linkedObjective.objectiveID, 1);
+        Debug.Log("Collected 1 Leaf");
+        interactSpamTimer = 0.0f;
     }
 
     public void AddLeaves()
     {
+        if (interactSpamTimer < interactSpamDelay) return;
+        
         NumLeavesCollected++;
 
         if (NumLeavesCollected >= 5)
