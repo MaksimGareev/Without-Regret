@@ -151,7 +151,7 @@ public class ObjectiveAndSaveTesting : MonoBehaviour
         }
     }
     
-//#if UNITY_EDITOR
+#if UNITY_EDITOR
     private void Update()
     {
         // Early returns to avoid unnecessary checks when conditions are not met
@@ -174,93 +174,8 @@ public class ObjectiveAndSaveTesting : MonoBehaviour
         {
             SkipObjective();
         }
-        
-        // CheckControllerInput();
-        // CheckMouseInput();
-        //
-        // if (usingController && !EventSystem.current.currentSelectedGameObject)
-        // {
-        //     EventSystem.current.SetSelectedGameObject(LevelSelectButtons[0].gameObject);
-        // }
     }
-//#endif
-    
-    // private void CheckMouseInput()
-    // {
-    //     if (Mouse.current == null)
-    //     {
-    //         return;
-    //     }
-    //
-    //     Vector2 mouseDelta = Mouse.current.delta.ReadValue();
-    //
-    //     bool mouseKeysMoved = mouseDelta.sqrMagnitude > 0.1f || Keyboard.current.anyKey.isPressed;
-    //
-    //     if (!mouseKeysMoved) return;
-    //
-    //     if (usingController)
-    //     {
-    //         usingController = false;
-    //         Cursor.visible = true;
-    //         Cursor.lockState = CursorLockMode.None;
-    //         
-    //         if (EventSystem.current.currentSelectedGameObject)
-    //         {
-    //             EventSystem.current.SetSelectedGameObject(null);
-    //         }
-    //     }
-    // }
-    //
-    // private void CheckControllerInput()
-    // {
-    //     if (Gamepad.current == null)
-    //     {
-    //         return;
-    //     }
-    //
-    //     // Check if the controller has moved either the left stick or dpad
-    //     bool controllerMoved = 
-    //         Gamepad.current.leftStick.ReadValue().sqrMagnitude > 0.1f 
-    //         || Gamepad.current.dpad.ReadValue().sqrMagnitude > 0.1f 
-    //         || ((Gamepad.current.leftShoulder.IsPressed() || Gamepad.current.rightShoulder.IsPressed()) && debugUI.activeSelf);
-    //     
-    //     if (!controllerMoved) return;
-    //
-    //     if (!usingController)
-    //     {
-    //         usingController = true;
-    //         Cursor.visible = false;
-    //         Cursor.lockState = CursorLockMode.Locked;
-    //
-    //         var es = EventSystem.current;
-    //
-    //         // Clear selected GameObject if mouse was hovering over something
-    //         if (es.IsPointerOverGameObject())
-    //         {
-    //             var ped = new PointerEventData(es)
-    //             {
-    //                 position = new Vector2(-99999f, -99999f)
-    //             };
-    //
-    //             es.RaycastAll(ped, new System.Collections.Generic.List<RaycastResult>());
-    //
-    //             InputSystemUIInputModule inputModule = es.currentInputModule as InputSystemUIInputModule;
-    //             if (inputModule != null)
-    //             {
-    //                 inputModule.enabled = false;
-    //                 inputModule.enabled = true;
-    //             }
-    //
-    //             es.SetSelectedGameObject(null);
-    //         }
-    //
-    //         // If nothing is selected, set a default based on the active panel
-    //         if (!es.currentSelectedGameObject && debugUI.activeSelf)
-    //         {
-    //             es.SetSelectedGameObject(LevelSelectButtons[0].gameObject);
-    //         }
-    //     }
-    // }
+#endif
 
     private void OpenDebugUI()
     {
@@ -269,6 +184,9 @@ public class ObjectiveAndSaveTesting : MonoBehaviour
         AddListeners();
         debugUI.SetActive(true);
         DebugUIIsActive = true;
+        
+        inputActions.FindActionMap("UI")?.Enable();
+        inputActions.FindActionMap("Debug")?.Enable();
         
         EventSystem.current.firstSelectedGameObject = LevelSelectButtons[0].gameObject;
         EventSystem.current.SetSelectedGameObject(EventSystem.current.firstSelectedGameObject);
@@ -316,15 +234,14 @@ public class ObjectiveAndSaveTesting : MonoBehaviour
 
     private void RemoveListeners()
     {
-        for (int i = 0; i < sceneObjectiveList.Count - 1; i++)
+        for (int i = 0; i < sceneObjectiveList.Count; i++)
         {
-            int index = i; // Capture the current value of i for the lambda
-            LevelSelectButtons[i].onClick.RemoveListener(() => LoadScene(sceneNames[index]));
+            LevelSelectButtons[i].onClick.RemoveAllListeners();
         }
 
         if (CloseUIButton != null)
         {
-            CloseUIButton.onClick.RemoveListener(CloseDebugUI);
+            CloseUIButton.onClick.RemoveAllListeners();
         }
     }
 
