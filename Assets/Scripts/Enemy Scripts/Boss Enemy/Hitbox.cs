@@ -1,13 +1,26 @@
 using System.Collections;
 using UnityEngine;
 
-public class ArmSweepHitbox : MonoBehaviour
+public class Hitbox : MonoBehaviour
 {
     [SerializeField] int damage = 1;
 
+    private Collider coll;
+
     private void Awake()
     {
-        GetComponent<Collider>().isTrigger = true;
+        coll = GetComponent<Collider>();
+        coll.isTrigger = true;
+    }
+
+    private void OnEnable()
+    {
+        coll.enabled = true;
+    }
+
+    private void OnDisable()
+    {
+        coll.enabled = false;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -17,6 +30,10 @@ public class ArmSweepHitbox : MonoBehaviour
             if (TimerRingUI.Instance != null)
             {
                 TimerRingUI.Instance.SubtractRingSection(damage);
+            }
+            else
+            {
+                Debug.LogWarning("TimerRing Instance null");
             }
         }
     }

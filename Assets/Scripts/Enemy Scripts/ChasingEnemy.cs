@@ -7,7 +7,7 @@ public class ChasingEnemy : MonoBehaviour
 {
     // Movement
     public NavMeshAgent agent;
-    public Transform[] targets;
+    public TraversablePoint[] targets;
     private int currentIndex = 0;
     //private Vector3 StoppingDistance;
     public float PursuitTimer;
@@ -44,6 +44,8 @@ public class ChasingEnemy : MonoBehaviour
     public float updateRate = 0.2f;
     private float updateTimer = 0f;
 
+    public bool Posessed = false;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -58,8 +60,8 @@ public class ChasingEnemy : MonoBehaviour
         if (targets.Length > 0)
         {
             currentIndex = 0;
-            currentTarget = targets[currentIndex];
-            agent.SetDestination(targets[currentIndex].position);
+            currentTarget = targets[currentIndex].transform;
+            agent.SetDestination(targets[currentIndex].transform.position);
         }
         else
         {
@@ -75,7 +77,7 @@ public class ChasingEnemy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (agent == null) return;
+        if (Posessed || agent == null || agent.enabled == false) return;
         
         UpdateSpeedFromMorality();
 
@@ -99,7 +101,7 @@ public class ChasingEnemy : MonoBehaviour
         {
             if (currentIndex < targets.Length && targets[currentIndex] != null)
             {
-                agent.SetDestination(targets[currentIndex].position);
+                agent.SetDestination(targets[currentIndex].transform.position);
             }
             updateTimer = updateRate;
         }
@@ -116,7 +118,7 @@ public class ChasingEnemy : MonoBehaviour
             }
         }
 
-        if (baseSpeed > 0.1f)
+        if (baseSpeed > 0.1f || agent.isStopped)
         {
             
             animator?.SetBool("isWalking", true);
@@ -195,9 +197,9 @@ public class ChasingEnemy : MonoBehaviour
         }*/
 
         // Move to next waypoint
-        currentIndex++;
+        
 
-        if (currentIndex >= targets.Length)
+        if (currentIndex+1 >= targets.Length)
         {
             Debug.Log("Enemy reached final target!");
             currentTarget = null;       // <--- set to null when no more targets
@@ -205,10 +207,19 @@ public class ChasingEnemy : MonoBehaviour
             return; // Stop here, no more targets
         }
 
-        currentTarget = targets[currentIndex];
-        if (currentTarget != null)
+       // currentTarget = targets[currentIndex].transform;
+        if (currentTarget != null && targets[currentIndex+1].isTraversable) //checking if next point is traversable
         {
-            agent.SetDestination(currentTarget.position);
+            currentIndex++; //if so , increment to that point
+            baseSpeed = 2; //set speed back here to ensure animation plays
+            agent.SetDestination(targets[currentIndex].transform.position);
+        }
+        else
+        {
+            if (!Posessed) 
+            {
+                baseSpeed = 0; //to ensure enemy doesn't move only when not possessed and when the next point isn't traversable
+            }
         }
     }
 

@@ -51,15 +51,9 @@ public class BossEnemyController : MonoBehaviour
 
     private Rigidbody voidProjectileRigidbody;
 
-    [Header("Arm Sweep Settings")]
-    [Tooltip("The speed at which the boss' arm moves, in degrees per second")]
-    [SerializeField] float sweepingSpeed = 20f;
-    
-    [Tooltip("The duration for how long the arm sweeps across")]
-    [SerializeField] float sweepingDuration = 8f;
-
-    private Vector3 originalArmPosition;
-    private Quaternion originalArmRotation;
+    [Header("Arm Sweep Settings (it's not an arm sweep anymore but im not renaming it)")]
+    [Tooltip("The duration of the attack (should match the duration of the animation)")]
+    [SerializeField] float knifeAttackDuration = 2f;
 
     [Header("References")]
     [SerializeField] Transform player;
@@ -69,9 +63,9 @@ public class BossEnemyController : MonoBehaviour
     
     [Tooltip("The visual model of the boss")]
     [SerializeField] GameObject model;
-    
-    [Tooltip("The arm used for the Arm Sweep attack")]
-    [SerializeField] GameObject sweepingArmObject;
+
+    [Tooltip("The hitbox component attached to the cleaver")]
+    [SerializeField] Hitbox cleaverHitbox;
     
     [Tooltip("The projectile prefab used for the void projectile attack")]
     [SerializeField] GameObject voidProjectileObject;
@@ -177,15 +171,13 @@ public class BossEnemyController : MonoBehaviour
             voidPoolSettings.healthDropChance = healthDropChance;
         }
 
-        if (sweepingArmObject == null)
+        if (cleaverHitbox == null)
         {
-            Debug.LogError("Sweeping arm object reference is missing.");
+            Debug.LogError("Cleaver Hitbox reference is missing.");
         }
         else
         {
-            originalArmPosition = sweepingArmObject.transform.position;
-            originalArmRotation = sweepingArmObject.transform.rotation;
-            sweepingArmObject.SetActive(false);
+            cleaverHitbox.enabled = false;
         }
 
         if (baseSliderPrefab != null)
@@ -589,40 +581,24 @@ public class BossEnemyController : MonoBehaviour
 
     void ArmSweep()
     {
-        if (sweepingArmObject == null)
+        if (cleaverHitbox == null)
         {
-            Debug.LogError("Sweeping Arm reference is missing.");
+            Debug.LogError("Cleaver Hitbox reference is missing.");
             return;
         }
         animator.SetTrigger("Attack");
 
         if (showDebugLogs) Debug.Log("Performing Arm Sweep action");
 
-        // Align the arm's height with the player's
-        sweepingArmObject.transform.position =
-            new Vector3(sweepingArmObject.transform.position.x,
-            player.position.y,
-            sweepingArmObject.transform.position.z);
-
-        sweepingArmObject.SetActive(true);
-
         StartCoroutine(Sweep());
     }
 
     IEnumerator Sweep()
     {
-        float startTime = Time.time;
-
-        // Rotate the arm around the boss for the duration of the sweep
-        while (Time.time < startTime + sweepingDuration)
-        {
-            // Rotate the arm around the boss at the specified speed
-            sweepingArmObject.transform.RotateAround(transform.position, Vector3.up, sweepingSpeed * Time.deltaTime);
-            yield return null;
-        }
-
-        sweepingArmObject.SetActive(false);
-        sweepingArmObject.transform.SetPositionAndRotation(originalArmPosition, originalArmRotation);
+        cleaverHitbox.enabled = true;
+        yield return new WaitForSeconds(knifeAttackDuration);
+        cleaverHitbox.enabled = false;
+        animator.ResetTrigger("Attack");
         EndAction();
     }
 

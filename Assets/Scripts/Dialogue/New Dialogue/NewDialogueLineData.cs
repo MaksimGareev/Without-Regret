@@ -25,7 +25,6 @@ public class NewDialogueLineData
     public bool movingOn;               // Bool that controls if the moving on VFX should be played 
     public bool GiveItem;               // Bool that contorls if the NPC gives the player an item
     public bool ShakeCamera;            // Bool that contorls if the camera should shake durring the current line
-    public bool cannotSkip;             // Bool that contorls if the player cannont skip this line of dialogue and should be fully built out
 
     [Header("Audio")]
     public bool playSFXOnstart;
