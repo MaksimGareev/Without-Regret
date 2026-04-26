@@ -45,13 +45,20 @@ public class CutsceneManager : MonoBehaviour
     [SerializeField] private Vector3 holdButtonScale =  Vector3.one;
     [SerializeField] private Sprite holdKeySprite;
     [SerializeField] private Vector3 holdKeyScale = Vector3.one;
-    [SerializeField]private Vector3 holdTextOffset = Vector3.zero ;
-    [SerializeField]private Vector3 toSkipTextOffset = Vector3.zero;
+    [SerializeField] private Vector3 holdTextOffset = Vector3.zero ;
+    [SerializeField] private Vector3 toSkipTextOffset = Vector3.zero;
+    [SerializeField] private Vector2 holdToSkipOffset = Vector2.zero;
+    [SerializeField] private Vector2 continueButtonOffset = Vector2.zero;
     [SerializeField] private Sprite continueButtonSprite;
     [SerializeField] private Sprite dialogueBackgroundSprite;
     [SerializeField] private Sprite speakerBackgroundSprite;
     private Vector3 originalHoldTextOffset;
     private Vector3 originalToSkipOffset;
+    private Vector2 originalHoldToSkipPosition;
+    private Vector2 originalContinueButtonOffset;
+    private RectTransform continueRectTransform;
+    private RectTransform holdRectTransform;
+    private bool holdAnchoredToCenter = true;
     
     [Header("Audio")]
     [SerializeField] private AudioMixer mainAudioMixer;
@@ -159,6 +166,20 @@ public class CutsceneManager : MonoBehaviour
         {
             Debug.LogWarning("Cutscene Manager requires a Hold To Skip Panel.");
         }
+
+        holdToSkipPanel.TryGetComponent<RectTransform>(out var holdRect);
+        holdRectTransform = holdRect;
+        if (holdRectTransform)
+        {
+            originalHoldToSkipPosition = holdRectTransform.anchoredPosition;
+        }
+        
+        continueButton.TryGetComponent<RectTransform>(out var continueButtonRect);
+        continueRectTransform = continueButtonRect;
+        if (continueRectTransform)
+        {
+            originalContinueButtonOffset = continueRectTransform.anchoredPosition;
+        }
         
         originalHoldTextOffset = holdText.rectTransform.anchoredPosition;
         originalToSkipOffset = toSkipText.rectTransform.anchoredPosition;
@@ -259,6 +280,53 @@ public class CutsceneManager : MonoBehaviour
     private void Update()
     {
         ProcessHoldToSkip();
+        UpdateUIToMatchDialogue();
+    }
+
+    private void UpdateUIToMatchDialogue()
+    {
+        if (!holdToSkipPanel.activeSelf) return;
+        
+        if (!dialoguePanel.activeSelf)
+        {
+            // Anchor to bottom left
+            if (holdAnchoredToCenter)
+            {
+                holdRectTransform.anchorMin = new Vector2(0, 0);
+                holdRectTransform.anchorMax = new Vector2(0, 0);
+                holdAnchoredToCenter = false;
+            }
+                
+            if (holdRectTransform.anchoredPosition != holdToSkipOffset)
+            {
+                holdRectTransform.anchoredPosition = holdToSkipOffset;
+            }
+                
+            if (continueRectTransform.anchoredPosition != continueButtonOffset)
+            {
+                continueRectTransform.anchoredPosition = continueButtonOffset;
+            }
+        }
+        else if (dialoguePanel.activeSelf)
+        {
+            // Anchor to center
+            if (!holdAnchoredToCenter)
+            {
+                holdRectTransform.anchorMin = new Vector2(0.5f, 0.5f);
+                holdRectTransform.anchorMax = new Vector2(0.5f, 0.5f);
+                holdAnchoredToCenter = true;
+            }
+            
+            if (holdRectTransform.anchoredPosition != originalHoldToSkipPosition)
+            {
+                holdRectTransform.anchoredPosition = originalHoldToSkipPosition;
+            }
+
+            if (continueRectTransform.anchoredPosition != originalContinueButtonOffset)
+            {
+                continueRectTransform.anchoredPosition = originalContinueButtonOffset;
+            }
+        }
     }
 
     private void ProcessHoldToSkip()
@@ -281,7 +349,7 @@ public class CutsceneManager : MonoBehaviour
                 holdToSkipSlider.gameObject.SetActive(true);
             }
             
-            holdToSkipSlider.value = skipTimer;
+            holdToSkipSlider.value = Mathf.Lerp(0.0f, holdToSkipDuration, (skipTimer - 0.2f) / (holdToSkipDuration - 0.2f));
         }
         
         if (skipTimer >= holdToSkipDuration && canSkipEntireCutscene)
@@ -323,6 +391,8 @@ public class CutsceneManager : MonoBehaviour
         
         holdText.rectTransform.anchoredPosition = originalHoldTextOffset;
         toSkipText.rectTransform.anchoredPosition = originalToSkipOffset;
+        originalHoldToSkipPosition += new Vector2(50.0f, 0.0f);
+        holdToSkipOffset += new Vector2(-50.0f, 0.0f);
         
         usingControllerLegend = true;
     }
@@ -335,6 +405,8 @@ public class CutsceneManager : MonoBehaviour
         
         holdText.rectTransform.anchoredPosition = holdTextOffset;
         toSkipText.rectTransform.anchoredPosition = toSkipTextOffset;
+        originalHoldToSkipPosition += new Vector2(-50.0f, 0.0f);
+        holdToSkipOffset += new Vector2(50.0f, 0.0f);
         
         usingControllerLegend = false;
     }
