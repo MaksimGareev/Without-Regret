@@ -450,23 +450,20 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
             PlayTypingSound(c);
 
             // create a small delay for punctuation
-            float baseDelay = .035f;
-            float fastDelay = 0.008f;
-
-            float delay = (line.cannotSkip && isHoldingConfirm) ? fastDelay : baseDelay;
+            float delay = .035f;
 
             switch (c)
             {
                 case '.':
                 case '!':
                 case '?':
-                    delay += (line.cannotSkip && isHoldingConfirm) ? 0.05f : 0.25f;
+                    delay += 0.25f;
                     break;
 
                 case ',':
                 case ';':
                 case ':':
-                    delay += (line.cannotSkip && isHoldingConfirm) ? 0.05f : 0.12f;
+                    delay += 0.12f;
                     break;
             }
 
@@ -499,12 +496,6 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
         // if line is typing and confirm is pressed have the line be build instantly and spawn arrow if needed
         if (typing)
         {
-            if (currentLine.cannotSkip)
-            {
-                // small feedback showing it cannot be skipped
-                dialogueText.transform.localPosition += Random.insideUnitSphere * 2f;
-                return;
-            }
             if (typingRoutine != null)
             {
                 StopCoroutine(typingRoutine);
