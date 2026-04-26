@@ -253,6 +253,8 @@ public class InventoryUIController : MonoBehaviour
                 index++;
             }
         }
+        
+        OnSelectionChanged(currentSelectedSlot);
     }
 
     private void OnSlotClicked(int row, int column, int index)
@@ -390,6 +392,7 @@ public class InventoryUIController : MonoBehaviour
         }
 
         EnsureSlotGridSelection();
+        OnSelectionChanged(currentSelectedSlot);
     }
 
     private void OnDisable()
@@ -432,19 +435,28 @@ public class InventoryUIController : MonoBehaviour
     public void DisableInventoryInput()
     {
         inputActions.FindActionMap("Inventory")?.Disable();
-        inputActions.FindActionMap("UI")?.Disable();
-        inputActions.FindAction("Player/Look")?.Enable();
-        inputActions.FindAction("Player/Jump")?.Enable();
-        inputActions.FindAction("Player/ChimeHint")?.Enable();
-        inputActions.FindAction("Player/Possession")?.Enable();
 
+        // If pause is currently active, keep shared UI input and selection owned by PauseManager.
+        bool pauseActive = PauseManager.Instance && PauseManager.Instance.isGamePaused;
+
+        if (!pauseActive)
+        {
+            inputActions.FindActionMap("UI")?.Disable();
+            inputActions.FindAction("Player/Look")?.Enable();
+            inputActions.FindAction("Player/Jump")?.Enable();
+            inputActions.FindAction("Player/ChimeHint")?.Enable();
+            inputActions.FindAction("Player/Possession")?.Enable();
+        }
 
         if (defaultUIMoveAction && uiInputModule)
         {
             uiInputModule.move = defaultUIMoveAction;
         }
-        
-        EventSystem.current.SetSelectedGameObject(null);
+
+        if (!pauseActive && EventSystem.current)
+        {
+            EventSystem.current.SetSelectedGameObject(null);
+        }
     }
 
     private bool IsSlotSelection(GameObject selectedGameObject)
