@@ -76,6 +76,8 @@ public class InputDeviceManager : MonoBehaviour
 
     private void Update()
     {
+        EnsurePlayerInputActive();
+        
         if (!UIActive || CurrentMode != InputMode.Controller)
             return;
 
@@ -105,6 +107,20 @@ public class InputDeviceManager : MonoBehaviour
             OnInputModeChanged?.Invoke(CurrentMode);
             UpdateUIForInputMode(CurrentMode);
         }
+    }
+
+    private void EnsurePlayerInputActive()
+    {
+        if (UIActive || !inputActions) return;
+        
+        var playerMap =  inputActions.FindActionMap("Player");
+
+        if (playerMap == null) return;
+        
+        if(playerMap.enabled) return;
+        
+        playerMap.Enable();
+        Debug.LogWarning("Player Input was not active outside of UI, re-enabling it now.");
     }
 
     private bool TryGetInputMode(InputEventPtr eventPtr, InputDevice device, out InputMode mode)
