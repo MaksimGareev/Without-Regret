@@ -1000,14 +1000,14 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
         
         npcPortrait.SetNativeSize();
 
-        if (currentLine.Speaker == "Chime(Human)")
-        {
-            npcPortrait.rectTransform.sizeDelta = new Vector2(npcPortrait.rectTransform.sizeDelta.x, npcPortrait.rectTransform.sizeDelta.y) * 0.47f;
-        }
-        else
-        {
-            npcPortrait.rectTransform.sizeDelta = new Vector2(npcPortrait.rectTransform.sizeDelta.x, npcPortrait.rectTransform.sizeDelta.y);
-        }
+        // if (currentLine.Speaker == "Chime(Human)")
+        // {
+        //     npcPortrait.rectTransform.sizeDelta = new Vector2(npcPortrait.rectTransform.sizeDelta.x, npcPortrait.rectTransform.sizeDelta.y) * 0.47f;
+        // }
+        // else
+        // {
+        //     npcPortrait.rectTransform.sizeDelta = new Vector2(npcPortrait.rectTransform.sizeDelta.x, npcPortrait.rectTransform.sizeDelta.y);
+        // }
         
         npcPortrait.gameObject.SetActive(true);
     }
