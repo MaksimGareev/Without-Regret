@@ -330,14 +330,28 @@ public class SettingsMenu : MonoBehaviour
             discardSettingsAction.Enable();
         }
 
-        if (parentMenu != null)
+        // if (parentMenu != null)
+        // {
+        //     if (parentMenu.GetComponent<MainMenu>() != null && parentMenu.GetComponent<MainMenu>().usingController)
+        //     {
+        //         controllerLegends.SetActive(true);
+        //         keyboardLegends.SetActive(false);
+        //     }
+        //     else if (parentMenu.GetComponent<PauseManager>() != null && parentMenu.GetComponent<PauseManager>().usingController)
+        //     {
+        //         controllerLegends.SetActive(true);
+        //         keyboardLegends.SetActive(false);
+        //     }
+        //     else
+        //     {
+        //         controllerLegends.SetActive(false);
+        //         keyboardLegends.SetActive(true);
+        //     }
+        // }
+
+        if (InputDeviceManager.Instance)
         {
-            if (parentMenu.GetComponent<MainMenu>() != null && parentMenu.GetComponent<MainMenu>().usingController)
-            {
-                controllerLegends.SetActive(true);
-                keyboardLegends.SetActive(false);
-            }
-            else if (parentMenu.GetComponent<PauseManager>() != null && parentMenu.GetComponent<PauseManager>().usingController)
+            if (InputDeviceManager.Instance.CurrentMode == InputDeviceManager.InputMode.Controller)
             {
                 controllerLegends.SetActive(true);
                 keyboardLegends.SetActive(false);
@@ -571,7 +585,8 @@ public class SettingsMenu : MonoBehaviour
         controlsSettingsUI.SetActive(false);
         
         // Set focus to resolution dropdown
-        EventSystem.current.SetSelectedGameObject(resolutionDropdown.gameObject);
+        EventSystem.current.firstSelectedGameObject = resolutionDropdown.gameObject;
+        EventSystem.current.SetSelectedGameObject(EventSystem.current.firstSelectedGameObject);
     }
 
     private void OpenAudioSettings()
@@ -595,7 +610,8 @@ public class SettingsMenu : MonoBehaviour
         controlsSettingsUI.SetActive(false);
 
         // Set focus to first audio slider
-        EventSystem.current.SetSelectedGameObject(masterVolumeSlider.gameObject);
+        EventSystem.current.firstSelectedGameObject = masterVolumeSlider.gameObject;
+        EventSystem.current.SetSelectedGameObject(EventSystem.current.firstSelectedGameObject);
     }
 
     private void OpenControlsSettings()
@@ -619,7 +635,8 @@ public class SettingsMenu : MonoBehaviour
         audioSettingsUI.SetActive(false);
 
         // Set focus to first controls slider
-        EventSystem.current.SetSelectedGameObject(mouseSensitivitySlider.gameObject);
+        EventSystem.current.firstSelectedGameObject = mouseSensitivitySlider.gameObject;
+        EventSystem.current.SetSelectedGameObject(EventSystem.current.firstSelectedGameObject);
     }
 
     private void SetResolution(int index)
@@ -762,13 +779,12 @@ public class SettingsMenu : MonoBehaviour
                 EnableAllButtonsAndSliders();
                 tabLeftAction.Enable();
                 tabRightAction.Enable();
-                EventSystem.current.SetSelectedGameObject
-                (
+                EventSystem.current.firstSelectedGameObject = 
                     videoSettingsOpen? resolutionDropdown.gameObject :
                     audioSettingsOpen ? masterVolumeSlider.gameObject :
                     controlsSettingsOpen ? mouseSensitivitySlider.gameObject :
-                    applyButton.gameObject
-                );
+                    applyButton.gameObject;
+                EventSystem.current.SetSelectedGameObject(EventSystem.current.firstSelectedGameObject);
             },
             () => 
             {
@@ -776,7 +792,8 @@ public class SettingsMenu : MonoBehaviour
                 EnableAllButtonsAndSliders();
                 tabLeftAction.Enable();
                 tabRightAction.Enable();
-                EventSystem.current.SetSelectedGameObject(applyButton.gameObject);
+                EventSystem.current.firstSelectedGameObject = applyButton.gameObject;
+                EventSystem.current.SetSelectedGameObject(EventSystem.current.firstSelectedGameObject);
             });        
     }
 
@@ -810,13 +827,12 @@ public class SettingsMenu : MonoBehaviour
                 EnableAllButtonsAndSliders();
                 tabLeftAction.Enable();
                 tabRightAction.Enable();
-                EventSystem.current.SetSelectedGameObject
-                (
+                EventSystem.current.firstSelectedGameObject = 
                     videoSettingsOpen? resolutionDropdown.gameObject :
                     audioSettingsOpen ? masterVolumeSlider.gameObject :
                     controlsSettingsOpen ? mouseSensitivitySlider.gameObject :
-                    applyButton.gameObject
-                );
+                    applyButton.gameObject;
+                EventSystem.current.SetSelectedGameObject(EventSystem.current.firstSelectedGameObject);
             },
             () => 
             {
@@ -824,7 +840,8 @@ public class SettingsMenu : MonoBehaviour
                 EnableAllButtonsAndSliders();
                 tabLeftAction.Enable();
                 tabRightAction.Enable();
-                EventSystem.current.SetSelectedGameObject(resetButton.gameObject);
+                EventSystem.current.firstSelectedGameObject = resetButton.gameObject;
+                EventSystem.current.SetSelectedGameObject(EventSystem.current.firstSelectedGameObject);
             });
     }
 
@@ -858,13 +875,12 @@ public class SettingsMenu : MonoBehaviour
                 EnableAllButtonsAndSliders();
                 tabLeftAction.Enable();
                 tabRightAction.Enable();
-                EventSystem.current.SetSelectedGameObject
-                (
+                EventSystem.current.firstSelectedGameObject = 
                     videoSettingsOpen? resolutionDropdown.gameObject :
                     audioSettingsOpen ? masterVolumeSlider.gameObject :
                     controlsSettingsOpen ? mouseSensitivitySlider.gameObject :
-                    applyButton.gameObject
-                );
+                    applyButton.gameObject;
+                EventSystem.current.SetSelectedGameObject(EventSystem.current.firstSelectedGameObject);
             },
             () => 
             {
@@ -872,7 +888,8 @@ public class SettingsMenu : MonoBehaviour
                 EnableAllButtonsAndSliders();
                 tabLeftAction.Enable();
                 tabRightAction.Enable();
-                EventSystem.current.SetSelectedGameObject(discardChangesButton.gameObject);
+                EventSystem.current.firstSelectedGameObject = discardChangesButton.gameObject;
+                EventSystem.current.SetSelectedGameObject(EventSystem.current.firstSelectedGameObject);
             });
     }
 
@@ -913,7 +930,8 @@ public class SettingsMenu : MonoBehaviour
                 EnableAllButtonsAndSliders();
                 tabLeftAction.Enable();
                 tabRightAction.Enable();
-                EventSystem.current.SetSelectedGameObject(applyButton.gameObject);
+                EventSystem.current.firstSelectedGameObject = applyButton.gameObject;
+                EventSystem.current.SetSelectedGameObject(EventSystem.current.firstSelectedGameObject);
             });
     }
 
@@ -1276,11 +1294,13 @@ public class SettingsMenu : MonoBehaviour
             controlSchemeOpen = true;
             if (GetComponentInParent<MainMenu>() != null)
             {
-                EventSystem.current.SetSelectedGameObject(GetComponentInParent<MainMenu>().backButton.gameObject);
+                EventSystem.current.firstSelectedGameObject = GetComponentInParent<MainMenu>().backButton.gameObject;
+                EventSystem.current.SetSelectedGameObject(EventSystem.current.firstSelectedGameObject);
             }
             else if (GetComponentInParent<PauseManager>() != null)
             {
-                EventSystem.current.SetSelectedGameObject(GetComponentInParent<PauseManager>().backButton.gameObject);
+                EventSystem.current.firstSelectedGameObject = GetComponentInParent<PauseManager>().backButton.gameObject;
+                EventSystem.current.SetSelectedGameObject(EventSystem.current.firstSelectedGameObject);
             }
         }
     }
@@ -1292,7 +1312,8 @@ public class SettingsMenu : MonoBehaviour
             controlSchemeUI.SetActive(false);
             settingsUI.SetActive(true);
             controlSchemeOpen = false;
-            EventSystem.current.SetSelectedGameObject(mouseSensitivitySlider.gameObject);
+            EventSystem.current.firstSelectedGameObject = mouseSensitivitySlider.gameObject;
+            EventSystem.current.SetSelectedGameObject(EventSystem.current.firstSelectedGameObject);
         }
     }
 

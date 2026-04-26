@@ -141,16 +141,6 @@ public class GameOverManager : MonoBehaviour
             ConfirmBeforeQuit();
         }
 
-        CheckMouseInput();
-        CheckControllerInput();
-
-        if (usingController && !EventSystem.current.currentSelectedGameObject)
-        {
-            usingController = false;
-            Cursor.visible = true;
-            Cursor.lockState = CursorLockMode.None;
-        }
-
         if (Time.timeSinceLevelLoad < 0.1f && gameOverUI.activeSelf && !IsGameOver)
         {
             DisableGameOverUI();
@@ -318,11 +308,6 @@ public class GameOverManager : MonoBehaviour
     {
         isGameOver = false;
         DisableGameOverUI();
-        
-        // if (TimerRingUI.Instance != null && TimerRingUI.Instance.currentRingState != TimerRingUI.RingState.Empty)
-        // {
-        //     
-        // }
     }
 
     public void TriggerGameOver()
@@ -351,13 +336,17 @@ public class GameOverManager : MonoBehaviour
         EnableUIButtons();
 
         gameOverUI.SetActive(true);
-        Cursor.visible = true;
-        Cursor.lockState = CursorLockMode.None;
 
         DisableOtherCanvases();
 
+        if (InputDeviceManager.Instance)
+        {
+            InputDeviceManager.Instance.SetUIActive(true, gameOverUI);
+        }
+
         EventSystem.current.SetSelectedGameObject(null);
-        EventSystem.current.SetSelectedGameObject(retryButton.gameObject);
+        EventSystem.current.firstSelectedGameObject = retryButton.gameObject;
+        EventSystem.current.SetSelectedGameObject(EventSystem.current.firstSelectedGameObject);
 
         // Lock camera when game over UI is active
         CameraMovement cam = FindFirstObjectByType<CameraMovement>();
@@ -384,11 +373,15 @@ public class GameOverManager : MonoBehaviour
         DisableInputActions();
 
         gameOverUI.SetActive(false);
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
+
+        if (InputDeviceManager.Instance)
+        {
+            InputDeviceManager.Instance.SetUIActive(false, null);
+        }
 
         EnableOtherCanvases();
 
+        EventSystem.current.firstSelectedGameObject = null;
         EventSystem.current.SetSelectedGameObject(null);
 
         // Unlock camera when game over UI is disabled

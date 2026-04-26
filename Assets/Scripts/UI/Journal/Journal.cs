@@ -194,7 +194,8 @@ public class Journal : MonoBehaviour, ISaveable
             && !GameManager.Instance.qteIsActive
             && !GameManager.Instance.objectiveDebugScript.DebugUIIsActive
             && !CutsceneManager.Instance.isCutscenePlaying
-            && !GameManager.Instance.lockPickUIScript.IsActive)
+            && !GameManager.Instance.lockPickUIScript.IsActive
+            && !InteractionTutorialUI.Instance.IsShowing)
         {
             ToggleJournalUI();
         }
@@ -322,9 +323,8 @@ public class Journal : MonoBehaviour, ISaveable
                     OpenObjectivesPage();
                     break;
             }
-
-            Cursor.visible = true;
-            Cursor.lockState = CursorLockMode.None;
+            
+            InputDeviceManager.Instance.SetUIActive(true, journalUI);
             EnableJournalInput();
             DisableOtherCanvases();
         }
@@ -333,14 +333,13 @@ public class Journal : MonoBehaviour, ISaveable
             pagesHolder.SetActive(false);
             tabsHolder.SetActive(false);
             DisableJournalInput();
-            Cursor.visible = false;
-            Cursor.lockState = CursorLockMode.Locked;
             animator.SetTrigger("Close");
 
             yield return new WaitUntil(() => journalAnimationCallback.AnimationFinished());
 
             journalAnimationCallback.SetAnimationFinishedFalse();
             journalUI.SetActive(IsJournalOpen);
+            InputDeviceManager.Instance.SetUIActive(false, null);
             SetPlayerInputEnabled(true);
             EnableOtherCanvases();
             Time.timeScale = 1f;

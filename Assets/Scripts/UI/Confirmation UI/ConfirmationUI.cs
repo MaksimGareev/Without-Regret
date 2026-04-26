@@ -107,8 +107,6 @@ public class ConfirmationUI : MonoBehaviour
         UpdateTaskText(type);
 
         StartCoroutine(WaitBeforeInput(onConfirm, onCancel));
-
-        EventSystem.current.SetSelectedGameObject(cancelButton.gameObject);
     }
 
     private IEnumerator WaitBeforeInput(System.Action onConfirm = null, System.Action onCancel = null)
@@ -125,6 +123,9 @@ public class ConfirmationUI : MonoBehaviour
             cancelButton.onClick.AddListener(() => onCancel.Invoke());
             cancelButton.interactable = true;
         }
+        
+        EventSystem.current.firstSelectedGameObject = cancelButton.gameObject;
+        EventSystem.current.SetSelectedGameObject(EventSystem.current.firstSelectedGameObject);
     }
 
     public void EndConfirmation()

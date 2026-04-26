@@ -50,9 +50,10 @@ public class MainMenu : MonoBehaviour
     private string feedbackSurveyURL = "https://docs.google.com/forms/d/e/1FAIpQLSe6KfbYdlWsa25Scm4URfYHRRS8lzQC3mZkm6tqyS_uxxHObA/viewform?usp=sharing&ouid=106294286738853521476";
     
     private SaveManager saveManager;
-    [HideInInspector] public bool usingController { get; private set; } = false;
+    //[HideInInspector] public bool usingController { get; private set; } = false;
     private Button lastSelectedButton;
-    
+    private float menuInputWarmupUntil;
+    private const float MenuInputWarmupSeconds = 0.5f;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -65,10 +66,19 @@ public class MainMenu : MonoBehaviour
         StartCoroutine(WaitToStartMusic());
 
         versionNumberText.text = gameVersion;
-        EventSystem.current.SetSelectedGameObject(playButton.gameObject);
+        
+        EventSystem.current.firstSelectedGameObject = playButton.gameObject;
+        EventSystem.current.SetSelectedGameObject(EventSystem.current.firstSelectedGameObject);
 
-        Cursor.visible = true;
-        Cursor.lockState = CursorLockMode.None;
+        if (!Cursor.visible)
+        {
+            Cursor.visible = true;
+        }
+
+        if (Cursor.lockState != CursorLockMode.None)
+        {
+            Cursor.lockState = CursorLockMode.None;
+        }
 
         // Initialize input actions
         if (inputActions && !inputActions.FindActionMap("UI").enabled)
@@ -107,6 +117,27 @@ public class MainMenu : MonoBehaviour
             return;
         }
         TabLeftAction.Enable();
+
+        menuInputWarmupUntil = Time.unscaledTime + MenuInputWarmupSeconds;
+        StartCoroutine(EnsureMenuInputAfterLoad());
+        EnsureMenuInputState();
+    }
+    
+    private void OnEnable()
+    {
+        if (InputDeviceManager.Instance)
+        {
+            InputDeviceManager.Instance.OnInputModeChanged += OnInputModeChanged;
+            Debug.Log("MainMenu subscribed to OnInputModeChanged");
+            OnInputModeChanged(InputDeviceManager.Instance.CurrentMode);
+        }
+        
+        playButton.onClick.AddListener(OpenSaveSlotsScreen);
+        settingsButton.onClick.AddListener(OpenSettings);
+        creditsButton.onClick.AddListener(OpenCredits);
+        quitButton.onClick.AddListener(ConfirmBeforeQuit);
+        backButton.onClick.AddListener(HandleUIBackButton);
+        feedbackSurveyButton.onClick.AddListener(ConfirmBeforeFeedbackSurvey);
     }
 
     // Update is called once per frame
@@ -114,8 +145,8 @@ public class MainMenu : MonoBehaviour
     {
         HandleControllerCancelInput();
         DeleteSavesDebug(); // Debug shortcut to delete all saves and reload main menu
-        CheckMouseInput();
-        CheckControllerInput();
+        // CheckMouseInput();
+        // CheckControllerInput();
 
         if (confirmationPanel.activeSelf && backButton.gameObject.activeSelf)
         {
@@ -126,23 +157,78 @@ public class MainMenu : MonoBehaviour
             backButton.gameObject.SetActive(true);
         }
 
-        if (usingController && !EventSystem.current.currentSelectedGameObject)
+        // if (usingController && !EventSystem.current.currentSelectedGameObject)
+        // {
+        //     usingController = false;
+        //     Cursor.visible = true;
+        //     Cursor.lockState = CursorLockMode.None;
+        // }
+        // else if (!usingController && !Cursor.visible || Cursor.lockState != CursorLockMode.None)
+        // {
+        //     Cursor.visible = true;
+        //     Cursor.lockState = CursorLockMode.None;
+        // }
+
+        EnsureMenuInputState();
+
+        if (Time.unscaledTime < menuInputWarmupUntil)
         {
-            usingController = false;
-            Cursor.visible = true;
-            Cursor.lockState = CursorLockMode.None;
+            EnsureMenuSelection();
         }
-        else if (!usingController && !Cursor.visible || Cursor.lockState != CursorLockMode.None)
+    }
+
+    private IEnumerator EnsureMenuInputAfterLoad()
+    {
+        // Re-assert menu input state for a few frames in case another transition script toggles maps late.
+        for (int i = 0; i < 5; i++)
         {
-            Cursor.visible = true;
-            Cursor.lockState = CursorLockMode.None;
+            yield return null;
+            EnsureMenuInputState();
+            EnsureMenuSelection();
+        }
+    }
+
+    private void EnsureMenuInputState()
+    {
+        InputActionMap uiMap = inputActions.FindActionMap("UI");
+        if (uiMap != null && !uiMap.enabled)
+        {
+            uiMap.Enable();
         }
 
-        if (!inputActions.FindActionMap("UI").enabled)
+        InputActionMap playerMap = inputActions.FindActionMap("Player");
+        if (playerMap != null && playerMap.enabled)
         {
-            Debug.LogError("UI action map not enabled. Enabling now");
-            inputActions.FindActionMap("UI").Enable();
+            playerMap.Disable();
         }
+
+        if (EventSystem.current && EventSystem.current.currentInputModule is InputSystemUIInputModule inputModule && !inputModule.enabled)
+        {
+            inputModule.enabled = true;
+        }
+
+        if (InputDeviceManager.Instance)
+        {
+            InputDeviceManager.Instance.SetUIActive(true, mainMenuPanel);
+        }
+    }
+
+    private void EnsureMenuSelection()
+    {
+        if (!mainMenuPanel.activeSelf || confirmationPanel.activeSelf)
+        {
+            return;
+        }
+
+        EventSystem eventSystem = EventSystem.current;
+        if (!eventSystem || eventSystem.currentSelectedGameObject)
+        {
+            return;
+        }
+
+        Button buttonToSelect = lastSelectedButton ? lastSelectedButton : playButton;
+        eventSystem.firstSelectedGameObject = buttonToSelect.gameObject;
+        eventSystem.SetSelectedGameObject(buttonToSelect.gameObject);
     }
 
     private void DeleteSavesDebug()
@@ -184,138 +270,131 @@ public class MainMenu : MonoBehaviour
         }
     }
 
-    private void CheckMouseInput()
+    private void OnInputModeChanged(InputDeviceManager.InputMode mode)
     {
-        if (Mouse.current == null)
+        Debug.Log("Input mode changed to: " + mode);
+
+        switch (mode)
         {
-            return;
-        }
-
-        Vector2 mouseDelta = Mouse.current.delta.ReadValue();
-
-        bool mouseKeysMoved = mouseDelta.sqrMagnitude > 0.1f || Keyboard.current.anyKey.isPressed;
-
-        if (!mouseKeysMoved) return;
-
-        if (usingController)
-        {
-            usingController = false;
-            Cursor.visible = true;
-            Cursor.lockState = CursorLockMode.None;
-            
-            if (EventSystem.current.currentSelectedGameObject != null)
-            {
-                EventSystem.current.SetSelectedGameObject(null);
-            }
-
-            if (settingsPanel.activeSelf && settingsScript != null && settingsScript.controllerLegends.activeSelf && !settingsScript.keyboardLegends.activeSelf)
-            {
-                settingsScript.controllerLegends.SetActive(false);
-                settingsScript.keyboardLegends.SetActive(true);
-            }
-        }
-    }
-
-    private void CheckControllerInput()
-    {
-        if (Gamepad.current == null)
-        {
-            return;
-        }
-
-        // Check if the controller has moved either the left stick or dpad
-        bool controllerMoved = 
-            Gamepad.current.leftStick.ReadValue().sqrMagnitude > 0.1f 
-            || Gamepad.current.dpad.ReadValue().sqrMagnitude > 0.1f 
-            || ((Gamepad.current.leftShoulder.IsPressed() || Gamepad.current.rightShoulder.IsPressed()) && settingsPanel.activeSelf);
-        
-        if (!controllerMoved) return;
-
-        if (!usingController)
-        {
-            usingController = true;
-            Cursor.visible = false;
-            Cursor.lockState = CursorLockMode.Locked;
-
-            var es = EventSystem.current;
-
-            // Clear selected GameObject if mouse was hovering over something
-            if (es.IsPointerOverGameObject())
-            {
-                var ped = new PointerEventData(es)
-                {
-                    position = new Vector2(-99999f, -99999f)
-                };
-
-                es.RaycastAll(ped, new System.Collections.Generic.List<RaycastResult>());
-
-                InputSystemUIInputModule inputModule = es.currentInputModule as InputSystemUIInputModule;
-                if (inputModule != null)
-                {
-                    inputModule.enabled = false;
-                    inputModule.enabled = true;
-                }
-
-                es.SetSelectedGameObject(null);
-            }
-
-            // If nothing is selected, set a default based on the active panel
-            if (es.currentSelectedGameObject == null)
-            {
-                if (confirmationPanel.activeSelf)
-                {
-                    es.SetSelectedGameObject(confirmationPanel.GetComponent<ConfirmationUI>().cancelButton.gameObject);
-                }
-                else if (mainMenuPanel.activeSelf)
-                {
-                    es.SetSelectedGameObject(playButton.gameObject);
-                }
-                else if (settingsPanel.activeSelf && !settingsScript.controlSchemeOpen)
-                {
-                    if (settingsScript.videoSettingsOpen)
-                    {
-                        es.SetSelectedGameObject(settingsScript.resolutionDropdown.gameObject);
-                    }
-                    else if (settingsScript.audioSettingsOpen)
-                    {
-                        es.SetSelectedGameObject(settingsScript.masterVolumeSlider.gameObject);
-                    }
-                    else if (settingsScript.controlsSettingsOpen)
-                    {
-                        es.SetSelectedGameObject(settingsScript.mouseSensitivitySlider.gameObject);
-                    }
-                }
-                else if (settingsPanel.activeSelf && settingsScript.controlSchemeOpen)
-                {
-                    es.SetSelectedGameObject(backButton.gameObject);
-                }
-                else if (creditsPanel.activeSelf)
-                {
-                    es.SetSelectedGameObject(backButton.gameObject);
-                }
-                else if (saveSlotsPanel.activeSelf)
-                {
-                    SelectSaveMenuButton();
-                }
-
-                if (settingsPanel.activeSelf && !settingsScript.controllerLegends.activeSelf && settingsScript.keyboardLegends.activeSelf)
+            case InputDeviceManager.InputMode.Controller:
+                
+                if (settingsPanel.activeSelf && settingsScript 
+                    && !settingsScript.controllerLegends.activeSelf && settingsScript.keyboardLegends.activeSelf)
                 {
                     settingsScript.controllerLegends.SetActive(true);
                     settingsScript.keyboardLegends.SetActive(false);
                 }
-            }
+                
+                break;
+            
+            case InputDeviceManager.InputMode.KeyboardMouse:
+                
+                if (settingsPanel.activeSelf && settingsScript 
+                    && settingsScript.controllerLegends.activeSelf && !settingsScript.keyboardLegends.activeSelf)
+                {
+                    settingsScript.controllerLegends.SetActive(false);
+                    settingsScript.keyboardLegends.SetActive(true);
+                }
+                
+                break;
         }
     }
 
-    private void OnEnable()
-    {
-        playButton.onClick.AddListener(OpenSaveSlotsScreen);
-        settingsButton.onClick.AddListener(OpenSettings);
-        creditsButton.onClick.AddListener(OpenCredits);
-        quitButton.onClick.AddListener(ConfirmBeforeQuit);
-        backButton.onClick.AddListener(HandleUIBackButton);
-        feedbackSurveyButton.onClick.AddListener(ConfirmBeforeFeedbackSurvey);
-    }
+    // private void CheckMouseInput()
+    // {
+    //     if (Mouse.current == null)
+    //     {
+    //         return;
+    //     }
+    //
+    //     Vector2 mouseDelta = Mouse.current.delta.ReadValue();
+    //
+    //     bool mouseKeysMoved = mouseDelta.sqrMagnitude > 0.1f || Keyboard.current.anyKey.isPressed;
+    //
+    //     if (!mouseKeysMoved) return;
+    //
+    //     if (usingController)
+    //     {
+    //         usingController = false;
+    //         Cursor.visible = true;
+    //         Cursor.lockState = CursorLockMode.None;
+    //         
+    //         if (EventSystem.current.currentSelectedGameObject != null)
+    //         {
+    //             EventSystem.current.SetSelectedGameObject(null);
+    //         }
+    //
+    //         
+    //     }
+    // }
+
+    // private void CheckControllerInput()
+    // {
+    //     if (Gamepad.current == null)
+    //     {
+    //         return;
+    //     }
+    //
+    //     // Check if the controller has moved either the left stick or dpad
+    //     bool controllerMoved = 
+    //         Gamepad.current.leftStick.ReadValue().sqrMagnitude > 0.1f 
+    //         || Gamepad.current.dpad.ReadValue().sqrMagnitude > 0.1f 
+    //         || ((Gamepad.current.leftShoulder.IsPressed() || Gamepad.current.rightShoulder.IsPressed()) && settingsPanel.activeSelf);
+    //     
+    //     if (!controllerMoved) return;
+    //
+    //     if (!usingController)
+    //     {
+    //         usingController = true;
+    //         Cursor.visible = false;
+    //         Cursor.lockState = CursorLockMode.Locked;
+    //
+    //         var es = EventSystem.current;
+    //
+    //         // Clear selected GameObject if mouse was hovering over something
+    //         if (es.IsPointerOverGameObject())
+    //         {
+    //             var ped = new PointerEventData(es)
+    //             {
+    //                 position = new Vector2(-99999f, -99999f)
+    //             };
+    //
+    //             es.RaycastAll(ped, new System.Collections.Generic.List<RaycastResult>());
+    //
+    //             InputSystemUIInputModule inputModule = es.currentInputModule as InputSystemUIInputModule;
+    //             if (inputModule != null)
+    //             {
+    //                 inputModule.enabled = false;
+    //                 inputModule.enabled = true;
+    //             }
+    //
+    //             es.SetSelectedGameObject(null);
+    //         }
+    //
+    //         // If nothing is selected, set a default based on the active panel
+    //         if (es.currentSelectedGameObject == null)
+    //         {
+    //             if (confirmationPanel.activeSelf)
+    //             {
+    //                 es.SetSelectedGameObject(confirmationPanel.GetComponent<ConfirmationUI>().cancelButton.gameObject);
+    //             }
+    //             else if (mainMenuPanel.activeSelf)
+    //             {
+    //                 es.SetSelectedGameObject(playButton.gameObject);
+    //             }
+    //             else if (creditsPanel.activeSelf)
+    //             {
+    //                 es.SetSelectedGameObject(backButton.gameObject);
+    //             }
+    //             else if (saveSlotsPanel.activeSelf)
+    //             {
+    //                 SelectSaveMenuButton();
+    //             }
+    //
+    //             
+    //         }
+    //     }
+    // }
 
     private void UpdatePlayButton()
     {
@@ -364,7 +443,13 @@ public class MainMenu : MonoBehaviour
         
         backButton.gameObject.SetActive(false);
 
-        EventSystem.current.SetSelectedGameObject(lastSelectedButton.gameObject);
+        EventSystem.current.firstSelectedGameObject = lastSelectedButton.gameObject;
+        EventSystem.current.SetSelectedGameObject(EventSystem.current.firstSelectedGameObject);
+
+        if (InputDeviceManager.Instance)
+        {
+            InputDeviceManager.Instance.SetUIActive(true, mainMenuPanel);
+        }
     }
 
     private void OpenSettings()
@@ -375,8 +460,14 @@ public class MainMenu : MonoBehaviour
         saveSlotsPanel.SetActive(false);
         
         backButton.gameObject.SetActive(true);
+
+        EventSystem.current.firstSelectedGameObject = settingsScript.resolutionDropdown.gameObject;
+        EventSystem.current.SetSelectedGameObject(EventSystem.current.firstSelectedGameObject);
         
-        EventSystem.current.SetSelectedGameObject(settingsScript.resolutionDropdown.gameObject);
+        if (InputDeviceManager.Instance)
+        {
+            InputDeviceManager.Instance.SetUIActive(true, settingsPanel);
+        }
 
         lastSelectedButton = settingsButton;
     }
@@ -389,8 +480,14 @@ public class MainMenu : MonoBehaviour
         creditsPanel.SetActive(true);
         
         backButton.gameObject.SetActive(true);
-
-        EventSystem.current.SetSelectedGameObject(backButton.gameObject);
+        
+        EventSystem.current.firstSelectedGameObject = backButton.gameObject;
+        EventSystem.current.SetSelectedGameObject(EventSystem.current.firstSelectedGameObject);
+        
+        if (InputDeviceManager.Instance)
+        {
+            InputDeviceManager.Instance.SetUIActive(true, creditsPanel);
+        }
 
         lastSelectedButton = creditsButton;
     }
@@ -405,6 +502,11 @@ public class MainMenu : MonoBehaviour
         backButton.gameObject.SetActive(true);
 
         SelectSaveMenuButton();
+        
+        if (InputDeviceManager.Instance)
+        {
+            InputDeviceManager.Instance.SetUIActive(true, saveSlotsPanel);
+        }
 
         lastSelectedButton = playButton;
     }
@@ -426,8 +528,10 @@ public class MainMenu : MonoBehaviour
             Debug.LogWarning("No active play or new game buttons found in save slots panel.");
             return;
         }
-
-        EventSystem.current.SetSelectedGameObject(buttonToSelect.gameObject);
+        
+        EventSystem.current.firstSelectedGameObject = buttonToSelect.gameObject;
+        EventSystem.current.SetSelectedGameObject(EventSystem.current.firstSelectedGameObject);
+        
         buttonToSelect.GetComponent<SelectableHighlighting>().ApplyHighlight();
     }
 
@@ -435,6 +539,11 @@ public class MainMenu : MonoBehaviour
     {
         confirmationPanel.SetActive(true);
         mainMenuPanel.SetActive(false);
+        
+        if (InputDeviceManager.Instance)
+        {
+            InputDeviceManager.Instance.SetUIActive(true, confirmationPanel);
+        }
 
         ConfirmationUI confirmationUI = confirmationPanel.GetComponent<ConfirmationUI>();
         confirmationUI.ConfirmTask(ConfirmationType.QuitToDesktop, QuitGame, OpenMainMenu);
@@ -446,6 +555,11 @@ public class MainMenu : MonoBehaviour
     {
         confirmationPanel.SetActive(true);
         mainMenuPanel.SetActive(false);
+        
+        if (InputDeviceManager.Instance)
+        {
+            InputDeviceManager.Instance.SetUIActive(true, confirmationPanel);
+        }
 
         ConfirmationUI confirmationUI = confirmationPanel.GetComponent<ConfirmationUI>();
         confirmationUI.ConfirmTask(ConfirmationType.FeedbackSurvey, OpenFeedbackSurvey, OpenMainMenu);
@@ -474,7 +588,7 @@ public class MainMenu : MonoBehaviour
 
     private IEnumerator WaitToStartMusic()
     {
-        yield return new WaitUntil(() => AudioManager.Instance != null);
+        yield return new WaitUntil(() => AudioManager.Instance);
         musicSource.SetActive(true);
     }
 
@@ -508,6 +622,12 @@ public class MainMenu : MonoBehaviour
         TabRightAction?.Disable();
         confirmAction?.Disable();
         cancelAction?.Disable();
+
+        if (InputDeviceManager.Instance)
+        {
+            InputDeviceManager.Instance.OnInputModeChanged -= OnInputModeChanged;
+            InputDeviceManager.Instance.SetUIActive(false, null);
+        }
     }
     
     public CutsceneData GetIntroCutscene()

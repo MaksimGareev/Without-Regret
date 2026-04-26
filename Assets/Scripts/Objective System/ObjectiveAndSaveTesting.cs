@@ -55,6 +55,8 @@ public class ObjectiveAndSaveTesting : MonoBehaviour
     [SerializeField] private Button CloseUIButton;
 
     private bool usingController = false;
+    private float debugInputWarmupUntil;
+    private const float DebugInputWarmupSeconds = 0.5f;
     
     public bool DebugUIIsActive { get; private set; } = false; 
 
@@ -175,120 +177,49 @@ public class ObjectiveAndSaveTesting : MonoBehaviour
         {
             SkipObjective();
         }
-        
-        CheckControllerInput();
-        CheckMouseInput();
-        
-        if (usingController && !EventSystem.current.currentSelectedGameObject)
+
+        if (debugUI.activeSelf)
         {
-            EventSystem.current.SetSelectedGameObject(LevelSelectButtons[0].gameObject);
+            EnsureDebugUIInputState();
+
+            if (Time.unscaledTime < debugInputWarmupUntil)
+            {
+                EnsureDebugUISelection();
+            }
         }
     }
 #endif
-    
-    private void CheckMouseInput()
-    {
-        if (Mouse.current == null)
-        {
-            return;
-        }
-
-        Vector2 mouseDelta = Mouse.current.delta.ReadValue();
-
-        bool mouseKeysMoved = mouseDelta.sqrMagnitude > 0.1f || Keyboard.current.anyKey.isPressed;
-
-        if (!mouseKeysMoved) return;
-
-        if (usingController)
-        {
-            usingController = false;
-            Cursor.visible = true;
-            Cursor.lockState = CursorLockMode.None;
-            
-            if (EventSystem.current.currentSelectedGameObject)
-            {
-                EventSystem.current.SetSelectedGameObject(null);
-            }
-        }
-    }
-
-    private void CheckControllerInput()
-    {
-        if (Gamepad.current == null)
-        {
-            return;
-        }
-
-        // Check if the controller has moved either the left stick or dpad
-        bool controllerMoved = 
-            Gamepad.current.leftStick.ReadValue().sqrMagnitude > 0.1f 
-            || Gamepad.current.dpad.ReadValue().sqrMagnitude > 0.1f 
-            || ((Gamepad.current.leftShoulder.IsPressed() || Gamepad.current.rightShoulder.IsPressed()) && debugUI.activeSelf);
-        
-        if (!controllerMoved) return;
-
-        if (!usingController)
-        {
-            usingController = true;
-            Cursor.visible = false;
-            Cursor.lockState = CursorLockMode.Locked;
-
-            var es = EventSystem.current;
-
-            // Clear selected GameObject if mouse was hovering over something
-            if (es.IsPointerOverGameObject())
-            {
-                var ped = new PointerEventData(es)
-                {
-                    position = new Vector2(-99999f, -99999f)
-                };
-
-                es.RaycastAll(ped, new System.Collections.Generic.List<RaycastResult>());
-
-                InputSystemUIInputModule inputModule = es.currentInputModule as InputSystemUIInputModule;
-                if (inputModule != null)
-                {
-                    inputModule.enabled = false;
-                    inputModule.enabled = true;
-                }
-
-                es.SetSelectedGameObject(null);
-            }
-
-            // If nothing is selected, set a default based on the active panel
-            if (!es.currentSelectedGameObject && debugUI.activeSelf)
-            {
-                es.SetSelectedGameObject(LevelSelectButtons[0].gameObject);
-            }
-        }
-    }
 
     private void OpenDebugUI()
     {
+        Time.timeScale = 0f;
+        
         AddListeners();
         debugUI.SetActive(true);
         DebugUIIsActive = true;
         
-        EventSystem.current.SetSelectedGameObject(LevelSelectButtons[0].gameObject);
+        inputActions.FindActionMap("UI")?.Enable();
+        inputActions.FindActionMap("Debug")?.Enable();
+        EnsureDebugUIInputState();
         
-        Time.timeScale = 0f;
+        debugInputWarmupUntil = Time.unscaledTime + DebugInputWarmupSeconds;
+        EnsureDebugUISelection();
+        StartCoroutine(EnsureDebugUIInputAfterOpen());
 
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-        usingController = true;
+        InputDeviceManager.Instance?.SetUIActive(true, debugUI);
     }
 
     private void CloseDebugUI()
     {
+        Time.timeScale = 1f;
+        
         RemoveListeners();
         debugUI.SetActive(false);
         DebugUIIsActive = false;
         
-        EventSystem.current.SetSelectedGameObject(LevelSelectButtons[0].gameObject);
-        
-        Time.timeScale = 1f;
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        EventSystem.current.firstSelectedGameObject = null;
+        EventSystem.current.SetSelectedGameObject(null);
+        InputDeviceManager.Instance?.SetUIActive(false, null);
     }
 
     private void AddListeners()
@@ -319,15 +250,14 @@ public class ObjectiveAndSaveTesting : MonoBehaviour
 
     private void RemoveListeners()
     {
-        for (int i = 0; i < sceneObjectiveList.Count - 1; i++)
+        for (int i = 0; i < sceneObjectiveList.Count; i++)
         {
-            int index = i; // Capture the current value of i for the lambda
-            LevelSelectButtons[i].onClick.RemoveListener(() => LoadScene(sceneNames[index]));
+            LevelSelectButtons[i].onClick.RemoveAllListeners();
         }
 
         if (CloseUIButton != null)
         {
-            CloseUIButton.onClick.RemoveListener(CloseDebugUI);
+            CloseUIButton.onClick.RemoveAllListeners();
         }
     }
 
@@ -422,5 +352,51 @@ public class ObjectiveAndSaveTesting : MonoBehaviour
     private void OnDisable()
     {
         RemoveListeners();
+    }
+
+    private IEnumerator EnsureDebugUIInputAfterOpen()
+    {
+        for (int i = 0; i < 5 && debugUI && debugUI.activeSelf; i++)
+        {
+            yield return null;
+            EnsureDebugUIInputState();
+            EnsureDebugUISelection();
+        }
+    }
+
+    private void EnsureDebugUIInputState()
+    {
+        if (!inputActions.FindActionMap("UI").enabled)
+        {
+            inputActions.FindActionMap("UI").Enable();
+        }
+
+        if (EventSystem.current && EventSystem.current.currentInputModule is InputSystemUIInputModule inputModule && !inputModule.enabled)
+        {
+            inputModule.enabled = true;
+        }
+
+        InputDeviceManager.Instance?.SetUIActive(true, debugUI);
+    }
+
+    private void EnsureDebugUISelection()
+    {
+        if (!debugUI || !debugUI.activeSelf || LevelSelectButtons == null || LevelSelectButtons.Length == 0)
+        {
+            return;
+        }
+        
+        if (!EventSystem.current|| EventSystem.current.currentSelectedGameObject)
+        {
+            return;
+        }
+
+        if (!LevelSelectButtons[0] || !LevelSelectButtons[0].gameObject.activeInHierarchy)
+        {
+            return;
+        }
+
+        EventSystem.current.firstSelectedGameObject = LevelSelectButtons[0].gameObject;
+        EventSystem.current.SetSelectedGameObject(EventSystem.current.firstSelectedGameObject);
     }
 }
