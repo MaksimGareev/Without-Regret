@@ -436,10 +436,16 @@ public class InventoryUIController : MonoBehaviour
     {
         inputActions.FindActionMap("Inventory")?.Disable();
 
-        // If pause is currently active, keep shared UI input and selection owned by PauseManager.
+        // Keep shared UI input/selection owned by whichever higher-priority UI is active.
         bool pauseActive = PauseManager.Instance && PauseManager.Instance.isGamePaused;
 
-        if (!pauseActive)
+        bool objectiveDebugActive = GameManager.Instance
+            && GameManager.Instance.objectiveDebugScript
+            && GameManager.Instance.objectiveDebugScript.DebugUIIsActive;
+        
+        bool preserveSharedUI = pauseActive || objectiveDebugActive;
+
+        if (!preserveSharedUI)
         {
             inputActions.FindActionMap("UI")?.Disable();
             inputActions.FindAction("Player/Look")?.Enable();
@@ -453,7 +459,7 @@ public class InventoryUIController : MonoBehaviour
             uiInputModule.move = defaultUIMoveAction;
         }
 
-        if (!pauseActive && EventSystem.current)
+        if (!preserveSharedUI && EventSystem.current)
         {
             EventSystem.current.SetSelectedGameObject(null);
         }

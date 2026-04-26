@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -54,6 +55,8 @@ public class ObjectiveAndSaveTesting : MonoBehaviour
     [SerializeField] private Button CloseUIButton;
 
     private bool usingController = false;
+    private float debugInputWarmupUntil;
+    private const float DebugInputWarmupSeconds = 0.5f;
     
     public bool DebugUIIsActive { get; private set; } = false; 
 
@@ -174,6 +177,16 @@ public class ObjectiveAndSaveTesting : MonoBehaviour
         {
             SkipObjective();
         }
+
+        if (debugUI.activeSelf)
+        {
+            EnsureDebugUIInputState();
+
+            if (Time.unscaledTime < debugInputWarmupUntil)
+            {
+                EnsureDebugUISelection();
+            }
+        }
     }
 #endif
 
@@ -187,9 +200,12 @@ public class ObjectiveAndSaveTesting : MonoBehaviour
         
         inputActions.FindActionMap("UI")?.Enable();
         inputActions.FindActionMap("Debug")?.Enable();
+        EnsureDebugUIInputState();
         
-        EventSystem.current.firstSelectedGameObject = LevelSelectButtons[0].gameObject;
-        EventSystem.current.SetSelectedGameObject(EventSystem.current.firstSelectedGameObject);
+        debugInputWarmupUntil = Time.unscaledTime + DebugInputWarmupSeconds;
+        EnsureDebugUISelection();
+        StartCoroutine(EnsureDebugUIInputAfterOpen());
+
         InputDeviceManager.Instance?.SetUIActive(true, debugUI);
     }
 
@@ -336,5 +352,51 @@ public class ObjectiveAndSaveTesting : MonoBehaviour
     private void OnDisable()
     {
         RemoveListeners();
+    }
+
+    private IEnumerator EnsureDebugUIInputAfterOpen()
+    {
+        for (int i = 0; i < 5 && debugUI && debugUI.activeSelf; i++)
+        {
+            yield return null;
+            EnsureDebugUIInputState();
+            EnsureDebugUISelection();
+        }
+    }
+
+    private void EnsureDebugUIInputState()
+    {
+        if (!inputActions.FindActionMap("UI").enabled)
+        {
+            inputActions.FindActionMap("UI").Enable();
+        }
+
+        if (EventSystem.current && EventSystem.current.currentInputModule is InputSystemUIInputModule inputModule && !inputModule.enabled)
+        {
+            inputModule.enabled = true;
+        }
+
+        InputDeviceManager.Instance?.SetUIActive(true, debugUI);
+    }
+
+    private void EnsureDebugUISelection()
+    {
+        if (!debugUI || !debugUI.activeSelf || LevelSelectButtons == null || LevelSelectButtons.Length == 0)
+        {
+            return;
+        }
+        
+        if (!EventSystem.current|| EventSystem.current.currentSelectedGameObject)
+        {
+            return;
+        }
+
+        if (!LevelSelectButtons[0] || !LevelSelectButtons[0].gameObject.activeInHierarchy)
+        {
+            return;
+        }
+
+        EventSystem.current.firstSelectedGameObject = LevelSelectButtons[0].gameObject;
+        EventSystem.current.SetSelectedGameObject(EventSystem.current.firstSelectedGameObject);
     }
 }
