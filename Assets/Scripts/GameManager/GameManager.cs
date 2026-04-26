@@ -41,7 +41,6 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public GameObject journalUICanvas;
     public GameObject journalUI;
     [HideInInspector] public GameObject playerUICanvas;
-    [HideInInspector] public InputDeviceManager inputDeviceManager;
     [HideInInspector] public GameObject pauseManager;
     public GameObject pauseMenu;
     [HideInInspector] public NewDialogueManager dialogueManager;
@@ -134,7 +133,6 @@ public class GameManager : MonoBehaviour
         interactionIconsCanvas = GetComponentInChildren<PopupManager>().gameObject;
         journalUICanvas = GetComponentInChildren<Journal>().gameObject;
         playerUICanvas = GetComponentInChildren<TimerRingUI>().gameObject;
-        inputDeviceManager = playerUICanvas?.GetComponent<InputDeviceManager>();
         pauseManager = GetComponentInChildren<PauseManager>().gameObject;
         dialogueManager = GetComponentInChildren<NewDialogueManager>();
         objectiveManager = GetComponentInChildren<ObjectiveManager>().gameObject;

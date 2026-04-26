@@ -818,6 +818,7 @@ MonoBehaviour:
   SprintSpeed: 8
   SprintDuration: 3
   sprintCooldown: 4
+  sprintRegeneration: 0.75
   emptyStaminaSpeedFactor: 0.5
   StationaryCamera: 0
   SprintTimer: 3
@@ -971,8 +972,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ToggleInventoryUI
   inputActions: {fileID: -944628639613478452, guid: f1f4dbfd8c64cd440924988ec4fb6f6a, type: 3}
   slideDuration: 0.4
-  disabledPosition: {x: -220, y: -350}
-  enabledPosition: {x: -220, y: 250}
+  disabledPosition: {x: -190, y: -350}
+  enabledPosition: {x: -190, y: 220}
   slideCurve:
     serializedVersion: 2
     m_Curve:
@@ -1047,6 +1048,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 257
   showDebugLogs: 0
+  canPickUp: 1
+  canPlace: 0
 --- !u!114 &6640155716822935536
 MonoBehaviour:
   m_ObjectHideFlags: 0

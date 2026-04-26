@@ -4,8 +4,6 @@ using UnityEngine.InputSystem;
 
 public class ToggleInventoryUI : MonoBehaviour
 {
-    private GameObject inventoryGameObject;
-
     [Header("Input Settings")]
     [SerializeField] private InputActionAsset inputActions;
     private InputAction inventoryAction;
@@ -70,15 +68,29 @@ public class ToggleInventoryUI : MonoBehaviour
 
         if (isEnabled)
         {
-            Cursor.visible = true;
-            Cursor.lockState = CursorLockMode.None;
+            if (InputDeviceManager.Instance)
+            {
+                InputDeviceManager.Instance.SetUIActive(true, GameManager.Instance.InventoryUI);
+            }
+
+            if (GameManager.Instance.inventoryInteractingScript)
+            {
+                GameManager.Instance.inventoryInteractingScript.EnableInventoryInput();
+            }
         }
         else
         {
-            Cursor.visible = false;
-            Cursor.lockState = CursorLockMode.Locked;
+            if (InputDeviceManager.Instance)
+            {
+                InputDeviceManager.Instance.SetUIActive(false, null);
+            }
+
+            if (GameManager.Instance.inventoryInteractingScript)
+            {
+                GameManager.Instance.inventoryInteractingScript.DisableInventoryInput();
+            }
         }
-        
+
         slideRoutine = StartCoroutine(SlideInventory(isEnabled));
     }
 

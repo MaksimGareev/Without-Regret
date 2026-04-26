@@ -365,12 +365,12 @@ public class PauseManager : MonoBehaviour
 
         inputActions.FindActionMap("UI").Enable();
         
-        if (GameManager.Instance && GameManager.Instance.InventoryUI)
+        if (GameManager.Instance && GameManager.Instance.inventoryInteractingScript)
         {
-            InventoryUIController inventory = GameManager.Instance.InventoryUI.GetComponentInChildren<InventoryUIController>();
-            if (inventory && inventory.InventoryOpen())
+            ToggleInventoryUI toggleInventoryUI = FindFirstObjectByType<ToggleInventoryUI>();
+            if (toggleInventoryUI && toggleInventoryUI.isEnabled)
             {
-                inventory.DisableInventoryInput();
+                GameManager.Instance.inventoryInteractingScript.DisableInventoryInput();
                 inventoryWasOpen = true;
             }
         }
@@ -466,14 +466,10 @@ public class PauseManager : MonoBehaviour
 
         inputActions.FindActionMap("UI").Disable();
         
-        if (GameManager.Instance && GameManager.Instance.InventoryUI)
+        if (GameManager.Instance && GameManager.Instance.inventoryInteractingScript && inventoryWasOpen)
         {
-            InventoryUIController inventory = GameManager.Instance.InventoryUI.GetComponentInChildren<InventoryUIController>();
-            if (inventory && inventoryWasOpen)
-            {
-                inventory.EnableInventoryInput();
-                inventoryWasOpen = false;
-            }
+            GameManager.Instance.inventoryInteractingScript.EnableInventoryInput();
+            inventoryWasOpen = false;
         }
         
         PlayerController playerController = FindFirstObjectByType<PlayerController>();
@@ -669,7 +665,7 @@ public class PauseManager : MonoBehaviour
             SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
         }
 
-        // Force-close pause UI so it cannot persist as a raycast blocker in MainMenu.
+        // Force-close pause UI
         pauseMenuPanel.SetActive(false);
         settingsScript.DisableSettingsPanel();
         settingsPanel.SetActive(false);
@@ -683,12 +679,11 @@ public class PauseManager : MonoBehaviour
         Time.timeScale = 1f; // Ensure time scale is reset
         isGamePaused = false;
         inventoryWasOpen = false;
-
-        EventSystem eventSystem = EventSystem.current;
-        if (eventSystem)
+        
+        if (EventSystem.current)
         {
-            eventSystem.SetSelectedGameObject(null);
-            eventSystem.firstSelectedGameObject = null;
+            EventSystem.current.SetSelectedGameObject(null);
+            EventSystem.current.firstSelectedGameObject = null;
         }
 
         // Keep menu navigation responsive during scene transition.
