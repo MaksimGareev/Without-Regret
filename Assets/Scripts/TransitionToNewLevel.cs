@@ -31,10 +31,7 @@ public class TransitionToNewLevel : MonoBehaviour
 
     private void Start()
     {
-        if (ObjectiveManager.Instance != null && linkedObjective != null && !isObjectiveActive)
-        {
-            isObjectiveActive = ObjectiveManager.Instance.IsObjectiveActive(linkedObjective.objectiveID);
-        }
+        CheckIfObjectiveActive();
         canTrigger = false;
         CheckIfPlayerSpawnedInTrigger();
     }
@@ -49,11 +46,23 @@ public class TransitionToNewLevel : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
+        CheckIfObjectiveActive();
+        
         if (sceneToLoad == null || (!isObjectiveActive && needsObjective) || !canTrigger) return;
 
         if (other.CompareTag("Player"))
         {
             LoadScene();
+        }
+    }
+
+    private void CheckIfObjectiveActive()
+    {
+        if (!linkedObjective || isObjectiveActive || !needsObjective) return;
+
+        if (ObjectiveManager.Instance && ObjectiveManager.Instance.IsObjectiveActive(linkedObjective.objectiveID))
+        {
+            isObjectiveActive = true;
         }
     }
 
