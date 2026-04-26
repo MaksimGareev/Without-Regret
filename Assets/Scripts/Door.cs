@@ -62,8 +62,9 @@ public class Door : MonoBehaviour, IInteractable
 
     public bool CanInteract(GameObject player)
     {
-        if (!needsObjective) return true;
+        if (sceneToLoad == null || string.IsNullOrEmpty(sceneToLoad.GetSceneName())) return false;
         
+        if (!needsObjective) return true;
 
         var active = ObjectiveManager.Instance.GetActiveObjectives();
         return active.Any(o => o.data == linkedObjective);
@@ -76,6 +77,12 @@ public class Door : MonoBehaviour, IInteractable
 
         hasInteracted = true;
 
+        if (sceneToLoad == null || string.IsNullOrEmpty(sceneToLoad.GetSceneName()))
+        {
+            hasInteracted = false;
+            return;
+        }
+
         if (animator != null)
         {
             animator.SetTrigger("DoorOpen");
@@ -84,11 +91,18 @@ public class Door : MonoBehaviour, IInteractable
         {
             audioSource.PlayOneShot(interactSound);
         }
+        
         StartCoroutine(WaitToLoadScene());
     }
 
     private IEnumerator WaitToLoadScene()
     {
+        if (sceneToLoad == null || string.IsNullOrEmpty(sceneToLoad.GetSceneName()))
+        {
+            Debug.LogError("Scene to load is not set on the door.");
+            yield break;
+        }
+        
         if (SaveManager.Instance != null)
         {
             SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
@@ -100,12 +114,6 @@ public class Door : MonoBehaviour, IInteractable
         }
         
         yield return new WaitForSeconds(0.1f);
-
-        if (sceneToLoad == null || string.IsNullOrEmpty(sceneToLoad.GetSceneName()))
-        {
-            Debug.LogError("Scene to load is not set on the door.");
-            yield break;
-        }
 
         if (GameManager.Instance != null && GameManager.Instance.sceneLoadManager != null)
         {
