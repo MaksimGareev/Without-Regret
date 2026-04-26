@@ -68,7 +68,7 @@ public class CutsceneManager : MonoBehaviour
     [Header("Input Action Assets")]
     [SerializeField] private InputActionAsset inputActions;
     private InputAction confirmAction;
-    private bool usingController = true;
+    //private bool usingController = true;
     private bool usingControllerLegend = true;
 
     private bool canSkipClip = false;
@@ -168,6 +168,29 @@ public class CutsceneManager : MonoBehaviour
         {
             ObjectiveManager.Instance.OnObjectiveCompleted.AddListener(OnObjectiveCompleted);
         }
+        
+        if (InputDeviceManager.Instance)
+        {
+            InputDeviceManager.Instance.OnInputModeChanged += OnInputModeChanged;
+            Debug.Log("Cutscene Manager subscribed to InputDeviceManager.OnInputModeChanged");
+            OnInputModeChanged(InputDeviceManager.Instance.CurrentMode);
+        }
+        else
+        {
+            StartCoroutine(WaitUntilIDMReady());
+        }
+    }
+
+    private IEnumerator WaitUntilIDMReady()
+    {
+        while (!InputDeviceManager.Instance)
+        {
+            yield return null;
+        }
+        
+        InputDeviceManager.Instance.OnInputModeChanged += OnInputModeChanged;
+        Debug.Log("Cutscene Manager subscribed to InputDeviceManager.OnInputModeChanged");
+        OnInputModeChanged(InputDeviceManager.Instance.CurrentMode);
     }
 
     private void InitializeUIArt()
@@ -237,8 +260,6 @@ public class CutsceneManager : MonoBehaviour
     private void Update()
     {
         ProcessHoldToSkip();
-        CheckMouseInput();
-        CheckControllerInput();
     }
 
     private void ProcessHoldToSkip()
@@ -274,93 +295,25 @@ public class CutsceneManager : MonoBehaviour
             ResetHoldTimer();
         }
     }
-    
-    private void CheckMouseInput()
+
+    private void OnInputModeChanged(InputDeviceManager.InputMode inputMode)
     {
-        if (Mouse.current == null || !isCutscenePlaying)
+        switch (inputMode)
         {
-            return;
-        }
-
-        Vector2 mouseDelta = Mouse.current.delta.ReadValue();
-
-        bool mouseKeysMoved = mouseDelta.sqrMagnitude > 0.1f || Keyboard.current.anyKey.isPressed;
-
-        if (!mouseKeysMoved) return;
-        
-        if (usingController)
-        {
-            usingController = false;
-            Cursor.visible = true;
-            Cursor.lockState = CursorLockMode.None;
-
-            if (EventSystem.current.currentSelectedGameObject)
-            {
-                EventSystem.current.SetSelectedGameObject(null);
-            }
-
-            if (usingControllerLegend)
-            {
-                SwitchToMouseKeyLegend();
-            }
-        }
-    }
-
-    private void CheckControllerInput()
-    {
-        if (Gamepad.current == null || !isCutscenePlaying)
-        {
-            return;
-        }
-
-        bool controllerMoved = 
-            Gamepad.current.leftStick.ReadValue().sqrMagnitude > 0.1f 
-            || Gamepad.current.dpad.ReadValue().sqrMagnitude > 0.1f
-            || Gamepad.current.leftShoulder.IsPressed() 
-            || Gamepad.current.rightShoulder.IsPressed();
-        
-        if (!controllerMoved)
-        {
-            return;
-        }
-
-        if (!usingController)
-        {
-            usingController = true;
-            Cursor.visible = false;
-            Cursor.lockState = CursorLockMode.Locked;
-
-            var es = EventSystem.current;
-
-            // Clear selected GameObject if mouse was hovering over something
-            if (es.IsPointerOverGameObject())
-            {
-                var ped = new PointerEventData(es)
+            case InputDeviceManager.InputMode.KeyboardMouse:
+                if (usingControllerLegend)
                 {
-                    position = new Vector2(-99999f, -99999f)
-                };
-
-                es.RaycastAll(ped, new System.Collections.Generic.List<RaycastResult>());
-                es.SetSelectedGameObject(null);
-
-                InputSystemUIInputModule inputModule = es.currentInputModule as InputSystemUIInputModule;
-                if (inputModule)
-                {
-                    inputModule.enabled = false;
-                    inputModule.enabled = true;
+                    SwitchToMouseKeyLegend();
                 }
-            }
-
-            if (EventSystem.current.currentSelectedGameObject)
-            {
-                EventSystem.current.SetSelectedGameObject(null);
-            }
+                break;
             
-            if (!usingControllerLegend)
-            {
-                SwitchToControllerLegend();
-            }
-        } 
+            case InputDeviceManager.InputMode.Controller:
+                if (!usingControllerLegend)
+                {
+                    SwitchToControllerLegend();
+                }
+                break;
+        }
     }
 
     private void SwitchToControllerLegend()
@@ -449,6 +402,11 @@ public class CutsceneManager : MonoBehaviour
         if (cutsceneCanvasGroup && fadeInCoroutine == null)
         {
             fadeInCoroutine = StartCoroutine(FadeInCutscene(currentCutscene.fadeIn));
+        }
+
+        if (InputDeviceManager.Instance)
+        {
+            InputDeviceManager.Instance.SetUIActive(true, cutscenePanel);
         }
 
         DisableOtherAudioSources();
@@ -868,6 +826,11 @@ public class CutsceneManager : MonoBehaviour
         EnableOtherAudioSources();
         
         isCutscenePlaying = false;
+
+        if (InputDeviceManager.Instance)
+        {
+            InputDeviceManager.Instance.SetUIActive(false, null);
+        }
         
         Time.timeScale = 1.0f; // Unpause Game
         
@@ -918,6 +881,14 @@ public class CutsceneManager : MonoBehaviour
         if (fadeOtherAudioCoroutine == null)
         {
             fadeOtherAudioCoroutine = StartCoroutine(FadeOtherSourceVolumes(true));
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (InputDeviceManager.Instance)
+        {
+            InputDeviceManager.Instance.OnInputModeChanged -= OnInputModeChanged;
         }
     }
 }
