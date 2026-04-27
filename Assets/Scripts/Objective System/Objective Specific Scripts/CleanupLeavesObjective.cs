@@ -72,6 +72,7 @@ public class CleanupLeavesObjective : MonoBehaviour
             {
                 interactable.SetInteractable(false);
                 interactable.OnInteracted -= IncrementCount; // Unsubscribe from the interaction event
+                interactable.gameObject.SetActive(false);
             }
         }
             
