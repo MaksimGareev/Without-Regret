@@ -76,6 +76,9 @@ public class CutsceneManager : MonoBehaviour
     private InputAction confirmAction;
     //private bool usingController = true;
     private bool usingControllerLegend = true;
+    
+    [Header("Debug Logs")]
+    [SerializeField] private bool showDebugLogs = false;
 
     private bool canSkipClip = false;
     private bool canSkipEntireCutscene = false;
@@ -192,7 +195,7 @@ public class CutsceneManager : MonoBehaviour
         if (InputDeviceManager.Instance)
         {
             InputDeviceManager.Instance.OnInputModeChanged += OnInputModeChanged;
-            Debug.Log("Cutscene Manager subscribed to InputDeviceManager.OnInputModeChanged");
+            if (showDebugLogs) Debug.Log("Cutscene Manager subscribed to InputDeviceManager.OnInputModeChanged");
             OnInputModeChanged(InputDeviceManager.Instance.CurrentMode);
         }
         else
@@ -209,7 +212,7 @@ public class CutsceneManager : MonoBehaviour
         }
         
         InputDeviceManager.Instance.OnInputModeChanged += OnInputModeChanged;
-        Debug.Log("Cutscene Manager subscribed to InputDeviceManager.OnInputModeChanged");
+        if (showDebugLogs) Debug.Log("Cutscene Manager subscribed to InputDeviceManager.OnInputModeChanged");
         OnInputModeChanged(InputDeviceManager.Instance.CurrentMode);
     }
 
@@ -705,7 +708,7 @@ public class CutsceneManager : MonoBehaviour
         else if (clip.backgroundType == CutsceneClip.BackgroundType.ImageFromPreviousClip)
         {
             // Do nothing, leave previous image or color on screen.
-            Debug.Log("Cutscene clip using image from previous clip.");
+            if (showDebugLogs) Debug.Log("Cutscene clip using image from previous clip.");
         }
         else
         {

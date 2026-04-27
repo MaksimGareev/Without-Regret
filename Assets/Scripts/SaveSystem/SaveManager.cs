@@ -327,7 +327,7 @@ public class SaveManager : MonoBehaviour
     {
         if (IsLoading)
         {
-            Debug.LogWarning("[SaveManager.LoadGame] Load was called again, but the SaveManager was already loading. Additional Load has been ignored");
+            if (showDebugLogs) Debug.LogWarning("[SaveManager.LoadGame] Load was called again, but the SaveManager was already loading. Additional Load has been ignored");
             return;
         }
         
@@ -383,12 +383,12 @@ public class SaveManager : MonoBehaviour
         // Set the timer ring state to the state in the saved data
         if (TimerRingUI.Instance && data.playerSaveData.currentRingState != TimerRingUI.RingState.Empty)
         {
-            Debug.Log("[SaveManager.LoadGame] Setting timer ring state to saved state: " + data.playerSaveData.currentRingState);
+            if (showDebugLogs) Debug.Log("[SaveManager.LoadGame] Setting timer ring state to saved state: " + data.playerSaveData.currentRingState);
             TimerRingUI.Instance.SetRingState(data.playerSaveData.currentRingState);
         }
         else if (TimerRingUI.Instance && data.playerSaveData.currentRingState == TimerRingUI.RingState.Empty)
         {
-            Debug.Log("[SaveManager.LoadGame] Loaded save data has empty timer ring state, setting to full by default.");
+            if (showDebugLogs) Debug.Log("[SaveManager.LoadGame] Loaded save data has empty timer ring state, setting to full by default.");
             TimerRingUI.Instance.SetRingState(TimerRingUI.RingState.Full);
         }
         else if (!TimerRingUI.Instance)

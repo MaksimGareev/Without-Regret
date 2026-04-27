@@ -87,6 +87,6 @@ public class InteractionTutorialManager : MonoBehaviour, ISaveable
         }
 
         SaveManager.Instance.RegisterSaveable(this);
-        Debug.Log("DialogueManager Registered with SaveManager");
+        //Debug.Log("DialogueManager Registered with SaveManager");
     }
 }

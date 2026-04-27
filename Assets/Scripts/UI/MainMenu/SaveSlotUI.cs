@@ -21,6 +21,9 @@ public class SaveSlotUI : MonoBehaviour
 
     [Header("FirstLevelReference")]
     [SerializeField] private SceneReference firstScene;
+    
+    [Header("Debug Logs")]
+    [SerializeField] private bool showDebugLogs = false;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -40,7 +43,7 @@ public class SaveSlotUI : MonoBehaviour
         {
             try
             {
-                Debug.Log($"Loading Save Slot {slot} Data...");
+                if (showDebugLogs) Debug.Log($"Loading Save Slot {slot} Data...");
                 SaveData data = SaveSystem.Load(slot);
                 UpdateSlotInfo(slot, data);
             }
@@ -85,7 +88,7 @@ public class SaveSlotUI : MonoBehaviour
 
     public void UpdateSlotInfo(int slot, SaveData data)
     {
-        Debug.Log($"Updating Slot {slot} Info");
+        if (showDebugLogs) Debug.Log($"Updating Slot {slot} Info");
         
         if (slot < 1 || slot > 3)
         {
@@ -95,11 +98,11 @@ public class SaveSlotUI : MonoBehaviour
 
         if (data == null)
         {
-            Debug.Log($"No save data found for slot {slot}");
+            if (showDebugLogs) Debug.Log($"No save data found for slot {slot}");
         }
         else 
         {
-            Debug.Log($"Save data found for slot {slot}: Last Scene - {data.lastSceneName}");
+            if (showDebugLogs) Debug.Log($"Save data found for slot {slot}: Last Scene - {data.lastSceneName}");
         }
 
         slotTexts[slot - 1].text = data != null 
@@ -179,7 +182,7 @@ public class SaveSlotUI : MonoBehaviour
         
         SaveManager.Instance.LoadGame(slot);
 
-        Debug.Log("Starting New Game...");
+        if (showDebugLogs) Debug.Log("Starting New Game...");
     }
 
     private void LoadGame(int slot)
@@ -199,7 +202,7 @@ public class SaveSlotUI : MonoBehaviour
                 SceneLoadManager.Instance.LoadScene(data.lastSceneName);
             }
 
-            Debug.Log("Continuing Game From Save...");
+            if (showDebugLogs) Debug.Log("Continuing Game From Save...");
             return;
         }
         else

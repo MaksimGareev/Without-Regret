@@ -168,13 +168,13 @@ public class PlayerController : MonoBehaviour, ISaveable
 
     public void SaveTo(SaveData data)
     {
-        Debug.Log("PlayerController::SaveTo function called."); 
+        if (showDebugLogs) Debug.Log("PlayerController::SaveTo function called."); 
         
         float[] position = { transform.position.x, transform.position.y, transform.position.z };
         float[] rotation = { transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z };
         data.playerSaveData.SetPlayerTransform(SceneManager.GetActiveScene().name, position, rotation);
         
-        Debug.Log("Player position saved: " + position + rotation);
+        if (showDebugLogs) Debug.Log("Player position saved: " + position + rotation);
         
         // data.playerSaveData.checkpoints = checkpointData;
 
@@ -194,19 +194,19 @@ public class PlayerController : MonoBehaviour, ISaveable
 
     public void LoadFrom(SaveData data)
     {
-        Debug.Log ("PlayerController::LoadFrom function called.");
+        if (showDebugLogs) Debug.Log ("PlayerController::LoadFrom function called.");
         if (data.playerSaveData.TryGetPlayerTransform(SceneManager.GetActiveScene().name, out float[] position, out float[] rotation))
         {
             Controller.enabled = false;
             transform.position = new Vector3(position[0], position[1], position[2]);
             transform.eulerAngles = new Vector3(rotation[0], rotation[1], rotation[2]);
             Controller.enabled = true;
-            Debug.Log("Player transform loaded for scene: " + SceneManager.GetActiveScene().name + " Position: " + transform.position + " Rotation: " + transform.eulerAngles);
+            if (showDebugLogs) Debug.Log("Player transform loaded for scene: " + SceneManager.GetActiveScene().name + " Position: " + transform.position + " Rotation: " + transform.eulerAngles);
             //StartCoroutine(VerifyPosition());
         }
         else
         {
-            Debug.Log("No saved transform found for player in scene: " + SceneManager.GetActiveScene().name);
+            if (showDebugLogs) Debug.Log("No saved transform found for player in scene: " + SceneManager.GetActiveScene().name);
         }
 
         // if (data.playerSaveData.checkpoints != null)
@@ -224,25 +224,25 @@ public class PlayerController : MonoBehaviour, ISaveable
         {
             if (data.playerSaveData.currentPlayerModel == PlayerModel.Echo)
             {
-                Debug.Log("Loading player model Echo");
+                if (showDebugLogs) Debug.Log("Loading player model Echo");
                 characterSwap.SwitchToEcho();
             }
             else if (data.playerSaveData.currentPlayerModel == PlayerModel.Chime)
             {
-                Debug.Log("Loading player model Chime");
+                if (showDebugLogs) Debug.Log("Loading player model Chime");
                 characterSwap.SwitchToChime();
             }
         }
         
     }
 
-    private IEnumerator VerifyPosition()
-    {
-        yield return null;
-        Debug.Log("Player Position Frame 1 :" + transform.position.x + " :" + transform.position.y + " :" + transform.position.z);
-        yield return new WaitForSeconds(0.1f);
-        Debug.Log("Player Position Frame 2 :" + transform.position.x + " :" + transform.position.y + " :" + transform.position.z);
-    }
+    // private IEnumerator VerifyPosition()
+    // {
+    //     yield return null;
+    //     Debug.Log("Player Position Frame 1 :" + transform.position.x + " :" + transform.position.y + " :" + transform.position.z);
+    //     yield return new WaitForSeconds(0.1f);
+    //     Debug.Log("Player Position Frame 2 :" + transform.position.x + " :" + transform.position.y + " :" + transform.position.z);
+    // }
 
     // public void SetCheckpoint(string sceneName, Vector3 position, Vector3 rotation)
     // {
