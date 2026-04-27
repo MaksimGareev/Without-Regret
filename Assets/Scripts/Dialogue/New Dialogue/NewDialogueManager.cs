@@ -1089,6 +1089,11 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
             cam.SetCameraLocked(false);
         }
         npcPortrait.gameObject.SetActive(false);
+
+        if (SaveManager.Instance)
+        {
+            SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
+        }
     }
 
     // Add players morality to save data
