@@ -105,6 +105,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: e40b43c9792e771498f43e36f3106ac3, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2252694104128681415}
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: e40b43c9792e771498f43e36f3106ac3, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8744846482109969126}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: e40b43c9792e771498f43e36f3106ac3, type: 3}
       insertIndex: -1
@@ -185,12 +188,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb6f976906f2747449b6d75a67a35b9d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NewDialogueTrigger
-  animator: {fileID: 8740143108691262306}
+  animator: {fileID: 3439557555632793756}
   isTalking: 0
   chimeAnimator: {fileID: 0}
   chimeActive: 0
   chimeScript: {fileID: 0}
-  faceHandler: {fileID: 8783717173192881986}
+  faceHandler: {fileID: 6328084375284553873}
   startDialogueFile: {fileID: 11400000, guid: de7978e893cb3b44c80ac726cec715a7, type: 2}
   talkedDialogueFile: {fileID: 0}
   taskActiveDialogueFile: {fileID: 0}
@@ -213,6 +216,7 @@ MonoBehaviour:
   enemy: {fileID: 0}
   RewardItem: {fileID: 0}
   hasPlayed: 0
+  completed: 0
   triggerType: 0
 --- !u!114 &7430618000941399012
 MonoBehaviour:
@@ -283,7 +287,8 @@ MonoBehaviour:
   arrived: 0
   stopDistance: 0.5
   agent: {fileID: 2800810733366397663}
-  animator: {fileID: 8740143108691262306}
+  animator: {fileID: 3439557555632793756}
+  startInConversation: 0
   npcName: Penelope
 --- !u!195 &2800810733366397663
 NavMeshAgent:
@@ -369,7 +374,8 @@ MonoBehaviour:
   arrived: 0
   stopDistance: 0.5
   agent: {fileID: 2800810733366397663}
-  animator: {fileID: 8740143108691262306}
+  animator: {fileID: 3439557555632793756}
+  isScared: 0
   npcName: Penelope
 --- !u!114 &6719243084635254832
 MonoBehaviour:
@@ -383,7 +389,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b93d8170e88d8e34684424c0750fb15a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SaveableFriendlyNPC
-  uniqueID: b44bf46f-db8f-4968-9d7c-b96ead367372
+  uniqueID: b2f0b647-1025-4056-86e6-2c0140fa9844
 --- !u!1001 &1786121623637168684
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -799,6 +805,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 2bd368df64940864ca99788f8a7e2f83, type: 3}
       propertyPath: m_Layer
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 2bd368df64940864ca99788f8a7e2f83, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 935820209201375382, guid: 2bd368df64940864ca99788f8a7e2f83, type: 3}
       propertyPath: m_Layer
@@ -1254,3 +1264,120 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8184730222495819609, guid: 2080a9975d2f0594b94c168db3959209, type: 3}
   m_PrefabInstance: {fileID: 4626393765212062532}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &9138180735281157389
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1623780519984519591}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: abebd63ae1778184c917fd277da2af4f, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 29.315239
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: abebd63ae1778184c917fd277da2af4f, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 29.315239
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: abebd63ae1778184c917fd277da2af4f, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 29.315239
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: abebd63ae1778184c917fd277da2af4f, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: abebd63ae1778184c917fd277da2af4f, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -23.3
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: abebd63ae1778184c917fd277da2af4f, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.9
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: abebd63ae1778184c917fd277da2af4f, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: abebd63ae1778184c917fd277da2af4f, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: abebd63ae1778184c917fd277da2af4f, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: abebd63ae1778184c917fd277da2af4f, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: abebd63ae1778184c917fd277da2af4f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: abebd63ae1778184c917fd277da2af4f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: abebd63ae1778184c917fd277da2af4f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -162932515048898954, guid: abebd63ae1778184c917fd277da2af4f, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 97fab4cec20877d43bea30a1e5493f48, type: 2}
+    - target: {fileID: 919132149155446097, guid: abebd63ae1778184c917fd277da2af4f, type: 3}
+      propertyPath: m_Name
+      value: PenelopeRTMRigged
+      objectReference: {fileID: 0}
+    - target: {fileID: 5866666021909216657, guid: abebd63ae1778184c917fd277da2af4f, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: a90677638fd4dc841a4aacba7ccc9911, type: 2}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: -8872037605114514483, guid: abebd63ae1778184c917fd277da2af4f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6328084375284553873}
+  m_SourcePrefab: {fileID: 100100000, guid: abebd63ae1778184c917fd277da2af4f, type: 3}
+--- !u!137 &246698849012706171 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -162932515048898954, guid: abebd63ae1778184c917fd277da2af4f, type: 3}
+  m_PrefabInstance: {fileID: 9138180735281157389}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &3439557555632793756 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: abebd63ae1778184c917fd277da2af4f, type: 3}
+  m_PrefabInstance: {fileID: 9138180735281157389}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &8744846482109969126 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: abebd63ae1778184c917fd277da2af4f, type: 3}
+  m_PrefabInstance: {fileID: 9138180735281157389}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &8804931152407013056 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -8872037605114514483, guid: abebd63ae1778184c917fd277da2af4f, type: 3}
+  m_PrefabInstance: {fileID: 9138180735281157389}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &6328084375284553873
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8804931152407013056}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c799f236d9c38c34384cd262e6e3b199, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FaceHandler
+  NeutralFace: {fileID: 2100000, guid: 97fab4cec20877d43bea30a1e5493f48, type: 2}
+  HappyFace: {fileID: 2100000, guid: ca9842c0b87ae2e468ce288ca1c40986, type: 2}
+  SadFace: {fileID: 2100000, guid: 7db84a9b79af41e44bf3e330099950ad, type: 2}
+  AngryFace: {fileID: 2100000, guid: 5bfb46a813fa96942a8c23732ac93aa7, type: 2}
+  faceRender: {fileID: 246698849012706171}
