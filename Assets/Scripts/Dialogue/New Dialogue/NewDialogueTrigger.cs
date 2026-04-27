@@ -53,8 +53,11 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
     [SerializeField] private JournalEntry journalEntry;
 
     [Header("Objectives")]
+    [Tooltip("This is a list of objective IDs that need to be completed in order to get the objectives complete dialogue file to be played when interacting with the NPC")]
     public List<string> objectiveIDsYouCareAbout = new List<string>();
     public ObjectiveData linkedObjective;
+    [Tooltip("This is a list of objective IDs that will make the NPC not be able to be interacted with")]
+    public List<string> blockInteractionIfActive = new List<string>();
 
     [Header("Camera")]
     public bool focusCameraOnTrigger = true;
@@ -190,6 +193,14 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
         {
             // Debug.Log("Dialogue already active!");
             return false;
+        }
+
+        foreach (string id in blockInteractionIfActive)
+        {
+            if (ObjectiveManager.Instance.IsObjectiveActive(id))
+            {
+                return false;
+            }
         }
 
         return true;
