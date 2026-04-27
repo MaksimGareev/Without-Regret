@@ -145,8 +145,6 @@ public class MainMenu : MonoBehaviour
     {
         HandleControllerCancelInput();
         DeleteSavesDebug(); // Debug shortcut to delete all saves and reload main menu
-        // CheckMouseInput();
-        // CheckControllerInput();
 
         if (confirmationPanel.activeSelf && backButton.gameObject.activeSelf)
         {
@@ -156,18 +154,6 @@ public class MainMenu : MonoBehaviour
         {
             backButton.gameObject.SetActive(true);
         }
-
-        // if (usingController && !EventSystem.current.currentSelectedGameObject)
-        // {
-        //     usingController = false;
-        //     Cursor.visible = true;
-        //     Cursor.lockState = CursorLockMode.None;
-        // }
-        // else if (!usingController && !Cursor.visible || Cursor.lockState != CursorLockMode.None)
-        // {
-        //     Cursor.visible = true;
-        //     Cursor.lockState = CursorLockMode.None;
-        // }
 
         EnsureMenuInputState();
 
@@ -272,7 +258,7 @@ public class MainMenu : MonoBehaviour
 
     private void OnInputModeChanged(InputDeviceManager.InputMode mode)
     {
-        Debug.Log("Input mode changed to: " + mode);
+        //Debug.Log("Input mode changed to: " + mode);
 
         switch (mode)
         {
@@ -299,102 +285,6 @@ public class MainMenu : MonoBehaviour
                 break;
         }
     }
-
-    // private void CheckMouseInput()
-    // {
-    //     if (Mouse.current == null)
-    //     {
-    //         return;
-    //     }
-    //
-    //     Vector2 mouseDelta = Mouse.current.delta.ReadValue();
-    //
-    //     bool mouseKeysMoved = mouseDelta.sqrMagnitude > 0.1f || Keyboard.current.anyKey.isPressed;
-    //
-    //     if (!mouseKeysMoved) return;
-    //
-    //     if (usingController)
-    //     {
-    //         usingController = false;
-    //         Cursor.visible = true;
-    //         Cursor.lockState = CursorLockMode.None;
-    //         
-    //         if (EventSystem.current.currentSelectedGameObject != null)
-    //         {
-    //             EventSystem.current.SetSelectedGameObject(null);
-    //         }
-    //
-    //         
-    //     }
-    // }
-
-    // private void CheckControllerInput()
-    // {
-    //     if (Gamepad.current == null)
-    //     {
-    //         return;
-    //     }
-    //
-    //     // Check if the controller has moved either the left stick or dpad
-    //     bool controllerMoved = 
-    //         Gamepad.current.leftStick.ReadValue().sqrMagnitude > 0.1f 
-    //         || Gamepad.current.dpad.ReadValue().sqrMagnitude > 0.1f 
-    //         || ((Gamepad.current.leftShoulder.IsPressed() || Gamepad.current.rightShoulder.IsPressed()) && settingsPanel.activeSelf);
-    //     
-    //     if (!controllerMoved) return;
-    //
-    //     if (!usingController)
-    //     {
-    //         usingController = true;
-    //         Cursor.visible = false;
-    //         Cursor.lockState = CursorLockMode.Locked;
-    //
-    //         var es = EventSystem.current;
-    //
-    //         // Clear selected GameObject if mouse was hovering over something
-    //         if (es.IsPointerOverGameObject())
-    //         {
-    //             var ped = new PointerEventData(es)
-    //             {
-    //                 position = new Vector2(-99999f, -99999f)
-    //             };
-    //
-    //             es.RaycastAll(ped, new System.Collections.Generic.List<RaycastResult>());
-    //
-    //             InputSystemUIInputModule inputModule = es.currentInputModule as InputSystemUIInputModule;
-    //             if (inputModule != null)
-    //             {
-    //                 inputModule.enabled = false;
-    //                 inputModule.enabled = true;
-    //             }
-    //
-    //             es.SetSelectedGameObject(null);
-    //         }
-    //
-    //         // If nothing is selected, set a default based on the active panel
-    //         if (es.currentSelectedGameObject == null)
-    //         {
-    //             if (confirmationPanel.activeSelf)
-    //             {
-    //                 es.SetSelectedGameObject(confirmationPanel.GetComponent<ConfirmationUI>().cancelButton.gameObject);
-    //             }
-    //             else if (mainMenuPanel.activeSelf)
-    //             {
-    //                 es.SetSelectedGameObject(playButton.gameObject);
-    //             }
-    //             else if (creditsPanel.activeSelf)
-    //             {
-    //                 es.SetSelectedGameObject(backButton.gameObject);
-    //             }
-    //             else if (saveSlotsPanel.activeSelf)
-    //             {
-    //                 SelectSaveMenuButton();
-    //             }
-    //
-    //             
-    //         }
-    //     }
-    // }
 
     private void UpdatePlayButton()
     {

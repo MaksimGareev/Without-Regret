@@ -166,7 +166,7 @@ public class PauseManager : MonoBehaviour
     
     private void OnInputModeChanged(InputDeviceManager.InputMode mode)
     {
-        Debug.Log($"PauseManager InputModeChanged: {mode}");
+        //Debug.Log($"PauseManager InputModeChanged: {mode}");
         
         switch (mode)
         {
