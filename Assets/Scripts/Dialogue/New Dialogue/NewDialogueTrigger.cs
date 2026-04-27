@@ -310,6 +310,12 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
             Debug.Log("Echo is moving and cannot be talked to");
             return;
         }
+        Darry darry = GetComponent<Darry>();
+        if (darry != null && darry.isTraveling)
+        {
+            Debug.Log("Darry is moving and cannot be talked to");
+            return;
+        }
 
         TryStartDialogue();
     }

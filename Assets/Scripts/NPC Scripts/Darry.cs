@@ -135,7 +135,7 @@ public class Darry : MonoBehaviour
     {
         //IsFollowing = false;
         isTraveling = true;
-        Debug.Log("Darry is now traveling to her destination");
+        Debug.Log("Darry is now traveling to his destination");
     }
 
     public void TravelToTarget()
@@ -144,6 +144,8 @@ public class Darry : MonoBehaviour
         {
             return;
         }
+
+        isTraveling = true;
 
         Vector3 direction = targetSpot.position - transform.position;
         direction.y = 0f;
@@ -299,6 +301,7 @@ public class Darry : MonoBehaviour
 
         if (other.CompareTag("Finish"))
         {
+            isTraveling = false;
             StopWaitCoroutine();
             if(enemy != null)
             {
