@@ -64,16 +64,25 @@ public class CleanupLeavesObjective : MonoBehaviour
 
     private void SetObjectiveInactive(ObjectiveInstance objective)
     {
-        if (objective.data == linkedObjective)
+        if (objective.data != linkedObjective) return;
+        
+        foreach (GameObject leaf in GameObject.FindGameObjectsWithTag("Leaves"))
         {
-            foreach (GameObject leaf in GameObject.FindGameObjectsWithTag("Leaves"))
+            if (leaf.TryGetComponent<RemoveableObject>(out var interactable))
             {
-                if (leaf.TryGetComponent<RemoveableObject>(out var interactable))
-                {
-                    interactable.SetInteractable(false);
-                    interactable.OnInteracted -= IncrementCount; // Unsubscribe from the interaction event
-                }
+                interactable.SetInteractable(false);
+                interactable.OnInteracted -= IncrementCount; // Unsubscribe from the interaction event
             }
+        }
+            
+        if (playerInv.HasItemInInventory(TrashbagRefForRemoval))
+        {
+            playerInv.RemoveItem(TrashbagRefForRemoval);
+        }
+        
+        if (!playerInv.HasItemInInventory(LeavesReward))
+        {
+            playerInv.AddItem(LeavesReward);
         }
     }
 
@@ -82,7 +91,7 @@ public class CleanupLeavesObjective : MonoBehaviour
         if (interactSpamTimer < interactSpamDelay) return;
         
         ObjectiveManager.Instance.AddProgress(linkedObjective.objectiveID, 1);
-        Debug.Log("Collected 1 Leaf");
+        //Debug.Log("Collected 1 Leaf");
         interactSpamTimer = 0.0f;
     }
 
