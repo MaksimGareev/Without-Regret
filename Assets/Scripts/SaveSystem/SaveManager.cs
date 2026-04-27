@@ -279,6 +279,13 @@ public class SaveManager : MonoBehaviour
             try
             {
                 if (showDebugLogs) Debug.Log($"[SaveManager.SaveGame] calling SaveTo on {saveable.GetType().Name}");
+                
+                // Dont save player location
+                if (saveable is PlayerController && SceneManager.GetActiveScene().name == "07_BarryAndDarry'sHouse")
+                {
+                    continue;
+                }
+                
                 saveable.SaveTo(data);
             }
             catch (System.Exception ex)

@@ -170,7 +170,6 @@ public class PlayerController : MonoBehaviour, ISaveable
     {
         Debug.Log("PlayerController::SaveTo function called."); 
         
-        //GetCheckpoint(SceneManager.GetActiveScene().name, out Vector3 savedPosition, out Vector3 savedRotation);
         float[] position = { transform.position.x, transform.position.y, transform.position.z };
         float[] rotation = { transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z };
         data.playerSaveData.SetPlayerTransform(SceneManager.GetActiveScene().name, position, rotation);

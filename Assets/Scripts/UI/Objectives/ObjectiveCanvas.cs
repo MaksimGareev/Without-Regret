@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -61,6 +62,13 @@ public class ObjectiveCanvas : MonoBehaviour
             ObjectiveManager.Instance.OnObjectiveActivated.AddListener(HandleObjectiveActivated);
             ObjectiveManager.Instance.OnObjectiveProgressUpdated.AddListener(HandleObjectiveProgressed);
             ObjectiveManager.Instance.OnObjectiveCompleted.AddListener(HandleObjectiveCompleted);
+            
+            var activeObjectives =  ObjectiveManager.Instance.GetActiveObjectives();
+            var objectiveInstances = activeObjectives as ObjectiveInstance[] ?? activeObjectives.ToArray();
+            if (objectiveInstances.Any())
+            {
+                currentObjective = objectiveInstances.FirstOrDefault();
+            }
         }
         else
         {
@@ -151,7 +159,7 @@ public class ObjectiveCanvas : MonoBehaviour
 
     private void HandleObjectiveProgressed(ObjectiveInstance updatedObjective)
     {
-        if (updatedObjective == currentObjective)
+        if (updatedObjective.data.objectiveID == currentObjective?.data.objectiveID)
         {
             titleText.text = updatedObjective.data.title;
             descriptionText.text = "Objective Progress Updated!";
