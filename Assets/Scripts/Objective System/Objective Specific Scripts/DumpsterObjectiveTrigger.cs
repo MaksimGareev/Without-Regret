@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 // This script is attached to trigger volumes in the scene that are linked to specific objectives. 
@@ -41,11 +42,26 @@ public class DumpsterObjectiveTrigger : MonoBehaviour
                 if (obj.data == linkedObjective)
                 {
                     ObjectiveManager.Instance.AddProgress(linkedObjective.objectiveID, 1);
-                    trashModel.SetActive(true);
-                    Destroy(other.gameObject);
+                    
+                    // Set the world item to not collectible so it can't be picked up again after being thrown in the dumpster
+                    other.gameObject.TryGetComponent<WorldItem>(out var worldItem);
+                    if (worldItem != null)
+                    {
+                        worldItem.isCollectible = false; 
+                    }
+                    
+                    // Delay to hide the trashBag after it lands in the dumpster rather than immediate deletion.
+                    StartCoroutine(DelayDisableTrashBag(other.gameObject));
                     break;
                 }
             }
         }
+    }
+
+    private IEnumerator DelayDisableTrashBag(GameObject trashBag)
+    {
+        yield return new WaitForSecondsRealtime(1f);
+        trashBag.SetActive(false);
+        trashModel.SetActive(true);
     }
 }
