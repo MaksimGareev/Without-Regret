@@ -7,6 +7,14 @@ using UnityEngine.SceneManagement;
 [RequireComponent(typeof(CanvasGroup), typeof(AudioSource))]
 public class ObjectiveCanvas : MonoBehaviour
 {
+    private enum TransitionPhase
+    {
+        None,
+        FadingIn,
+        WaitingToHide,
+        FadingOut
+    }
+
     [Header("Settings")]
     [SerializeField, Tooltip("How long fading the UI in/out takes until it's at 100 or 0 opacity")] private float fadeDuration = 0.5f;
     [SerializeField, Tooltip("How long the UI is visible for (time starts as soon as it's fully visible)")] private float visibleDuration = 2f;
@@ -26,6 +34,12 @@ public class ObjectiveCanvas : MonoBehaviour
     private AudioSource audioSource;
     private Coroutine showRoutine;
     private Coroutine hideRoutine;
+    
+    private TransitionPhase transitionPhase = TransitionPhase.None;
+    private float queuedFadeOutAlpha;
+    private float remainingHideDelay;
+    private float hideDelayStartedAt;
+    private bool hasSavedRuntimeState;
 
     private void Awake()
     {
@@ -43,6 +57,7 @@ public class ObjectiveCanvas : MonoBehaviour
         if (objectiveUI != null)
         {
             objectiveUI.SetActive(false);
+            objectiveUI.TryGetComponent(out canvasGroup);
         }
 
         audioSource = GetComponent<AudioSource>();
@@ -56,6 +71,14 @@ public class ObjectiveCanvas : MonoBehaviour
             enabled = false;
             return;
         }
+
+        if (canvasGroup == null)
+        {
+            objectiveUI.TryGetComponent(out canvasGroup);
+        }
+
+        RestoreRuntimeState();
+
         // Subscribe to manager events when available
         if (ObjectiveManager.Instance != null)
         {
@@ -78,6 +101,10 @@ public class ObjectiveCanvas : MonoBehaviour
 
     private void OnDisable()
     {
+        CacheRuntimeState();
+
+        StopTransitionCoroutines();
+
         if (ObjectiveManager.Instance != null)
         {
             ObjectiveManager.Instance.OnObjectiveActivated.RemoveListener(HandleObjectiveActivated);
@@ -110,18 +137,8 @@ public class ObjectiveCanvas : MonoBehaviour
             Debug.Log($"Objective Activated: {newObjective.data.title} - {newObjective.data.description}");
         }
 
-        // Cancel any pending hide
-        if (hideRoutine != null)
-        {
-            StopCoroutine(hideRoutine);
-            hideRoutine = null;
-        }
+        StopTransitionCoroutines();
 
-        if (showRoutine != null)
-        {
-            StopCoroutine(showRoutine);
-            showRoutine = null;
-        }
         showRoutine = StartCoroutine(FadeInUI(targetAlpha));
     }
 
@@ -137,17 +154,7 @@ public class ObjectiveCanvas : MonoBehaviour
         descriptionText.text = "Finished: " + completedObjective.data.title;
         progressText.text = "";
 
-        if (hideRoutine != null)
-        {
-            StopCoroutine(hideRoutine);
-            hideRoutine = null;
-        }
-
-        if (showRoutine != null)
-        {
-            StopCoroutine(showRoutine);
-            showRoutine = null;
-        }
+        StopTransitionCoroutines();
 
         if (showDebugLogs)
         {
@@ -166,17 +173,7 @@ public class ObjectiveCanvas : MonoBehaviour
             progressText.text = $"{updatedObjective.currentProgress} / {updatedObjective.data.requiredProgress}";
         }
 
-        if (hideRoutine != null)
-        {
-            StopCoroutine(hideRoutine);
-            hideRoutine = null;
-        }
-
-        if (showRoutine != null)
-        {
-            StopCoroutine(showRoutine);
-            showRoutine = null;
-        }
+        StopTransitionCoroutines();
 
         if (showDebugLogs)
         {
@@ -190,6 +187,9 @@ public class ObjectiveCanvas : MonoBehaviour
     {
         if (objectiveUI == null)
             yield break;
+
+        transitionPhase = TransitionPhase.FadingIn;
+        queuedFadeOutAlpha = Mathf.Clamp01(targetFadeOutAlpha);
 
         if (showDebugLogs)
         {
@@ -206,7 +206,8 @@ public class ObjectiveCanvas : MonoBehaviour
         if (IsVisible() && canvasGroup.alpha >= 1f)
         {
             // If already fully visible, go straight to delayedhide
-            hideRoutine = StartCoroutine(DelayedHide(targetFadeOutAlpha));
+            showRoutine = null;
+            hideRoutine = StartCoroutine(DelayedHide(queuedFadeOutAlpha));
             yield break;
         }
 
@@ -218,7 +219,7 @@ public class ObjectiveCanvas : MonoBehaviour
         }
 
         float duration = Mathf.Max(0f, fadeDuration);
-        float startAlpha = (IsVisible() && canvasGroup.alpha > 0f) ? canvasGroup.alpha : 0f;
+        float startAlpha = (objectiveUI.activeSelf && canvasGroup.alpha > 0f) ? canvasGroup.alpha : 0f;
         canvasGroup.alpha = startAlpha;
         objectiveUI.SetActive(true);
 
@@ -246,18 +247,25 @@ public class ObjectiveCanvas : MonoBehaviour
         }
 
         showRoutine = null;
-        hideRoutine = StartCoroutine(DelayedHide(targetFadeOutAlpha));
+        hideRoutine = StartCoroutine(DelayedHide(queuedFadeOutAlpha));
     }
 
-    private IEnumerator DelayedHide(float targetFadeOutAlpha)
+    private IEnumerator DelayedHide(float targetFadeOutAlpha, float customDelay = -1f)
     {
-        yield return new WaitForSeconds(visibleDuration);
+        transitionPhase = TransitionPhase.WaitingToHide;
+        queuedFadeOutAlpha = Mathf.Clamp01(targetFadeOutAlpha);
 
-        if (hideRoutine != null)
+        float waitDuration = customDelay >= 0f ? customDelay : visibleDuration;
+        waitDuration = Mathf.Max(0f, waitDuration);
+        remainingHideDelay = waitDuration;
+        hideDelayStartedAt = Time.unscaledTime;
+
+        if (waitDuration > Mathf.Epsilon)
         {
-            StopCoroutine(hideRoutine);
+            yield return new WaitForSeconds(waitDuration);
         }
-        hideRoutine = StartCoroutine(FadeOutUI(targetFadeOutAlpha));
+
+        hideRoutine = StartCoroutine(FadeOutUI(queuedFadeOutAlpha));
     }
 
     private IEnumerator FadeOutUI(float targetAlpha)
@@ -265,9 +273,13 @@ public class ObjectiveCanvas : MonoBehaviour
         if (objectiveUI == null)
             yield break;
 
+        transitionPhase = TransitionPhase.FadingOut;
+        queuedFadeOutAlpha = Mathf.Clamp01(targetAlpha);
+        remainingHideDelay = 0f;
+
         if (showDebugLogs)
         {
-            Debug.Log($"Fading out Objective UI to target alpha {targetAlpha}");
+            Debug.Log($"Fading out Objective UI to target alpha {queuedFadeOutAlpha}");
         }
 
         if (!objectiveUI.TryGetComponent<CanvasGroup>(out var canvasGroup))
@@ -284,7 +296,7 @@ public class ObjectiveCanvas : MonoBehaviour
             yield break;
         }
 
-        targetAlpha = Mathf.Clamp01(targetAlpha);
+        targetAlpha = queuedFadeOutAlpha;
         float duration = Mathf.Max(0f, fadeDuration);
         float startAlpha = canvasGroup.alpha;
 
@@ -296,6 +308,7 @@ public class ObjectiveCanvas : MonoBehaviour
             {
                 objectiveUI.SetActive(false);
             }
+            transitionPhase = TransitionPhase.None;
             hideRoutine = null;
             yield break;
         }
@@ -321,11 +334,82 @@ public class ObjectiveCanvas : MonoBehaviour
             objectiveUI.SetActive(false);
         }
 
+        transitionPhase = TransitionPhase.None;
         hideRoutine = null;
+    }
+
+    private void StopTransitionCoroutines()
+    {
+        if (showRoutine != null)
+        {
+            StopCoroutine(showRoutine);
+            showRoutine = null;
+        }
+
+        if (hideRoutine != null)
+        {
+            StopCoroutine(hideRoutine);
+            hideRoutine = null;
+        }
+    }
+
+    private void CacheRuntimeState()
+    {
+        if (objectiveUI == null)
+        {
+            hasSavedRuntimeState = false;
+            return;
+        }
+
+        if (canvasGroup == null)
+        {
+            objectiveUI.TryGetComponent(out canvasGroup);
+        }
+
+        if (canvasGroup != null)
+        {
+            queuedFadeOutAlpha = Mathf.Clamp01(queuedFadeOutAlpha);
+
+            if (transitionPhase == TransitionPhase.WaitingToHide)
+            {
+                float elapsed = Time.unscaledTime - hideDelayStartedAt;
+                remainingHideDelay = Mathf.Max(0f, remainingHideDelay - elapsed);
+            }
+
+            hasSavedRuntimeState = true;
+        }
+    }
+
+    private void RestoreRuntimeState()
+    {
+        if (!hasSavedRuntimeState || objectiveUI == null || canvasGroup == null)
+        {
+            return;
+        }
+
+        if (!objectiveUI.activeSelf && canvasGroup.alpha > 0f)
+        {
+            objectiveUI.SetActive(true);
+        }
+
+        switch (transitionPhase)
+        {
+            case TransitionPhase.FadingIn:
+                showRoutine = StartCoroutine(FadeInUI(queuedFadeOutAlpha));
+                break;
+            case TransitionPhase.WaitingToHide:
+                hideRoutine = StartCoroutine(DelayedHide(queuedFadeOutAlpha, remainingHideDelay));
+                break;
+            case TransitionPhase.FadingOut:
+                hideRoutine = StartCoroutine(FadeOutUI(queuedFadeOutAlpha));
+                break;
+        }
+
+        hasSavedRuntimeState = false;
     }
 
     public bool IsVisible()
     {
-        return objectiveUI != null && canvasGroup != null && (canvasGroup.alpha > targetAlpha || objectiveUI.activeSelf);
+        return objectiveUI != null && canvasGroup != null && (canvasGroup.alpha > 0f || objectiveUI.activeSelf);
     }
 }
