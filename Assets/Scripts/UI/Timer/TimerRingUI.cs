@@ -124,7 +124,7 @@ public class TimerRingUI : MonoBehaviour
         }
         else
         {
-            Debug.LogError("No CharacterSwap found!");
+            //Debug.LogError("No CharacterSwap found!");
         }
     }
 

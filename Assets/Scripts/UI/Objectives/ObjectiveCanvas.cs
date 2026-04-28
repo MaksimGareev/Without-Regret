@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Linq;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -61,6 +62,24 @@ public class ObjectiveCanvas : MonoBehaviour
         }
 
         audioSource = GetComponent<AudioSource>();
+    }
+
+    private void Start()
+    {
+        if (SceneLoadManager.Instance)
+        {
+            SceneLoadManager.Instance.OnSceneLoaded.AddListener(OnSceneLoaded);
+        }
+    }
+
+    private void OnSceneLoaded()
+    {
+        if (SceneManager.GetActiveScene().name == "MainMenu") return;
+        
+        if (ObjectiveManager.Instance)
+        {
+            HandleObjectiveActivated(ObjectiveManager.Instance.GetActiveObjectives().FirstOrDefault());
+        }
     }
 
     private void OnEnable()
@@ -410,6 +429,14 @@ public class ObjectiveCanvas : MonoBehaviour
 
     public bool IsVisible()
     {
-        return objectiveUI != null && canvasGroup != null && (canvasGroup.alpha > 0f || objectiveUI.activeSelf);
+        return objectiveUI && canvasGroup && (canvasGroup.alpha > 0f || objectiveUI.activeSelf);
+    }
+
+    private void OnDestroy()
+    {
+        if (SceneLoadManager.Instance)
+        {
+            SceneLoadManager.Instance.OnSceneLoaded.RemoveListener(OnSceneLoaded);
+        }
     }
 }

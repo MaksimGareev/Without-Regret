@@ -853,6 +853,8 @@ public class CutsceneManager : MonoBehaviour
         
         // Wait rest of the duration before either auto continuing or showing the continue button
         yield return new WaitForSecondsRealtime(currentCutscene.clips[currentClipIndex].duration - 0.5f);
+        
+        if (!isCutscenePlaying) yield break;
 
         if (currentCutscene.clips[currentClipIndex].autoContinue)
         {

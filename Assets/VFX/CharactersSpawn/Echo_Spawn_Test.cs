@@ -16,10 +16,9 @@ public class Echo_Spawn_Test : MonoBehaviour
 
     void Start()
     {
-
         // start at 0
-        materialInstance.SetFloat("_NoiseAmnt", 0f);
-        materialInstance.SetFloat("_Outline", 0f);
+        materialInstance?.SetFloat("_NoiseAmnt", 0f);
+        materialInstance?.SetFloat("_Outline", 0f);
     }
 
     void Update()
@@ -35,8 +34,8 @@ public class Echo_Spawn_Test : MonoBehaviour
                 for (int i = 0; i < echoRenderers.Count; i++)
                 {
                     materialInstance = echoRenderers[i].materials[1];
-                    materialInstance.SetFloat("_NoiseAmnt", 0);
-                    materialInstance.SetFloat("_Outline", 1f);
+                    materialInstance?.SetFloat("_NoiseAmnt", 0);
+                    materialInstance?.SetFloat("_Outline", 1f);
                 }
                 initialPhase = false;
             }
@@ -52,7 +51,7 @@ public class Echo_Spawn_Test : MonoBehaviour
                     for (int i = 0; i < echoRenderers.Count; i++)
                     {
                         materialInstance = echoRenderers[i].materials[1];
-                        materialInstance.SetFloat("_Outline", 1 - value);
+                        materialInstance?.SetFloat("_Outline", 1 - value);
                     }
 
                     // once outline reaches 1, switch to noise phase
