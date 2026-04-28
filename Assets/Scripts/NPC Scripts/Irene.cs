@@ -72,12 +72,12 @@ public class Irene : MonoBehaviour
         {
             proximityScript.enabled = !shouldDisableInteraction;
         }
-
+        
         if (proximityCollider != null)
         {
             proximityCollider.enabled = !shouldDisableInteraction;
         }
-
+        
         if (IsFollowing)
         {
             Follow();

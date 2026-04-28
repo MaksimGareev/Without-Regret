@@ -5,7 +5,6 @@ public class RemoveDialogueTrigger : MonoBehaviour
     public ObjectiveData linkedObjective;
     public GameObject trigger1;
     public GameObject trigger2;
-    public GameObject trigger3;
     public GameObject Enemy;
     public NewDialogueTrigger DialogueTrigger;
 
@@ -13,7 +12,6 @@ public class RemoveDialogueTrigger : MonoBehaviour
     {
         trigger1.SetActive(false);
         trigger2.SetActive(false);
-        trigger3.SetActive(false);
         Enemy.SetActive(false);
     }
 
@@ -51,7 +49,6 @@ public class RemoveDialogueTrigger : MonoBehaviour
         
         trigger1.SetActive(false);
         trigger2.SetActive(false);
-        trigger3.SetActive(false);
         Enemy.SetActive(false);
     }
 }

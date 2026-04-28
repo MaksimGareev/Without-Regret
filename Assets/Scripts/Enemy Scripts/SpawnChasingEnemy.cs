@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class SpawnChasingEnemy : MonoBehaviour
 {
@@ -7,6 +8,7 @@ public class SpawnChasingEnemy : MonoBehaviour
     public bool hasPassed = false;
 
     public bool enableChimeHint;
+    public List<string> blockInteractionIfComplete = new List<string>();
 
     private void Start()
     {
@@ -19,7 +21,15 @@ public class SpawnChasingEnemy : MonoBehaviour
         if (hasPassed == false)
         {
             Enemy.SetActive(false);
-        }   
+        }
+
+        foreach (string id in blockInteractionIfComplete)
+        {
+            if (ObjectiveManager.Instance.IsObjectiveCompleted(id))
+            {
+                this.gameObject.SetActive(false);
+            }
+        }
     }
 
     private void OnTriggerEnter(Collider other)

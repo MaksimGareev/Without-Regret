@@ -63,6 +63,7 @@ MonoBehaviour:
   stopDistance: 0.5
   agent: {fileID: 1261743198065681055}
   animator: {fileID: 8591535358633633672}
+  startInConversation: 0
   npcName: Barry
 --- !u!54 &3980699319312927126
 Rigidbody:
@@ -148,7 +149,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b93d8170e88d8e34684424c0750fb15a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SaveableFriendlyNPC
-  uniqueID: 0f68128a-d07c-4ae8-8754-033ecc87c08e
+  uniqueID: 8155cdfa-3e52-4c59-84ec-00ce32ae9940
 --- !u!114 &33584142970360482
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -176,7 +177,10 @@ MonoBehaviour:
   journalEntry: {fileID: 0}
   objectiveIDsYouCareAbout: []
   linkedObjective: {fileID: 0}
+  blockInteractionIfActive: []
   focusCameraOnTrigger: 1
+  cameraMoveTo: {fileID: 0}
+  target: {fileID: 0}
   playerMovePoint: {fileID: 0}
   moveSpeed: 2
   lookSpeed: 6
@@ -186,6 +190,8 @@ MonoBehaviour:
   isLookingAtPlayer: 0
   enemy: {fileID: 0}
   RewardItem: {fileID: 0}
+  hasPlayed: 0
+  completed: 0
   triggerType: 0
 --- !u!114 &7272062635568098858
 MonoBehaviour:
