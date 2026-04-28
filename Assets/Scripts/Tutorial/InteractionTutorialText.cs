@@ -24,6 +24,9 @@ public static class InteractionTutorialText
             case InteractType.BossQTE:
                 return "Match the correct inputs to send a burst of energy at the boss and damage it";
 
+            case InteractType.Collectable:
+                return "Collectable journal pages can be found throughout the world and have different entries based upon current morality when they are picked up.  Press the Select button / tab key to open your journal and navigate to the collectable section to view them.";
+
             default:
                 return "";
         }
