@@ -40,28 +40,31 @@ public class InteractionTutorialManager : MonoBehaviour, ISaveable
     // Called by the save system to store save data
     public void SaveTo(SaveData data)
     {
+        /*
         List<InteractType> tutorialList = new List<InteractType>();
         
         foreach (InteractType type in shownTutorials)
         {
             tutorialList.Add(type);
         }
+        */
         // stores list in save data
-        data.shownTutorials = tutorialList;
+        data.shownTutorials = new List<InteractType>(shownTutorials);
     }
 
     // Called by the save system to restore save data
     public void LoadFrom(SaveData data)
     {
-        HashSet<InteractType> tutorialHashSet = new HashSet<InteractType>();
+        shownTutorials = new HashSet<InteractType>();
 
-        foreach (InteractType type in data.shownTutorials)
+        if (data.shownTutorials != null)
         {
-            tutorialHashSet.Add(type);
+            foreach (InteractType type in data.shownTutorials)
+            {
+                shownTutorials.Add(type);
+            }
         }
         
-        // Replace current data with loaded data
-        shownTutorials = tutorialHashSet;
     }
     
     private void RegisterAsSaveable()

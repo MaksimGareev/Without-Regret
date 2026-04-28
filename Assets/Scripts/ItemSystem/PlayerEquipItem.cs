@@ -66,6 +66,20 @@ public class PlayerEquipItem : MonoBehaviour
 
         throwableEquipped = itemToEquip != null && itemToEquip.ItemType == ItemType.ThrowableItem;
         // Show tutorial for first time interaction
+        
+        if (throwableEquipped && InteractionTutorialManager.Instance != null && !InteractionTutorialManager.Instance.HasSeenTutorial(InteractType.Throwable) && InteractionTutorialUI.Instance != null)
+        {
+            InteractionTutorialManager.Instance.MarkTutorialSeen(InteractType.Throwable);
+
+            if (toggleInventoryUI != null)
+            {
+                toggleInventoryUI.ToggleInventory();
+            }
+
+            InteractionTutorialUI.Instance.ShowTutorial(InteractType.Throwable,
+                "Hold the Right trigger / Right mouse button to aim your equiped throwable object.Follow the indicator to know where the throwable item will land.  Holding the charge longer will result in a more direct throw.");
+        }
+        /*
         if (!tutorialShown && InteractionTutorialUI.Instance != null && itemToEquip.ItemType == ItemType.ThrowableItem)
         {
             tutorialShown = true;
@@ -78,7 +92,7 @@ public class PlayerEquipItem : MonoBehaviour
                 return;
             }
         }
-
+        */
 
         grabbableEquipped = itemToEquip != null && itemToEquip.ItemType == ItemType.GrabbableItem;
         EquippableItemEquipped = itemToEquip != null && itemToEquip.ItemType == ItemType.EquippableItem;
