@@ -121,6 +121,12 @@ public class InputDeviceManager : MonoBehaviour
         
         playerMap.Enable();
         Debug.LogWarning("Player Input was not active outside of UI, re-enabling it now.");
+        
+        var pauseAction = playerMap.FindAction("Pause");
+        var journalAction = playerMap.FindAction("Journal");
+        
+        if (pauseAction != null && !pauseAction.enabled) pauseAction.Enable();
+        if (journalAction != null && !journalAction.enabled) journalAction.Enable();
     }
 
     private bool TryGetInputMode(InputEventPtr eventPtr, InputDevice device, out InputMode mode)
