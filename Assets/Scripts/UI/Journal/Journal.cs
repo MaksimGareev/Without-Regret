@@ -953,9 +953,10 @@ public class Journal : MonoBehaviour, ISaveable
 
     private void SetPlayerInputEnabled(bool enabled)
     {
-        if (player == null)
+        if (!player)
         {
-            if (!GameObject.FindGameObjectWithTag("Player").TryGetComponent<PlayerController>(out player))
+            var go = GameObject.FindGameObjectWithTag("Player");
+            if (!go || !go.TryGetComponent<PlayerController>(out player))
             {
                 return;
             }

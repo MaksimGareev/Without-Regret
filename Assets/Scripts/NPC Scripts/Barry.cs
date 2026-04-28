@@ -125,6 +125,8 @@ public class Barry : MonoBehaviour
         {
             dialogueTrigger.isLookingAtPlayer = false;
         }
+
+        if (!agent.enabled || !agent.isOnNavMesh) return;
         
         agent.SetDestination(targetSpot.position);
         Debug.Log("Barry is now traveling to her destination");
@@ -157,7 +159,7 @@ public class Barry : MonoBehaviour
         }
 
         // Stop when close to target destination
-        if (!agent.pathPending && agent.remainingDistance <= stopDistance)
+        if (agent.enabled && !agent.pathPending && agent.remainingDistance <= stopDistance)
         {
             isTraveling = false;
             arrived = true;

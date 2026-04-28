@@ -21,43 +21,65 @@ public class DarryNeighborhood : MonoBehaviour
     // objectives
     [SerializeField] ObjectiveData linkedHouseObjective;
     [SerializeField] ObjectiveData linkedNeighborhoodObjective;
+    
+    [Tooltip("The objective that should cause the intruder triggers to spawn when it becomes complete.")]
+    [SerializeField] private ObjectiveData mediationObjective;
+    
+    private bool triggersActivated = false;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        IntruderTrigger.SetActive(false);
+        if (!CheckIfObjectiveComplete())
+        {
+            IntruderTrigger.SetActive(false);
+            triggersActivated = false;
+        }
+        else
+        {
+            IntruderTrigger.SetActive(true);
+            triggersActivated = true;
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (isTraveling)
+        if (!triggersActivated && mediationObjective && CheckIfObjectiveComplete())
         {
-            TravelToTarget();
-            bool isMoving = agent.velocity.sqrMagnitude > 0.05f;
-
-            if (animator)
-            {
-                animator.SetBool("isWalking", isMoving);
-                animator.SetBool("isIdle", !isMoving);
-            }
-
-
-            if (IntruderTrigger != null)
-            {
-                IntruderTrigger.SetActive(true);
-            }
-            else
-            {
-                Debug.Log("Intruder trigger is still inactive");
-            }
+            IntruderTrigger.SetActive(true);
+            triggersActivated = true;
         }
+        
+        if (!isTraveling) return;
+        
+        TravelToTarget();
+        bool isMoving = agent.velocity.sqrMagnitude > 0.05f;
+
+        if (animator)
+        {
+            animator.SetBool("isWalking", isMoving);
+            animator.SetBool("isIdle", !isMoving);
+        }
+        
         /*else if (arrived && lookAtTarget != null)
         {
             LookAtObject();
         }*/
-
     }
+
+    private bool CheckIfObjectiveComplete()
+    {
+        if (!mediationObjective) return false;
+
+        if (ObjectiveManager.Instance)
+        {
+            return ObjectiveManager.Instance.IsObjectiveCompleted(mediationObjective.objectiveID);
+        }
+
+        return false;
+    }
+    
     public void StartTravel()
     {
         //IsFollowing = false;

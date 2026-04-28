@@ -2,18 +2,19 @@ using UnityEngine;
 
 public class RemoveDialogueTrigger : MonoBehaviour
 {
-    public string linkedObjectiveID;
-    private ObjectiveManager objectiveManager;
+    public ObjectiveData linkedObjective;
     public GameObject trigger1;
     public GameObject trigger2;
     public GameObject trigger3;
     public GameObject Enemy;
     public NewDialogueTrigger DialogueTrigger;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Awake()
+    private void Start()
     {
-        objectiveManager = ObjectiveManager.Instance;
+        trigger1.SetActive(false);
+        trigger2.SetActive(false);
+        trigger3.SetActive(false);
+        Enemy.SetActive(false);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -37,14 +38,20 @@ public class RemoveDialogueTrigger : MonoBehaviour
         RemoveGameobjects();
     }
 
+    private bool CheckIfObjectiveActive()
+    {
+        if (!linkedObjective || !ObjectiveManager.Instance) return false;
+        
+        return ObjectiveManager.Instance.IsObjectiveActive(linkedObjective.objectiveID);
+    }
+
     public void RemoveGameobjects()
     {
-        if (DialogueTrigger.completed && DialogueTrigger != null)
-        {
-            trigger1.SetActive(false);
-            trigger2.SetActive(false);
-            trigger3.SetActive(false);
-            Enemy.SetActive(false);
-        }
+        if ((!DialogueTrigger || !DialogueTrigger.completed) && CheckIfObjectiveActive()) return;
+        
+        trigger1.SetActive(false);
+        trigger2.SetActive(false);
+        trigger3.SetActive(false);
+        Enemy.SetActive(false);
     }
 }
