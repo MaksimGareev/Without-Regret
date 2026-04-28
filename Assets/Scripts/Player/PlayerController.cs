@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour, ISaveable
     [Header("Animator settings")]
     public Animator Animator;
     private CharacterSwap characterSwap;
+    public bool isWorried;
 
 
     [Header("Chime Animation settings")]
@@ -278,6 +279,10 @@ public class PlayerController : MonoBehaviour, ISaveable
 
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.H)) //Temporary for testing
+        {
+            SetWorriedState(true);
+        }
         if (DialogueActive)
         {
             moveInput = Vector2.zero;
@@ -926,6 +931,11 @@ public class PlayerController : MonoBehaviour, ISaveable
     public void EnableInput() // for enabling/unfreezing the player throughout other scripts
     {
         controls.Enable();
+    }
+
+    public void SetWorriedState(bool worried)
+    {
+        Animator.SetBool("isWorried", worried);
     }
 
     private void ResetAnimations()
