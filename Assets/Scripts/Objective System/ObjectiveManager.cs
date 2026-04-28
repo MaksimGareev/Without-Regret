@@ -312,12 +312,14 @@ public class ObjectiveManager : MonoBehaviour, ISaveable
         OnObjectiveCompleted.Invoke(objective);
 
         ObjectiveData data = objective.data;
+        /*
         if (data.cameraShake)
         {
             // Shake the camera
             if (Camera.main.TryGetComponent<CameraMovement>(out var cam)) 
                 cam.Shake(data.cameraShakeDuration, data.cameraShakeMagnitude, data.cameraShakeFrequency);
         }
+        */
 
         Debug.Log($"Objective '{data.title}' completed!");
 
