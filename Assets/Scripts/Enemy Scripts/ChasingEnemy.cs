@@ -223,6 +223,16 @@ public class ChasingEnemy : MonoBehaviour
         }
     }
 
+    public void isKnocking(bool knock) // For enemy knocking animation, set true to start knocking animation, and call as false when enemy should stop knocking
+    {
+        if (knock == true)
+        {
+            animator.SetTrigger("Knock");
+        }
+        animator.SetBool("isKnocking", knock);
+    }
+
+
     /* IEnumerator PursuitCooldown()
      {
          yield return new WaitForSeconds(PursuitTimer);
