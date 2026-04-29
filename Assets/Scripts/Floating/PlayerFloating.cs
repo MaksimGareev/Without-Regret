@@ -348,6 +348,11 @@ public class PlayerFloating : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (canFloat && !IsFloating && !IsCoolingDown && UIFadeController.Instance)
+        {
+            UIFadeController.Instance?.ShowUI();
+        }
+        
         if (IsFloating)
         {
             ApplyFloatPhysics();
