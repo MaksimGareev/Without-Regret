@@ -61,8 +61,8 @@ public class BossEnemyController : MonoBehaviour
     [Tooltip("The enemy prefab used for spawning")]
     [SerializeField] GameObject enemyPrefab;
     
-    [Tooltip("The visual model of the boss")]
-    [SerializeField] GameObject model;
+    // [Tooltip("The visual model of the boss")]
+    // [SerializeField] GameObject model;
 
     [Tooltip("The hitbox component attached to the cleaver")]
     [SerializeField] Hitbox cleaverHitbox;

@@ -1123,7 +1123,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 8846b4174e9ff69478248538f146dd6d, type: 2}
+  - {fileID: 2100000, guid: aaa3b062b05f8564694f2bd4ef45d3bf, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1679,7 +1679,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 7487988799032684065}
   - {fileID: 3124144539760143426}
@@ -2790,7 +2790,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: aa47e92d516f9024aac2e670f1e663cd, type: 2}
+  - {fileID: 2100000, guid: aaa3b062b05f8564694f2bd4ef45d3bf, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -3450,7 +3450,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &4623343863141540300
 Transform:
   m_ObjectHideFlags: 0
@@ -3461,8 +3461,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0.000000029759, y: 0, z: 0.0000000033987}
-  m_LocalScale: {x: 1.5215, y: 0.05250088, z: 1.5215}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 0.13, y: 0.00448578, z: 0.13}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 7919601575018993577}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3818,7 +3818,7 @@ Transform:
   m_GameObject: {fileID: 6309504268384552789}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.032999847, y: 0.44099998, z: 0.28699863}
+  m_LocalPosition: {x: 0.032999847, y: 0.72, z: 0.212}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4325,7 +4325,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1335100790802403418
 Transform:
   m_ObjectHideFlags: 0
@@ -4887,7 +4887,6 @@ GameObject:
   m_Component:
   - component: {fileID: 6583842094603749823}
   - component: {fileID: 1518402119840012159}
-  - component: {fileID: 5493925449635537695}
   - component: {fileID: 2774413853831147891}
   - component: {fileID: 7441966102985826961}
   - component: {fileID: 7872790047243463844}
@@ -4909,8 +4908,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0.9983843, z: 0, w: 0.056823563}
   m_LocalPosition: {x: 0.4902, y: 2.55, z: 1.2}
-  m_LocalScale: {x: 1.99, y: 1.99, z: 1.99}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 86, y: 86, z: 86}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 5872583239573963369}
   - {fileID: 7919601575018993577}
@@ -4926,28 +4925,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7790211378159208611}
   m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
---- !u!195 &5493925449635537695
-NavMeshAgent:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7790211378159208611}
-  m_Enabled: 1
-  m_AgentTypeID: 0
-  m_Radius: 0.5
-  m_Speed: 3.5
-  m_Acceleration: 8
-  avoidancePriority: 50
-  m_AngularSpeed: 120
-  m_StoppingDistance: 0
-  m_AutoTraverseOffMeshLink: 1
-  m_AutoBraking: 1
-  m_AutoRepath: 1
-  m_Height: 2
-  m_BaseOffset: 1
-  m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 4
 --- !u!54 &2774413853831147891
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -5014,7 +4991,7 @@ MonoBehaviour:
   - Name: Phase 1
     Health: 1
     DelayBeforeStarting: 1.5
-    LoopActions: 0
+    LoopActions: 1
     Actions:
     - Name: Phase 1 Void Attack 1
       ActionType: 0
@@ -5035,7 +5012,7 @@ MonoBehaviour:
         m_PersistentCalls:
           m_Calls: []
   - Name: Phase 2
-    Health: 3
+    Health: 1
     DelayBeforeStarting: 1.5
     LoopActions: 1
     Actions:
@@ -5049,12 +5026,21 @@ MonoBehaviour:
         m_PersistentCalls:
           m_Calls: []
   - Name: Phase 3
-    Health: 3
+    Health: 1
     DelayBeforeStarting: 1.5
     LoopActions: 1
     Actions:
     - Name: Phase 3 Void Attack
       ActionType: 0
+      DelayUntilNextAction: 3
+      OnActionStart:
+        m_PersistentCalls:
+          m_Calls: []
+      OnActionEnd:
+        m_PersistentCalls:
+          m_Calls: []
+    - Name: Phase 3 Void Attack
+      ActionType: 1
       DelayUntilNextAction: 3
       OnActionStart:
         m_PersistentCalls:
@@ -5078,7 +5064,6 @@ MonoBehaviour:
   knifeAttackDuration: 2
   player: {fileID: 0}
   enemyPrefab: {fileID: 3086140246574635878, guid: 50418b5f2ca51554fb6c711361357d5e, type: 3}
-  model: {fileID: 163876696412008605}
   cleaverHitbox: {fileID: 1133556166685655450}
   voidProjectileObject: {fileID: 8576361245306014099}
   voidProjectileShadow: {fileID: 5526071831593837006}
@@ -5109,7 +5094,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 727d450d967b611488a6dcd8682903f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SaveableBossEnemy
-  uniqueID: 0b5f4559-8fe6-43e2-a629-5e0975408985
+  uniqueID: 8014e7cd-61bc-4857-8e15-318ac8add2fe
 --- !u!1 &7808760994735140927
 GameObject:
   m_ObjectHideFlags: 0
@@ -5423,7 +5408,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 8846b4174e9ff69478248538f146dd6d, type: 2}
+  - {fileID: 2100000, guid: aaa3b062b05f8564694f2bd4ef45d3bf, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -5557,7 +5542,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 8846b4174e9ff69478248538f146dd6d, type: 2}
+  - {fileID: 2100000, guid: aaa3b062b05f8564694f2bd4ef45d3bf, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -5879,7 +5864,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 8846b4174e9ff69478248538f146dd6d, type: 2}
+  - {fileID: 2100000, guid: aaa3b062b05f8564694f2bd4ef45d3bf, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -5958,8 +5943,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.998384, z: -0, w: 0.056827772}
   m_LocalPosition: {x: -3.674841, y: -0.3718593, z: 0.549581}
-  m_LocalScale: {x: 0.50251245, y: 0.5025126, z: 0.50251245}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 0.04, y: 0.04, z: 0.04}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 7919601575018993577}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -6329,7 +6314,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: aa47e92d516f9024aac2e670f1e663cd, type: 2}
+  - {fileID: 2100000, guid: aaa3b062b05f8564694f2bd4ef45d3bf, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -6575,7 +6560,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: f5c463ab78505d54685741243530eb4d, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.04333473
+      value: 0.06
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: f5c463ab78505d54685741243530eb4d, type: 3}
       propertyPath: m_LocalScale.z
@@ -6583,15 +6568,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: f5c463ab78505d54685741243530eb4d, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.454
+      value: -0.589
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: f5c463ab78505d54685741243530eb4d, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.33
+      value: -0.391
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: f5c463ab78505d54685741243530eb4d, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.212
+      value: -0.266
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: f5c463ab78505d54685741243530eb4d, type: 3}
       propertyPath: m_LocalRotation.w
@@ -6624,7 +6609,11 @@ PrefabInstance:
     - target: {fileID: -7511558181221131132, guid: f5c463ab78505d54685741243530eb4d, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: f213559a64338ba4e9863b954b448c8b, type: 2}
+      objectReference: {fileID: 2100000, guid: aaa3b062b05f8564694f2bd4ef45d3bf, type: 2}
+    - target: {fileID: -425565630206218756, guid: f5c463ab78505d54685741243530eb4d, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: aaa3b062b05f8564694f2bd4ef45d3bf, type: 2}
     - target: {fileID: 919132149155446097, guid: f5c463ab78505d54685741243530eb4d, type: 3}
       propertyPath: m_Name
       value: Cleaver
@@ -6677,7 +6666,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 14.010633, y: 16.830837, z: 40.881084}
+  m_Size: {x: 10.5, y: 15.5, z: 7.4}
   m_Center: {x: 2.5211055, y: -4.497759, z: 0.25607514}
 --- !u!4 &839601834899025242 stripped
 Transform:
