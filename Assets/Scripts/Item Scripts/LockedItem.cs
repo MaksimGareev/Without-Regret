@@ -112,11 +112,21 @@ public class LockedItem : MonoBehaviour, IInteractable
         if (mantling != null && mantling.isMantling)
             return false;
 
+        if (!CheckIfObjectiveActive())
+        {
+            return false;
+        }
+
         return true;
     }
 
     public void OnPlayerInteraction(GameObject player)
     {
+        if (!CheckIfObjectiveActive())
+        {
+            return;
+        }
+        
         // Only try interaction if player is in range
         if (isInRange && !hasBeenLockpicked)
         {
@@ -124,9 +134,20 @@ public class LockedItem : MonoBehaviour, IInteractable
         }
     }
 
+    private bool CheckIfObjectiveActive()
+    {
+        if (!(needsObjective && linkedObjective) || !ObjectiveManager.Instance) return true;
+        
+        return ObjectiveManager.Instance.IsObjectiveActive(linkedObjective.objectiveID);
+    }
+
     private void TryInteract()
     {
-        if (!isInRange || GameManager.Instance.LockPickUI == null || hasBeenLockpicked || !player.gameObject.GetComponent<Inventory>().keyItems.Any(x => x.ItemName == "Lock Pick")) return;
+        if (!isInRange 
+            || GameManager.Instance.LockPickUI == null 
+            || hasBeenLockpicked 
+            || !player.gameObject.GetComponent<Inventory>().keyItems.Any(x => x.ItemName == "Lock Pick") 
+            || !CheckIfObjectiveActive()) return;
 
         StartLockPick();
     }
