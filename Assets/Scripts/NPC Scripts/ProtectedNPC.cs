@@ -39,7 +39,7 @@ public class ProtectedNPC : MonoBehaviour
         {
             if (animator != null)
             {
-                animator.SetTrigger("Jump");
+                JumpAnimation();
                 animator.SetBool("isWalking", false);
                 animator.SetBool("isIdle", false);
 
@@ -90,5 +90,11 @@ public class ProtectedNPC : MonoBehaviour
             }      
         }
         
+    }
+
+    private void JumpAnimation()
+    {
+        animator.SetTrigger("Jump");
+        Debug.Log("Jumped");
     }
 }
