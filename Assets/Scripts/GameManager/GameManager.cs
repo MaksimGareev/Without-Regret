@@ -161,9 +161,9 @@ public class GameManager : MonoBehaviour
     }
 
     // Disables child objects that aren't needed when in the main menu, enables them in other levels if not already
-    private void ToggleChildrenActive()
+    public void ToggleChildrenActive()
     {
-        if (currentSceneName == "MainMenu")
+        if (currentSceneName == "MainMenu" || currentSceneName == "Credits")
         {
             if (gameOverManager != null && gameOverManager.activeSelf)
                 gameOverManager.SetActive(false);

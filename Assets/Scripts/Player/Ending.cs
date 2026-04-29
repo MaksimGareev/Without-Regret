@@ -24,15 +24,18 @@ public class Ending : MonoBehaviour
 
         // start below the screen
         rectTransform.anchoredPosition = new Vector2(0, -Screen.height *0.5f);
+        
+        DisableOtherCanvases();
     }
 
     private void Update()
     {
         if (finished || !rectTransform)
         {
-            DisableOtherCanvases();
             return;
         }
+        
+        DisableOtherCanvases();
 
         rectTransform.anchoredPosition += Vector2.up * scrollSpeed * Time.deltaTime;
 
@@ -40,7 +43,6 @@ public class Ending : MonoBehaviour
         {
             finished = true;
             StartCoroutine(LoadMainMenu());
-            EnableOtherCanvases();
         }
     }
 
