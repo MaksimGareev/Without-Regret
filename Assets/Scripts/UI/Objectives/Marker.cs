@@ -72,6 +72,6 @@ public class Marker : MonoBehaviour
     public void TurnOffMarker()
     {
         target = null;
-        onScreenIndicator.SetActive(false);
+        onScreenIndicator?.SetActive(false);
     } 
 }

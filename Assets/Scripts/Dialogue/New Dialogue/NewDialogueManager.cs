@@ -331,6 +331,8 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
         npcNameText.text = dialogue.npcName;
         cam.SetCameraInputEnabled(false);
 
+        DisableOtherCanvases();
+
         DialogueIsActive = true;
 
         // set player controler to dialogue
@@ -361,6 +363,93 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
         }
 
         ShowLine();
+    }
+
+    private void DisableOtherCanvases()
+    {
+        if (!GameManager.Instance) return;
+
+        if (GameManager.Instance.mainCanvas && GameManager.Instance.mainCanvas.activeSelf)
+        {
+            GameManager.Instance.mainCanvas.SetActive(false);
+        }
+
+        if (GameManager.Instance.interactionIconsCanvas && GameManager.Instance.interactionIconsCanvas.activeSelf)
+        {
+            GameManager.Instance.interactionIconsCanvas.SetActive(false);
+        }
+
+        if (GameManager.Instance.journalUI && GameManager.Instance.journalUI.activeSelf)
+        {
+            GameManager.Instance.journalUI.SetActive(false);
+        }
+
+        if (GameManager.Instance.playerUICanvas && GameManager.Instance.playerUICanvas.activeSelf)
+        {
+            GameManager.Instance.playerUICanvas.SetActive(false);
+        }
+
+        if (GameManager.Instance.gameOverCanvas && GameManager.Instance.gameOverCanvas.activeSelf)
+        {
+            GameManager.Instance.gameOverCanvas.SetActive(false);
+        }
+
+        if (GameManager.Instance.objectivePanel && GameManager.Instance.objectivePanel.activeSelf)
+        {
+            GameManager.Instance.objectivePanel.SetActive(false);
+        }
+        
+        if (GameManager.Instance.qteCanvas && GameManager.Instance.qteCanvas.activeSelf)
+        {
+            GameManager.Instance.qteCanvas.SetActive(false);
+        }
+        
+        BossEnemyController boss = FindFirstObjectByType<BossEnemyController>();
+        if (boss && boss.slidersContainer)
+        {
+            boss.slidersContainer.gameObject.SetActive(false);
+        }
+    }
+
+    private void EnableOtherCanvases()
+    {
+        if (!GameManager.Instance) return;
+
+        if (GameManager.Instance.mainCanvas && !GameManager.Instance.mainCanvas.activeSelf)
+        {
+            GameManager.Instance.mainCanvas.SetActive(true);
+        }
+
+        if (GameManager.Instance.interactionIconsCanvas && !GameManager.Instance.interactionIconsCanvas.activeSelf)
+        {
+            GameManager.Instance.interactionIconsCanvas.SetActive(true);
+        }
+
+        if (GameManager.Instance.playerUICanvas && !GameManager.Instance.playerUICanvas.activeSelf)
+        {
+            GameManager.Instance.playerUICanvas.SetActive(true);
+        }
+
+        if (GameManager.Instance.gameOverCanvas && !GameManager.Instance.gameOverCanvas.activeSelf)
+        {
+            GameManager.Instance.gameOverCanvas.SetActive(GameOverManager.Instance.IsGameOver);
+        }
+
+        if (GameManager.Instance.objectivePanel && !GameManager.Instance.objectivePanel.activeSelf)
+        {
+            GameManager.Instance.objectivePanel.SetActive(GameManager.Instance.objectiveCanvas.IsVisible());
+        }
+        
+        if (GameManager.Instance.qteCanvas && !GameManager.Instance.qteCanvas.activeSelf)
+        {
+            GameManager.Instance.qteCanvas.SetActive(true);
+        }
+        
+        BossEnemyController boss = FindFirstObjectByType<BossEnemyController>();
+        if (boss && boss.slidersContainer)
+        {
+            boss.slidersContainer.gameObject.SetActive(true);
+        }
     }
 
     IEnumerator ClearStartFlag()
@@ -1066,6 +1155,8 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
         continueArrow.SetActive(false);
         dialoguePanel.SetActive(false);
         playerPortrait.gameObject.SetActive(false);
+        
+        EnableOtherCanvases();
 
         if (playerController != null)
         {
