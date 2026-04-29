@@ -16,20 +16,143 @@ MonoBehaviour:
   dialogueLines:
   - LineID: Start
     Speaker: Echo
-    text: ...Weird dream.
+    text: ...Wha...what was that?!...why.
+    lineTone: 2
+    NPCGender: 
+    NextLineID: IreneKnock
+    endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
+    ShakeCamera: 0
+    playSFXOnstart: 0
+    SFX: {fileID: 0}
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
+    choices: []
+    objectivesToActivate: []
+  - LineID: IreneKnock
+    Speaker: Irene
+    text: 'Echo!...Echo! '
+    lineTone: 2
+    NPCGender: Female
+    NextLineID: IreneKnockTwo
+    endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
+    ShakeCamera: 0
+    playSFXOnstart: 1
+    SFX: {fileID: 8300000, guid: 3ba3cccf8a94c8d48a011bcd3dca84b1, type: 3}
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
+    choices: []
+    objectivesToActivate:
+    - grabBackpack
+  - LineID: IreneKnockTwo
+    Speaker: Irene
+    text: 'Come on, Echo! I''ve been waiting outside for you for a while now. Lets
+      go before it gets too late in the day. '
+    lineTone: 0
+    NPCGender: 
+    NextLineID: Silence
+    endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
+    ShakeCamera: 0
+    playSFXOnstart: 0
+    SFX: {fileID: 0}
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
+    choices: []
+    objectivesToActivate:
+    - grabBackpack
+  - LineID: Silence
+    Speaker: Echo
+    text: ...
+    lineTone: 0
+    NPCGender: 
+    NextLineID: IreneKnockThree
+    endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
+    ShakeCamera: 0
+    playSFXOnstart: 0
+    SFX: {fileID: 0}
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
+    choices: []
+    objectivesToActivate:
+    - grabBackpack
+  - LineID: IreneKnockThree
+    Speaker: Irene
+    text: '...I know life has been harder...since we lost her. But we have to do
+      this, Echo. If it were me, I would want my closest friends to see me too. '
+    lineTone: 0
+    NPCGender: 
+    NextLineID: EchoResponse
+    endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
+    ShakeCamera: 0
+    playSFXOnstart: 0
+    SFX: {fileID: 0}
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
+    choices: []
+    objectivesToActivate:
+    - grabBackpack
+  - LineID: EchoResponse
+    Speaker: Echo
+    text: 'Ok...I''ll be right out. '
     lineTone: 0
     NPCGender: 
     NextLineID: Grab Backpack
     endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
+    ShakeCamera: 0
+    playSFXOnstart: 0
+    SFX: {fileID: 0}
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
     choices: []
-    objectivesToActivate: []
+    objectivesToActivate:
+    - grabBackpack
   - LineID: Grab Backpack
     Speaker: Echo
-    text: What's the time...gotta grab my stuff, Irene's probably outside.
+    text: 'Gosh what''s the time...gotta grab my stuff. I can''t keep Irene waiting,
+      especially today. '
     lineTone: 0
     NPCGender: 
     NextLineID: 
     endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
+    ShakeCamera: 0
+    playSFXOnstart: 0
+    SFX: {fileID: 0}
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
     choices: []
     objectivesToActivate:
     - grabBackpack
