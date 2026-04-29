@@ -91,7 +91,6 @@ public class SceneLoadManager : MonoBehaviour
         {
             CutsceneManager.Instance.StartCutscene(cutsceneToPlay);
             
-            
             while (CutsceneManager.Instance.isCutscenePlaying)
             {
                 yield return null;

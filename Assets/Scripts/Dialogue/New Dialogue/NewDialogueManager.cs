@@ -611,7 +611,7 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
         {
             if (currentLine.movingOn)
             {
-                activeDialogueTrigger.MovingOn();
+                StartCoroutine(activeDialogueTrigger.MovingOn());
             }
             HandleNPCMovementsAfterLine();
             EndDialogue();

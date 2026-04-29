@@ -15,6 +15,7 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
     public Animator animator;
     public bool isTalking = false;
     private Coroutine talkRoutine;
+    
     [Header("Chime Animation")]
     [Tooltip("Animator used for chime")]
     public Animator chimeAnimator;
@@ -33,10 +34,13 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
     [Header("Dialogue Files")]
     [Tooltip("Scriptable dialogue object that will be loaded on the players first interaction with a NPC or used for the story dialogue trigger")]
     public NewDialogueData startDialogueFile;
+    
     [Tooltip("Scriptable dialogue object that will be loaded if the player interacts with the NPC and they do not have a objective they care about")]
     public NewDialogueData talkedDialogueFile;
+    
     [Tooltip("Scriptable dialogue object that will be loaded when the player interacts with the NPC with the objective they care about being active")]
     public NewDialogueData taskActiveDialogueFile;
+    
     [Tooltip("Scriptable dialogue object that will be loaded when the player interacts with the NPC after completing the objective they care about")]
     public NewDialogueData taskCompleteDialogueFile;
 
@@ -45,6 +49,7 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
     [Header("Name and chat Range")]
     [Tooltip("The name of the trigger (in the dialogue manager this is changed to the Speaker variable within the scriptable object, this can be used to trigger specific events)")]
     public string NPCName = "Friendly NPC";
+    
     [Tooltip("How far away the player must be to interact with the NPC")]
     public float chatRange = 3f;
     
@@ -56,6 +61,7 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
     [Tooltip("This is a list of objective IDs that need to be completed in order to get the objectives complete dialogue file to be played when interacting with the NPC")]
     public List<string> objectiveIDsYouCareAbout = new List<string>();
     public ObjectiveData linkedObjective;
+    
     [Tooltip("This is a list of objective IDs that will make the NPC not be able to be interacted with")]
     public List<string> blockInteractionIfActive = new List<string>();
 
@@ -71,6 +77,10 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
 
     [Tooltip("A bool that is used to identify if a dialogue interaction is a mediation making the NPC not look at the player")]
     public bool IsMediation = false;
+    
+    [Header("Cutscene")]
+    [Tooltip("The cutscene to play on ending this dialogue")]
+    [SerializeField] private CutsceneData cutscene;
 
     [Header("MovingOnVfx")]
     [SerializeField] private MovingOn movingOn;
@@ -756,9 +766,19 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
     }
 
     // Triggers moving on VFX played when dialogue corresponds to NPC moving on
-    public void MovingOn()
+    public IEnumerator MovingOn()
     {
-        if (movingOn != null)
+        if (cutscene && CutsceneManager.Instance)
+        {
+            CutsceneManager.Instance.StartCutscene(cutscene);
+
+            while (CutsceneManager.Instance.isCutscenePlaying)
+            {
+                yield return null;
+            }
+        }
+        
+        if (movingOn)
         {
             movingOn.StartMoving();
         }
