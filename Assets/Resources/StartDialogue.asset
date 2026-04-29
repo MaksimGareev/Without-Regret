@@ -16,7 +16,7 @@ MonoBehaviour:
   dialogueLines:
   - LineID: Start
     Speaker: Echo
-    text: ...Wha...what was that?!...why.
+    text: ...what an awful dream...
     lineTone: 2
     NPCGender: 
     NextLineID: IreneKnock
@@ -35,7 +35,7 @@ MonoBehaviour:
     objectivesToActivate: []
   - LineID: IreneKnock
     Speaker: Irene
-    text: 'Echo!...Echo! '
+    text: 'Echo? Echo! '
     lineTone: 2
     NPCGender: Female
     NextLineID: IreneKnockTwo
@@ -55,8 +55,8 @@ MonoBehaviour:
     - grabBackpack
   - LineID: IreneKnockTwo
     Speaker: Irene
-    text: 'Come on, Echo! I''ve been waiting outside for you for a while now. Lets
-      go before it gets too late in the day. '
+    text: Come on, Echo! I've been waiting outside for a while now. Let's go, we're
+      burning daylight!
     lineTone: 0
     NPCGender: 
     NextLineID: Silence
@@ -96,8 +96,9 @@ MonoBehaviour:
     - grabBackpack
   - LineID: IreneKnockThree
     Speaker: Irene
-    text: '...I know life has been harder...since we lost her. But we have to do
-      this, Echo. If it were me, I would want my closest friends to see me too. '
+    text: Echo...I know things have been hard for you lately...but this'll be good
+      for you, Echo. For us. I know I'd want my closest friends to visit, if it were
+      me.
     lineTone: 0
     NPCGender: 
     NextLineID: EchoResponse
@@ -117,7 +118,7 @@ MonoBehaviour:
     - grabBackpack
   - LineID: EchoResponse
     Speaker: Echo
-    text: 'Ok...I''ll be right out. '
+    text: ...Okay, I'll be right out.
     lineTone: 0
     NPCGender: 
     NextLineID: Grab Backpack
@@ -137,8 +138,7 @@ MonoBehaviour:
     - grabBackpack
   - LineID: Grab Backpack
     Speaker: Echo
-    text: 'Gosh what''s the time...gotta grab my stuff. I can''t keep Irene waiting,
-      especially today. '
+    text: Gotta grab my stuff, can't keep Irene waiting longer than she already has.
     lineTone: 0
     NPCGender: 
     NextLineID: 
