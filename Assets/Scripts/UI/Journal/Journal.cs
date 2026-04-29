@@ -873,11 +873,21 @@ public class Journal : MonoBehaviour, ISaveable
         {
             collectibleNamesList.Add(name);
             collectibleDictionary.Add(name, description);
+            
+            StartCoroutine(CollectableAddedPopUp(name));
 
             if (showDebugLogs) Debug.Log($"Added collectible entry for {name} in the journal with description \"{description}.\"");
         }
 
         RefreshCollectibles();
+    }
+    
+    private IEnumerator CollectableAddedPopUp(string title)
+    {
+        GameManager.Instance.inventoryPopupText.text = "Collectable added to Journal: " + title;
+        GameManager.Instance.inventoryPopupText.gameObject.SetActive(true);
+        yield return new WaitForSecondsRealtime(1.5f);
+        GameManager.Instance.inventoryPopupText.gameObject.SetActive(false);
     }
 
     private void RefreshCharacters()
