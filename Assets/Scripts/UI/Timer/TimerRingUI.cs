@@ -168,6 +168,19 @@ public class TimerRingUI : MonoBehaviour
 
     public bool SubtractRingSection(int sections)
     {
+        if (characterSwap == null)
+        {
+            characterSwap = FindFirstObjectByType<CharacterSwap>();
+
+            if (characterSwap != null)
+            {
+                animator = characterSwap.GetAnimator();
+
+                characterSwap.onAnimatorChanged += UpdateAnimator;
+            }
+        }
+
+        animator.SetTrigger("takenDamage");
         if (!canTakeDamage) return false;
         
         for (int i = 0; i < sections; i++)
