@@ -25,6 +25,9 @@ public class MoveableObjectPlacement : MonoBehaviour
     [Tooltip("Whether to add progress to the linked objective when the player places a moveable object in this slot.")]
     [SerializeField] private bool addProgress;
     
+    [Tooltip("Whether to trigger a game save when the moveable object is placed in this slot")]
+    [SerializeField] private bool saveOnPlacement = true;
+    
     [Tooltip("Whether to rebuild the NavMesh after placing the moveable object in this slot. Leave this unchecked if the moveable object is not an obstacle that NPCs need to navigate around or on, to save on performance.")]
     [SerializeField] private bool rebuildNavMesh = false;
     
@@ -210,7 +213,7 @@ public class MoveableObjectPlacement : MonoBehaviour
                 didOnce = true;
                 DisableGhost();
                 StartCoroutine(RebuildNavMesh());
-                if (SaveManager.Instance != null) 
+                if (saveOnPlacement && SaveManager.Instance) 
                 {
                     SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
                 }
