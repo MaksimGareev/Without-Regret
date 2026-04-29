@@ -23,7 +23,9 @@ public class TODManager : MonoBehaviour
 {
     public TOD currentTime = TOD.Morning;
     public float blendDuration = 2f;
-
+    private float fadeDuration = 0.5f;
+    [SerializeField] private AudioSource audioSource;
+    public List<AudioClip> audioClips = new List<AudioClip>();
     // spot lights that should turn on only during night
     public Light[] nightSpotLights;
 
@@ -49,6 +51,7 @@ public class TODManager : MonoBehaviour
             if (!objectiveTODRuntime.ContainsKey(pair.objectiveData))
             {
                 objectiveTODRuntime.Add(pair.objectiveData, pair.time);
+                
             }
             else
             {
@@ -117,6 +120,7 @@ public class TODManager : MonoBehaviour
     {
         SetVolumeWeightsInstant();
         SetDirectionalLightRotationInstant();
+       
 
         // update spot lights for night-only lighting
         UpdateNightSpotLights();
@@ -163,6 +167,40 @@ public class TODManager : MonoBehaviour
         return Vector3.zero;
     }
 
+    AudioClip GetAudioClip(TOD timeofDay)
+    {
+              
+        switch (timeofDay)
+        {
+            case TOD.Morning:
+                 //Debug.Log("Morning music");
+                return audioClips[0];
+            case TOD.Evening:
+                //Debug.Log("Afternoon music");
+                return audioClips[1];
+                
+            case TOD.Night:
+                 //Debug.Log("Night music");
+                return audioClips[2];
+        }
+        CrossFadeAudio(false);
+        return audioClips[0];
+    }
+
+    IEnumerator CrossFadeAudio(bool volumeOn)
+    {
+        float timer = 0f;
+        float originalVolume = audioSource.volume;
+
+        while(timer < fadeDuration)
+        {
+           audioSource.volume = Mathf.Lerp(volumeOn ? 0.0f : originalVolume, volumeOn ? originalVolume : 0.0f, timer / fadeDuration);
+
+            timer += Time.unscaledDeltaTime;
+            yield return null;
+        }
+    }
+
     IEnumerator BlendTOD()
     {
         float startMorning = (morningVolume != null) ? morningVolume.weight : 0f;
@@ -188,6 +226,7 @@ public class TODManager : MonoBehaviour
         // update fog particles for night-only effect
         UpdateNightFog();
 
+        
         float time = 0f;
 
         while (time < blendDuration)
@@ -212,6 +251,11 @@ public class TODManager : MonoBehaviour
 
         SetVolumeWeightsInstant();
         SetDirectionalLightRotationInstant();
+
+        audioSource.resource = GetAudioClip(currentTime);
+        audioSource.Play();
+        CrossFadeAudio(true);
+        
         blendCoroutine = null;
     }
 
