@@ -23,7 +23,7 @@ public class Ending : MonoBehaviour
         }
 
         // start below the screen
-        rectTransform.anchoredPosition = new Vector2(0, -Screen.height);
+        rectTransform.anchoredPosition = new Vector2(0, -Screen.height *0.5f);
     }
 
     private void Update()
