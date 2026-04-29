@@ -16,15 +16,15 @@ MonoBehaviour:
   dialogueLines:
   - LineID: Start
     Speaker: Irene
-    text: Hey Echo! Slept well, huh? You didn't even fix your hair!
-    lineTone: 1
+    text: 'Hi Echo. I''m glad you''re here with me. I''m not sure if I could have
+      gone alone. '
+    lineTone: 0
     NPCGender: female
     NextLineID: Go To Graveyard
     endDialogueAfterLine: 0
     movingOn: 0
     GiveItem: 0
     ShakeCamera: 0
-    cannotSkip: 0
     playSFXOnstart: 0
     SFX: {fileID: 0}
     spawnCollectible: 0
@@ -36,15 +36,14 @@ MonoBehaviour:
     objectivesToActivate: []
   - LineID: Go To Graveyard
     Speaker: Irene
-    text: So, we still going to the Graveyard?
-    lineTone: 1
+    text: I was wondering...
+    lineTone: 0
     NPCGender: female
     NextLineID: Question
     endDialogueAfterLine: 0
     movingOn: 0
     GiveItem: 0
     ShakeCamera: 0
-    cannotSkip: 0
     playSFXOnstart: 0
     SFX: {fileID: 0}
     spawnCollectible: 0
@@ -56,15 +55,14 @@ MonoBehaviour:
     objectivesToActivate: []
   - LineID: Question
     Speaker: Irene
-    text: I've been really looking forward to this, I hope you feel the same.
-    lineTone: 1
+    text: How do you feel? About visiting her.
+    lineTone: 0
     NPCGender: female
     NextLineID: 
     endDialogueAfterLine: 0
     movingOn: 0
     GiveItem: 0
     ShakeCamera: 0
-    cannotSkip: 0
     playSFXOnstart: 0
     SFX: {fileID: 0}
     spawnCollectible: 0
@@ -73,9 +71,9 @@ MonoBehaviour:
     collectableSpawnID: 
     collectableData: {fileID: 0}
     choices:
-    - text: Of course.
+    - text: I'm ready.
       NextLineID: Good E 1
-      moralityChange: 1
+      moralityChange: 2
       direction: 0
       objectiveToActivate: 
     - text: Meh.
@@ -88,55 +86,15 @@ MonoBehaviour:
       moralityChange: 1
       direction: 2
       objectiveToActivate: 
-    - text: Five more minutes...
+    - text: 'I''m not sure. '
       NextLineID: Bad E 2
-      moralityChange: -1
+      moralityChange: 0
       direction: 3
       objectiveToActivate: 
     objectivesToActivate: []
-  - LineID: Good
-    Speaker: Irene
-    text: Yay!  Let's go.
-    lineTone: 1
-    NPCGender: female
-    NextLineID: 
-    endDialogueAfterLine: 1
-    movingOn: 0
-    GiveItem: 0
-    ShakeCamera: 0
-    cannotSkip: 0
-    playSFXOnstart: 0
-    SFX: {fileID: 0}
-    spawnCollectible: 0
-    collectablePrefab: {fileID: 0}
-    spawnPointID: 
-    collectableSpawnID: 
-    collectableData: {fileID: 0}
-    choices: []
-    objectivesToActivate: []
-  - LineID: Bad
-    Speaker: Irene
-    text: Ouch...well, I already walked over so we're going anyways.
-    lineTone: 2
-    NPCGender: female
-    NextLineID: 
-    endDialogueAfterLine: 1
-    movingOn: 0
-    GiveItem: 0
-    ShakeCamera: 0
-    cannotSkip: 0
-    playSFXOnstart: 0
-    SFX: {fileID: 0}
-    spawnCollectible: 0
-    collectablePrefab: {fileID: 0}
-    spawnPointID: 
-    collectableSpawnID: 
-    collectableData: {fileID: 0}
-    choices: []
-    objectivesToActivate: []
   - LineID: Good E 1
     Speaker: Echo
-    text: Of course! I wouldn't miss it for the world.
+    text: 'I''m ready to mourn for her...with you. '
     lineTone: 1
     NPCGender: female
     NextLineID: Good
@@ -144,7 +102,6 @@ MonoBehaviour:
     movingOn: 0
     GiveItem: 0
     ShakeCamera: 0
-    cannotSkip: 0
     playSFXOnstart: 0
     SFX: {fileID: 0}
     spawnCollectible: 0
@@ -157,14 +114,13 @@ MonoBehaviour:
   - LineID: Good E 2
     Speaker: Echo
     text: I'm a bit tired, but I'm not backing out on our plans.
-    lineTone: 1
+    lineTone: 0
     NPCGender: female
-    NextLineID: Good
+    NextLineID: Good1
     endDialogueAfterLine: 0
     movingOn: 0
     GiveItem: 0
     ShakeCamera: 0
-    cannotSkip: 0
     playSFXOnstart: 0
     SFX: {fileID: 0}
     spawnCollectible: 0
@@ -176,15 +132,14 @@ MonoBehaviour:
     objectivesToActivate: []
   - LineID: Bad E 1
     Speaker: Echo
-    text: I mean, I guess...
-    lineTone: 0
+    text: Let's just go.
+    lineTone: 2
     NPCGender: female
     NextLineID: Bad
     endDialogueAfterLine: 0
     movingOn: 0
     GiveItem: 0
     ShakeCamera: 0
-    cannotSkip: 0
     playSFXOnstart: 0
     SFX: {fileID: 0}
     spawnCollectible: 0
@@ -196,7 +151,7 @@ MonoBehaviour:
     objectivesToActivate: []
   - LineID: Bad E 2
     Speaker: Echo
-    text: Sure, yeah, just let me snooze for five more minutes...
+    text: I don't know...how to feel.
     lineTone: 0
     NPCGender: female
     NextLineID: Bad II Irene
@@ -204,27 +159,101 @@ MonoBehaviour:
     movingOn: 0
     GiveItem: 0
     ShakeCamera: 0
-    cannotSkip: 0
     playSFXOnstart: 0
     SFX: {fileID: 0}
     spawnCollectible: 0
     collectablePrefab: {fileID: 0}
     spawnPointID: 
     collectableSpawnID: 
-    collectableData: {fileID: 11400000, guid: 7fc59d3d288105d4e8a58343f47bd02f, type: 2}
+    collectableData: {fileID: 0}
+    choices: []
+    objectivesToActivate: []
+  - LineID: Good
+    Speaker: Irene
+    text: 'Thank you Echo. That means so much to me. '
+    lineTone: 1
+    NPCGender: female
+    NextLineID: IreneFinal
+    endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
+    ShakeCamera: 0
+    playSFXOnstart: 0
+    SFX: {fileID: 0}
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
+    choices: []
+    objectivesToActivate: []
+  - LineID: Good1
+    Speaker: Irene
+    text: 'Thank you, Echo. '
+    lineTone: 0
+    NPCGender: female
+    NextLineID: IreneFinal
+    endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
+    ShakeCamera: 0
+    playSFXOnstart: 0
+    SFX: {fileID: 0}
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
+    choices: []
+    objectivesToActivate: []
+  - LineID: Bad
+    Speaker: Irene
+    text: ...
+    lineTone: 0
+    NPCGender: female
+    NextLineID: IreneFinal
+    endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
+    ShakeCamera: 0
+    playSFXOnstart: 0
+    SFX: {fileID: 0}
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
     choices: []
     objectivesToActivate: []
   - LineID: Bad II Irene
     Speaker: Irene
-    text: Seriously?! Come on Echo, I'm here and we're already outside. Let's go.
-    lineTone: 2
+    text: I understand. Its still hard to grasp. That she's really gone.
+    lineTone: 0
+    NPCGender: female
+    NextLineID: IreneFinal
+    endDialogueAfterLine: 0
+    movingOn: 0
+    GiveItem: 0
+    ShakeCamera: 0
+    playSFXOnstart: 0
+    SFX: {fileID: 0}
+    spawnCollectible: 0
+    collectablePrefab: {fileID: 0}
+    spawnPointID: 
+    collectableSpawnID: 
+    collectableData: {fileID: 0}
+    choices: []
+    objectivesToActivate: []
+  - LineID: IreneFinal
+    Speaker: Irene
+    text: Lets go to the graveyard.
+    lineTone: 0
     NPCGender: female
     NextLineID: 
     endDialogueAfterLine: 1
     movingOn: 0
     GiveItem: 0
     ShakeCamera: 0
-    cannotSkip: 0
     playSFXOnstart: 0
     SFX: {fileID: 0}
     spawnCollectible: 0
