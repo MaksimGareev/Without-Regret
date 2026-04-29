@@ -59,46 +59,46 @@ public class Ending : MonoBehaviour
         }
     }
 
-    private void EnableOtherCanvases()
-    {
-        if (!GameManager.Instance) return;
-
-        if (GameManager.Instance.mainCanvas && !GameManager.Instance.mainCanvas.activeSelf)
-        {
-            GameManager.Instance.mainCanvas.SetActive(true);
-        }
-
-        if (GameManager.Instance.interactionIconsCanvas && !GameManager.Instance.interactionIconsCanvas.activeSelf)
-        {
-            GameManager.Instance.interactionIconsCanvas.SetActive(true);
-        }
-
-        if (GameManager.Instance.playerUICanvas && !GameManager.Instance.playerUICanvas.activeSelf)
-        {
-            GameManager.Instance.playerUICanvas.SetActive(true);
-        }
-
-        if (GameManager.Instance.gameOverCanvas && !GameManager.Instance.gameOverCanvas.activeSelf)
-        {
-            GameManager.Instance.gameOverCanvas.SetActive(GameOverManager.Instance.IsGameOver);
-        }
-
-        if (GameManager.Instance.objectivePanel && !GameManager.Instance.objectivePanel.activeSelf)
-        {
-            GameManager.Instance.objectivePanel.SetActive(GameManager.Instance.objectiveCanvas.IsVisible());
-        }
-
-        if (GameManager.Instance.qteCanvas && !GameManager.Instance.qteCanvas.activeSelf)
-        {
-            GameManager.Instance.qteCanvas.SetActive(true);
-        }
-
-        BossEnemyController boss = FindFirstObjectByType<BossEnemyController>();
-        if (boss && boss.slidersContainer)
-        {
-            boss.slidersContainer.gameObject.SetActive(true);
-        }
-    }
+    // private void EnableOtherCanvases()
+    // {
+    //     if (!GameManager.Instance) return;
+    //
+    //     if (GameManager.Instance.mainCanvas && !GameManager.Instance.mainCanvas.activeSelf)
+    //     {
+    //         GameManager.Instance.mainCanvas.SetActive(true);
+    //     }
+    //
+    //     if (GameManager.Instance.interactionIconsCanvas && !GameManager.Instance.interactionIconsCanvas.activeSelf)
+    //     {
+    //         GameManager.Instance.interactionIconsCanvas.SetActive(true);
+    //     }
+    //
+    //     if (GameManager.Instance.playerUICanvas && !GameManager.Instance.playerUICanvas.activeSelf)
+    //     {
+    //         GameManager.Instance.playerUICanvas.SetActive(true);
+    //     }
+    //
+    //     if (GameManager.Instance.gameOverCanvas && !GameManager.Instance.gameOverCanvas.activeSelf)
+    //     {
+    //         GameManager.Instance.gameOverCanvas.SetActive(GameOverManager.Instance.IsGameOver);
+    //     }
+    //
+    //     if (GameManager.Instance.objectivePanel && !GameManager.Instance.objectivePanel.activeSelf)
+    //     {
+    //         GameManager.Instance.objectivePanel.SetActive(GameManager.Instance.objectiveCanvas.IsVisible());
+    //     }
+    //
+    //     if (GameManager.Instance.qteCanvas && !GameManager.Instance.qteCanvas.activeSelf)
+    //     {
+    //         GameManager.Instance.qteCanvas.SetActive(true);
+    //     }
+    //
+    //     BossEnemyController boss = FindFirstObjectByType<BossEnemyController>();
+    //     if (boss && boss.slidersContainer)
+    //     {
+    //         boss.slidersContainer.gameObject.SetActive(true);
+    //     }
+    // }
 
     private void DisableOtherCanvases()
     {

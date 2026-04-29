@@ -23,6 +23,7 @@ public class CutsceneManager : MonoBehaviour
     [SerializeField, Range(0.5f, 5.0f)] private float holdToSkipDuration = 1.0f;
     private float skipTimer = 0.0f;
     private bool isHoldingSkip = false;
+    private bool canSkipText = false;
     
     [Header("UI References")]
     [SerializeField] private GameObject cutscenePanel;
@@ -432,9 +433,26 @@ public class CutsceneManager : MonoBehaviour
 
     private void ResetHoldTimer()
     {
-        if (skipTimer < holdToSkipDuration && skipTimer > 0.02f && canSkipClip && isCutscenePlaying)
+        if (skipTimer < holdToSkipDuration && skipTimer > 0.02f && isCutscenePlaying)
         {
-            SkipCurrentClip();
+            if (isTyping && canSkipText)
+            {
+                isTyping = false;
+                canSkipText = false;
+                
+                if (typingCoroutine != null)
+                {
+                    StopCoroutine(typingCoroutine);
+                }
+                
+                dialogueText.text = currentCutscene.clips[currentClipIndex].dialogueLine.text;
+
+               ShowContinueButton();
+            }
+            else if (canSkipClip)
+            {
+                SkipCurrentClip();
+            }
         }
         
         if (holdToSkipSlider)
@@ -732,6 +750,7 @@ public class CutsceneManager : MonoBehaviour
         }
 
         isTyping = false;
+        canSkipText = false;
         
         // return early if no text is set.
         if (dialogueLine.text == "")
@@ -805,8 +824,12 @@ public class CutsceneManager : MonoBehaviour
 
             yield return new WaitForSecondsRealtime(delay);
         }
-
+        
         isTyping = false;
+        
+        yield return new WaitForSecondsRealtime(1f);
+        
+        ShowContinueButton();
     }
 
     private void SetVoiceGender(CutsceneDialogueGender gender)
@@ -845,6 +868,8 @@ public class CutsceneManager : MonoBehaviour
     {
         // Early skip allowing if canSkip overrides duration
         yield return new WaitForSecondsRealtime(0.5f);
+        
+        canSkipText = true;
 
         if (currentCutscene.clips[currentClipIndex].canSkipClipEarly)
         {
