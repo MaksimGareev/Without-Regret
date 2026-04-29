@@ -18,6 +18,9 @@ public class SaveManager : MonoBehaviour
 
     [Tooltip("Reference to the InputActionAsset that contains the player's input actions. There should only be one InputActionAsset that exists in the project (PlayerControls)")]
     [SerializeField] private InputActionAsset inputActions;
+    
+    [Tooltip("Used to determine if the game has been completed")]
+    [SerializeField] private SceneReference creditsScene;
 
     [Header("Settings")]
     [Tooltip("If true, the game will automatically save at regular intervals. Auto-saving will only occur when the player is in a scene other than the Main Menu.")]
@@ -253,7 +256,27 @@ public class SaveManager : MonoBehaviour
 
         SaveData data = SaveSystem.Load(slot) ?? new SaveData(slot);
 
-        data.lastSceneName = SceneManager.GetActiveScene().name;
+        var currentScene = SceneManager.GetActiveScene();
+
+        data.lastSceneName = currentScene.name;
+        
+        data.gameCompleted = currentScene.name == creditsScene.GetSceneName();
+        
+        if (data.gameCompleted && NewDialogueManager.Instance)
+        {
+            if (NewDialogueManager.Instance.playerMorality >= 5)
+            {
+                data.ending = 1;
+            }
+            else if (NewDialogueManager.Instance.playerMorality <= -5)
+            {
+                data.ending = -1;
+            }
+            else
+            {
+                data.ending = 0;
+            }
+        }
 
         if (TimerRingUI.Instance && TimerRingUI.Instance.currentRingState != TimerRingUI.RingState.Empty && !GameOverManager.Instance.IsGameOver)
         {

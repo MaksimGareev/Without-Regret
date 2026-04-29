@@ -17,6 +17,8 @@ public class SaveData
     public int slot = 1;
     public int playerMorality;
     public List<InteractType> shownTutorials;
+    public bool gameCompleted = false;
+    public int ending = 0;
 
     public SaveData(int slot)
     {

@@ -110,20 +110,30 @@ public class SaveSlotUI : MonoBehaviour
         : "Empty";
 
         slotStatus[slot - 1].text = data != null 
-        ? "Current Objective:" 
+        ? data.gameCompleted 
+            ? "STORY COMPLETE" 
+            : "Current Objective:" 
         : "";
 
         string objectiveName = "";
 
-        if (data != null && data.objectiveSaveData != null && data.objectiveSaveData.objectives != null)
+        if (data != null && data.objectiveSaveData != null && data.objectiveSaveData.objectives != null && !data.gameCompleted)
         {
             var list = data.objectiveSaveData.objectives;
             objectiveName = (list.Count > 0 && list[0] != null) ? list[0].objectiveName : "";
         }
+        else if (data != null && data.gameCompleted)
+        {
+            objectiveName = data.ending > 0 
+                ? "Good Ending" 
+                : data.ending < 0 
+                    ? "Bad Ending" 
+                    : "Neutral Ending";
+        }
 
         slotObjectives[slot - 1].text = objectiveName;
         
-        playButtons[slot - 1].gameObject.SetActive(data != null);
+        playButtons[slot - 1].gameObject.SetActive(data != null && !data.gameCompleted);
         deleteButtons[slot - 1].gameObject.SetActive(data != null);
 
         newGameButtons[slot - 1].gameObject.SetActive(data == null);
