@@ -257,6 +257,10 @@ public class TimerRingUI : MonoBehaviour
 
     private void EndGame()
     {
+        if (hasDied) return;
+
+        hasDied = true;
+
         if (characterSwap == null)
         {
             characterSwap = FindFirstObjectByType<CharacterSwap>();
@@ -344,6 +348,10 @@ public class TimerRingUI : MonoBehaviour
 
     IEnumerator GameOverAnimation()
     {
+        if (!GameOverManager.Instance) yield break;
+
+        GameOverManager.Instance.PrepareForGameOver();
+
         if (animator)
         {
             Debug.Log("Started Game Over Animation");
@@ -353,7 +361,6 @@ public class TimerRingUI : MonoBehaviour
         }
         yield return new WaitForSecondsRealtime(1f);
         GameOverManager.Instance.TriggerGameOver();
-        hasDied = true;
 
     }
 

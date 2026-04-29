@@ -2,7 +2,6 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -28,6 +27,7 @@ public class GameOverManager : MonoBehaviour
 
     private bool usingController = false;
     private ConfirmationUI confirmationUI;
+    private bool sceneLoadListenerRegistered = false;
 
     public bool isGameOverUIActive() => gameOverUI && gameOverUI.activeSelf;
 
@@ -48,13 +48,23 @@ public class GameOverManager : MonoBehaviour
         {
             gameOverUI.SetActive(false);
         }
+
+        ResetGameOverState();
         
         if (!confirmationPanel)
         {
             Debug.LogWarning("Confirmation panel reference is missing in GameOverManager.");
         }
-        
-        confirmationUI = confirmationPanel.GetComponent<ConfirmationUI>();
+
+        if (confirmationPanel)
+        {
+            confirmationUI = confirmationPanel.GetComponent<ConfirmationUI>();
+        }
+        else
+        {
+            Debug.LogError("Confirmation panel reference is missing in GameOverManager.");
+            confirmationUI = null;
+        }
         
         if (!confirmationUI)
         {
@@ -64,6 +74,7 @@ public class GameOverManager : MonoBehaviour
         if (SceneLoadManager.Instance)
         {
             SceneLoadManager.Instance.OnSceneLoaded.AddListener(OnSceneLoaded);
+            sceneLoadListenerRegistered = true;
         }
         else
         {
@@ -76,6 +87,12 @@ public class GameOverManager : MonoBehaviour
     {
         InitializeInputActions();
         AddListeners();
+        TryRegisterSceneLoadedListener();
+    }
+
+    private void Start()
+    {
+        TryRegisterSceneLoadedListener();
     }
 
     private void InitializeInputActions()
@@ -87,7 +104,7 @@ public class GameOverManager : MonoBehaviour
         }
         
         // Initialize input actions
-        cancelAction = inputActions.FindActionMap("UI").FindAction("Cancel");
+        cancelAction = inputActions.FindActionMap("UI")?.FindAction("Cancel");
         if (cancelAction == null)
         {
             Debug.LogError("Cancel action not found in InputActionAsset.");
@@ -96,16 +113,53 @@ public class GameOverManager : MonoBehaviour
 
     private void EnableInputActions()
     {
-        inputActions.FindActionMap("UI").Enable();
-        inputActions.FindActionMap("Player").Disable();
+        if (!inputActions) return;
+
+        inputActions.FindActionMap("UI")?.Enable();
+        inputActions.FindActionMap("Player")?.Disable();
         cancelAction?.Enable();
     }
 
     private void DisableInputActions()
     {
-        inputActions.FindActionMap("UI").Disable();
-        inputActions.FindActionMap("Player").Enable();
+        if (!inputActions) return;
+
+        inputActions.FindActionMap("UI")?.Disable();
+        inputActions.FindActionMap("Player")?.Enable();
         cancelAction?.Disable();
+    }
+
+    private void TryRegisterSceneLoadedListener()
+    {
+        if (sceneLoadListenerRegistered) return;
+
+        if (SceneLoadManager.Instance)
+        {
+            SceneLoadManager.Instance.OnSceneLoaded.AddListener(OnSceneLoaded);
+            sceneLoadListenerRegistered = true;
+        }
+    }
+
+    private void ResetGameOverState()
+    {
+        isGameOver = false;
+        usingController = false;
+    }
+
+    public void PrepareForGameOver()
+    {
+        var cameraMovement = FindFirstObjectByType<CameraMovement>();
+        if (cameraMovement)
+        {
+            cameraMovement.SetCameraLocked(true);
+        }
+
+        var playerController = FindFirstObjectByType<PlayerController>();
+        if (playerController)
+        {
+            playerController.SetCutsceneLocked(true);
+            playerController.DisableInput();
+        }
     }
 
     private void AddListeners()
@@ -136,100 +190,15 @@ public class GameOverManager : MonoBehaviour
 
     private void Update()
     {
-        if (cancelAction.triggered && isGameOverUIActive() && !confirmationPanel.activeSelf)
+        if (cancelAction != null && cancelAction.triggered && isGameOverUIActive() && !(confirmationPanel && confirmationPanel.activeSelf))
         {
             ConfirmBeforeQuit();
         }
 
-        if (Time.timeSinceLevelLoad < 0.1f && gameOverUI.activeSelf && !IsGameOver)
+        if (Time.timeSinceLevelLoad < 0.1f && gameOverUI && gameOverUI.activeSelf && !IsGameOver)
         {
             DisableGameOverUI();
         }
-    }
-
-    private void CheckMouseInput()
-    {
-        if (Mouse.current == null)
-        {
-            return;
-        }
-
-        Vector2 mouseDelta = Mouse.current.delta.ReadValue();
-
-        bool mouseKeysMoved = mouseDelta.sqrMagnitude > 0.1f || Keyboard.current.anyKey.isPressed;
-
-        if (!mouseKeysMoved) return;
-        
-        if (usingController)
-        {
-            usingController = false;
-            Cursor.visible = true;
-            Cursor.lockState = CursorLockMode.None;
-
-            if (EventSystem.current.currentSelectedGameObject)
-            {
-                EventSystem.current.SetSelectedGameObject(null);
-            }
-        }
-    }
-
-    private void CheckControllerInput()
-    {
-        if (Gamepad.current == null)
-        {
-            return;
-        }
-
-        bool controllerMoved = 
-            Gamepad.current.leftStick.ReadValue().sqrMagnitude > 0.1f 
-            || Gamepad.current.dpad.ReadValue().sqrMagnitude > 0.1f
-            || Gamepad.current.rightStick.ReadValue().sqrMagnitude > 0.1f;
-        
-        if (!controllerMoved)
-        {
-            return;
-        }
-
-        if (!usingController)
-        {
-            usingController = true;
-            Cursor.visible = false;
-            Cursor.lockState = CursorLockMode.Locked;
-
-            var es = EventSystem.current;
-
-            // Clear selected GameObject if mouse was hovering over something
-            if (es.IsPointerOverGameObject())
-            {
-                var ped = new PointerEventData(es)
-                {
-                    position = new Vector2(-99999f, -99999f)
-                };
-
-                es.RaycastAll(ped, new System.Collections.Generic.List<RaycastResult>());
-                es.SetSelectedGameObject(null);
-
-                InputSystemUIInputModule inputModule = es.currentInputModule as InputSystemUIInputModule;
-                if (inputModule)
-                {
-                    inputModule.enabled = false;
-                    inputModule.enabled = true;
-                }
-            }
-
-            // If nothing is selected, set a default based on the active panel
-            if (!es.currentSelectedGameObject)
-            {
-                if (confirmationPanel.activeSelf)
-                {
-                    es.SetSelectedGameObject(confirmationUI.cancelButton.gameObject);
-                }
-                else if (gameOverUI.activeSelf)
-                {
-                    es.SetSelectedGameObject(retryButton.gameObject);
-                }
-            }
-        } 
     }
 
     private void EnableOtherCanvases()
@@ -306,7 +275,8 @@ public class GameOverManager : MonoBehaviour
 
     private void OnSceneLoaded()
     {
-        isGameOver = false;
+        ResetGameOverState();
+        inputActions?.FindActionMap("Player")?.Enable();
         DisableGameOverUI();
     }
 
@@ -343,10 +313,13 @@ public class GameOverManager : MonoBehaviour
         {
             InputDeviceManager.Instance.SetUIActive(true, gameOverUI);
         }
-
-        EventSystem.current.SetSelectedGameObject(null);
-        EventSystem.current.firstSelectedGameObject = retryButton.gameObject;
-        EventSystem.current.SetSelectedGameObject(EventSystem.current.firstSelectedGameObject);
+        
+        if (EventSystem.current && retryButton)
+        {
+            EventSystem.current.SetSelectedGameObject(null);
+            EventSystem.current.firstSelectedGameObject = retryButton.gameObject;
+            EventSystem.current.SetSelectedGameObject(EventSystem.current.firstSelectedGameObject);
+        }
 
         // Lock camera when game over UI is active
         CameraMovement cam = FindFirstObjectByType<CameraMovement>();
@@ -360,11 +333,14 @@ public class GameOverManager : MonoBehaviour
         if (playerController)
         {
             playerController.DisableInput();
+            inputActions?.FindActionMap("Player")?.Disable();
         }
     }
 
     private void DisableGameOverUI()
     {
+        ResetGameOverState();
+
         if (gameOverUI == null)
         {
             return;
@@ -380,9 +356,12 @@ public class GameOverManager : MonoBehaviour
         }
 
         EnableOtherCanvases();
-
-        EventSystem.current.firstSelectedGameObject = null;
-        EventSystem.current.SetSelectedGameObject(null);
+        
+        if (EventSystem.current)
+        {
+            EventSystem.current.firstSelectedGameObject = null;
+            EventSystem.current.SetSelectedGameObject(null);
+        }
 
         // Unlock camera when game over UI is disabled
         CameraMovement cam = FindFirstObjectByType<CameraMovement>();
@@ -391,12 +370,12 @@ public class GameOverManager : MonoBehaviour
             cam.SetCameraLocked(false);
         }
 
-        // Re-enable player input when game over UI is disabled
-        PlayerController playerController = FindFirstObjectByType<PlayerController>();
-        if (playerController != null)
-        {
-            playerController.EnableInput();
-        }
+        // // Re-enable player input when game over UI is disabled
+        // PlayerController playerController = FindFirstObjectByType<PlayerController>();
+        // if (playerController != null)
+        // {
+        //     playerController.EnableInput();
+        // }
     }
 
     private void ConfirmBeforeQuit()
@@ -409,7 +388,7 @@ public class GameOverManager : MonoBehaviour
 
         confirmationPanel.SetActive(true);
         DisableUIButtons();
-        EventSystem.current.SetSelectedGameObject(null);
+        EventSystem.current?.SetSelectedGameObject(null);
 
         if (!confirmationUI)
         {
@@ -431,15 +410,21 @@ public class GameOverManager : MonoBehaviour
                 // Cancel action
                 confirmationPanel.SetActive(false);
                 EnableUIButtons();
-                EventSystem.current.SetSelectedGameObject(quitButton.gameObject);
+                if (quitButton && EventSystem.current)
+                {
+                    EventSystem.current.SetSelectedGameObject(quitButton.gameObject);
+                }
             });
     }
 
     private void Quit()
     {
-        Time.timeScale = 1f; // Resume the game before quitting
-        isGameOver = false;
-        gameOverUI.SetActive(false);
+        ResetGameOverState();
+        
+        if (gameOverUI)
+        {
+            gameOverUI.SetActive(false);
+        }
         
         if (SceneLoadManager.Instance)
         {
@@ -455,9 +440,8 @@ public class GameOverManager : MonoBehaviour
 
     private void Restart()
     {
-        Time.timeScale = 1f; // Resume the game
-        isGameOver = false;
         DisableGameOverUI();
+        
         Debug.Log("Restarting scene: " + SceneManager.GetActiveScene().name);
 
         if (SceneLoadManager.Instance)
@@ -505,7 +489,10 @@ public class GameOverManager : MonoBehaviour
 
     private void OnDestroy()
     {
-        if (SceneLoadManager.Instance != null) SceneLoadManager.Instance.OnSceneLoaded.RemoveListener(OnSceneLoaded);
+        if (SceneLoadManager.Instance && sceneLoadListenerRegistered)
+        {
+            SceneLoadManager.Instance.OnSceneLoaded.RemoveListener(OnSceneLoaded);
+        }
         DisableInputActions();
         RemoveListeners();
     }
