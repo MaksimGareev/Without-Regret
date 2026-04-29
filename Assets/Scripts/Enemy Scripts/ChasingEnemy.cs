@@ -201,7 +201,7 @@ public class ChasingEnemy : MonoBehaviour
 
         if (currentIndex+1 >= targets.Length)
         {
-            Debug.Log("Enemy reached final target!");
+            //Debug.Log("Enemy reached final target!");
             currentTarget = null;       // <--- set to null when no more targets
             agent.isStopped = true;     // stop the NavMeshAgent
             return; // Stop here, no more targets
