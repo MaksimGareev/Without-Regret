@@ -404,14 +404,20 @@ public class MainMenu : MonoBehaviour
     public void SelectSaveMenuButton()
     {
         Button buttonToSelect;
+        
+        var saveSlots = saveSlotsPanel.GetComponentInChildren<SaveSlotUI>();
 
-        if (saveSlotsPanel.GetComponentInChildren<SaveSlotUI>().playButtons[0].gameObject.activeSelf)
+        if (saveSlots.playButtons[0].gameObject.activeSelf)
         {
-            buttonToSelect = saveSlotsPanel.GetComponentInChildren<SaveSlotUI>().playButtons[0];
+            buttonToSelect = saveSlots.playButtons[0];
         }
-        else if (saveSlotsPanel.GetComponentInChildren<SaveSlotUI>().newGameButtons[0].gameObject.activeSelf)
+        else if (saveSlots.deleteButtons[0].gameObject.activeSelf)
         {
-            buttonToSelect = saveSlotsPanel.GetComponentInChildren<SaveSlotUI>().newGameButtons[0];
+            buttonToSelect = saveSlots.deleteButtons[0];
+        }
+        else if (saveSlots.newGameButtons[0].gameObject.activeSelf)
+        {
+            buttonToSelect = saveSlots.newGameButtons[0];
         }
         else
         {

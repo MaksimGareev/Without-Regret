@@ -356,12 +356,6 @@ public class QTETriggerVolume : MonoBehaviour, IInteractable
             for (int i = arrowsContainer.childCount - 1; i >= 0; --i)
                 Destroy(arrowsContainer.GetChild(i).gameObject);
         }
-
-        // Save game after successful QTE
-        if (SaveManager.Instance)
-        {
-            SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
-        }
         
         // Heal Player on successful QTE
         if (TimerRingUI.Instance)
@@ -395,6 +389,12 @@ public class QTETriggerVolume : MonoBehaviour, IInteractable
         }
 
         gameObject.SetActive(false);
+        
+        // Save game after successful QTE
+        if (SaveManager.Instance)
+        {
+            SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
+        }
         
         // Unpause Game
         Time.timeScale = 1.0f;

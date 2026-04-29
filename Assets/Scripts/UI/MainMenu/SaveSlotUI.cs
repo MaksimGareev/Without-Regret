@@ -16,7 +16,7 @@ public class SaveSlotUI : MonoBehaviour
     
     [Header("Buttons")]
     [SerializeField] public Button[] playButtons = new Button[3];
-    [SerializeField] private Button[] deleteButtons = new Button[3];
+    [SerializeField] public Button[] deleteButtons = new Button[3];
     [SerializeField] public Button[] newGameButtons = new Button[3];
 
     [Header("FirstLevelReference")]
