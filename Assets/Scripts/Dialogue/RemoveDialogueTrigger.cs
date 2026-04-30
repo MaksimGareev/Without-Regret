@@ -6,7 +6,7 @@ public class RemoveDialogueTrigger : MonoBehaviour
     public ObjectiveData mediationObjective;
     public GameObject trigger1;
     public GameObject trigger2;
-    //public GameObject trigger3;
+    public GameObject trigger3;
     public GameObject Enemy;
     public NewDialogueTrigger DialogueTrigger;
 
@@ -50,14 +50,14 @@ public class RemoveDialogueTrigger : MonoBehaviour
         {
             if (trigger1&& trigger1.activeSelf) trigger1.SetActive(false);
             if (trigger2&& trigger2.activeSelf) trigger2.SetActive(false);
-            //if (trigger3&& trigger3.activeSelf) trigger3.SetActive(false);
+            if (trigger3&& trigger3.activeSelf) trigger3.SetActive(false);
             if (Enemy && Enemy.activeSelf) Enemy.SetActive(false);
         }
         else if (DialogueTrigger && !DialogueTrigger.completed && CheckIfObjectiveActive())
         {
             if (trigger1 && !trigger1.activeSelf) trigger1.SetActive(true);
             if (trigger2 && !trigger2.activeSelf) trigger2.SetActive(true);
-            //if (trigger3 && !trigger3.activeSelf) trigger3.SetActive(true);
+            if (trigger3 && !trigger3.activeSelf) trigger3.SetActive(true);
         }
     }
 }
