@@ -75,7 +75,7 @@ public class Irene : MonoBehaviour
         
         if (proximityCollider != null)
         {
-            proximityCollider.enabled = !shouldDisableInteraction;
+           // proximityCollider.enabled = !shouldDisableInteraction;
         }
         
         if (IsFollowing)
