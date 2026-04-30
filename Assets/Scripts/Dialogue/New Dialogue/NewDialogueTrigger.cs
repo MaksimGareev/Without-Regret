@@ -752,7 +752,12 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
         {
             if (this.CompareTag("Spawner"))
             {
-                enemy.SetActive(true);
+                if (enemy)
+                {
+                    enemy.SetActive(true);
+                    enemy.TryGetComponent<ChasingEnemy>(out var chasingEnemy);
+                    if (chasingEnemy) chasingEnemy.isKnocking(true);
+                }
             }
         }
 
@@ -761,8 +766,6 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
         {
             TryStartDialogue();
         }
-
-
     }
 
     // Triggers moving on VFX played when dialogue corresponds to NPC moving on
