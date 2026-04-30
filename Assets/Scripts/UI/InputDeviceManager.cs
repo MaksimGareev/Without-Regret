@@ -81,6 +81,7 @@ public class InputDeviceManager : MonoBehaviour
         if (!UIActive || CurrentMode != InputMode.Controller)
             return;
 
+        EnsureUIInputActive();
         EnsureControllerSelection();
     }
 
@@ -127,6 +128,26 @@ public class InputDeviceManager : MonoBehaviour
         
         if (pauseAction != null && !pauseAction.enabled) pauseAction.Enable();
         if (journalAction != null && !journalAction.enabled) journalAction.Enable();
+    }
+
+    private void EnsureUIInputActive()
+    {
+        if (!UIActive || !inputActions) return;
+        
+        var UImap = inputActions.FindActionMap("UI");
+        
+        if (UImap == null) return;
+        
+        if (UImap.enabled) return;
+        
+        UImap.Enable();
+        Debug.LogWarning("UI Input was not active while UI is open, re-enabling it now.");
+        
+        var navigateAction = UImap.FindAction("Navigate");
+        var confirmAction = UImap.FindAction("Confirm");
+        
+        if (navigateAction != null && !navigateAction.enabled) navigateAction.Enable();
+        if (confirmAction != null && !confirmAction.enabled) confirmAction.Enable();
     }
 
     private bool TryGetInputMode(InputEventPtr eventPtr, InputDevice device, out InputMode mode)

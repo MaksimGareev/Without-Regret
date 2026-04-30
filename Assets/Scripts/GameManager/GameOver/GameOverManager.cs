@@ -235,6 +235,12 @@ public class GameOverManager : MonoBehaviour
         {
             GameManager.Instance.objectivePanel.SetActive(GameManager.Instance.objectiveCanvas.IsVisible());
         }
+        
+        BossEnemyController boss = FindFirstObjectByType<BossEnemyController>();
+        if (boss && boss.slidersContainer)
+        {
+            boss.slidersContainer.gameObject.SetActive(true);
+        }
     }
 
     private void DisableOtherCanvases()
@@ -270,6 +276,12 @@ public class GameOverManager : MonoBehaviour
         if (GameManager.Instance.objectivePanel && GameManager.Instance.objectivePanel.activeSelf)
         {
             GameManager.Instance.objectivePanel.SetActive(false);
+        }
+        
+        BossEnemyController boss = FindFirstObjectByType<BossEnemyController>();
+        if (boss && boss.slidersContainer)
+        {
+            boss.slidersContainer.gameObject.SetActive(false);
         }
     }
 
