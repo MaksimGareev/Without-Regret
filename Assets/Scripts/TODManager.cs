@@ -23,7 +23,7 @@ public class TODManager : MonoBehaviour
 {
     public TOD currentTime = TOD.Morning;
     public float blendDuration = 2f;
-    private float fadeDuration = 0.5f;
+    private float fadeDuration = 2f;
     [SerializeField] private AudioSource audioSource;
     public List<AudioClip> audioClips = new List<AudioClip>();
     // spot lights that should turn on only during night
@@ -43,6 +43,8 @@ public class TODManager : MonoBehaviour
 
     private Dictionary<ObjectiveData, TOD> objectiveTODRuntime = new Dictionary<ObjectiveData, TOD>();
     private Coroutine blendCoroutine;
+    private bool isFadingAudio = false;
+    private float originalVolume = 0.0f;
 
     private void Awake()
     {
@@ -76,6 +78,11 @@ public class TODManager : MonoBehaviour
                 SetTOD(pair.Value);
                 break;
             }
+        }
+        
+        if (audioSource != null)
+        {
+            originalVolume = audioSource.volume;
         }
     }
 
@@ -167,41 +174,43 @@ public class TODManager : MonoBehaviour
         return Vector3.zero;
     }
 
-    AudioClip GetAudioClip(TOD timeofDay)
+    private AudioClip GetAudioClip(TOD timeofDay)
     {
-              
         switch (timeofDay)
         {
-            case TOD.Morning:
-                 //Debug.Log("Morning music");
+            case TOD.Morning: 
+                // Debug.Log("Morning music");
                 return audioClips[0];
             case TOD.Evening:
-                //Debug.Log("Afternoon music");
+                // Debug.Log("Afternoon music");
                 return audioClips[1];
                 
             case TOD.Night:
-                 //Debug.Log("Night music");
+                // Debug.Log("Night music");
                 return audioClips[2];
+            default:
+                Debug.LogError("[TODManager] No audio clip found for " + timeofDay);
+                return null;
         }
-        CrossFadeAudio(false);
-        return audioClips[0];
     }
 
-    IEnumerator CrossFadeAudio(bool volumeOn)
+    private IEnumerator CrossFadeAudio(bool volumeOn)
     {
+        isFadingAudio = true;
         float timer = 0f;
-        float originalVolume = audioSource.volume;
 
         while(timer < fadeDuration)
         {
-           audioSource.volume = Mathf.Lerp(volumeOn ? 0.0f : originalVolume, volumeOn ? originalVolume : 0.0f, timer / fadeDuration);
+            audioSource.volume = Mathf.Lerp(volumeOn ? 0.0f : originalVolume, volumeOn ? originalVolume : 0.0f, timer / fadeDuration);
 
             timer += Time.unscaledDeltaTime;
             yield return null;
         }
+        
+        isFadingAudio = false;
     }
 
-    IEnumerator BlendTOD()
+    private IEnumerator BlendTOD()
     {
         float startMorning = (morningVolume != null) ? morningVolume.weight : 0f;
         float startEvening = (eveningVolume != null) ? eveningVolume.weight : 0f;
@@ -225,7 +234,8 @@ public class TODManager : MonoBehaviour
 
         // update fog particles for night-only effect
         UpdateNightFog();
-
+        
+        StartCoroutine(StartAudioCrossFade());
         
         float time = 0f;
 
@@ -251,12 +261,24 @@ public class TODManager : MonoBehaviour
 
         SetVolumeWeightsInstant();
         SetDirectionalLightRotationInstant();
-
-        audioSource.resource = GetAudioClip(currentTime);
-        audioSource.Play();
-        CrossFadeAudio(true);
         
         blendCoroutine = null;
+    }
+
+    private IEnumerator StartAudioCrossFade()
+    {
+        StartCoroutine(CrossFadeAudio(false));
+
+        while (isFadingAudio)
+        {
+            yield return null;
+        }
+        
+        audioSource.Stop();
+        audioSource.clip = GetAudioClip(currentTime);
+        audioSource.Play();
+        
+        StartCoroutine(CrossFadeAudio(true));
     }
 
     // enable or disable spot lights based on time of day
