@@ -5,6 +5,7 @@ public enum InteractType
     None,
     Dialogue,
     Pickup,
+    Interact,
     Move,
     Lockpick,
     Mantle,
