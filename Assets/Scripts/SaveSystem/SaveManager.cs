@@ -258,7 +258,7 @@ public class SaveManager : MonoBehaviour
 
         var currentScene = SceneManager.GetActiveScene();
 
-        data.lastSceneName = currentScene.name;
+        data.lastSceneName = currentScene.name == "MainMenu" ? data.lastSceneName : currentScene.name;
         
         data.gameCompleted = currentScene.name == creditsScene.GetSceneName();
         

@@ -51,6 +51,17 @@ public class UIFadeController : MonoBehaviour
 
     private void OnSceneLoaded()
     {
+        // Re-acquire CanvasGroup reference in case it changed during scene load
+        canvasGroup = GetComponent<CanvasGroup>();
+        if (canvasGroup == null)
+        {
+            Debug.LogError("CanvasGroup missing on UIFadeController after scene load!");
+        }
+        
+        // Reset timer and state when scene loads to prevent UI from being stuck faded out
+        lastActiveTime = Time.time;
+        isActive = true;
+        
         // Check if current scene is in excluded list
         foreach (SceneReference scene in excludedScenes)
         {
@@ -66,10 +77,7 @@ public class UIFadeController : MonoBehaviour
         Debug.Log("UIFadeController: Current scene is not in the excluded list, UI will fade as normal.");
 
         // Reset flag if player was previously in an excluded scene
-        if (inExcludedScene)
-        {
-            inExcludedScene = false;
-        }
+        inExcludedScene = false;
     }
 
     // Update is called once per frame
