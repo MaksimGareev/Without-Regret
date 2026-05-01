@@ -34,6 +34,16 @@ public class PossessedEnemyResisting : MonoBehaviour
             PlayerCamera = Camera.main;
         }
 
+        if (Agent == null)
+        {
+            Agent = GetComponent<NavMeshAgent>();
+        }
+
+        if (Agent == null)
+        {
+            Debug.LogError("NavMeshAgent not found on " + gameObject.name + " for possession!");
+        }
+
         if(chasingEnemy == null)
         {
             if (gameObject.GetComponent<ChasingEnemy>())

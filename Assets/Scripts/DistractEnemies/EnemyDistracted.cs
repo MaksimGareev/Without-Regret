@@ -24,11 +24,16 @@ public class EnemyDistracted : MonoBehaviour
     {
         enemyMovement = GetComponent<PatrollingEnemy>();
         enemyNavMeshAgent = GetComponent<NavMeshAgent>();
+
+        if (enemyNavMeshAgent == null)
+        {
+            Debug.LogError("NavMeshAgent not found on " + gameObject.name + " for distraction!");
+        }
     }
 
     void Update()
     {
-        if (!isDistracted || distraction == null)// if enemy is not destracted or somehow the destraction item is empty, skip the code
+        if (!isDistracted || distraction == null || enemyNavMeshAgent == null || !enemyNavMeshAgent.isOnNavMesh)
         {
             return;
         }

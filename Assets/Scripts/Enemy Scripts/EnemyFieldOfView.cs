@@ -92,6 +92,12 @@ public class EnemyFieldOfView : MonoBehaviour
     private void Awake()
     {
         initialTransform = transform;
+        
+        m_Agent = GetComponent<NavMeshAgent>();
+        if (m_Agent == null)
+        {
+            Debug.LogError("NavMeshAgent not found on " + gameObject.name + " for FOV!");
+        }
     }
 
     private void Start()
@@ -117,13 +123,18 @@ public class EnemyFieldOfView : MonoBehaviour
             }
             timeSinceStunned += Time.deltaTime;
         }
-        
-        m_Agent = GetComponent<NavMeshAgent>();
+
+        if (m_Agent == null)
+        {
+            m_Agent = GetComponent<NavMeshAgent>();
+            if (m_Agent == null)
+                return;
+        }
 
         UpdateFOVBasedOnMorality();
         ApplyFOV();
         //DetectPlayer();
-        
+
     }
 
     private void UpdateFOVBasedOnMorality()
@@ -175,6 +186,9 @@ public class EnemyFieldOfView : MonoBehaviour
     // Function for enemy's field of view
     private void FieldOfViewCheck()
     {
+        if (m_Agent == null || !m_Agent.isOnNavMesh)
+            return;
+
         if (AttackRangeCheck())
             return;
         if (CloseDetectionCheck())

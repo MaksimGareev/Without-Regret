@@ -49,9 +49,30 @@ public class ChasingEnemy : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        // Auto-assign agent if not already assigned
+        if (agent == null)
+        {
+            agent = GetComponent<NavMeshAgent>();
+        }
+
+        if (agent == null)
+        {
+            Debug.LogError("NavMeshAgent not found on " + gameObject.name + "! Enemy will not move.");
+            enabled = false;
+            return;
+        }
+
         if (playerMorality == null)
         {
             playerMorality = FindFirstObjectByType<NewDialogueManager>();
+        }
+
+        // Ensure agent is enabled and properly initialized
+        if (!agent.isOnNavMesh)
+        {
+            Debug.LogError("NavMeshAgent on " + gameObject.name + " is not on a NavMesh! Check that NavMesh is baked and agent position is valid.");
+            enabled = false;
+            return;
         }
 
         agent.speed = baseSpeed;
@@ -77,7 +98,11 @@ public class ChasingEnemy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Posessed || agent == null || agent.enabled == false) return;
+        if (agent == null || !agent.enabled || !agent.isOnNavMesh)
+            return;
+
+        if (Posessed)
+            return;
         
         UpdateSpeedFromMorality();
 

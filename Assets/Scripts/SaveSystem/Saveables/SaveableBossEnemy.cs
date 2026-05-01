@@ -10,8 +10,8 @@ public class SaveableBossEnemy : SaveableWithID
         {
             BossEnemySaveData state = new BossEnemySaveData();
             state.id = GetUniqueID();
-            state.position = new float[] { transform.position.x, transform.position.y, transform.position.z };
-            state.rotation = new float[] { transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z };
+            //state.position = new float[] { transform.position.x, transform.position.y, transform.position.z };
+            //state.rotation = new float[] { transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z };
             state.currentPhase = boss.GetCurrentPhase();
 
             data.bossEnemySaveData = state;
@@ -41,8 +41,8 @@ public class SaveableBossEnemy : SaveableWithID
         
         Debug.Log($"Loading Boss Enemy with ID: {GetUniqueID()}");
 
-        transform.position = new Vector3(state.position[0], state.position[1], state.position[2]);
-        transform.eulerAngles = new Vector3(state.rotation[0], state.rotation[1], data.bossEnemySaveData.rotation[2]);
+        //transform.position = new Vector3(state.position[0], state.position[1], state.position[2]);
+        //transform.eulerAngles = new Vector3(state.rotation[0], state.rotation[1], data.bossEnemySaveData.rotation[2]);
 
         if (state.currentPhase > 0)
         {
