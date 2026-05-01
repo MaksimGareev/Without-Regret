@@ -78,6 +78,9 @@ public class NewDialogueTrigger : MonoBehaviour, IInteractable
     [Tooltip("A bool that is used to identify if a dialogue interaction is a mediation making the NPC not look at the player")]
     public bool IsMediation = false;
     
+    [Header("Saving")]
+    public bool saveAfterDialogue = true;
+    
     [Header("Cutscene")]
     [Tooltip("The cutscene to play on ending this dialogue")]
     [SerializeField] private CutsceneData cutscene;

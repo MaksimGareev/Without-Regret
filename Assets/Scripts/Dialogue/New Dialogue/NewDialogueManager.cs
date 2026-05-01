@@ -1181,7 +1181,7 @@ public class NewDialogueManager : MonoBehaviour, ISaveable
         }
         npcPortrait.gameObject.SetActive(false);
 
-        if (SaveManager.Instance)
+        if (SaveManager.Instance && activeDialogueTrigger && activeDialogueTrigger.saveAfterDialogue)
         {
             SaveManager.Instance.SaveGame(SaveSystem.activeSaveSlot);
         }
