@@ -2,18 +2,26 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class PlayerPossessing : MonoBehaviour
 {
     [Header("Possession Settings")]
     [SerializeField] private float possessionDuration = 5f;
-    //[SerializeField] private float possessionRange = 50f;
-    //[SerializeField] private float searchConeAngle = 30f;
-    [SerializeField] private KeyCode possessKey = KeyCode.R;
-    [SerializeField] private KeyCode possessButton = KeyCode.JoystickButton9;
-    [SerializeField] private Vector3 iconOffset = new Vector3(0f, 2f, 0f);
     [SerializeField] private LayerMask mask;
+    
+    [Tooltip("The time it takes to recharge between possessions")]
+    [SerializeField] private float rechargeDelay = 1.5f;
+    
+    [Header("Input Actions")]
+    [SerializeField] private InputActionAsset inputActions;
+    private InputAction possessAction;
+    
+    [Header("Animator")]
+    public Animator animator;
+    private CharacterSwap characterSwap;
+
 
     private GameObject popupInstance;
     private PlayerController playerController;
@@ -21,28 +29,16 @@ public class PlayerPossessing : MonoBehaviour
     private PossessedEnemyResisting possessedEnemyMovement;
     private PatrollingEnemy normalEnemyMovement;
     private EnemyFieldOfView enemyPOV;
-    //private NavMeshAgent enemyNavMeshAgent;
-    private Rigidbody enemyRigidbody;
     private float possessionTimer;
     private float TimeSincePossession;
-    [Tooltip("The time it takes to recharge between possessions")]
-    [SerializeField] private float rechargeDelay = 1.5f;
     private float rechargeSpeed = .5f;
-    [SerializeField] private PossessedEnemyResisting target = null;
-
+    private PossessedEnemyResisting target = null;
     private Marker posessionIcon;
-    
-    RaycastHit[] hit = new RaycastHit[20];
+    private RaycastHit[] hit = new RaycastHit[20];
     private bool posessing = false;
-    public bool shouldShowIcon = true;
 
-    int fov = 15;
-    int numRays = 15;
-
-    [Header("Animator")]
-    public Animator animator;
-    private CharacterSwap characterSwap;
-
+    private int fov = 15;
+    private int numRays = 15;
 
     private void Awake()
     {
@@ -66,21 +62,35 @@ public class PlayerPossessing : MonoBehaviour
             posessionIcon = GameManager.Instance.posessionIcon;
 
         }
+        
+        InitializeInputActions();
+    }
+
+    private void InitializeInputActions()
+    {
+        if (inputActions == null)
+        {
+            Debug.LogError("InputActionAsset reference is missing on " + gameObject.name);
+            return;
+        }
+        
+        possessAction = inputActions.FindAction("Possess");
+        
+        if (possessAction == null)
+        {
+            Debug.LogError("Possess action not found in InputActionAsset!");
+        }
+        
+        possessAction?.Enable();
     }
 
     private void LateUpdate()
     {
         if (Time.timeScale == 0) return;
         
-        if (Input.GetKeyDown(possessKey))
+        if (possessAction != null && possessAction.triggered)
         {
             TryStartPossession();
-            Debug.Log("Tried Possessing Keyboard");
-        }
-        else if (Input.GetKeyDown(possessButton))
-        {
-            TryStartPossession();
-            Debug.Log("Tried Possessing Controller");
         }
 
         //get directions around player
@@ -124,13 +134,12 @@ public class PlayerPossessing : MonoBehaviour
                         target.ApplyHighlightColor();
                         EnablePopupIcon(target.iconPoint);
                     }
-
                 }
-
-                
             }
+            
             rayDir += rayStep;
         }
+        
         if (posessing != true && target != null)
         {
             CheckForClear();
@@ -141,17 +150,19 @@ public class PlayerPossessing : MonoBehaviour
             possessionTimer -= Time.deltaTime;
             GameManager.Instance.possessionSlider.value = Mathf.InverseLerp(0, possessionDuration, possessionTimer);
 
-                Vector3 input = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), 0);
-                possessedEnemyMovement.UpdatePossession(input);
+            Vector3 input = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), 0);
+            possessedEnemyMovement.UpdatePossession(input);
 
-                if (possessionTimer <= 0f || Input.GetKeyUp(possessKey) || Input.GetKeyUp(possessButton))
-                {
-                    EndPossession();
-                }
+            if (possessionTimer <= 0f || possessAction.WasReleasedThisFrame())
+            {
+                EndPossession();
+            }
         }
-        if(!posessing && possessionTimer < possessionDuration)
+        
+        if (!posessing && possessionTimer < possessionDuration)
         {
             GameManager.Instance.possessionSlider.gameObject.SetActive(true);
+            
             if (TimeSincePossession >= rechargeDelay)
             {
                 possessionTimer += Time.deltaTime * rechargeSpeed;
@@ -166,8 +177,6 @@ public class PlayerPossessing : MonoBehaviour
         {
             GameManager.Instance.possessionSlider.gameObject.SetActive(false);
         }
-
-        
     }
 
     private void TryStartPossession()
@@ -200,21 +209,17 @@ public class PlayerPossessing : MonoBehaviour
 
     private void StartPossession(PossessedEnemyResisting target)
     {
-        if (target == null)
-        {
-            return;
-        }
+        if (!target) return;
 
         posessing = true;
 
         animator.SetBool("isPosessing", true);
         GameManager.Instance.possessionSlider.gameObject.SetActive(true);
         normalEnemyMovement = target.GetComponent<PatrollingEnemy>();
-        enemyRigidbody = target.GetComponent<Rigidbody>();
         enemyPOV = target.GetComponent<EnemyFieldOfView>();
         possessedEnemyMovement = target;
 
-        if (playerController != null)
+        if (playerController)
         {
             Debug.Log("Reference to player controller is null");
 
@@ -230,13 +235,13 @@ public class PlayerPossessing : MonoBehaviour
             transform.SetPositionAndRotation(frozenPos, frozenRot);
         }
 
-        if (normalEnemyMovement != null)
+        if (normalEnemyMovement)
         {
-            Debug.Log("Reference to normal enemy movement is null");
+            Debug.LogError("Reference to normal enemy movement is null");
             normalEnemyMovement.enabled = false;
         }
 
-        if (enemyPOV != null)
+        if (enemyPOV)
         {
             enemyPOV.enabled = false;
         }
@@ -253,29 +258,32 @@ public class PlayerPossessing : MonoBehaviour
 
     private void EndPossession()
     {
-        if (possessedEnemyMovement != null)
+        if (possessedEnemyMovement)
         {
             possessedEnemyMovement.EndPossession();
-            if (normalEnemyMovement != null)
+            
+            if (normalEnemyMovement)
             {
                 normalEnemyMovement.enabled = true;
             }
         }
+        
         animator.SetBool("isPosessing", false);
 
         GameManager.Instance.possessionSlider.gameObject.SetActive(false);
 
-        if (enemyPOV != null)
+        if (enemyPOV)
         {
             enemyPOV.enabled = true;
         }
 
-        if (playerController != null)
+        if (playerController)
         {
             playerController.enabled = true;
             playerController.MovementLocked = false;
             GetComponent<CharacterController>().enabled = true;
         }
+        
         posessing = false;
         TimeSincePossession = 0;
         ClearTargetInfo();
@@ -292,17 +300,17 @@ public class PlayerPossessing : MonoBehaviour
         target = null;
     }
 
-    public void EnablePopupIcon(Transform target)
+    private void EnablePopupIcon(Transform target)
     {
-        if (posessionIcon != null)
+        if (posessionIcon)
         {
             posessionIcon.target = target;
         }
     }
 
-    public void DisablePopupIcon()
+    private void DisablePopupIcon()
     {
-        if (posessionIcon != null)
+        if (posessionIcon)
         {
             posessionIcon.TurnOffMarker();
         }
@@ -317,11 +325,12 @@ public class PlayerPossessing : MonoBehaviour
     {
         for (int c = 0; c < hit.Length; c++)
         {
-            if (hit[c].collider != null)
+            if (hit[c].collider)
             {
                 return;
             }
         }
+        
         ClearTargetInfo();
         DisablePopupIcon();
     }

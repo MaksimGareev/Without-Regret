@@ -167,6 +167,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Possess",
+                    "type": "Button",
+                    "id": "179d1c56-b7f1-4491-aadf-576248a3ca53",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -668,7 +677,7 @@
                 {
                     "name": "",
                     "id": "2b512c30-72b9-4cdd-b995-87cc86eedf81",
-                    "path": "<Gamepad>/rightStickPress",
+                    "path": "<Gamepad>/rightTrigger",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -695,6 +704,28 @@
                     "processors": "",
                     "groups": ";Gamepad",
                     "action": "Cancel",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "3adc4768-8abd-4f4f-a0f5-7af802f711f4",
+                    "path": "<Gamepad>/rightShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Possess",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "66113260-9d1a-4f8f-abed-b8bbf2e605f3",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Possess",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

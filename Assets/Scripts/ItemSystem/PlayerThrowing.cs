@@ -31,16 +31,13 @@ public class PlayerThrowing : MonoBehaviour
     [SerializeField] private float holdTime = 5f;
     private float currentHoldTime = 0f;
 
-    [Header("Input")]
-    [SerializeField] private MouseButton chargeKey = MouseButton.Right;
-    [SerializeField] private string chargeButton = "XboxRightTrigger";
-    [SerializeField] private KeyCode cancelKey = KeyCode.Q;
-    [SerializeField] private KeyCode cancelButton = KeyCode.Joystick1Button4;
-
-    private int chargeKeyInt;
+    [Header("Input")] 
+    [SerializeField] private InputActionAsset inputActions;
+    private InputAction throwAction;
+    private InputAction cancelAction;
+    
     private bool isCharging = false;
     private float currentCharge = 0f;
-    private bool usingController;
     private Vector3 PointerScale;
     private float TimeSinceChargingStart;
     private float waitBeforeCharging = .75f;
@@ -63,8 +60,35 @@ public class PlayerThrowing : MonoBehaviour
         WorldThrowPointer.SetActive(false);
         PointerScale = WorldThrowPointer.transform.localScale;
         line.enabled = false;
-        chargeKeyInt = (int)chargeKey;
+        
+        InitializeInputActions();
     }
+
+    private void InitializeInputActions()
+    {
+        if (!inputActions)
+        {
+            Debug.LogError("InputActionAsset not assigned in the inspector for PlayerThrowing!");
+            return;
+        }
+        
+        throwAction = inputActions.FindActionMap("Player").FindAction("Throwing");
+        
+        if (throwAction == null)
+        {
+            Debug.LogError("Throwing action not found in InputActionAsset! Please ensure there is an action named 'Throwing' in the 'Player' action map.");
+        }
+        throwAction?.Enable();
+        
+        cancelAction = inputActions.FindActionMap("Player").FindAction("Cancel");
+        
+        if (cancelAction == null)
+        {
+            Debug.LogError("Cancel action not found in InputActionAsset! Please ensure there is an action named 'Cancel' in the 'Player' action map.");
+        }
+        cancelAction?.Enable();
+    }
+    
     private void Awake()
     {
         characterSwap = FindFirstObjectByType<CharacterSwap>();
@@ -78,7 +102,6 @@ public class PlayerThrowing : MonoBehaviour
 
         if (animator == null)
         {
-            //animator = GetComponentInChildren<Animator>();
             if (animator == null)
             {
                 Debug.LogError("Animator component not found on the player or its children. Please ensure an Animator component is added to the player's 'Echo' mesh.");
@@ -88,6 +111,7 @@ public class PlayerThrowing : MonoBehaviour
         if (inventory == null)
         {
             inventory = GetComponent<Inventory>();
+            
             if (inventory == null)
             {
                 Debug.LogError("Inventory component not found on the player. Please ensure an Inventory component is added to the player.");
@@ -97,6 +121,7 @@ public class PlayerThrowing : MonoBehaviour
         if (playerCamera == null)
         {
             playerCamera = Camera.main;
+            
             if (playerCamera == null)
             {
                 Debug.LogError("Main Camera not found. Please ensure there is a Camera in the scene tagged as 'MainCamera'.");
@@ -106,6 +131,7 @@ public class PlayerThrowing : MonoBehaviour
         if (playerEquipItem == null)
         {
             playerEquipItem = GetComponent<PlayerEquipItem>();
+            
             if (playerEquipItem == null)
             {
                 Debug.LogError("PlayerEquipItem component not found on the player. Please ensure a PlayerEquipItem component is added to the player.");
@@ -115,6 +141,7 @@ public class PlayerThrowing : MonoBehaviour
         if (throwOrigin == null)
         {
             throwOrigin = GameObject.Find("Throwing Origin")?.transform;
+            
             if (throwOrigin == null)
             {
                 Debug.LogError("Throwing Origin GameObject with Transform component not found in the scene. Please ensure a GameObject named 'Throwing Origin' exists as a child of the player.");
@@ -124,6 +151,7 @@ public class PlayerThrowing : MonoBehaviour
         if (WorldThrowPointer == null)
         {
             WorldThrowPointer = GameObject.Find("WorldThrowIndicator");
+            
             if (WorldThrowPointer == null)
             {
                 Debug.LogError("WorldThrowIndicator GameObject not found in the scene. Please ensure a GameObject named 'WorldThrowIndicator' exists in the scene as a child of the player.");
@@ -133,6 +161,7 @@ public class PlayerThrowing : MonoBehaviour
         if (inventoryToggle == null)
         {
             inventoryToggle = GetComponent<ToggleInventoryUI>();
+            
             if (inventoryToggle == null)
             {
                 Debug.LogError("ToggleInventoryUI component not found on the player. Please ensure a ToggleInventoryUI component is added to the player.");
@@ -146,11 +175,10 @@ public class PlayerThrowing : MonoBehaviour
         {
             HandleCharging();
         }
-        else if (Time.timeScale != 0f && playerEquipItem.grabbableEquipped && (Input.GetMouseButtonDown(chargeKeyInt) || Input.GetAxis(chargeButton) > 0.1f))
+        else if (Time.timeScale != 0f && playerEquipItem.grabbableEquipped && throwAction != null && throwAction.triggered)
         {
             DropItem();
         }
-
     }
 
     private void DropItem()// if not throwable, drop the item instead
@@ -168,23 +196,13 @@ public class PlayerThrowing : MonoBehaviour
 
     private void HandleCharging()// charges the throw overtime
     {
-        if (Input.GetMouseButtonDown(chargeKeyInt) && !isCharging)
+        if (throwAction.triggered && !isCharging && canCharge)
         {
-            StartCharging(false);
-        }
-
-        if ((Input.GetAxis(chargeButton) > 0.1f) && !isCharging && canCharge)
-        {
-            StartCharging(true);
+            StartCharging();
         }
 
         if (isCharging)
         {
-            if (usingController)
-            {
-                Debug.Log($"Charge Button Value: {Input.GetAxis(chargeButton)}");
-            }
-            
             if (TimeSinceChargingStart >= waitBeforeCharging)
             {
                 if (currentCharge < 1f) // increases charge amount with time
@@ -209,7 +227,7 @@ public class PlayerThrowing : MonoBehaviour
                 TimeSinceChargingStart += Time.deltaTime;
             }
 
-            DrawProjection();// render line
+            DrawProjection(); // render line
 
             if (GameManager.Instance.throwingSlider != null)
             {
@@ -222,45 +240,20 @@ public class PlayerThrowing : MonoBehaviour
                 WorldThrowPointer.gameObject.SetActive(true);
             }
 
-            if (usingController)
+            if (throwAction.WasReleasedThisFrame())
             {
-                if (Input.GetAxis(chargeButton) < 0.1f)
-                {
-                    ThrowItem(currentCharge);
-                    Debug.Log($"Charge Button Value: {Input.GetAxis(chargeButton)}");
-                }
-            }
-            else
-            {
-                if (Input.GetMouseButtonUp(chargeKeyInt))
-                {
-                    ThrowItem(currentCharge);
-                }
+                ThrowItem(currentCharge);
             }
 
-            if (usingController)
+            if (cancelAction.triggered)
             {
-                if (Input.GetKeyDown(cancelButton))
-                {
-                    CancelCharge();
-                    StartCoroutine(CanceledDelay());
-                }
+                CancelCharge();
             }
-            else
-            {
-                if (Input.GetKeyDown(cancelKey))
-                {
-                    CancelCharge();
-                }
-            }
-            
         }
         else
         {
             line.enabled = false;
         }
-        
-
     }
 
     private void ThrowItem(float charge) //throw item script now handles the animation, input, UI and inventory, ThrowDelay now handles the actual throwing physics that were previously in this function
@@ -332,7 +325,6 @@ public class PlayerThrowing : MonoBehaviour
                 return;
             }
         }
-
     }
 
     public bool GetIsCharging() => isCharging;
@@ -383,7 +375,7 @@ public class PlayerThrowing : MonoBehaviour
     }
 
 
-    private void StartCharging(bool Controller) // handles starting the charging of a throw across both control types
+    private void StartCharging() // handles starting the charging of a throw across both control types
     {
         if (!isCharging)
         {
@@ -392,7 +384,6 @@ public class PlayerThrowing : MonoBehaviour
         }
         isCharging = true;
         currentCharge = 0f;
-        usingController = Controller;
         OnStartThrowing.Invoke(true);
     }
 
