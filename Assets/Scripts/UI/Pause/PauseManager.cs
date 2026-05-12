@@ -206,6 +206,10 @@ public class PauseManager : MonoBehaviour
                 {
                     settingsScript.CloseControlSchemeUI();
                 }
+                else if (settingsScript != null && settingsScript.IsResolutionDropdownOpen())
+                {
+                    settingsScript.resolutionDropdown.Hide();
+                }
                 else if (settingsScript != null && settingsScript.hasUnappliedChanges)
                 {
                     settingsScript.ConfirmBeforeLeaveWithoutApplying();

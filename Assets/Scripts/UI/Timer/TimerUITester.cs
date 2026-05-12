@@ -14,26 +14,26 @@ public class TimerUITester : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
-    {
-        if (timerRingUI != null)
-        {
-            if (Input.GetKeyDown(KeyCode.Alpha1))
-            {
-                timerRingUI.SetRingState(TimerRingUI.RingState.Full);
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha2))
-            {
-                timerRingUI.SetRingState(TimerRingUI.RingState.TwoThirds);
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha3))
-            {
-                timerRingUI.SetRingState(TimerRingUI.RingState.OneThird);
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha4))
-            {
-                timerRingUI.SetRingState(TimerRingUI.RingState.Empty);
-            }
-        }
-    }
+    // void Update()
+    // {
+    //     if (timerRingUI != null)
+    //     {
+    //         if (Input.GetKeyDown(KeyCode.Alpha1))
+    //         {
+    //             timerRingUI.SetRingState(TimerRingUI.RingState.Full);
+    //         }
+    //         else if (Input.GetKeyDown(KeyCode.Alpha2))
+    //         {
+    //             timerRingUI.SetRingState(TimerRingUI.RingState.TwoThirds);
+    //         }
+    //         else if (Input.GetKeyDown(KeyCode.Alpha3))
+    //         {
+    //             timerRingUI.SetRingState(TimerRingUI.RingState.OneThird);
+    //         }
+    //         else if (Input.GetKeyDown(KeyCode.Alpha4))
+    //         {
+    //             timerRingUI.SetRingState(TimerRingUI.RingState.Empty);
+    //         }
+    //     }
+    // }
 }

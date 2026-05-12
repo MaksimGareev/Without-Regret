@@ -5,6 +5,9 @@ using UnityEngine.EventSystems;
 
 public class SelectableHighlighting : MonoBehaviour
 {
+    [Header("Settings")] 
+    [SerializeField] private bool scaleOnHighlight = true;
+    
     private Color primaryHighlightColor = Color.aquamarine;
     private Color backgroundHighlightColor = new Color(0.25f, 0.7f, 0.6f, 1.0f);
     //private Color primaryOriginalColor;
@@ -284,7 +287,7 @@ public class SelectableHighlighting : MonoBehaviour
         }
 
         // Scale up the button slightly for a more pronounced highlight effect
-        SetScaleByType(true);
+        if (scaleOnHighlight) SetScaleByType(true);
     }
 
     // Method to reset the button's appearance to its original state
@@ -295,7 +298,7 @@ public class SelectableHighlighting : MonoBehaviour
         if (stayHighlighted) stayHighlighted = false; // Reset the stayHighlighted flag when unhighlighting
 
         // Reset the button scale
-        SetScaleByType(false);
+        if (scaleOnHighlight) SetScaleByType(false);
 
         // if (!selectable.interactable)
         // {

@@ -279,10 +279,10 @@ public class PlayerController : MonoBehaviour, ISaveable
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.H)) //Temporary for testing
-        {
-            SetWorriedState(true);
-        }
+        // if (Input.GetKeyDown(KeyCode.H)) //Temporary for testing
+        // {
+        //     SetWorriedState(true);
+        // }
         if (DialogueActive)
         {
             moveInput = Vector2.zero;

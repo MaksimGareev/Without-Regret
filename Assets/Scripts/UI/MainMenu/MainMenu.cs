@@ -144,7 +144,7 @@ public class MainMenu : MonoBehaviour
     void Update()
     {
         HandleControllerCancelInput();
-        DeleteSavesDebug(); // Debug shortcut to delete all saves and reload main menu
+        //DeleteSavesDebug(); // Debug shortcut to delete all saves and reload main menu
 
         if (confirmationPanel.activeSelf && backButton.gameObject.activeSelf)
         {
@@ -217,18 +217,18 @@ public class MainMenu : MonoBehaviour
         eventSystem.SetSelectedGameObject(buttonToSelect.gameObject);
     }
 
-    private void DeleteSavesDebug()
-    {
-        if (Input.GetKeyDown(KeyCode.F5))
-        {
-            for (int i = 1; i <= 3; i++)
-            {
-                SaveSystem.DeleteSave(i);
-            }
-
-            SceneManager.LoadScene("MainMenu");
-        }
-    }
+    // private void DeleteSavesDebug()
+    // {
+    //     if (Input.GetKeyDown(KeyCode.F5))
+    //     {
+    //         for (int i = 1; i <= 3; i++)
+    //         {
+    //             SaveSystem.DeleteSave(i);
+    //         }
+    //     
+    //         SceneManager.LoadScene("MainMenu");
+    //     }
+    // }
 
     private void HandleControllerCancelInput()
     {
@@ -243,6 +243,10 @@ public class MainMenu : MonoBehaviour
                 if (settingsScript.controlSchemeOpen)
                 {
                     settingsScript.CloseControlSchemeUI();
+                }
+                else if (settingsScript.IsResolutionDropdownOpen())
+                {
+                    settingsScript.resolutionDropdown.Hide();
                 }
                 else if (settingsScript.hasUnappliedChanges)
                 {

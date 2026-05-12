@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using TMPro;
 using UnityEngine.EventSystems;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine.InputSystem;
 
 public class SettingsMenu : MonoBehaviour
@@ -417,9 +418,10 @@ public class SettingsMenu : MonoBehaviour
         resolutions = Screen.resolutions;
         resolutionDropdown.ClearOptions();
 
-        var options = new System.Collections.Generic.List<string>();
+        var options = new List<string>();
         
-        var uniqueResolutions = new System.Collections.Generic.List<Resolution>();
+        var uniqueResolutions = new List<Resolution>();
+        
         foreach (var res in resolutions)
         {
             // Include 16:9, 16:10, and 4:3 aspect ratios.
@@ -434,9 +436,11 @@ public class SettingsMenu : MonoBehaviour
                 }
             }
         }
-
+        
+        uniqueResolutions.Reverse();
+        
         resolutions = uniqueResolutions.ToArray();
-        defaultResolutionIndex = resolutions.Length - 1; // Default to highest resolution
+        defaultResolutionIndex = 0; // Default to highest resolution
         
         int currentResolutionIndex = 0;
 
@@ -1417,5 +1421,10 @@ public class SettingsMenu : MonoBehaviour
     private void OnDestroy()
     {
         DisableListeners();
+    }
+    
+    public bool IsResolutionDropdownOpen()
+    {
+        return resolutionDropdown.IsExpanded;
     }
 }
