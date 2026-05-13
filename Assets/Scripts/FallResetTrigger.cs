@@ -235,6 +235,7 @@ public class FallResetTrigger : MonoBehaviour
             Debug.LogError("No black screen CanvasGroup assigned for FallResetTrigger.");
             yield break;
         }
+        
         if (showDebugLogs)
             Debug.Log($"{name}: Starting fade {(fadeIn ? "in to" : "out of")} black.");
 

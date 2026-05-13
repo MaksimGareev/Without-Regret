@@ -100,10 +100,11 @@ public class InventoryUIController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (EventSystem.current == null || slotButtons == null)
-        {
-            return;
-        }
+        if (GameOverManager.Instance && GameOverManager.Instance.IsGameOver) return;
+
+        if (!EventSystem.current || slotButtons == null) return;
+        
+        Debug.Log("[INV] Update selection => " + (EventSystem.current?.currentSelectedGameObject?.name ?? "null"));
 
         GameObject selectedGameObject = EventSystem.current.currentSelectedGameObject;
 
@@ -399,6 +400,8 @@ public class InventoryUIController : MonoBehaviour
     {
         SceneLoadManager.Instance.OnSceneLoaded.RemoveListener(OnSceneLoaded);
         inventoryOpen = false;
+        
+        InputDeviceManager.Instance?.SetUIActive(false, null);
 
         DisableInventoryInput();
     }

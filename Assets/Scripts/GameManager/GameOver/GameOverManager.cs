@@ -1,7 +1,9 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -25,7 +27,7 @@ public class GameOverManager : MonoBehaviour
     [Header("Events")]
     [HideInInspector] public UnityEvent onGameOver;
 
-    private bool usingController = false;
+    //private bool usingController = false;
     private ConfirmationUI confirmationUI;
     private bool sceneLoadListenerRegistered = false;
 
@@ -143,7 +145,7 @@ public class GameOverManager : MonoBehaviour
     private void ResetGameOverState()
     {
         isGameOver = false;
-        usingController = false;
+        //usingController = false;
     }
 
     public void PrepareForGameOver()
@@ -192,7 +194,7 @@ public class GameOverManager : MonoBehaviour
     {
         if (cancelAction != null && cancelAction.triggered && isGameOverUIActive() && !(confirmationPanel && confirmationPanel.activeSelf))
         {
-            ConfirmBeforeQuit();
+            quitButton?.onClick.Invoke();
         }
 
         if (Time.timeSinceLevelLoad < 0.1f && gameOverUI && gameOverUI.activeSelf && !IsGameOver)
@@ -317,9 +319,37 @@ public class GameOverManager : MonoBehaviour
         EnableInputActions();
         EnableUIButtons();
 
+        confirmationPanel.SetActive(false);
         gameOverUI.SetActive(true);
 
         DisableOtherCanvases();
+        
+        if (GameManager.Instance && GameManager.Instance.inventoryInteractingScript)
+        {
+            if (GameManager.Instance.inventoryInteractingScript)
+            {
+                GameManager.Instance.inventoryInteractingScript.DisableInventoryInput();
+            }
+
+            if (GameManager.Instance.InventoryUI && GameManager.Instance.InventoryUI.activeSelf)
+            {
+                GameManager.Instance.InventoryUI.SetActive(false);
+            }
+        }
+        
+        InputSystemUIInputModule uiInputModule = EventSystem.current?.GetComponent<InputSystemUIInputModule>();
+        if (uiInputModule)
+        {
+            var uiActionMap = inputActions?.FindActionMap("UI");
+            if (uiActionMap != null)
+            {
+                var navigateAction = InputActionReference.Create(uiActionMap.FindAction("Navigate"));
+                if (navigateAction && uiInputModule.move != navigateAction)
+                {
+                    uiInputModule.move = navigateAction;
+                }
+            }
+        }
 
         if (InputDeviceManager.Instance)
         {
@@ -347,6 +377,16 @@ public class GameOverManager : MonoBehaviour
             playerController.DisableInput();
             inputActions?.FindActionMap("Player")?.Disable();
         }
+        
+        StartCoroutine(EnsureInputEnabled());
+    }
+
+    private IEnumerator EnsureInputEnabled()
+    {
+        yield return new WaitForSecondsRealtime(0.5f);
+        EnableUIButtons();
+        EnableInputActions();
+        DisableOtherCanvases();
     }
 
     private void DisableGameOverUI()
@@ -408,6 +448,8 @@ public class GameOverManager : MonoBehaviour
             Quit();
             return;
         }
+        
+        InputDeviceManager.Instance.SetUIActive(true, confirmationPanel);
 
         confirmationUI.ConfirmTask(ConfirmationType.QuitToMainMenu, 
             () => 
@@ -422,9 +464,11 @@ public class GameOverManager : MonoBehaviour
                 // Cancel action
                 confirmationPanel.SetActive(false);
                 EnableUIButtons();
-                if (quitButton && EventSystem.current)
+                if (retryButton && EventSystem.current)
                 {
-                    EventSystem.current.SetSelectedGameObject(quitButton.gameObject);
+                    EventSystem.current.SetSelectedGameObject(null);
+                    EventSystem.current.firstSelectedGameObject = retryButton.gameObject;
+                    EventSystem.current.SetSelectedGameObject(EventSystem.current.firstSelectedGameObject);
                 }
             });
     }
@@ -486,10 +530,18 @@ public class GameOverManager : MonoBehaviour
         {
             retryButton.interactable = true;
         }
+        else
+        {
+            Debug.LogError("Retry button reference is missing in GameOverManager.");
+        }
 
         if (quitButton)
         {
             quitButton.interactable = true;
+        }
+        else
+        {
+            Debug.LogError("Quit button reference is missing in GameOverManager.");
         }
     }
 
