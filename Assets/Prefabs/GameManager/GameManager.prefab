@@ -86,7 +86,6 @@ GameObject:
   - component: {fileID: 8090287494469674823}
   - component: {fileID: 3511942004292408439}
   - component: {fileID: -3416331464475020366}
-  - component: {fileID: 5188864422828486562}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -198,18 +197,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 27f9da1b2020f3f478381aff87e054c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractionManager
---- !u!114 &5188864422828486562
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3766332721213988871}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a8602dd859bc67a4eb06a738e8cff81c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::InputDebugger
 --- !u!1 &5882326207973178002
 GameObject:
   m_ObjectHideFlags: 0
@@ -244,9 +231,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -429.19995, y: 32}
-  m_SizeDelta: {x: 800, y: 50}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -29.199951, y: 57}
+  m_SizeDelta: {x: 1601.05, y: 50}
+  m_Pivot: {x: 1, y: 1}
 --- !u!222 &6818390785422236064
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -927,7 +914,8 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 8092955961793045992, guid: d9bbb212694cb404498f826041308e9e, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d9bbb212694cb404498f826041308e9e, type: 3}
