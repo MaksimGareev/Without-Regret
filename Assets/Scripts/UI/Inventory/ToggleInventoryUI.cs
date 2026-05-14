@@ -39,21 +39,26 @@ public class ToggleInventoryUI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (inventoryAction.triggered 
-            && hasBackpack 
-            && !PauseManager.Instance.isGamePaused 
-            && !Journal.Instance.IsJournalOpen
-            && !NewDialogueManager.Instance.DialogueIsActive
-            && !GameOverManager.Instance.IsGameOver
-            && !SceneLoadManager.Instance.IsLoading
-            && !GameManager.Instance.objectiveDebugScript.DebugUIIsActive
-            && !GameManager.Instance.lockPickUIScript.IsActive
-            && !InteractionTutorialUI.Instance.IsShowing)
+        if (PauseManager.Instance.isGamePaused
+            || Journal.Instance.IsJournalOpen
+            || NewDialogueManager.Instance.DialogueIsActive
+            || GameOverManager.Instance.IsGameOver
+            || GameOverManager.Instance.isGameOverUIActive()
+            || SceneLoadManager.Instance.IsLoading
+            || GameManager.Instance.objectiveDebugScript.DebugUIIsActive
+            || GameManager.Instance.lockPickUIScript.IsActive
+            || InteractionTutorialUI.Instance.IsShowing)
+        {
+            return;
+        }
+        
+        if (inventoryAction.triggered && hasBackpack)
         {
             ToggleInventory();
         }
         else if (cancelAction.triggered && isEnabled)
         {
+            Debug.Log("Cancel Action triggered Inventory Toggle");
             ToggleInventory();
         }
     }
